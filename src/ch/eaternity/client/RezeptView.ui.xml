@@ -1,0 +1,82 @@
+ <ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+  
+<ui:style>
+
+ 	.SavePanel {
+  		float: left;
+  		clear: both;
+  	}
+	.SuggestTable {
+		
+		float: right;
+		clear: both;
+		width: 90%;
+		text-align: right;
+	}
+	.MenuTable {
+		margin: 15px 15px 15px 10px;
+	    border-right: 1.5px solid #bbb;
+    	border-bottom: 1.5px solid #bbb;
+    	cursor: pointer;
+    	cursor: hand;
+   		background: #fff;
+	}
+		.gwt-Button {
+	  margin: 5px 10px 5px 0px;
+	  padding: 3px 5px;
+	  text-decoration: none;
+	  font-size: small;
+	  cursor: pointer;
+	  cursor: hand;
+	  background: url("hborder.png") repeat-x 0px -27px;
+	  border: 1px outset #ccc;
+	}
+	.gwt-Button:active {
+	  border: 1px inset #ccc;
+	}
+	.gwt-Button:hover {
+	  border-color: #9cf #69e #69e #7af;
+	}
+	.gwt-Button[disabled] {
+	  cursor: default;
+	  color: #888;
+	}
+	.gwt-Button[disabled]:hover {
+	  border: 1px outset #ccc;
+	}
+</ui:style>
+
+  <ui:style field='selectionStyle'
+    type='ch.eaternity.client.RezeptView.SelectionStyle'>
+
+  .selectedRow {
+    background: #adcce7;
+  }
+
+  .selectedRow td {
+    border-top: 1px solid #88a4d6;
+    border-bottom: 1px solid #7b97d0;
+  }
+  
+ 
+  </ui:style>
+          
+           		<g:DecoratorPanel>
+           			<g:HTMLPanel>
+           			<g:Label>Ihre Zusammenstellung</g:Label>
+           			<g:HorizontalPanel  ui:field='addInfoPanel'>
+        				<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}' cellSpacing='0' cellPadding='0'/>
+        			</g:HorizontalPanel>
+        					
+        					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}' cellSpacing='0' cellPadding='0'/>
+        					<g:HTMLPanel ui:field='SaveRezeptPanel'>
+                				<g:TextBox ui:field="RezeptName">Rezept Name</g:TextBox>
+                				<g:CheckBox ui:field="makePublic">veröffentliche Rezept</g:CheckBox>
+                				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
+                			</g:HTMLPanel>
+        			</g:HTMLPanel>
+      			</g:DecoratorPanel>
+      			
+  </ui:UiBinder>

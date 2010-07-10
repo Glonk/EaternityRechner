@@ -1,0 +1,87 @@
+<ui:UiBinder 
+	xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:rechner='urn:import:ch.eaternity.client'>
+<ui:style>
+	.info {
+	border-top: 1.5px solid #bbb;
+	border-right: 1.5px solid #bbb;
+	
+	}
+	.top {
+	margin:15px 15px 0px 10px;
+		}
+	.box {
+		margin:10px;
+		}
+	.scrollbox {
+			border: 1.5px solid #bbe;
+			margin: 0px 15px 0px 15px;
+			background: #fff;
+		}
+		.hinweis{
+			width:250px;
+			background:#bbe;
+			text-align:center;
+			color:white;
+			font-weight:bold;
+			padding-right:10px;
+			padding-top:3px;
+			margin-left:90px;
+			}
+		
+
+.menge{
+	margin:0px 5px 10px 5px;
+	}
+	
+</ui:style>
+
+<ui:style field='passedStyle'
+    type='ch.eaternity.client.InfoZutatDialog.PassedStyle'>
+	
+		.hinweisPassed{
+			width:250px;
+			background:#ffa800;
+			text-align:center;
+			color:white;
+			font-weight:bold;
+			margin-left:90px;
+			padding-right:10px;
+			padding-top:3px;
+			}
+			
+  </ui:style>
+  
+             		<g:DecoratorPanel>
+             		
+					<g:HTMLPanel>
+						<g:HTML ui:field="zutatName">
+						Zutat Name
+ 						</g:HTML>
+						<ul class="rating onestar">
+							<li class="one">
+								<a href="#" title="1 Star">1</a>
+							</li>
+							<li class="two">
+								<a href="#" title="2 Stars">2</a>
+							</li>
+							<li class="three">
+								<a href="#" title="3 Stars">3</a>
+							</li>
+							<li class="four">
+								<a href="#" title="4 Stars">4</a>
+							</li>
+							<li class="five">
+								<a href="#" title="5 Stars">5</a>
+							</li>
+						</ul>
+						<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Die Angaben sind noch unvollständig</g:Label>
+									<g:ScrollPanel  styleName='{style.scrollbox}'>
+				<rechner:ZutatVarianten ui:field="zutatVarianten" />
+
+			</g:ScrollPanel>
+					</g:HTMLPanel>
+      			</g:DecoratorPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,57 @@
+<!DOCTYPE ui:UiBinder 
+  SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent"
+>
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:mail='urn:import:ch.eaternity.client'>
+
+
+  <ui:style>
+  .statusDiv {
+    text-align: right;
+    margin: 1em;
+    background:#fff;
+  }
+
+  .linksDiv {
+    text-align: right;
+  }
+  
+  .statusInfo{
+  	float: left;
+  	}
+
+  </ui:style>
+  
+
+  <g:HTMLPanel>
+
+
+    <div class="{style.statusDiv}">
+
+
+	
+      <div class="{style.statusInfo}">
+	  	
+        <g:Label ui:field='loginLabel' >Melden Sie sich an für mehr Funktionen.</g:Label>
+        <g:InlineLabel ui:field='loadingLabel' >lade Datenbank...</g:InlineLabel>
+      </div>
+
+      <div class='{style.linksDiv}'>
+
+        <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte von: </g:InlineLabel>
+        <g:TextBox ui:field="clientLocation">Schweiz</g:TextBox>
+          <g:Button ui:field="locationButton" text="Adresse festlegen"/>
+           <g:InlineLabel>Sie kochen im Monat: </g:InlineLabel>
+      	<g:ListBox ui:field="Monate">
+		</g:ListBox>
+        <g:Anchor href='javascript:;' ui:field='signOutLink'>Abmelden</g:Anchor>
+        &nbsp;
+        <g:Anchor href='javascript:;' ui:field='signInLink'>Anmelden</g:Anchor>
+        &nbsp;
+        <g:Anchor href='javascript:;' ui:field='AdminLink'>Admin Konsole</g:Anchor>
+      </div>
+    </div>
+  </g:HTMLPanel>
+</ui:UiBinder>

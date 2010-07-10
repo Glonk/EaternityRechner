@@ -1,0 +1,135 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:mail='urn:import:ch.eaternity.client'>
+
+  <ui:image field='gradient' src='gradient_bg_dark.png' repeatStyle='Horizontal'/>
+  
+ <ui:style src='TabLayoutPanel.css' >
+  
+
+
+	.gwt-Button {
+	  margin: 5px 10px 5px 0px;
+	  padding: 3px 5px;
+	  text-decoration: none;
+	  font-size: small;
+	  cursor: pointer;
+	  cursor: hand;
+	  background: url("hborder.png") repeat-x 0px -27px;
+	  border: 1px outset #ccc;
+	}
+	.gwt-Button:active {
+	  border: 1px inset #ccc;
+	}
+	.gwt-Button:hover {
+	  border-color: #9cf #69e #69e #7af;
+	}
+	.gwt-Button[disabled] {
+	  cursor: default;
+	  color: #888;
+	}
+	.gwt-Button[disabled]:hover {
+	  border: 1px outset #ccc;
+	}
+
+
+  .outer {
+    border-right: 1.5px solid #bbb;
+    border-bottom: 1.5px solid #bbb;
+    cursor: pointer;
+    cursor: hand;
+   
+    background: #fff;
+  }
+  .searcher{
+  	border-top: 1.5px solid #bbb;
+  	border-right: 1.5px solid #bbb;
+  	background: #fff;
+  	}
+  	
+    	.spacer {
+  		margin: 7px;
+  		 
+  	}
+
+
+  .table {
+    table-layout: fixed;
+    width: 100%;
+    background: #fff;
+  }
+
+  .table td {
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #eee;
+    padding: 2px 2px 2px 8px;
+    margin:3px;
+  }
+
+	.scroll {
+		background: #fff;
+		margin-top: 1px;
+		}
+.htmlbox {
+	background: #fafafa;
+	}
+		
+  </ui:style>
+
+  <ui:style field='selectionStyle'
+    type='ch.eaternity.client.Search.SelectionStyle'>
+
+  .selectedRow {
+    background: #adcce7;
+  }
+
+  .selectedRow td {
+    border-top: 1px solid #88a4d6;
+    border-bottom: 1px solid #7b97d0;
+  }
+  
+ 
+  </ui:style>
+
+  <g:DockLayoutPanel   unit='EM'>
+    <g:north size='3'>
+	 	<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'  unit='EM'>
+	 		<g:west size='4'>
+	 			<g:HTML><h3>Suche:</h3></g:HTML>
+	 		</g:west>
+	 		<g:center>
+	 			<g:SuggestBox styleName='{style.spacer}' ui:field="SearchBox2" />
+	 		</g:center>
+	 		
+	 	</g:DockLayoutPanel>
+    </g:north>
+
+    <g:center>
+	  <g:DockLayoutPanel ui:field="leftSplitPanel">
+	  <g:south ui:field="leftSplitPanelSouth" size="20" >
+	  <g:Label>...sortiere Ergebnisse nach...</g:Label>
+		  	<!--  mail:InfoZutat ui:field='infoZutat' /-->
+	  </g:south>
+	  <g:center>
+	    <g:TabLayoutPanel  styleName='{style.outer}' ui:field="tabLayoutPanel" barHeight='28'>
+	      <g:tab >
+	      <g:header><b>Ergebnisse</b></g:header>
+
+	      <g:ScrollPanel styleName='{style.scroll}'>
+	      <g:HTMLPanel>
+	        <g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        <g:HTML><hr /><hr /></g:HTML>
+	        <g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	       </g:HTMLPanel>
+	      </g:ScrollPanel>
+
+	      </g:tab>
+	      
+	     </g:TabLayoutPanel>
+	     </g:center>
+	   </g:DockLayoutPanel>
+	   
+    </g:center>
+  </g:DockLayoutPanel>
+</ui:UiBinder>

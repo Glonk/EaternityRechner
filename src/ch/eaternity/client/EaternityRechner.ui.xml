@@ -1,0 +1,107 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:rechner='urn:import:ch.eaternity.client'>
+  
+<ui:style>
+
+ 
+	.Worksheet {
+		margin: 15px 15px 15px 10px;
+	}
+	
+	.gwt-Button {
+	  margin: 5px 10px 5px 0px;
+	  padding: 3px 5px;
+	  text-decoration: none;
+	  font-size: small;
+	  cursor: pointer;
+	  cursor: hand;
+	  background: url("hborder.png") repeat-x 0px -27px;
+	  border: 1px outset #ccc;
+	}
+	.gwt-Button:active {
+	  border: 1px inset #ccc;
+	}
+	.gwt-Button:hover {
+	  border-color: #9cf #69e #69e #7af;
+	}
+	.gwt-Button[disabled] {
+	  cursor: default;
+	  color: #888;
+	}
+	.gwt-Button[disabled]:hover {
+	  border: 1px outset #ccc;
+	}
+</ui:style>
+
+  <ui:style field='selectionStyle'
+    type='ch.eaternity.client.EaternityRechner.SelectionStyle'>
+
+  .selectedRow {
+    background: #adcce7;
+  }
+
+  .selectedRow td {
+    border-top: 1px solid #88a4d6;
+    border-bottom: 1px solid #7b97d0;
+  }
+  
+ 
+  </ui:style>
+
+  <g:DockLayoutPanel>
+    <g:north size='50'>
+      <rechner:TopPanel ui:field='topPanel' />
+    </g:north>
+
+    <g:center>
+      <g:SplitLayoutPanel>
+        <g:west size='400'>
+          	<rechner:Search ui:field='search' />
+        </g:west>
+        <g:center>
+        <g:DockLayoutPanel>
+       			<g:north size='100'>
+       			<g:HTMLPanel styleName='{style.Worksheet}' >
+       			<!-- Add Rezept Button -->
+       			<g:Button styleName='{style.gwt-Button}'  ui:field="AddRezeptButton" text="Rezept hinzufügen"/>
+       			
+       			
+       			<!-- suggest bar -->
+       			<g:DockLayoutPanel>
+       				<g:west size='100'>
+       					<g:HTMLPanel ui:field='top20'> Top 20
+       					</g:HTMLPanel>
+       				</g:west>
+       				<g:west size='100'>
+       				    <g:HTMLPanel ui:field='above'> 20-50
+       					</g:HTMLPanel>
+       				</g:west>
+       				<g:west size='100'>
+       				    <g:HTMLPanel ui:field='below'> 50-100
+       					</g:HTMLPanel>
+       				</g:west>
+       				<g:center>
+       					<g:HTMLPanel ui:field='right'> 50-100
+       					</g:HTMLPanel>
+       				</g:center>
+       			</g:DockLayoutPanel>
+       			</g:HTMLPanel>
+       			</g:north>
+       			<g:center>
+       			<!-- List of Rezepte -->
+       				<g:ScrollPanel >
+						<g:FlexTable ui:field='rezeptList' cellSpacing='1' cellPadding='1'/>
+					</g:ScrollPanel>
+					
+				</g:center>
+        	</g:DockLayoutPanel>
+        </g:center>
+
+
+      </g:SplitLayoutPanel>
+    </g:center>
+  </g:DockLayoutPanel>
+
+</ui:UiBinder>

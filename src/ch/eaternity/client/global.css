@@ -1,0 +1,149 @@
+body, table {
+  font-size: small;
+}
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #000;
+  background: #fafafa;
+}
+a:link, a:visited, a:hover, a:active {
+  color: #000;
+}
+
+  
+.gwt-Button {
+  margin: 0;
+  padding: 3px 5px;
+  text-decoration: none;
+  font-size: small;
+  cursor: pointer;
+  cursor: hand;
+  background: url("hborder.png") repeat-x 0px -27px;
+  border: 1px outset #ccc;
+}
+.gwt-Button:active {
+  border: 1px inset #ccc;
+}
+
+.gwt-Button-active {
+  border: 1px inset #ccc;
+}
+.active {
+  border: 1px inset #ccc;
+}
+
+.gwt-Button:hover {
+  border-color: #9cf #69e #69e #7af;
+}
+.gwt-Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.gwt-Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
+
+/* Dialog boxes */
+.dialogTopLeftInner, .dialogMiddleLeftInner, .dialogBottomLeftInner,
+.dialogTopRightInner, .dialogMiddleRightInner, .dialogBottomRightInner {
+  display: none;
+}
+.gwt-DialogBox {
+  background-color: white;
+  border: 1px solid #666;
+  z-index: 2;
+}
+.gwt-DialogBox .Caption {
+  background: #d3d6dd url(gradient_bg_th.png) repeat-x bottom left;
+  font-weight: bold;
+  text-shadow: #fff 0 2px 2px;
+  cursor: default;
+  padding: 5px 10px;
+  border-bottom: 1px solid #999;
+  text-align: left;
+}
+.gwt-DialogBox .dialogContent {
+}
+.gwt-DialogBox .gwt-Button {
+  margin: 10px;
+}
+.gwt-PopupPanelGlass {
+  background-color: #000;
+  opacity: 0.3;
+  filter: literal("alpha(opacity=30)");
+  z-index: 2;
+}
+
+/* GWT Tree */
+.gwt-Tree {
+}
+.gwt-Tree .gwt-TreeItem {
+  padding: 0;
+  cursor: hand;
+  cursor: pointer;
+  display: block !important;
+}
+.gwt-Tree .gwt-TreeItem-selected {
+  background: #ccc;
+}
+
+/* Splitters */
+.gwt-SplitLayoutPanel-HDragger {
+  cursor: col-resize;
+}
+
+.gwt-SplitLayoutPanel-VDragger {
+  cursor: row-resize;
+}
+
+.rating{
+	width:80px;
+	height:16px;
+	margin:0 0 20px 0;
+	padding:0;
+	list-style:none;
+	clear:both;
+	position:relative;
+	background: url(star-matrix.gif) no-repeat 0 0;
+}
+/* add these classes to the ul to effect the change to the correct number of stars */
+.nostar {background-position:0 0}
+.onestar {background-position:0 -16px}
+.twostar {background-position:0 -32px}
+.threestar {background-position:0 -48px}
+.fourstar {background-position:0 -64px}
+.fivestar {background-position:0 -80px}
+ul.rating li {
+	cursor: pointer;
+ /*ie5 mac doesn't like it if the list is floated\*/
+	float:left;
+	/* end hide*/
+	text-indent:-999em;
+}
+ul.rating li a {
+	position:absolute;
+	left:0;
+	top:0;
+	width:16px;
+	height:16px;
+	text-decoration:none;
+	z-index: 200;
+}
+ul.rating li.one a {left:0}
+ul.rating li.two a {left:16px;}
+ul.rating li.three a {left:32px;}
+ul.rating li.four a {left:48px;}
+ul.rating li.five a {left:64px;}
+ul.rating li a:hover {
+	z-index:2;
+	width:80px;
+	height:16px;
+	overflow:hidden;
+	left:0;	
+	background: url(star-matrix.gif) no-repeat 0 0
+}
+ul.rating li.one a:hover {background-position:0 -96px;}
+ul.rating li.two a:hover {background-position:0 -112px;}
+ul.rating li.three a:hover {background-position:0 -128px}
+ul.rating li.four a:hover {background-position:0 -144px}
+ul.rating li.five a:hover {background-position:0 -160px}
