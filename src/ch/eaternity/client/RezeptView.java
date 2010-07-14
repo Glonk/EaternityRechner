@@ -92,17 +92,17 @@ public class RezeptView extends Composite {
 	}	
 	
 	public void showRezept(final Rezept rezept) {
-		
+			zutatImMenu.clear();
 			int row = AddZutatZumMenu(rezept.getZutaten());
 			// add Speicher Rezept Button
 			RezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if(RezeptName.getText() != ""){
 //						Speichere Rezept ab. 
-						Rezept rezept = new Rezept(RezeptName.getText());
-						rezept.setOpen(makePublic.getValue());
-						rezept.addZutaten(zutatImMenu);
-						EaternityRechner.addRezept(rezept);
+						Rezept rezeptSave = new Rezept(RezeptName.getText());
+						rezeptSave.setOpen(makePublic.getValue());
+						rezeptSave.addZutaten(zutatImMenu);
+						EaternityRechner.addRezept(rezeptSave);
 					}
 				}
 			});
@@ -116,7 +116,8 @@ public class RezeptView extends Composite {
 		int row = zutatImMenu.size();
 		for(ZutatSpecification zutat : zutaten){
 			if(zutat.getHerkunft() != null){
-			ZutatVarianten.SimpleDirectionsDemo(zutat.getHerkunft().name(),TopPanel.clientLocation.getText(),zutat);
+//				TODO this is to expensive!
+//			ZutatVarianten.SimpleDirectionsDemo(zutat.getHerkunft().name(),TopPanel.clientLocation.getText(),zutat);
 			}
 		}
 		
@@ -190,7 +191,8 @@ public class RezeptView extends Composite {
 
 	
 	private void displayZutatImMenu( List<ZutatSpecification> zutaten) {
-		
+	
+	MenuTable.removeAllRows();;
 	int row = MenuTable.getRowCount();
 	
 	for(final ZutatSpecification zutat : zutaten){
@@ -203,6 +205,7 @@ public class RezeptView extends Composite {
 			int removedIndex = zutatImMenu.indexOf(zutat);
 			zutatImMenu.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
+			rezept.removeZutat(removedIndex);
 			updateSuggestion();
 		}
 	});
@@ -270,10 +273,15 @@ public class RezeptView extends Composite {
 }
 	private void updateSuggestion() {
 
-
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
 
+		if(zutatImMenu.isEmpty()){
+			if(addInfoPanel.getWidgetCount() ==2){
+				addInfoPanel.remove(1);
+			}
+		}
+		
 		for (ZutatSpecification zutatSpec : zutatImMenu) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
@@ -285,10 +293,10 @@ public class RezeptView extends Composite {
 			MenuTable.setHTML(zutatImMenu.indexOf(zutatSpec), 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*100).concat("px'>.</div>")));
 		}
 		
-		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert );
+		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
 		SuggestTable.setWidth("300px");
-		SuggestTable.setText(0,0," alles zusammen: ca. "+formatted+"g CO₂-Äquivalent");
+		SuggestTable.setText(0,0," alles zusammen: ca "+formatted+"g CO₂-Äquivalent");
 
 	}
 	
@@ -296,7 +304,7 @@ public class RezeptView extends Composite {
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 		
 		MenuTable.getColumnFormatter().setWidth(4, "180px");
-		MenuTable.setText(row,4,": ca.as "+formatted+"g CO₂-Äquivalent ");
+		MenuTable.setText(row,4,": ca. "+formatted+"g CO₂-Äquivalent ");
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
 		updateSuggestion();
 	}

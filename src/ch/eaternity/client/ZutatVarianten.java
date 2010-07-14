@@ -97,9 +97,9 @@ public class ZutatVarianten extends  Composite{
 
 	
 	public void setWerte(ZutatSpecification zutatSpec, Zutat zutat,int row){
-		
+//		TODO it is to expensive!
 		// first get the distance ( this may take the longest)
-		SimpleDirectionsDemo(zutatSpec.getHerkunft().name(),TopPanel.clientLocation.getText(), null);
+//		SimpleDirectionsDemo(zutatSpec.getHerkunft().name(),TopPanel.clientLocation.getText(), null);
 
 		
 		// Menge Gramm
@@ -151,9 +151,9 @@ public class ZutatVarianten extends  Composite{
 	}
 	
 	public void setStdWerte(Zutat zutat){
-		
+//	TODO still to expensive!	
 		// first get the distance ( this may take the longest)
-		SimpleDirectionsDemo(zutat.getStdHerkunft().name(),TopPanel.clientLocation.getText(), null);
+//		SimpleDirectionsDemo(zutat.getStdHerkunft().name(),TopPanel.clientLocation.getText(), null);
 
 		
 		// Menge Gramm
@@ -246,7 +246,8 @@ public class ZutatVarianten extends  Composite{
 		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
 		
 		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec,EaternityRechner.selectedRow);
+		
+//		InfoZutat.updateZutatCO2(zutatSpec,EaternityRechner.selectedRow);
 		
 	}
 

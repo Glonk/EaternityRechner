@@ -16,6 +16,8 @@
 package ch.eaternity.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +41,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -85,6 +88,8 @@ public class Search extends ResizeComposite {
 	@UiField TabLayoutPanel tabLayoutPanel;
 	@UiField
 	static DockLayoutPanel leftSplitPanel;
+	@UiField Anchor co2Order;
+	@UiField Anchor alphOrder;
 	//@UiField
 	//static InfoZutat infoZutat;
 	
@@ -92,6 +97,8 @@ public class Search extends ResizeComposite {
 	private static Data clientData = new Data();
 	private static ArrayList<Rezept> FoundRezepte = new ArrayList<Rezept>();
 	private static ArrayList<Zutat> FoundZutaten = new ArrayList<Zutat>();
+	
+	static int sortMethod = 1;
 
 	public static Data getClientData() {
 		return clientData;
@@ -223,7 +230,8 @@ public class Search extends ResizeComposite {
 	 * 
 	 * @param row the row to be selected
 	 */
-	private void selectRow(int row) {
+	private void selectRow(final int row) {
+		
 
 		
 		//TODO uncomment this:
@@ -234,11 +242,14 @@ public class Search extends ResizeComposite {
 		}
 		
 		Zutat item = FoundZutaten.get(row);
+		
 
 		if (item == null) {
 			return;
 		}
-
+		
+		styleRow(selectedRow, false);
+		styleRow(row, true);
 		
 		//TODO uncomment this:
 		//infoZutat.setZutat(item);
@@ -259,7 +270,8 @@ public class Search extends ResizeComposite {
 
 
 
-		styleRow(selectedRow, false);
+		
+
 		
 		//TODO uncomment this:
 		//if(EaternityRechner.MenuTable.getRowCount() > 0){
@@ -267,7 +279,18 @@ public class Search extends ResizeComposite {
 		//	EaternityRechner.selectedRow = -1;
 		//}
 		
-		styleRow(row, true);
+		
+		
+		Timer t = new Timer() {
+			public void run() {
+				styleRow(row, false);
+			}
+		};
+		
+		EaternityRechner.AddZutatZumMenu(item);
+		
+
+		t.schedule(200);
 
 		selectedRow = row;
 
@@ -295,6 +318,11 @@ public class Search extends ResizeComposite {
 		
 		FoundZutaten.clear();
 		FoundRezepte.clear();
+		
+		List<Rezept> allRezepte = getClientData().getPublicRezepte();
+		if(	getClientData().getYourRezepte() != null){
+			allRezepte.addAll(getClientData().getYourRezepte());
+		}
 		
 			if ((getClientData().getZutaten() != null) ){
 				
@@ -329,11 +357,8 @@ public class Search extends ResizeComposite {
 						}
 					}
 				// Rezepte
-				List<Rezept> allRezepte = getClientData().getPublicRezepte();
-				if(	getClientData().getYourRezepte() != null){
-					allRezepte.addAll(getClientData().getYourRezepte());
-				}
-				
+
+				if(allRezepte != null){
 				for(Rezept rezept : allRezepte){
 					if(rezept != null){
 						if( getLevenshteinDistance(rezept.getSymbol(),searchString) < 5){
@@ -364,7 +389,8 @@ public class Search extends ResizeComposite {
 								if(ZutatImRezept != null){
 									int i = 0;
 									for(String search2 : searches){
-										if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
+										if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
+										//if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
 											i++;
 										}
 									}
@@ -380,6 +406,7 @@ public class Search extends ResizeComposite {
 						}
 					}
 				}
+				}
 				
 				} 
 				 else {
@@ -390,12 +417,82 @@ public class Search extends ResizeComposite {
 						displayZutat(zutat);
 						}
 					}
+					
+					for(Rezept rezept : allRezepte){
+						if(!FoundRezepte.contains(rezept)){
+							FoundRezepte.add(rezept);
+						displayRezept(rezept);
+						}
+					}
 				}
-			}
-			}
+				
+				sortResults();
+			}	
+		}
 
 	
+	@UiHandler("co2Order")
+	void onCo2Clicked(ClickEvent event) {
+		sortMethod = 1;
+		sortResults();
+	}
 	
+	@UiHandler("alphOrder")
+	void onAlphClicked(ClickEvent event) {
+		sortMethod = 5;
+		sortResults();
+	}
+	
+	private static void sortResults() {
+		
+		
+		switch(sortMethod){
+		case 1:{
+			//"co2-value"
+			Collections.sort(FoundZutaten,new ValueComparator());
+			table.removeAllRows();
+			if(FoundZutaten != null){
+				for (final Zutat item : FoundZutaten){
+					displayZutat(item);
+				}
+			}
+			break;
+		}
+		case 2:{
+			// "popularity"
+			
+		}
+		case 3:{
+			//"saisonal"
+			
+		}
+		case 4:{
+			//"kategorisch"
+			// vegetarisch
+			// vegan
+			// etc.
+		}
+		case 5:{
+			//"alphabetisch"
+//			   ComparatorChain chain = new ComparatorChain();
+//			    chain.addComparator(new NameComparator());
+//			    chain.addComparator(new NumberComparator()
+			Collections.sort(FoundZutaten,new NameComparator());
+			table.removeAllRows();
+			if(FoundZutaten != null){
+				for (final Zutat item : FoundZutaten){
+					displayZutat(item);
+				}
+			}
+			break;
+
+			
+			
+		}
+		}
+		
+	}
+
 	private void updateResults_old(String searchString) {
 		// Clear any remaining slots.
 		table.removeAllRows();
@@ -532,21 +629,21 @@ public class Search extends ResizeComposite {
 
 	public static void displayZutat(final Zutat zutat) {
 		int row = table.getRowCount();
-		table.setText(row,1,zutat.getSymbol());
-		table.setText(row, 2, "ca. "+Integer.toString((int) zutat.getCO2eWert()).concat("g CO₂-Äquivalent pro 100g"));
+		table.setText(row,0,zutat.getSymbol());
+		table.setText(row, 1, "ca. "+Integer.toString((int) zutat.getCO2eWert()).concat("g CO₂-Äquivalent pro 100g"));
 
 
 
-		Button AddZutatButton = new Button(" + ");
-		AddZutatButton.addStyleDependentName("gwt-Button");
-		AddZutatButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				int row = EaternityRechner.AddZutatZumMenu(zutat);
-				// TODO uncomment this:
-				//EaternityRechner.selectRow(row);
-			}
-		});
-		table.setWidget(row, 0, AddZutatButton);
+//		Button AddZutatButton = new Button(" + ");
+//		AddZutatButton.addStyleDependentName("gwt-Button");
+//		AddZutatButton.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				int row = EaternityRechner.AddZutatZumMenu(zutat);
+//				// TODO uncomment this:
+//				//EaternityRechner.selectRow(row);
+//			}
+//		});
+//		table.setWidget(row, 0, AddZutatButton);
 
 	}
 
@@ -645,3 +742,29 @@ public class Search extends ResizeComposite {
 		return p[n];
 	}
 }
+
+class NameComparator implements Comparator<Zutat> {
+	  public int compare(Zutat z1, Zutat z2) {
+		  String o1 = z1.getSymbol();
+		  String o2 = z2.getSymbol();
+	    if(o1 instanceof String && o2 instanceof String) {
+	      String s1 = (String)o1;
+	      String s2 = (String)o2;
+	      s1 = s1.substring(0, 1);
+	      s2 = s2.substring(0, 1);
+	      return s1.compareToIgnoreCase(s2);
+	    }
+	    return 0;
+	  }
+	}
+
+	class ValueComparator implements Comparator<Zutat> {
+	  public int compare(Zutat z1, Zutat z2) {
+		  long o1 = z1.getCO2eWert();
+		  long o2 = z2.getCO2eWert();
+		  
+	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
+
+
+	  }
+	}

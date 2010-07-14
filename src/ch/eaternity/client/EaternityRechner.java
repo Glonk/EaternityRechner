@@ -261,10 +261,10 @@ public class EaternityRechner implements EntryPoint {
 			Rezept rezept = rezeptView.getRezept();
 			
 			// maybe same as above
-			zutaten.addAll(zutaten);
+			//zutaten.addAll(zutaten);
 			rezept.addZutaten(zutaten);
 			rezeptView.setRezept(rezept);
-			rezeptList.setWidget(selectedRezept, 1, rezeptView);
+//			rezeptList.setWidget(selectedRezept, 1, rezeptView);
 			//worksheet.set(selectedRezept, rezeptView);
 		}
 		// is this necessary?

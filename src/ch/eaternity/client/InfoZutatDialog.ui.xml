@@ -2,7 +2,28 @@
 	xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:rechner='urn:import:ch.eaternity.client'>
-<ui:style>
+	
+	<ui:style src='Disclosure.css'>
+		.border {
+			padding: 5px;
+		}
+		
+		.bottom {
+			margin-bottom: 5px;
+			
+		}
+		
+		.blob {
+			width:80px;
+			background: #aac;
+			padding:0px 2px 0px 2px;
+			margin:1px;
+			text-align:center;
+			font-weight:bold;
+			color:white;
+			
+			
+		}
 	.info {
 	border-top: 1.5px solid #bbb;
 	border-right: 1.5px solid #bbb;
@@ -53,6 +74,24 @@
 			
   </ui:style>
   
+   <ui:style field='selectionStyle'
+    type='ch.eaternity.client.InfoZutatDialog.SelectionStyle'>
+	
+	.selectedBlob {
+			width:80px;
+			background: #82e300;
+			padding:0px 2px 0px 2px;
+			margin:1px;
+			text-align:center;
+			font-weight:bold;
+			color:white;
+
+		}
+  
+ 
+  </ui:style>
+  
+  
              		<g:DecoratorPanel>
              		
 					<g:HTMLPanel>
@@ -78,7 +117,86 @@
 						</ul>
 						<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Die Angaben sind noch unvollständig</g:Label>
 									<g:ScrollPanel  styleName='{style.scrollbox}'>
-				<rechner:ZutatVarianten ui:field="zutatVarianten" />
+				
+	<g:VerticalPanel styleName="{style.border}">
+<!--		<g:HorizontalPanel styleName="{style.bottom}">-->
+<!--			<g:DecoratorPanel>-->
+<!--				<g:HTMLPanel styleName="{style.blob}">-->
+<!--					Produktion-->
+<!--				</g:HTMLPanel>-->
+<!--			</g:DecoratorPanel>-->
+<!--			<g:ToggleButton>Bio</g:ToggleButton>-->
+<!--			<g:ToggleButton>konventionell</g:ToggleButton>-->
+<!--		</g:HorizontalPanel>-->
+
+		<g:HorizontalPanel styleName="{style.bottom}">
+			<g:DecoratorPanel>
+				<g:HTMLPanel ui:field="saisonHTML" styleName="{style.blob}">Saison</g:HTMLPanel>
+			</g:DecoratorPanel>
+
+			<g:Label ui:field="saison">ist nicht saisonal</g:Label>
+		</g:HorizontalPanel>
+
+		<g:HorizontalPanel styleName="{style.bottom}">
+			<g:DecoratorPanel>
+				<g:HTMLPanel ui:field="zustandHTML" styleName="{style.blob}">Zustand</g:HTMLPanel>
+			</g:DecoratorPanel>
+			<g:ToggleButton ui:field="tiefgekühlt">tiefgekühlt</g:ToggleButton>
+			<g:ToggleButton ui:field="getrocknet">getrocknet</g:ToggleButton>
+			<g:ToggleButton ui:field="eingemacht">eingemacht</g:ToggleButton>
+		</g:HorizontalPanel>
+
+
+
+<!--		<g:HorizontalPanel styleName="{style.bottom}">-->
+<!--			<g:DecoratorPanel>-->
+<!--				<g:HTMLPanel styleName="{style.blob}">Lagerung</g:HTMLPanel>-->
+<!--			</g:DecoratorPanel>-->
+<!--			<g:ListBox ui:field="Konservierungen">-->
+<!--			</g:ListBox>-->
+<!--		</g:HorizontalPanel>-->
+
+
+
+		<g:HorizontalPanel styleName="{style.bottom}">
+			<g:DecoratorPanel>	
+				<g:HTMLPanel ui:field="produktionHTML" styleName="{style.blob}">Produktion</g:HTMLPanel>
+			</g:DecoratorPanel>
+			<g:ToggleButton ui:field="bio">BIO</g:ToggleButton>
+			<g:ToggleButton ui:field="treibhaus">Treibhaus</g:ToggleButton>
+		</g:HorizontalPanel>
+
+
+		<g:HorizontalPanel styleName="{style.bottom}">
+			<g:DecoratorPanel>
+				<g:HTMLPanel ui:field="herkunftHTML" styleName="{style.blob}">Herkunft</g:HTMLPanel>
+			</g:DecoratorPanel>
+			<g:ListBox ui:field="Herkunft">
+			</g:ListBox>
+			<g:ToggleButton ui:field="flugzeug">Flugzeugtransport</g:ToggleButton>
+		</g:HorizontalPanel>
+
+<!--		<g:HorizontalPanel styleName="{style.bottom}">-->
+<!--			<g:DecoratorPanel>-->
+<!--				<g:HTMLPanel styleName="{style.blob}">Transport</g:HTMLPanel>-->
+<!--			</g:DecoratorPanel>-->
+<!--			<g:CheckBox>Flugzeug</g:CheckBox>-->
+<!--		</g:HorizontalPanel>-->
+	<!-- 	
+			<g:HTMLPanel >Diese Zutat ist frisch, aus konventioneller Freiland-Produktion und kommt aus der Schweiz.</g:HTMLPanel>
+		<g:DisclosurePanel ui:field="Labels">
+			<g:header>Labels</g:header>
+			<g:FlowPanel>
+				<g:CheckBox>naturaplan</g:CheckBox>
+				<g:CheckBox>Fairtrade</g:CheckBox>
+			</g:FlowPanel>
+		</g:DisclosurePanel> 
+	-->
+
+		
+	</g:VerticalPanel>
+
+
 
 			</g:ScrollPanel>
 					</g:HTMLPanel>

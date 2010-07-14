@@ -68,10 +68,8 @@ public class Rezept implements Serializable{
 
 	public void addZutaten(List<ZutatSpecification> zutaten) {
 		for(ZutatSpecification zutat : zutaten){
-			
 //			zutat.setRezept(this);
 			this.Zutaten.add(zutat);
-			
 		}
 		
 	}
@@ -80,7 +78,14 @@ public class Rezept implements Serializable{
 		return this.Zutaten;
 	}
 
+	public void setZutaten(List<ZutatSpecification> zutaten) {
+			this.Zutaten = zutaten;
 
+	}
+	
+	public void removeZutat(int index) {
+		this.Zutaten.remove(index);
+	}
 
 
 	public void setOpen(boolean open) {

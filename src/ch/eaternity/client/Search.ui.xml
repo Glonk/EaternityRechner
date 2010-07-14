@@ -1,3 +1,6 @@
+<!DOCTYPE ui:UiBinder 
+  SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent"
+>
 <ui:UiBinder
   xmlns:ui='urn:ui:com.google.gwt.uibinder'
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
@@ -96,7 +99,7 @@
     <g:north size='3'>
 	 	<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'  unit='EM'>
 	 		<g:west size='4'>
-	 			<g:HTML><h3>Suche:</h3></g:HTML>
+	 			<g:HTML><h3>&nbsp;Suche:</h3></g:HTML>
 	 		</g:west>
 	 		<g:center>
 	 			<g:SuggestBox styleName='{style.spacer}' ui:field="SearchBox2" />
@@ -107,8 +110,17 @@
 
     <g:center>
 	  <g:DockLayoutPanel ui:field="leftSplitPanel">
-	  <g:south ui:field="leftSplitPanelSouth" size="20" >
-	  <g:Label>...sortiere Ergebnisse nach...</g:Label>
+	  <g:south ui:field="leftSplitPanelSouth" size="34" >
+	  <g:HTMLPanel>
+	  <p>
+	  &nbsp;
+	  sortiere Ergebnisse:
+	  &nbsp;
+	  <g:Anchor href='javascript:;' ui:field='alphOrder'>alphabetisch</g:Anchor>
+	  &nbsp;
+	  <g:Anchor href='javascript:;' ui:field='co2Order'>CO₂Äq-Wert</g:Anchor>
+	  </p>
+	  </g:HTMLPanel>
 		  	<!--  mail:InfoZutat ui:field='infoZutat' /-->
 	  </g:south>
 	  <g:center>
@@ -119,7 +131,7 @@
 	      <g:ScrollPanel styleName='{style.scroll}'>
 	      <g:HTMLPanel>
 	        <g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
-	        <g:HTML><hr /><hr /></g:HTML>
+	        <hr />&nbsp;Rezeptvorschläge:<hr />
 	        <g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
 	       </g:HTMLPanel>
 	      </g:ScrollPanel>
