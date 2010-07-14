@@ -6,6 +6,7 @@ import java.util.List;
 
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.gwt.core.client.GWT;
@@ -42,14 +43,16 @@ public class RezeptView extends Composite {
 	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
 	@UiField HorizontalPanel addInfoPanel;
+
 	
 	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
 	
 	
 	public RezeptView(Rezept rezept) {
-	    // sets listBox
+	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
 	    setRezept(rezept);
+	    initTable();
 	  }
 	
 	
@@ -80,7 +83,11 @@ public class RezeptView extends Composite {
 		}
 	}
 	
-	
+	private void initTable() {
+		MenuTable.getColumnFormatter().setWidth(0, "40px");
+		MenuTable.getColumnFormatter().setWidth(1, "76px");
+		
+	}
 	
 	public void setRezept(Rezept rezept){
 		this.rezept = rezept;
@@ -135,16 +142,16 @@ public class RezeptView extends Composite {
 //		Window.alert(Integer.toString(row));
 		
 		//TODO this produces sometimes errors
-		ZutatSpecification item = zutatImMenu.get(row);
+		ZutatSpecification zutatSpec = zutatImMenu.get(row);
 
-		if (item == null) {
+		if (zutatSpec == null) {
 			return;
 		}
 		
-		Long ParentZutatId = item.getZutat_id();
-		Data clientDataHere = Search.getClientData();
+		Long ParentZutatId = zutatSpec.getZutat_id();
+		Zutat zutat = Search.getClientData().getZutatByID(ParentZutatId);
 		
-		openSpecificationDialog(item);
+		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 0), MenuTable,row);
 		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
 //
 //		infoZutat.stylePanel(true);
@@ -159,17 +166,17 @@ public class RezeptView extends Composite {
 		selectedRow = row;
 
 		if (listener != null) {
-			listener.onItemSelected(item);
+			listener.onItemSelected(zutatSpec);
 		}
 	}
 
-	private void openSpecificationDialog(ZutatSpecification zutatSpec) {
+	private void openSpecificationDialog(ZutatSpecification zutatSpec, Zutat zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
 		// TODO Auto-generated method stub
 		
 		if(addInfoPanel.getWidgetCount() ==2){
 			addInfoPanel.remove(1);
 		}
-		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec);
+		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow);
 		addInfoPanel.add(infoZutat);
 
 		

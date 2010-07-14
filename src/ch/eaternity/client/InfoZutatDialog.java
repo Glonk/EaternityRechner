@@ -14,15 +14,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,6 +52,9 @@ public class InfoZutatDialog extends Composite {
 	@UiField HTMLPanel produktionHTML;
 	@UiField HTMLPanel herkunftHTML;
 	@UiField HTMLPanel saisonHTML;
+	private ZutatSpecification zutatSpec;
+	private int selectedRow;
+	private FlexTable menuTable;
 	
 	interface SelectionStyle extends CssResource {
 		String selectedBlob();
@@ -78,17 +84,21 @@ public class InfoZutatDialog extends Composite {
 	
 }
 
-	public InfoZutatDialog(ZutatSpecification zutatSpec) {
+	public InfoZutatDialog(ZutatSpecification zutatSpec, Zutat zutat, TextBox amount, FlexTable menuTable, int selectedRow) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML("<h1>"+ zutatSpec.getName() +"</h1>");
 		// TODO Auto-generated constructor stub
+		this.setZutatSpec(zutatSpec);
+		this.setSelectedRow(selectedRow);
+		this.menuTable = menuTable;
+		setValues( zutat);
 	}
 
 	
 	
-	public void setValues(ZutatSpecification zutatSpec, Zutat zutat){
+	public void setValues( Zutat zutat){
 		
-		InfoZutat.zutatMenge.setText(Integer.toString(zutatSpec.getMengeGramm()));
+//		InfoZutat.zutatMenge.setText(Integer.toString(zutatSpec.getMengeGramm()));
 		
 		Herkunft.clear();
 		for(  Herkuenfte herkunft: zutat.getHerkuenfte() ){
@@ -130,19 +140,19 @@ public class InfoZutatDialog extends Composite {
 		
 //		TODO check if there is something to do
 //		InfoZutat.zutat = zutatSpec;
-		updateSaison();
+		updateSaison(zutatSpec);
 
 		
 	}
 	
 
-	public void updateSaison() {
+	public void updateSaison(ZutatSpecification zutatSpec) {
 		
 		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
 		// In Tagen
 //		String test = InfoZutat.zutat.getStartSeason();
-		Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( InfoZutat.zutat.getStartSeason() );		
-		Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( InfoZutat.zutat.getStopSeason() );
+		Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutatSpec.getStartSeason() );		
+		Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutatSpec.getStopSeason() );
 		
 		if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 				dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
@@ -150,8 +160,8 @@ public class InfoZutatDialog extends Composite {
 			saison.setText("Diese Zutat hat Saison");
 			styleLabel(saisonHTML,true);
 			
-			InfoZutat.styleHinweis(false);
-			InfoZutat.hinweisPanel.setText("Angaben sind koherent.");
+			styleHinweis(false);
+			hinweisPanel.setText("Angaben sind koherent.");
 			
 		} else {
 			saison.setText("Diese Zutat hat keine Saison");
@@ -159,8 +169,8 @@ public class InfoZutatDialog extends Composite {
 			
 			// unvollständig:
 			
-			InfoZutat.styleHinweis(true);
-			InfoZutat.hinweisPanel.setText("Angaben sind unvollständig.");
+			styleHinweis(true);
+			hinweisPanel.setText("Angaben sind unvollständig.");
 		}
 		
 		//TODO uncomment this:
@@ -177,48 +187,69 @@ public class InfoZutatDialog extends Composite {
 	@UiHandler("bio")
 	void onBioButtonClick(ClickEvent event) {
 		treibhaus.setDown(false);
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+		if(!bio.isDown()){
+			zutatSpec.setProduktion(Produktionen.konventionell);
+		} else {
+			zutatSpec.setProduktion(Produktionen.biologisch);
+		}
+		updateZutatCO2();
 	}
 	@UiHandler("treibhaus")
 	void onTreibhausButtonClick(ClickEvent event) {
 		bio.setDown(false);
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+		if(!treibhaus.isDown()){
+			zutatSpec.setProduktion(Produktionen.konventionell);
+		} else {
+			zutatSpec.setProduktion(Produktionen.Treibhaus);
+		}
+		updateZutatCO2();
 	}
 
 	@UiHandler("tiefgekühlt")
 	void onTiefButtonClick(ClickEvent event) {
 		getrocknet.setDown(false);
 		eingemacht.setDown(false);
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+
+		if(!tiefgekühlt.isDown()){
+			zutatSpec.setZustand(Zustaende.frisch);
+		} else {
+			zutatSpec.setZustand(Zustaende.tiefgekühlt);
+		}
+		updateZutatCO2();
 	}
 	@UiHandler("getrocknet")
 	void onTrockButtonClick(ClickEvent event) {
 		eingemacht.setDown(false);
 		tiefgekühlt.setDown(false);
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+
+		if(!getrocknet.isDown()){
+			zutatSpec.setZustand(Zustaende.frisch);
+		} else {
+			zutatSpec.setZustand(Zustaende.getrocknet);
+		}
+		updateZutatCO2();
 	}
 	@UiHandler("eingemacht")
 	void onEingButtonClick(ClickEvent event) {
 		getrocknet.setDown(false);
 		tiefgekühlt.setDown(false);
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+
+		if(!eingemacht.isDown()){
+			zutatSpec.setZustand(Zustaende.frisch);
+		} else {
+			zutatSpec.setZustand(Zustaende.eingemacht);
+		}
+		updateZutatCO2();
 	}
 	
 	@UiHandler("flugzeug")
 	void onFlugButtonClick(ClickEvent event) {
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+		if(!flugzeug.isDown()){
+			zutatSpec.setTransportmittel(Transportmittel.LKW);
+		} else {
+			zutatSpec.setTransportmittel(Transportmittel.Flugzeug);
+		}
+		updateZutatCO2();
 	}
 	
 	@UiHandler("Herkunft")
@@ -238,6 +269,20 @@ public class InfoZutatDialog extends Composite {
 		
 	}
 	
+	//TODO here comes all the CO2 Logic
+	public void updateZutatCO2(){
+		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
+//		valueLabel.setText(formatted + "g CO2-Äquivalent");
+		if(selectedRow != -1){
+//			if(EaternityRechner.zutatImMenu.contains(zutat)){
+//				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
+//				
+				menuTable.setText(selectedRow, 4, ": ca. "+formatted + "g CO2-Äquivalent");
+//			}
+			//TODO uncomment this:
+			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");
+		}
+	}
 	
 	private void styleLabel( HTMLPanel panel, boolean selected) {
 		
@@ -250,4 +295,16 @@ public class InfoZutatDialog extends Composite {
 		}
 	
 }
+	public void setZutatSpec(ZutatSpecification zutatSpec) {
+		this.zutatSpec = zutatSpec;
+	}
+	public ZutatSpecification getZutatSpec() {
+		return zutatSpec;
+	}
+	public void setSelectedRow(int selectedRow) {
+		this.selectedRow = selectedRow;
+	}
+	public int getSelectedRow() {
+		return selectedRow;
+	}
 }
