@@ -38,15 +38,11 @@
   <ui:style field='selectionStyle'
     type='ch.eaternity.client.EaternityRechner.SelectionStyle'>
 
-  .selectedRow {
-    background: #adcce7;
+  .selectedRezept {
+    background: #ffffff;
   }
 
-  .selectedRow td {
-    border-top: 1px solid #88a4d6;
-    border-bottom: 1px solid #7b97d0;
-  }
-  
+ 
  
   </ui:style>
 
@@ -57,7 +53,7 @@
 
     <g:center>
       <g:SplitLayoutPanel>
-        <g:west size='400'>
+        <g:west size='300'>
           	<rechner:Search ui:field='search' />
         </g:west>
         <g:center>
@@ -65,7 +61,7 @@
        			<g:north size='100'>
        			<g:HTMLPanel styleName='{style.Worksheet}' >
        			<!-- Add Rezept Button -->
-       			<g:Button styleName='{style.gwt-Button}'  ui:field="AddRezeptButton" text="Rezept hinzufügen"/>
+       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Rezept hinzufügen"/>
        			
        			
        			<!-- suggest bar -->

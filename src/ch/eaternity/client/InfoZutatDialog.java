@@ -110,7 +110,7 @@ public class InfoZutatDialog extends Composite {
 		bio.setDown(false);
 		treibhaus.setDown(false);
 		switch (produktion){
-			case biologisch: bio.setDown(true);
+			case biologisch: bio.setDown(true);break;
 			case Treibhaus: treibhaus.setDown(true);
 		}
 			
@@ -119,8 +119,8 @@ public class InfoZutatDialog extends Composite {
 		eingemacht.setDown(false);
 		getrocknet.setDown(false);
 		switch (zustand){
-			case tiefgekühlt: tiefgekühlt.setDown(true);
-			case eingemacht: eingemacht.setDown(true);
+			case tiefgekühlt: tiefgekühlt.setDown(true);break;
+			case eingemacht: eingemacht.setDown(true);break;
 			case getrocknet: getrocknet.setDown(true);
 		}
 		
@@ -193,6 +193,8 @@ public class InfoZutatDialog extends Composite {
 			zutatSpec.setProduktion(Produktionen.biologisch);
 		}
 		updateZutatCO2();
+		
+		
 	}
 	@UiHandler("treibhaus")
 	void onTreibhausButtonClick(ClickEvent event) {

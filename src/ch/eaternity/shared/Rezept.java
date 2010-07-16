@@ -30,7 +30,7 @@ public class Rezept implements Serializable{
     // @Persistent //(mappedBy = "rezept") //, defaultFetchGroup = "true")
 //    @Element(dependent = "true")
 	@NotPersistent 
-	private List<ZutatSpecification> Zutaten = new ArrayList<ZutatSpecification>();
+	public List<ZutatSpecification> Zutaten = new ArrayList<ZutatSpecification>();
     
 //    @Persistent 
 //    private List<String> ZutatSpecificationKeys = new ArrayList<String>(); 

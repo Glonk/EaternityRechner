@@ -245,7 +245,7 @@ public class ZutatSpecification  implements Serializable  {
 
 
 
-	public double getNormalCO2Value() {
+	public int getNormalCO2Value() {
 		return NormalCO2Value;
 	}
 

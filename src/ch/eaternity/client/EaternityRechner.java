@@ -18,6 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -28,6 +29,7 @@ import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -60,7 +62,9 @@ public class EaternityRechner implements EntryPoint {
 	
 	interface Binder extends UiBinder<DockLayoutPanel, EaternityRechner> { }
 	
-	
+	interface SelectionStyle extends CssResource {
+		String selectedRezept();
+	}
 
 	interface GlobalResources extends ClientBundle {
 		@NotStrict
@@ -72,21 +76,17 @@ public class EaternityRechner implements EntryPoint {
 
 	@UiField TopPanel topPanel;
 	@UiField Search search;  
-
 	@UiField
 	static FlexTable rezeptList;
-
-
-
-	@UiField SelectionStyle selectionStyle;
+	@UiField Button addRezeptButton;
+	@UiField
+	static SelectionStyle selectionStyle;
 
 	static int selectedRezept = -1;
 	
 	private HandlerRegistration adminHandler;
 	
-	interface SelectionStyle extends CssResource {
-		//String selectedRow();
-	}
+
 	
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -124,7 +124,7 @@ public class EaternityRechner implements EntryPoint {
 		// mainPanel.add(signOutLink);
 		
 		// Move cursor focus to the input box.
-
+		rezeptList.getColumnFormatter().setWidth(1, "900px");
 
 		//	  
 		// Check login status using login service.
@@ -154,6 +154,7 @@ public class EaternityRechner implements EntryPoint {
 
 	}
 
+	
 
 	static void addRezept(final Rezept rezept) {
 		rezeptService.addRezept(rezept, new AsyncCallback<String>() {
@@ -167,7 +168,7 @@ public class EaternityRechner implements EntryPoint {
 			}
 		});
 	}
-	private void removeRezept(final Long rezept_id) {
+	static void removeRezept(final Long rezept_id) {
 		rezeptService.removeRezept(rezept_id, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -178,7 +179,7 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 	
-	private void undisplayRezept(Long rezept_id) {
+	private static void undisplayRezept(Long rezept_id) {
 
 	}
 
@@ -217,12 +218,40 @@ public class EaternityRechner implements EntryPoint {
 
 	public static void ShowRezept(final Rezept rezept) {
 		// create a new one
+		styleRezept(selectedRezept, false);
+		
 		selectedRezept = -1;
 		List<ZutatSpecification> zutaten = rezept.getZutaten();
 		AddZutatZumMenu(zutaten);
 	}
+	
+	@UiHandler("addRezeptButton")
+	public void onButtonPress(ClickEvent event) {
+		Rezept rezept = new Rezept();
+		ShowRezept(rezept);	
+	}
+	
+	@UiHandler("rezeptList")
+	void onRezeptClicked(ClickEvent event) {
+		Cell cell = rezeptList.getCellForEvent(event);
+		if (cell != null) {
+			styleRezept(selectedRezept, false);
+			selectedRezept = cell.getRowIndex();
+			styleRezept(selectedRezept, true);
+		}
+	}
+	
+	public static void styleRezept(int row, boolean selected) {
+		if (row != -1) {
+			String style = selectionStyle.selectedRezept();
 
-
+			if (selected) {
+				rezeptList.getRowFormatter().addStyleName(row, style);
+			} else {
+				rezeptList.getRowFormatter().removeStyleName(row, style);
+			}
+		}
+	}
 	
 	public static int AddZutatZumMenu( Zutat zutat) {
 		// convert zutat to ZutatSpex and call the real method
@@ -251,6 +280,7 @@ public class EaternityRechner implements EntryPoint {
 			newRezept.addZutaten(zutaten);
 			RezeptView rezeptView = new RezeptView(newRezept);
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
+			styleRezept(selectedRezept, true);
 			
 			// is it necessary to have a worksheet or is rezeptList already containing everything?
 			// worksheet.add(rezeptView);
@@ -317,7 +347,8 @@ public class EaternityRechner implements EntryPoint {
 	private void displayRezepte(List<Rezept> rezepte) {
 		for (Rezept rezept : rezepte) {
 			if(rezept != null){ //why can it be 0?
-				Search.displayRezept(rezept);
+//				TODO wtf is this?
+				Search.displayRezept(rezept,false);
 			}
 		}
 	}

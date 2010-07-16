@@ -80,6 +80,8 @@ public class Search extends ResizeComposite {
 	static FlexTable table;
 	@UiField
 	static FlexTable tableMeals;
+	@UiField
+	static FlexTable tableMealsYours;
 //	@UiField Button SearchButton;
 	@UiField SuggestBox SearchBox2;
 	@UiField DockLayoutPanel SearchBox;
@@ -96,6 +98,7 @@ public class Search extends ResizeComposite {
 	
 	private static Data clientData = new Data();
 	private static ArrayList<Rezept> FoundRezepte = new ArrayList<Rezept>();
+	private static ArrayList<Rezept> FoundRezepteYours = new ArrayList<Rezept>();
 	private static ArrayList<Zutat> FoundZutaten = new ArrayList<Zutat>();
 	
 	static int sortMethod = 1;
@@ -315,9 +318,11 @@ public class Search extends ResizeComposite {
 	static void updateResults(String searchString) {
 		table.removeAllRows();
 		tableMeals.removeAllRows();
+		tableMealsYours.removeAllRows();
 		
 		FoundZutaten.clear();
 		FoundRezepte.clear();
+		FoundRezepteYours.clear();
 		
 		List<Rezept> allRezepte = getClientData().getPublicRezepte();
 		if(	getClientData().getYourRezepte() != null){
@@ -357,56 +362,14 @@ public class Search extends ResizeComposite {
 						}
 					}
 				// Rezepte
-
-				if(allRezepte != null){
-				for(Rezept rezept : allRezepte){
-					if(rezept != null){
-						if( getLevenshteinDistance(rezept.getSymbol(),searchString) < 5){
-							if(!FoundRezepte.contains(rezept)){
-								// Rezept zu Rezeptsuche
-								FoundRezepte.add(rezept);
-								displayRezept(rezept);
-								
-								// Zutaten des Rezept Ergerbnis Liste der Zutaten
-								for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
-									for(Zutat zutatSuche : getClientData().getZutaten() ){
-										if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
-											if(!FoundZutaten.contains(zutatSuche)){
-												FoundZutaten.add(zutatSuche);
-												displayZutat(zutatSuche);
-											}
-										}
-
-									}
-
-								}
-							}
-						}
-
-						List<ZutatSpecification> zutatenRezept = rezept.getZutaten();
-						if(zutatenRezept != null){
-							for(ZutatSpecification ZutatImRezept : zutatenRezept ){
-								if(ZutatImRezept != null){
-									int i = 0;
-									for(String search2 : searches){
-										if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
-										//if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
-											i++;
-										}
-									}
-									if(i == searches.length){
-										if(!FoundRezepte.contains(rezept)){
-											FoundRezepte.add(rezept);
-											displayRezept(rezept);
-										}
-									}
-								}
-
-							}
-						}
-					}
+				if(	getClientData().getYourRezepte() != null){
+					searchRezept(searchString, getClientData().getYourRezepte(), searches,false);
 				}
+				
+				if(	getClientData().getPublicRezepte() != null){
+					searchRezept(searchString, getClientData().getPublicRezepte(), searches,true);
 				}
+				
 				
 				} 
 				 else {
@@ -418,17 +381,91 @@ public class Search extends ResizeComposite {
 						}
 					}
 					
-					for(Rezept rezept : allRezepte){
-						if(!FoundRezepte.contains(rezept)){
-							FoundRezepte.add(rezept);
-						displayRezept(rezept);
+					if(	getClientData().getYourRezepte() != null){
+						for(Rezept rezept : getClientData().getYourRezepte()){
+							if(!FoundRezepteYours.contains(rezept)){
+								FoundRezepteYours.add(rezept);
+							displayRezept(rezept,true);
+							}
 						}
 					}
+					
+					if(	getClientData().getPublicRezepte() != null){
+						for(Rezept rezept : getClientData().getPublicRezepte()){
+							if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
+								FoundRezepte.add(rezept);
+							displayRezept(rezept,false);
+							}
+						}
+					}
+					
+
 				}
 				
 				sortResults();
 			}	
 		}
+
+	private static void searchRezept(String searchString,
+			List<Rezept> allRezepte, String[] searches, boolean yours) {
+		if(allRezepte != null){
+		for(Rezept rezept : allRezepte){
+			if(rezept != null){
+				if( getLevenshteinDistance(rezept.getSymbol(),searchString) < 5){
+					if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
+						// Rezept zu Rezeptsuche
+						if(yours){
+							FoundRezepteYours.add(rezept);
+						} else {
+							FoundRezepte.add(rezept);
+						}
+						displayRezept(rezept,yours);
+						
+						// Zutaten des Rezept Ergerbnis Liste der Zutaten
+						for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
+							for(Zutat zutatSuche : getClientData().getZutaten() ){
+								if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
+									if(!FoundZutaten.contains(zutatSuche)){
+										FoundZutaten.add(zutatSuche);
+										displayZutat(zutatSuche);
+									}
+								}
+
+							}
+
+						}
+					}
+				}
+
+				List<ZutatSpecification> zutatenRezept = rezept.getZutaten();
+				if(zutatenRezept != null){
+					for(ZutatSpecification ZutatImRezept : zutatenRezept ){
+						if(ZutatImRezept != null){
+							int i = 0;
+							for(String search2 : searches){
+								if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
+								//if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
+									i++;
+								}
+							}
+							if(i == searches.length){
+								if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
+									if(yours){
+										FoundRezepteYours.add(rezept);
+									} else {
+										FoundRezepte.add(rezept);
+									}
+									displayRezept(rezept,yours);
+								}
+							}
+						}
+
+					}
+				}
+			}
+		}
+		}
+	}
 
 	
 	@UiHandler("co2Order")
@@ -493,137 +530,42 @@ public class Search extends ResizeComposite {
 		
 	}
 
-	private void updateResults_old(String searchString) {
-		// Clear any remaining slots.
-		table.removeAllRows();
-		tableMeals.removeAllRows();
-		//	
-		//    for (int a= 0; a < table.getRowCount(); ++a) {
-		//      table.removeRow(table.getRowCount() - 1);
-		//    }
+	
 
-		//	if(getClientData().getOrcaleIndex().contains(search)){
-//		ArrayList<Rezept> FoundRezepte = new ArrayList<Rezept>();
-//		ArrayList<Zutat> FoundOnes = new ArrayList<Zutat>();
-		FoundZutaten.clear();
-		FoundRezepte.clear();
-		
-		if(getClientData().getZutaten() != null){
+	public static void displayRezept(final Rezept rezept, boolean yours) {
 
-			String[] searches = searchString.split(" ");
-			for(String search : searches){
-
-				// Zutaten
-				for(Zutat zutat : getClientData().getZutaten()){
-					if( getLevenshteinDistance(zutat.getSymbol(),search) < 3){
-						if(!FoundZutaten.contains(zutat)){
-							FoundZutaten.add(zutat);
-							displayZutat(zutat);
-						}
-						for(Long alternativen_id : zutat.getAlternativen()){
-							for(Zutat zutat2 : getClientData().getZutaten()){
-								if(zutat2.getId().equals(alternativen_id)){
-									if(!FoundZutaten.contains(zutat2)){
-										FoundZutaten.add(zutat2);
-										displayZutat(zutat2);
-									}
-								}
-							}
-
-						}
-					}
-				}
-
-				// Rezepte
-				List<Rezept> allRezepte = getClientData().getPublicRezepte();
-				if(	getClientData().getYourRezepte() != null){
-					allRezepte.addAll(getClientData().getYourRezepte());
-				}
-				
-				for(Rezept rezept : allRezepte){
-					if(rezept != null){
-						if( getLevenshteinDistance(rezept.getSymbol(),searchString) < 5){
-							if(!FoundRezepte.contains(rezept)){
-								// Rezept zu Rezeptsuche
-								FoundRezepte.add(rezept);
-								displayRezept(rezept);
-								
-								// Zutaten des Rezept Ergerbnis Liste der Zutaten
-								for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
-									for(Zutat zutatSuche : getClientData().getZutaten() ){
-										if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
-											if(!FoundZutaten.contains(zutatSuche)){
-												FoundZutaten.add(zutatSuche);
-												displayZutat(zutatSuche);
-											}
-										}
-
-									}
-
-								}
-							}
-						}
-
-						List<ZutatSpecification> zutatenRezept = rezept.getZutaten();
-						if(zutatenRezept != null){
-							for(ZutatSpecification ZutatImRezept : zutatenRezept ){
-								if(ZutatImRezept != null){
-									int i = 0;
-									for(String search2 : searches){
-										if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
-											i++;
-										}
-									}
-									if(i == searches.length){
-										if(!FoundRezepte.contains(rezept)){
-											FoundRezepte.add(rezept);
-											displayRezept(rezept);
-										}
-									}
-								}
-
-							}
-						}
-					}
-				}
-
-
-			}
-		}
-
-
-//		if(FoundOnes != null){
-//			for (final Zutat item : FoundOnes){
-//				displayZutat(item);
-//			}
-//		}
-//
-//		if(FoundRezepte != null){
-//			for (final Rezept item : FoundRezepte){
-//				displayRezept(item);
-//			}
-//		}
-
-	}
-
-	public static void displayRezept(final Rezept rezept) {
-		int row = tableMeals.getRowCount();
-		tableMeals.setText(row,1,rezept.getSymbol());
 
 		Button AddRezeptButton = new Button(" + ");
 		AddRezeptButton.addStyleDependentName("gwt-Button");
 		AddRezeptButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-
-//				Rezept test = rezept;
-				
 				EaternityRechner.ShowRezept(rezept);
-				//		    int removedIndex = item.indexOf(item.sender);
-				//		    item.remove(removedIndex);
-				//		    table.removeRow(removedIndex + 1);
 			}
 		});
-		tableMeals.setWidget(row, 0, AddRezeptButton);
+		
+		
+		if(yours){
+			final int row = tableMealsYours.getRowCount();
+			
+			Button removeRezeptButton = new Button(" - ");
+			removeRezeptButton.addStyleDependentName("gwt-Button");
+			removeRezeptButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					EaternityRechner.removeRezept(rezept.getId());
+					tableMealsYours.removeRow(row);
+				}
+			});
+			
+			tableMealsYours.setText(row,1,rezept.getSymbol());
+			tableMealsYours.setWidget(row, 0, AddRezeptButton);
+			tableMealsYours.setWidget(row, 2, removeRezeptButton);
+			
+		}else{
+			int row = tableMeals.getRowCount();
+			tableMeals.setText(row,1,rezept.getSymbol());
+			tableMeals.setWidget(row, 0, AddRezeptButton);
+		}
+
 	}
 
 

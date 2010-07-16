@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -35,7 +36,8 @@ public class RezeptView extends Composite {
 	interface Binder extends UiBinder<Widget, RezeptView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
-	@UiField SelectionStyle selectionStyle;
+	@UiField SelectionStyleRow selectionStyleRow;
+
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
 	@UiField Button RezeptButton;
@@ -43,9 +45,12 @@ public class RezeptView extends Composite {
 	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
 	@UiField HorizontalPanel addInfoPanel;
+	@UiField Button removeRezeptButton;
+	@UiField HTMLPanel htmlRezept;
+	HandlerRegistration klicky;
 
 	
-	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
+//	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
 	
 	
 	public RezeptView(Rezept rezept) {
@@ -60,7 +65,9 @@ public class RezeptView extends Composite {
 		void onItemSelected(ZutatSpecification item);
 	}
 
-	interface SelectionStyle extends CssResource {
+
+	
+	interface SelectionStyleRow extends CssResource {
 		String selectedRow();
 	}
 	private Listener listener;
@@ -83,6 +90,20 @@ public class RezeptView extends Composite {
 		}
 	}
 	
+	@UiHandler("removeRezeptButton")
+	void onRemoveClicked(ClickEvent event) {
+		// TODO recheck user if he really want to do this...
+		int row = getWidgetRow(this, EaternityRechner.rezeptList);
+		EaternityRechner.rezeptList.remove(this);
+		EaternityRechner.rezeptList.removeRow(row);
+		EaternityRechner.selectedRezept = -1;
+		
+
+	}
+	
+
+
+	
 	private void initTable() {
 		MenuTable.getColumnFormatter().setWidth(0, "40px");
 		MenuTable.getColumnFormatter().setWidth(1, "76px");
@@ -99,17 +120,27 @@ public class RezeptView extends Composite {
 	}	
 	
 	public void showRezept(final Rezept rezept) {
-			zutatImMenu.clear();
-			int row = AddZutatZumMenu(rezept.getZutaten());
+			displayZutatImMenu(rezept.Zutaten);
+			updateSuggestion();
+//			zutatImMenu.clear();
+			
+//			int row = AddZutatZumMenu(rezept.getZutaten());
 			// add Speicher Rezept Button
-			RezeptButton.addClickHandler(new ClickHandler() {
+			if(klicky != null){
+				klicky.removeHandler();
+			}
+			
+			klicky = RezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if(RezeptName.getText() != ""){
 //						Speichere Rezept ab. 
-						Rezept rezeptSave = new Rezept(RezeptName.getText());
-						rezeptSave.setOpen(makePublic.getValue());
-						rezeptSave.addZutaten(zutatImMenu);
-						EaternityRechner.addRezept(rezeptSave);
+//						Rezept rezeptSave = new Rezept(RezeptName.getText());
+//						rezeptSave.setOpen(makePublic.getValue());
+//						rezeptSave.addZutaten(rezept.getZutaten());
+//						EaternityRechner.addRezept(rezeptSave);
+						rezept.setSymbol(RezeptName.getText());
+						rezept.setOpen(makePublic.getValue());
+						EaternityRechner.addRezept(rezept);
 					}
 				}
 			});
@@ -117,22 +148,6 @@ public class RezeptView extends Composite {
 	}
 
 	
-	public int AddZutatZumMenu( List<ZutatSpecification> zutaten) {
-
-		zutatImMenu.addAll(zutaten);
-		int row = zutatImMenu.size();
-		for(ZutatSpecification zutat : zutaten){
-			if(zutat.getHerkunft() != null){
-//				TODO this is to expensive!
-//			ZutatVarianten.SimpleDirectionsDemo(zutat.getHerkunft().name(),TopPanel.clientLocation.getText(),zutat);
-			}
-		}
-		
-			displayZutatImMenu(zutaten);
-			updateSuggestion();
-			return row;
-
-	}
 	
 
 	 void selectRow(int row) {
@@ -141,8 +156,18 @@ public class RezeptView extends Composite {
 		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
 //		Window.alert(Integer.toString(row));
 		
-		//TODO this produces sometimes errors
-		ZutatSpecification zutatSpec = zutatImMenu.get(row);
+
+		 
+		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
+			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
+			 ZutatSpecification zutatSpec2 = infoDialog.getZutatSpec();
+//			 int index = zutatImMenu.indexOf(zutatSpec);
+//			 zutatImMenu = (ArrayList<ZutatSpecification>) rezept.getZutaten();
+			 rezept.Zutaten.set(selectedRow , zutatSpec2);
+
+		 }
+		 
+		ZutatSpecification zutatSpec = rezept.Zutaten.get(row);
 
 		if (zutatSpec == null) {
 			return;
@@ -186,7 +211,7 @@ public class RezeptView extends Composite {
 	//TODO do the same for Search BUtton Press
 	void styleRow(int row, boolean selected) {
 		if (row != -1) {
-			String style = selectionStyle.selectedRow();
+			String style = selectionStyleRow.selectedRow();
 
 			if (selected) {
 				MenuTable.getRowFormatter().addStyleName(row, style);
@@ -195,6 +220,8 @@ public class RezeptView extends Composite {
 			}
 		}
 	}
+	
+
 
 	
 	private void displayZutatImMenu( List<ZutatSpecification> zutaten) {
@@ -209,10 +236,10 @@ public class RezeptView extends Composite {
 //	removeZutat.addStyleDependentName("gwt-Button");
 	removeZutat.addClickHandler(new ClickHandler() {
 		public void onClick(ClickEvent event) {
-			int removedIndex = zutatImMenu.indexOf(zutat);
-			zutatImMenu.remove(removedIndex);
+			int removedIndex = rezept.Zutaten.indexOf(zutat);
+			rezept.Zutaten.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
-			rezept.removeZutat(removedIndex);
+//			rezept.removeZutat(removedIndex);
 			updateSuggestion();
 		}
 	});
@@ -283,21 +310,21 @@ public class RezeptView extends Composite {
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
 
-		if(zutatImMenu.isEmpty()){
+		if(rezept.Zutaten.isEmpty()){
 			if(addInfoPanel.getWidgetCount() ==2){
 				addInfoPanel.remove(1);
 			}
 		}
 		
-		for (ZutatSpecification zutatSpec : zutatImMenu) { 
+		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
 				MaxMenuWert = zutatSpec.getCalculatedCO2Value();
 			}
 			
 		}
-		for (ZutatSpecification zutatSpec : zutatImMenu) { 	
-			MenuTable.setHTML(zutatImMenu.indexOf(zutatSpec), 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*100).concat("px'>.</div>")));
+		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 	
+			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*100).concat("px'>.</div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);

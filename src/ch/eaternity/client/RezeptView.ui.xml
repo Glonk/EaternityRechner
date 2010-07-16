@@ -4,6 +4,9 @@
   
 <ui:style>
 
+	.rezeptDecoration {
+		width:900px;
+	}
  	.SavePanel {
   		float: left;
   		clear: both;
@@ -24,6 +27,7 @@
    		background: #fff;
 	}
 		.gwt-Button {
+		float: right;
 	  margin: 5px 10px 5px 0px;
 	  padding: 3px 5px;
 	  text-decoration: none;
@@ -48,8 +52,8 @@
 	}
 </ui:style>
 
-  <ui:style field='selectionStyle'
-    type='ch.eaternity.client.RezeptView.SelectionStyle'>
+  <ui:style field='selectionStyleRow'
+    type='ch.eaternity.client.RezeptView.SelectionStyleRow'>
 
   .selectedRow {
     background: #adcce7;
@@ -62,10 +66,12 @@
   
  
   </ui:style>
+
           
-           		<g:DecoratorPanel>
-           			<g:HTMLPanel>
-           			<g:Label>Ihre Zusammenstellung</g:Label>
+           		<g:DecoratorPanel >
+           			<g:HTMLPanel ui:field="htmlRezept" styleName='{style.rezeptDecoration}'>
+           			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
+           			<h4>Ihre Zusammenstellung</h4>
            			<g:HorizontalPanel  ui:field='addInfoPanel'>
         				<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}' cellSpacing='0' cellPadding='0'/>
         			</g:HorizontalPanel>
