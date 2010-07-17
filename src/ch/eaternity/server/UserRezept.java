@@ -28,6 +28,9 @@ public class UserRezept{
 	@Persistent
 	private Rezept rezept;
 	
+	@Persistent
+	private String rezeptKey;
+	
 	public void setUser(User user) {
 		this.user = user;
 	}
@@ -60,6 +63,12 @@ public class UserRezept{
 	}
 	public Key getId() {
 		return id;
+	}
+	public void setRezeptKey(String key) {
+		this.rezeptKey = key;
+	}
+	public String getRezeptKey() {
+		return rezeptKey;
 	}
 
 

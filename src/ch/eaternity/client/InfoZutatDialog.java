@@ -284,6 +284,8 @@ public class InfoZutatDialog extends Composite {
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");
 		}
+		
+		
 	}
 	
 	private void styleLabel( HTMLPanel panel, boolean selected) {

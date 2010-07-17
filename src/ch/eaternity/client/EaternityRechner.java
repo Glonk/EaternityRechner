@@ -51,7 +51,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class EaternityRechner implements EntryPoint {
 
-	private static LoginInfo loginInfo = null;
+	static LoginInfo loginInfo = null;
 	private final static DataServiceAsync rezeptService = GWT.create(DataService.class);
 	private List<RezeptView> worksheet = new ArrayList<RezeptView>();
 	// private VerticalPanel loginPanel = new VerticalPanel();
@@ -123,7 +123,8 @@ public class EaternityRechner implements EntryPoint {
 		root.add(outer);
 		// mainPanel.add(signOutLink);
 		
-		// Move cursor focus to the input box.
+		// TODO Move cursor focus to the Search box.
+		// TODO remove this with something that makes more sense
 		rezeptList.getColumnFormatter().setWidth(1, "900px");
 
 		//	  
@@ -168,18 +169,18 @@ public class EaternityRechner implements EntryPoint {
 			}
 		});
 	}
-	static void removeRezept(final Long rezept_id) {
-		rezeptService.removeRezept(rezept_id, new AsyncCallback<Void>() {
+	static void removeRezept(final String string) {
+		rezeptService.removeRezept(string, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Void ignore) {
-				undisplayRezept(rezept_id);
+				undisplayRezept(string);
 			}
 		});
 	}
 	
-	private static void undisplayRezept(Long rezept_id) {
+	private static void undisplayRezept(String rezept_id) {
 
 	}
 
@@ -223,11 +224,17 @@ public class EaternityRechner implements EntryPoint {
 		selectedRezept = -1;
 		List<ZutatSpecification> zutaten = rezept.getZutaten();
 		AddZutatZumMenu(zutaten);
+		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+		rezeptView.RezeptName.setText(rezept.getSymbol());
+		rezeptView.rezeptNameTop.setText(rezept.getSymbol());
+		rezeptView.makePublic.setValue(rezept.isOpen());
+		
 	}
 	
 	@UiHandler("addRezeptButton")
 	public void onButtonPress(ClickEvent event) {
 		Rezept rezept = new Rezept();
+		rezept.setSymbol("unbenanntes Rezept");
 		ShowRezept(rezept);	
 	}
 	

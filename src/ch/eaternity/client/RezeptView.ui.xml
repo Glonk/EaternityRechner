@@ -71,11 +71,12 @@
            		<g:DecoratorPanel >
            			<g:HTMLPanel ui:field="htmlRezept" styleName='{style.rezeptDecoration}'>
            			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
-           			<h4>Ihre Zusammenstellung</h4>
+           			<g:Label ui:field="rezeptNameTop">Ihr Menu</g:Label>
            			<g:HorizontalPanel  ui:field='addInfoPanel'>
         				<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}' cellSpacing='0' cellPadding='0'/>
         			</g:HorizontalPanel>
-        					
+        					<g:Button styleName='{style.gwt-Button}'  ui:field="acceptZutatButton" text="Okay"/>
+ 
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}' cellSpacing='0' cellPadding='0'/>
         					<g:HTMLPanel ui:field='SaveRezeptPanel'>
                 				<g:TextBox ui:field="RezeptName">Rezept Name</g:TextBox>

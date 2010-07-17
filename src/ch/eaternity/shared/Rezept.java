@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.Element;
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
@@ -21,7 +22,9 @@ public class Rezept implements Serializable{
 
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Long id;
+    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String id;
+    
 	private String symbol;
 	private Date createDate;
 	private Long hits;
@@ -115,11 +118,11 @@ public class Rezept implements Serializable{
 		return this;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -143,6 +146,8 @@ public class Rezept implements Serializable{
 	public double getCO2Value() {
 		return CO2Value;
 	}
+
+
 
 
 

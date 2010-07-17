@@ -67,9 +67,18 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		try {
 			UserRezept userRezept = new UserRezept(getUser());
+//			pm.makePersistent(rezept);
 			userRezept.setRezept(rezept);
+			
+//			userRezept.setRezeptKey(key);
 			pm.makePersistent(userRezept);
-			Long key = userRezept.getRezept().getId();
+			String key = userRezept.getRezept().getId();
+			userRezept.setRezeptKey(key);
+//			userRezept.getRezept().setRezeptKey(key);
+			
+//			TODO why do i need to do this twice???? damn keys
+			pm.makePersistent(userRezept);
+			
 //			List<String> zutatSpecificationKeys = new ArrayList<String>();
 			for(ZutatSpecification zutat: rezept.getZutaten()){
 				zutat.setRezeptKey(key);
@@ -85,23 +94,44 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 
-	public void removeRezept(Long rezept_id) throws NotLoggedInException {
+	public void removeRezept(String rezept_id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
 			//			user verification is missing here! ist it necessary?
 //			Rezept rezept =	pm.getObjectById(Rezept.class,rezept_id);
-			Query rezept2 = pm.newQuery(Rezept.class, "id == key");
-			rezept2.declareParameters("Long lastNameParam");
-			List<Rezept> rezeptList = (List<Rezept>) rezept2.execute(rezept_id);
-			for(Rezept rezept : rezeptList){
-				GWT.log("entferne " + rezept.getSymbol(), null);
+			Query rezeptUser = pm.newQuery(UserRezept.class, "rezeptKey == key");
+			rezeptUser.declareParameters("Long lastNameParam");
+			List<UserRezept> rezeptList = (List<UserRezept>) rezeptUser.execute(rezept_id);
+			for(UserRezept userRezept : rezeptList){
+//				GWT.log("entferne " + userRezept.getRezept().getSymbol(), null);
 //				TODO get parent
-				//	UserRezept rezept =	pm.getObjectById(UserRezept.class,rezept_id);
-				pm.deletePersistent(rezept);
+				
+//				
+				pm.deletePersistent(userRezept);
+
 			}
+			
+			
+			Rezept rezept =	pm.getObjectById(Rezept.class,rezept_id);
+			pm.deletePersistent(rezept);
+			
+//			Query rezepte = pm.newQuery(Rezept.class, "RezeptKey == key");
+//			rezepte.declareParameters("Long lastNameParam");
+//			List<Rezept> rezepteList = (List<Rezept>) rezepte.execute(rezept_id);
+//			for(Rezept rezept2 : rezepteList){
+//				pm.deletePersistent(rezept2);
+//			}
 
-
+			
+			Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
+			zutaten.declareParameters("Long lastNameParam");
+			List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(rezept_id);
+			for(ZutatSpecification zutat : zutatenList){
+				pm.deletePersistent(zutat);
+			}
+			
+			
 
 			//			Query q = pm.newQuery(UserRezept.class, "user == u");
 			//			q.declareParameters("com.google.appengine.api.users.User u");
@@ -130,11 +160,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				for (UserRezept userRezept : rezepteUser) {
 					List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
 					Rezept rezept = userRezept.getRezept();
-					Long key = rezept.getId();
+					String key = rezept.getId();
 					Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
 					zutaten.declareParameters("Long lastNameParam");
 					List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
 					for(ZutatSpecification zutat : zutatenList){
+						if(zutat.getRezeptKey().compareTo(key) == 0){
 						ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
 								zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
 								zutat.getTransportmittel());
@@ -142,8 +173,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
 						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
 						specsList.add(newZutat);
+						}
 					}
-					rezept.addZutaten(specsList);
+					rezept.Zutaten = specsList;
 					rezepte.add(rezept);
 				}
 
@@ -178,11 +210,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				for (UserRezept userRezept : rezepteUser) {
 					List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
 					Rezept rezept = userRezept.getRezept();
-					Long key = rezept.getId();
+					String key = rezept.getId();
 					Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
 					zutaten.declareParameters("Long lastNameParam");
 					List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
 					for(ZutatSpecification zutat : zutatenList){
+						if(zutat.getRezeptKey().compareTo(key) == 0){
 						ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
 								zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
 								zutat.getTransportmittel());
@@ -190,8 +223,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
 						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
 						specsList.add(newZutat);
+						}
 					}
-					rezept.addZutaten(specsList);
+					rezept.Zutaten = specsList;
 					rezeptePersonal.add(rezept);
 				}
 
@@ -207,11 +241,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			for (Rezept rezeptPublic : rezeptePublic) {
 				List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
 				Rezept rezept2 = rezeptPublic.getRezept();
-				Long key = rezept2.getId();
+				String key = rezept2.getId();
 				Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
 				zutaten.declareParameters("Long lastNameParam");
 				List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
 				for(ZutatSpecification zutat : zutatenList){
+					if(zutat.getRezeptKey().compareTo(key) == 0){
 					ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
 							zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
 							zutat.getTransportmittel());
@@ -219,6 +254,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 					newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
 					newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
 					specsList.add(newZutat);
+					}
 				}
 				rezept2.Zutaten = specsList;
 //				rezept2.addZutaten(specsList);

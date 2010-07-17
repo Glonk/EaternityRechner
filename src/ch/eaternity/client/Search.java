@@ -35,6 +35,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -552,19 +553,33 @@ public class Search extends ResizeComposite {
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					EaternityRechner.removeRezept(rezept.getId());
-					tableMealsYours.removeRow(row);
+					tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
+					
 				}
 			});
 			
 			tableMealsYours.setText(row,1,rezept.getSymbol());
 			tableMealsYours.setWidget(row, 0, AddRezeptButton);
 			tableMealsYours.setWidget(row, 2, removeRezeptButton);
+			if(rezept.isOpen()){
+				tableMealsYours.setText(row, 3,"öffentlich");
+			}
+			
+			double MenuLabelWert = 0.0;
+			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+			}
+			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
+			tableMealsYours.setText(row, 4,  "ca "+formatted+"g CO₂-Äquivalent");
+			
+			
 			
 		}else{
 			int row = tableMeals.getRowCount();
 			tableMeals.setText(row,1,rezept.getSymbol());
 			tableMeals.setWidget(row, 0, AddRezeptButton);
 		}
+		
 
 	}
 

@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -47,6 +48,8 @@ public class RezeptView extends Composite {
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
+	@UiField Label rezeptNameTop;
+	@UiField Button acceptZutatButton;
 	HandlerRegistration klicky;
 
 	
@@ -58,6 +61,13 @@ public class RezeptView extends Composite {
 	    initWidget(uiBinder.createAndBindUi(this));
 	    setRezept(rezept);
 	    initTable();
+	    
+	    acceptZutatButton.setVisible(false);
+		if(EaternityRechner.loginInfo.isLoggedIn()) {
+			SaveRezeptPanel.setVisible(true);
+		} else   {
+			SaveRezeptPanel.setVisible(false);
+		}
 	  }
 	
 	
@@ -140,6 +150,7 @@ public class RezeptView extends Composite {
 //						EaternityRechner.addRezept(rezeptSave);
 						rezept.setSymbol(RezeptName.getText());
 						rezept.setOpen(makePublic.getValue());
+						
 						EaternityRechner.addRezept(rezept);
 					}
 				}
@@ -183,7 +194,7 @@ public class RezeptView extends Composite {
 
 		styleRow(selectedRow, false);
 		
-		Search.styleRow(Search.selectedRow,false);
+//		Search.styleRow(Search.selectedRow,false);
 		Search.selectedRow = -1;
 		
 		styleRow(row, true);
@@ -193,6 +204,8 @@ public class RezeptView extends Composite {
 		if (listener != null) {
 			listener.onItemSelected(zutatSpec);
 		}
+		
+		updateSuggestion();
 	}
 
 	private void openSpecificationDialog(ZutatSpecification zutatSpec, Zutat zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
@@ -203,10 +216,20 @@ public class RezeptView extends Composite {
 		}
 		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow);
 		addInfoPanel.add(infoZutat);
-
+		acceptZutatButton.setVisible(true);
 		
 	}
-
+	
+	@UiHandler("acceptZutatButton")
+	void onAcceptClicked(ClickEvent event) {
+		styleRow(selectedRow, false);
+		if(addInfoPanel.getWidgetCount() ==2){
+			addInfoPanel.remove(1);
+		}
+		acceptZutatButton.setVisible(false);
+		updateSuggestion();
+	}
+	
 
 	//TODO do the same for Search BUtton Press
 	void styleRow(int row, boolean selected) {

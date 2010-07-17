@@ -52,7 +52,7 @@ public class ZutatSpecification  implements Serializable  {
 	private String name;
 	
 	@Persistent
-	private Long RezeptKey;
+	private String RezeptKey;
 	
 	private Long zutat_id;
 	
@@ -263,13 +263,13 @@ public class ZutatSpecification  implements Serializable  {
 
 
 
-	public void setRezeptKey(Long rezeptKey) {
-		RezeptKey = rezeptKey;
+	public void setRezeptKey(String key) {
+		RezeptKey = key;
 	}
 
 
 
-	public Long getRezeptKey() {
+	public String getRezeptKey() {
 		return RezeptKey;
 	}
 

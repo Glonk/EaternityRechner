@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface DataService extends RemoteService {
   public String addRezept(Rezept rezept) throws NotLoggedInException;
   public String addZutat(Zutat zutat) throws NotLoggedInException;
-  public void removeRezept(Long rezept_id) throws NotLoggedInException;
+  public void removeRezept(String rezept_id) throws NotLoggedInException;
   public List<Rezept> getYourRezepte() throws NotLoggedInException;
   public Data getData() throws NotLoggedInException;
 }
