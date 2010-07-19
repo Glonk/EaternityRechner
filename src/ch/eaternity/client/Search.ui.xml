@@ -127,17 +127,37 @@
 	    <g:TabLayoutPanel  styleName='{style.outer}' ui:field="tabLayoutPanel" barHeight='28'>
 	      <g:tab >
 	      <g:header><b>Ergebnisse</b></g:header>
+	      
+<g:SplitLayoutPanel>
+	<g:south size='300'>
+		      <g:ScrollPanel styleName='{style.scroll}'>
+		      <g:HTMLPanel>
+		      <g:HTMLPanel ui:field="yourRezeptePanel" >
+	      		
 
-	      <g:ScrollPanel styleName='{style.scroll}'>
-	      <g:HTMLPanel>
-	        <g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
-	        <hr />&nbsp;eigene Rezepte:<hr />
+	        	        <hr />&nbsp;eigene Rezepte:<hr />
 	        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        </g:HTMLPanel>
+	        
+	        
 	        <hr />&nbsp;Rezeptvorschläge:<hr />
 	        <g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
-	       </g:HTMLPanel>
+	        
+	        	       
+	        	       </g:HTMLPanel>
 	      </g:ScrollPanel>
+	</g:south>
+	<g:center>
+	      <g:ScrollPanel styleName='{style.scroll}'>
+	      <g:HTMLPanel>
 
+	        <g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        	       </g:HTMLPanel>
+	      </g:ScrollPanel>
+	 </g:center>
+
+
+</g:SplitLayoutPanel>
 	      </g:tab>
 	      
 	     </g:TabLayoutPanel>

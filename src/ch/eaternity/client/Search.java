@@ -46,8 +46,11 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -93,6 +96,9 @@ public class Search extends ResizeComposite {
 	static DockLayoutPanel leftSplitPanel;
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
+	static
+	@UiField HTMLPanel yourRezeptePanel;
+	
 	//@UiField
 	//static InfoZutat infoZutat;
 	
@@ -130,6 +136,7 @@ public class Search extends ResizeComposite {
 		initTable();
 		//    updateResults("all");
 		SearchBox2.setFocus(true);
+		yourRezeptePanel.setVisible(false);
 
 
 	}
@@ -326,8 +333,11 @@ public class Search extends ResizeComposite {
 		FoundRezepteYours.clear();
 		
 		List<Rezept> allRezepte = getClientData().getPublicRezepte();
-		if(	getClientData().getYourRezepte() != null){
+		if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
+			yourRezeptePanel.setVisible(true);
 			allRezepte.addAll(getClientData().getYourRezepte());
+		} else {
+			yourRezeptePanel.setVisible(false);
 		}
 		
 			if ((getClientData().getZutaten() != null) ){
@@ -364,11 +374,11 @@ public class Search extends ResizeComposite {
 					}
 				// Rezepte
 				if(	getClientData().getYourRezepte() != null){
-					searchRezept(searchString, getClientData().getYourRezepte(), searches,false);
+					searchRezept(searchString, getClientData().getYourRezepte(), searches,true);
 				}
 				
 				if(	getClientData().getPublicRezepte() != null){
-					searchRezept(searchString, getClientData().getPublicRezepte(), searches,true);
+					searchRezept(searchString, getClientData().getPublicRezepte(), searches,false);
 				}
 				
 				
@@ -382,13 +392,16 @@ public class Search extends ResizeComposite {
 						}
 					}
 					
-					if(	getClientData().getYourRezepte() != null){
+					if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
+						yourRezeptePanel.setVisible(true);
 						for(Rezept rezept : getClientData().getYourRezepte()){
-							if(!FoundRezepteYours.contains(rezept)){
+							if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
 								FoundRezepteYours.add(rezept);
 							displayRezept(rezept,true);
 							}
 						}
+					} else {
+						yourRezeptePanel.setVisible(false);
 					}
 					
 					if(	getClientData().getPublicRezepte() != null){
@@ -440,9 +453,10 @@ public class Search extends ResizeComposite {
 
 				List<ZutatSpecification> zutatenRezept = rezept.getZutaten();
 				if(zutatenRezept != null){
+					int i = 0;
 					for(ZutatSpecification ZutatImRezept : zutatenRezept ){
 						if(ZutatImRezept != null){
-							int i = 0;
+							
 							for(String search2 : searches){
 								if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
 								//if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
