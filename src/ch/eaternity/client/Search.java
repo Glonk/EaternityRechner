@@ -600,8 +600,20 @@ public class Search extends ResizeComposite {
 			removeRezeptButton.addStyleDependentName("gwt-Button");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					EaternityRechner.removeRezept(rezept.getId());
-					tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
+					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Rezept...");
+					dlg.statusLabel.setText("löschen?");
+					// TODO recheck user if he really want to do this...
+					dlg.executeButton.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							EaternityRechner.removeRezept(rezept.getId());
+							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
+							dlg.hide();
+							dlg.clear();
+						}
+					});
+					dlg.show();
+					dlg.center();
+
 					
 				}
 			});

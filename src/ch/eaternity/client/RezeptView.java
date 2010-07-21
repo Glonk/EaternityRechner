@@ -102,11 +102,25 @@ public class RezeptView extends Composite {
 	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
+		
+		final ConfirmDialog dlg = new ConfirmDialog("Sie wollen diese Zusammenstellung...");
+		dlg.statusLabel.setText("entfernen?");
 		// TODO recheck user if he really want to do this...
-		int row = getWidgetRow(this, EaternityRechner.rezeptList);
-		EaternityRechner.rezeptList.remove(this);
-		EaternityRechner.rezeptList.removeRow(row);
-		EaternityRechner.selectedRezept = -1;
+		final RezeptView test = this;
+		dlg.executeButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int row = getWidgetRow(test , EaternityRechner.rezeptList);
+				EaternityRechner.rezeptList.remove(test);
+				EaternityRechner.rezeptList.removeRow(row);
+				EaternityRechner.selectedRezept = -1;
+				dlg.hide();
+				dlg.clear();
+			}
+		});
+		dlg.show();
+		dlg.center();
+		
+
 		
 
 	}
