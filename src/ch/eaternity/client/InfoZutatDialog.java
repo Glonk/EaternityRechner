@@ -52,7 +52,7 @@ public class InfoZutatDialog extends Composite {
 	@UiField HTMLPanel produktionHTML;
 	@UiField HTMLPanel herkunftHTML;
 	@UiField HTMLPanel saisonHTML;
-	private ZutatSpecification zutatSpec;
+	ZutatSpecification zutatSpec;
 	private int selectedRow;
 	private FlexTable menuTable;
 	

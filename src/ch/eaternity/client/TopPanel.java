@@ -97,7 +97,7 @@ static TextBox clientLocation;
 //  }
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {
-	  ZutatVarianten.updateSaison();
+	  EaternityRechner.updateSaison();
   }
 
   @UiHandler("locationButton")

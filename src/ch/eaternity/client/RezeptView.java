@@ -328,7 +328,7 @@ public class RezeptView extends Composite {
 	row = row+1;
 	}
 }
-	private void updateSuggestion() {
+	void updateSuggestion() {
 
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
@@ -376,5 +376,13 @@ public class RezeptView extends Composite {
 			}
 		}
 		throw new RuntimeException("Unable to determine widget row");
+	}
+
+
+	public void updateSaison() {
+		if(addInfoPanel.getWidgetCount() ==2){
+			InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
+			 infoZutat.updateSaison(infoZutat.zutatSpec);
+		 }
 	}
 }

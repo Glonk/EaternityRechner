@@ -396,6 +396,18 @@ public class EaternityRechner implements EntryPoint {
 	public static Data getClientData() {
 		return clientData;
 	}
+
+
+
+	public static void updateSaison() {
+		
+		for( Widget rezeptViewWidget : rezeptList){
+			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
+			rezeptView.updateSaison();
+		}
+		
+		
+	}
 	
 	
 
