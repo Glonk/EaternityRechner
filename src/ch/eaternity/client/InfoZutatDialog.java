@@ -1,8 +1,10 @@
 package ch.eaternity.client;
 
 import java.util.Date;
+import java.util.List;
 
 import ch.eaternity.client.ZutatDetails.SelectionStyle;
+import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 import ch.eaternity.shared.Zutat.Herkuenfte;
@@ -55,6 +57,8 @@ public class InfoZutatDialog extends Composite {
 	ZutatSpecification zutatSpec;
 	private int selectedRow;
 	private FlexTable menuTable;
+	private Rezept rezept;
+	private FlexTable suggestTable;
 	
 	interface SelectionStyle extends CssResource {
 		String selectedBlob();
@@ -84,13 +88,15 @@ public class InfoZutatDialog extends Composite {
 	
 }
 
-	public InfoZutatDialog(ZutatSpecification zutatSpec, Zutat zutat, TextBox amount, FlexTable menuTable, int selectedRow) {
+	public InfoZutatDialog(ZutatSpecification zutatSpec, Zutat zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML("<h1>"+ zutatSpec.getName() +"</h1>");
 		// TODO Auto-generated constructor stub
 		this.setZutatSpec(zutatSpec);
 		this.setSelectedRow(selectedRow);
+		this.setRezept(rezept);
 		this.menuTable = menuTable;
+		this.suggestTable = suggestTable;
 		setValues( zutat);
 	}
 
@@ -280,6 +286,10 @@ public class InfoZutatDialog extends Composite {
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
 				menuTable.setText(selectedRow, 4, ": ca. "+formatted + "g CO2-Äquivalent");
+				rezept.Zutaten.set(selectedRow, zutatSpec);
+				Double MenuLabelWert = getRezeptCO2(rezept.Zutaten);
+				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
+				suggestTable.setText(0,0," alles zusammen: ca "+formattedMenu+"g CO₂-Äquivalent");
 //			}
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");
@@ -310,5 +320,19 @@ public class InfoZutatDialog extends Composite {
 	}
 	public int getSelectedRow() {
 		return selectedRow;
+	}
+	public void setRezept(Rezept rezept) {
+		this.rezept = rezept;
+	}
+	public Rezept getRezept() {
+		return rezept;
+	}
+	private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
+		Double MenuLabelWert = 0.0;
+		for (ZutatSpecification zutatSpec : Zutaten) { 
+			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+
+		}
+		return MenuLabelWert;
 	}
 }

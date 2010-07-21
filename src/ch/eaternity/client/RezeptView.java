@@ -49,7 +49,6 @@ public class RezeptView extends Composite {
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
 	@UiField Label rezeptNameTop;
-	@UiField Button acceptZutatButton;
 	HandlerRegistration klicky;
 
 	
@@ -62,7 +61,6 @@ public class RezeptView extends Composite {
 	    setRezept(rezept);
 	    initTable();
 	    
-	    acceptZutatButton.setVisible(false);
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
 			SaveRezeptPanel.setVisible(true);
 		} else   {
@@ -228,21 +226,11 @@ public class RezeptView extends Composite {
 		if(addInfoPanel.getWidgetCount() ==2){
 			addInfoPanel.remove(1);
 		}
-		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow);
+		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,rezept,SuggestTable);
 		addInfoPanel.add(infoZutat);
-		acceptZutatButton.setVisible(true);
 		
 	}
 	
-	@UiHandler("acceptZutatButton")
-	void onAcceptClicked(ClickEvent event) {
-		styleRow(selectedRow, false);
-		if(addInfoPanel.getWidgetCount() ==2){
-			addInfoPanel.remove(1);
-		}
-		acceptZutatButton.setVisible(false);
-		updateSuggestion();
-	}
 	
 
 	//TODO do the same for Search BUtton Press
@@ -376,6 +364,7 @@ public class RezeptView extends Composite {
 		
 		MenuTable.getColumnFormatter().setWidth(4, "180px");
 		MenuTable.setText(row,4,": ca. "+formatted+"g CO₂-Äquivalent ");
+		
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
 		updateSuggestion();
 	}

@@ -75,7 +75,6 @@
            			<g:HorizontalPanel  ui:field='addInfoPanel'>
         				<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}' cellSpacing='0' cellPadding='0'/>
         			</g:HorizontalPanel>
-        					<g:Button styleName='{style.gwt-Button}'  ui:field="acceptZutatButton" text="Okay"/>
  
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}' cellSpacing='0' cellPadding='0'/>
         					<g:HTMLPanel ui:field='SaveRezeptPanel'>

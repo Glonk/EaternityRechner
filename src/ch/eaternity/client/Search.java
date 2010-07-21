@@ -802,7 +802,6 @@ class NameComparator implements Comparator<Zutat> {
 
 		private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
 			Double MenuLabelWert = 0.0;
-
 			for (ZutatSpecification zutatSpec : Zutaten) { 
 				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 
