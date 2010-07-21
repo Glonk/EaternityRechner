@@ -508,6 +508,23 @@ public class Search extends ResizeComposite {
 					displayZutat(item);
 				}
 			}
+			
+			Collections.sort(FoundRezepte,new RezeptValueComparator());
+			tableMeals.removeAllRows();
+			if(FoundRezepte != null){
+				for (final Rezept item : FoundRezepte){
+					displayRezept(item,false);
+				}
+			}
+			
+			Collections.sort(FoundRezepteYours,new RezeptValueComparator());
+			tableMealsYours.removeAllRows();
+			if(FoundRezepteYours != null){
+				for (final Rezept item : FoundRezepteYours){
+					displayRezept(item,true);
+				}
+			}
+			
 			break;
 		}
 		case 2:{
@@ -536,6 +553,23 @@ public class Search extends ResizeComposite {
 					displayZutat(item);
 				}
 			}
+			
+			Collections.sort(FoundRezepte,new RezeptNameComparator());
+			tableMeals.removeAllRows();
+			if(FoundRezepte != null){
+				for (final Rezept item : FoundRezepte){
+					displayRezept(item,false);
+				}
+			}
+			
+			Collections.sort(FoundRezepteYours,new RezeptNameComparator());
+			tableMealsYours.removeAllRows();
+			if(FoundRezepteYours != null){
+				for (final Rezept item : FoundRezepteYours){
+					displayRezept(item,true);
+				}
+			}
+			
 			break;
 
 			
@@ -735,7 +769,40 @@ class NameComparator implements Comparator<Zutat> {
 		  long o2 = z2.getCO2eWert();
 		  
 	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
-
-
 	  }
 	}
+	
+	class RezeptValueComparator implements Comparator<Rezept> {
+		public int compare(Rezept r1, Rezept r2) {
+			Double o1 = getRezeptCO2(r1.getZutaten());
+			Double o2 = getRezeptCO2(r2.getZutaten());
+
+			return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
+
+		}
+
+		private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
+			Double MenuLabelWert = 0.0;
+
+			for (ZutatSpecification zutatSpec : Zutaten) { 
+				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+
+			}
+			return MenuLabelWert;
+		}
+	}
+	
+	class RezeptNameComparator implements Comparator<Rezept> {
+		  public int compare(Rezept z1, Rezept z2) {
+			  String o1 = z1.getSymbol();
+			  String o2 = z2.getSymbol();
+		    if(o1 instanceof String && o2 instanceof String) {
+		      String s1 = (String)o1;
+		      String s2 = (String)o2;
+		      s1 = s1.substring(0, 1);
+		      s2 = s2.substring(0, 1);
+		      return s1.compareToIgnoreCase(s2);
+		    }
+		    return 0;
+		  }
+		}
