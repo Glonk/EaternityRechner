@@ -626,6 +626,13 @@ public class Search extends ResizeComposite {
 			int row = tableMeals.getRowCount();
 			tableMeals.setText(row,1,rezept.getSymbol());
 			tableMeals.setWidget(row, 0, AddRezeptButton);
+			
+			double MenuLabelWert = 0.0;
+			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+			}
+			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
+			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
 		}
 		
 
