@@ -10,7 +10,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-import com.google.appengine.api.datastore.Key;
+
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -18,6 +18,7 @@ import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.DataService;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 import ch.eaternity.shared.Zutat.Herkuenfte;
@@ -90,12 +91,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
         } finally {
 			pm.close();
 		}
-		return rezept.getSymbol();
+		return rezept.getId();
 	}
 
-
-	public void removeRezept(String rezept_id) throws NotLoggedInException {
+ 
+	public void removeRezept(Rezept rezeptDelete) throws NotLoggedInException {
 		checkLoggedIn();
+		String rezept_id = rezeptDelete.getId();
 		PersistenceManager pm = getPersistenceManager();
 		try {
 			//			user verification is missing here! ist it necessary?
@@ -300,6 +302,16 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			}
 			data.setZutaten(zutaten);
 			
+			ArrayList<SingleDistance> distances = new ArrayList<SingleDistance>();
+			Query q4 = pm.newQuery(SingleDistance.class);
+			List<SingleDistance> singleDistances = (List<SingleDistance>) q4.execute();
+			for(SingleDistance singleDistance : singleDistances){
+				if(!distances.contains(singleDistance)){
+					distances.add(singleDistance);
+				}
+			}
+			data.setDistances(distances);
+			
 		
 		} finally {
 			pm.close();
@@ -320,5 +332,20 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
+	}
+
+
+	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException {
+		PersistenceManager pm = getPersistenceManager();
+
+		try {
+			for(SingleDistance singleDistance : distances){
+				pm.makePersistent(singleDistance);
+			}
+			
+		} finally {
+			pm.close();
+		}
+		return distances.size();
 	}
 }

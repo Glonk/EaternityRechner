@@ -16,7 +16,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable //(detachable = "true")
 public class Rezept implements Serializable{
-
+ 
 
 	private static final long serialVersionUID = -5888386800366492104L;
 

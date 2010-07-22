@@ -50,6 +50,8 @@ public class RezeptView extends Composite {
 	@UiField HTMLPanel htmlRezept;
 	@UiField Label rezeptNameTop;
 	HandlerRegistration klicky;
+	
+	boolean saved;
 
 	
 //	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
@@ -59,6 +61,7 @@ public class RezeptView extends Composite {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
 	    setRezept(rezept);
+	    saved = true;
 	    initTable();
 	    
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
@@ -100,11 +103,17 @@ public class RezeptView extends Composite {
 	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
-		
-		final ConfirmDialog dlg = new ConfirmDialog("Sie wollen diese Zusammenstellung...");
-		dlg.statusLabel.setText("entfernen?");
-		// TODO recheck user if he really want to do this...
 		final RezeptView test = this;
+		if(saved){
+			int row = getWidgetRow(test , EaternityRechner.rezeptList);
+			EaternityRechner.rezeptList.remove(test);
+			EaternityRechner.rezeptList.removeRow(row);
+			EaternityRechner.selectedRezept = -1;
+		} else {
+		final ConfirmDialog dlg = new ConfirmDialog("Sie wollen diese Zusammenstellung...");
+		dlg.statusLabel.setText("ausblenden, obwohl sie nicht gespeichert ist?");
+		// TODO recheck user if he really want to do this...
+		
 		dlg.executeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int row = getWidgetRow(test , EaternityRechner.rezeptList);
@@ -112,11 +121,11 @@ public class RezeptView extends Composite {
 				EaternityRechner.rezeptList.removeRow(row);
 				EaternityRechner.selectedRezept = -1;
 				dlg.hide();
-				dlg.clear();
 			}
 		});
 		dlg.show();
 		dlg.center();
+		}
 		
 
 		
@@ -142,6 +151,7 @@ public class RezeptView extends Composite {
 	}	
 	
 	public void showRezept(final Rezept rezept) {
+			final RezeptView rezeptView = this;
 			displayZutatImMenu(rezept.Zutaten);
 			updateSuggestion();
 //			zutatImMenu.clear();
@@ -163,7 +173,7 @@ public class RezeptView extends Composite {
 						rezept.setSymbol(RezeptName.getText());
 						rezept.setOpen(makePublic.getValue());
 						
-						EaternityRechner.addRezept(rezept);
+						EaternityRechner.addRezept(rezept,rezeptView);
 					}
 				}
 			});
@@ -179,7 +189,7 @@ public class RezeptView extends Composite {
 		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
 //		Window.alert(Integer.toString(row));
 		
-
+		 saved = false;
 		 
 		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
 			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
@@ -293,6 +303,7 @@ public class RezeptView extends Composite {
 				} else {
 					MengeZutatWert = "0";
 				}
+				
 				updateTable(rowhere,zutat);
 //				int length = (int)  Math.round(Double.valueOf(MengeZutatWert).doubleValue() *0.001);
 //				MenuTable.setText(rowhere,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
@@ -360,6 +371,7 @@ public class RezeptView extends Composite {
 	}
 	
 	private void updateTable(int row,ZutatSpecification zutatSpec){
+		saved = false;
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 		
 		MenuTable.getColumnFormatter().setWidth(4, "180px");

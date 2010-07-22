@@ -14,6 +14,7 @@ public class Data implements Serializable{
 	private  List<Rezept> PublicRezepte;
 	private  List<Rezept> YourRezepte;
 	private  List<Zutat> Zutaten;
+	private  List<SingleDistance> distances;
 
 	public void setZutaten(List<Zutat> zutaten) {
 		Zutaten = zutaten;
@@ -74,5 +75,12 @@ public class Data implements Serializable{
 
 		return oracleIndex;
 	}
+	public void setDistances(List<SingleDistance> distances) {
+		this.distances = distances;
+	}
+	public List<SingleDistance> getDistances() {
+		return distances;
+	}
+
 
 }

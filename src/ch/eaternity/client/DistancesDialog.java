@@ -1,12 +1,13 @@
 package ch.eaternity.client;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-
+import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 import ch.eaternity.shared.Zutat.Herkuenfte;
@@ -33,10 +34,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,17 +50,28 @@ public class DistancesDialog extends DialogBox{
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	private final static Geocoder geocoder = new Geocoder();
+	private final DataServiceAsync distancesService = GWT.create(DataService.class);
 
-	@UiField Button closeButton;
 	@UiField Button executeButton;
-	@UiField
-	static FlexTable mapsTable;
+	@UiField FlexTable mapsTable;
+	@UiField ScrollPanel scrollPanel;
+	@UiField FlexTable summaryTable;
 	@UiField Button locationButton;
 	@UiField TextBox clientLocationDialog;
+	
+	ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
+	String currentLocation;
 
-	public DistancesDialog() {
+	public DistancesDialog(String string) {		
+		processAddress(string,true);
+	}
+
+
+	private void openDialog() {
 		setWidget(binder.createAndBindUi(this));
-		
+		show();
+		scrollPanel.setHeight("400px");
+		center();
 		setText("Versuche Routen zu berechnen");
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
@@ -92,7 +108,9 @@ public class DistancesDialog extends DialogBox{
 			// enter or escape is pressed.
 			switch (evt.getKeyCode()) {
 			case KeyCodes.KEY_ENTER:
-					saveDistances();
+				mapsTable.removeAllRows();
+				processAddress(clientLocationDialog.getText(),false);
+				break;
 			case KeyCodes.KEY_ESCAPE:
 				hide();
 				break;
@@ -100,39 +118,67 @@ public class DistancesDialog extends DialogBox{
 		}
 	}
 
+
 	private void saveDistances() {
-		// TODO Auto-generated method stub
 		
+		if(!allDistances.isEmpty()){
+		distancesService.addDistances(allDistances, new AsyncCallback<Integer>() {
+			public void onFailure(Throwable error) {
+				Window.alert("Fehler : "+ error.getMessage());
+			}
+			public void onSuccess(Integer ignore) {
+				Search.getClientData().getDistances().addAll(allDistances);
+//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
+			}
+		});
+		}
+		hide();
 	}
-	private  void calculateDistances(String string) {
-		TreeMap<String, Double> distances = new TreeMap<String,Double>();
-		
+	
+	private  void calculateDistances(String string, boolean firstTime) {
+		 ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.getClientData().getDistances();
+		 ArrayList<String> distancesRequested = new ArrayList<String>();
+		  boolean notFound;
 		  List<Zutat> zutaten = Search.getClientData().getZutaten();
 		  for( Zutat zutat : zutaten){
 			  for(Herkuenfte herkunft : zutat.getHerkuenfte()){
-				  if(!distances.containsKey( herkunft.toString())){
-					  getDistance( string, herkunft.toString());
-					  distances.put(herkunft.toString(), 0.0);
-					  
+				  
+				  notFound = true;
+				  for(SingleDistance singleDistance : distances){
+					  if(singleDistance.getFrom().contentEquals(string) && 
+							  singleDistance.getTo().contentEquals(herkunft.toString())){
+						  notFound = false;
+					  }
 				  }
+				  if(notFound && !distancesRequested.contains(herkunft.toString()) ){
+					  distancesRequested.add(herkunft.toString());
+					  getDistance( string, herkunft.toString());
+				  }
+					  
+				  
 			  }
 			  
 		  }
+		  if(!distancesRequested.isEmpty() && firstTime){
+			  openDialog();
+		  }
 	}
 
-	@UiHandler("closeButton")
-	void onClicked(ClickEvent event) {
-		showTable();
-	}
 
-	private static void showTable() {
-		mapsTable.removeAllRows();
-	     Set<String> iter = TopPanel.allDistances.keySet();
+	private void showTable() {
+		
+		summaryTable.removeAllRows();
 //	    while(iter.hasNext()){
-	     for(String key : iter){
-	    	String formatted = NumberFormat.getFormat("##").format( TopPanel.allDistances.get(key)/1000 );
-	    	mapsTable.setText(mapsTable.getRowCount(), 0, "nach " + key +" : ca. " + formatted + "km");
+	     for(SingleDistance singleDistance : allDistances){
+	    	String to = singleDistance.getTo();
+	    	String formatted = NumberFormat.getFormat("##").format( singleDistance.getDistance()/100000 );
+	    	if(formatted.contentEquals("0")){
+	    		summaryTable.setText(summaryTable.getRowCount(), 0, "nach " + to +" : ca. " + formatted + "km");
+	    	}else{
+	    		summaryTable.setText(summaryTable.getRowCount(), 0, "nach " + to +" : ca. " + formatted + "00km");
+	    	}
 	  	}
+	    
 	}
 	
 	@UiHandler("executeButton")
@@ -143,11 +189,12 @@ public class DistancesDialog extends DialogBox{
 	
 	@UiHandler("locationButton")
 	void onLocClicked(ClickEvent event) {
-		processAddress(clientLocationDialog.getText());
+		mapsTable.removeAllRows();
+		processAddress(clientLocationDialog.getText(),false);
 	}
 
 
-	void processAddress(final String address) {
+	void processAddress(final String address, final boolean firstTime) {
 		if (address.length() > 1) { 
 	    geocoder.getLocations(address, new LocationCallback() {
 	      public void onFailure(int statusCode) {
@@ -157,10 +204,11 @@ public class DistancesDialog extends DialogBox{
 	      public void onSuccess(JsArray<Placemark> locations) {
 	    	  Placemark place = locations.get(0);
 	    	  TopPanel.locationLabel.setText("Sie befinden sich in der Mitte von: " +place.getAddress() +"  ");
-//	    	  TopPanel.currentLocation = place;
+	    	  currentLocation = place.getAddress();
 	    	  TopPanel.ddlg.setText("Berechne alle Routen von: " + place.getAddress());
-	    	  TopPanel.ddlg.clientLocationDialog.setText(place.getAddress());
-	    	  calculateDistances(place.getAddress());
+	    	  
+	    	  
+	    	  calculateDistances(place.getAddress(),firstTime);
 	    	  
 	      }
 	    });
@@ -204,12 +252,17 @@ public class DistancesDialog extends DialogBox{
 	public void simpleDirectionsDemo(final JsArray<Placemark> locationFrom, final JsArray<Placemark> locationTo) {
 		Placemark placeFrom = locationFrom.get(0);
 		Placemark placeTo = locationTo.get(0);
-		String from = placeFrom.getAddress();
+		final String from = placeFrom.getAddress();
 		final String to = placeTo.getAddress();
-			
-	    MapWidget map = null;
-		DirectionsPanel directionsPanel = null;
+		
+	    MapWidget map = new MapWidget(locationFrom.get(0).getPoint(), 15);
+	    map.setHeight("300px");
+		DirectionsPanel directionsPanel = new DirectionsPanel();
 		DirectionQueryOptions opts = new DirectionQueryOptions(map, directionsPanel);
+		int currentRow = mapsTable.getRowCount();
+		mapsTable.setWidget(currentRow, 0, map);
+		mapsTable.setWidget(currentRow, 1, directionsPanel);
+		
 	    opts.setLocale("de_DE");
 	    opts.setPreserveViewport(true);
 	    opts.setRetrievePolyline(false);
@@ -219,32 +272,46 @@ public class DistancesDialog extends DialogBox{
 	    Directions.load(query, opts, new DirectionsCallback() {
 
 	      public void onFailure(int statusCode) {
-	        Window.alert("Es ist ein Fehler aufgetreten...");
-	        getDistanceEstimateToCurrent(locationFrom,locationTo,to);
+//	        Window.alert("Es ist ein Fehler aufgetreten...");
+	        getDistanceEstimateToCurrent(locationFrom,locationTo,to,true);
+	        // remove last row
+	        mapsTable.removeRow(mapsTable.getRowCount()-1);
 	      }
 
 	      public void onSuccess(DirectionResults result) {
-//	    	Window.alert(Double.toString(result.getDistance().inMeters())+"m from "+from+" to "+to);
-	        GWT.log("Successfully loaded directions.", null);
-	        double distance = result.getDistance().inMeters();
-	        if (distance == 0){
-	        	getDistanceEstimateToCurrent(locationFrom,locationTo,to);
-	        } else {
-	        	TopPanel.allDistances.put(to, distance);
-	        	showTable();
-//	        	updateDistance(distance,zutatSpec);
-	        }
+	    	  //	    	Window.alert(Double.toString(result.getDistance().inMeters())+"m from "+from+" to "+to);
+	    	  GWT.log("Successfully loaded directions.", null);
+	    	  double distance = result.getDistance().inMeters();
+	    	  SingleDistance singleDistance = new SingleDistance();
+	    	  singleDistance.setFrom(from);
+	    	  singleDistance.setTo(to);
+	    	  singleDistance.setRoad(true);
+	    	  singleDistance.setTriedRoad(true);
+	    	  singleDistance.setDistance(distance);
+
+	    	  allDistances.add(singleDistance);
+	    	  showTable();
+	    	  //	        	updateDistance(distance,zutatSpec);
+
 	      }
 	    });
 	    
 	    
 	  }
 
-	static void getDistanceEstimateToCurrent(JsArray<Placemark> locations, JsArray<Placemark> locations1, String to) {
+	 void getDistanceEstimateToCurrent(JsArray<Placemark> locations, JsArray<Placemark> locations1, String to, Boolean tried) {
 
 		Placemark place = locations.get(0);
 		double distance = locations1.get(0).getPoint().distanceFrom(place.getPoint());
-		TopPanel.allDistances.put(to, distance);
+		
+    	SingleDistance singleDistance = new SingleDistance();
+    	singleDistance.setFrom(locations1.get(0).getAddress());
+    	singleDistance.setTo(to);
+    	singleDistance.setRoad(false);
+    	singleDistance.setTriedRoad(tried);
+    	singleDistance.setDistance(distance);
+    	
+    	allDistances.add(singleDistance);
 		showTable();
 		//	updateDistance(distance,zutatSpec);
 	}

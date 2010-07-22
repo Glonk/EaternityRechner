@@ -17,8 +17,11 @@ package ch.eaternity.client;
 
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TreeMap;
+
+import ch.eaternity.shared.SingleDistance;
 
 import com.google.gwt.core.client.GWT;
 
@@ -67,7 +70,7 @@ static TextBox clientLocation;
   public static Placemark currentLocation;
   public static DistancesDialog ddlg;
 
-protected static TreeMap<String,Double> allDistances = new TreeMap<String,Double>();
+protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
   
   public TopPanel() {
     initWidget(binder.createAndBindUi(this));
@@ -105,13 +108,13 @@ protected static TreeMap<String,Double> allDistances = new TreeMap<String,Double
   @UiHandler("locationButton")
   public void onClick(ClickEvent event) {
 	  
-	  ddlg = new DistancesDialog();
-	  ddlg.processAddress(clientLocation.getText());
-	  ddlg.show();
-	  ddlg.center();
+	  
+	  ddlg = new DistancesDialog(clientLocation.getText()); 
+
 	  
 
   }
+  
 
 
 }

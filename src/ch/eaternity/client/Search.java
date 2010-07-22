@@ -87,7 +87,8 @@ public class Search extends ResizeComposite {
 	@UiField
 	static FlexTable tableMealsYours;
 //	@UiField Button SearchButton;
-	@UiField SuggestBox SearchBox2;
+	@UiField
+	static SuggestBox SearchBox2;
 	@UiField DockLayoutPanel SearchBox;
 	@UiField
 	static SelectionStyle selectionStyle;
@@ -605,7 +606,7 @@ public class Search extends ResizeComposite {
 					// TODO recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.removeRezept(rezept.getId());
+							EaternityRechner.removeRezept(rezept);
 							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
 							dlg.hide();
 							dlg.clear();

@@ -27,7 +27,7 @@ public class UserRezept{
 	
 	@Persistent
 	private Rezept rezept;
-	
+	  
 	@Persistent
 	private String rezeptKey;
 	
