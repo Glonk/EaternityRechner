@@ -429,6 +429,7 @@ public class ZutatVarianten extends  Composite{
 	
 	
 	static void showAddress(final String address) {
+		String adresse = "unbekannt";
 		if (address.length() > 1) { 
 	    geocoder.getLocations(address, new LocationCallback() {
 	      public void onFailure(int statusCode) {
@@ -444,6 +445,8 @@ public class ZutatVarianten extends  Composite{
 		} else {
 			TopPanel.locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
 		}
+		
+		
 	}
 	
 	static void getDistanceEstimateToCurrent(final String from, final String to, final ZutatSpecification zutatSpec) {

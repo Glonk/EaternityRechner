@@ -95,6 +95,7 @@ public class EaternityRechner implements EntryPoint {
 	public void onModuleLoad() {
 		
 		// now load the data
+
 		loadData();
 
 		// Inject global styles.
@@ -327,6 +328,7 @@ public class EaternityRechner implements EntryPoint {
 				setClientData(data);
 				Search.setClientData(data);
 				Search.updateResults(" ");
+				topPanel.locationButton.setEnabled(true);
 				
 				//TODO ist the oracle of need?
 				//Set<String> itemIndex = data.getOrcaleIndex();

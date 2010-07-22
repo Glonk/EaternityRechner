@@ -1,0 +1,33 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:mail='urn:import:ch.eaternity.client'>
+
+
+
+  <ui:style>
+  .panel {
+    padding: 10px;
+ 	}
+
+  .aboutText {
+    text-align: left;
+  }
+
+  .buttons {
+  	
+    text-align: right;
+  }
+  </ui:style>
+
+  <g:HTMLPanel width='640px' styleName='{style.panel}'>
+        <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte von: </g:InlineLabel>
+        <g:TextBox ui:field="clientLocationDialog">Schweiz</g:TextBox>
+        <g:Button ui:field="locationButton" text="Adresse festlegen"/>
+    Legen Sie hier den Ort fest, an den alle Zutaten geliefert werden. Es werden alle möglichen Routen berechnet und angezeigt. Google wünscht, dass hierbei auch die Karten angezeigt werden.
+    <g:FlexTable ui:field='mapsTable'></g:FlexTable>
+    <div class='{style.buttons}'>
+     <g:Button text='Aktualisieren' ui:field='closeButton' />
+      <g:Button text='Akzeptieren' ui:field='executeButton' />
+    </div>
+  </g:HTMLPanel>
+</ui:UiBinder>

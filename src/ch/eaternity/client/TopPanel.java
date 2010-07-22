@@ -18,11 +18,13 @@ package ch.eaternity.client;
 
 
 import java.util.Date;
+import java.util.TreeMap;
 
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
@@ -63,9 +65,13 @@ static ListBox Monate;
   @UiField
 static TextBox clientLocation;
   public static Placemark currentLocation;
+  public static DistancesDialog ddlg;
+
+protected static TreeMap<String,Double> allDistances = new TreeMap<String,Double>();
   
   public TopPanel() {
     initWidget(binder.createAndBindUi(this));
+    locationButton.setEnabled(false);
     AdminLink.setVisible(false);
     signOutLink.setVisible(false);
   
@@ -91,10 +97,6 @@ static TextBox clientLocation;
   }
   
 
-//  @UiHandler("clientLocation")
-//  void  onKeyUp(KeyUpEvent event) {
-//		  ZutatVarianten.showAddress(clientLocation.getText());
-//  }
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {
 	  EaternityRechner.updateSaison();
@@ -102,13 +104,14 @@ static TextBox clientLocation;
 
   @UiHandler("locationButton")
   public void onClick(ClickEvent event) {
-		ZutatVarianten.showAddress(clientLocation.getText());
+	  
+	  ddlg = new DistancesDialog();
+	  ddlg.processAddress(clientLocation.getText());
+	  ddlg.show();
+	  ddlg.center();
+	  
+
   }
 
 
-
-//  @UiHandler("signOutLink")
-//  void onSignOutClicked(ClickEvent event) {
-//    Window.alert("If this were implemented, you would be signed out now.");
-//  }
 }
