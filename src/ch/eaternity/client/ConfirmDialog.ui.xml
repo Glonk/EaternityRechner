@@ -1,0 +1,29 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:mail='urn:import:ch.eaternity.client'>
+
+
+
+  <ui:style>
+  .panel {
+    padding: 10px;
+ 	}
+
+  .aboutText {
+    text-align: left;
+  }
+
+  .buttons {
+  	
+    text-align: right;
+  }
+  </ui:style>
+
+  <g:HTMLPanel width='200px' styleName='{style.panel}'>
+    <g:Label ui:field='statusLabel' >Dialog</g:Label>
+    <div class='{style.buttons}'>
+     <g:Button text='Cancel' ui:field='closeButton' />
+      <g:Button text='Okay' ui:field='executeButton' />
+    </div>
+  </g:HTMLPanel>
+</ui:UiBinder>
