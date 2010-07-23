@@ -3,7 +3,7 @@ package ch.eaternity.client;
 import java.util.Date;
 import java.util.List;
 
-import ch.eaternity.client.ZutatDetails.SelectionStyle;
+
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
