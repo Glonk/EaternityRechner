@@ -72,6 +72,7 @@ public class DistancesDialog extends DialogBox{
 		show();
 		scrollPanel.setHeight("400px");
 		center();
+		clientLocationDialog.setText(currentLocation);
 		setText("Versuche Routen zu berechnen");
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
@@ -234,7 +235,7 @@ public class DistancesDialog extends DialogBox{
 	    	  Placemark place = locations.get(0);
 	    	  TopPanel.locationLabel.setText("Sie befinden sich in der Mitte von: " +place.getAddress() +"  ");
 	    	  currentLocation = place.getAddress();
-	    	  TopPanel.ddlg.setText("Berechne alle Routen von: " + place.getAddress());
+	    	  setText("Berechne alle Routen von: " + place.getAddress());
 	    	  TopPanel.currentHerkunft = place.getAddress();
 	    	  
 	    	  calculateDistances(place.getAddress(),firstTime);
