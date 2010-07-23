@@ -128,10 +128,12 @@ public class DistancesDialog extends DialogBox{
 			}
 			public void onSuccess(Integer ignore) {
 				Search.getClientData().getDistances().addAll(allDistances);
+				updateAllZutaten(); 
 //				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
 			}
 		});
 		}
+		
 		hide();
 	}
 	
@@ -332,7 +334,7 @@ public class DistancesDialog extends DialogBox{
 		double distance = locations1.get(0).getPoint().distanceFrom(place.getPoint());
 		
     	SingleDistance singleDistance = new SingleDistance();
-    	singleDistance.setFrom(locations1.get(0).getAddress());
+    	singleDistance.setFrom(place.getAddress());
     	singleDistance.setTo(to);
     	singleDistance.setRoad(false);
     	singleDistance.setTriedRoad(tried);
