@@ -161,7 +161,34 @@ public class DistancesDialog extends DialogBox{
 		  }
 		  if(!distancesRequested.isEmpty() && firstTime){
 			  openDialog();
+		  } else {
+			  updateAllZutaten();
 		  }
+	}
+
+
+	private void updateAllZutaten() {
+		// TODO Auto-generated method stub
+		for(Widget widget : EaternityRechner.rezeptList){
+			RezeptView rezeptView = ((RezeptView) widget);
+			List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+			zutaten.addAll(rezeptView.getRezept().Zutaten);
+			for(ZutatSpecification zutatSpec : zutaten ){
+				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
+				for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
+							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
+
+						zutatSpec.setDistance(singleDistance.getDistance());
+						rezeptView.getRezept().Zutaten.set(index, zutatSpec);
+
+						break;
+					}
+
+				}
+			}
+			rezeptView.updateSuggestion();
+		}
 	}
 
 
@@ -206,7 +233,7 @@ public class DistancesDialog extends DialogBox{
 	    	  TopPanel.locationLabel.setText("Sie befinden sich in der Mitte von: " +place.getAddress() +"  ");
 	    	  currentLocation = place.getAddress();
 	    	  TopPanel.ddlg.setText("Berechne alle Routen von: " + place.getAddress());
-	    	  
+	    	  TopPanel.currentHerkunft = place.getAddress();
 	    	  
 	    	  calculateDistances(place.getAddress(),firstTime);
 	    	  

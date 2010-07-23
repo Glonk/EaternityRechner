@@ -173,6 +173,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 								zutat.getTransportmittel());
 						newZutat.setMengeGramm(zutat.getMengeGramm());
 						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
+						newZutat.setHerkunft(zutat.getHerkunft());
 						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
 						specsList.add(newZutat);
 						}
@@ -223,6 +224,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 								zutat.getTransportmittel());
 						newZutat.setMengeGramm(zutat.getMengeGramm());
 						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
+						newZutat.setHerkunft(zutat.getHerkunft());
 						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
 						specsList.add(newZutat);
 						}
@@ -253,6 +255,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 							zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
 							zutat.getTransportmittel());
 					newZutat.setMengeGramm(zutat.getMengeGramm());
+					newZutat.setHerkunft(zutat.getHerkunft());
 					newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
 					newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
 					specsList.add(newZutat);

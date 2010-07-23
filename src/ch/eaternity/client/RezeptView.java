@@ -359,7 +359,9 @@ public class RezeptView extends Composite {
 			}
 			
 		}
-		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 	
+		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
+			MenuTable.setText(rezept.Zutaten.indexOf(zutatSpec),4,": ca. "+formatted+"g CO₂-Äquivalent ");
 			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*100).concat("px'>.</div>")));
 		}
 		

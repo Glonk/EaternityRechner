@@ -26,8 +26,10 @@ import java.util.TreeSet;
 
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.Zutat.Herkuenfte;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -116,7 +118,9 @@ public class Search extends ResizeComposite {
 	}
 
 	public static void setClientData(Data clientData) {
+
 		Search.clientData = clientData;
+		
 	}
 
 	private Listener listener;
@@ -290,8 +294,6 @@ public class Search extends ResizeComposite {
 		//	EaternityRechner.styleRow(EaternityRechner.selectedRow,false);
 		//	EaternityRechner.selectedRow = -1;
 		//}
-		
-		
 		
 		Timer t = new Timer() {
 			public void run() {

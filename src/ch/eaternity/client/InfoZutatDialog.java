@@ -5,6 +5,7 @@ import java.util.List;
 
 import ch.eaternity.client.ZutatDetails.SelectionStyle;
 import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 import ch.eaternity.shared.Zutat.Herkuenfte;
@@ -262,18 +263,19 @@ public class InfoZutatDialog extends Composite {
 	
 	@UiHandler("Herkunft")
 	void onChange(ChangeEvent event) {
-		String location;
-		//		getDistance(Herkunft.getItemText(Herkunft.getSelectedIndex()),TopPanel.clientLocation.getText());
-		if(TopPanel.currentLocation != null){
-			location = TopPanel.currentLocation.getAddress();
-		} else {
-			location = TopPanel.clientLocation.getText();
-		}
-		
-//		SimpleDirectionsDemo(Herkunft.getItemText(Herkunft.getSelectedIndex()),location, null);
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		//TODO uncomment this:
-		//InfoZutat.updateZutatCO2(zutatSpec, EaternityRechner.selectedRow);
+			
+		zutatSpec.setHerkunft(Herkuenfte.valueOf( Herkunft.getItemText(Herkunft.getSelectedIndex())) );
+			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
+						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
+					
+					zutatSpec.setDistance(singleDistance.getDistance());
+					
+				}
+
+			}
+	
+			updateZutatCO2();
 		
 	}
 	

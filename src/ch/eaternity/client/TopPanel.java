@@ -55,6 +55,7 @@ public class TopPanel extends Composite {
 
   interface Binder extends UiBinder<Widget, TopPanel> { }
   private static final Binder binder = GWT.create(Binder.class);
+  static String currentHerkunft = "Schweiz";
 
   @UiField Button locationButton;
   @UiField Anchor signOutLink;
