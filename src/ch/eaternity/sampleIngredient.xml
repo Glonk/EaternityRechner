@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+
+<!-- this is a sample XML file to define an ingredient
+use this to populate the datastore as an admin of the application -->
+
+<Ingredients>
+
+	<ingredient>
+		<id>55562323</id>
+		<symbol>Tomate</symbol>
+		<co2eValue>200</co2eValue>
+		
+		<alternatives>
+			<zutatId>5555</zutatId>
+			<zutatId>3333</zutatId>
+		</alternatives>
+
+		<stdAmountGramm>100</stdAmountGramm>
+		<stdExtraction>Deutschland</stdExtraction>
+
+		<Conditions>
+			<condition>
+				<symbol>frisch</symbol>
+				<factor>1</factor>
+			</condition>
+			<condition>
+				<symbol>tiefgekühl</symbol>
+				<factor>1.3</factor>
+			</condition>
+			<condition>
+				<symbol>getrocknet</symbol>
+				<factor>1.1</factor>
+			</condition>
+		</Conditions>
+		
+		<Productions>
+			<production>
+				<symbol>konventionell</symbol>
+				<factor>1</factor>
+			</production>
+			<production>
+				<symbol>BIO</symbol>
+				<factor>0.9</factor>
+			</production>
+			<production>
+				<symbol>Treibhaus</symbol>
+				<factor>1.9</factor>
+			</production>
+		</Productions>
+		
+		<Extractions>
+			<extraction>Schweiz</extraction>
+			<extraction>Spanien</extraction>
+			<extraction>Italien</extraction>
+			<extraction>
+				<symbol>Deutschland</symbol>
+
+				<Transportation>
+					<MoTransportation>
+						<symbol>LKW</symbol>
+						<factor>1</factor>
+					</MoTransportation>
+					<MoTransportation>
+						<symbol>Schiff - Fluss</symbol>
+						<factor>0.1</factor>
+					</MoTransportation>
+					<MoTransportation>
+						<symbol>Zug</symbol>
+						<factor>0.8</factor>
+					</MoTransportation>
+				<Transportation>
+
+				<startSeason>01.10</startSeason>
+				<stopSeason>21.03</stopSeason>
+				
+				<condition>frisch</condition>
+				<production>konventionell</production>
+
+				<Labels>
+					<labelKey>naturaplan(12345)</labelKey>
+				</Labels>
+				
+			</extraction>
+		</Extractions>
+
+	</ingredient>
+
+</Ingredients>
