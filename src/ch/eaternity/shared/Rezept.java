@@ -26,6 +26,11 @@ public class Rezept implements Serializable{
     private String id;
     
 	private String symbol;
+	
+	private String cookInstruction;
+	
+	private Long persons;
+	
 	private Date createDate;
 	private Long hits;
 	private Long popularity;
@@ -145,6 +150,22 @@ public class Rezept implements Serializable{
 
 	public double getCO2Value() {
 		return CO2Value;
+	}
+
+	public void setCookInstruction(String cookInstruction) {
+		this.cookInstruction = cookInstruction;
+	}
+
+	public String getCookInstruction() {
+		return cookInstruction;
+	}
+
+	public void setPersons(Long persons) {
+		this.persons = persons;
+	}
+
+	public Long getPersons() {
+		return persons;
 	}
 
 
