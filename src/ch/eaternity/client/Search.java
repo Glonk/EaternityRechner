@@ -440,19 +440,20 @@ public class Search extends ResizeComposite {
 						}
 						displayRezept(rezept,yours);
 						
-						// Zutaten des Rezept Ergerbnis Liste der Zutaten
-						for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
-							for(Ingredient zutatSuche : getClientData().getIngredients() ){
-								if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
-									if(!FoundIngredient.contains(zutatSuche)){
-										FoundIngredient.add(zutatSuche);
-										displayZutat(zutatSuche);
-									}
-								}
-
-							}
-
-						}
+		// das ist unübersichtlich:
+//						// Zutaten des Rezept Ergerbnis Liste der Zutaten
+//						for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
+//							for(Ingredient zutatSuche : getClientData().getIngredients() ){
+//								if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
+//									if(!FoundIngredient.contains(zutatSuche)){
+//										FoundIngredient.add(zutatSuche);
+//										displayZutat(zutatSuche);
+//									}
+//								}
+//
+//							}
+//
+//						}
 					}
 				}
 
