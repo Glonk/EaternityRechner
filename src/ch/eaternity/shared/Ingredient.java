@@ -1,6 +1,7 @@
 package ch.eaternity.shared;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +24,23 @@ public class Ingredient implements IsSerializable{
     
     private Long[] alternativeIds;
     
-    Integer stdAmountGramm;
-	
-    Key<Extraction> stdExtraction;
+    Key<Ingredient> alternativeKeys;
     
-//    @Serialized Map<Key<Condition>,Double> conditionKeys;
+    public Integer stdAmountGramm;
+    
+    public String stdExtractionSymbol;
+	
+    @Serialized
+	public
+    Extraction stdExtraction;
+    
+    @Embedded
+	public ArrayList<Condition> conditions;
+    @Embedded
+	public ArrayList<Production> productions;
+    @Embedded
+	public ArrayList<MoTransportation> moTransportations;
+    
 //    @Serialized Map<Key<Production>,Double> productionKeys;
 //    @Serialized Map<Key<MoTransportation>,Double> moTransportationKeys;
     
@@ -37,6 +50,10 @@ public class Ingredient implements IsSerializable{
     @Serialized 
     private
     List<Extraction> extractions;
+
+	public Boolean hasSeason;
+
+
     
 //    @Serialized
 //    @Transient

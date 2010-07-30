@@ -316,11 +316,18 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				}
 			}
 			data.setDistances(distances);
-			
+
 		
 		} finally {
 			pm.close();
 		}
+		
+		// haha, this looks so much easier.. I hope that works...
+		DAO dao = new DAO();
+		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
+		data.setIngredients(ingredients);
+		
+		
 		return data;
 	}
 

@@ -13,7 +13,8 @@ public class Production implements Serializable{
 	 */
 	private static final long serialVersionUID = 4042328283688002109L;
 	@Id Long id;
-	String symbol;
+	public String symbol;
+	public Double factor;
 	
 	private Production()
 	{

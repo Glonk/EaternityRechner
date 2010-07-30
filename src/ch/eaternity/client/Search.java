@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
@@ -69,7 +70,7 @@ public class Search extends ResizeComposite {
 	 * Callback when items are selected. 
 	 */
 	public interface Listener {
-		void onItemSelected(Zutat item);
+		void onItemSelected(Ingredient item);
 	}
 
 	interface Binder extends UiBinder<Widget, Search> { }
@@ -109,7 +110,8 @@ public class Search extends ResizeComposite {
 	private static Data clientData = new Data();
 	private static ArrayList<Rezept> FoundRezepte = new ArrayList<Rezept>();
 	private static ArrayList<Rezept> FoundRezepteYours = new ArrayList<Rezept>();
-	private static ArrayList<Zutat> FoundZutaten = new ArrayList<Zutat>();
+//	private static ArrayList<Zutat> FoundZutaten = new ArrayList<Zutat>();
+	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
 	
 	static int sortMethod = 1;
 
@@ -253,11 +255,11 @@ public class Search extends ResizeComposite {
 		//TODO uncomment this:
 		//leftSplitPanel.setWidgetMinSize(infoZutat, 448);
 		//    Zutat item = MailItems.getMailItemName(table.getText(row, 1));
-		if (FoundZutaten.size() < row){
+		if (FoundIngredient.size() < row){
 			return;
 		}
 		
-		Zutat item = FoundZutaten.get(row);
+		Ingredient item = FoundIngredient.get(row);
 		
 
 		if (item == null) {
@@ -331,7 +333,7 @@ public class Search extends ResizeComposite {
 		tableMeals.removeAllRows();
 		tableMealsYours.removeAllRows();
 		
-		FoundZutaten.clear();
+		FoundIngredient.clear();
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
 		
@@ -353,19 +355,19 @@ public class Search extends ResizeComposite {
 				for(String search : searches){
 	
 					// Zutaten
-					for(Zutat zutat : getClientData().getZutaten())
+					for(Ingredient zutat : getClientData().getIngredients())
 						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
 						//if(,search) < 3){
 							//Window.alert(zutat.getSymbol().substring(0, search.trim().length()));
-							if(!FoundZutaten.contains(zutat)){
-								FoundZutaten.add(zutat);
+							if(!FoundIngredient.contains(zutat)){
+								FoundIngredient.add(zutat);
 								displayZutat(zutat);
 							}
-							for(Long alternativen_id : zutat.getAlternativen()){
-								for(Zutat zutat2 : getClientData().getZutaten()){
+							for(Long alternativen_id : zutat.getAlternatives()){
+								for(Ingredient zutat2 : getClientData().getIngredients()){
 									if(zutat2.getId().equals(alternativen_id)){
-										if(!FoundZutaten.contains(zutat2)){
-											FoundZutaten.add(zutat2);
+										if(!FoundIngredient.contains(zutat2)){
+											FoundIngredient.add(zutat2);
 											displayZutat(zutat2);
 										}
 									}
@@ -388,9 +390,9 @@ public class Search extends ResizeComposite {
 				} 
 				 else {
 				
-					for(Zutat zutat : getClientData().getZutaten()){
-						if(!FoundZutaten.contains(zutat)){
-							FoundZutaten.add(zutat);
+					for(Ingredient zutat : getClientData().getIngredients()){
+						if(!FoundIngredient.contains(zutat)){
+							FoundIngredient.add(zutat);
 						displayZutat(zutat);
 						}
 					}
@@ -440,10 +442,10 @@ public class Search extends ResizeComposite {
 						
 						// Zutaten des Rezept Ergerbnis Liste der Zutaten
 						for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
-							for(Zutat zutatSuche : getClientData().getZutaten() ){
+							for(Ingredient zutatSuche : getClientData().getIngredients() ){
 								if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
-									if(!FoundZutaten.contains(zutatSuche)){
-										FoundZutaten.add(zutatSuche);
+									if(!FoundIngredient.contains(zutatSuche)){
+										FoundIngredient.add(zutatSuche);
 										displayZutat(zutatSuche);
 									}
 								}
@@ -504,10 +506,10 @@ public class Search extends ResizeComposite {
 		switch(sortMethod){
 		case 1:{
 			//"co2-value"
-			Collections.sort(FoundZutaten,new ValueComparator());
+			Collections.sort(FoundIngredient,new ValueComparator());
 			table.removeAllRows();
-			if(FoundZutaten != null){
-				for (final Zutat item : FoundZutaten){
+			if(FoundIngredient != null){
+				for (final Ingredient item : FoundIngredient){
 					displayZutat(item);
 				}
 			}
@@ -549,10 +551,10 @@ public class Search extends ResizeComposite {
 //			   ComparatorChain chain = new ComparatorChain();
 //			    chain.addComparator(new NameComparator());
 //			    chain.addComparator(new NumberComparator()
-			Collections.sort(FoundZutaten,new NameComparator());
+			Collections.sort(FoundIngredient,new NameComparator());
 			table.removeAllRows();
-			if(FoundZutaten != null){
-				for (final Zutat item : FoundZutaten){
+			if(FoundIngredient != null){
+				for (final Ingredient item : FoundIngredient){
 					displayZutat(item);
 				}
 			}
@@ -654,10 +656,10 @@ public class Search extends ResizeComposite {
 	}
 
 
-	public static void displayZutat(final Zutat zutat) {
+	public static void displayZutat(final Ingredient zutat2) {
 		int row = table.getRowCount();
-		table.setText(row,0,zutat.getSymbol());
-		table.setText(row, 1, "ca. "+Integer.toString((int) zutat.getCO2eWert()).concat("g CO₂-Äquivalent pro 100g"));
+		table.setText(row,0,zutat2.getSymbol());
+		table.setText(row, 1, "ca. "+Integer.toString((int) zutat2.getCo2eValue()).concat("g CO₂-Äquivalent pro 100g"));
 
 
 
@@ -684,13 +686,6 @@ public class Search extends ResizeComposite {
 		return FoundRezepte;
 	}
 
-	public void setFoundZutaten(ArrayList<Zutat> foundZutaten) {
-		FoundZutaten = foundZutaten;
-	}
-
-	public ArrayList<Zutat> getFoundZutaten() {
-		return FoundZutaten;
-	}
 	
 	private static int getLevenshteinDistance(String s, String t) {
 		if (s == null || t == null) {
@@ -768,10 +763,18 @@ public class Search extends ResizeComposite {
 		// actually has the most recent cost counts
 		return p[n];
 	}
+
+	public static void setFoundIngredient(ArrayList<Ingredient> foundIngredient) {
+		FoundIngredient = foundIngredient;
+	}
+
+	public static ArrayList<Ingredient> getFoundIngredient() {
+		return FoundIngredient;
+	}
 }
 
-class NameComparator implements Comparator<Zutat> {
-	  public int compare(Zutat z1, Zutat z2) {
+class NameComparator implements Comparator<Ingredient> {
+	  public int compare(Ingredient z1, Ingredient z2) {
 		  String o1 = z1.getSymbol();
 		  String o2 = z2.getSymbol();
 	    if(o1 instanceof String && o2 instanceof String) {
@@ -785,10 +788,10 @@ class NameComparator implements Comparator<Zutat> {
 	  }
 	}
 
-	class ValueComparator implements Comparator<Zutat> {
-	  public int compare(Zutat z1, Zutat z2) {
-		  long o1 = z1.getCO2eWert();
-		  long o2 = z2.getCO2eWert();
+	class ValueComparator implements Comparator<Ingredient> {
+	  public int compare(Ingredient z1, Ingredient z2) {
+		  long o1 = z1.getCo2eValue();
+		  long o2 = z2.getCo2eValue();
 		  
 	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
 	  }

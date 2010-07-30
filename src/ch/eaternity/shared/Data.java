@@ -14,37 +14,9 @@ public class Data implements Serializable{
 	private  List<Rezept> PublicRezepte;
 	private  List<Rezept> YourRezepte;
 	private  List<Zutat> Zutaten;
+	private  List<Ingredient> ingredients;
 	private  List<SingleDistance> distances;
 
-	public void setZutaten(List<Zutat> zutaten) {
-		Zutaten = zutaten;
-	}
-	public List<Zutat> getZutaten() {
-		return Zutaten;
-	}
-	public void setPublicRezepte(List<Rezept> publicRezepte) {
-		PublicRezepte = publicRezepte;
-	}
-	public List<Rezept> getPublicRezepte() {
-		return PublicRezepte;
-	}
-	public void setYourRezepte(List<Rezept> yourRezepte) {
-		YourRezepte = yourRezepte;
-	}
-	public List<Rezept> getYourRezepte() {
-		return YourRezepte;
-	}
-	
-	public Zutat getZutatByID(long id){
-		for(Zutat zutat : Zutaten){
-			if (zutat.getId() == id){
-				return zutat;
-			}
-		}
-		return null;
-	}
-	
-	
 	public Set<String> getOrcaleIndex() {
 
 		Set<String> oracleIndex = new TreeSet<String>();
@@ -75,11 +47,47 @@ public class Data implements Serializable{
 
 		return oracleIndex;
 	}
+	
+	public void setZutaten(List<Zutat> zutaten) {
+		Zutaten = zutaten;
+	}
+	public List<Zutat> getZutaten() {
+		return Zutaten;
+	}
+	public void setPublicRezepte(List<Rezept> publicRezepte) {
+		PublicRezepte = publicRezepte;
+	}
+	public List<Rezept> getPublicRezepte() {
+		return PublicRezepte;
+	}
+	public void setYourRezepte(List<Rezept> yourRezepte) {
+		YourRezepte = yourRezepte;
+	}
+	public List<Rezept> getYourRezepte() {
+		return YourRezepte;
+	}
+	
+	public Ingredient getIngredientByID(long id){
+		for(Ingredient zutat : ingredients){
+			if (zutat.getId() == id){
+				return zutat;
+			}
+		}
+		return null;
+	}
+	
+	
 	public void setDistances(List<SingleDistance> distances) {
 		this.distances = distances;
 	}
 	public List<SingleDistance> getDistances() {
 		return distances;
+	}
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
+	}
+	public List<Ingredient> getIngredients() {
+		return ingredients;
 	}
 
 

@@ -11,6 +11,8 @@ import java.util.Set;
 import ch.eaternity.client.Search.Listener;
 import ch.eaternity.client.Search.SelectionStyle;
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Extraction;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
@@ -283,15 +285,21 @@ public class EaternityRechner implements EntryPoint {
 		}
 	}
 	
-	public static int AddZutatZumMenu( Zutat zutat) {
+	public static int AddZutatZumMenu( Ingredient item) {
 		// convert zutat to ZutatSpex and call the real method
-		ZutatSpecification zutatSpecification = new ZutatSpecification(zutat.getId(), zutat.getSymbol(),
-				 new Date(),zutat.getStdZustand(), zutat.getStdProduktion(), 
-				zutat.getStdTransportmittel());
-		zutatSpecification.setHerkunft(zutat.getStdHerkunft());
-		zutatSpecification.setMengeGramm(zutat.getStdMengeGramm());
-		zutatSpecification.setSeason(zutat.getStdStartSeason(), zutat.getStdStopSeason());
-		zutatSpecification.setNormalCO2Value(zutat.getCO2eWert());
+		Extraction stdExtraction = null;
+		for(Extraction extraction: item.getExtractions()){
+			if(item.stdExtractionSymbol.equalsIgnoreCase(extraction.symbol)){
+				stdExtraction = extraction;
+			}
+		}
+		ZutatSpecification zutatSpecification = new ZutatSpecification(item.getId(), item.getSymbol(),
+				 new Date(),stdExtraction.stdCondition, stdExtraction.stdProduction, 
+				 stdExtraction.stdMoTransportation);
+		zutatSpecification.setHerkunft(stdExtraction);
+		zutatSpecification.setMengeGramm(item.stdAmountGramm);
+		zutatSpecification.setSeason(stdExtraction.startSeason, stdExtraction.stopSeason);
+		zutatSpecification.setNormalCO2Value(item.getCo2eValue());
 		List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
 		
 		
@@ -306,7 +314,7 @@ public class EaternityRechner implements EntryPoint {
 			ZutatSpecification zutatSpec = iterator.next();
 			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
 				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
+						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 					
 					zutatSpec.setDistance(singleDistance.getDistance());
 					iterator.set(zutatSpec);
@@ -400,8 +408,8 @@ public class EaternityRechner implements EntryPoint {
 		}
 	}
 	
-	private void displayZutaten(List<Zutat> zutaten) {
-		for (Zutat zutat : zutaten) {
+	private void displayZutaten(List<Ingredient> zutaten) {
+		for (Ingredient zutat : zutaten) {
 			if(zutat != null){ //why can it be 0?
 				Search.displayZutat(zutat);
 			}

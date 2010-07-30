@@ -19,6 +19,7 @@ for now this is all German as we are still not having i18n... -->
 		<stdAmountGramm>100</stdAmountGramm>
 		<stdExtraction>Deutschland</stdExtraction>
 		
+		<hasSeason>true</hasSeason>
 		
 		<Extractions>
 			<extraction>
@@ -31,7 +32,7 @@ for now this is all German as we are still not having i18n... -->
 				<moTransportation>LKW</moTransportation>
 
 				<Labels>
-					<label>naturaplan<label>
+					<label>naturaplan</label>
 				</Labels>
 			</extraction>
 		</Extractions>
@@ -67,18 +68,18 @@ for now this is all German as we are still not having i18n... -->
 		</Productions>
 		
 		<Transportation>
-			<MoTransportation>
+			<moTransportation>
 				<symbol>LKW</symbol>
 				<factor>1</factor>
-			</MoTransportation>
-			<MoTransportation>
+			</moTransportation>
+			<moTransportation>
 				<symbol>Schiff - Fluss</symbol>
 				<factor>0.1</factor>
-			</MoTransportation>
-			<MoTransportation>
+			</moTransportation>
+			<moTransportation>
 				<symbol>Zug</symbol>
 				<factor>0.8</factor>
-			</MoTransportation>
+			</moTransportation>
 		<Transportation>
 		
 	</ingredient>

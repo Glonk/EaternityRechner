@@ -13,7 +13,8 @@ public class Condition implements Serializable{
 	 */
 	private static final long serialVersionUID = -6977365500555091257L;
 	@Id Long id;
-	String symbol;
+	public String symbol;
+	public Double factor;
 	
 	private Condition()
 	{

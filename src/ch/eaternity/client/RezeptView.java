@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
@@ -207,7 +208,7 @@ public class RezeptView extends Composite {
 		}
 		
 		Long ParentZutatId = zutatSpec.getZutat_id();
-		Zutat zutat = Search.getClientData().getZutatByID(ParentZutatId);
+		Ingredient zutat = Search.getClientData().getIngredientByID(ParentZutatId);
 		
 		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 0), MenuTable,row);
 		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
@@ -230,7 +231,7 @@ public class RezeptView extends Composite {
 		updateSuggestion();
 	}
 
-	private void openSpecificationDialog(ZutatSpecification zutatSpec, Zutat zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
+	private void openSpecificationDialog(ZutatSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
 		// TODO Auto-generated method stub
 		
 		if(addInfoPanel.getWidgetCount() ==2){

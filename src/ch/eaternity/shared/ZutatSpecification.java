@@ -58,11 +58,11 @@ public class ZutatSpecification  implements Serializable  {
 	
 
 	private int mengeGramm;
-	private Herkuenfte herkunft;
+	private Extraction herkunft;
 	private Date cookingDate;
-	private Zustaende zustand;
-	private Produktionen produktion;
-	private Transportmittel transportmittel;
+	private Condition zustand;
+	private Production produktion;
+	private MoTransportation transportmittel;
 	private Long label;
 	private String startSeason;
 	private String stopSeason;
@@ -73,15 +73,15 @@ public class ZutatSpecification  implements Serializable  {
 	private int NormalCO2Value;
 	
 	public ZutatSpecification(Long zutat_id, String name,
-		 Date cookingDate,Zustaende zustand,Produktionen produktion, 
-			Transportmittel transportmittel) {
+		 Date cookingDate,Condition symbol,Production symbol2, 
+		 MoTransportation symbol3) {
 		this.setName(name);
 		this.setZutat_id(zutat_id);
 		
 		this.cookingDate = cookingDate;
-		this.zustand = zustand;
-		this.produktion = produktion;
-		this.transportmittel = transportmittel;
+		this.zustand = symbol;
+		this.produktion = symbol2;
+		this.transportmittel = symbol3;
 //		this.setLabels(labels);
 		
 	}
@@ -97,12 +97,12 @@ public class ZutatSpecification  implements Serializable  {
 		this.setName(name);
 	}
 
-	public void setHerkunft(Herkuenfte herkuenfte) {
-		this.herkunft = herkuenfte;
+	public void setHerkunft(Extraction stdExtractionSymbol) {
+		this.herkunft = stdExtractionSymbol;
 	}
 	
 	
-	public Herkuenfte getHerkunft() {
+	public Extraction getHerkunft() {
 		return herkunft;
 	}
 	public void setCookingDate(Date cookingDate) {
@@ -111,22 +111,22 @@ public class ZutatSpecification  implements Serializable  {
 	public Date getCookingDate() {
 		return cookingDate;
 	}
-	public void setZustand(Zustaende zustand) {
+	public void setZustand(Condition zustand) {
 		this.zustand = zustand;
 	}
-	public Zustaende getZustand() {
+	public Condition getZustand() {
 		return zustand;
 	}
-	public void setProduktion(Produktionen produktion) {
+	public void setProduktion(Production produktion) {
 		this.produktion = produktion;
 	}
-	public Produktionen getProduktion() {
+	public Production getProduktion() {
 		return produktion;
 	}
-	public void setTransportmittel(Transportmittel transportmittel) {
+	public void setTransportmittel(MoTransportation transportmittel) {
 		this.transportmittel = transportmittel;
 	}
-	public Transportmittel getTransportmittel() {
+	public MoTransportation getTransportmittel() {
 		return transportmittel;
 	}
 
@@ -205,34 +205,19 @@ public class ZutatSpecification  implements Serializable  {
 	public double getCalculatedCO2Value() {
 		double wert = NormalCO2Value*mengeGramm/100;
 		
+		if(transportmittel.factor != null){
 		if(distance != 0){
-		double transportfaktor = 0;
-		switch (transportmittel) {
-			case Flugzeug: transportfaktor=1.20;break; 
-			case  LKW: transportfaktor=0.100;break; 
-			case Schiff: transportfaktor=0.010;
+		wert += transportmittel.factor*distance/1000000*mengeGramm;
+		}
 		}
 		
-		wert += transportfaktor*distance/1000000*mengeGramm;
+		if(zustand.factor != null){
+		wert += zustand.factor*mengeGramm;
 		}
 		
-		double zustandfaktor = 0;
-		switch (zustand) {
-		case tiefgekühlt:zustandfaktor = 2;break; 
-		case getrocknet:zustandfaktor = .5;break; 
-		case eingemacht:zustandfaktor = 1;break; 
-		case frisch:zustandfaktor = 0;
-
+		if(produktion.factor != null){
+		wert += produktion.factor*mengeGramm;
 		}
-		wert += zustandfaktor*mengeGramm;
-		
-		double produktionsfaktor = 0;
-		switch(produktion){
-		case biologisch: produktionsfaktor = -0.1;break; 
-		case Treibhaus:produktionsfaktor = 3;break; 
-		case konventionell:produktionsfaktor = 0;
-		}
-		wert += produktionsfaktor*mengeGramm;
 
 		return wert;
 		

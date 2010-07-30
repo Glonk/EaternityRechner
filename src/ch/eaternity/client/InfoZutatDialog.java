@@ -4,6 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 
+import ch.eaternity.shared.Condition;
+import ch.eaternity.shared.Extraction;
+import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.MoTransportation;
+import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
@@ -15,19 +20,24 @@ import ch.eaternity.shared.Zutat.Zustaende;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,22 +52,11 @@ public class InfoZutatDialog extends Composite {
 	static double distance = 0;
 
 	@UiField SelectionStyle selectionStyle;
-//	@UiField DisclosurePanel Labels;
-	@UiField ListBox Herkunft;
-	@UiField ToggleButton flugzeug;
-	@UiField ToggleButton bio;
-	@UiField ToggleButton treibhaus;
-	@UiField ToggleButton tiefgekühlt;
-	@UiField ToggleButton eingemacht;
-	@UiField ToggleButton getrocknet;
-	@UiField Label saison;
-	@UiField HTMLPanel zustandHTML;
-	@UiField HTMLPanel produktionHTML;
-	@UiField HTMLPanel herkunftHTML;
-	@UiField HTMLPanel saisonHTML;
 	ZutatSpecification zutatSpec;
 	private int selectedRow;
 	private FlexTable menuTable;
+	@UiField
+	FlexTable specificationTable;
 	private Rezept rezept;
 	private FlexTable suggestTable;
 	
@@ -89,7 +88,7 @@ public class InfoZutatDialog extends Composite {
 	
 }
 
-	public InfoZutatDialog(ZutatSpecification zutatSpec, Zutat zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable) {
+	public InfoZutatDialog(ZutatSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML("<h1>"+ zutatSpec.getName() +"</h1>");
 		// TODO Auto-generated constructor stub
@@ -103,51 +102,119 @@ public class InfoZutatDialog extends Composite {
 
 	
 	
-	public void setValues( Zutat zutat){
+	public void setValues( final Ingredient zutat){
 		
-//		InfoZutat.zutatMenge.setText(Integer.toString(zutatSpec.getMengeGramm()));
-		
-		Herkunft.clear();
-		for(  Herkuenfte herkunft: zutat.getHerkuenfte() ){
-			Herkunft.addItem(herkunft.name());
-		}
-		Herkunft.setSelectedIndex(zutat.getHerkuenfte().indexOf(zutatSpec.getHerkunft()));
-		
-		Produktionen produktion = zutatSpec.getProduktion();
-		bio.setDown(false);
-		treibhaus.setDown(false);
-		switch (produktion){
-			case biologisch: bio.setDown(true);break;
-			case Treibhaus: treibhaus.setDown(true);
-		}
+		if(zutat.getExtractions().size()>0){
 			
-		Zustaende zustand = zutatSpec.getZustand();
-		tiefgekühlt.setDown(false);
-		eingemacht.setDown(false);
-		getrocknet.setDown(false);
-		switch (zustand){
-			case tiefgekühlt: tiefgekühlt.setDown(true);break;
-			case eingemacht: eingemacht.setDown(true);break;
-			case getrocknet: getrocknet.setDown(true);
+			final ListBox herkuenfte = new ListBox();
+			
+			for(Extraction extraction : zutat.getExtractions()){
+				herkuenfte.addItem(extraction.symbol);
+			}
+			herkuenfte.addChangeHandler(new ChangeHandler(){
+				public void onChange(ChangeEvent event){
+					zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
+					for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+						if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
+								singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
+							
+							zutatSpec.setDistance(singleDistance.getDistance());
+							
+						}
+
+					}
+			
+					updateZutatCO2();
+				}
+			});
+		    
+			int row = specificationTable.getRowCount();
+			specificationTable.setWidget(row,0,herkuenfte);
+			
+			
+			herkuenfte.setSelectedIndex(zutat.getExtractions().indexOf(zutatSpec.getHerkunft()));
+			
 		}
 		
-		Transportmittel transport = zutatSpec.getTransportmittel();
-		flugzeug.setDown(false);
-		switch (transport){
-			case Flugzeug: flugzeug.setDown(true);
+		if(zutat.hasSeason){
+			updateSaison(zutatSpec);
+		}
+
+		if(zutat.moTransportations.size()>0){
+			int row = specificationTable.getRowCount();
+			int col = 0;
+			for(final MoTransportation moTransportations : zutat.moTransportations){
+				RadioButton transport = new RadioButton("Transportations",moTransportations.symbol);
+				if(moTransportations.equals(zutatSpec.getTransportmittel())){
+					transport.setValue(true);
+				}
+				transport.addClickHandler(new ClickHandler() {
+				      public void onClick(ClickEvent event) {
+				        boolean checked = ((RadioButton) event.getSource()).isChecked();
+				        if(checked){
+				        	zutatSpec.setTransportmittel(moTransportations);
+				        	updateZutatCO2();
+				        }
+				      }
+				    });
+				
+//				specificationTable.addCell(row);
+				specificationTable.setWidget(row,col , transport);
+				col = specificationTable.getCellCount(row);
+
+			}
 		}
 		
-//		ZutatSpecification zutatSpecification = new ZutatSpecification(zutat.getId(), zutat.getSymbol(),
-//				 new Date(),zutat.getStdZustand(), zutat.getStdProduktion(), 
-//				zutat.getStdTransportmittel());
-//		zutatSpecification.setHerkunft(zutat.getStdHerkunft());
-//		zutatSpecification.setMengeGramm(zutat.getStdMengeGramm());
-//		zutatSpecification.setSeason(zutat.getStdStartSeason(), zutat.getStdStopSeason());
-//		zutatSpecification.setNormalCO2Value(zutat.getCO2eWert());
+		if(zutat.productions.size()>0){
+			int row = specificationTable.getRowCount();
+			int col = 0;
+			for(final Production production : zutat.productions){
+				RadioButton productionBox = new RadioButton("productions",production.symbol);
+				if(production.equals(zutatSpec.getProduktion())){
+					productionBox.setValue(true);
+				}
+				productionBox.addClickHandler(new ClickHandler() {
+				      public void onClick(ClickEvent event) {
+				        boolean checked = ((RadioButton) event.getSource()).isChecked();
+				        if(checked){
+				        	zutatSpec.setProduktion(production);
+				        	updateZutatCO2();
+				        }
+				      }
+				    });
+
+				specificationTable.setWidget(row,col , productionBox);
+				col = specificationTable.getCellCount(row);
+
+			}
+		}
 		
-//		TODO check if there is something to do
-//		InfoZutat.zutat = zutatSpec;
-		updateSaison(zutatSpec);
+		
+		if(zutat.conditions.size()>0){
+			int row = specificationTable.getRowCount();
+			int col = 0;
+			for(final Condition condition : zutat.conditions){
+				RadioButton conditionBox = new RadioButton("conditions",condition.symbol);
+				if(condition.equals(zutatSpec.getZustand())){
+					conditionBox.setValue(true);
+				}
+				conditionBox.addClickHandler(new ClickHandler() {
+				      public void onClick(ClickEvent event) {
+				        boolean checked = ((RadioButton) event.getSource()).isChecked();
+				        if(checked){
+				        	zutatSpec.setZustand(condition);
+				        	updateZutatCO2();
+				        }
+				      }
+				    });
+
+				specificationTable.setWidget(row,col , conditionBox);
+				col = specificationTable.getCellCount(row);
+			}
+		}
+		
+
+		
 
 		
 	}
@@ -164,15 +231,14 @@ public class InfoZutatDialog extends Composite {
 		if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 				dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
 			
-			saison.setText("Diese Zutat hat Saison");
-			styleLabel(saisonHTML,true);
+			
+			specificationTable.setHTML(1, 1, "Diese Zutat hat Saison");
 			
 			styleHinweis(false);
 			hinweisPanel.setText("Angaben sind koherent.");
 			
 		} else {
-			saison.setText("Diese Zutat hat keine Saison");
-			styleLabel(saisonHTML,false);
+			specificationTable.setHTML(1, 1, "Diese Zutat hat keine Saison");
 			
 			// unvollständig:
 			
@@ -180,104 +246,98 @@ public class InfoZutatDialog extends Composite {
 			hinweisPanel.setText("Angaben sind unvollständig.");
 		}
 		
-		//TODO uncomment this:
-//		ZutatSpecification zutatSpec = getZutatSpecification(InfoZutat.zutat) ;
-		
-		//TODO uncomment this:
-		
-//		InfoZutat.updateZutatCO2(zutatSpec,EaternityRechner.selectedRow);
 		
 	}
 
 	
-
-	@UiHandler("bio")
-	void onBioButtonClick(ClickEvent event) {
-		treibhaus.setDown(false);
-		if(!bio.isDown()){
-			zutatSpec.setProduktion(Produktionen.konventionell);
-		} else {
-			zutatSpec.setProduktion(Produktionen.biologisch);
-		}
-		updateZutatCO2();
-		
-		
-	}
-	@UiHandler("treibhaus")
-	void onTreibhausButtonClick(ClickEvent event) {
-		bio.setDown(false);
-		if(!treibhaus.isDown()){
-			zutatSpec.setProduktion(Produktionen.konventionell);
-		} else {
-			zutatSpec.setProduktion(Produktionen.Treibhaus);
-		}
-		updateZutatCO2();
-	}
-
-	@UiHandler("tiefgekühlt")
-	void onTiefButtonClick(ClickEvent event) {
-		getrocknet.setDown(false);
-		eingemacht.setDown(false);
-
-		if(!tiefgekühlt.isDown()){
-			zutatSpec.setZustand(Zustaende.frisch);
-		} else {
-			zutatSpec.setZustand(Zustaende.tiefgekühlt);
-		}
-		updateZutatCO2();
-	}
-	@UiHandler("getrocknet")
-	void onTrockButtonClick(ClickEvent event) {
-		eingemacht.setDown(false);
-		tiefgekühlt.setDown(false);
-
-		if(!getrocknet.isDown()){
-			zutatSpec.setZustand(Zustaende.frisch);
-		} else {
-			zutatSpec.setZustand(Zustaende.getrocknet);
-		}
-		updateZutatCO2();
-	}
-	@UiHandler("eingemacht")
-	void onEingButtonClick(ClickEvent event) {
-		getrocknet.setDown(false);
-		tiefgekühlt.setDown(false);
-
-		if(!eingemacht.isDown()){
-			zutatSpec.setZustand(Zustaende.frisch);
-		} else {
-			zutatSpec.setZustand(Zustaende.eingemacht);
-		}
-		updateZutatCO2();
-	}
-	
-	@UiHandler("flugzeug")
-	void onFlugButtonClick(ClickEvent event) {
-		if(!flugzeug.isDown()){
-			zutatSpec.setTransportmittel(Transportmittel.LKW);
-		} else {
-			zutatSpec.setTransportmittel(Transportmittel.Flugzeug);
-		}
-		updateZutatCO2();
-	}
-	
-	@UiHandler("Herkunft")
-	void onChange(ChangeEvent event) {
-			
-		zutatSpec.setHerkunft(Herkuenfte.valueOf( Herkunft.getItemText(Herkunft.getSelectedIndex())) );
-			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
-				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
-					
-					zutatSpec.setDistance(singleDistance.getDistance());
-					
-				}
-
-			}
-	
-			updateZutatCO2();
-		
-	}
+//
+//	@UiHandler("bio")
+//	void onBioButtonClick(ClickEvent event) {
+//		treibhaus.setDown(false);
+//		if(!bio.isDown()){
+//			zutatSpec.setProduktion(Produktionen.konventionell);
+//		} else {
+//			zutatSpec.setProduktion(Produktionen.biologisch);
+//		}
+//		updateZutatCO2();
+//		
+//		
+//	}
+//	@UiHandler("treibhaus")
+//	void onTreibhausButtonClick(ClickEvent event) {
+//		bio.setDown(false);
+//		if(!treibhaus.isDown()){
+//			zutatSpec.setProduktion(Produktionen.konventionell);
+//		} else {
+//			zutatSpec.setProduktion(Produktionen.Treibhaus);
+//		}
+//		updateZutatCO2();
+//	}
+//
+//	@UiHandler("tiefgekühlt")
+//	void onTiefButtonClick(ClickEvent event) {
+//		getrocknet.setDown(false);
+//		eingemacht.setDown(false);
+//
+//		if(!tiefgekühlt.isDown()){
+//			zutatSpec.setZustand(Zustaende.frisch);
+//		} else {
+//			zutatSpec.setZustand(Zustaende.tiefgekühlt);
+//		}
+//		updateZutatCO2();
+//	}
+//	@UiHandler("getrocknet")
+//	void onTrockButtonClick(ClickEvent event) {
+//		eingemacht.setDown(false);
+//		tiefgekühlt.setDown(false);
+//
+//		if(!getrocknet.isDown()){
+//			zutatSpec.setZustand(Zustaende.frisch);
+//		} else {
+//			zutatSpec.setZustand(Zustaende.getrocknet);
+//		}
+//		updateZutatCO2();
+//	}
+//	@UiHandler("eingemacht")
+//	void onEingButtonClick(ClickEvent event) {
+//		getrocknet.setDown(false);
+//		tiefgekühlt.setDown(false);
+//
+//		if(!eingemacht.isDown()){
+//			zutatSpec.setZustand(Zustaende.frisch);
+//		} else {
+//			zutatSpec.setZustand(Zustaende.eingemacht);
+//		}
+//		updateZutatCO2();
+//	}
+//	
+//	@UiHandler("flugzeug")
+//	void onFlugButtonClick(ClickEvent event) {
+//		if(!flugzeug.isDown()){
+//			zutatSpec.setTransportmittel(Transportmittel.LKW);
+//		} else {
+//			zutatSpec.setTransportmittel(Transportmittel.Flugzeug);
+//		}
+//		updateZutatCO2();
+//	}
+//	
+//	@UiHandler("Herkunft")
+//	void onChange(ChangeEvent event) {
+//			
+//		zutatSpec.setHerkunft(Herkuenfte.valueOf( Herkunft.getItemText(Herkunft.getSelectedIndex())) );
+//			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+//				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
+//						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
+//					
+//					zutatSpec.setDistance(singleDistance.getDistance());
+//					
+//				}
+//
+//			}
+//	
+//			updateZutatCO2();
+//		
+//	}
 	
 	//TODO here comes all the CO2 Logic
 	public void updateZutatCO2(){

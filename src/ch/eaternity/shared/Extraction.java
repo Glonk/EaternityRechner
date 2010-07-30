@@ -22,9 +22,10 @@ public class Extraction implements Serializable{
 	@Id Long id;
     
 	public String symbol;
-	public Boolean hasSeason;
+
 	public String startSeason;
 	public String stopSeason;
+
 	
 	public Condition stdCondition;
 	public Production stdProduction;
