@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
@@ -18,4 +19,7 @@ public interface DataServiceAsync {
   public void getYourRezepte(AsyncCallback<List<Rezept>> async);
   public void getData(AsyncCallback<Data> async);
   public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
+  public void getIngredientsXml(AsyncCallback<String> ingredientsXml);
+  public void persistIngredients(ArrayList<Ingredient> ingredients,
+		AsyncCallback<Boolean> asyncCallback);
 }

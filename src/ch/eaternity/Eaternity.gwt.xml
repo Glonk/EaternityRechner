@@ -33,6 +33,9 @@
   <source path='client'/>
   <source path='shared'/>
   
+  <!-- Okay, let's try this one -->
+  <inherits name="com.googlecode.objectify.Objectify" />
+  
   <inherits name='com.google.gwt.maps.GoogleMaps' />
   <!--script src="http://maps.google.com/maps?gwt=1&amp;file=api&amp;v=2&amp;sensor=false" /-->
   <!-- this is the key for testing -->

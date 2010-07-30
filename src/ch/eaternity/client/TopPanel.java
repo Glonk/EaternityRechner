@@ -61,6 +61,7 @@ public class TopPanel extends Composite {
   @UiField Anchor signOutLink;
   @UiField Anchor signInLink;
   @UiField Anchor AdminLink;
+  @UiField Anchor ingredientLink;
   @UiField Label loginLabel;
   @UiField
 static ListBox Monate;
@@ -77,6 +78,7 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
     initWidget(binder.createAndBindUi(this));
     locationButton.setEnabled(false);
     AdminLink.setVisible(false);
+    ingredientLink.setVisible(false);
     signOutLink.setVisible(false);
   
 	Monate.addItem("Januar");

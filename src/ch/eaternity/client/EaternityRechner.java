@@ -88,7 +88,7 @@ public class EaternityRechner implements EntryPoint {
 	static int selectedRezept = -1;
 	
 	private HandlerRegistration adminHandler;
-	
+	private HandlerRegistration ingredientHandler;
 
 	
 	/**
@@ -150,6 +150,7 @@ public class EaternityRechner implements EntryPoint {
 					loadLogin();
 					if(adminHandler != null){
 						adminHandler.removeHandler();
+						ingredientHandler.removeHandler();
 					}
 				}
 			}
@@ -226,6 +227,16 @@ public class EaternityRechner implements EntryPoint {
 			}
 		});
 		topPanel.AdminLink.setVisible(true);
+		
+		ingredientHandler = topPanel.ingredientLink.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				IngredientsDialog dlg = new IngredientsDialog();
+				dlg.show();
+				dlg.center();
+			}
+		});
+		topPanel.ingredientLink.setVisible(true);
+		
 		return adminHandler;
 	}
 

@@ -17,6 +17,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.DataService;
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
@@ -31,6 +32,7 @@ import ch.eaternity.shared.Zutat.Zustaende;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.googlecode.objectify.Key;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -350,5 +352,21 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			pm.close();
 		}
 		return distances.size();
+	}
+	
+	public Boolean persistIngredients(ArrayList<Ingredient> ingredients)  throws NotLoggedInException
+	{
+		
+		DAO dao = new DAO();
+
+		Boolean success = dao.CreateIngredients(ingredients);
+		return success;
+		
+	}
+	
+	public String getIngredientsXml()
+	{
+		DAO dao = new DAO();
+		return dao.getAllIngredientsXml();
 	}
 }

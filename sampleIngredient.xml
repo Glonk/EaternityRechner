@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+
+<!-- this is a sample XML file to define an ingredient
+use this to populate the datastore as an admin of the application
+for now this is all German as we are still not having i18n... -->
+
+<Ingredients>
+
+	<ingredient>
+		<id>1</id>
+		<symbol>Tomate</symbol>
+		<co2eValue>200</co2eValue>
+		
+		<Alternatives>
+			<zutatId>2</zutatId>
+			<zutatId>3</zutatId>
+		</Alternatives>
+
+		<stdAmountGramm>100</stdAmountGramm>
+		<stdExtraction>Deutschland</stdExtraction>
+		
+		
+		<Extractions>
+			<extraction>
+				<symbol>Deutschland</symbol>
+				<startSeason>01.10</startSeason>
+				<stopSeason>21.03</stopSeason>
+				
+				<condition>frisch</condition>
+				<production>konventionell</production>
+				<moTransportation>LKW</moTransportation>
+
+				<Labels>
+					<label>naturaplan<label>
+				</Labels>
+			</extraction>
+		</Extractions>
+
+		<Conditions>
+			<condition>
+				<symbol>frisch</symbol>
+				<factor>1</factor>
+			</condition>
+			<condition>
+				<symbol>tiefgekühlt</symbol>
+				<factor>1.3</factor>
+			</condition>
+			<condition>
+				<symbol>getrocknet</symbol>
+				<factor>1.1</factor>
+			</condition>
+		</Conditions>
+		
+		<Productions>
+			<production>
+				<symbol>konventionell</symbol>
+				<factor>1</factor>
+			</production>
+			<production>
+				<symbol>BIO</symbol>
+				<factor>0.9</factor>
+			</production>
+			<production>
+				<symbol>Treibhaus</symbol>
+				<factor>1.9</factor>
+			</production>
+		</Productions>
+		
+		<Transportation>
+			<MoTransportation>
+				<symbol>LKW</symbol>
+				<factor>1</factor>
+			</MoTransportation>
+			<MoTransportation>
+				<symbol>Schiff - Fluss</symbol>
+				<factor>0.1</factor>
+			</MoTransportation>
+			<MoTransportation>
+				<symbol>Zug</symbol>
+				<factor>0.8</factor>
+			</MoTransportation>
+		<Transportation>
+		
+	</ingredient>
+
+</Ingredients>
