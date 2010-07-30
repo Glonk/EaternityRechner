@@ -205,18 +205,18 @@ public class ZutatSpecification  implements Serializable  {
 	public double getCalculatedCO2Value() {
 		double wert = NormalCO2Value*mengeGramm/100;
 		
-		if(transportmittel.factor != null){
+		if(transportmittel != null && transportmittel.factor != null){
 		if(distance != 0){
 		wert += transportmittel.factor*distance/1000000*mengeGramm;
 		}
 		}
 		
-		if(zustand.factor != null){
-		wert += zustand.factor*mengeGramm;
+		if(zustand != null && zustand.factor != null){
+		wert += zustand.factor*mengeGramm/1000;
 		}
 		
-		if(produktion.factor != null){
-		wert += produktion.factor*mengeGramm;
+		if(produktion != null && produktion.factor != null){
+		wert += produktion.factor*mengeGramm/1000;
 		}
 
 		return wert;

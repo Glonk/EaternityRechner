@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import ch.eaternity.shared.Extraction;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
@@ -142,20 +144,20 @@ public class DistancesDialog extends DialogBox{
 		 ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.getClientData().getDistances();
 		 ArrayList<String> distancesRequested = new ArrayList<String>();
 		  boolean notFound;
-		  List<Zutat> zutaten = Search.getClientData().getZutaten();
-		  for( Zutat zutat : zutaten){
-			  for(Herkuenfte herkunft : zutat.getHerkuenfte()){
+		  List<Ingredient> zutaten = Search.getClientData().getIngredients();
+		  for( Ingredient zutat : zutaten){
+			  for(Extraction herkunft : zutat.getExtractions()){
 				  
 				  notFound = true;
 				  for(SingleDistance singleDistance : distances){
 					  if(singleDistance.getFrom().contentEquals(string) && 
-							  singleDistance.getTo().contentEquals(herkunft.toString())){
+							  singleDistance.getTo().contentEquals(herkunft.symbol)){
 						  notFound = false;
 					  }
 				  }
-				  if(notFound && !distancesRequested.contains(herkunft.toString()) ){
-					  distancesRequested.add(herkunft.toString());
-					  getDistance( string, herkunft.toString());
+				  if(notFound && !distancesRequested.contains(herkunft.symbol) ){
+					  distancesRequested.add(herkunft.symbol);
+					  getDistance( string, herkunft.symbol);
 				  }
 					  
 				  
@@ -180,7 +182,7 @@ public class DistancesDialog extends DialogBox{
 				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
 				for(SingleDistance singleDistance : Search.getClientData().getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
+							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 
 						zutatSpec.setDistance(singleDistance.getDistance());
 						rezeptView.getRezept().Zutaten.set(index, zutatSpec);

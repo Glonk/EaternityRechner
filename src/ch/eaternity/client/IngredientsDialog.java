@@ -166,6 +166,109 @@ public class IngredientsDialog extends DialogBox{
 //					Window.alert("CO2eWert : "  + ((Node) CO2eWert.item(0)).getNodeValue());
 					newIngredient.hasSeason = Boolean.valueOf( ((Node) hasSeason.item(0)).getNodeValue() ) ;
 					
+					
+					//
+					NodeList Conditions = zutatElmnt.getElementsByTagName("Conditions");
+					Element conditionsElement = (Element) Conditions.item(0);
+
+					if (conditionsElement.getNodeType() == Node.ELEMENT_NODE) {
+
+						NodeList ConditionsElmntLst = conditionsElement.getElementsByTagName("condition");
+						ArrayList<Condition> newConditions = new ArrayList<Condition>(ConditionsElmntLst.getLength());
+						for(int j=0; j<ConditionsElmntLst.getLength(); j++){
+							Element labelsId = (Element) ConditionsElmntLst.item(j);
+
+							NodeList LabelSymbolElmntLst = labelsId.getElementsByTagName("symbol");
+							Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
+							NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
+							//									Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
+							Condition condition = new Condition(( (Node) LabelSymbol.item(0)).getNodeValue() );
+
+							NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
+							Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
+							NodeList LabelFactor = LabelFactorElmnt.getChildNodes();
+							//									Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
+							Double factor = Double.valueOf(	( (Node) LabelFactor.item(0)).getNodeValue() );
+							condition.factor = factor;
+
+							newConditions.add(condition);
+
+
+						}
+
+						newIngredient.conditions = newConditions;
+
+					}
+
+						//
+						NodeList Productions = zutatElmnt.getElementsByTagName("Productions");
+						Element productionsElement = (Element) Productions.item(0);
+
+						if (productionsElement.getNodeType() == Node.ELEMENT_NODE) {
+
+							NodeList ProductionsElmntLst = productionsElement.getElementsByTagName("production");
+							ArrayList<Production> newProductions = new ArrayList<Production>(ProductionsElmntLst.getLength());
+							for(int j=0; j<ProductionsElmntLst.getLength(); j++){
+								Element labelsId = (Element) ProductionsElmntLst.item(j);
+
+								NodeList LabelSymbolElmntLst = labelsId.getElementsByTagName("symbol");
+								Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
+								NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
+								//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
+								Production production = new Production(( (Node) LabelSymbol.item(0)).getNodeValue() );
+
+								NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
+								Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
+								NodeList LabelFactor = LabelFactorElmnt.getChildNodes();
+								//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
+								Double factor = Double.valueOf(	( (Node) LabelFactor.item(0)).getNodeValue() );
+								production.factor = factor;
+
+								newProductions.add(production);
+
+
+							}
+
+							newIngredient.productions = newProductions;
+						}
+
+
+
+						//
+						NodeList Transportations = zutatElmnt.getElementsByTagName("Transportation");
+						Element TransportationsElement = (Element) Transportations.item(0);
+
+						if (TransportationsElement.getNodeType() == Node.ELEMENT_NODE) {
+
+							NodeList TransportationElmntLst = TransportationsElement.getElementsByTagName("moTransportation");
+							ArrayList<MoTransportation> newTransportation = new ArrayList<MoTransportation>(TransportationElmntLst.getLength());
+							for(int j=0; j<TransportationElmntLst.getLength(); j++){
+								Element labelsId = (Element) TransportationElmntLst.item(j);
+
+								NodeList LabelSymbolElmntLst = labelsId.getElementsByTagName("symbol");
+								Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
+								NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
+								//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
+								MoTransportation moTransportation = new MoTransportation(( (Node) LabelSymbol.item(0)).getNodeValue() );
+
+								NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
+								Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
+								NodeList LabelFactor = LabelFactorElmnt.getChildNodes();
+								//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
+								Double factor = Double.valueOf(	( (Node) LabelFactor.item(0)).getNodeValue() );
+								moTransportation.factor = factor;
+
+								newTransportation.add(moTransportation);
+
+
+							}
+
+							newIngredient.moTransportations = newTransportation;
+						}
+					
+					
+					
+					
 
 					NodeList herkuenfte = zutatElmnt.getElementsByTagName("Extractions");
 					Element herkuenfteElement = (Element) herkuenfte.item(0);
@@ -206,24 +309,33 @@ public class IngredientsDialog extends DialogBox{
 								Element zustandElmnt = (Element) zustandElmntLst.item(0);
 								NodeList zustand = zustandElmnt.getChildNodes();
 //								Window.alert("std zustand : "  + ((Node) zustand.item(0)).getNodeValue());
-								Condition condition = new Condition( ((Node) zustand.item(0)).getNodeValue() );
-								extraction.stdCondition = condition;
-								
+								for(Condition condition : newIngredient.conditions){
+									if(((Node) zustand.item(0)).getNodeValue().contentEquals(condition.symbol) ){
+										extraction.stdCondition = condition;
+									}
+								}
+
 								// std produktion
 								NodeList produktionElmntLst = extractionElement.getElementsByTagName("production");
 								Element produktionElmnt = (Element) produktionElmntLst.item(0);
 								NodeList produktion = produktionElmnt.getChildNodes();
 //								Window.alert("std produktion : "  + ((Node) produktion.item(0)).getNodeValue());
-								Production production = new Production( ((Node) produktion.item(0)).getNodeValue() );
-								extraction.stdProduction = production;
+								for(Production production : newIngredient.productions){
+									if(((Node) produktion.item(0)).getNodeValue().contentEquals(production.symbol) ){
+										extraction.stdProduction = production;
+									}
+								}
 								
 								// std transportmittel
 								NodeList transportmittelElmntLst = extractionElement.getElementsByTagName("moTransportation");
 								Element transportmittelElmnt = (Element) transportmittelElmntLst.item(0);
 								NodeList transportmittel = transportmittelElmnt.getChildNodes();
 //								Window.alert("std transportmittel : "  + ((Node) transportmittel.item(0)).getNodeValue());
-								MoTransportation moTransportation = new MoTransportation( ((Node) transportmittel.item(0)).getNodeValue() );
-								extraction.stdMoTransportation = moTransportation;
+								for(MoTransportation moTransportation : newIngredient.moTransportations){
+									if(((Node) transportmittel.item(0)).getNodeValue().contentEquals(moTransportation.symbol) ){
+										extraction.stdMoTransportation = moTransportation;
+									}
+								}
 								
 //
 								NodeList labels = extractionElement.getElementsByTagName("Labels");
@@ -247,6 +359,9 @@ public class IngredientsDialog extends DialogBox{
 
 									}
 
+									if(newIngredient.stdExtractionSymbol.equalsIgnoreCase(extraction.symbol)){
+										newIngredient.stdExtraction = extraction;
+									}
 									extraction.stdProductLabels = newLabels;
 								}
 //								
@@ -260,108 +375,11 @@ public class IngredientsDialog extends DialogBox{
 						// even so it doesn't work no more?
 						newIngredient.setExtractions(newHerkuenfte);
 						
-						//
-						NodeList Conditions = zutatElmnt.getElementsByTagName("Conditions");
-						Element conditionsElement = (Element) Conditions.item(0);
-
-						if (conditionsElement.getNodeType() == Node.ELEMENT_NODE) {
-
-							NodeList ConditionsElmntLst = conditionsElement.getElementsByTagName("condition");
-							ArrayList<Condition> newConditions = new ArrayList<Condition>(ConditionsElmntLst.getLength());
-							for(int j=0; j<ConditionsElmntLst.getLength(); j++){
-								Element labelsId = (Element) ConditionsElmntLst.item(j);
-									
-									NodeList LabelSymbolElmntLst = labelsId.getElementsByTagName("symbol");
-									Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
-									NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
-//									Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-									Condition condition = new Condition(( (Node) LabelSymbol.item(0)).getNodeValue() );
-									
-									NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
-									Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
-									NodeList LabelFactor = LabelFactorElmnt.getChildNodes();
-//									Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-									Double factor = Double.valueOf(	( (Node) LabelFactor.item(0)).getNodeValue() );
-									condition.factor = factor;
-									
-									newConditions.add(condition);
-									
-
-							}
-
-							newIngredient.conditions = newConditions;
-							
-
-
-							//
-							NodeList Productions = zutatElmnt.getElementsByTagName("Productions");
-							Element productionsElement = (Element) Productions.item(0);
-
-							if (productionsElement.getNodeType() == Node.ELEMENT_NODE) {
-
-								NodeList ProductionsElmntLst = productionsElement.getElementsByTagName("production");
-								ArrayList<Production> newProductions = new ArrayList<Production>(ProductionsElmntLst.getLength());
-								for(int j=0; j<ProductionsElmntLst.getLength(); j++){
-									Element labelsId = (Element) ProductionsElmntLst.item(j);
-
-									NodeList LabelSymbolElmntLst = labelsId.getElementsByTagName("symbol");
-									Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
-									NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
-									//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-									Production production = new Production(( (Node) LabelSymbol.item(0)).getNodeValue() );
-
-									NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
-									Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
-									NodeList LabelFactor = LabelFactorElmnt.getChildNodes();
-									//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-									Double factor = Double.valueOf(	( (Node) LabelFactor.item(0)).getNodeValue() );
-									production.factor = factor;
-
-									newProductions.add(production);
-
-
-								}
-
-								newIngredient.productions = newProductions;
-							}
-
-
-
-							//
-							NodeList Transportations = zutatElmnt.getElementsByTagName("Transportation");
-							Element TransportationsElement = (Element) Transportations.item(0);
-
-							if (TransportationsElement.getNodeType() == Node.ELEMENT_NODE) {
-
-								NodeList TransportationElmntLst = TransportationsElement.getElementsByTagName("moTransportation");
-								ArrayList<MoTransportation> newTransportation = new ArrayList<MoTransportation>(TransportationElmntLst.getLength());
-								for(int j=0; j<TransportationElmntLst.getLength(); j++){
-									Element labelsId = (Element) TransportationElmntLst.item(j);
-
-									NodeList LabelSymbolElmntLst = labelsId.getElementsByTagName("symbol");
-									Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
-									NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
-									//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-									MoTransportation moTransportation = new MoTransportation(( (Node) LabelSymbol.item(0)).getNodeValue() );
-
-									NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
-									Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
-									NodeList LabelFactor = LabelFactorElmnt.getChildNodes();
-									//										Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-									Double factor = Double.valueOf(	( (Node) LabelFactor.item(0)).getNodeValue() );
-									moTransportation.factor = factor;
-
-									newTransportation.add(moTransportation);
-
-
-								}
-
-								newIngredient.moTransportations = newTransportation;
-							}
-
-						}
 						
+
 						
+
+
 					}
 				}
 			}

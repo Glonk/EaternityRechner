@@ -2,7 +2,10 @@
 
 <!-- this is a sample XML file to define an ingredient
 use this to populate the datastore as an admin of the application
-for now this is all German as we are still not having i18n... -->
+for now this is all German as we are still not having i18n...
+
+factor is always the amount of CO2 associated with 1kg of the ingredient
+ -->
 
 <Ingredients>
 

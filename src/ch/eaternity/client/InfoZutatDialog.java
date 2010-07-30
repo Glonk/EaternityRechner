@@ -33,8 +33,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -104,6 +106,11 @@ public class InfoZutatDialog extends Composite {
 	
 	public void setValues( final Ingredient zutat){
 		
+		if(zutat.hasSeason){
+			specificationTable.setHTML(0, 0, "Saison");
+			updateSaison(zutatSpec);
+		}
+		
 		if(zutat.getExtractions().size()>0){
 			
 			final ListBox herkuenfte = new ListBox();
@@ -129,23 +136,36 @@ public class InfoZutatDialog extends Composite {
 			});
 		    
 			int row = specificationTable.getRowCount();
-			specificationTable.setWidget(row,0,herkuenfte);
+			specificationTable.setHTML(row, 0, "Herkunft");
+			HorizontalPanel flow = new HorizontalPanel();
+			specificationTable.setWidget(row,1,flow);
+			flow.add(herkuenfte);
+			HTML kleinerText = new HTML();
+	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
+	    	if(formatted.contentEquals("0")){
+	    		kleinerText.setHTML("ca. " + formatted + "km");
+	    	}else{
+	    		kleinerText.setHTML("ca. " + formatted + "00km");
+	    	}
+	    	flow.add(kleinerText);
+			
 			
 			
 			herkuenfte.setSelectedIndex(zutat.getExtractions().indexOf(zutatSpec.getHerkunft()));
 			
 		}
 		
-		if(zutat.hasSeason){
-			updateSaison(zutatSpec);
-		}
+
 
 		if(zutat.moTransportations.size()>0){
 			int row = specificationTable.getRowCount();
-			int col = 0;
+			specificationTable.setHTML(row, 0, "Transport");
+			FlowPanel flow = new FlowPanel();
+			specificationTable.setWidget(row,1,flow);
+			
 			for(final MoTransportation moTransportations : zutat.moTransportations){
 				RadioButton transport = new RadioButton("Transportations",moTransportations.symbol);
-				if(moTransportations.equals(zutatSpec.getTransportmittel())){
+				if(moTransportations.symbol.equalsIgnoreCase(zutatSpec.getTransportmittel().symbol)){
 					transport.setValue(true);
 				}
 				transport.addClickHandler(new ClickHandler() {
@@ -158,19 +178,20 @@ public class InfoZutatDialog extends Composite {
 				      }
 				    });
 				
-//				specificationTable.addCell(row);
-				specificationTable.setWidget(row,col , transport);
-				col = specificationTable.getCellCount(row);
-
+				flow.add(transport);
 			}
+			
 		}
 		
 		if(zutat.productions.size()>0){
 			int row = specificationTable.getRowCount();
-			int col = 0;
+			specificationTable.setHTML(row, 0, "Herstellung");
+			FlowPanel flow = new FlowPanel();
+			specificationTable.setWidget(row,1,flow);
+			
 			for(final Production production : zutat.productions){
 				RadioButton productionBox = new RadioButton("productions",production.symbol);
-				if(production.equals(zutatSpec.getProduktion())){
+				if(production.symbol.equalsIgnoreCase(zutatSpec.getProduktion().symbol)){
 					productionBox.setValue(true);
 				}
 				productionBox.addClickHandler(new ClickHandler() {
@@ -183,8 +204,7 @@ public class InfoZutatDialog extends Composite {
 				      }
 				    });
 
-				specificationTable.setWidget(row,col , productionBox);
-				col = specificationTable.getCellCount(row);
+				flow.add(productionBox);
 
 			}
 		}
@@ -192,10 +212,13 @@ public class InfoZutatDialog extends Composite {
 		
 		if(zutat.conditions.size()>0){
 			int row = specificationTable.getRowCount();
-			int col = 0;
+			specificationTable.setHTML(row, 0, "Zustand");
+			FlowPanel flow = new FlowPanel();
+			specificationTable.setWidget(row,1,flow);
+			
 			for(final Condition condition : zutat.conditions){
 				RadioButton conditionBox = new RadioButton("conditions",condition.symbol);
-				if(condition.equals(zutatSpec.getZustand())){
+				if(condition.symbol.equalsIgnoreCase(zutatSpec.getZustand().symbol)){
 					conditionBox.setValue(true);
 				}
 				conditionBox.addClickHandler(new ClickHandler() {
@@ -208,8 +231,7 @@ public class InfoZutatDialog extends Composite {
 				      }
 				    });
 
-				specificationTable.setWidget(row,col , conditionBox);
-				col = specificationTable.getCellCount(row);
+				flow.add(conditionBox);
 			}
 		}
 		
@@ -232,13 +254,13 @@ public class InfoZutatDialog extends Composite {
 				dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
 			
 			
-			specificationTable.setHTML(1, 1, "Diese Zutat hat Saison");
+			specificationTable.setHTML(0, 1, "Diese Zutat hat Saison");
 			
 			styleHinweis(false);
 			hinweisPanel.setText("Angaben sind koherent.");
 			
 		} else {
-			specificationTable.setHTML(1, 1, "Diese Zutat hat keine Saison");
+			specificationTable.setHTML(0, 1, "Diese Zutat hat keine Saison");
 			
 			// unvollständig:
 			
