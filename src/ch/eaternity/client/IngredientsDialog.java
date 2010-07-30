@@ -2,6 +2,7 @@ package ch.eaternity.client;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 //import ch.eaternity.server.Ingredient;
 import ch.eaternity.shared.Condition;
@@ -148,7 +149,7 @@ public class IngredientsDialog extends DialogBox{
 					if (herkuenfteElement.getNodeType() == Node.ELEMENT_NODE) {
 						
 						NodeList herkunftIdElmntLst = herkuenfteElement.getElementsByTagName("extraction");
-						Extraction[] newHerkuenfte = new Extraction[herkunftIdElmntLst.getLength()];
+						List<Extraction> newHerkuenfte = new ArrayList<Extraction>(herkunftIdElmntLst.getLength());
 						for(int i=0; i<herkunftIdElmntLst.getLength(); i++){
 							Element extractionElement = (Element) herkunftIdElmntLst.item(i);
 							
@@ -200,17 +201,14 @@ public class IngredientsDialog extends DialogBox{
 								MoTransportation moTransportation = new MoTransportation( ((Node) transportmittel.item(0)).getNodeValue() );
 								extraction.stdMoTransportation = moTransportation;
 								
-								
-
-								
-
+//
 								NodeList labels = extractionElement.getElementsByTagName("Labels");
 								Element labelsElement = (Element) labels.item(0);
 
 								if (labelsElement.getNodeType() == Node.ELEMENT_NODE) {
 									
 									NodeList labelExtractionIdElmntLst = labelsElement.getElementsByTagName("label");
-									ProductLabel[] newLabels = new ProductLabel[labelExtractionIdElmntLst.getLength()];
+									List<ProductLabel> newLabels = new ArrayList<ProductLabel>(labelExtractionIdElmntLst.getLength());
 									for(int j=0; j<labelExtractionIdElmntLst.getLength(); j++){
 										Node labelsId = labelExtractionIdElmntLst.item(j);
 										if (labelsId.getNodeType() == Node.ELEMENT_NODE) {
@@ -219,7 +217,7 @@ public class IngredientsDialog extends DialogBox{
 											NodeList labelId = labelIdElement.getChildNodes();
 //											Window.alert("Label Id : "  + ((Node) labelId.item(0)).getNodeValue());
 											ProductLabel productLabel = new ProductLabel(((Node) labelId.item(0)).getNodeValue() );
-											newLabels[j] = productLabel;
+											newLabels.add( productLabel );
 											
 										}
 
@@ -227,10 +225,10 @@ public class IngredientsDialog extends DialogBox{
 
 									extraction.stdProductLabels = newLabels;
 								}
-								
-								
-								
-								newHerkuenfte[i] = extraction;
+//								
+//								
+//								
+								newHerkuenfte.add(extraction);
 								
 							
 
@@ -266,16 +264,16 @@ public class IngredientsDialog extends DialogBox{
 	}
 	
 	
-	private void getIngredients() {
-		ingredientsService.getIngredientsXml( new AsyncCallback<String>() {
-			public void onFailure(Throwable error) {
-				Window.alert(error.getMessage());
-			}
-			public void onSuccess(String success) {
-				xmlText.setText(success);
-			}
-		});
-	}
+//	private void getIngredients() {
+//		ingredientsService.getIngredientsXml( new AsyncCallback<String>() {
+//			public void onFailure(Throwable error) {
+//				Window.alert(error.getMessage());
+//			}
+//			public void onSuccess(String success) {
+//				xmlText.setText(success);
+//			}
+//		});
+//	}
 	
 	
 

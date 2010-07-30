@@ -1,5 +1,6 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +11,13 @@ import javax.persistence.Transient;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;
 
-public class Extraction implements IsSerializable{
+public class Extraction implements Serializable{
 	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3996022378367844877L;
 
 	@Id Long id;
     
@@ -25,7 +31,7 @@ public class Extraction implements IsSerializable{
 	public MoTransportation stdMoTransportation;
 	
 	@Embedded
-	public ProductLabel[] stdProductLabels;
+	public List<ProductLabel> stdProductLabels;
 	
     private Extraction() {
 		

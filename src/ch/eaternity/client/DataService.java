@@ -22,5 +22,4 @@ public interface DataService extends RemoteService {
   public Data getData() throws NotLoggedInException;
   public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException;
   public Boolean persistIngredients(ArrayList<Ingredient> ingredients) throws NotLoggedInException;
-  public String getIngredientsXml() throws NotLoggedInException;
 }

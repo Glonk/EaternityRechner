@@ -1,6 +1,7 @@
 package ch.eaternity.shared;
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Embedded;
@@ -26,31 +27,31 @@ public class Ingredient implements IsSerializable{
 	
     Key<Extraction> stdExtraction;
     
-    @Serialized Map<Key<Condition>,Double> conditionKeys;
-    @Serialized Map<Key<Production>,Double> productionKeys;
-    @Serialized Map<Key<MoTransportation>,Double> moTransportationKeys;
+//    @Serialized Map<Key<Condition>,Double> conditionKeys;
+//    @Serialized Map<Key<Production>,Double> productionKeys;
+//    @Serialized Map<Key<MoTransportation>,Double> moTransportationKeys;
     
     // fetches all, max 5000
-    Key<Extraction>[] extractionKeys;
+//    Key<Extraction>[] extractionKeys;
     
-    @Embedded 
-    private
-    Extraction[] extractions;
-    
-    @Serialized
-    @Transient
-    private
-    Map<Condition,Double> conditions;
-    
-    @Transient
     @Serialized 
     private
-    Map<Production,Double> productions;
+    List<Extraction> extractions;
     
-    @Transient
-    @Serialized 
-    private
-    Map<MoTransportation,Double> moTransportations;
+//    @Serialized
+//    @Transient
+//    private
+//    Map<Condition,Double> conditions;
+//    
+//    @Transient
+//    @Serialized 
+//    private
+//    Map<Production,Double> productions;
+//    
+//    @Transient
+//    @Serialized 
+//    private
+//    Map<MoTransportation,Double> moTransportations;
 
     // empty constructor necessary for GWT serialization
     private Ingredient() {}
@@ -99,37 +100,37 @@ public class Ingredient implements IsSerializable{
 		return alternativeIds;
 	}
 
-	public void setExtractions(Extraction[] extractions) {
+	public void setExtractions(List<Extraction> extractions) {
 		this.extractions = extractions;
 	}
 
-	public Extraction[] getExtractions() {
+	public List<Extraction> getExtractions() {
 		return extractions;
 	}
 
-	public void setConditions(Map<Condition,Double> conditions) {
-		this.conditions = conditions;
-	}
-
-	public Map<Condition,Double> getConditions() {
-		return conditions;
-	}
-
-	public void setProductions(Map<Production,Double> productions) {
-		this.productions = productions;
-	}
-
-	public Map<Production,Double> getProductions() {
-		return productions;
-	}
-
-	public void setMoTransportations(Map<MoTransportation,Double> moTransportations) {
-		this.moTransportations = moTransportations;
-	}
-
-	public Map<MoTransportation,Double> getMoTransportations() {
-		return moTransportations;
-	}
+//	public void setConditions(Map<Condition,Double> conditions) {
+//		this.conditions = conditions;
+//	}
+//
+//	public Map<Condition,Double> getConditions() {
+//		return conditions;
+//	}
+//
+//	public void setProductions(Map<Production,Double> productions) {
+//		this.productions = productions;
+//	}
+//
+//	public Map<Production,Double> getProductions() {
+//		return productions;
+//	}
+//
+//	public void setMoTransportations(Map<MoTransportation,Double> moTransportations) {
+//		this.moTransportations = moTransportations;
+//	}
+//
+//	public Map<MoTransportation,Double> getMoTransportations() {
+//		return moTransportations;
+//	}
 
 
     

@@ -19,7 +19,6 @@ public interface DataServiceAsync {
   public void getYourRezepte(AsyncCallback<List<Rezept>> async);
   public void getData(AsyncCallback<Data> async);
   public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
-  public void getIngredientsXml(AsyncCallback<String> ingredientsXml);
   public void persistIngredients(ArrayList<Ingredient> ingredients,
 		AsyncCallback<Boolean> asyncCallback);
 }
