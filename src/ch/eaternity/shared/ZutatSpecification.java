@@ -11,6 +11,8 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.persistence.Embedded;
+import javax.persistence.Id;
 
 
 
@@ -35,6 +37,7 @@ public class ZutatSpecification  implements Serializable  {
 //    @Extension(vendorName="datanucleus", key="gae.pk-id", value="true")
 //    private Long keyId;
 	
+	@Id
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
@@ -52,8 +55,12 @@ public class ZutatSpecification  implements Serializable  {
 	private int mengeGramm;
 	private Extraction herkunft;
 	private Date cookingDate;
+	
+	@Embedded
 	private Condition zustand;
+	@Embedded
 	private Production produktion;
+	@Embedded
 	private MoTransportation transportmittel;
 	private Long label;
 	private String startSeason;

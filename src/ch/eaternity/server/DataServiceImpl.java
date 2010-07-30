@@ -47,6 +47,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		
+		
 //		Rezept newRezept = new Rezept();
 //		newRezept.setSymbol(rezept.getSymbol());
 //		newRezept.addZutaten(rezept.getZutaten());

@@ -13,6 +13,9 @@ import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.persistence.Id;
+
+import com.googlecode.objectify.annotation.Serialized;
 
 @PersistenceCapable //(detachable = "true")
 public class Rezept implements Serializable{
@@ -20,6 +23,7 @@ public class Rezept implements Serializable{
 
 	private static final long serialVersionUID = -5888386800366492104L;
 
+	@Id
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
@@ -37,6 +41,7 @@ public class Rezept implements Serializable{
 	
     // @Persistent //(mappedBy = "rezept") //, defaultFetchGroup = "true")
 //    @Element(dependent = "true")
+	@Serialized
 	@NotPersistent 
 	public List<ZutatSpecification> Zutaten = new ArrayList<ZutatSpecification>();
     
