@@ -13,7 +13,6 @@ public class Data implements Serializable{
 	private static final long serialVersionUID = -8325524250818128692L;
 	private  List<Rezept> PublicRezepte;
 	private  List<Rezept> YourRezepte;
-	private  List<Zutat> Zutaten;
 	private  List<Ingredient> ingredients;
 	private  List<SingleDistance> distances;
 
@@ -23,8 +22,8 @@ public class Data implements Serializable{
 
 		oracleIndex.add("all");
 
-		if(this.Zutaten != null){
-			for(Zutat zutat : this.Zutaten){
+		if(this.ingredients != null){
+			for(Ingredient zutat : this.ingredients){
 				if(zutat != null){
 					oracleIndex.add(zutat.getSymbol());
 				}
@@ -48,12 +47,6 @@ public class Data implements Serializable{
 		return oracleIndex;
 	}
 	
-	public void setZutaten(List<Zutat> zutaten) {
-		Zutaten = zutaten;
-	}
-	public List<Zutat> getZutaten() {
-		return Zutaten;
-	}
 	public void setPublicRezepte(List<Rezept> publicRezepte) {
 		PublicRezepte = publicRezepte;
 	}

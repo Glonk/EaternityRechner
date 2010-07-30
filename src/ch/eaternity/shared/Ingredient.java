@@ -3,12 +3,9 @@ package ch.eaternity.shared;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Embedded;
 import javax.persistence.Id;
-import javax.persistence.Transient;
-
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;

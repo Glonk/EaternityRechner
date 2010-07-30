@@ -2,48 +2,35 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
 
-import ch.eaternity.client.Search.Listener;
-import ch.eaternity.client.Search.SelectionStyle;
+
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
@@ -221,14 +208,6 @@ public class EaternityRechner implements EntryPoint {
 
 	}
 	private HandlerRegistration loadAdmin() {
-		HandlerRegistration adminHandler = topPanel.AdminLink.addClickHandler(new ClickHandler(){
-			public void onClick(ClickEvent event) {
-				AdminDialog dlg = new AdminDialog();
-				dlg.show();
-				dlg.center();
-			}
-		});
-		topPanel.AdminLink.setVisible(true);
 		
 		ingredientHandler = topPanel.ingredientLink.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {

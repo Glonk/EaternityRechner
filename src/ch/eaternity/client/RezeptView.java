@@ -1,13 +1,10 @@
 package ch.eaternity.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
-import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.gwt.core.client.GWT;
@@ -22,7 +19,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -370,6 +366,10 @@ public class RezeptView extends Composite {
 		
 		SuggestTable.setWidth("300px");
 		SuggestTable.setText(0,0," alles zusammen: ca "+formatted+"g CO₂-Äquivalent");
+		
+		if(addInfoPanel.getWidgetCount() ==2){
+			addInfoPanel.remove(1);
+		}
 
 	}
 	

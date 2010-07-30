@@ -2,17 +2,13 @@ package ch.eaternity.client;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+
 
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
-import ch.eaternity.shared.Zutat.Herkuenfte;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -40,9 +36,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -173,7 +166,6 @@ public class DistancesDialog extends DialogBox{
 
 
 	private void updateAllZutaten() {
-		// TODO Auto-generated method stub
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = ((RezeptView) widget);
 			List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();

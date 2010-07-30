@@ -22,15 +22,11 @@ import java.util.List;
 import java.util.Set;
 
 
-import java.util.TreeSet;
 
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
-import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
-import ch.eaternity.shared.Zutat.Herkuenfte;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -44,17 +40,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -345,7 +337,7 @@ public class Search extends ResizeComposite {
 			yourRezeptePanel.setVisible(false);
 		}
 		
-			if ((getClientData().getZutaten() != null) ){
+			if ((getClientData().getIngredients() != null) ){
 				
 				// Zutaten
 				if(searchString.trim().length() != 0){

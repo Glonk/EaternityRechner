@@ -12,14 +12,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import ch.eaternity.shared.Zutat.Herkuenfte;
-import ch.eaternity.shared.Zutat.Produktionen;
-import ch.eaternity.shared.Zutat.Transportmittel;
-import ch.eaternity.shared.Zutat.Zustaende;
-
-
-
-
 
 
 

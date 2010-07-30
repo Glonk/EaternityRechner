@@ -20,12 +20,8 @@ import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
-import ch.eaternity.shared.Zutat.Herkuenfte;
-import ch.eaternity.shared.Zutat.Produktionen;
-import ch.eaternity.shared.Zutat.Transportmittel;
-import ch.eaternity.shared.Zutat.Zustaende;
+
 
 
 
@@ -45,17 +41,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	private static final PersistenceManagerFactory PMF =
 		JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
-	public String addZutat(Zutat zutat) throws NotLoggedInException {
-		checkLoggedIn();
-		PersistenceManager pm = getPersistenceManager();
-
-		try {
-			pm.makePersistent(zutat);
-		} finally {
-			pm.close();
-		}
-		return zutat.getSymbol();
-	}
 
 
 	public String addRezept(Rezept rezept) throws NotLoggedInException {
@@ -269,43 +254,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			}
 			data.setPublicRezepte(rezepte);
 
-			Query q3 = pm.newQuery(Zutat.class);
-			q3.setOrdering("createDate");
-			List<Zutat> zutatenQuery = (List<Zutat>) q3.execute();
-
-			List<Zutat> zutaten = new ArrayList<Zutat>(zutatenQuery.size());
-			for (Zutat zutat : zutatenQuery) {
-
-				List<Long> alternativen = new ArrayList<Long>(zutat.getAlternativen().size());
-				for(Long alternative : zutat.getAlternativen()){
-					alternativen.add(alternative);
-				}
-
-
-				//		    	  ZutatSpecification stdMengen = new ZutatSpecification(zutat.getId(),zutat.getSymbol());
-				//		    	  if(zutat.getZutatStdWerte_id() != null){
-				//		    		  ZutatSpecification stdMengeRequest =	pm.getObjectById(ZutatSpecification.class,zutat.getZutatStdWerte_id());
-				//		    		  stdMengen.setHerkunft(stdMengeRequest.getHerkunft());
-				//		    		  stdMengen.setMengeGramm(stdMengeRequest.getMengeGramm());
-				//		    	  }
-				//		    			  											,,
-				//		    			  											null, zutat.getZutatStdWerte().getZustand(), zutat.getZutatStdWerte().getProduktion(),
-				//		    			  											zutat.getZutatStdWerte().getTransportmittel(), zutat.getZutatStdWerte().getLabel());
-				//		    		  zutat.getZutatStdWerte();
-//				pm.detachCopy(zutat);
-				ArrayList<Herkuenfte> herkuenfte = new ArrayList<Herkuenfte>();
-				for( Herkuenfte herkunft : zutat.getHerkuenfte()){
-					herkuenfte.add(Herkuenfte.valueOf(herkunft.name()));
-				}
-				
-				zutaten.add(new Zutat( zutat.getId(), zutat.getSymbol(), zutat.getCreateDate(), zutat.getCO2eWert(),
-						alternativen, zutat.getStdHerkunft(),zutat.getStdZustand(),zutat.getStdProduktion(),zutat.getStdTransportmittel(),
-						zutat.getStdMengeGramm() , herkuenfte, zutat.getStdStartSeason(),zutat.getStdStopSeason()));
-				
-
-				//		    			  zutat_id, herkunft, cookingDate, zustand, produktion, transportmittel, labe)
-			}
-			data.setZutaten(zutaten);
+			
 			
 			ArrayList<SingleDistance> distances = new ArrayList<SingleDistance>();
 			Query q4 = pm.newQuery(SingleDistance.class);

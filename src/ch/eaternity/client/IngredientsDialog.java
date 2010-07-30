@@ -2,10 +2,8 @@ package ch.eaternity.client;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
 
 //import ch.eaternity.server.Ingredient;
 import ch.eaternity.shared.Condition;
@@ -14,11 +12,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Production;
-import ch.eaternity.shared.Zutat;
-import ch.eaternity.shared.Zutat.Herkuenfte;
-import ch.eaternity.shared.Zutat.Produktionen;
-import ch.eaternity.shared.Zutat.Transportmittel;
-import ch.eaternity.shared.Zutat.Zustaende;
+
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -42,7 +36,6 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
-import com.googlecode.objectify.Key;
 
 public class IngredientsDialog extends DialogBox{
 

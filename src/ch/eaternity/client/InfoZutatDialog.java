@@ -11,12 +11,8 @@ import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Zutat;
 import ch.eaternity.shared.ZutatSpecification;
-import ch.eaternity.shared.Zutat.Herkuenfte;
-import ch.eaternity.shared.Zutat.Produktionen;
-import ch.eaternity.shared.Zutat.Transportmittel;
-import ch.eaternity.shared.Zutat.Zustaende;
+
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;

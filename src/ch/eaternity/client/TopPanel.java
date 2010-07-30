@@ -60,7 +60,6 @@ public class TopPanel extends Composite {
   @UiField Button locationButton;
   @UiField Anchor signOutLink;
   @UiField Anchor signInLink;
-  @UiField Anchor AdminLink;
   @UiField Anchor ingredientLink;
   @UiField Label loginLabel;
   @UiField
@@ -77,7 +76,6 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
   public TopPanel() {
     initWidget(binder.createAndBindUi(this));
     locationButton.setEnabled(false);
-    AdminLink.setVisible(false);
     ingredientLink.setVisible(false);
     signOutLink.setVisible(false);
   

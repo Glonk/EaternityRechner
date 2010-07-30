@@ -49,8 +49,6 @@
         <g:Anchor href='javascript:;' ui:field='signOutLink'>Abmelden</g:Anchor>
         &nbsp;
         <g:Anchor href='javascript:;' ui:field='signInLink'>Anmelden</g:Anchor>
-        &nbsp;
-        <g:Anchor href='javascript:;' ui:field='AdminLink'>Admin Konsole</g:Anchor>
          &nbsp;
         <g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
       </div>
