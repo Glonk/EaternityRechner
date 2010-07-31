@@ -14,6 +14,8 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
 
+import com.googlecode.objectify.annotation.Serialized;
+
 
 
 
@@ -27,7 +29,7 @@ public class ZutatSpecification  implements Serializable  {
 	 */
 	private static final long serialVersionUID = -2858311250621887438L;
 	
-
+	@Id private Long id;
 	
 //    @PrimaryKey
 //    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -37,7 +39,7 @@ public class ZutatSpecification  implements Serializable  {
 //    @Extension(vendorName="datanucleus", key="gae.pk-id", value="true")
 //    private Long keyId;
 	
-	@Id
+	
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
@@ -53,6 +55,7 @@ public class ZutatSpecification  implements Serializable  {
 	
 
 	private int mengeGramm;
+	@Serialized
 	private Extraction herkunft;
 	private Date cookingDate;
 	
@@ -255,6 +258,18 @@ public class ZutatSpecification  implements Serializable  {
 
 	public String getRezeptKey() {
 		return RezeptKey;
+	}
+
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+
+	public Long getId() {
+		return id;
 	}
 
 

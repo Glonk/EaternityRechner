@@ -152,12 +152,12 @@ public class EaternityRechner implements EntryPoint {
 	
 
 	static void addRezept(final Rezept rezept, final RezeptView rezeptView) {
-		rezeptService.addRezept(rezept, new AsyncCallback<String>() {
+		rezeptService.addRezept(rezept, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 
-			public void onSuccess(String id) {
+			public void onSuccess(Long id) {
 //Window.alert("good");
 //				Search.displayRezept(rezept);
 				rezept.setId(id);
@@ -169,11 +169,11 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 	static void removeRezept(final Rezept rezept) {
-		rezeptService.removeRezept(rezept, new AsyncCallback<Void>() {
+		rezeptService.removeRezept(rezept.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
-			public void onSuccess(Void ignore) {
+			public void onSuccess(Boolean ignore) {
 				Search.getClientData().getYourRezepte().remove(rezept);
 				if(rezept.isOpen()){
 				Search.getClientData().getPublicRezepte().remove(rezept);

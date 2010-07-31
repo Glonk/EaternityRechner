@@ -6,28 +6,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.jdo.annotations.Element;
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.NotPersistent;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+
 import javax.persistence.Id;
 
 import com.googlecode.objectify.annotation.Serialized;
 
-@PersistenceCapable //(detachable = "true")
+
 public class Rezept implements Serializable{
  
 
 	private static final long serialVersionUID = -5888386800366492104L;
 
-	@Id
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-    private String id;
+	@Id Long id;
     
 	private String symbol;
 	
@@ -42,7 +32,6 @@ public class Rezept implements Serializable{
     // @Persistent //(mappedBy = "rezept") //, defaultFetchGroup = "true")
 //    @Element(dependent = "true")
 	@Serialized
-	@NotPersistent 
 	public List<ZutatSpecification> Zutaten = new ArrayList<ZutatSpecification>();
     
 //    @Persistent 
@@ -128,13 +117,7 @@ public class Rezept implements Serializable{
 		return this;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getId() {
-		return id;
-	}
+	
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
@@ -171,6 +154,14 @@ public class Rezept implements Serializable{
 
 	public Long getPersons() {
 		return persons;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 

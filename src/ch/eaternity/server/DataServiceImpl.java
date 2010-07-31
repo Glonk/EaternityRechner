@@ -22,13 +22,7 @@ import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.ZutatSpecification;
 
-
-
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.googlecode.objectify.Key;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -43,94 +37,26 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 
-	public String addRezept(Rezept rezept) throws NotLoggedInException {
+	public Long addRezept(Rezept rezept) throws NotLoggedInException {
 		checkLoggedIn();
-		PersistenceManager pm = getPersistenceManager();
-		
-		
-//		Rezept newRezept = new Rezept();
-//		newRezept.setSymbol(rezept.getSymbol());
-//		newRezept.addZutaten(rezept.getZutaten());
-//		newRezept.setOpen(rezept.isOpen());
-		
 
-		try {
-			UserRezept userRezept = new UserRezept(getUser());
-//			pm.makePersistent(rezept);
-			userRezept.setRezept(rezept);
-			
-//			userRezept.setRezeptKey(key);
-			pm.makePersistent(userRezept);
-			String key = userRezept.getRezept().getId();
-			userRezept.setRezeptKey(key);
-//			userRezept.getRezept().setRezeptKey(key);
-			
-//			TODO why do i need to do this twice???? damn keys
-			pm.makePersistent(userRezept);
-			
-//			List<String> zutatSpecificationKeys = new ArrayList<String>();
-			for(ZutatSpecification zutat: rezept.getZutaten()){
-				zutat.setRezeptKey(key);
-				pm.makePersistent(zutat);
-			}
+		DAO dao = new DAO();
 
-//			userRezept.setRezept(rezept);
-//			pm.makePersistent(rezept);
-        } finally {
-			pm.close();
-		}
-		return rezept.getId();
+		UserRezept userRezept = new UserRezept(getUser());
+
+		userRezept.setRezept(rezept);
+		dao.ofy().put(userRezept);
+
+		return userRezept.id;
 	}
 
  
-	public void removeRezept(Rezept rezeptDelete) throws NotLoggedInException {
+	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException {
 		checkLoggedIn();
-		String rezept_id = rezeptDelete.getId();
-		PersistenceManager pm = getPersistenceManager();
-		try {
-			//			user verification is missing here! ist it necessary?
-//			Rezept rezept =	pm.getObjectById(Rezept.class,rezept_id);
-			Query rezeptUser = pm.newQuery(UserRezept.class, "rezeptKey == key");
-			rezeptUser.declareParameters("Long lastNameParam");
-			List<UserRezept> rezeptList = (List<UserRezept>) rezeptUser.execute(rezept_id);
-			for(UserRezept userRezept : rezeptList){
-//				GWT.log("entferne " + userRezept.getRezept().getSymbol(), null);
-//				TODO get parent
-				
-//				
-				pm.deletePersistent(userRezept);
-
-			}
-			
-			
-			Rezept rezept =	pm.getObjectById(Rezept.class,rezept_id);
-			pm.deletePersistent(rezept);
-			
-//			Query rezepte = pm.newQuery(Rezept.class, "RezeptKey == key");
-//			rezepte.declareParameters("Long lastNameParam");
-//			List<Rezept> rezepteList = (List<Rezept>) rezepte.execute(rezept_id);
-//			for(Rezept rezept2 : rezepteList){
-//				pm.deletePersistent(rezept2);
-//			}
-
-			
-			Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
-			zutaten.declareParameters("Long lastNameParam");
-			List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(rezept_id);
-			for(ZutatSpecification zutat : zutatenList){
-				pm.deletePersistent(zutat);
-			}
-			
-			
-
-			//			Query q = pm.newQuery(UserRezept.class, "user == u");
-			//			q.declareParameters("com.google.appengine.api.users.User u");
-			//			List<UserRezept> rezepte = (List<UserRezept>) q.execute(getUser());
-
-
-		} finally {
-			pm.close();
-		}
+		DAO dao = new DAO();
+		dao.ofy().delete(UserRezept.class,rezeptId);
+		return true;
+		
 	}
 
 
@@ -141,36 +67,36 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		PersistenceManager pm = getPersistenceManager();
 		List<Rezept> rezepte = new ArrayList<Rezept>();
 		try {
-			if (getUser() != null) {
-				Query q = pm.newQuery(UserRezept.class, "user == u");
-				q.declareParameters("com.google.appengine.api.users.User u");
-				q.setOrdering("createDate");
-				List<UserRezept> rezepteUser = (List<UserRezept>) q.execute(getUser());
-
-				for (UserRezept userRezept : rezepteUser) {
-					List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
-					Rezept rezept = userRezept.getRezept();
-					String key = rezept.getId();
-					Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
-					zutaten.declareParameters("Long lastNameParam");
-					List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
-					for(ZutatSpecification zutat : zutatenList){
-						if(zutat.getRezeptKey().compareTo(key) == 0){
-						ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
-								zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
-								zutat.getTransportmittel());
-						newZutat.setMengeGramm(zutat.getMengeGramm());
-						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
-						newZutat.setHerkunft(zutat.getHerkunft());
-						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
-						specsList.add(newZutat);
-						}
-					}
-					rezept.Zutaten = specsList;
-					rezepte.add(rezept);
-				}
-
-			}
+//			if (getUser() != null) {
+//				Query q = pm.newQuery(UserRezept.class, "user == u");
+//				q.declareParameters("com.google.appengine.api.users.User u");
+//				q.setOrdering("createDate");
+//				List<UserRezept> rezepteUser = (List<UserRezept>) q.execute(getUser());
+//
+//				for (UserRezept userRezept : rezepteUser) {
+//					List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
+//					Rezept rezept = userRezept.getRezept();
+//					Long key = rezept.id;
+//					Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
+//					zutaten.declareParameters("Long lastNameParam");
+//					List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
+//					for(ZutatSpecification zutat : zutatenList){
+////						if(zutat.getRezeptKey().compareTo(key) == 0){
+////						ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
+////								zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
+////								zutat.getTransportmittel());
+////						newZutat.setMengeGramm(zutat.getMengeGramm());
+////						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
+////						newZutat.setHerkunft(zutat.getHerkunft());
+////						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
+////						specsList.add(newZutat);
+////						}
+//					}
+//					rezept.Zutaten = specsList;
+//					rezepte.add(rezept);
+//				}
+//
+//			}
 
 
 		} finally {
@@ -189,73 +115,73 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		Data data = new Data();
 
 		try {
-//			Query specs = pm.newQuery(ZutatSpecification.class);
-//			List<ZutatSpecification> specsList = (List<ZutatSpecification>) specs.execute();
-			
-			if (getUser() != null) {
-				Query q = pm.newQuery(UserRezept.class, "user == u");
-				q.declareParameters("com.google.appengine.api.users.User u");
-				q.setOrdering("createDate");
-				List<UserRezept> rezepteUser = (List<UserRezept>) q.execute(getUser());
-
-				for (UserRezept userRezept : rezepteUser) {
-					List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
-					Rezept rezept = userRezept.getRezept();
-					String key = rezept.getId();
-					Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
-					zutaten.declareParameters("Long lastNameParam");
-					List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
-					for(ZutatSpecification zutat : zutatenList){
-						if(zutat.getRezeptKey().compareTo(key) == 0){
-						ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
-								zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
-								zutat.getTransportmittel());
-						newZutat.setMengeGramm(zutat.getMengeGramm());
-						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
-						newZutat.setHerkunft(zutat.getHerkunft());
-						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
-						specsList.add(newZutat);
-						}
-					}
-					rezept.Zutaten = specsList;
-					rezeptePersonal.add(rezept);
-				}
-
+////			Query specs = pm.newQuery(ZutatSpecification.class);
+////			List<ZutatSpecification> specsList = (List<ZutatSpecification>) specs.execute();
+//			
+//			if (getUser() != null) {
+//				Query q = pm.newQuery(UserRezept.class, "user == u");
+//				q.declareParameters("com.google.appengine.api.users.User u");
+//				q.setOrdering("createDate");
+//				List<UserRezept> rezepteUser = (List<UserRezept>) q.execute(getUser());
+//
+//				for (UserRezept userRezept : rezepteUser) {
+//					List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
+//					Rezept rezept = userRezept.getRezept();
+//					Long key = rezept.id;
+//					Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
+//					zutaten.declareParameters("Long lastNameParam");
+//					List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
+//					for(ZutatSpecification zutat : zutatenList){
+////						if(zutat.getRezeptKey().compareTo(key) == 0){
+////						ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
+////								zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
+////								zutat.getTransportmittel());
+////						newZutat.setMengeGramm(zutat.getMengeGramm());
+////						newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
+////						newZutat.setHerkunft(zutat.getHerkunft());
+////						newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
+////						specsList.add(newZutat);
+////						}
+//					}
+//					rezept.Zutaten = specsList;
+//					rezeptePersonal.add(rezept);
+//				}
+//
 				data.setYourRezepte(rezeptePersonal);
-			}
-			Query q2 = pm.newQuery(Rezept.class, "open == true");
-			q2.setOrdering("createDate");
-			List<Rezept> rezeptePublic =   (List<Rezept>) q2.execute();
-			
-
-//			return (Employee[]) employees.toArray(new Employee[0]);
-			// pm.detachCopyAll(
-			for (Rezept rezeptPublic : rezeptePublic) {
-				List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
-				Rezept rezept2 = rezeptPublic.getRezept();
-				String key = rezept2.getId();
-				Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
-				zutaten.declareParameters("Long lastNameParam");
-				List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
-				for(ZutatSpecification zutat : zutatenList){
-					if(zutat.getRezeptKey().compareTo(key) == 0){
-					ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
-							zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
-							zutat.getTransportmittel());
-					newZutat.setMengeGramm(zutat.getMengeGramm());
-					newZutat.setHerkunft(zutat.getHerkunft());
-					newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
-					newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
-					specsList.add(newZutat);
-					}
-				}
-				rezept2.Zutaten = specsList;
-//				rezept2.addZutaten(specsList);
-				rezepte.add(rezept2);
-			}
+//			}
+//			Query q2 = pm.newQuery(Rezept.class, "open == true");
+//			q2.setOrdering("createDate");
+//			List<Rezept> rezeptePublic =   (List<Rezept>) q2.execute();
+//			
+//
+////			return (Employee[]) employees.toArray(new Employee[0]);
+//			// pm.detachCopyAll(
+//			for (Rezept rezeptPublic : rezeptePublic) {
+//				List<ZutatSpecification> specsList =  new ArrayList<ZutatSpecification>();
+//				Rezept rezept2 = rezeptPublic.getRezept();
+//				Long key = rezept2.id;
+//				Query zutaten = pm.newQuery(ZutatSpecification.class, "RezeptKey == key");
+//				zutaten.declareParameters("Long lastNameParam");
+//				List<ZutatSpecification> zutatenList = (List<ZutatSpecification>) zutaten.execute(key);
+//				for(ZutatSpecification zutat : zutatenList){
+////					if(zutat.getRezeptKey().compareTo(key) == 0){
+////					ZutatSpecification newZutat = new ZutatSpecification(zutat.getZutat_id(), zutat.getName(),
+////							zutat.getCookingDate(),zutat.getZustand(),zutat.getProduktion(), 
+////							zutat.getTransportmittel());
+////					newZutat.setMengeGramm(zutat.getMengeGramm());
+////					newZutat.setHerkunft(zutat.getHerkunft());
+////					newZutat.setNormalCO2Value(zutat.getNormalCO2Value());
+////					newZutat.setSeason(zutat.getStartSeason(), zutat.getStopSeason());
+////					specsList.add(newZutat);
+////					}
+//				}
+//				rezept2.Zutaten = specsList;
+////				rezept2.addZutaten(specsList);
+//				rezepte.add(rezept2);
+//			}
 			data.setPublicRezepte(rezepte);
-
-			
+//
+//			
 			
 			ArrayList<SingleDistance> distances = new ArrayList<SingleDistance>();
 			Query q4 = pm.newQuery(SingleDistance.class);
@@ -272,7 +198,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			pm.close();
 		}
 		
-		// haha, this looks so much easier.. I hope that works...
+		// haha, this looks so much easier.. I hope that works... yep it does
 		DAO dao = new DAO();
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
 		data.setIngredients(ingredients);

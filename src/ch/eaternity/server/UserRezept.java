@@ -2,40 +2,35 @@ package ch.eaternity.server;
 
 import java.util.Date;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-import com.google.appengine.api.datastore.Key;
+
+import javax.persistence.Id;
 
 import ch.eaternity.shared.Rezept;
 
 import com.google.appengine.api.users.User;
+import com.googlecode.objectify.annotation.Serialized;
 
-@PersistenceCapable // (identityType = IdentityType.APPLICATION)
+
 public class UserRezept{
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	@Id Long id;
 	
-	@Persistent
-	private Date createDate;
+	public Date createDate;
 	
-	@Persistent
-	private User user;
+	public User user;
 	
-	@Persistent
-	private Rezept rezept;
-	  
-	@Persistent
-	private String rezeptKey;
+	@Serialized
+	public Rezept rezept;
 	
 	public void setUser(User user) {
 		this.user = user;
 	}
 	public User getUser() {
 		return user;
+	}
+	
+	public UserRezept(){
+		
 	}
 
 	public UserRezept( User user){
@@ -58,18 +53,7 @@ public class UserRezept{
 	public Rezept getRezept() {
 		return rezept;
 	}
-	public void setId(Key id) {
-		this.id = id;
-	}
-	public Key getId() {
-		return id;
-	}
-	public void setRezeptKey(String key) {
-		this.rezeptKey = key;
-	}
-	public String getRezeptKey() {
-		return rezeptKey;
-	}
+
 
 
 

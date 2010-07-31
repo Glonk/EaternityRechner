@@ -26,6 +26,7 @@ public class DAO extends DAOBase
         ObjectifyService.register(ProductLabel.class);
         ObjectifyService.register(ZutatSpecification.class);
         ObjectifyService.register(Rezept.class);
+        ObjectifyService.register(UserRezept.class);
     }
 
     /** Your DAO can have your own useful methods */

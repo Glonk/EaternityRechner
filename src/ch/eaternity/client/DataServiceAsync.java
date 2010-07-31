@@ -12,8 +12,8 @@ import ch.eaternity.shared.SingleDistance;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DataServiceAsync {
-  public void addRezept(Rezept rezept, AsyncCallback<String> async);
-  public void removeRezept(Rezept rezept, AsyncCallback<Void> async);
+  public void addRezept(Rezept rezept, AsyncCallback<Long> async);
+  public void removeRezept(Long rezeptId, AsyncCallback<Boolean> async);
   public void getYourRezepte(AsyncCallback<List<Rezept>> async);
   public void getData(AsyncCallback<Data> async);
   public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
