@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import ch.eaternity.shared.Rezept;
 
 import com.google.appengine.api.users.User;
+import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Serialized;
 
 
@@ -17,7 +18,10 @@ public class UserRezept{
 	
 	public Date createDate;
 	
+	@Indexed
 	public User user;
+	
+	public Boolean approvedOpen;
 	
 	@Serialized
 	public Rezept rezept;

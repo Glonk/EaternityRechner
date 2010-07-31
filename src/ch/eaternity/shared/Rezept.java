@@ -37,8 +37,8 @@ public class Rezept implements Serializable{
 //    @Persistent 
 //    private List<String> ZutatSpecificationKeys = new ArrayList<String>(); 
     
-	private double CO2Value;
-	private boolean open;
+	private Double CO2Value;
+	public Boolean open;
 
 	public Rezept() {
 

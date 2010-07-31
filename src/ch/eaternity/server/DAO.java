@@ -2,6 +2,7 @@ package ch.eaternity.server;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
@@ -12,6 +13,7 @@ import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.users.User;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
 import com.googlecode.objectify.helper.DAOBase;
@@ -81,6 +83,40 @@ public class DAO extends DAOBase
 	public Boolean saveRecipe(Rezept recipe){
         ofy().put(recipe);
         return true;
+	}
+	
+	public List<Rezept> getYourRecipe(User user){
+		
+		List<Rezept> yourRecipes = new ArrayList<Rezept>();
+
+		// The Query itself is Iterable
+		Query<UserRezept> yourUserRecipes = ofy().query(UserRezept.class).filter("user", user);
+        QueryResultIterator<UserRezept> iterator = yourUserRecipes.iterator();
+        
+        while (iterator.hasNext()) {
+        	Rezept rezept = iterator.next().getRezept();
+        	yourRecipes.add(rezept);
+        }
+        
+        return yourRecipes;
+
+	}
+	
+	public List<Rezept> getOpenRecipe(){
+		
+		List<Rezept> openRecipes = new ArrayList<Rezept>();
+
+		// The Query itself is Iterable
+		Query<UserRezept> yourOpenRecipes = ofy().query(UserRezept.class).filter("approvedOpen", true);
+        QueryResultIterator<UserRezept> iterator = yourOpenRecipes.iterator();
+        
+        while (iterator.hasNext()) {
+        	Rezept rezept = iterator.next().getRezept();
+        	openRecipes.add(rezept);
+        }
+        
+        return openRecipes;
+
 	}
     
 }
