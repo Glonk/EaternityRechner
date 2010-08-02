@@ -1,6 +1,11 @@
 package ch.eaternity.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 
 import ch.eaternity.shared.Ingredient;
@@ -19,10 +24,12 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -49,6 +56,11 @@ public class RezeptView extends Composite {
 	HandlerRegistration klicky;
 	
 	boolean saved;
+	
+	private Listener listener;
+	int  selectedRow = 0;
+	int  selectedRezept = -1;
+	private Rezept rezept;
 
 	
 //	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
@@ -78,10 +90,7 @@ public class RezeptView extends Composite {
 	interface SelectionStyleRow extends CssResource {
 		String selectedRow();
 	}
-	private Listener listener;
-	int  selectedRow = 0;
-	int  selectedRezept = -1;
-	private Rezept rezept;
+
 	
 	public void setListener(Listener listener) {
 		this.listener = listener;
@@ -107,8 +116,8 @@ public class RezeptView extends Composite {
 			EaternityRechner.rezeptList.removeRow(row);
 			EaternityRechner.selectedRezept = -1;
 		} else {
-		final ConfirmDialog dlg = new ConfirmDialog("Sie wollen diese Zusammenstellung...");
-		dlg.statusLabel.setText("ausblenden, obwohl sie nicht gespeichert ist?");
+		final ConfirmDialog dlg = new ConfirmDialog("Diese Zusammenstellungen wurde noch nicht gespeichert!");
+		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
 		// TODO recheck user if he really want to do this...
 		
 		dlg.executeButton.addClickHandler(new ClickHandler() {
@@ -235,6 +244,8 @@ public class RezeptView extends Composite {
 		}
 		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,rezept,SuggestTable);
 		addInfoPanel.add(infoZutat);
+		
+//		addInfoPanel.add(new HTML("test"));
 		
 	}
 	
@@ -367,12 +378,197 @@ public class RezeptView extends Composite {
 		SuggestTable.setWidth("300px");
 		SuggestTable.setText(0,0," alles zusammen: ca "+formatted+"g CO₂-Äquivalent");
 		
-		if(addInfoPanel.getWidgetCount() ==2){
-			addInfoPanel.remove(1);
-		}
+		// TODO Algorithm for the Top Suggestions
+		// Von jedem Gericht gibt es einen CO2 Wert für 4Personen (mit oder ohne Herkunft? oder aus der nächsten Distanz?), 
+		// so wie sie gepeichert wurde.
+		// Es werden bei der Anzeige Rezepte berücksichtigt, die: 
+		// min 20% identische Zutaten ( Zutat*(Menge im Rezept)/StdMenge ) und das pro Zutat, und davon min 20%identisch
+		// min +50% Zutaten die in den alternativen Vorkommen
+		// hierbei wird die 2 passendsten Rezepte jeweils aus den nicht durch das markierte Rezept belegten Bereich angezeigt
+		// Bereich sind 0-20%	20%-50%		50%-100%
+		
+		// Rezepte sollten sich bewerten lassen, und deren Popularität gemessen werden. ( Über die Zeit?)
+		// 
 
+		// diese Filter sollten in der Reihenfolge ausgeführt werden, in der sie am wenigsten Berechnungen benötigen:
+		
+		// TODO alle Rezepte für 4 Personen, sonst macht der Vergleich keinen Sinn
+		
+		// get Comparator
+		ArrayList<ComparatorObject> comparator = comparator(rezept);
+		Double maxScore = 0.0;
+		for(ComparatorObject comparatorObject : comparator){
+			maxScore = maxScore+comparatorObject.value;
+		}
+		
+		// all Recipes
+		List<Rezept> allRecipes = Search.getClientData().getPublicRezepte();
+		allRecipes.addAll(Search.getClientData().getYourRezepte());
+		
+		// zuerst der Filter über die tatsächlichen Zutaten
+		ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
+		scoreMap.clear();
+		for( Rezept compareRecipe : allRecipes){
+			ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
+			comparatorRecipe.key = compareRecipe.getId();
+			comparatorRecipe.recipe = compareRecipe;
+			comparatorRecipe.comparator = getExactScore(comparator,comparator(compareRecipe));
+			Double error = 0.0;
+			for(ComparatorObject comparatorObject : comparatorRecipe.comparator){
+				error = error+Math.abs(comparatorObject.value);
+			}
+			comparatorRecipe.value = error;
+			scoreMap.add(comparatorRecipe);
+		}
+		
+		// dann der gröbere über die definierten Alternativen der Zutaten
+		ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
+		for(ComparatorRecipe compObj: scoreMap){
+			if((compObj.value/maxScore)<0.2){ // this is min. 20% identical
+				Rezept compareRecipe = compObj.recipe;
+				ComparatorRecipe comparatorObject = new ComparatorRecipe();
+				comparatorObject.recipe = compareRecipe;
+				// TODO write this method
+//				comparatorObject.comparator = getAltScore(comparator,comparator(compareRecipe));
+				scoreMap2.add(comparatorObject);
+			}
+		}
+		
+		// alles was jetzt noch da ist, wird verglichen, das heisst die Statistik ausgerechnet
+		
+		
+		// und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
+		
+		
+		
 	}
 	
+	
+	
+	private ArrayList<ComparatorObject> getExactScore(ArrayList<ComparatorObject> recipeOrigin, ArrayList<ComparatorObject> recipeComparator) {
+		
+		ArrayList<ComparatorObject> resultComparator = new ArrayList<ComparatorObject>();
+		
+		// takes this Recipe from this RezeptView
+		for(ComparatorObject comparatorObjectOrigin : recipeOrigin){
+			// and compares every ingredient
+
+			
+			ComparatorObject comparatorResultObject = new ComparatorObject();
+			double newValue = comparatorObjectOrigin.value;
+			comparatorResultObject.key = comparatorObjectOrigin.key;
+			
+			// with the one from the database
+			for(ComparatorObject comparatorObject :recipeComparator){
+				
+				// on match
+				if(comparatorObject.key.equals(comparatorObjectOrigin.key)){	
+					// calculate the error value
+					newValue = comparatorObject.value-comparatorObjectOrigin.value;
+					break;
+				}
+			}
+			
+			// store the error value
+			comparatorResultObject.value = newValue;
+			resultComparator.add(comparatorResultObject);
+			
+
+		}
+		
+		return resultComparator;
+	}
+
+
+	private ArrayList<ComparatorObject> comparator(Rezept rezept){
+		// wtf is up with the Map() ???
+//		Map<Long,Double> recipeComparator = Collections.emptyMap();
+		// everything would have been so easy!!
+		
+		 ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
+	
+		
+		for(ZutatSpecification zutatSpec : rezept.Zutaten){
+			Ingredient zutat = Search.getClientData().getIngredientByID(zutatSpec.getZutat_id());
+			Double amount = 1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm;
+			Double alreadyAmount = 0.0;
+			int index = -1;
+			for(ComparatorObject comparatorObject :recipeComparator){
+				if(comparatorObject.key.equals(zutat.getId())){
+					alreadyAmount =  comparatorObject.value;
+					index = recipeComparator.indexOf(comparatorObject);
+					break;
+				}
+			}
+			
+			ComparatorObject comparatorObject = new ComparatorObject();
+			comparatorObject.ingredient = zutat;
+			comparatorObject.key = zutat.getId();
+			comparatorObject.value = amount+alreadyAmount;
+			
+			if(index!=-1){
+				recipeComparator.set(index, comparatorObject);
+			} else {
+				recipeComparator.add(comparatorObject);
+			}
+
+		}
+
+		return recipeComparator;
+	}
+	
+	private Double getIdenticalScore(Rezept compareRecipe,ArrayList<ComparatorObject> recipeComparator) {
+		// der Score ist:  ( Zutat*(Menge im Rezept)/StdMenge )
+		Double score = 0.0;
+		Double negativeScore = 0.0;
+		for(ZutatSpecification zutatSpec : compareRecipe.Zutaten){
+			
+			int index = -1;
+			double newValue = 0.0;
+			for(ComparatorObject comparatorObject :recipeComparator){
+				if(comparatorObject.key.equals(zutatSpec.getZutat_id())){
+					Double amount = 1.0*zutatSpec.getMengeGramm()/Search.getClientData().getIngredientByID(zutatSpec.getZutat_id()).stdAmountGramm;
+					if(amount>comparatorObject.value){
+						score = score+comparatorObject.value;
+//						comparator.recipeComparatorValues.set(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()), 0.0);
+//						comparator.put(zutatSpec.getZutat_id(),0.0);
+						negativeScore = negativeScore - (amount - comparatorObject.value);
+					} else {
+						score = score+amount;
+						newValue = comparatorObject.value-amount ;
+					}
+					index = recipeComparator.indexOf(comparatorObject);
+					break;
+				}
+			}
+			
+			ComparatorObject comparatorObject = new ComparatorObject();
+			comparatorObject.key = zutatSpec.getZutat_id();
+			comparatorObject.value = newValue;
+			if(index!=-1){
+				recipeComparator.set(index, comparatorObject);
+			} 
+//			
+//			if(comparator.recipeComparatorIndex.contains(zutatSpec.getZutat_id())){
+//				Double amount = 1.0*zutatSpec.getMengeGramm()/Search.getClientData().getIngredientByID(zutatSpec.getZutat_id()).stdAmountGramm;
+//				Double compareAmount = comparator.recipeComparatorValues.get(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()));
+//				if(amount>compareAmount){
+//					score = score+compareAmount;
+//					comparator.recipeComparatorValues.set(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()), 0.0);
+////					comparator.put(zutatSpec.getZutat_id(),0.0);
+//					negativeScore = negativeScore - (amount - compareAmount);
+//				} else {
+//					score = score+amount;
+//					comparator.recipeComparatorValues.set(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()),compareAmount-amount );
+//				}
+//			}
+//			
+		}
+		
+		return score+negativeScore;
+	}
+
+
 	private void updateTable(int row,ZutatSpecification zutatSpec){
 		saved = false;
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
@@ -402,5 +598,25 @@ public class RezeptView extends Composite {
 			InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
 			 infoZutat.updateSaison(infoZutat.zutatSpec);
 		 }
+	}
+}
+
+
+class ComparatorObject{
+	public Long key;
+	public Double value;
+	public Ingredient ingredient;
+	public ComparatorObject(){
+		
+	}
+}
+
+class ComparatorRecipe{
+	public Long key;
+	public Double value;
+	public Rezept recipe;
+	public ArrayList<ComparatorObject> comparator;
+	public ComparatorRecipe(){
+		
 	}
 }
