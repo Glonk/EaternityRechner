@@ -2,6 +2,8 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -378,6 +380,14 @@ public class RezeptView extends Composite {
 		SuggestTable.setWidth("300px");
 		SuggestTable.setText(0,0," alles zusammen: ca "+formatted+"g CO₂-Äquivalent");
 		
+		updtTopSuggestion();
+		
+		
+		
+	}
+
+
+	public void updtTopSuggestion() {
 		// TODO Algorithm for the Top Suggestions
 		// Von jedem Gericht gibt es einen CO2 Wert für 4Personen (mit oder ohne Herkunft? oder aus der nächsten Distanz?), 
 		// so wie sie gepeichert wurde.
@@ -403,7 +413,11 @@ public class RezeptView extends Composite {
 		
 		// all Recipes
 		List<Rezept> allRecipes = Search.getClientData().getPublicRezepte();
-		allRecipes.addAll(Search.getClientData().getYourRezepte());
+		if(Search.getClientData().getYourRezepte() != null){
+			allRecipes.addAll(Search.getClientData().getYourRezepte());
+		}
+		
+		
 		
 		// zuerst der Filter über die tatsächlichen Zutaten
 		ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
@@ -423,28 +437,132 @@ public class RezeptView extends Composite {
 		
 		// dann der gröbere über die definierten Alternativen der Zutaten
 		ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
-		for(ComparatorRecipe compObj: scoreMap){
-			if((compObj.value/maxScore)<0.2){ // this is min. 20% identical
-				Rezept compareRecipe = compObj.recipe;
-				ComparatorRecipe comparatorObject = new ComparatorRecipe();
-				comparatorObject.recipe = compareRecipe;
-				// TODO write this method
-//				comparatorObject.comparator = getAltScore(comparator,comparator(compareRecipe));
-				scoreMap2.add(comparatorObject);
+		for(ComparatorRecipe compRecipe: scoreMap){
+			// TODO 0.8 IS JUST A GUESS
+			if((compRecipe.value/maxScore)<0.8){ // this is min. 20% identical
+				Rezept compareRecipe = compRecipe.recipe;
+				ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
+				comparatorRecipe.recipe = compareRecipe;
+				comparatorRecipe.key = compareRecipe.getId();
+				comparatorRecipe.value = getAltScore(compRecipe);
+				scoreMap2.add(comparatorRecipe);
+			}
+		}
+
+		
+		// alles was jetzt noch da ist (alle errors  <0.6), werden verglichen, das heisst die Statistik ausgerechnet
+		ArrayList<ComparatorRecipe> scoreMapFinal = new ArrayList<ComparatorRecipe>();
+		for(ComparatorRecipe compRecipe: scoreMap2){
+			// TODO 0.6 IS JUST A GUESS
+			if((compRecipe.value/maxScore)<0.6){ // this is min. 20% identical and min. 60% alternative Identity
+				scoreMapFinal.add(compRecipe);
 			}
 		}
 		
-		// alles was jetzt noch da ist, wird verglichen, das heisst die Statistik ausgerechnet
-		
+		Collections.sort(scoreMapFinal,new ComparatorComparator());
+
+		// this is just a test
+		if(scoreMapFinal.size()>0){
+			EaternityRechner.suggestionPanel.clear();
+
+			displayTops(scoreMapFinal, 0.0, 0.2);
+			displayTops(scoreMapFinal, 0.2, 0.5);
+			displayTops(scoreMapFinal, 0.5, 1.0);
+			
+		}
+
 		
 		// und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
-		
-		
-		
+	}
+
+
+	private void displayTops(ArrayList<ComparatorRecipe> scoreMapFinal,
+			Double startDouble, Double stopDouble) {
+		int beginRange = (int) Math.round(scoreMapFinal.size()*startDouble);
+		int stopRange = (int) Math.round(scoreMapFinal.size()*stopDouble);
+
+		List<ComparatorRecipe> selectionList =  scoreMapFinal.subList(beginRange, stopRange);
+		if(stopRange-beginRange != 0){
+			Double minValue = 100000.0;
+			Rezept selectedMax = null;
+			Iterator<ComparatorRecipe> iterator = selectionList.iterator();
+			while(iterator.hasNext()){
+				ComparatorRecipe takeMax = iterator.next();
+				if(takeMax.value<minValue){
+					selectedMax = takeMax.recipe;
+					minValue = takeMax.value;
+				}
+			}
+
+			double MenuLabelWert = 0.0;
+			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+			}
+
+			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
+			
+			HTML suggestText = new HTML();
+			suggestText.setHTML(selectedMax.getSymbol() + " hat " +formatted +"g CO2<br/>");
+			EaternityRechner.suggestionPanel.add(suggestText);
+		}
 	}
 	
 	
 	
+	private Double getAltScore(ComparatorRecipe compRecipe) {
+		// check for all the stuff thats negative: that means we had to much in the compareRecipe
+		// and check for all the alternatives of the negative one, if there is something left in the positive
+		ArrayList<ComparatorObject> resultComparator = null;
+
+		boolean changed = true;
+		while(changed){
+			resultComparator = compRecipe.comparator;
+			changed = false;
+			for(ComparatorObject compObj: resultComparator){
+				if(Math.abs(compObj.value)>0.1){
+					// we take 10% as a tolerance value
+					for(Long altIngredientId :compObj.ingredient.getAlternatives()){
+						for(ComparatorObject compObj2: resultComparator){
+							if(altIngredientId.equals(compObj2.key)){
+								if((compObj.value+compObj2.value)<0.1){
+									// this means we have min. 10% improvement ( to have a converging situation)
+
+									int subtractHere = compRecipe.comparator.indexOf(compObj2);
+									int addHere = compRecipe.comparator.indexOf(compObj);
+									compObj2.value = compObj2.value-compObj.value;
+									compObj.value = compObj.value-compObj2.value;
+									compRecipe.comparator.set(subtractHere, compObj2);						
+									compRecipe.comparator.set(addHere, compObj);	
+
+									changed = true;
+								}
+							}
+						}
+					}
+
+				}
+			}
+			
+		}
+		
+		
+		Double errorOrig = 0.0;
+		for(ComparatorObject comparatorObject : compRecipe.comparator){
+			errorOrig = errorOrig+Math.abs(comparatorObject.value);
+		}
+		
+		Double errorHere = 0.0;
+		for(ComparatorObject comparatorObject : resultComparator){
+			errorHere = errorHere+Math.abs(comparatorObject.value);
+		}
+		
+
+		// return value should be the absolut values but just 1/3 of the score...
+		// TODO 1/3 IS JUST A GUESS
+		return errorOrig+(errorOrig-errorHere)/3;
+	}
+
+
 	private ArrayList<ComparatorObject> getExactScore(ArrayList<ComparatorObject> recipeOrigin, ArrayList<ComparatorObject> recipeComparator) {
 		
 		ArrayList<ComparatorObject> resultComparator = new ArrayList<ComparatorObject>();
@@ -455,8 +573,11 @@ public class RezeptView extends Composite {
 
 			
 			ComparatorObject comparatorResultObject = new ComparatorObject();
+			// this is the positive error
+			// we have something in the origin, but not in the compare
 			double newValue = comparatorObjectOrigin.value;
 			comparatorResultObject.key = comparatorObjectOrigin.key;
+			comparatorResultObject.ingredient  = comparatorObjectOrigin.ingredient;
 			
 			// with the one from the database
 			for(ComparatorObject comparatorObject :recipeComparator){
@@ -464,7 +585,8 @@ public class RezeptView extends Composite {
 				// on match
 				if(comparatorObject.key.equals(comparatorObjectOrigin.key)){	
 					// calculate the error value
-					newValue = comparatorObject.value-comparatorObjectOrigin.value;
+					newValue = comparatorObjectOrigin.value-comparatorObject.value;
+					// if this is negative, we had too much of this in the compare
 					break;
 				}
 			}
@@ -472,9 +594,28 @@ public class RezeptView extends Composite {
 			// store the error value
 			comparatorResultObject.value = newValue;
 			resultComparator.add(comparatorResultObject);
-			
 
 		}
+		
+		// this is the case that we have more ingredients, then in the origin one.
+		// they will be added as negative error... ( as it was also too much...)
+		for(ComparatorObject comparatorObject :recipeComparator){
+			boolean notFound = true;
+			for(ComparatorObject resultCompObj : resultComparator){
+				if(comparatorObject.key.equals(resultCompObj.key)){
+					notFound = false;
+				}
+			}
+			if(notFound){
+				ComparatorObject comparatorResultObject = new ComparatorObject();
+				comparatorResultObject.key = comparatorObject.key;
+				comparatorResultObject.value = -comparatorObject.value;
+				comparatorResultObject.ingredient  = comparatorObject.ingredient;
+				resultComparator.add(comparatorResultObject);
+			}
+		
+		}
+		
 		
 		return resultComparator;
 	}
@@ -620,3 +761,11 @@ class ComparatorRecipe{
 		
 	}
 }
+
+class ComparatorComparator implements Comparator<ComparatorRecipe> {
+	  public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {
+		  Double o1 = z1.value;
+		  Double o2 = z2.value;
+			return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
+	  }
+	}

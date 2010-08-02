@@ -101,15 +101,17 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		
 		List<Rezept> rezepte = dao.getOpenRecipe();
-		for(Rezept rezept: data.YourRezepte){
-			int removeIndex = -1;
-			for(Rezept rezept2:rezepte){
-				if(rezept2.getId().equals(rezept.getId())){
-					removeIndex = rezepte.indexOf(rezept2);
+		if(data.YourRezepte != null){
+			for(Rezept rezept: data.YourRezepte){
+				int removeIndex = -1;
+				for(Rezept rezept2:rezepte){
+					if(rezept2.getId().equals(rezept.getId())){
+						removeIndex = rezepte.indexOf(rezept2);
+					}
 				}
-			}
-			if(removeIndex != -1){
-				rezepte.remove(removeIndex);
+				if(removeIndex != -1){
+					rezepte.remove(removeIndex);
+				}
 			}
 		}
 		data.setPublicRezepte(rezepte);

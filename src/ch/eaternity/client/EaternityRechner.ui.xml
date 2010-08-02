@@ -65,24 +65,10 @@
        			
        			
        			<!-- suggest bar -->
-       			<g:DockLayoutPanel>
-       				<g:west size='100'>
-       					<g:HTMLPanel ui:field='top20'> Top 20
-       					</g:HTMLPanel>
-       				</g:west>
-       				<g:west size='100'>
-       				    <g:HTMLPanel ui:field='above'> 20-50
-       					</g:HTMLPanel>
-       				</g:west>
-       				<g:west size='100'>
-       				    <g:HTMLPanel ui:field='below'> 50-100
-       					</g:HTMLPanel>
-       				</g:west>
-       				<g:center>
-       					<g:HTMLPanel ui:field='right'> 50-100
-       					</g:HTMLPanel>
-       				</g:center>
-       			</g:DockLayoutPanel>
+       			<g:HorizontalPanel ui:field='suggestionPanel'>
+
+       			</g:HorizontalPanel>
+       			
        			</g:HTMLPanel>
        			</g:north>
        			<g:center>

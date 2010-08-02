@@ -30,6 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -73,6 +74,7 @@ public class EaternityRechner implements EntryPoint {
 	@UiField Button addRezeptButton;
 	@UiField
 	static SelectionStyle selectionStyle;
+	@UiField static HorizontalPanel suggestionPanel;
 
 	static int selectedRezept = -1;
 	
@@ -249,6 +251,13 @@ public class EaternityRechner implements EntryPoint {
 			styleRezept(selectedRezept, false);
 			selectedRezept = cell.getRowIndex();
 			styleRezept(selectedRezept, true);
+			
+			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
+			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
+			rezeptView.updtTopSuggestion();
+			
+			
+			
 		}
 	}
 	
@@ -427,13 +436,10 @@ public class EaternityRechner implements EntryPoint {
 
 
 	public static void updateSaison() {
-		
 		for( Widget rezeptViewWidget : rezeptList){
 			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
 			rezeptView.updateSaison();
 		}
-		
-		
 	}
 	
 	
