@@ -214,11 +214,11 @@ public class ZutatSpecification  implements Serializable  {
 		}
 		
 		if(zustand != null && zustand.factor != null){
-		wert += zustand.factor*mengeGramm/1000;
+		wert += zustand.factor*mengeGramm;
 		}
 		
 		if(produktion != null && produktion.factor != null){
-		wert += produktion.factor*mengeGramm/1000;
+		wert += produktion.factor*mengeGramm;
 		}
 
 		return wert;
