@@ -185,6 +185,10 @@ public class DistancesDialog extends DialogBox{
 				}
 			}
 			rezeptView.updateSuggestion();
+			  
+			if(rezeptView.addInfoPanel.getWidgetCount() ==2){
+				rezeptView.addInfoPanel.remove(1);
+			}
 		}
 	}
 
