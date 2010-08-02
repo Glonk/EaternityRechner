@@ -112,8 +112,9 @@ public class Search extends ResizeComposite {
 	}
 
 	public static void setClientData(Data clientData) {
-
+		
 		Search.clientData = clientData;
+		
 		
 	}
 
@@ -329,10 +330,15 @@ public class Search extends ResizeComposite {
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
 		
-		List<Rezept> allRezepte = getClientData().getPublicRezepte();
+//		List<Rezept> allRezepte = getClientData().getPublicRezepte();
 		if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
 			yourRezeptePanel.setVisible(true);
-			allRezepte.addAll(getClientData().getYourRezepte());
+//			for(Rezept rezept: getClientData().getYourRezepte()){
+//				if(!allRezepte.contains(rezept)){
+//					allRezepte.add(rezept);
+//				}
+//			}
+//			allRezepte.addAll(getClientData().getYourRezepte());
 		} else {
 			yourRezeptePanel.setVisible(false);
 		}

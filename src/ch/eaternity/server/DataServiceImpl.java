@@ -1,7 +1,6 @@
 package ch.eaternity.server;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,7 +19,6 @@ import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -45,6 +43,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		UserRezept userRezept = new UserRezept(getUser());
 		// TODO : this is not a propper approval process!!!
 		userRezept.approvedOpen = rezept.isOpen();
+		
 		userRezept.setRezept(rezept);
 		dao.ofy().put(userRezept);
 
@@ -102,6 +101,17 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		
 		List<Rezept> rezepte = dao.getOpenRecipe();
+		for(Rezept rezept: data.YourRezepte){
+			int removeIndex = -1;
+			for(Rezept rezept2:rezepte){
+				if(rezept2.getId().equals(rezept.getId())){
+					removeIndex = rezepte.indexOf(rezept2);
+				}
+			}
+			if(removeIndex != -1){
+				rezepte.remove(removeIndex);
+			}
+		}
 		data.setPublicRezepte(rezepte);
 		
 		

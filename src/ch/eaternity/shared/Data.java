@@ -11,10 +11,10 @@ public class Data implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -8325524250818128692L;
-	private  List<Rezept> PublicRezepte;
-	private  List<Rezept> YourRezepte;
-	private  List<Ingredient> ingredients;
-	private  List<SingleDistance> distances;
+	public  List<Rezept> PublicRezepte;
+	public  List<Rezept> YourRezepte;
+	public  List<Ingredient> ingredients;
+	public  List<SingleDistance> distances;
 
 	public Set<String> getOrcaleIndex() {
 

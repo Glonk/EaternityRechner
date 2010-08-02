@@ -112,7 +112,6 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
 	  
 	  ddlg = new DistancesDialog(clientLocation.getText()); 
 
-	  
 
   }
   

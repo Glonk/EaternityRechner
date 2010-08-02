@@ -350,7 +350,7 @@ public class EaternityRechner implements EntryPoint {
 //				displayRezepte(data.getPublicRezepte());
 //				displayRezepte(data.getYourRezepte());
 				
-				setClientData(data);
+//				setClientData(data);
 				Search.setClientData(data);
 				Search.updateResults(" ");
 				topPanel.locationButton.setEnabled(true);

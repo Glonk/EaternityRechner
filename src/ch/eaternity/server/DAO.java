@@ -94,7 +94,9 @@ public class DAO extends DAOBase
         QueryResultIterator<UserRezept> iterator = yourUserRecipes.iterator();
         
         while (iterator.hasNext()) {
-        	Rezept rezept = iterator.next().getRezept();
+        	UserRezept userRezept = iterator.next();
+        	Rezept rezept = userRezept.getRezept();
+        	rezept.setId( userRezept.id);
         	yourRecipes.add(rezept);
         }
         
@@ -111,7 +113,9 @@ public class DAO extends DAOBase
         QueryResultIterator<UserRezept> iterator = yourOpenRecipes.iterator();
         
         while (iterator.hasNext()) {
-        	Rezept rezept = iterator.next().getRezept();
+        	UserRezept userRezept = iterator.next();
+        	Rezept rezept = userRezept.getRezept();
+        	rezept.setId( userRezept.id);
         	openRecipes.add(rezept);
         }
         
