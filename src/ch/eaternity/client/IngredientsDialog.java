@@ -111,14 +111,14 @@ public class IngredientsDialog extends DialogBox{
 					Element CO2eWertElmnt = (Element) CO2eWertElmntLst.item(0);
 					NodeList CO2eWert = CO2eWertElmnt.getChildNodes();
 //					Window.alert("CO2eWert : "  + ((Node) CO2eWert.item(0)).getNodeValue());
-					newIngredient.setCo2eValue( Integer.parseInt( ((Node) CO2eWert.item(0)).getNodeValue() ) );
+					newIngredient.setCo2eValue( Math.round(Float.parseFloat( ((Node) CO2eWert.item(0)).getNodeValue() )*1000) );
 					
 					
 					// alternatives
 					NodeList alternativen = zutatElmnt.getElementsByTagName("Alternatives");
 					Element alternativeElement = (Element) alternativen.item(0);
 
-					if (alternativeElement.getNodeType() == Node.ELEMENT_NODE) {
+					if (alternativeElement != null && alternativeElement.getNodeType() == Node.ELEMENT_NODE) {
 
 						NodeList alternativeElmntLst = alternativeElement.getElementsByTagName("zutatId");
 						Long[] newAlternativen = new Long[alternativeElmntLst.getLength()];
@@ -138,6 +138,17 @@ public class IngredientsDialog extends DialogBox{
 						newIngredient.setAlternatives(newAlternativen);
 					}
 					
+					
+					// hasSeason
+					NodeList hasSeasonElmntLst = zutatElmnt.getElementsByTagName("hasSeason");
+					Element hasSeasonWertElmnt = (Element) hasSeasonElmntLst.item(0);
+					if(hasSeasonWertElmnt!=null){
+					NodeList hasSeason = hasSeasonWertElmnt.getChildNodes();
+//					Window.alert("CO2eWert : "  + ((Node) CO2eWert.item(0)).getNodeValue());
+					newIngredient.hasSeason = Boolean.valueOf( ((Node) hasSeason.item(0)).getNodeValue() ) ;
+					}
+					
+					
 					// std mengeGramm
 					NodeList mengeGrammElmntLst = zutatElmnt.getElementsByTagName("stdAmountGramm");
 					Element mengeGrammElmnt = (Element) mengeGrammElmntLst.item(0);
@@ -152,19 +163,14 @@ public class IngredientsDialog extends DialogBox{
 //					Window.alert("std herkunft : "  + ((Node) herkunft.item(0)).getNodeValue());
 					newIngredient.stdExtractionSymbol = ((Node) herkunft.item(0)).getNodeValue();
 					
-					// hasSeason
-					NodeList hasSeasonElmntLst = zutatElmnt.getElementsByTagName("hasSeason");
-					Element hasSeasonWertElmnt = (Element) hasSeasonElmntLst.item(0);
-					NodeList hasSeason = hasSeasonWertElmnt.getChildNodes();
-//					Window.alert("CO2eWert : "  + ((Node) CO2eWert.item(0)).getNodeValue());
-					newIngredient.hasSeason = Boolean.valueOf( ((Node) hasSeason.item(0)).getNodeValue() ) ;
+
 					
 					
 					//
 					NodeList Conditions = zutatElmnt.getElementsByTagName("Conditions");
 					Element conditionsElement = (Element) Conditions.item(0);
 
-					if (conditionsElement.getNodeType() == Node.ELEMENT_NODE) {
+					if (conditionsElement != null && conditionsElement.getNodeType() == Node.ELEMENT_NODE) {
 
 						NodeList ConditionsElmntLst = conditionsElement.getElementsByTagName("condition");
 						ArrayList<Condition> newConditions = new ArrayList<Condition>(ConditionsElmntLst.getLength());
@@ -197,7 +203,7 @@ public class IngredientsDialog extends DialogBox{
 						NodeList Productions = zutatElmnt.getElementsByTagName("Productions");
 						Element productionsElement = (Element) Productions.item(0);
 
-						if (productionsElement.getNodeType() == Node.ELEMENT_NODE) {
+						if (productionsElement != null && productionsElement.getNodeType() == Node.ELEMENT_NODE) {
 
 							NodeList ProductionsElmntLst = productionsElement.getElementsByTagName("production");
 							ArrayList<Production> newProductions = new ArrayList<Production>(ProductionsElmntLst.getLength());
@@ -231,7 +237,7 @@ public class IngredientsDialog extends DialogBox{
 						NodeList Transportations = zutatElmnt.getElementsByTagName("Transportation");
 						Element TransportationsElement = (Element) Transportations.item(0);
 
-						if (TransportationsElement.getNodeType() == Node.ELEMENT_NODE) {
+						if (TransportationsElement != null && TransportationsElement.getNodeType() == Node.ELEMENT_NODE) {
 
 							NodeList TransportationElmntLst = TransportationsElement.getElementsByTagName("moTransportation");
 							ArrayList<MoTransportation> newTransportation = new ArrayList<MoTransportation>(TransportationElmntLst.getLength());
@@ -266,7 +272,7 @@ public class IngredientsDialog extends DialogBox{
 					NodeList herkuenfte = zutatElmnt.getElementsByTagName("Extractions");
 					Element herkuenfteElement = (Element) herkuenfte.item(0);
 
-					if (herkuenfteElement.getNodeType() == Node.ELEMENT_NODE) {
+					if (herkuenfteElement != null && herkuenfteElement.getNodeType() == Node.ELEMENT_NODE) {
 						
 						NodeList herkunftIdElmntLst = herkuenfteElement.getElementsByTagName("extraction");
 						List<Extraction> newHerkuenfte = new ArrayList<Extraction>(herkunftIdElmntLst.getLength());
@@ -284,6 +290,7 @@ public class IngredientsDialog extends DialogBox{
 								// std startSeason
 								NodeList startSeasonElmntLst = extractionElement.getElementsByTagName("startSeason");
 								Element startSeasonElmnt = (Element) startSeasonElmntLst.item(0);
+								if(startSeasonElmnt != null){
 								NodeList startSeason = startSeasonElmnt.getChildNodes();
 //								Window.alert("std startSeason : "  + ((Node) startSeason.item(0)).getNodeValue());
 								extraction.startSeason =  ((Node) startSeason.item(0)).getNodeValue();
@@ -295,9 +302,10 @@ public class IngredientsDialog extends DialogBox{
 								NodeList stopSeason = stopSeasonElmnt.getChildNodes();
 //								Window.alert("std stopSeason : "  + ((Node) stopSeason.item(0)).getNodeValue());
 								extraction.stopSeason =	((Node)  stopSeason.item(0)).getNodeValue();
-								
+								}
 								
 								// std zustand
+								if(newIngredient.conditions != null){
 								NodeList zustandElmntLst = extractionElement.getElementsByTagName("condition");
 								Element zustandElmnt = (Element) zustandElmntLst.item(0);
 								NodeList zustand = zustandElmnt.getChildNodes();
@@ -307,8 +315,10 @@ public class IngredientsDialog extends DialogBox{
 										extraction.stdCondition = condition;
 									}
 								}
+								}
 
 								// std produktion
+								if(newIngredient.productions != null){
 								NodeList produktionElmntLst = extractionElement.getElementsByTagName("production");
 								Element produktionElmnt = (Element) produktionElmntLst.item(0);
 								NodeList produktion = produktionElmnt.getChildNodes();
@@ -318,8 +328,10 @@ public class IngredientsDialog extends DialogBox{
 										extraction.stdProduction = production;
 									}
 								}
+								}
 								
 								// std transportmittel
+								if(newIngredient.moTransportations != null){
 								NodeList transportmittelElmntLst = extractionElement.getElementsByTagName("moTransportation");
 								Element transportmittelElmnt = (Element) transportmittelElmntLst.item(0);
 								NodeList transportmittel = transportmittelElmnt.getChildNodes();
@@ -328,6 +340,7 @@ public class IngredientsDialog extends DialogBox{
 									if(((Node) transportmittel.item(0)).getNodeValue().contentEquals(moTransportation.symbol) ){
 										extraction.stdMoTransportation = moTransportation;
 									}
+								}
 								}
 								
 //
