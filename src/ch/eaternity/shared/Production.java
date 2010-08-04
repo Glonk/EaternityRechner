@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class Production implements Serializable{
+public class Production implements Serializable, Cloneable{
 
 	/**
 	 * 

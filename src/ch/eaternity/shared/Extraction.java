@@ -11,7 +11,7 @@ import javax.persistence.Transient;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;
 
-public class Extraction implements Serializable{
+public class Extraction implements Serializable,Cloneable{
 	
 
 	/**

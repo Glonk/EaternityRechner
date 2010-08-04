@@ -58,6 +58,8 @@ public class InfoZutatDialog extends Composite {
 	private Rezept rezept;
 	private FlexTable suggestTable;
 	
+	private HTML kmText = new HTML();
+	
 	interface SelectionStyle extends CssResource {
 		String selectedBlob();
 	}
@@ -102,12 +104,12 @@ public class InfoZutatDialog extends Composite {
 	
 	public void setValues( final Ingredient zutat){
 		
-		if(zutat.hasSeason){
+		if(zutat.hasSeason != null && zutat.hasSeason){
 			specificationTable.setHTML(0, 0, "Saison");
 			updateSaison(zutatSpec);
 		}
 		
-		if(zutat.getExtractions().size()>0){
+		if(zutat.getExtractions() != null && zutat.getExtractions().size()>0){
 			
 			final ListBox herkuenfte = new ListBox();
 			
@@ -122,7 +124,14 @@ public class InfoZutatDialog extends Composite {
 								singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 							
 							zutatSpec.setDistance(singleDistance.getDistance());
-							
+						
+
+					    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
+					    	if(formatted.contentEquals("0")){
+					    		kmText.setHTML("ca. " + formatted + "km");
+					    	}else{
+					    		kmText.setHTML("ca. " + formatted + "00km");
+					    	}
 						}
 
 					}
@@ -136,14 +145,14 @@ public class InfoZutatDialog extends Composite {
 			HorizontalPanel flow = new HorizontalPanel();
 			specificationTable.setWidget(row,1,flow);
 			flow.add(herkuenfte);
-			HTML kleinerText = new HTML();
+			
 	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
 	    	if(formatted.contentEquals("0")){
-	    		kleinerText.setHTML("ca. " + formatted + "km");
+	    		kmText.setHTML("ca. " + formatted + "km");
 	    	}else{
-	    		kleinerText.setHTML("ca. " + formatted + "00km");
+	    		kmText.setHTML("ca. " + formatted + "00km");
 	    	}
-	    	flow.add(kleinerText);
+	    	flow.add(kmText);
 			
 			
 			
@@ -153,7 +162,7 @@ public class InfoZutatDialog extends Composite {
 		
 
 
-		if(zutat.moTransportations.size()>0){
+		if(zutat.moTransportations != null && zutat.moTransportations.size()>0){
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Transport");
 			FlowPanel flow = new FlowPanel();
@@ -179,7 +188,7 @@ public class InfoZutatDialog extends Composite {
 			
 		}
 		
-		if(zutat.productions.size()>0){
+		if(zutat.productions != null && zutat.productions.size()>0){
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Herstellung");
 			FlowPanel flow = new FlowPanel();
@@ -206,7 +215,7 @@ public class InfoZutatDialog extends Composite {
 		}
 		
 		
-		if(zutat.conditions.size()>0){
+		if(zutat.conditions != null && zutat.conditions.size()>0){
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Zustand");
 			FlowPanel flow = new FlowPanel();

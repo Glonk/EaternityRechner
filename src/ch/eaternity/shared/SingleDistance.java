@@ -10,7 +10,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class SingleDistance implements Serializable {
+public class SingleDistance implements Serializable, Cloneable {
 
 	/**
 	 * 

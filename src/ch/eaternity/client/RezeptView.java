@@ -3,12 +3,16 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 
 
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.MoTransportation;
+import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.ZutatSpecification;
 
@@ -267,13 +271,13 @@ public class RezeptView extends Composite {
 
 
 	
-	private void displayZutatImMenu( List<ZutatSpecification> zutaten) {
+	private void displayZutatImMenu( ArrayList<ZutatSpecification> zutaten) {
 	
 	MenuTable.removeAllRows();;
 	int row = MenuTable.getRowCount();
-	
+//	ArrayList<ZutatSpecification> zutatenNew = (ArrayList<ZutatSpecification>) zutaten.clone();
 	for(final ZutatSpecification zutat : zutaten){
-
+//		
 	Button removeZutat = new Button("x");
 //	removeZutat.addStyleName("style.gwt-Button");
 //	removeZutat.addStyleDependentName("gwt-Button");
@@ -305,11 +309,11 @@ public class RezeptView extends Composite {
 			} else {
 				String MengeZutatWert;
 				int rowhere = getWidgetRow(MengeZutat,MenuTable);
-				if(MengeZutat.getText() != ""){
+				if(!MengeZutat.getText().equalsIgnoreCase("")){
 					MengeZutatWert = MengeZutat.getText();
 					zutat.setMengeGramm(Integer.valueOf(MengeZutatWert));
 				} else {
-					MengeZutatWert = "0";
+					MengeZutatWert = "";
 				}
 				
 				updateTable(rowhere,zutat);

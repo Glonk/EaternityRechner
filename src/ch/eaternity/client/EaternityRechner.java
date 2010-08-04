@@ -225,12 +225,27 @@ public class EaternityRechner implements EntryPoint {
 
 	public static void ShowRezept(final Rezept rezept) {
 		// create a new one
+		
 		styleRezept(selectedRezept, false);
 		
 		selectedRezept = -1;
-		List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+		ArrayList<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
 		zutaten.clear();
-		zutaten.addAll(	rezept.getZutaten());
+		for(ZutatSpecification zutatNew : rezept.getZutaten()){
+			
+			// TODO that nothing is missing
+			final ZutatSpecification zutat = new ZutatSpecification(zutatNew.getId(), zutatNew.getName(),
+					zutatNew.getCookingDate(),zutatNew.getZustand(),zutatNew.getProduktion(), 
+					zutatNew.getTransportmittel());
+			zutat.setDistance(zutatNew.getDistance());
+			zutat.setHerkunft(zutatNew.getHerkunft());
+			zutat.setMengeGramm(zutatNew.getMengeGramm());
+			zutat.setSeason(zutatNew.getStartSeason(), zutatNew.getStopSeason());
+			zutat.setZutat_id(zutatNew.getZutat_id());
+			zutaten.add(zutat);
+		}
+
+		
 		AddZutatZumMenu(zutaten);
 		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
 		rezeptView.RezeptName.setText(rezept.getSymbol());
@@ -290,7 +305,7 @@ public class EaternityRechner implements EntryPoint {
 		zutatSpecification.setMengeGramm(item.stdAmountGramm);
 		zutatSpecification.setSeason(stdExtraction.startSeason, stdExtraction.stopSeason);
 		zutatSpecification.setNormalCO2Value(item.getCo2eValue());
-		List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+		ArrayList<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
 		
 		
 		zutaten.add(zutatSpecification);
@@ -298,7 +313,8 @@ public class EaternityRechner implements EntryPoint {
 		return row;
 	}
 
-	static int AddZutatZumMenu(final List<ZutatSpecification> zutaten) {
+	static int AddZutatZumMenu(final ArrayList<ZutatSpecification> zutatenNew) {
+		ArrayList<ZutatSpecification> zutaten = (ArrayList<ZutatSpecification>) zutatenNew.clone();
 		ListIterator<ZutatSpecification> iterator = zutaten.listIterator();
 		while(iterator.hasNext()){
 			ZutatSpecification zutatSpec = iterator.next();

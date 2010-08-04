@@ -23,7 +23,7 @@ import com.googlecode.objectify.annotation.Serialized;
  * A specification in more detail of the ingredient.
  */
 @PersistenceCapable //(detachable = "true")
-public class ZutatSpecification  implements Serializable  {
+public class ZutatSpecification  implements Serializable, Cloneable  {
 	/**
 	 * 
 	 */

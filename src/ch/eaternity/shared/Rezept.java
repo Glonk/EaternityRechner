@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import com.googlecode.objectify.annotation.Serialized;
 
 
-public class Rezept implements Serializable{
+public class Rezept implements Serializable, Cloneable{
  
 
 	private static final long serialVersionUID = -5888386800366492104L;
@@ -32,7 +32,7 @@ public class Rezept implements Serializable{
     // @Persistent //(mappedBy = "rezept") //, defaultFetchGroup = "true")
 //    @Element(dependent = "true")
 	@Serialized
-	public List<ZutatSpecification> Zutaten = new ArrayList<ZutatSpecification>();
+	public ArrayList<ZutatSpecification> Zutaten = new ArrayList<ZutatSpecification>();
     
 //    @Persistent 
 //    private List<String> ZutatSpecificationKeys = new ArrayList<String>(); 
@@ -76,11 +76,11 @@ public class Rezept implements Serializable{
 		
 	}
 
-	public List<ZutatSpecification> getZutaten() {
+	public ArrayList<ZutatSpecification> getZutaten() {
 		return this.Zutaten;
 	}
 
-	public void setZutaten(List<ZutatSpecification> zutaten) {
+	public void setZutaten(ArrayList<ZutatSpecification> zutaten) {
 			this.Zutaten = zutaten;
 
 	}
