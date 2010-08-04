@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
+
 
 
 import ch.eaternity.shared.Ingredient;
@@ -26,7 +24,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -173,6 +170,7 @@ public class RezeptView extends Composite {
 			klicky = RezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if(RezeptName.getText() != ""){
+						// TODO warn that it wasn't saved in the other case
 //						Speichere Rezept ab. 
 //						Rezept rezeptSave = new Rezept(RezeptName.getText());
 //						rezeptSave.setOpen(makePublic.getValue());
@@ -412,11 +410,16 @@ public class RezeptView extends Composite {
 		}
 		
 		// all Recipes
-		List<Rezept> allRecipes = Search.getClientData().getPublicRezepte();
+		List<Rezept> allRecipes = new ArrayList<Rezept>();
+		allRecipes.clear();
+		Rezept compare = rezept;
+		compare.setSymbol("Ihr Rezept");
+		allRecipes.add(compare);
+		allRecipes.addAll( Search.getClientData().getPublicRezepte());
 		if(Search.getClientData().getYourRezepte() != null){
 			allRecipes.addAll(Search.getClientData().getYourRezepte());
 		}
-		
+
 		
 		
 		// zuerst der Filter über die tatsächlichen Zutaten
@@ -437,6 +440,7 @@ public class RezeptView extends Composite {
 		
 		// dann der gröbere über die definierten Alternativen der Zutaten
 		ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
+		scoreMap2.clear();
 		for(ComparatorRecipe compRecipe: scoreMap){
 			// TODO 0.8 IS JUST A GUESS
 			if((compRecipe.value/maxScore)<0.8){ // this is min. 20% identical
@@ -452,9 +456,12 @@ public class RezeptView extends Composite {
 		
 		// alles was jetzt noch da ist (alle errors  <0.6), werden verglichen, das heisst die Statistik ausgerechnet
 		ArrayList<ComparatorRecipe> scoreMapFinal = new ArrayList<ComparatorRecipe>();
+		scoreMapFinal.clear();
 		for(ComparatorRecipe compRecipe: scoreMap2){
 			// TODO 0.6 IS JUST A GUESS
 			if((compRecipe.value/maxScore)<0.6){ // this is min. 20% identical and min. 60% alternative Identity
+				
+				compRecipe.recipe.setCO2Value();
 				scoreMapFinal.add(compRecipe);
 			}
 		}
@@ -465,9 +472,9 @@ public class RezeptView extends Composite {
 		if(scoreMapFinal.size()>0){
 			EaternityRechner.suggestionPanel.clear();
 
-			displayTops(scoreMapFinal, 0.0, 0.2);
-			displayTops(scoreMapFinal, 0.2, 0.5);
-			displayTops(scoreMapFinal, 0.5, 1.0);
+			displayTops(scoreMapFinal, 0.8, 1.0);
+			displayTops(scoreMapFinal, 0.5, 0.8);
+			displayTops(scoreMapFinal, 0.0, 0.5);
 			
 		}
 
@@ -478,8 +485,8 @@ public class RezeptView extends Composite {
 
 	private void displayTops(ArrayList<ComparatorRecipe> scoreMapFinal,
 			Double startDouble, Double stopDouble) {
-		int beginRange = (int) Math.round(scoreMapFinal.size()*startDouble);
-		int stopRange = (int) Math.round(scoreMapFinal.size()*stopDouble);
+		int beginRange = (int) Math.round((scoreMapFinal.size()-1)*startDouble);
+		int stopRange = (int) Math.round((scoreMapFinal.size()-1)*stopDouble);
 
 		List<ComparatorRecipe> selectionList =  scoreMapFinal.subList(beginRange, stopRange);
 		if(stopRange-beginRange != 0){
@@ -494,15 +501,15 @@ public class RezeptView extends Composite {
 				}
 			}
 
-			double MenuLabelWert = 0.0;
-			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+			Double MenuLabelWert = new Double(0.0);
+			for (ZutatSpecification zutatSpec : selectedMax.Zutaten) { 
 				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			}
 
-			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
+	
 			
-			HTML suggestText = new HTML();
-			suggestText.setHTML(selectedMax.getSymbol() + " hat " +formatted +"g CO2<br/>");
+			HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g CO2 ");
+//			suggestText.setHTML();
 			EaternityRechner.suggestionPanel.add(suggestText);
 		}
 	}
@@ -519,27 +526,29 @@ public class RezeptView extends Composite {
 			resultComparator = compRecipe.comparator;
 			changed = false;
 			for(ComparatorObject compObj: resultComparator){
-				if(Math.abs(compObj.value)>0.1){
-					// we take 10% as a tolerance value
-					for(Long altIngredientId :compObj.ingredient.getAlternatives()){
-						for(ComparatorObject compObj2: resultComparator){
-							if(altIngredientId.equals(compObj2.key)){
-								if((compObj.value+compObj2.value)<0.1){
-									// this means we have min. 10% improvement ( to have a converging situation)
+				if(compObj.ingredient.getAlternatives() != null){
+					if(Math.abs(compObj.value)>0.1){
+						// we take 10% as a tolerance value
+						for(Long altIngredientId :compObj.ingredient.getAlternatives()){
+							for(ComparatorObject compObj2: resultComparator){
+								if(altIngredientId.equals(compObj2.key)){
+									if((compObj.value+compObj2.value)<0.1){
+										// this means we have min. 10% improvement ( to have a converging situation)
 
-									int subtractHere = compRecipe.comparator.indexOf(compObj2);
-									int addHere = compRecipe.comparator.indexOf(compObj);
-									compObj2.value = compObj2.value-compObj.value;
-									compObj.value = compObj.value-compObj2.value;
-									compRecipe.comparator.set(subtractHere, compObj2);						
-									compRecipe.comparator.set(addHere, compObj);	
+										int subtractHere = compRecipe.comparator.indexOf(compObj2);
+										int addHere = compRecipe.comparator.indexOf(compObj);
+										compObj2.value = compObj2.value-compObj.value;
+										compObj.value = compObj.value-compObj2.value;
+										compRecipe.comparator.set(subtractHere, compObj2);						
+										compRecipe.comparator.set(addHere, compObj);	
 
-									changed = true;
+										changed = true;
+									}
 								}
 							}
 						}
-					}
 
+					}
 				}
 			}
 			
@@ -657,57 +666,6 @@ public class RezeptView extends Composite {
 
 		return recipeComparator;
 	}
-	
-	private Double getIdenticalScore(Rezept compareRecipe,ArrayList<ComparatorObject> recipeComparator) {
-		// der Score ist:  ( Zutat*(Menge im Rezept)/StdMenge )
-		Double score = 0.0;
-		Double negativeScore = 0.0;
-		for(ZutatSpecification zutatSpec : compareRecipe.Zutaten){
-			
-			int index = -1;
-			double newValue = 0.0;
-			for(ComparatorObject comparatorObject :recipeComparator){
-				if(comparatorObject.key.equals(zutatSpec.getZutat_id())){
-					Double amount = 1.0*zutatSpec.getMengeGramm()/Search.getClientData().getIngredientByID(zutatSpec.getZutat_id()).stdAmountGramm;
-					if(amount>comparatorObject.value){
-						score = score+comparatorObject.value;
-//						comparator.recipeComparatorValues.set(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()), 0.0);
-//						comparator.put(zutatSpec.getZutat_id(),0.0);
-						negativeScore = negativeScore - (amount - comparatorObject.value);
-					} else {
-						score = score+amount;
-						newValue = comparatorObject.value-amount ;
-					}
-					index = recipeComparator.indexOf(comparatorObject);
-					break;
-				}
-			}
-			
-			ComparatorObject comparatorObject = new ComparatorObject();
-			comparatorObject.key = zutatSpec.getZutat_id();
-			comparatorObject.value = newValue;
-			if(index!=-1){
-				recipeComparator.set(index, comparatorObject);
-			} 
-//			
-//			if(comparator.recipeComparatorIndex.contains(zutatSpec.getZutat_id())){
-//				Double amount = 1.0*zutatSpec.getMengeGramm()/Search.getClientData().getIngredientByID(zutatSpec.getZutat_id()).stdAmountGramm;
-//				Double compareAmount = comparator.recipeComparatorValues.get(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()));
-//				if(amount>compareAmount){
-//					score = score+compareAmount;
-//					comparator.recipeComparatorValues.set(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()), 0.0);
-////					comparator.put(zutatSpec.getZutat_id(),0.0);
-//					negativeScore = negativeScore - (amount - compareAmount);
-//				} else {
-//					score = score+amount;
-//					comparator.recipeComparatorValues.set(comparator.recipeComparatorIndex.indexOf(zutatSpec.getZutat_id()),compareAmount-amount );
-//				}
-//			}
-//			
-		}
-		
-		return score+negativeScore;
-	}
 
 
 	private void updateTable(int row,ZutatSpecification zutatSpec){
@@ -764,8 +722,8 @@ class ComparatorRecipe{
 
 class ComparatorComparator implements Comparator<ComparatorRecipe> {
 	  public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {
-		  Double o1 = z1.value;
-		  Double o2 = z2.value;
-			return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
+		  Double o1 = z1.recipe.getCO2Value();
+		  Double o2 = z2.recipe.getCO2Value();
+			return Double.valueOf(o2).compareTo(Double.valueOf(o1));
 	  }
 	}
