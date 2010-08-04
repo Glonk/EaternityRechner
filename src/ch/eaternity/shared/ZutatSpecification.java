@@ -205,7 +205,7 @@ public class ZutatSpecification  implements Serializable  {
 
 	//TODO calculate the CO2 value
 	public double getCalculatedCO2Value() {
-		double wert = NormalCO2Value*mengeGramm/100;
+		double wert = NormalCO2Value*mengeGramm/1000;
 		
 		if(transportmittel != null && transportmittel.factor != null){
 		if(distance != 0){

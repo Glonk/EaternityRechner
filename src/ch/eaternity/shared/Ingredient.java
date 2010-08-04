@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Embedded;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;
@@ -18,6 +19,9 @@ public class Ingredient implements IsSerializable{
     private String symbol;
 
     private Integer co2eValue;
+    
+    @Transient
+    public Boolean noAlternative;
     
     private Long[] alternativeIds;
     

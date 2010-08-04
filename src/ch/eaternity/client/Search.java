@@ -353,28 +353,40 @@ public class Search extends ResizeComposite {
 				for(String search : searches){
 	
 					// Zutaten
-					for(Ingredient zutat : getClientData().getIngredients())
+					for(Ingredient zutat : getClientData().getIngredients()){
 						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
-						//if(,search) < 3){
+							//if(,search) < 3){
 							//Window.alert(zutat.getSymbol().substring(0, search.trim().length()));
 							if(!FoundIngredient.contains(zutat)){
+								zutat.noAlternative = true;
 								FoundIngredient.add(zutat);
 								displayZutat(zutat);
 							}
-							for(Long alternativen_id : zutat.getAlternatives()){
-								for(Ingredient zutat2 : getClientData().getIngredients()){
-									if(zutat2.getId().equals(alternativen_id)){
-										if(!FoundIngredient.contains(zutat2)){
-											FoundIngredient.add(zutat2);
-											displayZutat(zutat2);
+							
+
+
+						}
+					}
+					// only look for alternatives, if there is only 1 result
+					// TODO mark the alternatives as Special!
+					if(FoundIngredient.size() == 1){
+						for(Ingredient zutat :FoundIngredient){
+							if(zutat.getAlternatives() != null){
+								for(Long alternativen_id : zutat.getAlternatives()){
+									for(Ingredient zutat2 : getClientData().getIngredients()){
+										if(zutat2.getId().equals(alternativen_id)){
+											if(!FoundIngredient.contains(zutat2)){
+												zutat2.noAlternative = false;
+												FoundIngredient.add(zutat2);
+												displayZutat(zutat2);
+											}
 										}
 									}
 								}
-
 							}
-							
 						}
 					}
+				}
 				// Rezepte
 				if(	getClientData().getYourRezepte() != null){
 					searchRezept(searchString, getClientData().getYourRezepte(), searches,true);
@@ -391,7 +403,8 @@ public class Search extends ResizeComposite {
 					for(Ingredient zutat : getClientData().getIngredients()){
 						if(!FoundIngredient.contains(zutat)){
 							FoundIngredient.add(zutat);
-						displayZutat(zutat);
+							zutat.noAlternative = true;
+							displayZutat(zutat);
 						}
 					}
 					
@@ -657,8 +670,13 @@ public class Search extends ResizeComposite {
 
 	public static void displayZutat(final Ingredient zutat2) {
 		int row = table.getRowCount();
-		table.setText(row,0,zutat2.getSymbol());
-		table.setText(row, 1, "ca. "+Integer.toString((int) zutat2.getCo2eValue()).concat("g CO₂-Äquivalent pro 100g"));
+
+		if(zutat2.noAlternative){
+			table.setText(row,0,zutat2.getSymbol());
+		} else {
+			table.setText(row,0,"Alternative : " + zutat2.getSymbol());
+		}
+		table.setText(row, 1, "ca. "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g CO₂-Äquivalent pro 100g"));
 
 
 
