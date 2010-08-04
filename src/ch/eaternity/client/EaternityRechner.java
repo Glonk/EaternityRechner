@@ -228,11 +228,13 @@ public class EaternityRechner implements EntryPoint {
 		styleRezept(selectedRezept, false);
 		
 		selectedRezept = -1;
-		List<ZutatSpecification> zutaten = rezept.getZutaten();
+		List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+		zutaten.clear();
+		zutaten.addAll(	rezept.getZutaten());
 		AddZutatZumMenu(zutaten);
 		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
 		rezeptView.RezeptName.setText(rezept.getSymbol());
-		rezeptView.rezeptNameTop.setText(rezept.getSymbol());
+		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
 		rezeptView.makePublic.setValue(rezept.isOpen());
 		
 	}
