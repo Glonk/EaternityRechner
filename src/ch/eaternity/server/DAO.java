@@ -4,7 +4,7 @@ package ch.eaternity.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.eaternity.shared.Condition;
+import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
@@ -23,7 +23,7 @@ public class DAO extends DAOBase
     static {
         ObjectifyService.register(Ingredient.class);
         ObjectifyService.register(Extraction.class);
-        ObjectifyService.register(Condition.class);
+        ObjectifyService.register(IngredientCondition.class);
         ObjectifyService.register(MoTransportation.class);
         ObjectifyService.register(ProductLabel.class);
         ObjectifyService.register(ZutatSpecification.class);

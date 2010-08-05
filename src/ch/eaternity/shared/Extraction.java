@@ -27,7 +27,7 @@ public class Extraction implements Serializable,Cloneable{
 	public String stopSeason;
 
 	
-	public Condition stdCondition;
+	public IngredientCondition stdCondition;
 	public Production stdProduction;
 	public MoTransportation stdMoTransportation;
 	

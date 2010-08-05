@@ -6,7 +6,7 @@ import java.util.List;
 
 
 //import ch.eaternity.server.Ingredient;
-import ch.eaternity.shared.Condition;
+import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
@@ -173,7 +173,7 @@ public class IngredientsDialog extends DialogBox{
 					if (conditionsElement != null && conditionsElement.getNodeType() == Node.ELEMENT_NODE) {
 
 						NodeList ConditionsElmntLst = conditionsElement.getElementsByTagName("condition");
-						ArrayList<Condition> newConditions = new ArrayList<Condition>(ConditionsElmntLst.getLength());
+						ArrayList<IngredientCondition> newConditions = new ArrayList<IngredientCondition>(ConditionsElmntLst.getLength());
 						for(int j=0; j<ConditionsElmntLst.getLength(); j++){
 							Element labelsId = (Element) ConditionsElmntLst.item(j);
 
@@ -181,7 +181,7 @@ public class IngredientsDialog extends DialogBox{
 							Element LabelSymbolElmnt = (Element) LabelSymbolElmntLst.item(0);
 							NodeList LabelSymbol = LabelSymbolElmnt.getChildNodes();
 							//									Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
-							Condition condition = new Condition(( (Node) LabelSymbol.item(0)).getNodeValue() );
+							IngredientCondition condition = new IngredientCondition(( (Node) LabelSymbol.item(0)).getNodeValue() );
 
 							NodeList LabelFactorElmntLst = labelsId.getElementsByTagName("factor");
 							Element LabelFactorElmnt = (Element) LabelFactorElmntLst.item(0);
@@ -310,7 +310,7 @@ public class IngredientsDialog extends DialogBox{
 								Element zustandElmnt = (Element) zustandElmntLst.item(0);
 								NodeList zustand = zustandElmnt.getChildNodes();
 //								Window.alert("std zustand : "  + ((Node) zustand.item(0)).getNodeValue());
-								for(Condition condition : newIngredient.conditions){
+								for(IngredientCondition condition : newIngredient.conditions){
 									if(((Node) zustand.item(0)).getNodeValue().contentEquals(condition.symbol) ){
 										extraction.stdCondition = condition;
 									}

@@ -135,7 +135,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return userService.getCurrentUser();
 	}
 
-	private PersistenceManager getPersistenceManager() {
+	static PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
 	}
 

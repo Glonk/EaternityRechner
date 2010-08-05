@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 
-import ch.eaternity.shared.Condition;
+import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
@@ -221,7 +221,7 @@ public class InfoZutatDialog extends Composite {
 			FlowPanel flow = new FlowPanel();
 			specificationTable.setWidget(row,1,flow);
 			
-			for(final Condition condition : zutat.conditions){
+			for(final IngredientCondition condition : zutat.conditions){
 				RadioButton conditionBox = new RadioButton("conditions",condition.symbol);
 				if(condition.symbol.equalsIgnoreCase(zutatSpec.getZustand().symbol)){
 					conditionBox.setValue(true);

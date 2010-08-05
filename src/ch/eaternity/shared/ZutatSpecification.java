@@ -60,7 +60,7 @@ public class ZutatSpecification  implements Serializable, Cloneable  {
 	private Date cookingDate;
 	
 	@Embedded
-	private Condition zustand;
+	private IngredientCondition zustand;
 	@Embedded
 	private Production produktion;
 	@Embedded
@@ -75,7 +75,7 @@ public class ZutatSpecification  implements Serializable, Cloneable  {
 	private int NormalCO2Value;
 	
 	public ZutatSpecification(Long zutat_id, String name,
-		 Date cookingDate,Condition symbol,Production symbol2, 
+		 Date cookingDate,IngredientCondition symbol,Production symbol2, 
 		 MoTransportation symbol3) {
 		this.setName(name);
 		this.setZutat_id(zutat_id);
@@ -113,10 +113,10 @@ public class ZutatSpecification  implements Serializable, Cloneable  {
 	public Date getCookingDate() {
 		return cookingDate;
 	}
-	public void setZustand(Condition zustand) {
+	public void setZustand(IngredientCondition zustand) {
 		this.zustand = zustand;
 	}
-	public Condition getZustand() {
+	public IngredientCondition getZustand() {
 		return zustand;
 	}
 	public void setProduktion(Production produktion) {

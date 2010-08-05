@@ -19,6 +19,14 @@
   
 
 
+  <!-- Include GWTUpload library -->
+  <inherits name="gwtupload.GWTUpload"/>
+  <!--inherits name="jsupload.JsUploadLib"/>
+  <stylesheet src="JsUpload.css"/>
+  <stylesheet src="UploadSample.css"/-->
+
+
+
   <!-- inherits name='com.google.gwt.search.Search'/ -->
 	<!-- script src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;gwt=1"/ -->
   <!-- This will give us shorter obfuscated CSS class names. We guarantee

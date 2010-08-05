@@ -10,9 +10,9 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class SingleDistance implements Serializable, Cloneable {
+public class SingleDistance implements Serializable {
 
-	/**
+	/** 
 	 * 
 	 */
 	private static final long serialVersionUID = 3172640409035191698L;

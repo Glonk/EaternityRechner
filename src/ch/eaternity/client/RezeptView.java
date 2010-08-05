@@ -1,5 +1,12 @@
 package ch.eaternity.client;
 
+import gwtupload.client.IUploader;
+import gwtupload.client.MultiUploader;
+import gwtupload.client.PreloadedImage;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader.Utils;
+import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,7 +16,7 @@ import java.util.List;
 
 
 
-import ch.eaternity.shared.Condition;
+import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.Production;
@@ -28,17 +35,26 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.XMLParser;
 
 public class RezeptView extends Composite {
 	interface Binder extends UiBinder<Widget, RezeptView> { }
@@ -58,6 +74,11 @@ public class RezeptView extends Composite {
 	@UiField Label rezeptNameTop;
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
+	@UiField HorizontalPanel imageUploaderHP;
+	private FlowPanel panelImages = new FlowPanel();
+
+	
+	
 	HandlerRegistration klicky;
 	
 	boolean saved;
@@ -77,6 +98,14 @@ public class RezeptView extends Composite {
 	    setRezept(rezept);
 	    saved = true;
 	    initTable();
+	    
+	    imageUploaderHP.add(panelImages);
+	    MultiUploader defaultUploader = new MultiUploader();
+	    imageUploaderHP.add(defaultUploader);
+	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
+	    defaultUploader.avoidRepeatFiles(true);
+	    defaultUploader.setValidExtensions(new String[] { "jpg", "jpeg", "png", "gif" });
+	    defaultUploader.setMaximumFiles(1);
 	    
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
 			SaveRezeptPanel.setVisible(true);
@@ -490,7 +519,7 @@ public class RezeptView extends Composite {
 			double stop = scoreMapFinal.get(0).recipe.getCO2Value();
 			double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
 			Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
-			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezept.getCO2Value())+"g CO2</div>";
+			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 4 Personen: "+NumberFormat.getFormat("##").format(rezept.getCO2Value())+"g CO2</div>";
 			topIndikator.setHTML(indikatorHTML);
 			bottomIndikator.setHTML(indikatorHTML);
 			
@@ -716,6 +745,40 @@ public class RezeptView extends Composite {
 			 infoZutat.updateSaison(infoZutat.zutatSpec);
 		 }
 	}
+	
+	
+	// here comes the Image Uploader:
+
+   
+ 
+	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
+	    public void onFinish(IUploader uploader) {
+	      if (uploader.getStatus() == Status.SUCCESS) {
+
+	        new PreloadedImage(uploader.fileUrl(), showImage);
+	        
+	        // The server can send information to the client.
+	        // You can parse this information using XML or JSON libraries
+	        Document doc = XMLParser.parse(uploader.getServerResponse());
+	        String size = Utils.getXmlNodeValue(doc, "file-1-size");
+	        String type = Utils.getXmlNodeValue(doc, "file-1-type");
+	        System.out.println(size + " " + type);
+	      }
+	    }
+	  };
+
+	  // Attach an image to the pictures viewer
+	  private OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
+	    public void onLoad(PreloadedImage image) {
+	      image.setWidth("75px");
+	      panelImages.add(image);
+	    }
+	  };
+	
+	
+	
+	
+	
 }
 
 
