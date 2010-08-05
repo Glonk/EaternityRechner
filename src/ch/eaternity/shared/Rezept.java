@@ -23,6 +23,8 @@ public class Rezept implements Serializable, Cloneable{
 	
 	private String cookInstruction;
 	
+	public String imageUrl;
+	
 	private Long persons;
 	
 	private Date createDate;

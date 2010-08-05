@@ -34,11 +34,13 @@ public class ImageBlob{
 	@Persistent
 	private String source;
 
+	public ImageBlob(){
+		
+	}
 
 	public ImageBlob(String name, Blob picture) {
 		this.setPicture(picture);
 		this.setName(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void setId(Key id) {

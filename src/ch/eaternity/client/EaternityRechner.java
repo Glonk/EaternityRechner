@@ -30,6 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -250,8 +251,18 @@ public class EaternityRechner implements EntryPoint {
 		AddZutatZumMenu(zutaten);
 		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
 		rezeptView.RezeptName.setText(rezept.getSymbol());
+		
 		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
 		rezeptView.makePublic.setValue(rezept.isOpen());
+		
+	    if(rezept.imageUrl != null){
+	    	HTML showImage = new HTML();
+	    	showImage.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />");
+	    	rezeptView.imageUploaderHP.add(showImage);
+	    }
+	    rezeptView.amountPersons.setText(rezept.getPersons().toString());
+	    rezeptView.cookingInstr.setText(rezept.getCookInstruction());
+		
 		
 	}
 	

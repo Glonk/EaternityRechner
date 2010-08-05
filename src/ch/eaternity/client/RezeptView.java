@@ -47,6 +47,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -75,6 +76,8 @@ public class RezeptView extends Composite {
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
 	@UiField HorizontalPanel imageUploaderHP;
+	@UiField TextArea cookingInstr;
+	@UiField TextBox amountPersons;
 	private FlowPanel panelImages = new FlowPanel();
 
 	
@@ -98,6 +101,7 @@ public class RezeptView extends Composite {
 	    setRezept(rezept);
 	    saved = true;
 	    initTable();
+
 	    
 	    imageUploaderHP.add(panelImages);
 	    MultiUploader defaultUploader = new MultiUploader();
@@ -213,6 +217,15 @@ public class RezeptView extends Composite {
 //						EaternityRechner.addRezept(rezeptSave);
 						rezept.setSymbol(RezeptName.getText());
 						rezept.setOpen(makePublic.getValue());
+						rezept.setCookInstruction(cookingInstr.getText()); 
+						
+						Long persons = Long.parseLong(amountPersons.getText());
+						if(persons > 0){
+							rezept.setPersons(persons);
+						} else {
+							Window.alert("Sie haben zuwenig Personen angeben für das Rezept");
+						}
+						
 						
 						EaternityRechner.addRezept(rezept,rezeptView);
 					}
@@ -754,23 +767,23 @@ public class RezeptView extends Composite {
 	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
 	    public void onFinish(IUploader uploader) {
 	      if (uploader.getStatus() == Status.SUCCESS) {
-
+	    	 rezept.imageUrl = uploader.fileUrl();
 	        new PreloadedImage(uploader.fileUrl(), showImage);
 	        
 	        // The server can send information to the client.
 	        // You can parse this information using XML or JSON libraries
-	        Document doc = XMLParser.parse(uploader.getServerResponse());
-	        String size = Utils.getXmlNodeValue(doc, "file-1-size");
-	        String type = Utils.getXmlNodeValue(doc, "file-1-type");
-	        System.out.println(size + " " + type);
+//	        Document doc = XMLParser.parse(uploader.getServerResponse());
+//	        String size = Utils.getXmlNodeValue(doc, "file-1-size");
+//	        String type = Utils.getXmlNodeValue(doc, "file-1-type");
+//	        System.out.println(size + " " + type);
 	      }
 	    }
 	  };
 
 	  // Attach an image to the pictures viewer
-	  private OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
+	  OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
 	    public void onLoad(PreloadedImage image) {
-	      image.setWidth("75px");
+	      image.setWidth("125px");
 	      panelImages.add(image);
 	    }
 	  };
