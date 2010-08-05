@@ -6,6 +6,8 @@
 
 	.rezeptDecoration {
 		width:900px;
+		padding: 7px;
+		border: 1.5px solid #bbb;
 	}
  	.SavePanel {
   		float: left;
@@ -26,9 +28,9 @@
     	cursor: hand;
    		background: #fff;
 	}
-		.gwt-Button {
+	.gwt-Button {
 		float: right;
-	  margin: 5px 10px 5px 0px;
+	  margin: -2px 10px 5px 0px;
 	  padding: 3px 5px;
 	  text-decoration: none;
 	  font-size: small;
@@ -68,21 +70,29 @@
   </ui:style>
 
           
-           		<g:DecoratorPanel >
-           			<g:HTMLPanel ui:field="htmlRezept" styleName='{style.rezeptDecoration}'>
+           		
+           			<g:HTMLPanel ui:field="htmlRezept" >
+           			<g:HTML ui:field="topIndikator"><div style="padding-left:100px"></div></g:HTML>
+           		
+           			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
            			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
            			<g:Label ui:field="rezeptNameTop">Ihr Menu</g:Label>
+           			<g:TextBox ui:field="amountPersons">Anzahl Personen</g:TextBox>
            			<g:HorizontalPanel  ui:field='addInfoPanel'>
         				<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}' cellSpacing='0' cellPadding='0'/>
         			</g:HorizontalPanel>
  
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}' cellSpacing='0' cellPadding='0'/>
+        					<g:TextArea ui:field="cookingInstr">Kochanleitung</g:TextArea>
         					<g:HTMLPanel ui:field='SaveRezeptPanel'>
                 				<g:TextBox ui:field="RezeptName">Rezept Name</g:TextBox>
                 				<g:CheckBox ui:field="makePublic">veröffentliche Rezept</g:CheckBox>
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			</g:HTMLPanel>
+                	</g:HTMLPanel>
+              
+                	<g:HTML ui:field="bottomIndikator"></g:HTML>
         			</g:HTMLPanel>
-      			</g:DecoratorPanel>
+      			
       			
   </ui:UiBinder>

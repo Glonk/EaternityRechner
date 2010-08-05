@@ -242,6 +242,7 @@ public class EaternityRechner implements EntryPoint {
 			zutat.setMengeGramm(zutatNew.getMengeGramm());
 			zutat.setSeason(zutatNew.getStartSeason(), zutatNew.getStopSeason());
 			zutat.setZutat_id(zutatNew.getZutat_id());
+			zutat.setNormalCO2Value(zutatNew.getNormalCO2Value());
 			zutaten.add(zutat);
 		}
 

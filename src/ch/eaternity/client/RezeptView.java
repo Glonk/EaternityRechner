@@ -56,6 +56,8 @@ public class RezeptView extends Composite {
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
 	@UiField Label rezeptNameTop;
+	@UiField HTML topIndikator;
+	@UiField HTML bottomIndikator;
 	HandlerRegistration klicky;
 	
 	boolean saved;
@@ -481,7 +483,19 @@ public class RezeptView extends Composite {
 			displayTops(scoreMapFinal, 0.0, 0.5);
 			
 		}
-
+		
+		if(scoreMapFinal.size()>2){
+			rezept.setCO2Value();
+			double indikator = rezept.getCO2Value();
+			double stop = scoreMapFinal.get(0).recipe.getCO2Value();
+			double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
+			Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
+			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezept.getCO2Value())+"g CO2</div>";
+			topIndikator.setHTML(indikatorHTML);
+			bottomIndikator.setHTML(indikatorHTML);
+			
+		}
+		
 		
 		// und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
 	}
