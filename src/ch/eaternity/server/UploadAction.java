@@ -22,7 +22,7 @@ public class UploadAction extends AppEngineUploadAction {
 		@Override 
         public String executeAction(HttpServletRequest request, 
 List<FileItem> sessionFiles) throws UploadActionException { 
-                String out = super.executeAction(request, sessionFiles); 
+                
                 for(FileItem imgItem : sessionFiles) { 
                         PersistenceManager pm = DataServiceImpl.getPersistenceManager(); 
                         Transaction tx = pm.currentTransaction(); 
@@ -46,6 +46,8 @@ List<FileItem> sessionFiles) throws UploadActionException {
                             pm.close(); 
                         } 
                 } 
+//                removeSessionFileItems(request);
+                String out = super.executeAction(request, sessionFiles); 
             return out; 
         } 
 } 

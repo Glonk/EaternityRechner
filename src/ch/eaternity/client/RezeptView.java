@@ -106,10 +106,11 @@ public class RezeptView extends Composite {
 	    imageUploaderHP.add(panelImages);
 	    MultiUploader defaultUploader = new MultiUploader();
 	    imageUploaderHP.add(defaultUploader);
-	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 	    defaultUploader.avoidRepeatFiles(true);
 	    defaultUploader.setValidExtensions(new String[] { "jpg", "jpeg", "png", "gif" });
 	    defaultUploader.setMaximumFiles(1);
+	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
+
 	    
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
 			SaveRezeptPanel.setVisible(true);
@@ -134,6 +135,36 @@ public class RezeptView extends Composite {
 		this.listener = listener;
 	}
 	
+	@UiHandler("amountPersons")
+	void onKeyUp(KeyUpEvent event) {
+		int keyCode = event.getNativeKeyCode();
+		if ((Character.isDigit((char) keyCode)) 
+				|| (keyCode == KeyCodes.KEY_BACKSPACE)
+				|| (keyCode == KeyCodes.KEY_DELETE) ) {
+			// TextBox.cancelKey() suppresses the current keyboard event.
+			Long persons = 1l;
+			rezept.setPersons(persons);
+			if(!amountPersons.getText().isEmpty()){
+				persons = Long.parseLong(amountPersons.getText());
+				if(persons > 0){
+					rezept.setPersons(persons);
+					updateSuggestion();
+				} else {
+//					amountPersons.setText("1");
+				}
+			} else {
+//				amountPersons.setText("1");
+			}
+			
+			
+		} else {
+			amountPersons.cancelKey();
+		}
+	}
+
+
+	
+
 	
 	@UiHandler("MenuTable")
 	void onTableClicked(ClickEvent event) {
@@ -195,6 +226,14 @@ public class RezeptView extends Composite {
 	}	
 	
 	public void showRezept(final Rezept rezept) {
+
+			if(rezept.getPersons() != null){
+				amountPersons.setText(rezept.getPersons().toString());
+			} else {
+				amountPersons.setText("4");
+				Long persons = Long.parseLong(amountPersons.getText());
+				rezept.setPersons(persons);
+			}
 			final RezeptView rezeptView = this;
 			displayZutatImMenu(rezept.Zutaten);
 			updateSuggestion();
@@ -210,6 +249,7 @@ public class RezeptView extends Composite {
 				public void onClick(ClickEvent event) {
 					if(RezeptName.getText() != ""){
 						// TODO warn that it wasn't saved in the other case
+						amountPersons.setText(rezept.getPersons().toString());
 //						Speichere Rezept ab. 
 //						Rezept rezeptSave = new Rezept(RezeptName.getText());
 //						rezeptSave.setOpen(makePublic.getValue());
@@ -218,14 +258,6 @@ public class RezeptView extends Composite {
 						rezept.setSymbol(RezeptName.getText());
 						rezept.setOpen(makePublic.getValue());
 						rezept.setCookInstruction(cookingInstr.getText()); 
-						
-						Long persons = Long.parseLong(amountPersons.getText());
-						if(persons > 0){
-							rezept.setPersons(persons);
-						} else {
-							Window.alert("Sie haben zuwenig Personen angeben für das Rezept");
-						}
-						
 						
 						EaternityRechner.addRezept(rezept,rezeptView);
 					}
@@ -457,11 +489,15 @@ public class RezeptView extends Composite {
 			maxScore = maxScore+comparatorObject.value;
 		}
 		
+		
 		// all Recipes
 		List<Rezept> allRecipes = new ArrayList<Rezept>();
 		allRecipes.clear();
 		Rezept compare = rezept;
-		compare.setSymbol("Ihr Rezept");
+		if(rezept.getSymbol() == null){
+			compare.setSymbol("Ihr Rezept");
+		}
+		
 		allRecipes.add(compare);
 		allRecipes.addAll( Search.getClientData().getPublicRezepte());
 		if(Search.getClientData().getYourRezepte() != null){
@@ -473,7 +509,30 @@ public class RezeptView extends Composite {
 		// zuerst der Filter über die tatsächlichen Zutaten
 		ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
 		scoreMap.clear();
+		Double MaxValueRezept = 0.0;
+		Double MinValueRezept = 10000000.0;
+		// first go over the Recipes in the Workspace
+		for(Widget widget : EaternityRechner.rezeptList){
+			RezeptView rezeptView = (RezeptView) widget;
+			rezeptView.rezept.setCO2Value();
+			if(rezeptView.rezept.getCO2Value()>MaxValueRezept){
+				MaxValueRezept = rezeptView.rezept.getCO2Value();
+			} 
+			if(rezeptView.rezept.getCO2Value()<MinValueRezept){
+				MinValueRezept = rezeptView.rezept.getCO2Value();
+			}
+		}
+		
 		for( Rezept compareRecipe : allRecipes){
+			
+			compareRecipe.setCO2Value();
+			if(compareRecipe.getCO2Value()>MaxValueRezept){
+				MaxValueRezept = compareRecipe.getCO2Value();
+			} 
+			if(compareRecipe.getCO2Value()<MinValueRezept){
+				MinValueRezept = compareRecipe.getCO2Value();
+			}
+			
 			ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
 			comparatorRecipe.key = compareRecipe.getId();
 			comparatorRecipe.recipe = compareRecipe;
@@ -526,18 +585,39 @@ public class RezeptView extends Composite {
 			
 		}
 		
-		if(scoreMapFinal.size()>2){
-			rezept.setCO2Value();
-			double indikator = rezept.getCO2Value();
-			double stop = scoreMapFinal.get(0).recipe.getCO2Value();
-			double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
-			Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
-			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 4 Personen: "+NumberFormat.getFormat("##").format(rezept.getCO2Value())+"g CO2</div>";
-			topIndikator.setHTML(indikatorHTML);
-			bottomIndikator.setHTML(indikatorHTML);
+////		if(scoreMapFinal.size()>2){
+//			rezept.setCO2Value();
+//			double indikator = rezept.getCO2Value();
+////			double stop = scoreMapFinal.get(0).recipe.getCO2Value();
+//			double stop = MaxValueRezept;
+////			double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
+//			double start = MinValueRezept;
+//			
+//			Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
+//			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezept.getCO2Value())+"g CO2</div>";
+//			topIndikator.setHTML(indikatorHTML);
+//			bottomIndikator.setHTML(indikatorHTML);
 			
-		}
+//		}
 		
+
+		//		double stop = scoreMapFinal.get(0).recipe.getCO2Value();
+		double stop = MaxValueRezept;
+		//		double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
+		double start = MinValueRezept;
+
+
+		// update all widgets bars!
+		for(Widget widget : EaternityRechner.rezeptList){
+			RezeptView rezeptView = (RezeptView) widget;
+			rezeptView.rezept.setCO2Value();
+			Long indikatorLeft = new Long(Math.round(750/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
+			String indikatorHTML = new String("<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g CO2</div>");
+			rezeptView.topIndikator.setHTML(indikatorHTML);
+			rezeptView.bottomIndikator.setHTML(indikatorHTML);
+		}
+
+			
 		
 		// und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
 	}
@@ -561,10 +641,12 @@ public class RezeptView extends Composite {
 				}
 			}
 
-			Double MenuLabelWert = new Double(0.0);
-			for (ZutatSpecification zutatSpec : selectedMax.Zutaten) { 
-				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-			}
+//			Double MenuLabelWert = new Double(0.0);
+//			for (ZutatSpecification zutatSpec : selectedMax.Zutaten) { 
+//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+//			}
+			selectedMax.setCO2Value();
+			Double MenuLabelWert = selectedMax.getCO2Value();
 
 	
 			
@@ -700,13 +782,16 @@ public class RezeptView extends Composite {
 		
 		for(ZutatSpecification zutatSpec : rezept.Zutaten){
 			Ingredient zutat = Search.getClientData().getIngredientByID(zutatSpec.getZutat_id());
-			Double amount = 1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm;
+//			amount of Persons needs to be assigned always!
+			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/rezept.getPersons();
 			Double alreadyAmount = 0.0;
 			int index = -1;
+//			check if the indgredient is already in there...
 			for(ComparatorObject comparatorObject :recipeComparator){
 				if(comparatorObject.key.equals(zutat.getId())){
 					alreadyAmount =  comparatorObject.value;
 					index = recipeComparator.indexOf(comparatorObject);
+					// if so take the found index
 					break;
 				}
 			}

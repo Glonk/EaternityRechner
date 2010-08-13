@@ -248,6 +248,7 @@ public class InfoZutatDialog extends Composite {
 	
 
 	public void updateSaison(ZutatSpecification zutatSpec) {
+		// if it is Greenhouse, or conserved then it should be koherent...
 		
 		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
 		// In Tagen
@@ -277,94 +278,6 @@ public class InfoZutatDialog extends Composite {
 	}
 
 	
-//
-//	@UiHandler("bio")
-//	void onBioButtonClick(ClickEvent event) {
-//		treibhaus.setDown(false);
-//		if(!bio.isDown()){
-//			zutatSpec.setProduktion(Produktionen.konventionell);
-//		} else {
-//			zutatSpec.setProduktion(Produktionen.biologisch);
-//		}
-//		updateZutatCO2();
-//		
-//		
-//	}
-//	@UiHandler("treibhaus")
-//	void onTreibhausButtonClick(ClickEvent event) {
-//		bio.setDown(false);
-//		if(!treibhaus.isDown()){
-//			zutatSpec.setProduktion(Produktionen.konventionell);
-//		} else {
-//			zutatSpec.setProduktion(Produktionen.Treibhaus);
-//		}
-//		updateZutatCO2();
-//	}
-//
-//	@UiHandler("tiefgekühlt")
-//	void onTiefButtonClick(ClickEvent event) {
-//		getrocknet.setDown(false);
-//		eingemacht.setDown(false);
-//
-//		if(!tiefgekühlt.isDown()){
-//			zutatSpec.setZustand(Zustaende.frisch);
-//		} else {
-//			zutatSpec.setZustand(Zustaende.tiefgekühlt);
-//		}
-//		updateZutatCO2();
-//	}
-//	@UiHandler("getrocknet")
-//	void onTrockButtonClick(ClickEvent event) {
-//		eingemacht.setDown(false);
-//		tiefgekühlt.setDown(false);
-//
-//		if(!getrocknet.isDown()){
-//			zutatSpec.setZustand(Zustaende.frisch);
-//		} else {
-//			zutatSpec.setZustand(Zustaende.getrocknet);
-//		}
-//		updateZutatCO2();
-//	}
-//	@UiHandler("eingemacht")
-//	void onEingButtonClick(ClickEvent event) {
-//		getrocknet.setDown(false);
-//		tiefgekühlt.setDown(false);
-//
-//		if(!eingemacht.isDown()){
-//			zutatSpec.setZustand(Zustaende.frisch);
-//		} else {
-//			zutatSpec.setZustand(Zustaende.eingemacht);
-//		}
-//		updateZutatCO2();
-//	}
-//	
-//	@UiHandler("flugzeug")
-//	void onFlugButtonClick(ClickEvent event) {
-//		if(!flugzeug.isDown()){
-//			zutatSpec.setTransportmittel(Transportmittel.LKW);
-//		} else {
-//			zutatSpec.setTransportmittel(Transportmittel.Flugzeug);
-//		}
-//		updateZutatCO2();
-//	}
-//	
-//	@UiHandler("Herkunft")
-//	void onChange(ChangeEvent event) {
-//			
-//		zutatSpec.setHerkunft(Herkuenfte.valueOf( Herkunft.getItemText(Herkunft.getSelectedIndex())) );
-//			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
-//				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-//						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().toString())){
-//					
-//					zutatSpec.setDistance(singleDistance.getDistance());
-//					
-//				}
-//
-//			}
-//	
-//			updateZutatCO2();
-//		
-//	}
 	
 	//TODO here comes all the CO2 Logic
 	public void updateZutatCO2(){
@@ -374,7 +287,7 @@ public class InfoZutatDialog extends Composite {
 //			if(EaternityRechner.zutatImMenu.contains(zutat)){
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
-				menuTable.setText(selectedRow, 4, ": ca. "+formatted + "g CO2-Äquivalent");
+				menuTable.setText(selectedRow, 4, ": ca. "+formatted + "g CO₂-Äquivalent");
 				rezept.Zutaten.set(selectedRow, zutatSpec);
 				Double MenuLabelWert = getRezeptCO2(rezept.Zutaten);
 				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
