@@ -287,11 +287,11 @@ public class InfoZutatDialog extends Composite {
 //			if(EaternityRechner.zutatImMenu.contains(zutat)){
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
-				menuTable.setText(selectedRow, 4, ": ca. "+formatted + "g CO₂-Äquivalent");
+				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
 				rezept.Zutaten.set(selectedRow, zutatSpec);
 				Double MenuLabelWert = getRezeptCO2(rezept.Zutaten);
 				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
-				suggestTable.setText(0,0," alles zusammen: ca "+formattedMenu+"g CO₂-Äquivalent");
+				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
 //			}
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");

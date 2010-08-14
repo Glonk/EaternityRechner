@@ -62,6 +62,7 @@ public class RezeptView extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	@UiField SelectionStyleRow selectionStyleRow;
+	@UiField EvenStyleRow evenStyleRow;
 
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
@@ -101,6 +102,7 @@ public class RezeptView extends Composite {
 	    setRezept(rezept);
 	    saved = true;
 	    initTable();
+	    
 
 	    
 	    imageUploaderHP.add(panelImages);
@@ -113,6 +115,7 @@ public class RezeptView extends Composite {
 
 	    
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
+			// TODO even more....
 			SaveRezeptPanel.setVisible(true);
 		} else   {
 			SaveRezeptPanel.setVisible(false);
@@ -129,7 +132,9 @@ public class RezeptView extends Composite {
 	interface SelectionStyleRow extends CssResource {
 		String selectedRow();
 	}
-
+	interface EvenStyleRow extends CssResource {
+		String evenRow();
+	}
 	
 	public void setListener(Listener listener) {
 		this.listener = listener;
@@ -145,7 +150,7 @@ public class RezeptView extends Composite {
 			Long persons = 1l;
 			rezept.setPersons(persons);
 			if(!amountPersons.getText().isEmpty()){
-				persons = Long.parseLong(amountPersons.getText());
+				persons = Long.parseLong(amountPersons.getText().trim());
 				if(persons > 0){
 					rezept.setPersons(persons);
 					updateSuggestion();
@@ -212,8 +217,8 @@ public class RezeptView extends Composite {
 	
 	private void initTable() {
 		MenuTable.getColumnFormatter().setWidth(0, "40px");
-		MenuTable.getColumnFormatter().setWidth(1, "76px");
-		
+		MenuTable.getColumnFormatter().setWidth(1, "140px");
+		MenuTable.setCellPadding(3);
 	}
 	
 	public void setRezept(Rezept rezept){
@@ -350,7 +355,7 @@ public class RezeptView extends Composite {
 	private void displayZutatImMenu( ArrayList<ZutatSpecification> zutaten) {
 	
 	MenuTable.removeAllRows();;
-	int row = MenuTable.getRowCount();
+	Integer row = MenuTable.getRowCount();
 //	ArrayList<ZutatSpecification> zutatenNew = (ArrayList<ZutatSpecification>) zutaten.clone();
 	for(final ZutatSpecification zutat : zutaten){
 //		
@@ -369,7 +374,7 @@ public class RezeptView extends Composite {
 	
 	final TextBox MengeZutat = new TextBox();
 	MengeZutat.setText(Integer.toString(zutat.getMengeGramm()));
-	MengeZutat.setWidth("35px");
+	MengeZutat.setWidth("36px");
 	
 	MengeZutat.addKeyUpHandler( new KeyUpHandler() {
 		public void onKeyUp(KeyUpEvent event) {
@@ -386,7 +391,7 @@ public class RezeptView extends Composite {
 				String MengeZutatWert;
 				int rowhere = getWidgetRow(MengeZutat,MenuTable);
 				if(!MengeZutat.getText().equalsIgnoreCase("")){
-					MengeZutatWert = MengeZutat.getText();
+					MengeZutatWert = MengeZutat.getText().trim();
 					zutat.setMengeGramm(Integer.valueOf(MengeZutatWert));
 				} else {
 					MengeZutatWert = "";
@@ -406,9 +411,15 @@ public class RezeptView extends Composite {
 	});
 
 	//Name
+	
+
+	if ((row % 2) == 1) {
+		String style = evenStyleRow.evenRow();
+		MenuTable.getRowFormatter().addStyleName(row, style);
+	}
 	MenuTable.setWidget(row, 0, MengeZutat);
 	MenuTable.setText(row, 1, "g " + zutat.getName());
-	MenuTable.setWidget(row, 6, removeZutat);
+	MenuTable.setWidget(row, 5, removeZutat);
 	// Remove Button
 
 	
@@ -449,14 +460,17 @@ public class RezeptView extends Composite {
 		}
 		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			MenuTable.setText(rezept.Zutaten.indexOf(zutatSpec),4,": ca. "+formatted+"g CO₂-Äquivalent ");
-			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*100).concat("px'>.</div>")));
+			MenuTable.setText(rezept.Zutaten.indexOf(zutatSpec),3,"ca "+formatted+"g *");
+			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:80px;height:1.2em;margin-right:5px;'><div style='background:#000;height:1.2em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*80).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
-		SuggestTable.setWidth("300px");
-		SuggestTable.setText(0,0," alles zusammen: ca "+formatted+"g CO₂-Äquivalent");
+		SuggestTable.setCellSpacing(4);
+		SuggestTable.setText(0,0,"SUMME");
+		SuggestTable.getColumnFormatter().setWidth(0, "191px");
+		SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
+		SuggestTable.getColumnFormatter().setWidth(1, "192px");
 		
 		updtTopSuggestion();
 		
@@ -612,7 +626,7 @@ public class RezeptView extends Composite {
 			RezeptView rezeptView = (RezeptView) widget;
 			rezeptView.rezept.setCO2Value();
 			Long indikatorLeft = new Long(Math.round(750/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
-			String indikatorHTML = new String("<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g CO2</div>");
+			String indikatorHTML = new String("<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
 			rezeptView.topIndikator.setHTML(indikatorHTML);
 			rezeptView.bottomIndikator.setHTML(indikatorHTML);
 		}
@@ -650,7 +664,7 @@ public class RezeptView extends Composite {
 
 	
 			
-			HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g CO2 ");
+			HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
 //			suggestText.setHTML();
 			EaternityRechner.suggestionPanel.add(suggestText);
 		}
@@ -817,8 +831,8 @@ public class RezeptView extends Composite {
 		saved = false;
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 		
-		MenuTable.getColumnFormatter().setWidth(4, "180px");
-		MenuTable.setText(row,4,": ca. "+formatted+"g CO₂-Äquivalent ");
+		MenuTable.getColumnFormatter().setWidth(3, "80px");
+		MenuTable.setText(row,3,": ca. "+formatted+"g CO₂-Äquivalent ");
 		
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
 		updateSuggestion();

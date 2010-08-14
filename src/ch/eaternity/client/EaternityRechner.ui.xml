@@ -5,11 +5,14 @@
   
 <ui:style>
 
- 
 	.Worksheet {
 		margin: 15px 15px 15px 10px;
 	}
 	
+	.WorksheetTable {
+		margin-left:10px;
+	}
+
 	.gwt-Button {
 	  margin: 5px 10px 5px 0px;
 	  padding: 3px 5px;
@@ -39,7 +42,7 @@
     type='ch.eaternity.client.EaternityRechner.SelectionStyle'>
 
   .selectedRezept {
-    background: #ffffff;
+    background: #F48F28;
   }
 
  
@@ -74,7 +77,7 @@
        			<g:center>
        			<!-- List of Rezepte -->
        				<g:ScrollPanel >
-						<g:FlexTable ui:field='rezeptList' cellSpacing='1' cellPadding='1'/>
+						<g:FlexTable styleName='{style.WorksheetTable}' ui:field='rezeptList' cellSpacing='0' cellPadding='0'/>
 					</g:ScrollPanel>
 					
 				</g:center>

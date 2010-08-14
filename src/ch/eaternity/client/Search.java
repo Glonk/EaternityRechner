@@ -171,23 +171,23 @@ public class Search extends ResizeComposite {
 
 
 	// Listen for keyboard events in the input box.
-	@UiHandler("SearchBox2")
-	public void onKeyPress(KeyPressEvent event) {
-		if (event.getCharCode() == KeyCodes.KEY_ENTER) {
-
-			
-
-			// simulate button press
-//			SearchButton.setEnabled(false);
-			Timer t = new Timer() {
-				public void run() {
-//					SearchButton.setEnabled(true);
-					updateResults(SearchBox2.getText());
-				}
-			};
-			t.schedule(200);
-		}
-	}
+//	@UiHandler("SearchBox2")
+//	public void onKeyPress(KeyPressEvent event) {
+//		if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+//
+//			
+//
+//			// simulate button press
+////			SearchButton.setEnabled(false);
+//			Timer t = new Timer() {
+//				public void run() {
+////					SearchButton.setEnabled(true);
+//					updateResults(SearchBox2.getText());
+//				}
+//			};
+//			t.schedule(200);
+//		}
+//	}
 
 
 
@@ -641,12 +641,12 @@ public class Search extends ResizeComposite {
 			if(rezept.isOpen()){
 				tableMealsYours.setText(row, 3,"öffentlich");
 			}
-			
-			double MenuLabelWert = 0.0;
-			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
-				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-			}
-			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
+			rezept.setCO2Value();
+//			double MenuLabelWert = 0.0;
+//			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+//			}
+			String formatted = NumberFormat.getFormat("##").format(rezept.getCO2Value());
 			tableMealsYours.setText(row, 4,  "ca "+formatted+"g CO₂-Äquivalent");
 			
 			

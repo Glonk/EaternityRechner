@@ -250,6 +250,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		AddZutatZumMenu(zutaten);
 		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+		
 		rezeptView.RezeptName.setText(rezept.getSymbol());
 		
 		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
@@ -348,10 +349,12 @@ public class EaternityRechner implements EntryPoint {
 			selectedRezept = 0;
 			rezeptList.insertRow(0);
 			
+			
 			//same as below
 			newRezept.addZutaten(zutaten);
 			RezeptView rezeptView = new RezeptView(newRezept);
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
+			rezeptList.getRowFormatter().setStyleName(0, "rezept");
 			styleRezept(selectedRezept, true);
 			
 			// is it necessary to have a worksheet or is rezeptList already containing everything?

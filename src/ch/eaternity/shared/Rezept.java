@@ -134,8 +134,11 @@ public class Rezept implements Serializable, Cloneable{
 		for ( ZutatSpecification zutatSpec : Zutaten){
 			sum += zutatSpec.getCalculatedCO2Value();
 		}
-		
-		CO2Value = sum/persons;
+		if(persons != null){
+			CO2Value = sum/persons;
+		} else {
+			CO2Value = sum;
+		}
 	}
 
 	public double getCO2Value() {
