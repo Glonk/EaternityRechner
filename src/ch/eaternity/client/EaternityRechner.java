@@ -224,7 +224,7 @@ public class EaternityRechner implements EntryPoint {
 		return adminHandler;
 	}
 
-	public static void ShowRezept(final Rezept rezept) {
+	public static void ShowRezept(Rezept rezept) {
 		// create a new one
 		
 		styleRezept(selectedRezept, false);
@@ -252,8 +252,13 @@ public class EaternityRechner implements EntryPoint {
 		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
 		
 		rezeptView.RezeptName.setText(rezept.getSymbol());
+		if(rezept.getSubTitle() == null){
+			rezept.setSubTitle("just like that");
+		}
 		
-		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
+		rezeptView.rezeptDetails.setText(rezept.getSubTitle());
+		
+		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol() + " - " + rezept.getSubTitle());
 		rezeptView.makePublic.setValue(rezept.isOpen());
 		
 	    if(rezept.imageUrl != null){

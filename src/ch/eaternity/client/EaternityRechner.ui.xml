@@ -6,15 +6,19 @@
 <ui:style>
 
 	.Worksheet {
-		margin: 15px 15px 15px 10px;
+		margin: 10px 15px 15px 10px;
 	}
+	
 	
 	.WorksheetTable {
 		margin-left:10px;
 	}
+	.topScores{
+		padding: 0px 1px 10px 1px;
+	}
 
 	.gwt-Button {
-	  margin: 5px 10px 5px 0px;
+	  margin: 1px 10px 1px 0px;
 	  padding: 3px 5px;
 	  text-decoration: none;
 	  font-size: small;
@@ -61,14 +65,15 @@
         </g:west>
         <g:center>
         <g:DockLayoutPanel>
-       			<g:north size='100'>
+       			<g:north size='160'>
        			<g:HTMLPanel styleName='{style.Worksheet}' >
        			<!-- Add Rezept Button -->
        			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Rezept hinzufügen"/>
        			
        			
        			<!-- suggest bar -->
-       			<g:HorizontalPanel ui:field='suggestionPanel'>
+       			<p>Im Vergleich:</p>
+       			<g:HorizontalPanel ui:field='suggestionPanel' styleName='{style.topScores}'>
 
        			</g:HorizontalPanel>
        			

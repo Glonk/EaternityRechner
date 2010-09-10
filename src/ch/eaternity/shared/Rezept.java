@@ -8,6 +8,7 @@ import java.util.List;
 
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.googlecode.objectify.annotation.Serialized;
 
@@ -21,6 +22,8 @@ public class Rezept implements Serializable, Cloneable{
     
 	private String symbol;
 	
+	private String subTitle;
+	
 	private String cookInstruction;
 	
 	public String imageUrl;
@@ -30,6 +33,9 @@ public class Rezept implements Serializable, Cloneable{
 	private Date createDate;
 	private Long hits;
 	private Long popularity;
+	
+	@Transient
+	private Boolean selected = false;
 	
     // @Persistent //(mappedBy = "rezept") //, defaultFetchGroup = "true")
 //    @Element(dependent = "true")
@@ -167,6 +173,22 @@ public class Rezept implements Serializable, Cloneable{
 
 	public Long getId() {
 		return id;
+	}
+
+	public void setSubTitle(String subTitle) {
+		this.subTitle = subTitle;
+	}
+
+	public String getSubTitle() {
+		return subTitle;
+	}
+
+	public void setSelected(Boolean selected) {
+		this.selected = selected;
+	}
+
+	public Boolean getSelected() {
+		return selected;
 	}
 
 

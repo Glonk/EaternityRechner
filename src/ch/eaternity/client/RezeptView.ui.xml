@@ -11,6 +11,32 @@
 		padding: 7px;
 		
 	}
+	.rezeptNameTop {
+		width:240px;
+		padding-left:4px;
+		margin-right:6px;
+		font-size:1.2em;
+
+		text-align: left;
+	}
+	.recipeTitle {
+		background:#323533;
+		color:#fff;
+		width:380px;
+		margin-left:10px;
+
+	}
+	
+	.recipePersons{
+		margin-right:10px;
+		width:120px;
+		text-align: right;
+	}
+	
+	.recipeSmallDetail{
+	 height:10px;
+	  background: none;
+	}
  	.SavePanel {
   		float: left;
   		clear: both;
@@ -20,12 +46,12 @@
 		float: left;
 		clear: both;
 		text-align: left;
-		background: #000;
+		background: #323533;
 		color: #fff;
 
 	}
 	.MenuTableWrapper {
-		background:#F8BC77;
+		background:#F9C88C;
 		margin: 15px 15px 0px 10px;
 	}
 	.MenuTable {
@@ -68,7 +94,7 @@
     type='ch.eaternity.client.RezeptView.SelectionStyleRow'>
 
   .selectedRow td{
-    background: #F48F28;
+    background: #fff;
   }
 
  
@@ -78,7 +104,7 @@
     type='ch.eaternity.client.RezeptView.EvenStyleRow'>
 
   .evenRow {
-    background: #F5E0C3;
+    background: #FEE6C6;
   }
 
   </ui:style>
@@ -90,16 +116,26 @@
            		
            			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
            			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
-           			<g:Label ui:field="rezeptNameTop">Ihr Menu</g:Label>
-           			<g:TextBox ui:field="amountPersons" width="2em">4</g:TextBox>
+           			
            			<g:HorizontalPanel  ui:field='addInfoPanel'>
+           				<g:VerticalPanel>
+           				
+           				<g:HorizontalPanel styleName='{style.recipeTitle}' >
+           					<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>
+           					<g:HTMLPanel styleName='{style.recipePersons}'>
+           						für <g:TextBox ui:field="amountPersons" width="2em">4</g:TextBox> Personen
+           					</g:HTMLPanel >
+           				</g:HorizontalPanel >
+           				
+           				<g:HTMLPanel  styleName='{style.recipeSmallDetail}'>
+           				</g:HTMLPanel >
            				<g:VerticalPanel styleName='{style.MenuTableWrapper}' >
            				<g:HTMLPanel >
-           					<img src='tabs-bg.png' height='140px' width='1px' style='float:left;' />
+           					<img src='tabs-bg.png' height='170px' width='1px' style='float:left;' />
         					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
         				</g:HTMLPanel>
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
-        					
+        				</g:VerticalPanel>
         				</g:VerticalPanel>
         			</g:HorizontalPanel>
  					
@@ -108,11 +144,12 @@
         					    <g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel>
         						<g:TextArea ui:field="cookingInstr">Kochanleitung</g:TextArea>
                 				<g:TextBox ui:field="RezeptName">Rezept Name</g:TextBox>
+                				<g:TextBox ui:field="rezeptDetails">Rezept Untertitel</g:TextBox>
                 				<g:CheckBox ui:field="makePublic">veröffentliche Rezept</g:CheckBox>
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			</g:HTMLPanel>
                 	</g:HTMLPanel>
-              		<g:HTML ><div style='padding-left:220px;margin-bottom:20px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
+              		<g:HTML ><div style='padding-left:300px;margin-bottom:20px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
                 	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
         			</g:HTMLPanel>
       			

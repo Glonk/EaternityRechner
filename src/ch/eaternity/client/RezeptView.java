@@ -79,6 +79,8 @@ public class RezeptView extends Composite {
 	@UiField HorizontalPanel imageUploaderHP;
 	@UiField TextArea cookingInstr;
 	@UiField TextBox amountPersons;
+	@UiField TextBox rezeptDetails;
+	
 	private FlowPanel panelImages = new FlowPanel();
 
 	
@@ -218,7 +220,7 @@ public class RezeptView extends Composite {
 	private void initTable() {
 		MenuTable.getColumnFormatter().setWidth(0, "40px");
 		MenuTable.getColumnFormatter().setWidth(1, "140px");
-		MenuTable.setCellPadding(3);
+		MenuTable.setCellPadding(1);
 	}
 	
 	public void setRezept(Rezept rezept){
@@ -261,6 +263,11 @@ public class RezeptView extends Composite {
 //						rezeptSave.addZutaten(rezept.getZutaten());
 //						EaternityRechner.addRezept(rezeptSave);
 						rezept.setSymbol(RezeptName.getText());
+						if(rezeptDetails.getText() != ""){
+							rezept.setSubTitle(rezeptDetails.getText());
+						} else {
+							rezept.setSubTitle("just like that");
+						}
 						rezept.setOpen(makePublic.getValue());
 						rezept.setCookInstruction(cookingInstr.getText()); 
 						
@@ -461,16 +468,16 @@ public class RezeptView extends Composite {
 		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 			MenuTable.setText(rezept.Zutaten.indexOf(zutatSpec),3,"ca "+formatted+"g *");
-			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:80px;height:1.2em;margin-right:5px;'><div style='background:#000;height:1.2em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*80).concat("px'>.</div></div>")));
+			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:80px;height:1.1em;margin-right:5px;'><div style='background:#323533;height:1.1em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*80).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
 		SuggestTable.setCellSpacing(4);
 		SuggestTable.setText(0,0,"SUMME");
-		SuggestTable.getColumnFormatter().setWidth(0, "191px");
+		SuggestTable.getColumnFormatter().setWidth(0, "182px");
 		SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
-		SuggestTable.getColumnFormatter().setWidth(1, "192px");
+		SuggestTable.getColumnFormatter().setWidth(1, "185px");
 		
 		updtTopSuggestion();
 		
@@ -508,8 +515,13 @@ public class RezeptView extends Composite {
 		List<Rezept> allRecipes = new ArrayList<Rezept>();
 		allRecipes.clear();
 		Rezept compare = rezept;
+		compare.setSelected(true);
 		if(rezept.getSymbol() == null){
 			compare.setSymbol("Ihr Rezept");
+		}
+		
+		if(rezept.getSubTitle() == null){
+			compare.setSubTitle("just like that");
 		}
 		
 		allRecipes.add(compare);
@@ -654,17 +666,29 @@ public class RezeptView extends Composite {
 					minValue = takeMax.value;
 				}
 			}
-
+			final Rezept takeThisOne = selectedMax;
+			
 //			Double MenuLabelWert = new Double(0.0);
 //			for (ZutatSpecification zutatSpec : selectedMax.Zutaten) { 
 //				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 //			}
 			selectedMax.setCO2Value();
 			Double MenuLabelWert = selectedMax.getCO2Value();
-
-	
+			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:260px;background:#F9C88C;margin-right:60px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:30px;width:220px;background:#323533;color:#fff'>" + selectedMax.getSymbol() + "</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
+			HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					// add receipe to the Worksheet Panel
+					EaternityRechner.ShowRezept(takeThisOne);
+				}
+			});
 			
-			HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
+			if(selectedMax.getSelected() != null){
+				if(selectedMax.getSelected()){
+					handler.removeHandler();
+					suggestText = new HTML("<div style='height:60px;width:260px;background:#F48F28;margin-right:60px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:30px;width:220px;background:#323533;color:#fff'>" + selectedMax.getSymbol() + "</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
+				}
+			}
+			//HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
 //			suggestText.setHTML();
 			EaternityRechner.suggestionPanel.add(suggestText);
 		}
