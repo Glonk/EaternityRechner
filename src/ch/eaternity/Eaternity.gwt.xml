@@ -34,8 +34,7 @@
        
   <set-configuration-property name="CssResource.obfuscationPrefix" value="M" />
   
-   <!-- Specify the app entry point class.                         -->
-  <entry-point class='ch.eaternity.client.EaternityRechner' />
+
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
@@ -45,9 +44,14 @@
   <inherits name="com.googlecode.objectify.Objectify" />
   
   <inherits name='com.google.gwt.maps.GoogleMaps' />
+  <inherits name="com.google.gwt.i18n.I18N"/>
   <!--script src="http://maps.google.com/maps?gwt=1&amp;file=api&amp;v=2&amp;sensor=false" /-->
-  <!-- this is the key for testing -->
-   <script src="http://maps.google.com/maps?gwt=1&amp;file=api&amp;v=2&amp;key=ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw" />
+  <!-- this is the key for testing: ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw   -->
+   <script src="http://maps.google.com/maps?gwt=1&amp;hl=de&amp;file=api&amp;v=2&amp;language=de&amp;key=ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw" />
+
   
+  
+     <!-- Specify the app entry point class.                         -->
+  <entry-point class='ch.eaternity.client.EaternityRechner' />
   
 </module>
