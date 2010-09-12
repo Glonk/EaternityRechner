@@ -6,6 +6,11 @@ body {
   color: #000;
   background: #fff;
 }
+
+hr {
+	border:solid #F48F28 1px;
+
+	}
 a:link, a:visited, a:hover, a:active {
   color: #000;
 }
@@ -95,10 +100,12 @@ a:link, a:visited, a:hover, a:active {
 
 /* Splitters */
 .gwt-SplitLayoutPanel-HDragger {
+background-color: #fff;
   cursor: col-resize;
 }
 
 .gwt-SplitLayoutPanel-VDragger {
+	background-color: #fff;
   cursor: row-resize;
 }
 

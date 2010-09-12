@@ -29,11 +29,14 @@ import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -47,6 +50,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -94,6 +98,9 @@ public class Search extends ResizeComposite {
 	@UiField Anchor alphOrder;
 	static
 	@UiField HTMLPanel yourRezeptePanel;
+	@UiField SplitLayoutPanel mealsSplitPanels;
+	@UiField HTMLPanel scrollAbleHtml;
+	@UiField HTMLPanel scrollTriggerHtml;
 	
 	//@UiField
 	//static InfoZutat infoZutat;
@@ -188,7 +195,12 @@ public class Search extends ResizeComposite {
 //			t.schedule(200);
 //		}
 //	}
-
+	
+	
+	@UiHandler("mealsSplitPanels")
+	public void onDrag(MouseUpEvent change){
+		scrollAbleHtml.setHeight(Integer.toString(mealsSplitPanels.getOffsetHeight()));
+	}
 
 
 	@UiHandler("SearchBox2")

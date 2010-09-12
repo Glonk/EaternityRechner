@@ -224,6 +224,7 @@ public class DistancesDialog extends DialogBox{
 
 	void processAddress(final String address, final boolean firstTime) {
 		if (address.length() > 1) { 
+		geocoder.setBaseCountryCode("ch");
 	    geocoder.getLocations(address, new LocationCallback() {
 	      public void onFailure(int statusCode) {
 	        TopPanel.locationLabel.setText("Wir können diese Adresse nicht finden: ");

@@ -76,6 +76,7 @@ public class EaternityRechner implements EntryPoint {
 	@UiField
 	static SelectionStyle selectionStyle;
 	@UiField static HorizontalPanel suggestionPanel;
+	
 
 	static int selectedRezept = -1;
 	
@@ -258,7 +259,8 @@ public class EaternityRechner implements EntryPoint {
 		
 		rezeptView.rezeptDetails.setText(rezept.getSubTitle());
 		
-		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol() + " - " + rezept.getSubTitle());
+		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
+		rezeptView.rezeptSubTitleTop.setText(rezept.getSubTitle());
 		rezeptView.makePublic.setValue(rezept.isOpen());
 		
 	    if(rezept.imageUrl != null){
@@ -266,7 +268,11 @@ public class EaternityRechner implements EntryPoint {
 	    	showImage.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />");
 	    	rezeptView.imageUploaderHP.add(showImage);
 	    }
-	    rezeptView.amountPersons.setText(rezept.getPersons().toString());
+	    if(rezept.getPersons() != null){
+	    	rezeptView.amountPersons.setText(rezept.getPersons().toString());
+	    } else {
+	    	rezeptView.amountPersons.setText("4");
+	    }
 	    rezeptView.cookingInstr.setText(rezept.getCookInstruction());
 		
 		
@@ -276,6 +282,7 @@ public class EaternityRechner implements EntryPoint {
 	public void onButtonPress(ClickEvent event) {
 		Rezept rezept = new Rezept();
 		rezept.setSymbol("unbenanntes Rezept");
+		rezept.setOpen(false);
 		ShowRezept(rezept);	
 	}
 	
@@ -289,6 +296,8 @@ public class EaternityRechner implements EntryPoint {
 			
 			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
 			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
+			suggestionPanel.clear();
+			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
 			rezeptView.updtTopSuggestion();
 			
 			

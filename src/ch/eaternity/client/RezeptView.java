@@ -74,6 +74,7 @@ public class RezeptView extends Composite {
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
 	@UiField Label rezeptNameTop;
+	@UiField Label rezeptSubTitleTop;
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
 	@UiField HorizontalPanel imageUploaderHP;
@@ -191,6 +192,7 @@ public class RezeptView extends Composite {
 			EaternityRechner.rezeptList.remove(test);
 			EaternityRechner.rezeptList.removeRow(row);
 			EaternityRechner.selectedRezept = -1;
+			EaternityRechner.suggestionPanel.clear();
 		} else {
 		final ConfirmDialog dlg = new ConfirmDialog("Diese Zusammenstellungen wurde noch nicht gespeichert!");
 		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
@@ -375,6 +377,31 @@ public class RezeptView extends Composite {
 			rezept.Zutaten.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
 //			rezept.removeZutat(removedIndex);
+			
+			// does this work to prevent the error?
+			styleRow(removedIndex, false);
+			
+			if(selectedRow == removedIndex){
+				if(addInfoPanel.getWidgetCount() ==2){
+					addInfoPanel.remove(1);
+				}
+			} else {
+				if(selectedRow > removedIndex){
+					selectedRow = selectedRow-1;
+					selectRow(selectedRow);
+				}
+			}
+			
+			// set the colors in the right order...
+			String style = evenStyleRow.evenRow();
+			for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
+				if ((rowIndex % 2) == 1) {
+					MenuTable.getRowFormatter().addStyleName(rowIndex, style);
+				} else {
+					MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
+				}
+			}
+			
 			updateSuggestion();
 		}
 	});
@@ -517,7 +544,7 @@ public class RezeptView extends Composite {
 		Rezept compare = rezept;
 		compare.setSelected(true);
 		if(rezept.getSymbol() == null){
-			compare.setSymbol("Ihr Rezept");
+			compare.setSymbol("markiertes Rezept");
 		}
 		
 		if(rezept.getSubTitle() == null){
@@ -651,8 +678,8 @@ public class RezeptView extends Composite {
 
 	private void displayTops(ArrayList<ComparatorRecipe> scoreMapFinal,
 			Double startDouble, Double stopDouble) {
-		int beginRange = (int) Math.round((scoreMapFinal.size()-1)*startDouble);
-		int stopRange = (int) Math.round((scoreMapFinal.size()-1)*stopDouble);
+		int beginRange = (int) Math.floor((scoreMapFinal.size())*startDouble);
+		int stopRange = (int) Math.floor((scoreMapFinal.size())*stopDouble);
 
 		List<ComparatorRecipe> selectionList =  scoreMapFinal.subList(beginRange, stopRange);
 		if(stopRange-beginRange != 0){
@@ -674,7 +701,7 @@ public class RezeptView extends Composite {
 //			}
 			selectedMax.setCO2Value();
 			Double MenuLabelWert = selectedMax.getCO2Value();
-			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:260px;background:#F9C88C;margin-right:60px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:30px;width:220px;background:#323533;color:#fff'>" + selectedMax.getSymbol() + "</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
+			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:260px;background:#F9C88C;margin-right:60px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:220px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
 			HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					// add receipe to the Worksheet Panel
@@ -685,7 +712,7 @@ public class RezeptView extends Composite {
 			if(selectedMax.getSelected() != null){
 				if(selectedMax.getSelected()){
 					handler.removeHandler();
-					suggestText = new HTML("<div style='height:60px;width:260px;background:#F48F28;margin-right:60px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:30px;width:220px;background:#323533;color:#fff'>" + selectedMax.getSymbol() + "</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
+					suggestText = new HTML("<div style='height:60px;width:260px;background:#F48F28;margin-right:60px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:220px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
 				}
 			}
 			//HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
