@@ -99,8 +99,9 @@ public class Search extends ResizeComposite {
 	static
 	@UiField HTMLPanel yourRezeptePanel;
 	@UiField SplitLayoutPanel mealsSplitPanels;
+	@UiField SplitLayoutPanel helpMealsSplitPanels;
 	@UiField HTMLPanel scrollAbleHtml;
-	@UiField HTMLPanel scrollTriggerHtml;
+//	@UiField HTMLPanel scrollTriggerHtml;
 	
 	//@UiField
 	//static InfoZutat infoZutat;
@@ -144,10 +145,25 @@ public class Search extends ResizeComposite {
 		//    updateResults("all");
 		SearchBox2.setFocus(true);
 		yourRezeptePanel.setVisible(false);
+		helpMealsSplitPanels.addStyleName("noSplitter");
+		setVDraggerHeight("0px");
 
 
 	}
 
+	public void setVDraggerHeight (String height)
+	{
+//	  SplitLayoutPanel p = (SplitLayoutPanel) this.getWidget ();
+		SplitLayoutPanel p = 	helpMealsSplitPanels;
+	  int widgetCount = p.getWidgetCount ();
+	  for (int i = 0; i < widgetCount; i++) {
+	    Widget w = p.getWidget (i);
+	    if (w.getStyleName ().equals ("gwt-SplitLayoutPanel-VDragger")) {
+	      w.setHeight (height);
+	    }
+	  }
+	}
+	
 	public static void initializeOracle(Set<String> itemIndex){
 		if (itemIndex != null){
 			//TODO switch on Oracle...
@@ -196,11 +212,11 @@ public class Search extends ResizeComposite {
 //		}
 //	}
 	
-	
-	@UiHandler("mealsSplitPanels")
-	public void onDrag(MouseUpEvent change){
-		scrollAbleHtml.setHeight(Integer.toString(mealsSplitPanels.getOffsetHeight()));
-	}
+//	
+//	@UiHandler("mealsSplitPanels")
+//	public void onDrag(MouseUpEvent change){
+//		scrollAbleHtml.setHeight(Integer.toString(mealsSplitPanels.getOffsetHeight()));
+//	}
 
 
 	@UiHandler("SearchBox2")

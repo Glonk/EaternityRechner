@@ -79,6 +79,7 @@
 .htmlbox {
 	background: #fafafa;
 	}
+
 		
   </ui:style>
 
@@ -132,29 +133,45 @@
 	      
 <g:SplitLayoutPanel ui:field='mealsSplitPanels'>
 	<g:south size='300'>
+
+		     <g:SplitLayoutPanel ui:field='helpMealsSplitPanels'>
+		     
+		     <g:center>
+
+	        <g:ScrollPanel styleName='{style.scroll}'>
+	        <g:HTMLPanel ui:field='scrollAbleHtml'>
+	        
+	
+	        	<g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        		      <!--  g:HTMLPanel ui:field='scrollTriggerHtml'>  -->
 		      
-		      <g:HTMLPanel ui:field='scrollTriggerHtml'>
 		      <g:HTMLPanel ui:field="yourRezeptePanel" >
 	      		
 
-	        	        <hr /><br />&nbsp;eigene Rezepte:<hr  />
+	        	    <hr /><br />&nbsp;eigene Rezepte:<hr  />
+        	        	<br />
 	        <g:ScrollPanel styleName='{style.scroll}'>
 	        
 	        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
 	        </g:ScrollPanel>
 	        </g:HTMLPanel>
-	        
-	        
-	        <hr  /><br />&nbsp;Rezeptvorschläge:<hr />
-	        <g:ScrollPanel styleName='{style.scroll}'>
-	        <g:HTMLPanel ui:field='scrollAbleHtml'>
-	        <br />
-	        <g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        	        
+	            
+
 	        </g:HTMLPanel>
 	        </g:ScrollPanel>
-	        	       
-	        </g:HTMLPanel>
-	      
+	        </g:center>
+	        
+	        <g:north size='60'>
+	        	<g:HTMLPanel>
+	         		<hr  /><br />&nbsp;Rezeptvorschläge:<hr />
+	        	</g:HTMLPanel>
+	         </g:north>
+	        
+	        </g:SplitLayoutPanel>
+	        	      <!--  
+	        </g:HTMLPanel> -->
+
 	</g:south>
 	<g:center>
 	      <g:ScrollPanel styleName='{style.scroll}'>
