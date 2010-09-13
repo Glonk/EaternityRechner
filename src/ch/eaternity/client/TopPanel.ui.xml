@@ -10,8 +10,9 @@
   <ui:style>
   .statusDiv {
     text-align: right;
-    margin: 1em;
+    padding: 1em;
     background:#fff;
+    border-bottom: 2.5px solid #bbb;
   }
 
   .linksDiv {
@@ -40,7 +41,7 @@
 
       <div class='{style.linksDiv}'>
 
-        <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte von: </g:InlineLabel>
+        <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in: </g:InlineLabel>
         <g:TextBox ui:field="clientLocation">Schweiz</g:TextBox>
           <g:Button ui:field="locationButton" text="Adresse festlegen"/>
            <g:InlineLabel>Sie kochen im Monat: </g:InlineLabel>

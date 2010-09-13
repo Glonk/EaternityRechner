@@ -102,6 +102,7 @@ a:link, a:visited, a:hover, a:active {
 .gwt-SplitLayoutPanel-HDragger {
 background-color: #fff;
   cursor: col-resize;
+    	border-left: 1.5px solid #bbb; 
 }
 
 .noSplitter .gwt-SplitLayoutPanel-VDragger {
@@ -113,6 +114,8 @@ background-color: #fff;
 	}
 
 .gwt-SplitLayoutPanel-VDragger {
+	  	border-top: 1.5px solid #bbb;
+
 	background-color: #fff;
   cursor: row-resize;
 }

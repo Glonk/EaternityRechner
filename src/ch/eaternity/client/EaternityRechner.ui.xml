@@ -54,13 +54,13 @@
   </ui:style>
 
   <g:DockLayoutPanel>
-    <g:north size='50'>
+    <g:north size='54'>
       <rechner:TopPanel ui:field='topPanel' />
     </g:north>
 
     <g:center>
       <g:SplitLayoutPanel>
-        <g:west size='300'>
+        <g:west size='240'>
           	<rechner:Search ui:field='search' />
         </g:west>
         <g:center>

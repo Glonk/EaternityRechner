@@ -9,7 +9,11 @@
   <ui:image field='gradient' src='gradient_bg_dark.png' repeatStyle='Horizontal'/>
   
  <ui:style src='TabLayoutPanel.css' >
-  
+
+  .searchLabel {
+  	padding-left:6px;
+  }
+
 	.scrollLittle{
 		height:100px;
 		}
@@ -48,14 +52,21 @@
     background: #fff;
   }
   .searcher{
+  	/*
   	border-top: 1.5px solid #bbb;
-  	border-right: 1.5px solid #bbb;
-  	background: #fff;
+  	border-right: 1.5px solid #bbb; 
+  	*/
+  	background: #F48F28;
+  	color:#555;
+  	margin-top: 24px;
   	}
   	
     	.spacer {
   		margin: 7px;
   		 
+  	}
+  	  .sortThing {
+  		  	border-top: 1.5px solid #bbb;
   	}
 
 
@@ -66,15 +77,19 @@
   }
 
   .table td {
+  	/*
     border-top: 1px solid #fff;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ddd;
+    */
+   
     padding: 2px 2px 2px 8px;
-    margin:3px;
+    margin:0px;
   }
 
 	.scroll {
 		background: #fff;
 		margin-top: 1px;
+			border-top:solid #bbb 1px;
 		}
 .htmlbox {
 	background: #fafafa;
@@ -87,22 +102,34 @@
     type='ch.eaternity.client.Search.SelectionStyle'>
 
   .selectedRow {
-    background: #adcce7;
+    
   }
 
   .selectedRow td {
+  	background: #adcce7;
+  	/*
     border-top: 1px solid #88a4d6;
     border-bottom: 1px solid #7b97d0;
+    */
   }
+
+  </ui:style>
   
- 
+    <ui:style field='evenStyleRow'
+    type='ch.eaternity.client.Search.EvenStyleRow'>
+
+  .evenRow {
+    background: #E8EAEA;
+  }
+
+
   </ui:style>
 
   <g:DockLayoutPanel   unit='EM'>
-    <g:north size='3'>
+    <g:north size='5'>
 	 	<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'  unit='EM'>
 	 		<g:west size='4'>
-	 			<g:HTML><h3>&nbsp;Suche:</h3></g:HTML>
+	 			<g:HTML styleName='{style.searchLabel}'><p >Suche:</p></g:HTML>
 	 		</g:west>
 	 		<g:center>
 	 			<g:SuggestBox styleName='{style.spacer}' ui:field="SearchBox2" />
@@ -114,10 +141,10 @@
     <g:center>
 	  <g:DockLayoutPanel ui:field="leftSplitPanel">
 	  <g:south ui:field="leftSplitPanelSouth" size="34" >
-	  <g:HTMLPanel>
+	  <g:HTMLPanel styleName='{style.sortThing}'>
 	  <p>
 	  &nbsp;
-	  sortiere Ergebnisse:
+	  sortiere:
 	  &nbsp;
 	  <g:Anchor href='javascript:;' ui:field='alphOrder'>alphabetisch</g:Anchor>
 	  &nbsp;
@@ -127,12 +154,17 @@
 		  	<!--  mail:InfoZutat ui:field='infoZutat' /-->
 	  </g:south>
 	  <g:center>
-	    <g:TabLayoutPanel  styleName='{style.outer}' ui:field="tabLayoutPanel" barHeight='28'>
-	      <g:tab >
-	      <g:header><b>Ergebnisse</b></g:header>
+	  <g:DockLayoutPanel>
+	  <g:north size='38'>
+		<g:HTML >
 	      
+	     <p>&nbsp;als Zutat</p>
+        	
+	      </g:HTML>
+	      </g:north>
+	      <g:center>
 <g:SplitLayoutPanel ui:field='mealsSplitPanels'>
-	<g:south size='300'>
+	<g:south size='260'>
 
 		     <g:SplitLayoutPanel ui:field='helpMealsSplitPanels'>
 		     
@@ -148,7 +180,7 @@
 		      <g:HTMLPanel ui:field="yourRezeptePanel" >
 	      		
 
-	        	    <hr /><br />&nbsp;eigene Rezepte:<hr  />
+	        	    <hr /><br />&nbsp;in eigenen Rezepten
         	        	<br />
 	        <g:ScrollPanel styleName='{style.scroll}'>
 	        
@@ -162,9 +194,9 @@
 	        </g:ScrollPanel>
 	        </g:center>
 	        
-	        <g:north size='60'>
+	        <g:north size='44'>
 	        	<g:HTMLPanel>
-	         		<hr  /><br />&nbsp;Rezeptvorschläge:<hr />
+	         		<hr  /><br />&nbsp;in Rezeptvorschlägen
 	        	</g:HTMLPanel>
 	         </g:north>
 	        
@@ -184,9 +216,8 @@
 
 
 </g:SplitLayoutPanel>
-	      </g:tab>
-	      
-	     </g:TabLayoutPanel>
+	    </g:center>
+	    </g:DockLayoutPanel>
 	     </g:center>
 	   </g:DockLayoutPanel>
 	   

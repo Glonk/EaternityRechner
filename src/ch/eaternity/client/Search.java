@@ -73,6 +73,11 @@ public class Search extends ResizeComposite {
 	interface SelectionStyle extends CssResource {
 		String selectedRow();
 	}
+	
+	interface EvenStyleRow extends CssResource {
+		String evenRow();
+	}
+
 
 
 
@@ -91,7 +96,9 @@ public class Search extends ResizeComposite {
 	@UiField DockLayoutPanel SearchBox;
 	@UiField
 	static SelectionStyle selectionStyle;
-	@UiField TabLayoutPanel tabLayoutPanel;
+	@UiField
+	static EvenStyleRow evenStyleRow;
+//	@UiField TabLayoutPanel tabLayoutPanel;
 	@UiField
 	static DockLayoutPanel leftSplitPanel;
 	@UiField Anchor co2Order;
@@ -101,6 +108,7 @@ public class Search extends ResizeComposite {
 	@UiField SplitLayoutPanel mealsSplitPanels;
 	@UiField SplitLayoutPanel helpMealsSplitPanels;
 	@UiField HTMLPanel scrollAbleHtml;
+
 //	@UiField HTMLPanel scrollTriggerHtml;
 	
 	//@UiField
@@ -133,6 +141,7 @@ public class Search extends ResizeComposite {
 	
 	private static MultiWordSuggestOracle oracle;
 	//  private SearchBar navBar;
+	
 
 	public Search() {
 
@@ -259,8 +268,9 @@ public class Search extends ResizeComposite {
 
 
 	private void initTable() {
-		table.getColumnFormatter().setWidth(0, "36px");
-		table.getColumnFormatter().setWidth(1, "102px");
+		table.getColumnFormatter().setWidth(0, "120px");
+		table.getColumnFormatter().setWidth(1, "60px");
+		table.getColumnFormatter().setWidth(1, "60px");
 		
 	}
 
@@ -675,9 +685,12 @@ public class Search extends ResizeComposite {
 //				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 //			}
 			String formatted = NumberFormat.getFormat("##").format(rezept.getCO2Value());
-			tableMealsYours.setText(row, 4,  "ca "+formatted+"g CO₂-Äquivalent");
+			tableMealsYours.setText(row, 4,  "ca "+formatted+"g *");
 			
-			
+			if ((row % 2) == 1) {
+				String style = evenStyleRow.evenRow();
+				tableMealsYours.getRowFormatter().addStyleName(row, style);
+			}
 			
 		}else{
 			int row = tableMeals.getRowCount();
@@ -689,22 +702,35 @@ public class Search extends ResizeComposite {
 				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			}
 			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
-			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
+//			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
+			tableMeals.setText(row, 2,  "ca "+formatted+"g *");
+			
+			if ((row % 2) == 1) {
+				String style = evenStyleRow.evenRow();
+				tableMeals.getRowFormatter().addStyleName(row, style);
+			}
 		}
 		
+		
+
 
 	}
 
 
 	public static void displayZutat(final Ingredient zutat2) {
 		int row = table.getRowCount();
+		
+		if ((row % 2) == 1) {
+			String style = evenStyleRow.evenRow();
+			table.getRowFormatter().addStyleName(row, style);
+		}
 
 		if(zutat2.noAlternative){
 			table.setText(row,0,zutat2.getSymbol());
 		} else {
 			table.setText(row,0,"Alternative : " + zutat2.getSymbol());
 		}
-		table.setText(row, 1, "ca. "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g CO₂-Äquivalent pro 100g"));
+		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g *"));
 
 
 
