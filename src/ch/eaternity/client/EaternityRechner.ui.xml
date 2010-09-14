@@ -60,7 +60,7 @@
 
     <g:center>
       <g:SplitLayoutPanel>
-        <g:west size='240'>
+        <g:west size='260'>
           	<rechner:Search ui:field='search' />
         </g:west>
         <g:center>

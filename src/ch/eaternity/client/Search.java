@@ -269,8 +269,18 @@ public class Search extends ResizeComposite {
 
 	private void initTable() {
 		table.getColumnFormatter().setWidth(0, "120px");
-		table.getColumnFormatter().setWidth(1, "60px");
-		table.getColumnFormatter().setWidth(1, "60px");
+		table.getColumnFormatter().setWidth(1, "80px");
+		table.getColumnFormatter().setWidth(2, "40px");
+		
+		tableMeals.getColumnFormatter().setWidth(0, "120px");
+		tableMeals.getColumnFormatter().setWidth(1, "80px");
+		tableMeals.getColumnFormatter().setWidth(2, "40px");
+		
+		tableMealsYours.getColumnFormatter().setWidth(0, "80px");
+		tableMealsYours.getColumnFormatter().setWidth(1, "40px");
+		tableMealsYours.getColumnFormatter().setWidth(2, "15px");
+		tableMealsYours.getColumnFormatter().setWidth(3, "15px");
+		tableMealsYours.getColumnFormatter().setWidth(4, "15px");
 		
 	}
 
@@ -673,11 +683,11 @@ public class Search extends ResizeComposite {
 				}
 			});
 			
-			tableMealsYours.setText(row,1,rezept.getSymbol());
-			tableMealsYours.setWidget(row, 0, AddRezeptButton);
-			tableMealsYours.setWidget(row, 2, removeRezeptButton);
+			tableMealsYours.setText(row,0,rezept.getSymbol());
+			tableMealsYours.setWidget(row, 2, AddRezeptButton);
+			tableMealsYours.setWidget(row, 3, removeRezeptButton);
 			if(rezept.isOpen()){
-				tableMealsYours.setText(row, 3,"öffentlich");
+				tableMealsYours.setText(row, 4,"o");
 			}
 			rezept.setCO2Value();
 //			double MenuLabelWert = 0.0;
@@ -685,7 +695,7 @@ public class Search extends ResizeComposite {
 //				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 //			}
 			String formatted = NumberFormat.getFormat("##").format(rezept.getCO2Value());
-			tableMealsYours.setText(row, 4,  "ca "+formatted+"g *");
+			tableMealsYours.setText(row, 1,  "ca "+formatted+"g *");
 			
 			if ((row % 2) == 1) {
 				String style = evenStyleRow.evenRow();
@@ -694,8 +704,8 @@ public class Search extends ResizeComposite {
 			
 		}else{
 			int row = tableMeals.getRowCount();
-			tableMeals.setText(row,1,rezept.getSymbol());
-			tableMeals.setWidget(row, 0, AddRezeptButton);
+			tableMeals.setText(row,0,rezept.getSymbol());
+			tableMeals.setWidget(row, 2, AddRezeptButton);
 			
 			double MenuLabelWert = 0.0;
 			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
@@ -703,7 +713,7 @@ public class Search extends ResizeComposite {
 			}
 			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 //			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
-			tableMeals.setText(row, 2,  "ca "+formatted+"g *");
+			tableMeals.setText(row, 1,  "ca "+formatted+"g *");
 			
 			if ((row % 2) == 1) {
 				String style = evenStyleRow.evenRow();
@@ -728,7 +738,7 @@ public class Search extends ResizeComposite {
 		if(zutat2.noAlternative){
 			table.setText(row,0,zutat2.getSymbol());
 		} else {
-			table.setText(row,0,"Alternative : " + zutat2.getSymbol());
+			table.setText(row,0,"oder : " + zutat2.getSymbol());
 		}
 		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g *"));
 
