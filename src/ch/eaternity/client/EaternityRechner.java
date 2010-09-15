@@ -122,7 +122,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		// TODO Move cursor focus to the Search box.
 		// TODO remove this with something that makes more sense
-		rezeptList.getColumnFormatter().setWidth(1, "780px");
+		rezeptList.getColumnFormatter().setWidth(1, "750px");
 
 		//	  
 		// Check login status using login service.

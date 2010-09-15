@@ -8,17 +8,17 @@
 	}
 	.statusInfo{
 	color:#fff;
-	padding:0px 4px 6px 10px;
+	padding:0px 0px 4px 10px;
 	font-size:0.9em;
 	}
 	
 	.rezeptDecoration {
-		width:800px;
+		width:750px;
 		padding: 7px;
 		
 	}
 	.rezeptNameTop {
-		width:240px;
+		width:220px;
 		padding-left:4px;
 		margin-right:6px;
 		font-size:1.2em;
@@ -27,18 +27,20 @@
 	}
 	.rezeptSubTitleTop{
 		
-		width:220px;
+		width:200px;
 		padding-left:4px;
 		margin-right:26px;
 		font-size:1em;
 
 		text-align: right;
 	}
-	
+	.closeButton {
+	margin-top:-14px;
+	}
 	.recipeTitle {
 		background:#323533;
 		color:#fff;
-		width:380px;
+		width:360px;
 		margin-left:10px;
 
 	}
@@ -71,7 +73,7 @@
 		margin: 15px 15px 0px 10px;
 	}
 	.MenuTable {
-		
+		width:360px;
 	    cursor: pointer;
     	cursor: hand;
   
@@ -82,7 +84,7 @@
 	
 	.gwt-Button {
 		float: right;
-	  margin: -2px 5px 5px 0px;
+	  margin: -1px -1px 5px 0px;
 	  padding: 3px 5px;
 	  text-decoration: none;
 	  font-size: small;
@@ -131,13 +133,14 @@
            			<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
            		
            			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
-           			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
+           			    <g:HTMLPanel styleName='{style.statusInfo}'>
+           					Neue Zusammenstellung - noch nicht veröffentlicht -	noch nicht gespeichert
+           					<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
+           				</g:HTMLPanel>
+           			
            			
            			<g:HorizontalPanel  ui:field='addInfoPanel'>
            				<g:VerticalPanel>
-           				<g:HTMLPanel styleName='{style.statusInfo}'>
-           					Neue Zusammenstellung - noch nicht veröffentlicht -	noch nicht gespeichert
-           				</g:HTMLPanel>
            				<g:HorizontalPanel styleName='{style.recipeTitle}' >
            					<g:HTMLPanel>
            						<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>
@@ -152,7 +155,7 @@
            				</g:HTMLPanel >
            				<g:VerticalPanel styleName='{style.MenuTableWrapper}' >
            				<g:HTMLPanel >
-           					<img src='tabs-bg.png' height='170px' width='1px' style='float:left;' />
+           					<img src='tabs-bg.png' height='90px' width='1px' style='float:left;' />
         					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
         				</g:HTMLPanel>
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
@@ -170,7 +173,7 @@
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			</g:HTMLPanel>
                 	</g:HTMLPanel>
-              		<g:HTML ><div style='padding-left:300px;margin-bottom:20px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
+              		<g:HTML ><div style='padding-left:274px;margin-top:-6px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
                 	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
         			</g:HTMLPanel>
       			

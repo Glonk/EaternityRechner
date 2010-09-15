@@ -90,7 +90,7 @@ public class InfoZutatDialog extends Composite {
 
 	public InfoZutatDialog(ZutatSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable) {
 		initWidget(uiBinder.createAndBindUi(this));
-		zutatName.setHTML("<h4>"+ zutatSpec.getName() +"</h4>");
+		zutatName.setHTML("<h3>"+ zutatSpec.getName() +"</h3>");
 		// TODO Auto-generated constructor stub
 		this.setZutatSpec(zutatSpec);
 		this.setSelectedRow(selectedRow);

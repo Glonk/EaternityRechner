@@ -500,11 +500,12 @@ public class RezeptView extends Composite {
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
-		SuggestTable.setCellSpacing(4);
+		SuggestTable.setCellSpacing(2);
 		SuggestTable.setText(0,0,"SUMME");
-		SuggestTable.getColumnFormatter().setWidth(0, "182px");
+		SuggestTable.getColumnFormatter().setWidth(0, "175px");
 		SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
-		SuggestTable.getColumnFormatter().setWidth(1, "185px");
+		SuggestTable.getColumnFormatter().setWidth(1, "180px");
+		
 		
 		updtTopSuggestion();
 		
@@ -664,7 +665,7 @@ public class RezeptView extends Composite {
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = (RezeptView) widget;
 			rezeptView.rezept.setCO2Value();
-			Long indikatorLeft = new Long(Math.round(650/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
+			Long indikatorLeft = new Long(Math.round(620/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
 			String indikatorHTML = new String("<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
 			rezeptView.topIndikator.setHTML(indikatorHTML);
 			rezeptView.bottomIndikator.setHTML(indikatorHTML);
@@ -701,7 +702,7 @@ public class RezeptView extends Composite {
 //			}
 			selectedMax.setCO2Value();
 			Double MenuLabelWert = selectedMax.getCO2Value();
-			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:230px;background:#F9C88C;margin-right:55px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
+			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:230px;background:#F9C88C;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
 			HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					// add receipe to the Worksheet Panel
@@ -712,7 +713,7 @@ public class RezeptView extends Composite {
 			if(selectedMax.getSelected() != null){
 				if(selectedMax.getSelected()){
 					handler.removeHandler();
-					suggestText = new HTML("<div style='height:60px;width:230px;background:#F48F28;margin-right:55px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
+					suggestText = new HTML("<div style='height:60px;width:230px;background:#F48F28;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g</b></div>");
 				}
 			}
 			//HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");

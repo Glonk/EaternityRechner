@@ -11,10 +11,10 @@
 	
 	
 	.WorksheetTable {
-		margin-left:10px;
+		margin-left:8px;
 	}
 	.topScores{
-		padding: 0px 1px 10px 1px;
+		padding: 0px 1px 10px 0px;
 	}
 
 	.gwt-Button {
