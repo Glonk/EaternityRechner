@@ -93,7 +93,7 @@ public class RezeptView extends Composite {
 	private Listener listener;
 	int  selectedRow = 0;
 	int  selectedRezept = -1;
-	private Rezept rezept;
+	Rezept rezept;
 
 	
 //	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
@@ -102,7 +102,6 @@ public class RezeptView extends Composite {
 	public RezeptView(Rezept rezept) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
-	    rezept.setSymbol(rezeptNameTop.getText());
 	    setRezept(rezept);
 	    saved = true;
 	    initTable();
@@ -205,6 +204,7 @@ public class RezeptView extends Composite {
 				EaternityRechner.rezeptList.remove(test);
 				EaternityRechner.rezeptList.removeRow(row);
 				EaternityRechner.selectedRezept = -1;
+				EaternityRechner.suggestionPanel.clear();
 				dlg.hide();
 			}
 		});
@@ -228,7 +228,7 @@ public class RezeptView extends Composite {
 	
 	public void setRezept(Rezept rezept){
 		this.rezept = rezept;
-		showRezept(rezept);
+//		showRezept(rezept);
 	}
 
 	public Rezept getRezept(){
@@ -546,7 +546,7 @@ public class RezeptView extends Composite {
 		Rezept compare = rezept;
 		compare.setSelected(true);
 		if(rezept.getSymbol() == null){
-			compare.setSymbol("markiertes Rezept");
+			compare.setSymbol("Ihr Menu");
 		}
 		
 		if(rezept.getSubTitle() == null){

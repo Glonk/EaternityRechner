@@ -254,10 +254,11 @@ public class EaternityRechner implements EntryPoint {
 		
 		rezeptView.RezeptName.setText(rezept.getSymbol());
 		if(rezept.getSubTitle() == null){
-			rezept.setSubTitle("just like that");
+			rezeptView.rezept.setSubTitle("just like that");
 		}
 		
 		rezeptView.rezeptDetails.setText(rezept.getSubTitle());
+		rezeptView.rezept.setSymbol("Ihr " + rezept.getSymbol());
 		
 		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
 		
@@ -275,7 +276,9 @@ public class EaternityRechner implements EntryPoint {
 	    	rezeptView.amountPersons.setText("4");
 	    }
 	    rezeptView.cookingInstr.setText(rezept.getCookInstruction());
-		
+//	    rezeptView.showRezept(rezeptView.rezept);
+	    rezeptView.showRezept(rezeptView.rezept);
+	    rezeptView.saved = true;
 		
 	}
 	
@@ -338,6 +341,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		zutaten.add(zutatSpecification);
 		int row = AddZutatZumMenu(zutaten);
+		
 		return row;
 	}
 
@@ -357,7 +361,7 @@ public class EaternityRechner implements EntryPoint {
 
 			}
 		}
-		
+		RezeptView rezeptView;
 		if (selectedRezept == -1){
 			// create new Rezept
 			Rezept newRezept = new Rezept();
@@ -367,7 +371,7 @@ public class EaternityRechner implements EntryPoint {
 			
 			//same as below
 			newRezept.addZutaten(zutaten);
-			RezeptView rezeptView = new RezeptView(newRezept);
+			rezeptView = new RezeptView(newRezept);
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
 			rezeptList.getRowFormatter().setStyleName(0, "rezept");
 			styleRezept(selectedRezept, true);
@@ -377,7 +381,7 @@ public class EaternityRechner implements EntryPoint {
 			
 		} else {
 			// get the old one
-			RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+			rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
 			Rezept rezept = rezeptView.getRezept();
 			
 			// maybe same as above
@@ -388,6 +392,8 @@ public class EaternityRechner implements EntryPoint {
 			//worksheet.set(selectedRezept, rezeptView);
 		}
 		// is this necessary?
+		rezeptView.showRezept(rezeptView.rezept);
+		
 		return selectedRezept;
 	}
 	
