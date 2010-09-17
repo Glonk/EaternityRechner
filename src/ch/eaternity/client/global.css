@@ -22,6 +22,13 @@ a:link, a:visited, a:hover, a:active {
 	border-radius: 3px;
 	border:1px solid #fff;
 }
+.littleZutatSpec tbody tr td{
+	/*vertical-align: middle;*/
+	border:0px;
+	}
+.littleZutatSpec .gwt-HTML {
+	margin-top:5px;
+	}
 .gwt-Button {
   margin: 0;
   padding: 3px 5px;

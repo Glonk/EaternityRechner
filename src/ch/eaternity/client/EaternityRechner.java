@@ -260,6 +260,7 @@ public class EaternityRechner implements EntryPoint {
 		rezeptView.rezeptDetails.setText(rezept.getSubTitle());
 		
 		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
+		
 		rezeptView.rezeptSubTitleTop.setText(rezept.getSubTitle());
 		rezeptView.makePublic.setValue(rezept.isOpen());
 		

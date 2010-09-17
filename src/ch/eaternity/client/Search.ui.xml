@@ -74,6 +74,8 @@
     table-layout: fixed;
     width: 100%;
     background: #fff;
+    cursor: pointer;
+	cursor: hand;
   }
 
   .table td {
@@ -85,6 +87,9 @@
     padding: 2px 2px 2px 8px;
     margin:0px;
   }
+  .table tr:hover {
+  	background: #f3d3a3;
+  	}
 
 	.scroll {
 		background: #fff;

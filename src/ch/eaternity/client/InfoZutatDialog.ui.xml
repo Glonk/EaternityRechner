@@ -58,6 +58,13 @@
 			margin: 0px 15px 0px 15px;
 			background: #fff;
 		}
+		.close{
+			float:right;
+			color:#bbb;
+			margin:-3px 3px 3px 3px;
+			cursor: pointer;
+	  		cursor: hand;
+			}
 		.hinweisDetails {
 			color:#bbb;
 			padding:3px;
@@ -117,6 +124,7 @@
             
              		
 					<g:HTMLPanel styleName="{style.wholePanel}">
+					<g:Label ui:field="closeLabel"  styleName='{style.close}'>x</g:Label>
 					<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Angaben sind unvollständig</g:Label>
 					
 						<g:HTML ui:field="zutatName" styleName='{style.zutatName}'>

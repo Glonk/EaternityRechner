@@ -102,6 +102,7 @@ public class RezeptView extends Composite {
 	public RezeptView(Rezept rezept) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
+	    rezept.setSymbol(rezeptNameTop.getText());
 	    setRezept(rezept);
 	    saved = true;
 	    initTable();
@@ -336,7 +337,7 @@ public class RezeptView extends Composite {
 		if(addInfoPanel.getWidgetCount() ==2){
 			addInfoPanel.remove(1);
 		}
-		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,rezept,SuggestTable);
+		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,rezept,SuggestTable,this);
 		addInfoPanel.add(infoZutat);
 		
 //		addInfoPanel.add(new HTML("test"));

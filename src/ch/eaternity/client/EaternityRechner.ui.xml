@@ -14,11 +14,13 @@
 		margin-left:8px;
 	}
 	.topScores{
+		margin-top:15px;
 		padding: 0px 1px 10px 0px;
 	}
 
 	.gwt-Button {
-	  margin: 1px 10px 1px 0px;
+	 float:right;
+	  margin: 0px 10px 0px 0px;
 	  padding: 3px 5px;
 	  text-decoration: none;
 	  font-size: small;
@@ -65,14 +67,14 @@
         </g:west>
         <g:center>
         <g:DockLayoutPanel>
-       			<g:north size='160'>
+       			<g:north size='120'>
        			<g:HTMLPanel styleName='{style.Worksheet}' >
        			<!-- Add Rezept Button -->
        			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Rezept hinzufügen"/>
        			
        			
        			<!-- suggest bar -->
-       			<p>Im Vergleich:</p>
+       			Im Vergleich:
        			<g:HorizontalPanel ui:field='suggestionPanel' styleName='{style.topScores}'>
 
        			</g:HorizontalPanel>

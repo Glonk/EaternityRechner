@@ -47,12 +47,14 @@ public class InfoZutatDialog extends Composite {
 	@UiField PassedStyle passedStyle;
 	@UiField Label hinweisPanel;
 	@UiField Label hinweisDetails;
+	@UiField Label closeLabel;
 	
 	static double distance = 0;
 
 	@UiField SelectionStyle selectionStyle;
 	ZutatSpecification zutatSpec;
 	Ingredient stdIngredient;
+	RezeptView rezeptviewParent;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
@@ -83,17 +85,25 @@ public class InfoZutatDialog extends Composite {
 	}
 	public void stylePanel(boolean onOff) {
 		if (onOff) {
-//			infoBox.setHeight("500px");
+			//			infoBox.setHeight("500px");
 		} else {
-			
-		}
-	
-}
 
-	public InfoZutatDialog(ZutatSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable) {
+		}
+
+	}
+	
+	@UiHandler("closeLabel")
+	void onCloseClicked(ClickEvent event) {
+		rezeptviewParent.addInfoPanel.remove(1);
+		
+	}
+
+	public InfoZutatDialog(ZutatSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable, RezeptView rezeptview) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML("<h3>"+ zutatSpec.getName() +"</h3>");
+		specificationTable.setCellSpacing(0);
 		// TODO Auto-generated constructor stub
+		this.rezeptviewParent = rezeptview;
 		this.setZutatSpec(zutatSpec);
 		this.stdIngredient = zutat;
 		this.setSelectedRow(selectedRow);
@@ -148,6 +158,9 @@ public class InfoZutatDialog extends Composite {
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Herkunft");
 			HorizontalPanel flow = new HorizontalPanel();
+			flow.setBorderWidth(0);
+			flow.setSpacing(0);
+			flow.addStyleName("littleZutatSpec");
 			specificationTable.setWidget(row,1,flow);
 			flow.add(herkuenfte);
 			
@@ -276,8 +289,8 @@ public class InfoZutatDialog extends Composite {
 			
 			
 			if(zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)
-					&& !zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")
-					&& zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
+					&& zutatSpec.getProduktion() != null && !zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")
+					&& zutatSpec.getZustand() != null && zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
 			
 			// unvollständig:
 			
@@ -292,10 +305,10 @@ public class InfoZutatDialog extends Composite {
 				if(!zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)){
 					text = text +"aus "+ zutatSpec.getHerkunft().symbol +" mit dem " +zutatSpec.getTransportmittel().symbol + " importiert, ";
 				} 
-				if(zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")){
+				if(zutatSpec.getProduktion() != null && zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")){
 					text = text +"im Gewächshaus produziert, ";
 				}
-				if(!zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
+				if(zutatSpec.getZustand() != null && !zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
 					text = text + zutatSpec.getZustand().symbol + ", ";
 				}
 				String shortText = text.substring(0, text.length()-2);

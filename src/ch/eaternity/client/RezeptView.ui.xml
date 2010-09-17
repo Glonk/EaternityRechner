@@ -8,7 +8,7 @@
 	}
 	.statusInfo{
 	color:#fff;
-	padding:0px 0px 4px 10px;
+	margin:0px 0px 14px 10px;
 	font-size:0.9em;
 	}
 	
@@ -21,7 +21,8 @@
 		width:220px;
 		padding-left:4px;
 		margin-right:6px;
-		font-size:1.2em;
+		font-size:1em;
+		font-weight:bold;
 
 		text-align: left;
 	}
@@ -32,7 +33,7 @@
 		margin-right:26px;
 		font-size:1em;
 
-		text-align: right;
+		text-align: left;
 	}
 	.closeButton {
 	margin-top:-14px;

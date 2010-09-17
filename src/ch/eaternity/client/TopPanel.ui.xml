@@ -35,7 +35,7 @@
 	
       <div class="{style.statusInfo}">
 	  	
-        <g:Label ui:field='loginLabel' >Melden Sie sich an für mehr Funktionen.</g:Label>
+        <g:Label ui:field='loginLabel' ></g:Label>
         <g:InlineLabel ui:field='loadingLabel' >lade Datenbank...</g:InlineLabel>
       </div>
 
