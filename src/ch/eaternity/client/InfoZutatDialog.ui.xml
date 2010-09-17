@@ -11,6 +11,11 @@
 			padding:0px 3px 0px 3px;
 			}
 			
+		.tableSpecs {
+			border: 0px;
+			width:350px;
+			}
+		
 		.tableSpecs td{
 			border-bottom: 1.5px solid #F48F28;
 			}
@@ -53,6 +58,10 @@
 			margin: 0px 15px 0px 15px;
 			background: #fff;
 		}
+		.hinweisDetails {
+			color:#bbb;
+			padding:3px;
+			}
 		.hinweis{
 			float:right;
 			width:200px;
@@ -138,6 +147,8 @@
 	<g:VerticalPanel styleName="{style.border}">
 
 		<g:FlexTable  styleName="{style.tableSpecs}" ui:field="specificationTable"></g:FlexTable>
+			<g:Label ui:field="hinweisDetails"  styleName='{style.hinweisDetails}'></g:Label>
+				
 		
 	</g:VerticalPanel>
 

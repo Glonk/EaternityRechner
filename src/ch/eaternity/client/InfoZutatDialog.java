@@ -46,11 +46,13 @@ public class InfoZutatDialog extends Composite {
 	@UiField HTML zutatName;
 	@UiField PassedStyle passedStyle;
 	@UiField Label hinweisPanel;
+	@UiField Label hinweisDetails;
 	
 	static double distance = 0;
 
 	@UiField SelectionStyle selectionStyle;
 	ZutatSpecification zutatSpec;
+	Ingredient stdIngredient;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
@@ -93,6 +95,7 @@ public class InfoZutatDialog extends Composite {
 		zutatName.setHTML("<h3>"+ zutatSpec.getName() +"</h3>");
 		// TODO Auto-generated constructor stub
 		this.setZutatSpec(zutatSpec);
+		this.stdIngredient = zutat;
 		this.setSelectedRow(selectedRow);
 		this.setRezept(rezept);
 		this.menuTable = menuTable;
@@ -103,6 +106,8 @@ public class InfoZutatDialog extends Composite {
 	
 	
 	public void setValues( final Ingredient zutat){
+		
+		hinweisDetails.setText("");
 		
 		if(zutat.hasSeason != null && zutat.hasSeason){
 			specificationTable.setHTML(0, 0, "Saison");
@@ -264,14 +269,45 @@ public class InfoZutatDialog extends Composite {
 			
 			styleHinweis(false);
 			hinweisPanel.setText("Angaben sind koherent.");
+			hinweisDetails.setText("Es ist möglich die Zutat frisch und lokal zu beziehen.");
 			
 		} else {
 			specificationTable.setHTML(0, 1, "Diese Zutat hat keine Saison");
+			
+			
+			if(zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)
+					&& !zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")
+					&& zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
 			
 			// unvollständig:
 			
 			styleHinweis(true);
 			hinweisPanel.setText("Angaben sind unvollständig.");
+			hinweisDetails.setText("Bitten geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
+			} else {
+				styleHinweis(false);
+				hinweisPanel.setText("Angaben sind koherent.");
+				String text = "Die Zutat wurde ";
+				
+				if(!zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)){
+					text = text +"aus "+ zutatSpec.getHerkunft().symbol +" mit dem " +zutatSpec.getTransportmittel().symbol + " importiert, ";
+				} 
+				if(zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")){
+					text = text +"im Gewächshaus produziert, ";
+				}
+				if(!zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
+					text = text + zutatSpec.getZustand().symbol + ", ";
+				}
+				String shortText = text.substring(0, text.length()-2);
+				int indexShortText = shortText.lastIndexOf(", ");
+				String readyText;
+				if(indexShortText == -1){
+					readyText = shortText +".";
+				} else {
+				 readyText = shortText.substring(0, indexShortText) + " und " +shortText.substring(indexShortText + 2, shortText.length()) + ".";
+				}
+				 hinweisDetails.setText( readyText);
+			}
 		}
 		
 		
@@ -281,6 +317,11 @@ public class InfoZutatDialog extends Composite {
 	
 	//TODO here comes all the CO2 Logic
 	public void updateZutatCO2(){
+		
+		if(stdIngredient.hasSeason != null && stdIngredient.hasSeason){
+			updateSaison(zutatSpec);
+		}
+		
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 //		valueLabel.setText(formatted + "g CO2-Äquivalent");
 		if(selectedRow != -1){
