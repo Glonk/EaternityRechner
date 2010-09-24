@@ -76,6 +76,7 @@ public class DAO extends DAOBase
     }
     
 	public String getAllIngredientsXml() {
+		// TODO export...
 		ArrayList<Ingredient> ingredients = getAllIngredients();
 		return null;
 	}
@@ -83,6 +84,11 @@ public class DAO extends DAOBase
 	public Boolean saveRecipe(Rezept recipe){
         ofy().put(recipe);
         return true;
+	}
+	
+	public UserRezept getRecipe(Long recipeID){
+		UserRezept userRezept = ofy().get(UserRezept.class,recipeID);
+        return userRezept;
 	}
 	
 	public List<Rezept> getYourRecipe(User user){
@@ -101,6 +107,25 @@ public class DAO extends DAOBase
         }
         
         return yourRecipes;
+
+	}
+	
+	public List<Rezept> adminGetRecipe(User user){
+		
+		List<Rezept> adminRecipes = new ArrayList<Rezept>();
+
+		// The Query itself is Iterable
+		Query<UserRezept> yourUserRecipes = ofy().query(UserRezept.class).filter("user !=", user);
+        QueryResultIterator<UserRezept> iterator = yourUserRecipes.iterator();
+        
+        while (iterator.hasNext()) {
+        	UserRezept userRezept = iterator.next();
+        	Rezept rezept = userRezept.getRezept();
+        	rezept.setId( userRezept.id);
+        	adminRecipes.add(rezept);
+        }
+        
+        return adminRecipes;
 
 	}
 	

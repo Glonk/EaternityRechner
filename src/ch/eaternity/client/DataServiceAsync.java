@@ -15,8 +15,12 @@ public interface DataServiceAsync {
   public void addRezept(Rezept rezept, AsyncCallback<Long> async);
   public void removeRezept(Long rezeptId, AsyncCallback<Boolean> async);
   public void getYourRezepte(AsyncCallback<List<Rezept>> async);
+  public void getAdminRezepte(AsyncCallback<List<Rezept>> asyncCallback);
   public void getData(AsyncCallback<Data> async);
   public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
   public void persistIngredients(ArrayList<Ingredient> ingredients,
 		AsyncCallback<Boolean> asyncCallback);
+public void approveRezept(Long id, Boolean approve,
+		AsyncCallback<Boolean> asyncCallback);
+
 }

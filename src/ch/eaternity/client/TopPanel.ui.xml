@@ -10,7 +10,7 @@
   <ui:style>
   .statusDiv {
     text-align: right;
-    padding: 1em;
+    padding:0.5em 1em 1.5em 1em;
     background:#fff;
     border-bottom: 2.5px solid #bbb;
   }
@@ -21,6 +21,7 @@
   
   .statusInfo{
   	float: left;
+  	 text-align: left;
   	}
 
   </ui:style>
@@ -34,9 +35,10 @@
 
 	
       <div class="{style.statusInfo}">
-	  	
-        <g:Label ui:field='loginLabel' ></g:Label>
-        <g:InlineLabel ui:field='loadingLabel' >lade Datenbank...</g:InlineLabel>
+	  	<g:Label ui:field='loadingLabel' >Datenbank wird geladen...</g:Label>
+        <g:InlineLabel ui:field='loginLabel' ></g:InlineLabel>
+        <a href="mailto:info@eaternity.ch">Kontaktieren Sie uns.</a>
+        
       </div>
 
       <div class='{style.linksDiv}'>

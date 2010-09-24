@@ -16,7 +16,10 @@
 
 	.scrollLittle{
 		height:100px;
-		}
+	}
+	.someSpace {
+		padding-bottom: 7px;		
+	}
 
 	.gwt-Button {
 	  margin: 5px 10px 5px 0px;
@@ -184,9 +187,9 @@
 		      
 		      <g:HTMLPanel ui:field="yourRezeptePanel" >
 	      		
-
+				<g:HTMLPanel  styleName='{style.someSpace}'>
 	        	    <hr /><br />&nbsp;in eigenen Rezepten
-        	        	<br />
+        	    </g:HTMLPanel>
 	        <g:ScrollPanel styleName='{style.scroll}'>
 	        
 	        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>

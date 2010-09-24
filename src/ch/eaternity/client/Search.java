@@ -67,8 +67,14 @@ public class Search extends ResizeComposite {
 	 */
 	public interface Listener {
 		void onItemSelected(Ingredient item);
+
+		
 	}
 
+	public interface ListenerMeals {
+		void onItemSelected(Rezept item);
+	}
+	
 	interface Binder extends UiBinder<Widget, Search> { }
 	interface SelectionStyle extends CssResource {
 		String selectedRow();
@@ -135,6 +141,7 @@ public class Search extends ResizeComposite {
 	}
 
 	private Listener listener;
+	private ListenerMeals listenerMeals;
 	//TODO check why everything crashes for selectedRow = -1
 	static int  selectedRow = 0;
 	
@@ -185,6 +192,10 @@ public class Search extends ResizeComposite {
 	 */
 	public void setListener(Listener listener) {
 		this.listener = listener;
+	}
+	
+	public void setMealListener(ListenerMeals listener) {
+		this.listenerMeals = listener;
 	}
 
 	@Override
@@ -265,6 +276,26 @@ public class Search extends ResizeComposite {
 			selectRow(row);
 		}
 	}
+	
+	@UiHandler("tableMeals")
+	void onTableMealsClicked(ClickEvent event) {
+		// Select the row that was clicked (-1 to account for header row).
+		Cell cell = tableMeals.getCellForEvent(event);
+		if (cell != null) {
+			int row = cell.getRowIndex();
+			selectRowMeals(row);
+		}
+	}
+	
+	@UiHandler("tableMealsYours")
+	void onTableMealsYoursClicked(ClickEvent event) {
+		// Select the row that was clicked (-1 to account for header row).
+		Cell cell = tableMealsYours.getCellForEvent(event);
+		if (cell != null) {
+			int row = cell.getRowIndex();
+			selectRowMealsYours(row);
+		}
+	}
 
 
 	private void initTable() {
@@ -284,11 +315,64 @@ public class Search extends ResizeComposite {
 		
 	}
 
-	/**
-	 * Selects the given row (relative to the current page).
-	 * 
-	 * @param row the row to be selected
-	 */
+	private void selectRowMeals(final int row) {
+		
+		if (FoundRezepte.size() < row){
+			return;
+		}
+		Rezept item = FoundRezepte.get(row);
+		if (item == null) {
+			return;
+		}
+		
+		styleRowMeals(selectedRow, false);
+		styleRowMeals(row, true);
+
+		Timer t = new Timer() {
+			public void run() {
+				styleRowMeals(row, false);
+			}
+		};
+		
+		EaternityRechner.ShowRezept(item);
+		t.schedule(200);
+
+		selectedRow = row;
+		if (listenerMeals != null) {
+			listenerMeals.onItemSelected(item);
+		}
+		
+	}
+	
+	private void selectRowMealsYours(final int row) {
+		
+		if (FoundRezepteYours.size() < row){
+			return;
+		}
+		Rezept item = FoundRezepteYours.get(row);
+		if (item == null) {
+			return;
+		}
+		
+		styleRowMealsYours(selectedRow, false);
+		styleRowMealsYours(row, true);
+
+		Timer t = new Timer() {
+			public void run() {
+				styleRowMealsYours(row, false);
+			}
+		};
+		
+		EaternityRechner.ShowRezept(item);
+		t.schedule(200);
+
+		selectedRow = row;
+		if (listenerMeals != null) {
+			listenerMeals.onItemSelected(item);
+		}
+		
+	}
+
 	private void selectRow(final int row) {
 		
 
@@ -356,7 +440,6 @@ public class Search extends ResizeComposite {
 		}
 	}
 
-	//TODO do the same for Search BUtton Press
 	static void styleRow(int row, boolean selected) {
 		if (row != -1) {
 			String style = selectionStyle.selectedRow();
@@ -365,6 +448,30 @@ public class Search extends ResizeComposite {
 				table.getRowFormatter().addStyleName(row, style);
 			} else {
 				table.getRowFormatter().removeStyleName(row, style);
+			}
+		}
+	}
+	
+	static void styleRowMeals(int row, boolean selected) {
+		if (row != -1) {
+			String style = selectionStyle.selectedRow();
+
+			if (selected) {
+				tableMeals.getRowFormatter().addStyleName(row, style);
+			} else {
+				tableMeals.getRowFormatter().removeStyleName(row, style);
+			}
+		}
+	}
+	
+	static void styleRowMealsYours(int row, boolean selected) {
+		if (row != -1) {
+			String style = selectionStyle.selectedRow();
+
+			if (selected) {
+				tableMealsYours.getRowFormatter().addStyleName(row, style);
+			} else {
+				tableMealsYours.getRowFormatter().removeStyleName(row, style);
 			}
 		}
 	}
@@ -648,14 +755,14 @@ public class Search extends ResizeComposite {
 
 	public static void displayRezept(final Rezept rezept, boolean yours) {
 
-
-		Button AddRezeptButton = new Button(" + ");
-		AddRezeptButton.addStyleDependentName("gwt-Button");
-		AddRezeptButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				EaternityRechner.ShowRezept(rezept);
-			}
-		});
+		// TODO no more add Button, but a click on the line is enough ... so when mousehover add a little triangle on top right edge
+//		Button AddRezeptButton = new Button(" + ");
+//		AddRezeptButton.addStyleDependentName("gwt-Button");
+//		AddRezeptButton.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				EaternityRechner.ShowRezept(rezept);
+//			}
+//		});
 		
 		
 		if(yours){
@@ -684,16 +791,15 @@ public class Search extends ResizeComposite {
 			});
 			
 			tableMealsYours.setText(row,0,rezept.getSymbol());
-			tableMealsYours.setWidget(row, 2, AddRezeptButton);
-			tableMealsYours.setWidget(row, 3, removeRezeptButton);
+//			tableMealsYours.setWidget(row, 2, AddRezeptButton);
+			tableMealsYours.setWidget(row, 2, removeRezeptButton);
 			if(rezept.isOpen()){
-				tableMealsYours.setText(row, 4,"o");
+				tableMealsYours.setText(row, 3,"o");
+			} else if(rezept.openRequested){
+				tableMealsYours.setText(row, 3,"r");
 			}
 			rezept.setCO2Value();
-//			double MenuLabelWert = 0.0;
-//			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
-//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-//			}
+
 			String formatted = NumberFormat.getFormat("##").format(rezept.getCO2Value());
 			tableMealsYours.setText(row, 1,  "ca "+formatted+"g *");
 			
@@ -705,7 +811,7 @@ public class Search extends ResizeComposite {
 		}else{
 			int row = tableMeals.getRowCount();
 			tableMeals.setText(row,0,rezept.getSymbol());
-			tableMeals.setWidget(row, 2, AddRezeptButton);
+//			tableMeals.setWidget(row, 2, AddRezeptButton);
 			
 			double MenuLabelWert = 0.0;
 			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
@@ -714,6 +820,31 @@ public class Search extends ResizeComposite {
 			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 //			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
 			tableMeals.setText(row, 1,  "ca "+formatted+"g *");
+			
+			if(EaternityRechner.loginInfo.isAdmin()){
+			if(!rezept.isOpen()){
+				if(rezept.openRequested){
+					// TODO this should be a link to make it open
+					Anchor openThis = new Anchor("o");
+					openThis.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+						EaternityRechner.rezeptApproval(rezept,true);
+						}
+					});
+					tableMeals.setWidget(row, 2,openThis);
+				}
+			} else {
+				// TODO this should be a link to make it close
+					Anchor closeThis = new Anchor("c");
+					closeThis.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+						EaternityRechner.rezeptApproval(rezept,false);
+						}
+					});
+					tableMeals.setWidget(row, 2,closeThis);
+				}
+			}
+			
 			
 			if ((row % 2) == 1) {
 				String style = evenStyleRow.evenRow();

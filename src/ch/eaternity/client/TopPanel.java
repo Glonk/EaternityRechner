@@ -61,11 +61,11 @@ public class TopPanel extends Composite {
   @UiField Anchor signOutLink;
   @UiField Anchor signInLink;
   @UiField Anchor ingredientLink;
-  @UiField Label loginLabel;
+  @UiField InlineLabel loginLabel;
   @UiField
 static ListBox Monate;
   @UiField static Label locationLabel;
-  @UiField InlineLabel loadingLabel;
+  @UiField Label loadingLabel;
   @UiField
 static TextBox clientLocation;
   public static Placemark currentLocation;

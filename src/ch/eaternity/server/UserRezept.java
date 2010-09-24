@@ -22,6 +22,7 @@ public class UserRezept{
 	public User user;
 	
 	public Boolean approvedOpen;
+	public Boolean requestedOpen;
 	
 	@Serialized
 	public Rezept rezept;

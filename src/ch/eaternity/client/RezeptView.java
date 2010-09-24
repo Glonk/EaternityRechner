@@ -82,6 +82,10 @@ public class RezeptView extends Composite {
 	@UiField TextBox amountPersons;
 	@UiField TextBox rezeptDetails;
 	
+	@UiField HTML titleHTML;
+	@UiField HTML openHTML;
+	@UiField HTML savedHTML;
+	
 	private FlowPanel panelImages = new FlowPanel();
 
 	
@@ -271,7 +275,8 @@ public class RezeptView extends Composite {
 						} else {
 							rezept.setSubTitle("just like that");
 						}
-						rezept.setOpen(makePublic.getValue());
+						rezept.openRequested = !makePublic.getValue();
+						rezept.open = false;
 						rezept.setCookInstruction(cookingInstr.getText()); 
 						
 						EaternityRechner.addRezept(rezept,rezeptView);

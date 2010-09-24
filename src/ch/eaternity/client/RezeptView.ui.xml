@@ -11,6 +11,9 @@
 	margin:0px 0px 14px 10px;
 	font-size:0.9em;
 	}
+	.inline {
+		display:inline;
+	}
 	
 	.rezeptDecoration {
 		width:750px;
@@ -35,6 +38,8 @@
 
 		text-align: left;
 	}
+	
+	
 	.closeButton {
 	margin-top:-14px;
 	}
@@ -135,7 +140,7 @@
            		
            			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
            			    <g:HTMLPanel styleName='{style.statusInfo}'>
-           					Neue Zusammenstellung - noch nicht veröffentlicht -	noch nicht gespeichert
+           			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML> - <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML> - <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML>
            					<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
            				</g:HTMLPanel>
            			
@@ -170,7 +175,7 @@
         						<g:TextArea ui:field="cookingInstr">Kochanleitung</g:TextArea>
                 				<g:TextBox ui:field="RezeptName">Rezept Name</g:TextBox>
                 				<g:TextBox ui:field="rezeptDetails">Rezept Untertitel</g:TextBox>
-                				<g:CheckBox ui:field="makePublic">veröffentliche Rezept</g:CheckBox>
+                				<g:CheckBox ui:field="makePublic">keine Veröffentlichung.</g:CheckBox>
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			</g:HTMLPanel>
                 	</g:HTMLPanel>

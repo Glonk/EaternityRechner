@@ -42,7 +42,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		UserRezept userRezept = new UserRezept(getUser());
 		// TODO : this is not a propper approval process!!!
-		userRezept.approvedOpen = rezept.isOpen();
+		userRezept.requestedOpen = rezept.openRequested;
+		rezept.open = false;
+		userRezept.approvedOpen = rezept.open;
+		
 		
 		userRezept.setRezept(rezept);
 		dao.ofy().put(userRezept);
@@ -50,6 +53,16 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return userRezept.id;
 	}
 
+	// TODO approve and disapprove Rezept
+	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException {
+		checkLoggedIn();
+		DAO dao = new DAO();
+		UserRezept userRezept =  dao.getRecipe(rezeptId);
+		userRezept.rezept.open = approve;
+		userRezept.approvedOpen = approve;
+		dao.ofy().put(userRezept);
+		return true;
+	}
  
 	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException {
 		checkLoggedIn();
@@ -65,6 +78,22 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		DAO dao = new DAO();
 		return dao.getYourRecipe(getUser());
+		
+		
+		
+	}
+	
+	public List<Rezept> getAdminRezepte() throws NotLoggedInException{
+		UserService userService = UserServiceFactory.getUserService();
+		List<Rezept> adminRecipes = new ArrayList<Rezept>();
+		if(userService.getCurrentUser() != null){
+		if(userService.isUserAdmin()){
+			DAO dao = new DAO();
+			adminRecipes = dao.adminGetRecipe(userService.getCurrentUser());
+		}
+		}
+		return adminRecipes;
+		
 	}
 
 	public Data getData() throws NotLoggedInException {
@@ -97,10 +126,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if (getUser() != null) {
 		List<Rezept> rezeptePersonal = dao.getYourRecipe(getUser());
 		data.setYourRezepte(rezeptePersonal);
+		
 		}
 		
 		
-		List<Rezept> rezepte = dao.getOpenRecipe();
+		List<Rezept> rezepte = getAdminRezepte();
+		if(rezepte.isEmpty()){
+			rezepte = dao.getOpenRecipe();
+		}
 		if(data.YourRezepte != null){
 			for(Rezept rezept: data.YourRezepte){
 				int removeIndex = -1;

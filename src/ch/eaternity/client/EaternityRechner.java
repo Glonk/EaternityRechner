@@ -45,7 +45,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class EaternityRechner implements EntryPoint {
 
-	static LoginInfo loginInfo = null;
+	public static LoginInfo loginInfo = null;
 	private final static DataServiceAsync rezeptService = GWT.create(DataService.class);
 	private List<RezeptView> worksheet = new ArrayList<RezeptView>();
 	// private VerticalPanel loginPanel = new VerticalPanel();
@@ -186,6 +186,22 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 	
+	static void rezeptApproval(final Rezept rezept, final Boolean approve) {
+		rezeptService.approveRezept(rezept.getId(), approve,new AsyncCallback<Boolean>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Boolean ignore) {
+
+				Search.getClientData().getPublicRezepte().remove(rezept);
+				rezept.open = approve;
+				Search.getClientData().getPublicRezepte().add(rezept);
+				
+				Search.updateResults(Search.SearchBox2.getText());
+			}
+		});
+	}
+	
 	private static void undisplayRezept(String rezept_id) {
 
 	}
@@ -202,7 +218,7 @@ public class EaternityRechner implements EntryPoint {
 		topPanel.signOutLink.setHref(loginInfo.getLogoutUrl());
 		topPanel.signInLink.setVisible(false);
 		topPanel.signOutLink.setVisible(true);
-		topPanel.loginLabel.setText("Willkommen ".concat( loginInfo.getNickname() ));
+		topPanel.loginLabel.setText("Willkommen "+ loginInfo.getNickname() +".");
 		// TODO only show when logged in:
 		//SaveRezeptPanel.setVisible(true);
 		//load your personal recipes
@@ -221,6 +237,20 @@ public class EaternityRechner implements EntryPoint {
 			}
 		});
 		topPanel.ingredientLink.setVisible(true);
+		
+		// TODO get all the other recipes
+		rezeptService.getAdminRezepte(new AsyncCallback<List<Rezept>>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(List<Rezept> rezepte) {
+				Data data = Search.getClientData();
+				data.setPublicRezepte(rezepte);
+				Search.setClientData(data);
+				Search.updateResults(" ");
+//				displayRezepte(rezepte);
+			}
+		});
 		
 		return adminHandler;
 	}
@@ -261,9 +291,17 @@ public class EaternityRechner implements EntryPoint {
 		rezeptView.rezept.setSymbol("Ihr " + rezept.getSymbol());
 		
 		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
+		rezeptView.titleHTML.setText(rezept.getSymbol());
 		
 		rezeptView.rezeptSubTitleTop.setText(rezept.getSubTitle());
-		rezeptView.makePublic.setValue(rezept.isOpen());
+		rezeptView.makePublic.setValue(!rezept.openRequested);
+		
+		rezeptView.openHTML.setHTML("nicht veröffentlicht");
+		if(rezept.isOpen()){
+			rezeptView.openHTML.setHTML("veröffentlicht");
+		} else if(rezept.openRequested){
+			rezeptView.openHTML.setHTML("Veröffentichung angefragt");
+		}
 		
 	    if(rezept.imageUrl != null){
 	    	HTML showImage = new HTML();
@@ -279,6 +317,7 @@ public class EaternityRechner implements EntryPoint {
 //	    rezeptView.showRezept(rezeptView.rezept);
 	    rezeptView.showRezept(rezeptView.rezept);
 	    rezeptView.saved = true;
+	    rezeptView.savedHTML.setHTML("gespeichert");
 		
 	}
 	
@@ -286,7 +325,7 @@ public class EaternityRechner implements EntryPoint {
 	public void onButtonPress(ClickEvent event) {
 		Rezept rezept = new Rezept();
 		rezept.setSymbol("unbenanntes Rezept");
-		rezept.setOpen(false);
+		rezept.openRequested = true;
 		ShowRezept(rezept);	
 	}
 	

@@ -46,6 +46,7 @@ public class Rezept implements Serializable, Cloneable{
 //    private List<String> ZutatSpecificationKeys = new ArrayList<String>(); 
     
 	private Double CO2Value;
+	public Boolean openRequested;
 	public Boolean open;
 
 	public Rezept() {
