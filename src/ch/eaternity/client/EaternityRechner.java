@@ -10,6 +10,7 @@ import java.util.ListIterator;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.ZutatSpecification;
@@ -305,8 +306,11 @@ public class EaternityRechner implements EntryPoint {
 		
 	    if(rezept.imageUrl != null){
 	    	HTML showImage = new HTML();
-	    	showImage.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />");
-	    	rezeptView.imageUploaderHP.add(showImage);
+//	    	showImage.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />"+rezept.getCookInstruction());
+//	    	rezeptView.imageUploaderHP.add(showImage);
+	    	
+	    	rezeptView.menuDecoInfo.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />"+rezept.getCookInstruction());
+
 	    }
 	    if(rezept.getPersons() != null){
 	    	rezeptView.amountPersons.setText(rezept.getPersons().toString());

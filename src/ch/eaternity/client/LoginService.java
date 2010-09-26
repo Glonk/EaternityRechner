@@ -1,4 +1,6 @@
-package ch.eaternity.client;
+ package ch.eaternity.client;
+
+import ch.eaternity.shared.LoginInfo;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

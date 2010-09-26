@@ -24,6 +24,7 @@
 			background: #fff;
 			margin-top:64px;
 			width:360px;
+			margin-right:10px;
 			}
 		
 		.bottom {

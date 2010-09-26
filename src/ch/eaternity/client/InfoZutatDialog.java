@@ -94,7 +94,9 @@ public class InfoZutatDialog extends Composite {
 	
 	@UiHandler("closeLabel")
 	void onCloseClicked(ClickEvent event) {
-		rezeptviewParent.addInfoPanel.remove(1);
+		rezeptviewParent.addInfoPanel.getWidget(2).setVisible(false);
+		rezeptviewParent.menuDecoInfo.setVisible(true);
+//		rezeptviewParent.addInfoPanel.insert(new HTML("test"), 1);
 		
 	}
 

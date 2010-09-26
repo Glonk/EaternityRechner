@@ -16,6 +16,8 @@ import java.util.List;
 
 
 
+import ch.eaternity.client.widgets.PhotoGallery;
+import ch.eaternity.client.widgets.UploadPhoto;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
@@ -66,6 +68,8 @@ public class RezeptView extends Composite {
 
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
+	@UiField HTMLPanel topStatusBar;
+	@UiField HTML menuDecoInfo;
 	@UiField Button RezeptButton;
 	@UiField TextBox RezeptName;
 	@UiField CheckBox makePublic;
@@ -87,7 +91,8 @@ public class RezeptView extends Composite {
 	@UiField HTML savedHTML;
 	
 	private FlowPanel panelImages = new FlowPanel();
-
+	private PhotoGallery galleryWidget;
+	private UploadPhoto uploadWidget;
 	
 	
 	HandlerRegistration klicky;
@@ -110,7 +115,15 @@ public class RezeptView extends Composite {
 	    saved = true;
 	    initTable();
 	    
-
+	    galleryWidget = new PhotoGallery(this);
+	    addInfoPanel.insert(galleryWidget,0);
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo);
+			
+			// Bind it to event so uploadWidget can refresh the gallery
+			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
+			addInfoPanel.insert(uploadWidget,0);
+		}
 	    
 	    imageUploaderHP.add(panelImages);
 	    MultiUploader defaultUploader = new MultiUploader();
@@ -124,8 +137,10 @@ public class RezeptView extends Composite {
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
 			// TODO even more....
 			SaveRezeptPanel.setVisible(true);
+			topStatusBar.setVisible(true);
 		} else   {
 			SaveRezeptPanel.setVisible(false);
+			topStatusBar.setVisible(false);
 		}
 	  }
 	
@@ -215,10 +230,6 @@ public class RezeptView extends Composite {
 		dlg.show();
 		dlg.center();
 		}
-		
-
-		
-
 	}
 	
 
@@ -339,12 +350,13 @@ public class RezeptView extends Composite {
 	private void openSpecificationDialog(ZutatSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
 		// TODO Auto-generated method stub
 		
-		if(addInfoPanel.getWidgetCount() ==2){
-			addInfoPanel.remove(1);
-		}
+//		if(addInfoPanel.getWidgetCount() ==2){
+			addInfoPanel.remove(2);
+//		}
+		menuDecoInfo.setVisible(false);
 		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,rezept,SuggestTable,this);
-		addInfoPanel.add(infoZutat);
-		
+//		addInfoPanel.add(infoZutat);
+		addInfoPanel.insert(infoZutat, 2);
 //		addInfoPanel.add(new HTML("test"));
 		
 	}
@@ -925,6 +937,8 @@ public class RezeptView extends Composite {
 	    public void onFinish(IUploader uploader) {
 	      if (uploader.getStatus() == Status.SUCCESS) {
 	    	 rezept.imageUrl = uploader.fileUrl();
+//	    	 rezept.imageId = uploader.
+	    	 GWT.log("Successfully uploaded image: "+  uploader.fileUrl(), null);
 	        new PreloadedImage(uploader.fileUrl(), showImage);
 	        
 	        // The server can send information to the client.

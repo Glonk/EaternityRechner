@@ -13,6 +13,8 @@ import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
@@ -29,6 +31,7 @@ public class DAO extends DAOBase
         ObjectifyService.register(ZutatSpecification.class);
         ObjectifyService.register(Rezept.class);
         ObjectifyService.register(UserRezept.class);
+        ObjectifyService.register(ImageBlob.class);
     }
 
     /** Your DAO can have your own useful methods */
@@ -62,6 +65,20 @@ public class DAO extends DAOBase
         return ingredients;
     }
     
+    public Long CreateImage(ImageBlob image)
+    {
+        ofy().put(image);
+//        ImagesService imgS = ImagesServiceFactory.getImagesService();
+//        String test = imgS.getServingUrl(image.getPicture());
+        // I propably want something like this: http://jeremyblythe.blogspot.com/
+        return image.getId();
+    }
+    
+    public ImageBlob getImage(Long imageID)
+    {
+    	return ofy().get(ImageBlob.class, imageID);
+         
+    }
 
     public Boolean CreateIngredients(ArrayList<Ingredient> ingredients)
     {

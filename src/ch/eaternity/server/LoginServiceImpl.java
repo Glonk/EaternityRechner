@@ -1,7 +1,8 @@
 package ch.eaternity.server;
 
-import ch.eaternity.client.LoginInfo;
 import ch.eaternity.client.LoginService;
+import ch.eaternity.shared.LoginInfo;
+
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -26,6 +27,7 @@ public LoginInfo login(String requestUri) {
       loginInfo.setNickname(user.getNickname());
       loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
       loginInfo.setAdmin(userService.isUserAdmin());
+      loginInfo.setId(user.getUserId());
     } else {
       loginInfo.setLoggedIn(false);
       loginInfo.setLoginUrl(userService.createLoginURL(requestUri));

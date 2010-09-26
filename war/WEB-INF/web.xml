@@ -1,0 +1,90 @@
+<web-app>
+  
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>loginService</servlet-name>
+    <servlet-class>ch.eaternity.server.LoginServiceImpl</servlet-class>
+  </servlet>
+
+
+  <servlet>
+    <servlet-name>dataService</servlet-name>
+    <servlet-class>ch.eaternity.server.DataServiceImpl</servlet-class>
+  </servlet>
+  
+   <servlet>
+    <servlet-name>userImageServlet</servlet-name>
+    <servlet-class>ch.eaternity.server.UserImageServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>loginService</servlet-name>
+    <url-pattern>/eaternity/login</url-pattern>
+  </servlet-mapping>
+  
+   <servlet-mapping>
+    <servlet-name>dataService</servlet-name>
+    <url-pattern>/eaternity/data</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>userImageServlet</servlet-name>
+    <url-pattern>/eaternity/images</url-pattern>
+  </servlet-mapping>
+  
+  <context-param>
+    <!-- max size of the upload request -->
+    <param-name>maxSize</param-name>
+    <param-value>3145728</param-value>
+  </context-param>
+  <context-param>
+    <!-- Useful in development mode to slow down the uploads in fast networks.
+         Put the number of milliseconds to sleep in each block received in the server.
+         false or 0, means don't use slow uploads  -->
+    <param-name>slowUploads</param-name>
+    <param-value>200</param-value>
+  </context-param>
+  
+	<servlet>
+		<servlet-name>uploadServlet</servlet-name>
+		<servlet-class>ch.eaternity.server.UploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	   <servlet-name>uploadServlet</servlet-name>
+	   <url-pattern>/upload</url-pattern>
+	</servlet-mapping>
+	
+  <!--servlet>
+    <servlet-name>uploadServlet</servlet-name>
+    <servlet-class>ch.eaternity.server.UploadAction</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>uploadServlet</servlet-name>
+    <url-pattern>*.gupld</url-pattern>
+  </servlet-mapping-->
+
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>EaternityRechner.html</welcome-file>
+  </welcome-file-list>
+
+<!--OnPositive Tools-->
+<servlet>
+		<servlet-name>baseViewerServlet</servlet-name>
+		<servlet-class>com.onpositive.gae.tools.servlets.BaseViewerServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+		<servlet-name>baseViewerServlet</servlet-name>
+		<url-pattern>/appwrench/baseviewer</url-pattern>
+</servlet-mapping>
+<servlet>
+<servlet-name>SessionAuth</servlet-name>
+<servlet-class>com.onpositive.auth.AuthServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>SessionAuth</servlet-name>
+<url-pattern>/appwrench/auth</url-pattern>
+</servlet-mapping>
+</web-app>

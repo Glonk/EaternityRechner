@@ -1,38 +1,31 @@
 package ch.eaternity.server;
 
-import java.util.Date;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+import javax.persistence.Id;
 
 import com.google.appengine.api.datastore.Blob;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.users.User;
 
 
-@PersistenceCapable // (identityType = IdentityType.APPLICATION)
 public class ImageBlob{
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+
+	@Id private Long id;
 	
-	@Persistent
-	private Date createDate;
 	
-	@Persistent
+//	private Date createDate;
+	
+	
 	private Blob picture;
 	
-	@Persistent
+	
 	private User uploader;
 	
-	@Persistent
+	
 	private String name;
 	
-	@Persistent
-	private String source;
+	
+//	private String source;
 
 	public ImageBlob(){
 		
@@ -43,21 +36,21 @@ public class ImageBlob{
 		this.setName(name);
 	}
 
-	public void setId(Key id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Key getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
+//	public void setCreateDate(Date createDate) {
+//		this.createDate = createDate;
+//	}
+//
+//	public Date getCreateDate() {
+//		return createDate;
+//	}
 
 	public void setPicture(Blob picture) {
 		this.picture = picture;
@@ -75,13 +68,13 @@ public class ImageBlob{
 		return uploader;
 	}
 
-	public void setSource(String source) {
-		this.source = source;
-	}
-
-	public String getSource() {
-		return source;
-	}
+//	public void setSource(String source) {
+//		this.source = source;
+//	}
+//
+//	public String getSource() {
+//		return source;
+//	}
 
 	public void setName(String name) {
 		this.name = name;

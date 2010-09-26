@@ -14,7 +14,15 @@
 	.inline {
 		display:inline;
 	}
-	
+	.inline2 {
+		display:inline;
+		width:380px;
+		background: #ccc;
+		float:left;
+	}
+	.hideOverflow {
+		overflow:hidden;
+	}
 	.rezeptDecoration {
 		width:750px;
 		padding: 7px;
@@ -139,13 +147,13 @@
            			<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
            		
            			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
-           			    <g:HTMLPanel styleName='{style.statusInfo}'>
+           			    <g:HTMLPanel ui:field='topStatusBar' styleName='{style.statusInfo}'>
            			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML> - <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML> - <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML>
            					<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
            				</g:HTMLPanel>
            			
            			
-           			<g:HorizontalPanel  ui:field='addInfoPanel'>
+           			<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
            				<g:VerticalPanel>
            				<g:HorizontalPanel styleName='{style.recipeTitle}' >
            					<g:HTMLPanel>
@@ -167,8 +175,9 @@
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
         				</g:VerticalPanel>
         				</g:VerticalPanel>
-        			</g:HorizontalPanel>
- 					
+        				<g:HTML ui:field='menuDecoInfo'></g:HTML>
+        				<g:HTMLPanel></g:HTMLPanel >
+ 					</g:HorizontalPanel>
         					
         					<g:HTMLPanel ui:field='SaveRezeptPanel'>
         					    <g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel>

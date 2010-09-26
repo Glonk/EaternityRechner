@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem; 
 import org.apache.commons.io.IOUtils; 
 import com.google.appengine.api.datastore.Blob; 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 
 public class UploadAction extends AppEngineUploadAction { 
@@ -22,28 +24,34 @@ public class UploadAction extends AppEngineUploadAction {
 		@Override 
         public String executeAction(HttpServletRequest request, 
 List<FileItem> sessionFiles) throws UploadActionException { 
-                
+			DAO dao = new DAO();
+			UserService userService = UserServiceFactory.getUserService();
                 for(FileItem imgItem : sessionFiles) { 
-                        PersistenceManager pm = DataServiceImpl.getPersistenceManager(); 
-                        Transaction tx = pm.currentTransaction(); 
+                		
+                		
+//                        PersistenceManager pm = DataServiceImpl.getPersistenceManager(); 
+//                        Transaction tx = pm.currentTransaction(); 
                         try { 
                             // Start the transaction 
-                            tx.begin(); 
+//                            tx.begin(); 
                             InputStream imgStream = imgItem.getInputStream(); 
                                 Blob blob = new Blob(IOUtils.toByteArray(imgStream)); 
                                 ImageBlob imageBlob = new ImageBlob(imgItem.getName(), blob); 
-                            pm.makePersistent(imageBlob); 
+                                imageBlob.setUploader(userService.getCurrentUser());
+                                
+                                Long imageID = dao.CreateImage(imageBlob);
+//                            pm.makePersistent(imageBlob); 
                             // Commit the transaction, flushing the object to the datastore 
-                            tx.commit(); 
+//                            tx.commit(); 
                         } 
                         catch(Exception e) { 
                                 e.printStackTrace(); 
                         } 
                         finally { 
-                            if(tx.isActive()) { 
-                                tx.rollback(); 
-                            } 
-                            pm.close(); 
+//                            if(tx.isActive()) { 
+//                                tx.rollback(); 
+//                            } 
+//                            pm.close(); 
                         } 
                 } 
 //                removeSessionFileItems(request);

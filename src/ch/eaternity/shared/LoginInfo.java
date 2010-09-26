@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.shared;
 
 import java.io.Serializable;
 
@@ -14,6 +14,15 @@ public class LoginInfo implements Serializable {
 	private String emailAddress;
 	private String nickname;
 	private boolean admin = false;
+	private String id;
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 	
 	public boolean isLoggedIn() {
 		return loggedIn;

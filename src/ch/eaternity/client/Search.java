@@ -793,10 +793,36 @@ public class Search extends ResizeComposite {
 			tableMealsYours.setText(row,0,rezept.getSymbol());
 //			tableMealsYours.setWidget(row, 2, AddRezeptButton);
 			tableMealsYours.setWidget(row, 2, removeRezeptButton);
-			if(rezept.isOpen()){
-				tableMealsYours.setText(row, 3,"o");
-			} else if(rezept.openRequested){
-				tableMealsYours.setText(row, 3,"r");
+			
+			if(EaternityRechner.loginInfo.isAdmin()){
+				if(!rezept.isOpen()){
+//					if(rezept.openRequested){
+						// this should be a link to make it open
+						Anchor openThis = new Anchor("o");
+						openThis.addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+							EaternityRechner.rezeptApproval(rezept,true);
+							}
+						});
+						tableMealsYours.setWidget(row, 3,openThis);
+//					}
+				} else {
+					// this should be a link to make it close
+						Anchor closeThis = new Anchor("c");
+						closeThis.addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+							EaternityRechner.rezeptApproval(rezept,false);
+							}
+						});
+						tableMealsYours.setWidget(row, 3,closeThis);
+					}
+			} else {
+
+				if(rezept.isOpen()){
+					tableMealsYours.setText(row, 3,"o");
+				} else if(rezept.openRequested){
+					tableMealsYours.setText(row, 3,"r");
+				}
 			}
 			rezept.setCO2Value();
 
