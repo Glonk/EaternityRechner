@@ -232,7 +232,7 @@ public class DistancesDialog extends DialogBox{
 
 	      public void onSuccess(JsArray<Placemark> locations) {
 	    	  Placemark place = locations.get(0);
-	    	  TopPanel.locationLabel.setText("Sie befinden sich in der Mitte von: " +place.getAddress() +"  ");
+	    	  TopPanel.locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
 	    	  currentLocation = place.getAddress();
 	    	  setText("Berechne alle Routen von: " + place.getAddress());
 	    	  TopPanel.currentHerkunft = place.getAddress();
