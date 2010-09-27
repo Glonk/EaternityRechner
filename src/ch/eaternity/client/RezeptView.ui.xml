@@ -13,6 +13,13 @@
 		display:inline;
 		
 	}
+	.floatRight{
+		float:right;
+	}
+	.savePanel {
+		padding:3px;
+		display:block;
+	}
 	.inline {
 		display:inline;
 	}
@@ -32,6 +39,15 @@
 	
 		
 	}
+	.cookingInstr {
+		float:left;
+		margin-left:10px;
+		height:154px;
+		width:180px;
+		display:inline;
+		
+	}
+	
 	.rezeptNameTop {
 		width:220px;
 		padding-left:4px;
@@ -123,8 +139,8 @@
 	}
 	
 	.gwt-Button {
-		float: right;
-	  margin: -1px -1px 5px 0px;
+
+	  margin: -1px -1px 0px 0px;
 	  padding: 3px 5px;
 	  text-decoration: none;
 	  font-size: small;
@@ -183,11 +199,11 @@
            			      -
            			      <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
            			      
-           				
+           				           			<g:HTMLPanel styleName='{style.floatRight}'>
+           				<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
+           			</g:HTMLPanel>
            				</g:HTMLPanel>
-           			
-           			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
-           			
+
            			<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
            				<g:VerticalPanel>
            				<g:HorizontalPanel  styleName='{style.recipeTitle}' >
@@ -206,26 +222,25 @@
            				</g:HTMLPanel >
            				<g:VerticalPanel styleName='{style.MenuTableWrapper}' >
            				<g:HTMLPanel >
-           					<img src='tabs-bg.png' height='94px' width='1px' style='float:left;' />
+           					<img src='tabs-bg.png' height='88px' width='1px' style='float:left;' />
         					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
         				</g:HTMLPanel>
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
+        					
         				</g:VerticalPanel>
+        				<g:HTML ><div style='padding-left:274px;margin-top:0px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
         				</g:VerticalPanel>
-        				<g:VerticalPanel ui:field='menuDecoInfo'></g:VerticalPanel>
+        				<g:FlowPanel ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>
         					
-        					<g:HTMLPanel ui:field='SaveRezeptPanel'>
+        					<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
         					    <!--g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel-->
-        						<g:TextArea ui:field="cookingInstr">Kochanleitung</g:TextArea>
-                				
-                			
-                				
+
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			</g:HTMLPanel>
                 	</g:HTMLPanel>
-              		<g:HTML ><div style='padding-left:274px;margin-top:-6px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
+              		
                 	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
         			</g:HTMLPanel>
       			

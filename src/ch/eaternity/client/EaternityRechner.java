@@ -7,6 +7,8 @@ import java.util.ListIterator;
 
 
 
+import ch.eaternity.client.widgets.ImageOverlay;
+import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
@@ -19,6 +21,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -33,6 +37,8 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -256,7 +262,7 @@ public class EaternityRechner implements EntryPoint {
 		return adminHandler;
 	}
 
-	public static void ShowRezept(Rezept rezept) {
+	public static void ShowRezept(final Rezept rezept) {
 		// create a new one
 		
 		styleRezept(selectedRezept, false);
@@ -281,7 +287,9 @@ public class EaternityRechner implements EntryPoint {
 
 		
 		AddZutatZumMenu(zutaten);
-		RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+		final RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+		
+		
 		
 		rezeptView.RezeptName.setText(rezept.getSymbol());
 		if(rezept.getSubTitle() == null){
@@ -304,14 +312,58 @@ public class EaternityRechner implements EntryPoint {
 			rezeptView.openHTML.setHTML("Veröffentichung angefragt");
 		}
 		
-//	    if(rezept.imageUrl != null){
-//	    	HTML showImage = new HTML();
-//	    	showImage.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />"+rezept.getCookInstruction());
-////	    	rezeptView.imageUploaderHP.add(showImage);
-//	    	
-//	    	rezeptView.menuDecoInfo.add(showImage);
-//	    	
-//	    }
+	    if(rezept.getCookInstruction() != null){
+	    	final HTML htmlCooking = new HTML(rezept.getCookInstruction());
+	    	htmlCooking.addStyleName("cookingInstr");
+	    	rezeptView.menuDecoInfo.insert(htmlCooking,0);
+	    	
+	    	
+	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
+
+				@Override
+				public void onMouseOver(MouseOverEvent event) {
+					// TODO Auto-generated method stub
+					if (EaternityRechner.loginInfo.isLoggedIn()) {
+						rezeptView.cookingInstr.setVisible(true);
+						htmlCooking.setVisible(false);
+					}
+				}
+			});
+	    	rezeptView.htmlCooking = htmlCooking;
+	    	
+	    }
+		
+		
+	    if(rezept.image != null){
+	    	final Image showImage = new Image();
+	    	showImage.setUrl(rezept.image.getServingUrl()+"=s160-c");
+//	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
+//	    	rezeptView.imageUploaderHP.add(showImage);
+	    	
+	    	showImage.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					ImageOverlay imageOverlay = new ImageOverlay(rezept.image, loginInfo);
+//					imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
+					
+					final PopupPanel imagePopup = new PopupPanel(true);
+					imagePopup.setAnimationEnabled(true);
+					imagePopup.setWidget(imageOverlay);
+//					imagePopup.setGlassEnabled(true);
+					imagePopup.setAutoHideEnabled(true);
+
+					// TODO what is this???
+					imagePopup.center();
+					imagePopup.setPopupPosition(10, 10);
+				}
+			});
+	    	showImage.addStyleName("inline");
+	    	rezeptView.menuDecoInfo.insert(showImage,0);
+	    	
+	    }
+	    
+
 	    if(rezept.getPersons() != null){
 	    	rezeptView.amountPersons.setText(rezept.getPersons().toString());
 	    } else {

@@ -15,6 +15,21 @@ a:link, a:visited, a:hover, a:active {
   color: #000;
 }
 
+.inline {
+	display:inline;
+	float:left;
+	}
+
+.cookingInstr {
+	float:left;
+	margin-left:10px;
+	height:154px;
+	width:180px;
+	display:inline;
+	overflow:hidden;
+	
+	}
+
 .rezept {
 	background: #F7A959;
 	-moz-border-radius: 3px;

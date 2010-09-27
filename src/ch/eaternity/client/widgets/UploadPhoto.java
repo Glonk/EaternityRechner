@@ -14,14 +14,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
+import ch.eaternity.client.RezeptView;
 import ch.eaternity.client.UserImageService;
 import ch.eaternity.client.UserImageServiceAsync;
 import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.UploadedImage;
 
 public class UploadPhoto extends Composite implements HasHandlers {
@@ -46,10 +49,13 @@ public class UploadPhoto extends Composite implements HasHandlers {
 	FileUpload uploadField;
 
 	LoginInfo loginInfo;
+	
+	Rezept rezept;
 
-	public UploadPhoto(final LoginInfo loginInfo) {
+	public UploadPhoto(final LoginInfo loginInfo,final RezeptView rezeptView) {
 		handlerManager = new HandlerManager(this);
-
+		
+		this.rezept = rezept;
 		this.loginInfo = loginInfo;
 
 		initWidget(uiBinder.createAndBindUi(this));
@@ -83,7 +89,17 @@ public class UploadPhoto extends Composite implements HasHandlers {
 
 									@Override
 									public void onSuccess(UploadedImage result) {
-
+										
+										rezeptView.getRezept().image = result;
+									    
+									    	Image showImage = new Image();
+									    	showImage.setUrl(result.getServingUrl()+"=s160-c");
+//									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
+//									    	rezeptView.imageUploaderHP.add(showImage);
+									    	
+									    	rezeptView.menuDecoInfo.add(showImage);
+									    
+										
 										ImageOverlay overlay = new ImageOverlay(
 												result, loginInfo);
 										GalleryUpdatedEvent event = new GalleryUpdatedEvent();
@@ -96,10 +112,11 @@ public class UploadPhoto extends Composite implements HasHandlers {
 												true);
 										imagePopup.setAnimationEnabled(true);
 										imagePopup.setWidget(overlay);
-										imagePopup.setGlassEnabled(true);
+//										imagePopup.setGlassEnabled(true);
 										imagePopup.setAutoHideEnabled(true);
 
 										imagePopup.center();
+										imagePopup.setPopupPosition(10, 10);
 
 									}
 								});

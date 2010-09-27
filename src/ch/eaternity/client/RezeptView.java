@@ -73,7 +73,8 @@ public class RezeptView extends Composite {
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
 	@UiField HTMLPanel topStatusBar;
-	@UiField VerticalPanel menuDecoInfo;
+	@UiField
+	public FlowPanel menuDecoInfo;
 	@UiField Button RezeptButton;
 	@UiField TextBox RezeptName;
 	@UiField CheckBox makePublic;
@@ -99,6 +100,7 @@ public class RezeptView extends Composite {
 	private PhotoGallery galleryWidget;
 	private UploadPhoto uploadWidget;
 	
+	HTML htmlCooking;
 	
 	HandlerRegistration klicky;
 	
@@ -122,19 +124,22 @@ public class RezeptView extends Composite {
 	    
 	    RezeptName.setVisible(false);
 	    rezeptDetails.setVisible(false);
+	    cookingInstr.setVisible(false);
 	    
-	    galleryWidget = new PhotoGallery(this);
-//	    addInfoPanel.insert(galleryWidget,0);
-	    menuDecoInfo.add(galleryWidget);
+//	    galleryWidget = new PhotoGallery(this);
+////	    addInfoPanel.insert(galleryWidget,0);
+//	    menuDecoInfo.add(galleryWidget);
 	    
 		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo);
+			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
 			
 			// Bind it to event so uploadWidget can refresh the gallery
-			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
+//			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
 //			addInfoPanel.insert(uploadWidget,0);
 			menuDecoInfo.add(uploadWidget);
 		}
+		
+		
 	    
 //	    imageUploaderHP.add(panelImages);
 //	    MultiUploader defaultUploader = new MultiUploader();
@@ -222,6 +227,22 @@ public class RezeptView extends Composite {
 		if (EaternityRechner.loginInfo.isLoggedIn()) {
 			RezeptName.setVisible(false);
 			rezeptNameTop.setVisible(true);
+		}
+	}
+	
+	@UiHandler("cookingInstr")
+	void onEditCook(KeyUpEvent event) {
+		if(cookingInstr.getText() != ""){
+			htmlCooking.setText(cookingInstr.getText());
+			rezept.setCookInstruction(cookingInstr.getText());
+		}
+	}
+	
+	@UiHandler("cookingInstr")
+	void onMouseOutCook(MouseOutEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			cookingInstr.setVisible(false);
+			htmlCooking.setVisible(true);
 		}
 	}
 	
@@ -996,7 +1017,7 @@ public class RezeptView extends Composite {
 	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
 	    public void onFinish(IUploader uploader) {
 	      if (uploader.getStatus() == Status.SUCCESS) {
-	    	 rezept.imageUrl = uploader.fileUrl();
+	    	 
 //	    	 rezept.imageId = uploader.
 	    	 GWT.log("Successfully uploaded image: "+  uploader.fileUrl(), null);
 	        new PreloadedImage(uploader.fileUrl(), showImage);
