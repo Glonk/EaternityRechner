@@ -31,6 +31,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -69,7 +73,7 @@ public class RezeptView extends Composite {
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
 	@UiField HTMLPanel topStatusBar;
-	@UiField HTML menuDecoInfo;
+	@UiField VerticalPanel menuDecoInfo;
 	@UiField Button RezeptButton;
 	@UiField TextBox RezeptName;
 	@UiField CheckBox makePublic;
@@ -77,11 +81,12 @@ public class RezeptView extends Composite {
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
+	@UiField HTMLPanel rezeptTitle;
 	@UiField Label rezeptNameTop;
 	@UiField Label rezeptSubTitleTop;
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
-	@UiField HorizontalPanel imageUploaderHP;
+//	@UiField HorizontalPanel imageUploaderHP;
 	@UiField TextArea cookingInstr;
 	@UiField TextBox amountPersons;
 	@UiField TextBox rezeptDetails;
@@ -115,23 +120,29 @@ public class RezeptView extends Composite {
 	    saved = true;
 	    initTable();
 	    
+	    RezeptName.setVisible(false);
+	    rezeptDetails.setVisible(false);
+	    
 	    galleryWidget = new PhotoGallery(this);
-	    addInfoPanel.insert(galleryWidget,0);
+//	    addInfoPanel.insert(galleryWidget,0);
+	    menuDecoInfo.add(galleryWidget);
+	    
 		if (EaternityRechner.loginInfo.isLoggedIn()) {
 			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo);
 			
 			// Bind it to event so uploadWidget can refresh the gallery
 			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
-			addInfoPanel.insert(uploadWidget,0);
+//			addInfoPanel.insert(uploadWidget,0);
+			menuDecoInfo.add(uploadWidget);
 		}
 	    
-	    imageUploaderHP.add(panelImages);
-	    MultiUploader defaultUploader = new MultiUploader();
-	    imageUploaderHP.add(defaultUploader);
-	    defaultUploader.avoidRepeatFiles(true);
-	    defaultUploader.setValidExtensions(new String[] { "jpg", "jpeg", "png", "gif" });
-	    defaultUploader.setMaximumFiles(1);
-	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
+//	    imageUploaderHP.add(panelImages);
+//	    MultiUploader defaultUploader = new MultiUploader();
+//	    imageUploaderHP.add(defaultUploader);
+//	    defaultUploader.avoidRepeatFiles(true);
+//	    defaultUploader.setValidExtensions(new String[] { "jpg", "jpeg", "png", "gif" });
+//	    defaultUploader.setMaximumFiles(1);
+//	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 
 	    
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
@@ -190,6 +201,55 @@ public class RezeptView extends Composite {
 	}
 
 
+	@UiHandler("rezeptNameTop")
+	void onMouseOver(MouseOverEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			RezeptName.setVisible(true);
+			rezeptNameTop.setVisible(false);
+		}
+	}
+	
+	@UiHandler("RezeptName")
+	void onEdit(KeyUpEvent event) {
+		if(RezeptName.getText() != ""){
+			rezeptNameTop.setText(RezeptName.getText());
+			rezept.setSymbol(RezeptName.getText());
+		}
+	}
+	
+	@UiHandler("RezeptName")
+	void onMouseOut(MouseOutEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			RezeptName.setVisible(false);
+			rezeptNameTop.setVisible(true);
+		}
+	}
+	
+
+	@UiHandler("rezeptSubTitleTop")
+	void onMouseOverSub(MouseOverEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			rezeptDetails.setVisible(true);
+			rezeptSubTitleTop.setVisible(false);
+		}
+	}
+	
+	@UiHandler("rezeptDetails")
+	void onEditSub(KeyUpEvent event) {
+		if(rezeptDetails.getText() != ""){
+			rezeptSubTitleTop.setText(rezeptDetails.getText());
+			rezept.setSubTitle(rezeptDetails.getText());
+		}
+	}
+	
+	@UiHandler("rezeptDetails")
+	void onMouseOutSub(MouseOutEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			rezeptDetails.setVisible(false);
+			rezeptSubTitleTop.setVisible(true);
+		}
+	}
+	
 	
 
 	

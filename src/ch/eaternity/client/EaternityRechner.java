@@ -304,14 +304,14 @@ public class EaternityRechner implements EntryPoint {
 			rezeptView.openHTML.setHTML("Veröffentichung angefragt");
 		}
 		
-	    if(rezept.imageUrl != null){
-	    	HTML showImage = new HTML();
+//	    if(rezept.imageUrl != null){
+//	    	HTML showImage = new HTML();
 //	    	showImage.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />"+rezept.getCookInstruction());
-//	    	rezeptView.imageUploaderHP.add(showImage);
-	    	
-	    	rezeptView.menuDecoInfo.setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.imageUrl + "' />"+rezept.getCookInstruction());
-
-	    }
+////	    	rezeptView.imageUploaderHP.add(showImage);
+//	    	
+//	    	rezeptView.menuDecoInfo.add(showImage);
+//	    	
+//	    }
 	    if(rezept.getPersons() != null){
 	    	rezeptView.amountPersons.setText(rezept.getPersons().toString());
 	    } else {
@@ -329,6 +329,7 @@ public class EaternityRechner implements EntryPoint {
 	public void onButtonPress(ClickEvent event) {
 		Rezept rezept = new Rezept();
 		rezept.setSymbol("unbenanntes Rezept");
+		rezept.open = false;
 		rezept.openRequested = true;
 		ShowRezept(rezept);	
 	}

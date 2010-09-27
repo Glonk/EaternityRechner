@@ -86,7 +86,7 @@ public class PhotoGallery extends Composite implements GalleryUpdatedEventHandle
 
 	private Image createImageWidget(final UploadedImage image) {
 		final Image imageWidget = new Image();
-		imageWidget.setUrl(image.getServingUrl() + "=s200");
+		imageWidget.setUrl(image.getServingUrl() + "=s160-c");
 		final DecoratedPopupPanel simplePopup = new DecoratedPopupPanel(true);
 
 		imageWidget.addMouseOverHandler(new MouseOverHandler() {
@@ -124,10 +124,12 @@ public class PhotoGallery extends Composite implements GalleryUpdatedEventHandle
 				final PopupPanel imagePopup = new PopupPanel(true);
 				imagePopup.setAnimationEnabled(true);
 				imagePopup.setWidget(imageOverlay);
-				imagePopup.setGlassEnabled(true);
+//				imagePopup.setGlassEnabled(true);
 				imagePopup.setAutoHideEnabled(true);
 
+				// TODO what is this???
 				imagePopup.center();
+				imagePopup.setPopupPosition(10, 10);
 			}
 		});
 

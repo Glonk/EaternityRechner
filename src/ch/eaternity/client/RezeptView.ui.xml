@@ -10,6 +10,8 @@
 	color:#fff;
 	margin:0px 0px 14px 10px;
 	font-size:0.9em;
+		display:inline;
+		
 	}
 	.inline {
 		display:inline;
@@ -22,10 +24,12 @@
 	}
 	.hideOverflow {
 		overflow:hidden;
+		margin-top:10px;
 	}
 	.rezeptDecoration {
 		width:750px;
 		padding: 7px;
+	
 		
 	}
 	.rezeptNameTop {
@@ -37,9 +41,29 @@
 
 		text-align: left;
 	}
+	.rezeptNameTop2 {
+		width:214px;
+		padding-left:4px;
+		margin-right:6px;
+		margin-left:1px;
+		font-size:1em;
+		font-weight:bold;
+		height:18px;
+		text-align: left;
+	}
 	.rezeptSubTitleTop{
 		
-		width:200px;
+		width:220px;
+		padding-left:4px;
+		margin-right:26px;
+		font-size:1em;
+
+		text-align: left;
+	}
+	
+	.rezeptSubTitleTop2{
+		height:14px;
+		width:214px;
 		padding-left:4px;
 		margin-right:26px;
 		font-size:1em;
@@ -56,6 +80,7 @@
 		color:#fff;
 		width:360px;
 		margin-left:10px;
+		
 
 	}
 	
@@ -66,6 +91,7 @@
 	}
 	
 	.recipeSmallDetail{
+	margin-left:10px;
 	 height:10px;
 	  background: none;
 	}
@@ -147,18 +173,27 @@
            			<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
            		
            			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
+           			
            			    <g:HTMLPanel ui:field='topStatusBar' styleName='{style.statusInfo}'>
-           			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML> - <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML> - <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML>
-           					<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
+           			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML>
+           			     - 
+           			     <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML>
+           			      - 
+           			      <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML> 
+           			      -
+           			      <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
+           			      
+           				
            				</g:HTMLPanel>
            			
+           			<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
            			
            			<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
            				<g:VerticalPanel>
-           				<g:HorizontalPanel styleName='{style.recipeTitle}' >
-           					<g:HTMLPanel>
+           				<g:HorizontalPanel  styleName='{style.recipeTitle}' >
+           					<g:HTMLPanel ui:field="rezeptTitle">
            						<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>
-           						<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' >just like that</g:Label>
+           						<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Rezept Name</g:TextBox>
            					</g:HTMLPanel>
            					<g:HTMLPanel styleName='{style.recipePersons}'>
            						für <g:TextBox ui:field="amountPersons" width="2em">4</g:TextBox> Personen
@@ -166,25 +201,27 @@
            				</g:HorizontalPanel >
            				
            				<g:HTMLPanel  styleName='{style.recipeSmallDetail}'>
+           					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' >just like that</g:Label>
+           					<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept Untertitel</g:TextBox>
            				</g:HTMLPanel >
            				<g:VerticalPanel styleName='{style.MenuTableWrapper}' >
            				<g:HTMLPanel >
-           					<img src='tabs-bg.png' height='90px' width='1px' style='float:left;' />
+           					<img src='tabs-bg.png' height='94px' width='1px' style='float:left;' />
         					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
         				</g:HTMLPanel>
         					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
         				</g:VerticalPanel>
         				</g:VerticalPanel>
-        				<g:HTML ui:field='menuDecoInfo'></g:HTML>
+        				<g:VerticalPanel ui:field='menuDecoInfo'></g:VerticalPanel>
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>
         					
         					<g:HTMLPanel ui:field='SaveRezeptPanel'>
-        					    <g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel>
+        					    <!--g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel-->
         						<g:TextArea ui:field="cookingInstr">Kochanleitung</g:TextArea>
-                				<g:TextBox ui:field="RezeptName">Rezept Name</g:TextBox>
-                				<g:TextBox ui:field="rezeptDetails">Rezept Untertitel</g:TextBox>
-                				<g:CheckBox ui:field="makePublic">keine Veröffentlichung.</g:CheckBox>
+                				
+                			
+                				
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			</g:HTMLPanel>
                 	</g:HTMLPanel>

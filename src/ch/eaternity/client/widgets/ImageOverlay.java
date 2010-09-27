@@ -79,10 +79,10 @@ public class ImageOverlay extends Composite implements HasHandlers {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		image.setUrl(uploadedImage.getServingUrl());
+		image.setUrl(uploadedImage.getServingUrl() + "=s640");
 		timestamp.setText("Created at:" + uploadedImage.getCreatedAt());
 
-		if (loginInfo != null
+		if (loginInfo.isLoggedIn()
 				&& (loginInfo.getId().equals(uploadedImage.getOwnerId()))) {
 			deleteButton.setText("Delete image");
 			deleteButton.setVisible(true);
@@ -97,6 +97,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 					@Override
 					public void onFailure(Throwable caught) {
 						// TODO Auto-generated method stub
+						GWT.log("error in loading tags", caught);
 
 					}
 
@@ -112,16 +113,16 @@ public class ImageOverlay extends Composite implements HasHandlers {
 
 	}
 
-	@UiHandler("image")
-	void onClickImage(MouseDownEvent e) {
-		Element imageElement = e.getRelativeElement();
-		int x = e.getRelativeX(imageElement);
-		int y = e.getRelativeY(imageElement);
-		// Window.alert("X: " + x + " Y: "+ y);
-		TagDialog tagDialog = new TagDialog(image, x, y);
-		tagDialog.showAndFocus();
-
-	}
+//	@UiHandler("image")
+//	void onClickImage(MouseDownEvent e) {
+//		Element imageElement = e.getRelativeElement();
+//		int x = e.getRelativeX(imageElement);
+//		int y = e.getRelativeY(imageElement);
+//		// Window.alert("X: " + x + " Y: "+ y);
+//		TagDialog tagDialog = new TagDialog(image, x, y);
+//		tagDialog.showAndFocus();
+//
+//	}
 
 	/**
 	 * 
