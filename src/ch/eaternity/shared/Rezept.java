@@ -28,6 +28,8 @@ public class Rezept implements Serializable, Cloneable{
 	
 	public UploadedImage image;
 	
+	private String emailAddressOwner;
+	
 	private Long persons;
 	
 	private Date createDate;
@@ -190,6 +192,14 @@ public class Rezept implements Serializable, Cloneable{
 
 	public Boolean getSelected() {
 		return selected;
+	}
+
+	public void setEmailAddressOwner(String emailAddressOwner) {
+		this.emailAddressOwner = emailAddressOwner;
+	}
+
+	public String getEmailAddressOwner() {
+		return emailAddressOwner;
 	}
 
 

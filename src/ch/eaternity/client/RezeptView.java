@@ -132,6 +132,7 @@ public class RezeptView extends Composite {
 	    
 		if (EaternityRechner.loginInfo.isLoggedIn()) {
 			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
+			uploadWidget.setStyleName("notInline");
 			
 			// Bind it to event so uploadWidget can refresh the gallery
 //			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);

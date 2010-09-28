@@ -8,7 +8,7 @@
 	}
 	.statusInfo{
 	color:#fff;
-	margin:0px 0px 14px 10px;
+	margin:0px 0px 0px 4px;
 	font-size:0.9em;
 		display:inline;
 		
@@ -36,7 +36,8 @@
 	}
 	.hideOverflow {
 		overflow:hidden;
-		margin-top:10px;
+		padding-top:10px;
+		vertical-align: top;
 	}
 	.rezeptDecoration {
 		width:750px;
@@ -149,8 +150,8 @@
 	
 	.gwt-Button {
 
-	  margin: -1px -1px 0px 0px;
-	  padding: 3px 5px;
+	  margin: -1px -3px 0px 0px;
+	  padding: 0px 3px;
 	  text-decoration: none;
 	  font-size: small;
 	  cursor: pointer;
@@ -191,30 +192,26 @@
   }
 
   </ui:style>
-
-          
-           		
-           			<g:HTMLPanel ui:field="htmlRezept" >
-           			<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
-           		
-           			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
-           			<g:HTMLPanel styleName='{style.statusInfo}'>
-           			 <g:HTMLPanel styleName='{style.closeButton}' ui:field='topStatusBar'>
+		<g:HTMLPanel ui:field="htmlRezept" >
+           	<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
+           	<g:HTMLPanel styleName='{style.rezeptDecoration}'>
+           		<g:HTMLPanel styleName='{style.statusInfo}'>
+           			<g:HTMLPanel styleName='{style.closeButton}' ui:field='topStatusBar'>
            			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML>
            			     - 
-           			     <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML>
+           			    <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML>
            			      - 
-           			      <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML> 
+           			    <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML> 
            			      -
-           			      <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
+           			    <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
            			</g:HTMLPanel>
            			<g:HTMLPanel styleName='{style.floatRight}'>
            				<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
            			</g:HTMLPanel>
-           				</g:HTMLPanel>
+           		</g:HTMLPanel>
 
-           			<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
-           				<g:VerticalPanel>
+           		<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
+           			<g:VerticalPanel>
            				<g:HorizontalPanel  styleName='{style.recipeTitle}' >
            					<g:HTMLPanel ui:field="rezeptTitle">
            						<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>

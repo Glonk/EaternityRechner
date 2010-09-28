@@ -349,17 +349,23 @@ public class EaternityRechner implements EntryPoint {
 	    	
 	    }
 	    
-
+	   
 	    if(rezept.getPersons() != null){
-	    	rezeptView.amountPersons.setText(rezept.getPersons().toString());
+	    	 rezeptView.rezept.setPersons(rezept.getPersons());	    	
 	    } else {
-	    	rezeptView.amountPersons.setText("4");
+	    	rezeptView.rezept.setPersons(4l);
 	    }
+	    rezeptView.amountPersons.setText(rezeptView.rezept.getPersons().toString());
+	    
 	    rezeptView.cookingInstr.setText(rezept.getCookInstruction());
 //	    rezeptView.showRezept(rezeptView.rezept);
 	    rezeptView.showRezept(rezeptView.rezept);
 	    rezeptView.saved = true;
-	    rezeptView.savedHTML.setHTML("gespeichert");
+	    if(loginInfo.isAdmin() && rezept.getEmailAddressOwner() != null ) {
+	    	rezeptView.savedHTML.setHTML("gespeichert von "+rezept.getEmailAddressOwner());
+		} else {
+			rezeptView.savedHTML.setHTML("gespeichert");
+		}
 		
 	}
 	
@@ -496,7 +502,7 @@ public class EaternityRechner implements EntryPoint {
 //				displayZutaten(data.getZutaten());
 //				displayRezepte(data.getPublicRezepte());
 //				displayRezepte(data.getYourRezepte());
-				
+				topPanel.loadingLabel.setText(" ");
 //				setClientData(data);
 				Search.setClientData(data);
 				Search.updateResults(" ");
@@ -506,7 +512,7 @@ public class EaternityRechner implements EntryPoint {
 				//Set<String> itemIndex = data.getOrcaleIndex();
 				//Search.initializeOracle(itemIndex);
 				
-				topPanel.loadingLabel.setText("");
+				
 			}
 		});
 	}

@@ -23,6 +23,11 @@ a:link, a:visited, a:hover, a:active {
 	display:inline;
 	float:left;
 	}
+.notInline {
+	clear:both;
+	display:block;
+	padding-right:2px;
+	}
 
 .cookingInstr {
 	float:left;

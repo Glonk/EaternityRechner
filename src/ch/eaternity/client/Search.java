@@ -835,7 +835,7 @@ public class Search extends ResizeComposite {
 			}
 			
 		}else{
-			int row = tableMeals.getRowCount();
+			final int row = tableMeals.getRowCount();
 			tableMeals.setText(row,0,rezept.getSymbol());
 //			tableMeals.setWidget(row, 2, AddRezeptButton);
 			
@@ -848,6 +848,30 @@ public class Search extends ResizeComposite {
 			tableMeals.setText(row, 1,  "ca "+formatted+"g *");
 			
 			if(EaternityRechner.loginInfo.isAdmin()){
+
+			Button removeRezeptButton = new Button(" - ");
+			removeRezeptButton.addStyleDependentName("gwt-Button");
+			removeRezeptButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Rezept...");
+					dlg.statusLabel.setText("löschen?");
+					// TODO recheck user if he really want to do this...
+					dlg.executeButton.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							EaternityRechner.removeRezept(rezept);
+							tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));
+							dlg.hide();
+							dlg.clear();
+						}
+					});
+					dlg.show();
+					dlg.center();
+
+
+				}
+			});
+			tableMeals.setWidget(row, 2, removeRezeptButton);
+			
 			if(!rezept.isOpen()){
 				if(rezept.openRequested){
 					// TODO this should be a link to make it open
@@ -857,7 +881,7 @@ public class Search extends ResizeComposite {
 						EaternityRechner.rezeptApproval(rezept,true);
 						}
 					});
-					tableMeals.setWidget(row, 2,openThis);
+					tableMeals.setWidget(row, 3,openThis);
 				}
 			} else {
 				// TODO this should be a link to make it close
@@ -867,7 +891,7 @@ public class Search extends ResizeComposite {
 						EaternityRechner.rezeptApproval(rezept,false);
 						}
 					});
-					tableMeals.setWidget(row, 2,closeThis);
+					tableMeals.setWidget(row, 3,closeThis);
 				}
 			}
 			

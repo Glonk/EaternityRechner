@@ -36,13 +36,21 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 	public Long addRezept(Rezept rezept) throws NotLoggedInException {
-		checkLoggedIn();
-
+//		checkLoggedIn();
+		UserService userService = UserServiceFactory.getUserService();
+		if(userService.getCurrentUser() == null){
+			throw new NotLoggedInException("Not logged in.");
+		}
 		DAO dao = new DAO();
 
 		UserRezept userRezept = new UserRezept(getUser());
 		// TODO : this is not a propper approval process!!!
 		userRezept.requestedOpen = rezept.openRequested;
+		if(userService.getCurrentUser().getEmail() != null){
+			rezept.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
+		} else {
+			rezept.setEmailAddressOwner(userService.getCurrentUser().getNickname());
+		}
 		rezept.open = false;
 		userRezept.approvedOpen = rezept.open;
 		

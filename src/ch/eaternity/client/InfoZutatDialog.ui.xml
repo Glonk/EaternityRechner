@@ -9,11 +9,13 @@
 		}
 		.zutatName{
 			padding:0px 3px 0px 3px;
+			font-size: 1.17em;
+			font-weight: bold;
 			}
 			
 		.tableSpecs {
 			border: 0px;
-			width:350px;
+			width:330px;
 			}
 		
 		.tableSpecs td{
@@ -22,8 +24,8 @@
 			
 		.wholePanel {
 			background: #fff;
-			margin-top:50px;
-			width:360px;
+			/* padding-top:50px; */
+			width:340px;
 			/* margin-right:10px; */
 			}
 		
