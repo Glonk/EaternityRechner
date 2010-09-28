@@ -14,7 +14,11 @@ hr {
 a:link, a:visited, a:hover, a:active {
   color: #000;
 }
-
+.cursorStyle{
+	 cursor: pointer;
+  	cursor: hand;
+  	padding: 0px 2px 2px 2px;
+	}
 .inline {
 	display:inline;
 	float:left;
@@ -23,8 +27,8 @@ a:link, a:visited, a:hover, a:active {
 .cookingInstr {
 	float:left;
 	margin-left:10px;
-	height:154px;
-	width:180px;
+	height:156px;
+	width:150px;
 	display:inline;
 	overflow:hidden;
 	

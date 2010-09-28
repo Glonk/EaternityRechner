@@ -293,7 +293,9 @@ public class EaternityRechner implements EntryPoint {
 		
 		rezeptView.RezeptName.setText(rezept.getSymbol());
 		if(rezept.getSubTitle() == null){
-			rezeptView.rezept.setSubTitle("just like that");
+			rezeptView.rezept.setSubTitle("Rezept Untertitel");
+		} else {
+			rezeptView.rezept.setSubTitle(rezept.getSubTitle());
 		}
 		
 		rezeptView.rezeptDetails.setText(rezept.getSubTitle());
@@ -309,29 +311,13 @@ public class EaternityRechner implements EntryPoint {
 		if(rezept.isOpen()){
 			rezeptView.openHTML.setHTML("veröffentlicht");
 		} else if(rezept.openRequested){
-			rezeptView.openHTML.setHTML("Veröffentichung angefragt");
+			rezeptView.openHTML.setHTML("Veröffentlichung angefragt");
 		}
 		
-	    if(rezept.getCookInstruction() != null){
-	    	final HTML htmlCooking = new HTML(rezept.getCookInstruction());
-	    	htmlCooking.addStyleName("cookingInstr");
-	    	rezeptView.menuDecoInfo.insert(htmlCooking,0);
-	    	
-	    	
-	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
-
-				@Override
-				public void onMouseOver(MouseOverEvent event) {
-					// TODO Auto-generated method stub
-					if (EaternityRechner.loginInfo.isLoggedIn()) {
-						rezeptView.cookingInstr.setVisible(true);
-						htmlCooking.setVisible(false);
-					}
-				}
-			});
-	    	rezeptView.htmlCooking = htmlCooking;
-	    	
-	    }
+		if(rezept.getCookInstruction() != null){
+			rezeptView.htmlCooking.setHTML(rezept.getCookInstruction());
+			rezeptView.rezept.setCookInstruction(rezept.getCookInstruction());
+		}
 		
 		
 	    if(rezept.image != null){
@@ -339,7 +325,7 @@ public class EaternityRechner implements EntryPoint {
 	    	showImage.setUrl(rezept.image.getServingUrl()+"=s160-c");
 //	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
 //	    	rezeptView.imageUploaderHP.add(showImage);
-	    	
+	    	showImage.setStylePrimaryName("cursorStyle");
 	    	showImage.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -381,6 +367,8 @@ public class EaternityRechner implements EntryPoint {
 	public void onButtonPress(ClickEvent event) {
 		Rezept rezept = new Rezept();
 		rezept.setSymbol("unbenanntes Rezept");
+		rezept.setSubTitle(" ");
+		rezept.setCookInstruction("Kochanleitung.");
 		rezept.open = false;
 		rezept.openRequested = true;
 		ShowRezept(rezept);	

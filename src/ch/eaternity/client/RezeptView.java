@@ -320,6 +320,29 @@ public class RezeptView extends Composite {
 		MenuTable.getColumnFormatter().setWidth(0, "40px");
 		MenuTable.getColumnFormatter().setWidth(1, "140px");
 		MenuTable.setCellPadding(1);
+		
+	    if(rezept.getCookInstruction() != null){
+	    	htmlCooking = new HTML(rezept.getCookInstruction());
+	    } else {
+	    	htmlCooking = new HTML("Kochanleitung.");
+	    }
+	    	htmlCooking.addStyleName("cookingInstr");
+	    	menuDecoInfo.insert(htmlCooking,0);
+	    	
+	    	
+	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
+
+				@Override
+				public void onMouseOver(MouseOverEvent event) {
+					// TODO Auto-generated method stub
+					if (EaternityRechner.loginInfo.isLoggedIn()) {
+						cookingInstr.setVisible(true);
+						htmlCooking.setVisible(false);
+					}
+				}
+			});
+	    	
+	    
 	}
 	
 	public void setRezept(Rezept rezept){

@@ -13,8 +13,13 @@
 		display:inline;
 		
 	}
+	
+	.closeButton{
+		display:inline;
+	}
 	.floatRight{
 		float:right;
+		display:inline;
 	}
 	.savePanel {
 		padding:3px;
@@ -41,11 +46,15 @@
 	}
 	.cookingInstr {
 		float:left;
-		margin-left:10px;
-		height:154px;
-		width:180px;
+		margin-left:6px;
+		height:148px;
+		width:148px;
 		display:inline;
+		margin-top:2px;
 		
+	}
+	.menuDecoPanel {
+		width:330px;
 	}
 	
 	.rezeptNameTop {
@@ -54,7 +63,7 @@
 		margin-right:6px;
 		font-size:1em;
 		font-weight:bold;
-
+		height:18px;
 		text-align: left;
 	}
 	.rezeptNameTop2 {
@@ -73,7 +82,7 @@
 		padding-left:4px;
 		margin-right:26px;
 		font-size:1em;
-
+		height:14px;
 		text-align: left;
 	}
 	
@@ -189,8 +198,8 @@
            			<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
            		
            			<g:HTMLPanel styleName='{style.rezeptDecoration}'>
-           			
-           			    <g:HTMLPanel ui:field='topStatusBar' styleName='{style.statusInfo}'>
+           			<g:HTMLPanel styleName='{style.statusInfo}'>
+           			 <g:HTMLPanel styleName='{style.closeButton}' ui:field='topStatusBar'>
            			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML>
            			     - 
            			     <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML>
@@ -198,8 +207,8 @@
            			      <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML> 
            			      -
            			      <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
-           			      
-           				           			<g:HTMLPanel styleName='{style.floatRight}'>
+           			</g:HTMLPanel>
+           			<g:HTMLPanel styleName='{style.floatRight}'>
            				<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
            			</g:HTMLPanel>
            				</g:HTMLPanel>
@@ -217,7 +226,7 @@
            				</g:HorizontalPanel >
            				
            				<g:HTMLPanel  styleName='{style.recipeSmallDetail}'>
-           					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' >just like that</g:Label>
+           					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' ></g:Label>
            					<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept Untertitel</g:TextBox>
            				</g:HTMLPanel >
            				<g:VerticalPanel styleName='{style.MenuTableWrapper}' >
@@ -230,7 +239,7 @@
         				</g:VerticalPanel>
         				<g:HTML ><div style='padding-left:274px;margin-top:0px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
         				</g:VerticalPanel>
-        				<g:FlowPanel ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
+        				<g:FlowPanel styleName='{style.menuDecoPanel}' ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>
         					

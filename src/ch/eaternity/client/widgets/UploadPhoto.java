@@ -2,6 +2,7 @@ package ch.eaternity.client.widgets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -88,7 +89,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									}
 
 									@Override
-									public void onSuccess(UploadedImage result) {
+									public void onSuccess(final UploadedImage result) {
 										
 										rezeptView.getRezept().image = result;
 									    
@@ -96,8 +97,28 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									    	showImage.setUrl(result.getServingUrl()+"=s160-c");
 //									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
 //									    	rezeptView.imageUploaderHP.add(showImage);
+									    	showImage.setStylePrimaryName("cursorStyle");
+									    	showImage.addClickHandler(new ClickHandler() {
+
+												@Override
+												public void onClick(ClickEvent event) {
+													ImageOverlay imageOverlay = new ImageOverlay(result, loginInfo);
+//													imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
+													
+													final PopupPanel imagePopup = new PopupPanel(true);
+													imagePopup.setAnimationEnabled(true);
+													imagePopup.setWidget(imageOverlay);
+//													imagePopup.setGlassEnabled(true);
+													imagePopup.setAutoHideEnabled(true);
+
+													// TODO what is this???
+													imagePopup.center();
+													imagePopup.setPopupPosition(10, 10);
+												}
+											});
+									    	showImage.addStyleName("inline");
 									    	
-									    	rezeptView.menuDecoInfo.add(showImage);
+									    	rezeptView.menuDecoInfo.insert(showImage,0);
 									    
 										
 										ImageOverlay overlay = new ImageOverlay(
