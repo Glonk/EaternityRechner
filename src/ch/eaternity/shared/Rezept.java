@@ -50,6 +50,9 @@ public class Rezept implements Serializable, Cloneable{
 	private Double CO2Value;
 	public Boolean openRequested;
 	public Boolean open;
+	public Boolean eaternitySelected;
+	public Boolean bio;
+	public Boolean regsas;
 
 	public Rezept() {
 

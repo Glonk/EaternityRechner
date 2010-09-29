@@ -20,6 +20,7 @@
 	.someSpace {
 		padding-bottom: 7px;		
 	}
+	
 
 	.gwt-Button {
 	  margin: 5px 10px 5px 0px;

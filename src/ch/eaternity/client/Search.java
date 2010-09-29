@@ -18,6 +18,7 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -47,6 +49,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -301,11 +304,11 @@ public class Search extends ResizeComposite {
 	private void initTable() {
 		table.getColumnFormatter().setWidth(0, "120px");
 		table.getColumnFormatter().setWidth(1, "80px");
-		table.getColumnFormatter().setWidth(2, "40px");
+//		table.getColumnFormatter().setWidth(2, "40px");
 		
-		tableMeals.getColumnFormatter().setWidth(0, "120px");
-		tableMeals.getColumnFormatter().setWidth(1, "80px");
-		tableMeals.getColumnFormatter().setWidth(2, "40px");
+		tableMeals.getColumnFormatter().setWidth(0, "130px");
+		tableMeals.getColumnFormatter().setWidth(1, "70px");
+//		tableMeals.getColumnFormatter().setWidth(2, "40px");
 		
 		tableMealsYours.getColumnFormatter().setWidth(0, "80px");
 		tableMealsYours.getColumnFormatter().setWidth(1, "40px");
@@ -836,7 +839,22 @@ public class Search extends ResizeComposite {
 			
 		}else{
 			final int row = tableMeals.getRowCount();
-			tableMeals.setText(row,0,rezept.getSymbol());
+			HTML item = new HTML();
+			
+			if(rezept.eaternitySelected != null && rezept.eaternitySelected){
+				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+				item.setStyleName("base-icons carrot");	
+			}
+			if(rezept.regsas != null && rezept.regsas){
+				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+			if(rezept.bio != null && rezept.bio){
+				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+			
+			item.setHTML(item.getHTML()+rezept.getSymbol());
+			
+			tableMeals.setWidget(row,0,item);
 //			tableMeals.setWidget(row, 2, AddRezeptButton);
 			
 			double MenuLabelWert = 0.0;
@@ -915,12 +933,38 @@ public class Search extends ResizeComposite {
 			String style = evenStyleRow.evenRow();
 			table.getRowFormatter().addStyleName(row, style);
 		}
-
-		if(zutat2.noAlternative){
-			table.setText(row,0,zutat2.getSymbol());
-		} else {
-			table.setText(row,0,"oder : " + zutat2.getSymbol());
+		
+		HTML icon = new HTML();
+		
+		if(zutat2.getCo2eValue() < 400){
+			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+			icon.setStyleName("base-icons smiley1");			
+		} else	if(zutat2.getCo2eValue() < 1200){
+			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+			icon.setStyleName("base-icons smiley2");			
 		}
+	
+		if(zutat2.hasSeason != null && zutat2.hasSeason){
+			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+			// In Tagen
+			//		String test = InfoZutat.zutat.getStartSeason();
+			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat2.stdExtraction.startSeason);		
+			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat2.stdExtraction.stopSeason );
+
+			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
+					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			} 
+		}
+		
+		if(zutat2.noAlternative){
+			icon.setHTML(icon.getHTML()+zutat2.getSymbol());
+
+		} else {
+			icon.setHTML(icon.getHTML()+"#: " +zutat2.getSymbol());
+		}
+		table.setWidget(row,0,icon);
+		
 		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g *"));
 
 

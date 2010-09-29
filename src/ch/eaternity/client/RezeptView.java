@@ -802,6 +802,7 @@ public class RezeptView extends Composite {
 
 	private void displayTops(ArrayList<ComparatorRecipe> scoreMapFinal,
 			Double startDouble, Double stopDouble) {
+		// maybe it shouldn't be 20% of the best rezepte, but a another scaling...
 		int beginRange = (int) Math.floor((scoreMapFinal.size())*startDouble);
 		int stopRange = (int) Math.floor((scoreMapFinal.size())*stopDouble);
 

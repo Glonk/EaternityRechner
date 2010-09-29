@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import ch.eaternity.client.widgets.ImageOverlay;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
@@ -15,17 +16,29 @@ import ch.eaternity.shared.ZutatSpecification;
 
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.maps.client.MapWidget;
+import com.google.gwt.maps.client.geocode.DirectionQueryOptions;
+import com.google.gwt.maps.client.geocode.DirectionResults;
+import com.google.gwt.maps.client.geocode.Directions;
+import com.google.gwt.maps.client.geocode.DirectionsCallback;
+import com.google.gwt.maps.client.geocode.DirectionsPanel;
+import com.google.gwt.maps.client.geocode.Geocoder;
+import com.google.gwt.maps.client.geocode.LocationCallback;
+import com.google.gwt.maps.client.geocode.Placemark;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -35,6 +48,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
@@ -51,6 +65,8 @@ public class InfoZutatDialog extends Composite {
 	
 	static double distance = 0;
 
+	private final static Geocoder geocoder = new Geocoder();
+	
 	@UiField SelectionStyle selectionStyle;
 	ZutatSpecification zutatSpec;
 	Ingredient stdIngredient;
@@ -136,13 +152,15 @@ public class InfoZutatDialog extends Composite {
 			}
 			herkuenfte.addChangeHandler(new ChangeHandler(){
 				public void onChange(ChangeEvent event){
+					Boolean notChanged = true;
+					// TODO update also choice for moTransportations
 					zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
 					for(SingleDistance singleDistance : Search.getClientData().getDistances()){
 						if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 								singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 							
 							zutatSpec.setDistance(singleDistance.getDistance());
-						
+							notChanged = false;
 
 					    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
 					    	if(formatted.contentEquals("0")){
@@ -150,8 +168,45 @@ public class InfoZutatDialog extends Composite {
 					    	}else{
 					    		kmText.setHTML("ca. " + formatted + "00km");
 					    	}
+					    	break;
 						}
 
+					}
+					
+					if(notChanged){
+						kmText.setHTML("Strecke nicht gefunden");
+						zutatSpec.setDistance(0.0);
+						final String to = zutatSpec.getHerkunft().symbol;
+						final String from = TopPanel.currentHerkunft;
+						geocoder.getLocations(to, new LocationCallback() {
+						      public void onFailure(int statusCode) {
+						        Window.alert("Diese Zutat hat einen falsche Herkunft: "+ to);
+						      }
+
+						      public void onSuccess(final JsArray<Placemark> locationsTo) {
+
+						    	  geocoder.getLocations(from, new LocationCallback() {
+								      public void onFailure(int statusCode) {
+								        Window.alert("Wir können Ihre Adresse nicht zuordnen: " + from);
+								      }
+
+										      public void onSuccess(JsArray<Placemark> locationsFrom) {
+
+										    		Placemark place = locationsTo.get(0);
+										    		double distance = locationsFrom.get(0).getPoint().distanceFrom(place.getPoint());
+										    		zutatSpec.setDistance(distance);
+
+											    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
+											    	if(formatted.contentEquals("0")){
+											    		kmText.setHTML("ca. " + formatted + "km");
+											    	}else{
+											    		kmText.setHTML("ca. " + formatted + "00km");
+											    	}
+										      }
+										    });
+						      }
+						    });
+						
 					}
 			
 					updateZutatCO2();
@@ -160,7 +215,7 @@ public class InfoZutatDialog extends Composite {
 		    
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Herkunft");
-			HorizontalPanel flow = new HorizontalPanel();
+			final HorizontalPanel flow = new HorizontalPanel();
 			flow.setBorderWidth(0);
 			flow.setSpacing(0);
 			flow.addStyleName("littleZutatSpec");
@@ -175,7 +230,57 @@ public class InfoZutatDialog extends Composite {
 	    	}
 	    	flow.add(kmText);
 			
-			
+	    	// TODO each extraction has its own season... this has flaws .. hack? right now it is anyway a hack
+	    	Anchor moreExtractions = new Anchor("andere Herkunft");
+	    	moreExtractions.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					int width = herkuenfte.getOffsetWidth();
+					herkuenfte.setVisible(false);
+					final TextBox newExtractionBox = new TextBox();
+					newExtractionBox.setWidth(Integer.toString(width)+"px");
+					flow.insert(newExtractionBox,0);
+					kmText.setHTML("berechnen");
+					kmText.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							Geocoder geocoder = new Geocoder();
+							geocoder.setBaseCountryCode("ch");
+						    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
+						      public void onFailure(int statusCode) {
+						    	  kmText.setHTML("Adresse nicht auffindbar!");
+						    	  Timer t = new Timer() {
+						    		  public void run() {
+						    			  kmText.setHTML("brechnen");
+						    		  }
+						    	  };
+						    	  t.schedule(1000);
+						      }
+
+						      public void onSuccess(JsArray<Placemark> locations) {
+						    	  Placemark place = locations.get(0);
+						    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
+						    	  herkuenfte.insertItem(place.getAddress(), 0);
+						    	  Extraction element = new Extraction(place.getAddress());
+						    	  // TODO come up with stuff like seasons and so forth..
+						    	  element.startSeason = zutat.stdExtraction.startSeason;
+						    	  element.stopSeason = zutat.stdExtraction.stopSeason;
+						    	  element.stdCondition = zutat.stdExtraction.stdCondition;
+						    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
+						    	  element.stdProduction = zutat.stdExtraction.stdProduction;
+
+						    	  zutat.getExtractions().add(0, element);
+						    	  newExtractionBox.setVisible(false);
+						    	  herkuenfte.setVisible(true);
+						    	  herkuenfte.setSelectedIndex(0);
+						    	  
+						      }
+						    });
+						}
+					});
+				}
+			});
+	    	flow.add(moreExtractions);
 			
 			herkuenfte.setSelectedIndex(zutat.getExtractions().indexOf(zutatSpec.getHerkunft()));
 			
