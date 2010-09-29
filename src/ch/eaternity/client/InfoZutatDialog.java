@@ -21,6 +21,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.maps.client.MapWidget;
@@ -66,6 +68,8 @@ public class InfoZutatDialog extends Composite {
 	static double distance = 0;
 
 	private final static Geocoder geocoder = new Geocoder();
+	final TextBox newExtractionBox = new TextBox();
+	ClickHandler clickerHandler = null;
 	
 	@UiField SelectionStyle selectionStyle;
 	ZutatSpecification zutatSpec;
@@ -150,68 +154,13 @@ public class InfoZutatDialog extends Composite {
 			for(Extraction extraction : zutat.getExtractions()){
 				herkuenfte.addItem(extraction.symbol);
 			}
-			herkuenfte.addChangeHandler(new ChangeHandler(){
+			final ChangeHandler onHerkunftChange = new ChangeHandler(){
 				public void onChange(ChangeEvent event){
-					Boolean notChanged = true;
-					// TODO update also choice for moTransportations
-					zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
-					for(SingleDistance singleDistance : Search.getClientData().getDistances()){
-						if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-								singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
-							
-							zutatSpec.setDistance(singleDistance.getDistance());
-							notChanged = false;
-
-					    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
-					    	if(formatted.contentEquals("0")){
-					    		kmText.setHTML("ca. " + formatted + "km");
-					    	}else{
-					    		kmText.setHTML("ca. " + formatted + "00km");
-					    	}
-					    	break;
-						}
-
-					}
-					
-					if(notChanged){
-						kmText.setHTML("Strecke nicht gefunden");
-						zutatSpec.setDistance(0.0);
-						final String to = zutatSpec.getHerkunft().symbol;
-						final String from = TopPanel.currentHerkunft;
-						geocoder.getLocations(to, new LocationCallback() {
-						      public void onFailure(int statusCode) {
-						        Window.alert("Diese Zutat hat einen falsche Herkunft: "+ to);
-						      }
-
-						      public void onSuccess(final JsArray<Placemark> locationsTo) {
-
-						    	  geocoder.getLocations(from, new LocationCallback() {
-								      public void onFailure(int statusCode) {
-								        Window.alert("Wir können Ihre Adresse nicht zuordnen: " + from);
-								      }
-
-										      public void onSuccess(JsArray<Placemark> locationsFrom) {
-
-										    		Placemark place = locationsTo.get(0);
-										    		double distance = locationsFrom.get(0).getPoint().distanceFrom(place.getPoint());
-										    		zutatSpec.setDistance(distance);
-
-											    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
-											    	if(formatted.contentEquals("0")){
-											    		kmText.setHTML("ca. " + formatted + "km");
-											    	}else{
-											    		kmText.setHTML("ca. " + formatted + "00km");
-											    	}
-										      }
-										    });
-						      }
-						    });
-						
-					}
-			
-					updateZutatCO2();
+					triggerHerkunftChange(zutat, herkuenfte);
 				}
-			});
+
+			};
+			herkuenfte.addChangeHandler(onHerkunftChange);
 		    
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Herkunft");
@@ -229,19 +178,24 @@ public class InfoZutatDialog extends Composite {
 	    		kmText.setHTML("ca. " + formatted + "00km");
 	    	}
 	    	flow.add(kmText);
+	    	flow.insert(newExtractionBox,0);
+	    	newExtractionBox.setVisible(false);
 			
 	    	// TODO each extraction has its own season... this has flaws .. hack? right now it is anyway a hack
-	    	Anchor moreExtractions = new Anchor("andere Herkunft");
+	    	final Anchor moreExtractions = new Anchor("+");
+	    	moreExtractions.setStylePrimaryName("ohhLittlePlus");
 	    	moreExtractions.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+					moreExtractions.setVisible(false);
 					int width = herkuenfte.getOffsetWidth();
 					herkuenfte.setVisible(false);
-					final TextBox newExtractionBox = new TextBox();
 					newExtractionBox.setWidth(Integer.toString(width)+"px");
-					flow.insert(newExtractionBox,0);
-					kmText.setHTML("berechnen");
-					kmText.addClickHandler(new ClickHandler() {
+					newExtractionBox.setVisible(true);
+					
+					kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+
+					clickerHandler = new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
 							Geocoder geocoder = new Geocoder();
@@ -251,7 +205,7 @@ public class InfoZutatDialog extends Composite {
 						    	  kmText.setHTML("Adresse nicht auffindbar!");
 						    	  Timer t = new Timer() {
 						    		  public void run() {
-						    			  kmText.setHTML("brechnen");
+						    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
 						    		  }
 						    	  };
 						    	  t.schedule(1000);
@@ -273,13 +227,21 @@ public class InfoZutatDialog extends Composite {
 						    	  newExtractionBox.setVisible(false);
 						    	  herkuenfte.setVisible(true);
 						    	  herkuenfte.setSelectedIndex(0);
+						    	  triggerHerkunftChange(zutat, herkuenfte);
+						    	  moreExtractions.setVisible(true);
 						    	  
 						      }
 						    });
 						}
-					});
+					};
+					if(clickerHandler == null){
+						kmText.addClickHandler(clickerHandler);
+					}
 				}
 			});
+					
+
+
 	    	flow.add(moreExtractions);
 			
 			herkuenfte.setSelectedIndex(zutat.getExtractions().indexOf(zutatSpec.getHerkunft()));
@@ -373,6 +335,68 @@ public class InfoZutatDialog extends Composite {
 	}
 	
 
+	private void triggerHerkunftChange(final Ingredient zutat,
+			final ListBox herkuenfte) {
+		Boolean notChanged = true;
+		// TODO update also choice for moTransportations
+		zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
+		for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
+					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
+				
+				zutatSpec.setDistance(singleDistance.getDistance());
+				notChanged = false;
+
+		    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
+		    	if(formatted.contentEquals("0")){
+		    		kmText.setHTML("ca. " + formatted + "km");
+		    	}else{
+		    		kmText.setHTML("ca. " + formatted + "00km");
+		    	}
+		    	break;
+			}
+
+		}
+		
+		if(notChanged){
+			kmText.setHTML("Strecke nicht gefunden");
+			zutatSpec.setDistance(0.0);
+			final String to = zutatSpec.getHerkunft().symbol;
+			final String from = TopPanel.currentHerkunft;
+			geocoder.getLocations(to, new LocationCallback() {
+			      public void onFailure(int statusCode) {
+			        Window.alert("Diese Zutat hat einen falsche Herkunft: "+ to);
+			      }
+
+			      public void onSuccess(final JsArray<Placemark> locationsTo) {
+
+			    	  geocoder.getLocations(from, new LocationCallback() {
+					      public void onFailure(int statusCode) {
+					        Window.alert("Wir können Ihre Adresse nicht zuordnen: " + from);
+					      }
+
+							      public void onSuccess(JsArray<Placemark> locationsFrom) {
+
+							    		Placemark place = locationsTo.get(0);
+							    		double distance = locationsFrom.get(0).getPoint().distanceFrom(place.getPoint());
+							    		zutatSpec.setDistance(distance);
+
+								    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
+								    	if(formatted.contentEquals("0")){
+								    		kmText.setHTML("ca. " + formatted + "km");
+								    	}else{
+								    		kmText.setHTML("ca. " + formatted + "00km");
+								    	}
+							      }
+							    });
+			      }
+			    });
+			
+		}
+
+		updateZutatCO2();
+	}
+	
 	public void updateSaison(ZutatSpecification zutatSpec) {
 		// if it is Greenhouse, or conserved then it should be koherent...
 		
