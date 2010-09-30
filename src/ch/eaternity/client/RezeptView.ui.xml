@@ -5,6 +5,7 @@
 <ui:style>
 	.indikator {
 		background:#fff;
+		clear:both;
 	}
 	.statusInfo{
 	color:#fff;
@@ -13,7 +14,9 @@
 		display:inline;
 		
 	}
-	
+	.detailText{
+	  margin:10px;
+	}
 	.closeButton{
 		display:inline;
 	}
@@ -24,6 +27,8 @@
 	.savePanel {
 		padding:3px;
 		display:block;
+		width:600px;
+		clear:both;
 	}
 	.inline {
 		display:inline;
@@ -35,7 +40,7 @@
 		float:left;
 	}
 	.hideOverflow {
-		overflow:hidden;
+		/* overflow:hidden; */
 		padding-top:10px;
 		vertical-align: top;
 	}
@@ -48,14 +53,16 @@
 	.cookingInstr {
 		float:left;
 		margin-left:6px;
-		height:148px;
-		width:148px;
+		height:124px;
+		width:168px;
 		display:inline;
 		margin-top:2px;
+		margin-bottom:4px;
+		resize: none;
 		
 	}
 	.menuDecoPanel {
-		width:330px;
+		width:340px;
 	}
 	
 	.rezeptNameTop {
@@ -239,7 +246,7 @@
         				<g:FlowPanel styleName='{style.menuDecoPanel}' ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>
-        					
+        			<g:HTML ui:field='detailText' styleName='{style.detailText}'></g:HTML >
         					<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
         					    <!--g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel-->
 

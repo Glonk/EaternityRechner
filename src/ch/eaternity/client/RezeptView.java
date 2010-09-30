@@ -42,6 +42,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -52,6 +53,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -95,13 +97,16 @@ public class RezeptView extends Composite {
 	@UiField HTML titleHTML;
 	@UiField HTML openHTML;
 	@UiField HTML savedHTML;
+	@UiField HTML detailText;
 	
 	private FlowPanel panelImages = new FlowPanel();
 	private PhotoGallery galleryWidget;
-	private UploadPhoto uploadWidget;
+	public UploadPhoto uploadWidget;
 	
 	HTML htmlCooking;
-	
+	Boolean askForLess;
+	public Image showImageRezept;
+	public Anchor bildEntfernen;
 	HandlerRegistration klicky;
 	
 	boolean saved;

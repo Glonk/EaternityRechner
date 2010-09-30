@@ -104,11 +104,23 @@ a:link, a:visited, a:hover, a:active {
 .cookingInstr {
 	float:left;
 	margin-left:10px;
-	height:156px;
-	width:150px;
+	height:128px;
+	width:170px;
 	display:inline;
 	overflow:hidden;
+	margin-bottom:8px;
 	
+	}
+	.platzrechts{
+	margin-left:8px;
+	}
+	.overlap{
+	margin-bottom:-620px;
+	}
+.floatRight{
+	float:right;
+	margin-left:100px;
+	padding-right:6px;
 	}
 
 .rezept {

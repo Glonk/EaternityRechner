@@ -93,8 +93,8 @@ public class UploadPhoto extends Composite implements HasHandlers {
 										
 										rezeptView.getRezept().image = result;
 									    
-									    	Image showImage = new Image();
-									    	showImage.setUrl(result.getServingUrl()+"=s160-c");
+									    	Image showImage = rezeptView.showImageRezept;
+									    	showImage.setUrl(result.getServingUrl()+"=s150-c");
 //									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
 //									    	rezeptView.imageUploaderHP.add(showImage);
 									    	showImage.setStylePrimaryName("cursorStyle");
@@ -119,6 +119,8 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									    	showImage.addStyleName("inline");
 									    	
 									    	rezeptView.menuDecoInfo.insert(showImage,0);
+									    	rezeptView.bildEntfernen.setVisible(true);
+									    	rezeptView.uploadWidget.setVisible(false);
 									    
 										
 										ImageOverlay overlay = new ImageOverlay(

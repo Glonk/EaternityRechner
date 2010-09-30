@@ -70,6 +70,7 @@ public class InfoZutatDialog extends Composite {
 	private final static Geocoder geocoder = new Geocoder();
 	final TextBox newExtractionBox = new TextBox();
 	ClickHandler clickerHandler = null;
+	Boolean handlerNotAdded = true;
 	
 	@UiField SelectionStyle selectionStyle;
 	ZutatSpecification zutatSpec;
@@ -234,8 +235,9 @@ public class InfoZutatDialog extends Composite {
 						    });
 						}
 					};
-					if(clickerHandler == null){
+					if(handlerNotAdded){
 						kmText.addClickHandler(clickerHandler);
+						handlerNotAdded = false;
 					}
 				}
 			});
