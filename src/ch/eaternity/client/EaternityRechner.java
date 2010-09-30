@@ -21,6 +21,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -370,6 +372,7 @@ public class EaternityRechner implements EntryPoint {
 	    final Anchor mehrDetails = new Anchor("mehr Details");
 	    mehrDetails.setStyleName("floatRight");
 	    rezeptView.askForLess = false;
+	    rezeptView.askForLess2 = false;
 	    mehrDetails.addClickHandler(new ClickHandler(){
 
 			@Override
@@ -386,15 +389,26 @@ public class EaternityRechner implements EntryPoint {
 					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
 					rezeptView.askForLess = false;
+					rezeptView.askForLess2 = false;
 				} else {
 					if(rezeptView.getRezept().image != null){
 						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s800");
 						rezeptView.showImageRezept.setWidth("340px");
-						int overlap = rezeptView.showImageRezept.getOffsetHeight() -  rezeptView.MenuTable.getOffsetHeight() -30;
-						rezeptView.showImageRezept.addStyleName("overlap");
-						rezeptView.detailText.setWidth("730px");
-						//				rezeptView.detailText.setHeight(height)
-						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
+						rezeptView.showImageHandler = new LoadHandler(){
+							@Override
+							public void onLoad(LoadEvent event) {
+								if(rezeptView.askForLess == false || rezeptView.askForLess2 == false){
+								int overlap = rezeptView.showImageRezept.getHeight() -  rezeptView.MenuTable.getOffsetHeight() -160;
+								rezeptView.showImageRezept.addStyleName("overlap");
+								rezeptView.detailText.setWidth("730px");
+								//				rezeptView.detailText.setHeight(height)
+								rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
+								rezeptView.askForLess2 = true;
+								}
+							}
+						};
+						rezeptView.showImageRezept.addLoadHandler(rezeptView.showImageHandler);
+
 					}
 					rezeptView.cookingInstr.setVisible(false);
 					rezeptView.htmlCooking.setVisible(false);
