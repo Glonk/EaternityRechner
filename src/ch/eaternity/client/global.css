@@ -116,7 +116,25 @@ a:link, a:visited, a:hover, a:active {
 	}
 	.overlap{
 	margin-bottom:-620px;
+	margin-top: 30px;
 	}
+	.imageSmall {
+		display:inline;
+		float:left;
+		cursor: pointer;
+  		cursor: hand;
+  		padding: 0px 2px 2px 2px;
+	}
+	.imageBig {
+		display:inline;
+		float:left;
+		cursor: pointer;
+  		cursor: hand;
+  		padding: 0px 2px 2px 2px;
+  		margin-bottom:-620px;
+		margin-top: 30px;
+	}
+	
 .floatRight{
 	float:right;
 	margin-left:100px;

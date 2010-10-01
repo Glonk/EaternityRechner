@@ -97,8 +97,16 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									    	showImage.setUrl(result.getServingUrl()+"=s150-c");
 //									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
 //									    	rezeptView.imageUploaderHP.add(showImage);
-									    	showImage.setStylePrimaryName("cursorStyle");
-									    	showImage.addClickHandler(new ClickHandler() {
+//									    	showImage.setStylePrimaryName("cursorStyle");
+									    	if(rezeptView.imagePopUpHandler != null){
+									    		rezeptView.imagePopUpHandler.removeHandler();
+									    	}
+									    	if(rezeptView.showImageHandler != null){
+									    		rezeptView.showImageHandler.removeHandler();
+									    		rezeptView.showImageHandler = null;
+									    	}
+									    	
+									    	rezeptView.imagePopUpHandler = showImage.addClickHandler(new ClickHandler() {
 
 												@Override
 												public void onClick(ClickEvent event) {
@@ -116,9 +124,10 @@ public class UploadPhoto extends Composite implements HasHandlers {
 													imagePopup.setPopupPosition(10, 10);
 												}
 											});
-									    	showImage.addStyleName("inline");
+//									    	showImage.addStyleName("inline");
 									    	
 									    	rezeptView.menuDecoInfo.insert(showImage,0);
+									    	rezeptView.askForLess2 = true;
 									    	rezeptView.bildEntfernen.setVisible(true);
 									    	rezeptView.uploadWidget.setVisible(false);
 									    

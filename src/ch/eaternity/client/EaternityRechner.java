@@ -87,12 +87,12 @@ public class EaternityRechner implements EntryPoint {
 	static SelectionStyle selectionStyle;
 	@UiField static HorizontalPanel suggestionPanel;
 	
-
+	static int overlap = 0;
 	static int selectedRezept = -1;
 	
 	private HandlerRegistration adminHandler;
 	private HandlerRegistration ingredientHandler;
-
+	static String styleNameOverlap = "overlap";
 	
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -329,7 +329,7 @@ public class EaternityRechner implements EntryPoint {
     	rezeptView.bildEntfernen.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent event) {
-				rezeptView.menuDecoInfo.remove(0);
+				rezeptView.menuDecoInfo.remove(rezeptView.showImageRezept);
 				rezeptView.uploadWidget.setVisible(true);
 				rezeptView.bildEntfernen.setVisible(false);
 				rezeptView.rezept.image = null;
@@ -344,8 +344,8 @@ public class EaternityRechner implements EntryPoint {
 	    	rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s150-c");
 //	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
 //	    	rezeptView.imageUploaderHP.add(showImage);
-	    	rezeptView.showImageRezept.setStylePrimaryName("cursorStyle");
-	    	rezeptView.showImageRezept.addClickHandler(new ClickHandler() {
+	    	
+	    	rezeptView.imagePopUpHandler = rezeptView.showImageRezept.addClickHandler(new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
@@ -363,7 +363,7 @@ public class EaternityRechner implements EntryPoint {
 					imagePopup.setPopupPosition(10, 10);
 				}
 			});
-	    	rezeptView.showImageRezept.addStyleName("inline");
+	    	rezeptView.showImageRezept.setStyleName("imageSmall");
 	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
 	    	rezeptView.uploadWidget.setVisible(false);
 
@@ -372,7 +372,7 @@ public class EaternityRechner implements EntryPoint {
 	    final Anchor mehrDetails = new Anchor("mehr Details");
 	    mehrDetails.setStyleName("floatRight");
 	    rezeptView.askForLess = false;
-	    rezeptView.askForLess2 = false;
+	    rezeptView.askForLess2 = true;
 	    mehrDetails.addClickHandler(new ClickHandler(){
 
 			@Override
@@ -381,35 +381,44 @@ public class EaternityRechner implements EntryPoint {
 					if(rezeptView.getRezept().image != null){
 						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s150-c");
 						rezeptView.showImageRezept.setWidth("150px");
-						rezeptView.showImageRezept.removeStyleName("overlap");
-						rezeptView.detailText.setText("");
+						
+						rezeptView.showImageRezept.setStyleName("imageSmall");
+						
 						
 					}
+					rezeptView.detailText.setVisible(false);
 //					rezeptView.cookingInstr.setVisible(true);
 					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
 					rezeptView.askForLess = false;
-					rezeptView.askForLess2 = false;
+					
 				} else {
+					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height=0 />"+rezeptView.rezept.getCookInstruction());
 					if(rezeptView.getRezept().image != null){
 						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s800");
 						rezeptView.showImageRezept.setWidth("340px");
-						rezeptView.showImageHandler = new LoadHandler(){
-							@Override
-							public void onLoad(LoadEvent event) {
-								if(rezeptView.askForLess == false || rezeptView.askForLess2 == false){
-								int overlap = rezeptView.showImageRezept.getHeight() -  rezeptView.MenuTable.getOffsetHeight() -160;
-								rezeptView.showImageRezept.addStyleName("overlap");
-								rezeptView.detailText.setWidth("730px");
-								//				rezeptView.detailText.setHeight(height)
-								rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
-								rezeptView.askForLess2 = true;
+						rezeptView.showImageRezept.setStyleName("imageBig");
+
+						if(rezeptView.showImageHandler == null){
+							rezeptView.showImageHandler = rezeptView.showImageRezept.addLoadHandler(new LoadHandler(){
+								@Override
+								public void onLoad(LoadEvent event) {
+									if(rezeptView.askForLess2){
+										overlap = rezeptView.showImageRezept.getHeight() -  rezeptView.MenuTable.getOffsetHeight() -140;
+
+										//				rezeptView.detailText.setHeight(height)
+										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
+										rezeptView.askForLess2 = false;
+									}
 								}
-							}
-						};
-						rezeptView.showImageRezept.addLoadHandler(rezeptView.showImageHandler);
+							});
+						}
+						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
+						
 
 					}
+					rezeptView.detailText.setWidth("730px");
+					rezeptView.detailText.setVisible(true);
 					rezeptView.cookingInstr.setVisible(false);
 					rezeptView.htmlCooking.setVisible(false);
 					mehrDetails.setText("weniger Details");

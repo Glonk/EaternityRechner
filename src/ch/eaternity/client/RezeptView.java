@@ -103,14 +103,15 @@ public class RezeptView extends Composite {
 	private FlowPanel panelImages = new FlowPanel();
 	private PhotoGallery galleryWidget;
 	public UploadPhoto uploadWidget;
+	public HandlerRegistration imagePopUpHandler = null;
 	
 	HTML htmlCooking;
 	Boolean askForLess;
-	Boolean askForLess2;
+	public Boolean askForLess2;
 	public Image showImageRezept;
 	public Anchor bildEntfernen;
 	HandlerRegistration klicky;
-	LoadHandler showImageHandler;
+	public HandlerRegistration showImageHandler = null;
 	
 	boolean saved;
 	
@@ -1072,6 +1073,8 @@ public class RezeptView extends Composite {
 	      panelImages.add(image);
 	    }
 	  };
+
+	
 	
 	
 	

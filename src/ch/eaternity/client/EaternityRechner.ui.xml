@@ -70,7 +70,7 @@
        			<g:north size='120'>
        			<g:HTMLPanel styleName='{style.Worksheet}' >
        			<!-- Add Rezept Button -->
-       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Rezept hinzufügen"/>
+       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Rezept"/>
        			
        			
        			<!-- suggest bar -->
