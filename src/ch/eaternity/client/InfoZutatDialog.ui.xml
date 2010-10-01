@@ -96,10 +96,10 @@
 		.hinweisPassed{
 			float:right;
 			width:200px;
-			background:#ffa800;
+			background:#000;
 			text-align:center;
 			color:white;
-			font-weight:bold;
+			/* font-weight:bold; */
 			padding-right:3px;
 			padding-top:3px;
 			}

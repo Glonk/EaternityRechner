@@ -402,7 +402,7 @@ public class EaternityRechner implements EntryPoint {
 					}
 					
 				} else {
-
+					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height=0 />"+rezept.getCookInstruction());
 					if(rezeptView.getRezept().image != null){
 
 //						rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);

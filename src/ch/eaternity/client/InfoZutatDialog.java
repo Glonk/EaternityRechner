@@ -99,8 +99,10 @@ public class InfoZutatDialog extends Composite {
 
 		if (selected) {
 			hinweisPanel.addStyleName(style);
+			hinweisDetails.setStyleName("black");
 		} else {
 			hinweisPanel.removeStyleName(style);
+			hinweisDetails.setStyleName("grey");
 		}
 	
 	}
@@ -430,7 +432,7 @@ public class InfoZutatDialog extends Composite {
 			
 			styleHinweis(true);
 			hinweisPanel.setText("Angaben sind unvollständig.");
-			hinweisDetails.setText("Bitten geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
+			hinweisDetails.setText("Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
 			} else {
 				styleHinweis(false);
 				hinweisPanel.setText("Angaben sind koherent.");

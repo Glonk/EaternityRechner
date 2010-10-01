@@ -713,9 +713,9 @@ public class RezeptView extends Composite {
 		
 		SuggestTable.setCellSpacing(2);
 		SuggestTable.setText(0,0,"SUMME");
-		SuggestTable.getColumnFormatter().setWidth(0, "175px");
+		SuggestTable.getColumnFormatter().setWidth(0, "215px");
 		SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
-		SuggestTable.getColumnFormatter().setWidth(1, "180px");
+		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
 		updtTopSuggestion();
@@ -877,8 +877,8 @@ public class RezeptView extends Composite {
 			RezeptView rezeptView = (RezeptView) widget;
 			rezeptView.rezept.setCO2Value();
 			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
-			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
-			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
+			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g * (pro Person)</div>");
+			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g * (pro Person)</div>");
 			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
 			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
 		}
