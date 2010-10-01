@@ -87,7 +87,7 @@ public class EaternityRechner implements EntryPoint {
 	static SelectionStyle selectionStyle;
 	@UiField static HorizontalPanel suggestionPanel;
 	
-	static int overlap = 0;
+	
 	static int selectedRezept = -1;
 	
 	private HandlerRegistration adminHandler;
@@ -324,6 +324,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		rezeptView.showImageRezept = new Image();
 		
+		if(loginInfo.isLoggedIn()){
     	rezeptView.bildEntfernen = new Anchor("Bild entfernen");
     	rezeptView.bildEntfernen.addStyleName("platzrechts");
     	rezeptView.bildEntfernen.addClickHandler(new ClickHandler(){
@@ -338,6 +339,7 @@ public class EaternityRechner implements EntryPoint {
     	
     	rezeptView.menuDecoInfo.add(rezeptView.bildEntfernen);
     	rezeptView.bildEntfernen.setVisible(false);
+		}
     	
 	    if(rezept.image != null){
 	    	rezeptView.getRezept().image = rezept.image;
@@ -365,9 +367,12 @@ public class EaternityRechner implements EntryPoint {
 			});
 	    	rezeptView.showImageRezept.setStyleName("imageSmall");
 	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
-	    	rezeptView.uploadWidget.setVisible(false);
-
+	    	if(rezeptView.uploadWidget != null){
+	    		rezeptView.uploadWidget.setVisible(false);
+	    	}
+	    	if(loginInfo.isLoggedIn()){
 	    	rezeptView.bildEntfernen.setVisible(true);
+	    	}
 	    }
 	    final Anchor mehrDetails = new Anchor("mehr Details");
 	    mehrDetails.setStyleName("floatRight");
@@ -391,29 +396,35 @@ public class EaternityRechner implements EntryPoint {
 					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
 					rezeptView.askForLess = false;
+					if(rezeptView.showImageHandler != null){
+						rezeptView.showImageHandler.removeHandler();
+						rezeptView.showImageHandler = null;
+					}
 					
 				} else {
-					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height=0 />"+rezeptView.rezept.getCookInstruction());
-					if(rezeptView.getRezept().image != null){
-						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s800");
-						rezeptView.showImageRezept.setWidth("340px");
-						rezeptView.showImageRezept.setStyleName("imageBig");
 
+					if(rezeptView.getRezept().image != null){
+
+//						rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
+//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezept.getCookInstruction());
 						if(rezeptView.showImageHandler == null){
 							rezeptView.showImageHandler = rezeptView.showImageRezept.addLoadHandler(new LoadHandler(){
 								@Override
 								public void onLoad(LoadEvent event) {
 									if(rezeptView.askForLess2){
-										overlap = rezeptView.showImageRezept.getHeight() -  rezeptView.MenuTable.getOffsetHeight() -140;
+										rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
 
 										//				rezeptView.detailText.setHeight(height)
-										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
+										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.rezept.getCookInstruction());
 										rezeptView.askForLess2 = false;
 									}
 								}
 							});
 						}
-						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezeptView.rezept.getCookInstruction());
+						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s800");
+						rezeptView.showImageRezept.setWidth("340px");
+						rezeptView.showImageRezept.setStyleName("imageBig");
+//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.rezept.getCookInstruction());
 						
 
 					}
@@ -660,10 +671,13 @@ public class EaternityRechner implements EntryPoint {
 
 
 
-	public static void updateSaison() {
+	public static void updateSaisonAndMore() {
 		for( Widget rezeptViewWidget : rezeptList){
 			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
 			rezeptView.updateSaison();
+			for(ZutatSpecification zutat : rezeptView.rezept.getZutaten()){
+				rezeptView.changeIcons(rezeptView.rezept.getZutaten().indexOf(zutat), zutat);
+			}
 		}
 	}
 	

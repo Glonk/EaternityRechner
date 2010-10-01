@@ -469,17 +469,22 @@ public class InfoZutatDialog extends Composite {
 			updateSaison(zutatSpec);
 		}
 		
-		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
+//		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
+		
 //		valueLabel.setText(formatted + "g CO2-Äquivalent");
 		if(selectedRow != -1){
 //			if(EaternityRechner.zutatImMenu.contains(zutat)){
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
-				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
+//				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
 				rezept.Zutaten.set(selectedRow, zutatSpec);
-				Double MenuLabelWert = getRezeptCO2(rezept.Zutaten);
-				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
-				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
+//				Double MenuLabelWert = getRezeptCO2(rezept.Zutaten);
+				
+//				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
+//				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
+				
+				rezeptviewParent.changeIcons(selectedRow, zutatSpec);
+				rezeptviewParent.updateSuggestion();
 //			}
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");

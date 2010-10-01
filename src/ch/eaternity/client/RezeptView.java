@@ -37,6 +37,7 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -94,6 +95,7 @@ public class RezeptView extends Composite {
 	@UiField TextArea cookingInstr;
 	@UiField TextBox amountPersons;
 	@UiField TextBox rezeptDetails;
+	@UiField VerticalPanel MenuTableWrapper;
 	
 	@UiField HTML titleHTML;
 	@UiField HTML openHTML;
@@ -104,6 +106,7 @@ public class RezeptView extends Composite {
 	private PhotoGallery galleryWidget;
 	public UploadPhoto uploadWidget;
 	public HandlerRegistration imagePopUpHandler = null;
+	static int overlap = 0;
 	
 	HTML htmlCooking;
 	Boolean askForLess;
@@ -134,6 +137,7 @@ public class RezeptView extends Composite {
 	    RezeptName.setVisible(false);
 	    rezeptDetails.setVisible(false);
 	    cookingInstr.setVisible(false);
+	    detailText.setVisible(false);
 	    
 //	    galleryWidget = new PhotoGallery(this);
 ////	    addInfoPanel.insert(galleryWidget,0);
@@ -328,7 +332,7 @@ public class RezeptView extends Composite {
 	
 	private void initTable() {
 		MenuTable.getColumnFormatter().setWidth(0, "40px");
-		MenuTable.getColumnFormatter().setWidth(1, "140px");
+		MenuTable.getColumnFormatter().setWidth(1, "180px");
 		MenuTable.setCellPadding(1);
 		
 	    if(rezept.getCookInstruction() != null){
@@ -494,7 +498,22 @@ public class RezeptView extends Composite {
 
 	
 	private void displayZutatImMenu( ArrayList<ZutatSpecification> zutaten) {
-	
+		if(askForLess != null){
+
+			if(showImageHandler != null){
+				showImageHandler.removeHandler();
+				showImageHandler = null;
+			}
+			if(askForLess){
+				if(detailText != null){
+					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
+
+					//				rezeptView.detailText.setHeight(height)
+					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezept.getCookInstruction());
+				}
+			}
+		}
+		
 	MenuTable.removeAllRows();;
 	Integer row = MenuTable.getRowCount();
 //	ArrayList<ZutatSpecification> zutatenNew = (ArrayList<ZutatSpecification>) zutaten.clone();
@@ -532,6 +551,21 @@ public class RezeptView extends Composite {
 				} else {
 					MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
 				}
+			}
+			if(askForLess != null){
+				
+					if(showImageHandler != null){
+						showImageHandler.removeHandler();
+						showImageHandler = null;
+					}
+					if(askForLess){
+				if(detailText != null){
+					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40 );
+
+					//				rezeptView.detailText.setHeight(height)
+					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezept.getCookInstruction());
+				}
+					}
 			}
 			
 			updateSuggestion();
@@ -584,7 +618,8 @@ public class RezeptView extends Composite {
 		MenuTable.getRowFormatter().addStyleName(row, style);
 	}
 	MenuTable.setWidget(row, 0, MengeZutat);
-	MenuTable.setText(row, 1, "g " + zutat.getName());
+	
+	changeIcons(row, zutat);
 	MenuTable.setWidget(row, 5, removeZutat);
 	// Remove Button
 
@@ -606,6 +641,50 @@ public class RezeptView extends Composite {
 	row = row+1;
 	}
 }
+
+	void changeIcons(Integer row, final ZutatSpecification zutat) {
+		HTML icon = new HTML("g ");
+		
+		if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+//		icon.setStyleName("base-icons smiley1");			
+		} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+//		icon.setStyleName("base-icons smiley2");			
+		}
+		
+		if(zutat.getZustand() != null){
+		if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
+		if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
+			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+			// In Tagen
+			//		String test = InfoZutat.zutat.getStartSeason();
+			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStartSeason());		
+			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStopSeason() );
+
+			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
+					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			} 
+		}
+		} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+		}
+		}
+		
+		
+		
+		if(zutat.getProduktion() != null && zutat.getProduktion().symbol.equalsIgnoreCase("bio")){
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
+		}
+		
+		icon.setHTML(icon.getHTML()+zutat.getName());
+		
+		MenuTable.setWidget(row, 1,  icon);
+	}
+	
 	void updateSuggestion() {
 
 		Double MenuLabelWert = 0.0;
@@ -627,7 +706,7 @@ public class RezeptView extends Composite {
 		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 			MenuTable.setText(rezept.Zutaten.indexOf(zutatSpec),3,"ca "+formatted+"g *");
-			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:80px;height:1.1em;margin-right:5px;'><div style='background:#323533;height:1.1em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*80).concat("px'>.</div></div>")));
+			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);

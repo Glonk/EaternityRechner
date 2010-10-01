@@ -103,7 +103,7 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
 
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {
-	  EaternityRechner.updateSaison();
+	  EaternityRechner.updateSaisonAndMore();
 	  Search.updateResults(Search.SearchBox2.getText());
 	  // TODO aktuallisiere die Saisonalität aller Rezepte... dieser Prozess muss gethreaded sein!
 	  // TODO close the InfozutatDialog when doing this...

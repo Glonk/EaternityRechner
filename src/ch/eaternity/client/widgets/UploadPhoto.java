@@ -61,7 +61,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		uploadButton.setText("Upload");
+		uploadButton.setText("hochladen");
 		uploadButton.setText("Loading...");
 		uploadButton.setEnabled(false);
 
@@ -166,7 +166,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 				uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 				uploadForm.setMethod(FormPanel.METHOD_POST);
 
-				uploadButton.setText("Upload");
+				uploadButton.setText("hochladen");
 				uploadButton.setEnabled(true);
 
 			}

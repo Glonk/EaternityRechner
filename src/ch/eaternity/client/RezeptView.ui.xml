@@ -29,6 +29,7 @@
 		display:block;
 		width:600px;
 		clear:both;
+		margin-top:-20px;
 	}
 	.inline {
 		display:inline;
@@ -71,7 +72,7 @@
 		margin-right:6px;
 		font-size:1em;
 		font-weight:bold;
-		height:18px;
+		height:22px;
 		text-align: left;
 	}
 	.rezeptNameTop2 {
@@ -81,16 +82,16 @@
 		margin-left:1px;
 		font-size:1em;
 		font-weight:bold;
-		height:18px;
+		height:16px;
 		text-align: left;
 	}
 	.rezeptSubTitleTop{
-		
+		float:left;
 		width:220px;
 		padding-left:4px;
-		margin-right:26px;
+		margin-right:23px;
 		font-size:1em;
-		height:14px;
+		height:10px;
 		text-align: left;
 	}
 	
@@ -98,7 +99,7 @@
 		height:14px;
 		width:214px;
 		padding-left:4px;
-		margin-right:26px;
+		margin-right:20px;
 		font-size:1em;
 
 		text-align: left;
@@ -118,9 +119,10 @@
 	}
 	
 	.recipePersons{
-		margin-right:10px;
+		/* margin-right:10px; */
 		width:120px;
 		text-align: right;
+		display: inline;
 	}
 	
 	.recipeSmallDetail{
@@ -224,16 +226,18 @@
            						<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>
            						<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Rezept Name</g:TextBox>
            					</g:HTMLPanel>
-           					<g:HTMLPanel styleName='{style.recipePersons}'>
-           						für <g:TextBox ui:field="amountPersons" width="2em">4</g:TextBox> Personen
-           					</g:HTMLPanel>
+  
            				</g:HorizontalPanel >
            				
            				<g:HTMLPanel  styleName='{style.recipeSmallDetail}'>
            					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' ></g:Label>
            					<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept Untertitel</g:TextBox>
+           				    <g:HTMLPanel styleName='{style.recipePersons}'>
+           						für <g:TextBox ui:field="amountPersons" width="2em">4</g:TextBox> Personen
+           					</g:HTMLPanel>
            				</g:HTMLPanel >
-           				<g:VerticalPanel styleName='{style.MenuTableWrapper}' >
+
+           				<g:VerticalPanel  ui:field='MenuTableWrapper' styleName='{style.MenuTableWrapper}' >
            				<g:HTMLPanel >
            					<img src='tabs-bg.png' height='88px' width='1px' style='float:left;' />
         					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
