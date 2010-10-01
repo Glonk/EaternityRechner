@@ -876,10 +876,11 @@ public class RezeptView extends Composite {
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = (RezeptView) widget;
 			rezeptView.rezept.setCO2Value();
-			Long indikatorLeft = new Long(Math.round(620/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
-			String indikatorHTML = new String("<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
-			rezeptView.topIndikator.setHTML(indikatorHTML);
-			rezeptView.bottomIndikator.setHTML(indikatorHTML);
+			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
+			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
+			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g *</div>");
+			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
+			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
 		}
 
 			
