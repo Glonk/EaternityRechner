@@ -152,6 +152,9 @@ public class IngredientsDialog extends DialogBox{
 					// std mengeGramm
 					NodeList mengeGrammElmntLst = zutatElmnt.getElementsByTagName("stdAmountGramm");
 					Element mengeGrammElmnt = (Element) mengeGrammElmntLst.item(0);
+					if(mengeGrammElmnt == null){
+						GWT.log("hello");
+					}
 					NodeList mengeGramm = mengeGrammElmnt.getChildNodes();
 //					Window.alert("std menge Gramm : "  + ((Node) mengeGramm.item(0)).getNodeValue());
 					newIngredient.stdAmountGramm = Integer.parseInt( ((Node) mengeGramm.item(0)).getNodeValue() ) ;
