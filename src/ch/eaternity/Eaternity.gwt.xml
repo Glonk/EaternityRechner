@@ -53,5 +53,6 @@
   
      <!-- Specify the app entry point class.                         -->
   <entry-point class='ch.eaternity.client.EaternityRechner' />
+
   
 </module>

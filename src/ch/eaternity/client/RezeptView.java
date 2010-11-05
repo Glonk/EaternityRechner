@@ -16,6 +16,9 @@ import java.util.List;
 
 
 
+import ch.eaternity.client.comparators.ComparatorComparator;
+import ch.eaternity.client.comparators.ComparatorObject;
+import ch.eaternity.client.comparators.ComparatorRecipe;
 import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.client.widgets.UploadPhoto;
 import ch.eaternity.shared.IngredientCondition;
@@ -1163,29 +1166,29 @@ public class RezeptView extends Composite {
 }
 
 
-class ComparatorObject{
-	public Long key;
-	public Double value;
-	public Ingredient ingredient;
-	public ComparatorObject(){
-		
-	}
-}
+//class ComparatorObject{
+//	public Long key;
+//	public Double value;
+//	public Ingredient ingredient;
+//	public ComparatorObject(){
+//		
+//	}
+//}
 
-class ComparatorRecipe{
-	public Long key;
-	public Double value;
-	public Rezept recipe;
-	public ArrayList<ComparatorObject> comparator;
-	public ComparatorRecipe(){
-		
-	}
-}
-
-class ComparatorComparator implements Comparator<ComparatorRecipe> {
-	  public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {
-		  Double o1 = z1.recipe.getCO2Value();
-		  Double o2 = z2.recipe.getCO2Value();
-			return Double.valueOf(o2).compareTo(Double.valueOf(o1));
-	  }
-	}
+//class ComparatorRecipe{
+//	public Long key;
+//	public Double value;
+//	public Rezept recipe;
+//	public ArrayList<ComparatorObject> comparator;
+//	public ComparatorRecipe(){
+//		
+//	}
+//}
+//
+//class ComparatorComparator implements Comparator<ComparatorRecipe> {
+//	  public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {
+//		  Double o1 = z1.recipe.getCO2Value();
+//		  Double o2 = z2.recipe.getCO2Value();
+//			return Double.valueOf(o2).compareTo(Double.valueOf(o1));
+//	  }
+//	}

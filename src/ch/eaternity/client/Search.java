@@ -17,27 +17,23 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-
-
+import ch.eaternity.client.comparators.NameComparator;
+import ch.eaternity.client.comparators.RezeptNameComparator;
+import ch.eaternity.client.comparators.RezeptValueComparator;
+import ch.eaternity.client.comparators.ValueComparator;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Rezept;
 import ch.eaternity.shared.ZutatSpecification;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -56,7 +52,6 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
@@ -1079,60 +1074,60 @@ public class Search extends ResizeComposite {
 	}
 }
 
-class NameComparator implements Comparator<Ingredient> {
-	  public int compare(Ingredient z1, Ingredient z2) {
-		  String o1 = z1.getSymbol();
-		  String o2 = z2.getSymbol();
-	    if(o1 instanceof String && o2 instanceof String) {
-	      String s1 = (String)o1;
-	      String s2 = (String)o2;
-	      s1 = s1.substring(0, 1);
-	      s2 = s2.substring(0, 1);
-	      return s1.compareToIgnoreCase(s2);
-	    }
-	    return 0;
-	  }
-	}
+//class NameComparator implements Comparator<Ingredient> {
+//	  public int compare(Ingredient z1, Ingredient z2) {
+//		  String o1 = z1.getSymbol();
+//		  String o2 = z2.getSymbol();
+//	    if(o1 instanceof String && o2 instanceof String) {
+//	      String s1 = (String)o1;
+//	      String s2 = (String)o2;
+//	      s1 = s1.substring(0, 1);
+//	      s2 = s2.substring(0, 1);
+//	      return s1.compareToIgnoreCase(s2);
+//	    }
+//	    return 0;
+//	  }
+//	}
 
-	class ValueComparator implements Comparator<Ingredient> {
-	  public int compare(Ingredient z1, Ingredient z2) {
-		  long o1 = z1.getCo2eValue();
-		  long o2 = z2.getCo2eValue();
-		  
-	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
-	  }
-	}
+//	class ValueComparator implements Comparator<Ingredient> {
+//	  public int compare(Ingredient z1, Ingredient z2) {
+//		  long o1 = z1.getCo2eValue();
+//		  long o2 = z2.getCo2eValue();
+//		  
+//	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
+//	  }
+//	}
 	
-	class RezeptValueComparator implements Comparator<Rezept> {
-		public int compare(Rezept r1, Rezept r2) {
-			Double o1 = getRezeptCO2(r1.getZutaten());
-			Double o2 = getRezeptCO2(r2.getZutaten());
-
-			return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
-
-		}
-
-		private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
-			Double MenuLabelWert = 0.0;
-			for (ZutatSpecification zutatSpec : Zutaten) { 
-				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-
-			}
-			return MenuLabelWert;
-		}
-	}
-	
-	class RezeptNameComparator implements Comparator<Rezept> {
-		  public int compare(Rezept z1, Rezept z2) {
-			  String o1 = z1.getSymbol();
-			  String o2 = z2.getSymbol();
-		    if(o1 instanceof String && o2 instanceof String) {
-		      String s1 = (String)o1;
-		      String s2 = (String)o2;
-		      s1 = s1.substring(0, 1);
-		      s2 = s2.substring(0, 1);
-		      return s1.compareToIgnoreCase(s2);
-		    }
-		    return 0;
-		  }
-		}
+//	class RezeptValueComparator implements Comparator<Rezept> {
+//		public int compare(Rezept r1, Rezept r2) {
+//			Double o1 = getRezeptCO2(r1.getZutaten());
+//			Double o2 = getRezeptCO2(r2.getZutaten());
+//
+//			return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
+//
+//		}
+//
+//		private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
+//			Double MenuLabelWert = 0.0;
+//			for (ZutatSpecification zutatSpec : Zutaten) { 
+//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+//
+//			}
+//			return MenuLabelWert;
+//		}
+//	}
+//	
+//	class RezeptNameComparator implements Comparator<Rezept> {
+//		  public int compare(Rezept z1, Rezept z2) {
+//			  String o1 = z1.getSymbol();
+//			  String o2 = z2.getSymbol();
+//		    if(o1 instanceof String && o2 instanceof String) {
+//		      String s1 = (String)o1;
+//		      String s2 = (String)o2;
+//		      s1 = s1.substring(0, 1);
+//		      s2 = s2.substring(0, 1);
+//		      return s1.compareToIgnoreCase(s2);
+//		    }
+//		    return 0;
+//		  }
+//		}
