@@ -667,11 +667,11 @@ public class RezeptView extends Composite {
 			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
 				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-			} 
+			} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
+				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			}
 		}
-		} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-		}
+		} 
 		}
 		
 		

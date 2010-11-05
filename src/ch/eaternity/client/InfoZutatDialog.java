@@ -82,6 +82,7 @@ public class InfoZutatDialog extends Composite {
 	FlexTable specificationTable;
 	private Rezept rezept;
 	private FlexTable suggestTable;
+	FlowPanel flowTransport = null;
 	
 	private HTML kmText = new HTML();
 	
@@ -253,12 +254,12 @@ public class InfoZutatDialog extends Composite {
 		}
 		
 
-
+		
 		if(zutat.moTransportations != null && zutat.moTransportations.size()>0){
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Transport");
-			FlowPanel flow = new FlowPanel();
-			specificationTable.setWidget(row,1,flow);
+			flowTransport = new FlowPanel();
+			specificationTable.setWidget(row,1,flowTransport);
 			
 			for(final MoTransportation moTransportations : zutat.moTransportations){
 				RadioButton transport = new RadioButton("Transportations",moTransportations.symbol);
@@ -275,7 +276,7 @@ public class InfoZutatDialog extends Composite {
 				      }
 				    });
 				
-				flow.add(transport);
+				flowTransport.add(transport);
 			}
 			
 		}
@@ -315,6 +316,11 @@ public class InfoZutatDialog extends Composite {
 			
 			for(final IngredientCondition condition : zutat.conditions){
 				RadioButton conditionBox = new RadioButton("conditions",condition.symbol);
+				// hack to take the first one...
+				if(zutatSpec.getZustand() == null){
+					IngredientCondition zustand = new IngredientCondition(condition.symbol);
+					zutatSpec.setZustand(zustand);
+				}
 				if(condition.symbol.equalsIgnoreCase(zutatSpec.getZustand().symbol)){
 					conditionBox.setValue(true);
 				}
@@ -350,6 +356,58 @@ public class InfoZutatDialog extends Composite {
 				
 				zutatSpec.setDistance(singleDistance.getDistance());
 				notChanged = false;
+				boolean deselect = false;
+				if(singleDistance.getTriedRoad() && !singleDistance.getRoad() ){
+					if(zutatSpec.getTransportmittel().symbol.equalsIgnoreCase("LKW") ){
+						deselect = true;
+					}
+					
+					// TODO
+					if(flowTransport != null){
+						for(int i=0;i<flowTransport.getWidgetCount();i++){
+							RadioButton radioTransport = (RadioButton) flowTransport.getWidget(i);
+							if(radioTransport.getText().equalsIgnoreCase("Schiff")){
+								radioTransport.setEnabled(true);
+							if(deselect){
+								radioTransport.setChecked(true);
+								for(final MoTransportation moTransportations : zutat.moTransportations){
+									if(moTransportations.symbol.equalsIgnoreCase("Schiff")){
+										zutatSpec.setTransportmittel(moTransportations);
+									}
+								}
+							}}
+							if(radioTransport.getText().equalsIgnoreCase("LKW")){
+								radioTransport.setEnabled(false);
+							}
+						}
+					}
+					
+				} else if(singleDistance.getTriedRoad() && singleDistance.getRoad()) {
+					if(zutatSpec.getTransportmittel().symbol.equalsIgnoreCase("Schiff") ){
+						deselect = true;
+					}
+					
+					// TODO
+					if(flowTransport != null){
+						for(int i=0;i<flowTransport.getWidgetCount();i++){
+							RadioButton radioTransport = (RadioButton) flowTransport.getWidget(i);
+							if( radioTransport.getText().equalsIgnoreCase("LKW")){
+								radioTransport.setEnabled(true);
+								
+							if(deselect){
+								radioTransport.setChecked(true);
+								for(final MoTransportation moTransportations : zutat.moTransportations){
+									if(moTransportations.symbol.equalsIgnoreCase("LKW")){
+										zutatSpec.setTransportmittel(moTransportations);
+									}
+								}
+							}}
+							if(radioTransport.getText().equalsIgnoreCase("Schiff")){
+								radioTransport.setEnabled(false);
+							}
+						}
+					}
+				}
 
 		    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
 		    	if(formatted.contentEquals("0")){
@@ -402,7 +460,7 @@ public class InfoZutatDialog extends Composite {
 	}
 	
 	public void updateSaison(ZutatSpecification zutatSpec) {
-		// if it is Greenhouse, or conserved then it should be koherent...
+		// if it is Greenhouse, or conserved then it should be kohärent...
 		
 		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
 		// In Tagen
@@ -417,7 +475,7 @@ public class InfoZutatDialog extends Composite {
 			specificationTable.setHTML(0, 1, "Diese Zutat hat Saison");
 			
 			styleHinweis(false);
-			hinweisPanel.setText("Angaben sind koherent.");
+			hinweisPanel.setText("Angaben sind kohärent.");
 			hinweisDetails.setText("Es ist möglich die Zutat frisch und lokal zu beziehen.");
 			
 		} else {
@@ -435,7 +493,7 @@ public class InfoZutatDialog extends Composite {
 			hinweisDetails.setText("Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
 			} else {
 				styleHinweis(false);
-				hinweisPanel.setText("Angaben sind koherent.");
+				hinweisPanel.setText("Angaben sind kohärent.");
 				String text = "Die Zutat wurde ";
 				
 				if(!zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)){
