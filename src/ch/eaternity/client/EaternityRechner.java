@@ -594,10 +594,12 @@ public class EaternityRechner implements EntryPoint {
 //				displayZutaten(data.getZutaten());
 //				displayRezepte(data.getPublicRezepte());
 //				displayRezepte(data.getYourRezepte());
-				topPanel.loadingLabel.setText(" ");
+//				topPanel.loadingLabel.setText(" ");
 //				setClientData(data);
 				Search.setClientData(data);
+				Search.SearchBox2.setText(" ");
 				Search.updateResults(" ");
+				
 				topPanel.locationButton.setEnabled(true);
 				
 				//TODO ist the oracle of need?

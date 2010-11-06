@@ -65,7 +65,7 @@ public class TopPanel extends Composite {
   @UiField
 static ListBox Monate;
   @UiField static Label locationLabel;
-  @UiField Label loadingLabel;
+//  @UiField Label loadingLabel;
   @UiField
 static TextBox clientLocation;
   public static Placemark currentLocation;

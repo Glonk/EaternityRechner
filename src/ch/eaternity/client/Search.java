@@ -97,7 +97,7 @@ public class Search extends ResizeComposite {
 //	@UiField Button SearchButton;
 	@UiField
 	static SuggestBox SearchBox2;
-	@UiField DockLayoutPanel SearchBox;
+//	@UiField DockLayoutPanel SearchBox;
 	@UiField
 	static SelectionStyle selectionStyle;
 	@UiField
@@ -154,7 +154,7 @@ public class Search extends ResizeComposite {
 		initWidget(binder.createAndBindUi(this));
 		SuggestOracle soracle = SearchBox2.getSuggestOracle();
 		oracle = (MultiWordSuggestOracle) soracle;
-
+		SearchBox2.setText(" wird geladen");
 		initTable();
 		//    updateResults("all");
 		SearchBox2.setFocus(true);

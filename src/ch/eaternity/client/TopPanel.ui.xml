@@ -10,18 +10,22 @@
   <ui:style>
   .statusDiv {
     text-align: right;
-    padding:0.5em 1em 1.5em 1em;
+    padding:6px 8px 16px 10px;
     background:#fff;
+    background: url("header_rechner.jpg")  no-repeat 0px 0px;
     border-bottom: 2.5px solid #bbb;
+    height:50px;
   }
 
   .linksDiv {
     text-align: right;
+    clear:both;
   }
   
   .statusInfo{
-  	float: left;
-  	 text-align: left;
+  	padding:0.5em 0em 0em 1em;
+  	float: right;
+  	 text-align: right;
   	}
 
   </ui:style>
@@ -34,27 +38,30 @@
 
 
 	
-      <div class="{style.statusInfo}">
-	  	<g:Label ui:field='loadingLabel' >Datenbank wird geladen...</g:Label>
-        <g:InlineLabel ui:field='loginLabel' ></g:InlineLabel>
-        <a href="mailto:info@eaternity.ch">Kontaktieren Sie uns.</a>
-        
-      </div>
+
 
       <div class='{style.linksDiv}'>
-
-        <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in: </g:InlineLabel>
-        <g:TextBox ui:field="clientLocation">Schweiz</g:TextBox>
-          <g:Button ui:field="locationButton" text="Adresse festlegen"/>
            <g:InlineLabel>Sie kochen im Monat: </g:InlineLabel>
       	<g:ListBox ui:field="Monate">
 		</g:ListBox>
-        <g:Anchor href='javascript:;' ui:field='signOutLink'>Abmelden</g:Anchor>
+        <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in: </g:InlineLabel>
+        <g:TextBox ui:field="clientLocation">Schweiz</g:TextBox>
+          <g:Button ui:field="locationButton" text="Adresse festlegen"/>
+
+    
+      </div>
+            <div class="{style.statusInfo}">
+	
+	  	    <g:Anchor href='javascript:;' ui:field='signOutLink'>Abmelden</g:Anchor>
         &nbsp;
         <g:Anchor href='javascript:;' ui:field='signInLink'>Anmelden</g:Anchor>
          &nbsp;
         <g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
+        <g:InlineLabel ui:field='loginLabel' ></g:InlineLabel>
+        <a href="mailto:info@eaternity.ch">Kontakt</a>
+       	<!--  <g:Label ui:field='loadingLabel' >Rechner initialisiert.</g:Label>  -->
       </div>
+      
     </div>
   </g:HTMLPanel>
 </ui:UiBinder>

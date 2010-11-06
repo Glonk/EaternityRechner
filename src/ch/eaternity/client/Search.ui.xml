@@ -134,7 +134,7 @@
 
   </ui:style>
 
-  <g:DockLayoutPanel   unit='EM'>
+  <g:DockLayoutPanel unit='EM'>
     <g:north size='5'>
 	 	<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'  unit='EM'>
 	 		<g:west size='4'>
@@ -145,6 +145,7 @@
 	 		</g:center>
 	 		
 	 	</g:DockLayoutPanel>
+
     </g:north>
 
     <g:center>

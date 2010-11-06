@@ -56,7 +56,7 @@
   </ui:style>
 
   <g:DockLayoutPanel>
-    <g:north size='54'>
+    <g:north size='74'>
       <rechner:TopPanel ui:field='topPanel' />
     </g:north>
 
