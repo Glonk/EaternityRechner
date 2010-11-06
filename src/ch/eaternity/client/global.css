@@ -81,6 +81,16 @@ a:link, a:visited, a:hover, a:active {
 	background-position  : -2px -109px;
 }
 
+.yourcssclass{
+	padding: 8px 24px 24px 14px;
+	border-top: 1.5px outset #fff;
+	
+	background-image:url('tooltip2.png');
+	background-repeat:no-repeat;
+	background-position: left bottom;
+
+	}
+
 .cursorStyle{
 	 cursor: pointer;
   	cursor: hand;

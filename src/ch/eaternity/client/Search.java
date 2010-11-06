@@ -97,7 +97,8 @@ public class Search extends ResizeComposite {
 //	@UiField Button SearchButton;
 	@UiField
 	static SuggestBox SearchBox2;
-//	@UiField DockLayoutPanel SearchBox;
+	@UiField DockLayoutPanel SearchBox;
+	@UiField HTML SearchLabel;
 	@UiField
 	static SelectionStyle selectionStyle;
 	@UiField
@@ -154,13 +155,24 @@ public class Search extends ResizeComposite {
 		initWidget(binder.createAndBindUi(this));
 		SuggestOracle soracle = SearchBox2.getSuggestOracle();
 		oracle = (MultiWordSuggestOracle) soracle;
-		SearchBox2.setText(" wird geladen");
+		SearchBox2.setText("wird geladen ...");
 		initTable();
 		//    updateResults("all");
 		SearchBox2.setFocus(true);
 		yourRezeptePanel.setVisible(false);
 		helpMealsSplitPanels.addStyleName("noSplitter");
 		setVDraggerHeight("0px");
+		
+		SearchLabel.addMouseListener(
+			    new TooltipListener(
+			      "Suche nach Zutaten und Rezepten hier.", 5000 /* timeout in milliseconds*/,"yourcssclass",5,-34));
+		co2Order.addMouseListener(
+			    new TooltipListener(
+			      "Sortiere Suchergebnisse nach CO₂-Äquivalent Wert.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
+		alphOrder.addMouseListener(
+			    new TooltipListener(
+					      "Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
+
 
 
 	}
@@ -933,10 +945,12 @@ public class Search extends ResizeComposite {
 		
 		if(zutat2.getCo2eValue() < 400){
 			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons smiley1");			
+			icon.setStyleName("base-icons smiley1");	
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 		} else	if(zutat2.getCo2eValue() < 1200){
 			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 			icon.setStyleName("base-icons smiley2");			
+			
 		}
 	
 		if(zutat2.hasSeason != null && zutat2.hasSeason){

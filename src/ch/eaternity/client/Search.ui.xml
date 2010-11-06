@@ -66,7 +66,8 @@
   	}
   	
     	.spacer {
-  		margin: 7px;
+  		margin: 8px;
+  		padding-left:4px;
   		 
   	}
   	  .sortThing {
@@ -138,7 +139,7 @@
     <g:north size='5'>
 	 	<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'  unit='EM'>
 	 		<g:west size='4'>
-	 			<g:HTML styleName='{style.searchLabel}'><p >Suche:</p></g:HTML>
+	 			<g:HTML ui:field="SearchLabel" styleName='{style.searchLabel}'><p >Suche:</p></g:HTML>
 	 		</g:west>
 	 		<g:center>
 	 			<g:SuggestBox styleName='{style.spacer}' ui:field="SearchBox2" />

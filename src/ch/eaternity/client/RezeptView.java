@@ -650,6 +650,7 @@ public class RezeptView extends Composite {
 		
 		if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
 			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 //		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 //		icon.setStyleName("base-icons smiley1");			
 		} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){

@@ -597,7 +597,7 @@ public class EaternityRechner implements EntryPoint {
 //				topPanel.loadingLabel.setText(" ");
 //				setClientData(data);
 				Search.setClientData(data);
-				Search.SearchBox2.setText(" ");
+				Search.SearchBox2.setText("");
 				Search.updateResults(" ");
 				
 				topPanel.locationButton.setEnabled(true);

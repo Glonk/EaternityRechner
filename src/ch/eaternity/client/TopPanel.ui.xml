@@ -41,6 +41,7 @@
 
 
       <div class='{style.linksDiv}'>
+      <g:InlineLabel ui:field='loginLabel' ></g:InlineLabel>
            <g:InlineLabel>Sie kochen im Monat: </g:InlineLabel>
       	<g:ListBox ui:field="Monate">
 		</g:ListBox>
@@ -57,9 +58,10 @@
         <g:Anchor href='javascript:;' ui:field='signInLink'>Anmelden</g:Anchor>
          &nbsp;
         <g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
-        <g:InlineLabel ui:field='loginLabel' ></g:InlineLabel>
+        
         <a href="mailto:info@eaternity.ch">Kontakt</a>
        	<!--  <g:Label ui:field='loadingLabel' >Rechner initialisiert.</g:Label>  -->
+       	
       </div>
       
     </div>
