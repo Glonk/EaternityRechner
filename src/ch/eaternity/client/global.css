@@ -51,10 +51,19 @@ a:link, a:visited, a:hover, a:active {
 	height: 22px;
 	background-image: url(icons-small.png);
 	background-position: top;
+	/* get it done
 	overflow:hidden;
+	*/
 
 	background-color     : transparent;
 	background-repeat    : no-repeat;
+	}
+
+.ingText {
+	display: inline;
+margin-right: 65px;
+overflow: hidden;
+width: 100%;
 	}
 
 .smiley1 {
@@ -89,6 +98,22 @@ a:link, a:visited, a:hover, a:active {
 	background-repeat:no-repeat;
 	background-position: left bottom;
 
+	}
+
+.putRight{
+	display: inline;
+float: right;
+margin-left: -65px;
+margin-right: 20px;
+width: 65px;
+	
+	/*
+	margin-left:-85px;
+	background:#fff;
+	border: .5px outset #ccc;
+	
+	*/
+	
 	}
 
 .cursorStyle{

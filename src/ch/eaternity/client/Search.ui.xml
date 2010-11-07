@@ -88,12 +88,18 @@
     border-top: 1px solid #fff;
     border-bottom: 1px solid #ddd;
     */
-   
+ 
     padding: 2px 2px 2px 8px;
     margin:0px;
+    overflow: hidden;
   }
   .table tr:hover {
   	background: #f3d3a3;
+  			  	background-image:url('add.png');
+	background-repeat:no-repeat;
+	background-position: right center;
+
+  	
   	}
 
 	.scroll {

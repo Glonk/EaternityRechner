@@ -34,6 +34,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -173,8 +175,6 @@ public class Search extends ResizeComposite {
 			    new TooltipListener(
 					      "Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
 
-
-
 	}
 
 	public void setVDraggerHeight (String height)
@@ -275,6 +275,12 @@ public class Search extends ResizeComposite {
 //		}
 	}
 
+//	
+//	@UiHandler("table")
+//	void onTableHover(MouseOverEvent event){
+//		 new TooltipListener(
+//			      "add", 15000 /* timeout in milliseconds*/,"bla",100,0);
+//	}
 
 
 	@UiHandler("table")
@@ -310,7 +316,7 @@ public class Search extends ResizeComposite {
 
 	private void initTable() {
 		table.getColumnFormatter().setWidth(0, "120px");
-		table.getColumnFormatter().setWidth(1, "80px");
+//		table.getColumnFormatter().setWidth(1, "80px");
 //		table.getColumnFormatter().setWidth(2, "40px");
 		
 		tableMeals.getColumnFormatter().setWidth(0, "130px");
@@ -943,10 +949,14 @@ public class Search extends ResizeComposite {
 		
 		HTML icon = new HTML();
 		
+//		icon.addMouseListener(
+//			    new TooltipListener(
+//			      "add", 15000 /* timeout in milliseconds*/,"bla",400,10));
+		
 		if(zutat2.getCo2eValue() < 400){
 			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons smiley1");	
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+			icon.setStyleName("base-icons smiley2");	
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
 		} else	if(zutat2.getCo2eValue() < 1200){
 			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 			icon.setStyleName("base-icons smiley2");			
@@ -967,14 +977,17 @@ public class Search extends ResizeComposite {
 		}
 		
 		if(zutat2.noAlternative){
-			icon.setHTML(icon.getHTML()+zutat2.getSymbol());
+			icon.setHTML(icon.getHTML()+"<div class='ingText'>"+zutat2.getSymbol()+"</div>");
 
 		} else {
 			icon.setHTML(icon.getHTML()+"#: " +zutat2.getSymbol());
 		}
+		
+		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g *")+"</div>");
+		
 		table.setWidget(row,0,icon);
 		
-		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g *"));
+//		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g *"));
 
 
 
