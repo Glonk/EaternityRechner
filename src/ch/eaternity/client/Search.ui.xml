@@ -20,7 +20,11 @@
 	.someSpace {
 		padding-bottom: 7px;		
 	}
-	
+	.legend {
+		display: none;
+		clear:both;
+		width: 100%;
+		}
 
 	.gwt-Button {
 	  margin: 5px 10px 5px 0px;
@@ -157,8 +161,8 @@
 
     <g:center>
 	  <g:DockLayoutPanel ui:field="leftSplitPanel">
-	  <g:south ui:field="leftSplitPanelSouth" size="34" >
-	  <g:HTMLPanel styleName='{style.sortThing}'>
+	  <g:south  size="76" >
+	  <g:HTMLPanel ui:field="panelSouth" styleName='{style.sortThing}'>
 	  <p>
 	  &nbsp;
 	  sortiere:
@@ -167,6 +171,29 @@
 	  &nbsp;
 	  <g:Anchor href='javascript:;' ui:field='co2Order'>CO₂Äq-Wert</g:Anchor>
 	  </p>
+	  <hr />
+		<g:HTML  ui:field="legendPanel" styleName='{style.legend}'>
+		<img style='float:left;margin-left:3px;' height='155' src='icons-3.png' /><div style='height: 180px;width:300px;line-height: 25px;padding: 9px 0px 5px 0px;'>
+		ausgezeichnet klimafreundlich<br />
+		CO₂Äq-Wert unter besten 20%<br />
+		CO₂Äq-Wert über Durchschnitt<br />
+		Angaben unvollständig<br />
+		saisonale und regionale Ware<br />
+		biologische Zutat / Rezept<br />
+		</div>
+		</g:HTML>
+	  &nbsp;&nbsp;<g:Anchor href='javascript:;' ui:field='legendAnchor'>Legende</g:Anchor>
+	  <div style='float:right;margin: -4px 10px 0px 0px;' class='base-icons carrot'>
+	  <img src='pixel.png' height='1' width='20' /> 
+	  <div class='extra-icon smiley1'><img src='pixel.png' height='1' width='20' /></div> 
+	  <div class='extra-icon smiley2'><img src='pixel.png' height='1' width='20' /></div>
+	  <div class='extra-icon smiley3'><img src='pixel.png' height='1' width='20' /></div> 
+	  <div class='extra-icon regloc'><img src='pixel.png' height='1' width='20' /></div> 
+	  <div class='extra-icon bio'><img src='pixel.png' height='1' width='20' />
+	   
+	  </div> 
+	  
+	  </div>
 	  </g:HTMLPanel>
 		  	<!--  mail:InfoZutat ui:field='infoZutat' /-->
 	  </g:south>

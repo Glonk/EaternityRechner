@@ -646,37 +646,49 @@ public class RezeptView extends Composite {
 }
 
 	void changeIcons(Integer row, final ZutatSpecification zutat) {
-		HTML icon = new HTML("g ");
+		HTML icon = new HTML();
+		Boolean itsOkay = true;
 		
-		if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-//		icon.setStyleName("base-icons smiley1");			
-		} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-//		icon.setStyleName("base-icons smiley2");			
-		}
 		
 		if(zutat.getZustand() != null){
-		if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
-		if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
-			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
-			// In Tagen
-			//		String test = InfoZutat.zutat.getStartSeason();
-			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStartSeason());		
-			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStopSeason() );
+			if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
+				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
+					Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+					// In Tagen
+					//		String test = InfoZutat.zutat.getStartSeason();
+					Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStartSeason());		
+					Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStopSeason() );
 
-			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-			} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+					if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
+							dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+					} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
+						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+					} else {
+						icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley3'><img src='pixel.png' height=1 width=20 /></div>");
+						itsOkay = false;
+					}
+				}
+			} 
+		}
+		
+		if (itsOkay) {
+			if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
+				icon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
+				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
+
+				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+				//		icon.setStyleName("base-icons smiley1");			
+			} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){
+				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
+				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+				//		icon.setStyleName("base-icons smiley2");			
 			}
+		} else {
+			icon.setHTML(" g  "+icon.getHTML());
 		}
-		} 
-		}
+		
+
 		
 		
 		

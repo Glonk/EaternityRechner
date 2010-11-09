@@ -106,8 +106,7 @@ public class Search extends ResizeComposite {
 	@UiField
 	static EvenStyleRow evenStyleRow;
 //	@UiField TabLayoutPanel tabLayoutPanel;
-	@UiField
-	static DockLayoutPanel leftSplitPanel;
+	@UiField DockLayoutPanel leftSplitPanel;
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
 	static
@@ -115,6 +114,9 @@ public class Search extends ResizeComposite {
 	@UiField SplitLayoutPanel mealsSplitPanels;
 	@UiField SplitLayoutPanel helpMealsSplitPanels;
 	@UiField HTMLPanel scrollAbleHtml;
+	@UiField Anchor legendAnchor;
+	@UiField HTML legendPanel;
+	@UiField HTMLPanel panelSouth;
 
 //	@UiField HTMLPanel scrollTriggerHtml;
 	
@@ -157,7 +159,7 @@ public class Search extends ResizeComposite {
 		initWidget(binder.createAndBindUi(this));
 		SuggestOracle soracle = SearchBox2.getSuggestOracle();
 		oracle = (MultiWordSuggestOracle) soracle;
-		SearchBox2.setText("wird geladen ...");
+		SearchBox2.setText("wird geladen...");
 		initTable();
 		//    updateResults("all");
 		SearchBox2.setFocus(true);
@@ -281,7 +283,14 @@ public class Search extends ResizeComposite {
 //		 new TooltipListener(
 //			      "add", 15000 /* timeout in milliseconds*/,"bla",100,0);
 //	}
+	  @UiHandler("legendAnchor")
+	  public void onLegendClick(ClickEvent event) {
+		  
+		  legendPanel.setStyleName("noen");
+		  leftSplitPanel.setWidgetSize(panelSouth, 220);
+		  leftSplitPanel.forceLayout();
 
+	  }
 
 	@UiHandler("table")
 	void onTableClicked(ClickEvent event) {
