@@ -11,8 +11,8 @@ public class Data implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -8325524250818128692L;
-	public  List<Rezept> PublicRezepte;
-	public  List<Rezept> YourRezepte;
+	public  List<Recipe> PublicRezepte;
+	public  List<Recipe> YourRezepte;
 	public  List<Ingredient> ingredients;
 	public  List<SingleDistance> distances;
 
@@ -30,16 +30,16 @@ public class Data implements Serializable{
 			}
 		}
 		if(this.PublicRezepte != null){
-			for(Rezept rezept : this.PublicRezepte){
-				if(rezept != null){
-					oracleIndex.add(rezept.getSymbol());
+			for(Recipe recipe : this.PublicRezepte){
+				if(recipe != null){
+					oracleIndex.add(recipe.getSymbol());
 				}
 			}
 		}
 		if(this.YourRezepte != null){
-			for(Rezept rezept  : this.YourRezepte){
-				if(rezept != null){
-					oracleIndex.add(rezept.getSymbol());
+			for(Recipe recipe  : this.YourRezepte){
+				if(recipe != null){
+					oracleIndex.add(recipe.getSymbol());
 				}
 			}
 		}
@@ -47,16 +47,16 @@ public class Data implements Serializable{
 		return oracleIndex;
 	}
 	
-	public void setPublicRezepte(List<Rezept> publicRezepte) {
+	public void setPublicRezepte(List<Recipe> publicRezepte) {
 		PublicRezepte = publicRezepte;
 	}
-	public List<Rezept> getPublicRezepte() {
+	public List<Recipe> getPublicRezepte() {
 		return PublicRezepte;
 	}
-	public void setYourRezepte(List<Rezept> yourRezepte) {
+	public void setYourRezepte(List<Recipe> yourRezepte) {
 		YourRezepte = yourRezepte;
 	}
-	public List<Rezept> getYourRezepte() {
+	public List<Recipe> getYourRezepte() {
 		return YourRezepte;
 	}
 	

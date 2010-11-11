@@ -17,7 +17,7 @@ import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.DataService;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -35,7 +35,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 
-	public Long addRezept(Rezept rezept) throws NotLoggedInException {
+	public Long addRezept(Recipe recipe) throws NotLoggedInException {
 //		checkLoggedIn();
 		UserService userService = UserServiceFactory.getUserService();
 		if(userService.getCurrentUser() == null){
@@ -45,28 +45,28 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		UserRezept userRezept = new UserRezept(getUser());
 		// TODO : this is not a propper approval process!!!
-		userRezept.requestedOpen = rezept.openRequested;
+		userRezept.requestedOpen = recipe.openRequested;
 		if(userService.getCurrentUser().getEmail() != null){
-			rezept.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
+			recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
 		} else {
-			rezept.setEmailAddressOwner(userService.getCurrentUser().getNickname());
+			recipe.setEmailAddressOwner(userService.getCurrentUser().getNickname());
 		}
-		rezept.open = false;
-		userRezept.approvedOpen = rezept.open;
+		recipe.open = false;
+		userRezept.approvedOpen = recipe.open;
 		
 		
-		userRezept.setRezept(rezept);
+		userRezept.setRezept(recipe);
 		dao.ofy().put(userRezept);
 
 		return userRezept.id;
 	}
 
-	// TODO approve and disapprove Rezept
+	// TODO approve and disapprove Recipe
 	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
 		UserRezept userRezept =  dao.getRecipe(rezeptId);
-		userRezept.rezept.open = approve;
+		userRezept.recipe.open = approve;
 		userRezept.approvedOpen = approve;
 		dao.ofy().put(userRezept);
 		return true;
@@ -82,7 +82,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 
-	public List<Rezept> getYourRezepte() throws NotLoggedInException {
+	public List<Recipe> getYourRezepte() throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
 		return dao.getYourRecipe(getUser());
@@ -91,9 +91,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 	}
 	
-	public List<Rezept> getAdminRezepte() throws NotLoggedInException{
+	public List<Recipe> getAdminRezepte() throws NotLoggedInException{
 		UserService userService = UserServiceFactory.getUserService();
-		List<Rezept> adminRecipes = new ArrayList<Rezept>();
+		List<Recipe> adminRecipes = new ArrayList<Recipe>();
 		if(userService.getCurrentUser() != null){
 		if(userService.isUserAdmin()){
 			DAO dao = new DAO();
@@ -132,21 +132,21 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		
 		if (getUser() != null) {
-		List<Rezept> rezeptePersonal = dao.getYourRecipe(getUser());
+		List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
 		data.setYourRezepte(rezeptePersonal);
 		
 		}
 		
 		
-		List<Rezept> rezepte = getAdminRezepte();
+		List<Recipe> rezepte = getAdminRezepte();
 		if(rezepte.isEmpty()){
 			rezepte = dao.getOpenRecipe();
 		}
 		if(data.YourRezepte != null){
-			for(Rezept rezept: data.YourRezepte){
+			for(Recipe recipe: data.YourRezepte){
 				int removeIndex = -1;
-				for(Rezept rezept2:rezepte){
-					if(rezept2.getId().equals(rezept.getId())){
+				for(Recipe rezept2:rezepte){
+					if(rezept2.getId().equals(recipe.getId())){
 						removeIndex = rezepte.indexOf(rezept2);
 					}
 				}

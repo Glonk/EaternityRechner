@@ -66,6 +66,23 @@ overflow: hidden;
 width: 100%;
 	}
 
+	.legend1 {
+		display: block;
+		clear:both;
+		width: 100%;
+			text-wrap:none;
+	word-wrap:none;
+	white-space: nowrap;  
+		}
+			.legend2 {
+		display: none;
+		clear:both;
+		width: 100%;
+			text-wrap:none;
+	word-wrap:none;
+	white-space: nowrap;  
+		}
+
 .smiley1 {
 		background-position  : -2px -33px;
 }

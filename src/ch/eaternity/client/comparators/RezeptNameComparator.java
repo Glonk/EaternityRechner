@@ -2,11 +2,11 @@ package ch.eaternity.client.comparators;
 
 import java.util.Comparator;
 
-import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Recipe;
 
 
-public class RezeptNameComparator implements Comparator<Rezept> {
-	public int compare(Rezept z1, Rezept z2) {
+public class RezeptNameComparator implements Comparator<Recipe> {
+	public int compare(Recipe z1, Recipe z2) {
 		String o1 = z1.getSymbol();
 		String o2 = z2.getSymbol();
 		if(o1 instanceof String && o2 instanceof String) {

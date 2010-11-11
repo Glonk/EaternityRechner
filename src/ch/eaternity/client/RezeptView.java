@@ -25,8 +25,8 @@ import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.Production;
-import ch.eaternity.shared.Rezept;
-import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.IngredientSpecification;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -124,16 +124,16 @@ public class RezeptView extends Composite {
 	private Listener listener;
 	int  selectedRow = 0;
 	int  selectedRezept = -1;
-	Rezept rezept;
+	Recipe recipe;
 
 	
-//	static ArrayList<ZutatSpecification> zutatImMenu = new ArrayList<ZutatSpecification>();
+//	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
 	
 	
-	public RezeptView(Rezept rezept) {
+	public RezeptView(Recipe recipe) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
-	    setRezept(rezept);
+	    setRezept(recipe);
 	    saved = true;
 	    initTable();
 	    
@@ -179,7 +179,7 @@ public class RezeptView extends Composite {
 	
 	
 	public interface Listener {
-		void onItemSelected(ZutatSpecification item);
+		void onItemSelected(IngredientSpecification item);
 	}
 
 
@@ -203,11 +203,11 @@ public class RezeptView extends Composite {
 				|| (keyCode == KeyCodes.KEY_DELETE) ) {
 			// TextBox.cancelKey() suppresses the current keyboard event.
 			Long persons = 1l;
-			rezept.setPersons(persons);
+			recipe.setPersons(persons);
 			if(!amountPersons.getText().isEmpty()){
 				persons = Long.parseLong(amountPersons.getText().trim());
 				if(persons > 0){
-					rezept.setPersons(persons);
+					recipe.setPersons(persons);
 					updateSuggestion();
 				} else {
 //					amountPersons.setText("1");
@@ -235,7 +235,7 @@ public class RezeptView extends Composite {
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
 			rezeptNameTop.setText(RezeptName.getText());
-			rezept.setSymbol(RezeptName.getText());
+			recipe.setSymbol(RezeptName.getText());
 		}
 	}
 	
@@ -251,7 +251,7 @@ public class RezeptView extends Composite {
 	void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
 			htmlCooking.setText(cookingInstr.getText());
-			rezept.setCookInstruction(cookingInstr.getText());
+			recipe.setCookInstruction(cookingInstr.getText());
 		}
 	}
 	
@@ -276,7 +276,7 @@ public class RezeptView extends Composite {
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
 			rezeptSubTitleTop.setText(rezeptDetails.getText());
-			rezept.setSubTitle(rezeptDetails.getText());
+			recipe.setSubTitle(rezeptDetails.getText());
 		}
 	}
 	
@@ -338,8 +338,8 @@ public class RezeptView extends Composite {
 		MenuTable.getColumnFormatter().setWidth(1, "180px");
 		MenuTable.setCellPadding(1);
 		
-	    if(rezept.getCookInstruction() != null){
-	    	htmlCooking = new HTML(rezept.getCookInstruction());
+	    if(recipe.getCookInstruction() != null){
+	    	htmlCooking = new HTML(recipe.getCookInstruction());
 	    } else {
 	    	htmlCooking = new HTML("Kochanleitung.");
 	    }
@@ -362,31 +362,31 @@ public class RezeptView extends Composite {
 	    
 	}
 	
-	public void setRezept(Rezept rezept){
-		this.rezept = rezept;
-//		showRezept(rezept);
+	public void setRezept(Recipe recipe){
+		this.recipe = recipe;
+//		showRezept(recipe);
 	}
 
-	public Rezept getRezept(){
-		return this.rezept;
+	public Recipe getRezept(){
+		return this.recipe;
 	}	
 	
-	public void showRezept(final Rezept rezept) {
+	public void showRezept(final Recipe recipe) {
 
-			if(rezept.getPersons() != null){
-				amountPersons.setText(rezept.getPersons().toString());
+			if(recipe.getPersons() != null){
+				amountPersons.setText(recipe.getPersons().toString());
 			} else {
 				amountPersons.setText("4");
 				Long persons = Long.parseLong(amountPersons.getText());
-				rezept.setPersons(persons);
+				recipe.setPersons(persons);
 			}
 			final RezeptView rezeptView = this;
-			displayZutatImMenu(rezept.Zutaten);
+			displayZutatImMenu(recipe.Zutaten);
 			updateSuggestion();
 //			zutatImMenu.clear();
 			
-//			int row = AddZutatZumMenu(rezept.getZutaten());
-			// add Speicher Rezept Button
+//			int row = AddZutatZumMenu(recipe.getZutaten());
+			// add Speicher Recipe Button
 			if(klicky != null){
 				klicky.removeHandler();
 			}
@@ -395,23 +395,23 @@ public class RezeptView extends Composite {
 				public void onClick(ClickEvent event) {
 					if(RezeptName.getText() != ""){
 						// TODO warn that it wasn't saved in the other case
-						amountPersons.setText(rezept.getPersons().toString());
-//						Speichere Rezept ab. 
-//						Rezept rezeptSave = new Rezept(RezeptName.getText());
+						amountPersons.setText(recipe.getPersons().toString());
+//						Speichere Recipe ab. 
+//						Recipe rezeptSave = new Recipe(RezeptName.getText());
 //						rezeptSave.setOpen(makePublic.getValue());
-//						rezeptSave.addZutaten(rezept.getZutaten());
+//						rezeptSave.addZutaten(recipe.getZutaten());
 //						EaternityRechner.addRezept(rezeptSave);
-						rezept.setSymbol(RezeptName.getText());
+						recipe.setSymbol(RezeptName.getText());
 						if(rezeptDetails.getText() != ""){
-							rezept.setSubTitle(rezeptDetails.getText());
+							recipe.setSubTitle(rezeptDetails.getText());
 						} else {
-							rezept.setSubTitle("just like that");
+							recipe.setSubTitle("just like that");
 						}
-						rezept.openRequested = !makePublic.getValue();
-						rezept.open = false;
-						rezept.setCookInstruction(cookingInstr.getText()); 
+						recipe.openRequested = !makePublic.getValue();
+						recipe.open = false;
+						recipe.setCookInstruction(cookingInstr.getText()); 
 						
-						EaternityRechner.addRezept(rezept,rezeptView);
+						EaternityRechner.addRezept(recipe,rezeptView);
 					}
 				}
 			});
@@ -431,14 +431,14 @@ public class RezeptView extends Composite {
 		 
 		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
 			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
-			 ZutatSpecification zutatSpec2 = infoDialog.getZutatSpec();
+			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
 //			 int index = zutatImMenu.indexOf(zutatSpec);
-//			 zutatImMenu = (ArrayList<ZutatSpecification>) rezept.getZutaten();
-			 rezept.Zutaten.set(selectedRow , zutatSpec2);
+//			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
+			 recipe.Zutaten.set(selectedRow , zutatSpec2);
 
 		 }
 		 
-		ZutatSpecification zutatSpec = rezept.Zutaten.get(row);
+		IngredientSpecification zutatSpec = recipe.Zutaten.get(row);
 
 		if (zutatSpec == null) {
 			return;
@@ -468,14 +468,14 @@ public class RezeptView extends Composite {
 		updateSuggestion();
 	}
 
-	private void openSpecificationDialog(ZutatSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
+	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
 		// TODO Auto-generated method stub
 		
 //		if(addInfoPanel.getWidgetCount() ==2){
 			addInfoPanel.remove(2);
 //		}
 		menuDecoInfo.setVisible(false);
-		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,rezept,SuggestTable,this);
+		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
 //		addInfoPanel.add(infoZutat);
 		addInfoPanel.insert(infoZutat, 2);
 //		addInfoPanel.add(new HTML("test"));
@@ -500,7 +500,7 @@ public class RezeptView extends Composite {
 
 
 	
-	private void displayZutatImMenu( ArrayList<ZutatSpecification> zutaten) {
+	private void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
 		if(askForLess != null){
 
 			if(showImageHandler != null){
@@ -512,25 +512,25 @@ public class RezeptView extends Composite {
 					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
 
 					//				rezeptView.detailText.setHeight(height)
-					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezept.getCookInstruction());
+					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
 				}
 			}
 		}
 		
 	MenuTable.removeAllRows();;
 	Integer row = MenuTable.getRowCount();
-//	ArrayList<ZutatSpecification> zutatenNew = (ArrayList<ZutatSpecification>) zutaten.clone();
-	for(final ZutatSpecification zutat : zutaten){
+//	ArrayList<IngredientSpecification> zutatenNew = (ArrayList<IngredientSpecification>) zutaten.clone();
+	for(final IngredientSpecification zutat : zutaten){
 //		
 	Button removeZutat = new Button("x");
 //	removeZutat.addStyleName("style.gwt-Button");
 //	removeZutat.addStyleDependentName("gwt-Button");
 	removeZutat.addClickHandler(new ClickHandler() {
 		public void onClick(ClickEvent event) {
-			int removedIndex = rezept.Zutaten.indexOf(zutat);
-			rezept.Zutaten.remove(removedIndex);
+			int removedIndex = recipe.Zutaten.indexOf(zutat);
+			recipe.Zutaten.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
-//			rezept.removeZutat(removedIndex);
+//			recipe.removeZutat(removedIndex);
 			
 			// does this work to prevent the error?
 			styleRow(removedIndex, false);
@@ -566,7 +566,7 @@ public class RezeptView extends Composite {
 					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40 );
 
 					//				rezeptView.detailText.setHeight(height)
-					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezept.getCookInstruction());
+					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
 				}
 					}
 			}
@@ -645,7 +645,7 @@ public class RezeptView extends Composite {
 	}
 }
 
-	void changeIcons(Integer row, final ZutatSpecification zutat) {
+	void changeIcons(Integer row, final IngredientSpecification zutat) {
 		HTML icon = new HTML();
 		Boolean itsOkay = true;
 		
@@ -683,6 +683,8 @@ public class RezeptView extends Composite {
 				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
 				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 				//		icon.setStyleName("base-icons smiley2");			
+			} else {
+				icon.setHTML(" g  "+icon.getHTML());
 			}
 		} else {
 			icon.setHTML(" g  "+icon.getHTML());
@@ -706,23 +708,23 @@ public class RezeptView extends Composite {
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
 
-		if(rezept.Zutaten.isEmpty()){
+		if(recipe.Zutaten.isEmpty()){
 			if(addInfoPanel.getWidgetCount() ==2){
 				addInfoPanel.remove(1);
 			}
 		}
 		
-		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
 				MaxMenuWert = zutatSpec.getCalculatedCO2Value();
 			}
 			
 		}
-		for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			MenuTable.setText(rezept.Zutaten.indexOf(zutatSpec),3,"ca "+formatted+"g *");
-			MenuTable.setHTML(rezept.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
+			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),3,"ca "+formatted+"g *");
+			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
@@ -746,9 +748,9 @@ public class RezeptView extends Composite {
 		// Von jedem Gericht gibt es einen CO2 Wert für 4Personen (mit oder ohne Herkunft? oder aus der nächsten Distanz?), 
 		// so wie sie gepeichert wurde.
 		// Es werden bei der Anzeige Rezepte berücksichtigt, die: 
-		// min 20% identische Zutaten ( Zutat*(Menge im Rezept)/StdMenge ) und das pro Zutat, und davon min 20%identisch
+		// min 20% identische Zutaten ( Zutat*(Menge im Recipe)/StdMenge ) und das pro Zutat, und davon min 20%identisch
 		// min +50% Zutaten die in den alternativen Vorkommen
-		// hierbei wird die 2 passendsten Rezepte jeweils aus den nicht durch das markierte Rezept belegten Bereich angezeigt
+		// hierbei wird die 2 passendsten Rezepte jeweils aus den nicht durch das markierte Recipe belegten Bereich angezeigt
 		// Bereich sind 0-20%	20%-50%		50%-100%
 		
 		// Rezepte sollten sich bewerten lassen, und deren Popularität gemessen werden. ( Über die Zeit?)
@@ -759,7 +761,7 @@ public class RezeptView extends Composite {
 		// TODO alle Rezepte für 4 Personen, sonst macht der Vergleich keinen Sinn
 		
 		// get Comparator
-		ArrayList<ComparatorObject> comparator = comparator(rezept);
+		ArrayList<ComparatorObject> comparator = comparator(recipe);
 		Double maxScore = 0.0;
 		for(ComparatorObject comparatorObject : comparator){
 			maxScore = maxScore+comparatorObject.value;
@@ -767,15 +769,15 @@ public class RezeptView extends Composite {
 		
 		
 		// all Recipes
-		List<Rezept> allRecipes = new ArrayList<Rezept>();
+		List<Recipe> allRecipes = new ArrayList<Recipe>();
 		allRecipes.clear();
-		Rezept compare = rezept;
+		Recipe compare = recipe;
 		compare.setSelected(true);
-		if(rezept.getSymbol() == null){
+		if(recipe.getSymbol() == null){
 			compare.setSymbol("Ihr Menu");
 		}
 		
-		if(rezept.getSubTitle() == null){
+		if(recipe.getSubTitle() == null){
 			compare.setSubTitle("just like that");
 		}
 		
@@ -795,16 +797,16 @@ public class RezeptView extends Composite {
 		// first go over the Recipes in the Workspace
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = (RezeptView) widget;
-			rezeptView.rezept.setCO2Value();
-			if(rezeptView.rezept.getCO2Value()>MaxValueRezept){
-				MaxValueRezept = rezeptView.rezept.getCO2Value();
+			rezeptView.recipe.setCO2Value();
+			if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
+				MaxValueRezept = rezeptView.recipe.getCO2Value();
 			} 
-			if(rezeptView.rezept.getCO2Value()<MinValueRezept){
-				MinValueRezept = rezeptView.rezept.getCO2Value();
+			if(rezeptView.recipe.getCO2Value()<MinValueRezept){
+				MinValueRezept = rezeptView.recipe.getCO2Value();
 			}
 		}
 		
-		for( Rezept compareRecipe : allRecipes){
+		for( Recipe compareRecipe : allRecipes){
 			
 			compareRecipe.setCO2Value();
 			if(compareRecipe.getCO2Value()>MaxValueRezept){
@@ -832,7 +834,7 @@ public class RezeptView extends Composite {
 		for(ComparatorRecipe compRecipe: scoreMap){
 			// TODO 0.8 IS JUST A GUESS
 			if((compRecipe.value/maxScore)<0.8){ // this is min. 20% identical
-				Rezept compareRecipe = compRecipe.recipe;
+				Recipe compareRecipe = compRecipe.recipe;
 				ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
 				comparatorRecipe.recipe = compareRecipe;
 				comparatorRecipe.key = compareRecipe.getId();
@@ -867,15 +869,15 @@ public class RezeptView extends Composite {
 		}
 		
 ////		if(scoreMapFinal.size()>2){
-//			rezept.setCO2Value();
-//			double indikator = rezept.getCO2Value();
+//			recipe.setCO2Value();
+//			double indikator = recipe.getCO2Value();
 ////			double stop = scoreMapFinal.get(0).recipe.getCO2Value();
 //			double stop = MaxValueRezept;
 ////			double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
 //			double start = MinValueRezept;
 //			
 //			Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
-//			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(rezept.getCO2Value())+"g CO2</div>";
+//			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(recipe.getCO2Value())+"g CO2</div>";
 //			topIndikator.setHTML(indikatorHTML);
 //			bottomIndikator.setHTML(indikatorHTML);
 			
@@ -891,10 +893,10 @@ public class RezeptView extends Composite {
 		// update all widgets bars!
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = (RezeptView) widget;
-			rezeptView.rezept.setCO2Value();
-			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.rezept.getCO2Value()-start)));
-			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g * (pro Person)</div>");
-			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.rezept.getCO2Value())+"g * (pro Person)</div>");
+			rezeptView.recipe.setCO2Value();
+			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
+			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+"g * (pro Person)</div>");
+			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+"g * (pro Person)</div>");
 			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
 			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
 		}
@@ -914,7 +916,7 @@ public class RezeptView extends Composite {
 		List<ComparatorRecipe> selectionList =  scoreMapFinal.subList(beginRange, stopRange);
 		if(stopRange-beginRange != 0){
 			Double minValue = 100000.0;
-			Rezept selectedMax = null;
+			Recipe selectedMax = null;
 			Iterator<ComparatorRecipe> iterator = selectionList.iterator();
 			while(iterator.hasNext()){
 				ComparatorRecipe takeMax = iterator.next();
@@ -923,10 +925,10 @@ public class RezeptView extends Composite {
 					minValue = takeMax.value;
 				}
 			}
-			final Rezept takeThisOne = selectedMax;
+			final Recipe takeThisOne = selectedMax;
 			
 //			Double MenuLabelWert = new Double(0.0);
-//			for (ZutatSpecification zutatSpec : selectedMax.Zutaten) { 
+//			for (IngredientSpecification zutatSpec : selectedMax.Zutaten) { 
 //				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 //			}
 			selectedMax.setCO2Value();
@@ -1067,7 +1069,7 @@ public class RezeptView extends Composite {
 	}
 
 
-	private ArrayList<ComparatorObject> comparator(Rezept rezept){
+	private ArrayList<ComparatorObject> comparator(Recipe recipe){
 		// wtf is up with the Map() ???
 //		Map<Long,Double> recipeComparator = Collections.emptyMap();
 		// everything would have been so easy!!
@@ -1075,10 +1077,10 @@ public class RezeptView extends Composite {
 		 ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
 	
 		
-		for(ZutatSpecification zutatSpec : rezept.Zutaten){
+		for(IngredientSpecification zutatSpec : recipe.Zutaten){
 			Ingredient zutat = Search.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 //			amount of Persons needs to be assigned always!
-			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/rezept.getPersons();
+			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
 			Double alreadyAmount = 0.0;
 			int index = -1;
 //			check if the indgredient is already in there...
@@ -1108,7 +1110,7 @@ public class RezeptView extends Composite {
 	}
 
 
-	private void updateTable(int row,ZutatSpecification zutatSpec){
+	private void updateTable(int row,IngredientSpecification zutatSpec){
 		saved = false;
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 		
@@ -1148,7 +1150,7 @@ public class RezeptView extends Composite {
 	    public void onFinish(IUploader uploader) {
 	      if (uploader.getStatus() == Status.SUCCESS) {
 	    	 
-//	    	 rezept.imageId = uploader.
+//	    	 recipe.imageId = uploader.
 	    	 GWT.log("Successfully uploaded image: "+  uploader.fileUrl(), null);
 	        new PreloadedImage(uploader.fileUrl(), showImage);
 	        
@@ -1191,7 +1193,7 @@ public class RezeptView extends Composite {
 //class ComparatorRecipe{
 //	public Long key;
 //	public Double value;
-//	public Rezept recipe;
+//	public Recipe recipe;
 //	public ArrayList<ComparatorObject> comparator;
 //	public ComparatorRecipe(){
 //		

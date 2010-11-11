@@ -8,7 +8,7 @@ import java.util.List;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.IngredientSpecification;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -172,9 +172,9 @@ public class DistancesDialog extends DialogBox{
 	private void updateAllZutaten() {
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = ((RezeptView) widget);
-			List<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 			zutaten.addAll(rezeptView.getRezept().Zutaten);
-			for(ZutatSpecification zutatSpec : zutaten ){
+			for(IngredientSpecification zutatSpec : zutaten ){
 				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
 				for(SingleDistance singleDistance : Search.getClientData().getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 

@@ -25,7 +25,7 @@ import ch.eaternity.client.RezeptView;
 import ch.eaternity.client.UserImageService;
 import ch.eaternity.client.UserImageServiceAsync;
 import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;
 
 public class UploadPhoto extends Composite implements HasHandlers {
@@ -51,12 +51,12 @@ public class UploadPhoto extends Composite implements HasHandlers {
 
 	LoginInfo loginInfo;
 	
-	Rezept rezept;
+	Recipe recipe;
 
 	public UploadPhoto(final LoginInfo loginInfo,final RezeptView rezeptView) {
 		handlerManager = new HandlerManager(this);
 		
-		this.rezept = rezept;
+		this.recipe = recipe;
 		this.loginInfo = loginInfo;
 
 		initWidget(uiBinder.createAndBindUi(this));
@@ -95,7 +95,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									    
 									    	Image showImage = rezeptView.showImageRezept;
 									    	showImage.setUrl(result.getServingUrl()+"=s150-c");
-//									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
+//									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
 //									    	rezeptView.imageUploaderHP.add(showImage);
 //									    	showImage.setStylePrimaryName("cursorStyle");
 									    	if(rezeptView.imagePopUpHandler != null){

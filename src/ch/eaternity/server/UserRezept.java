@@ -5,7 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Id;
 
-import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Recipe;
 
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Indexed;
@@ -25,7 +25,7 @@ public class UserRezept{
 	public Boolean requestedOpen;
 	
 	@Serialized
-	public Rezept rezept;
+	public Recipe recipe;
 	
 	public void setUser(User user) {
 		this.user = user;
@@ -43,8 +43,8 @@ public class UserRezept{
 		this.user = user;	
 	}
 	
-	public UserRezept( Rezept rezept ,User user){
-		this.rezept = rezept;
+	public UserRezept( Recipe recipe ,User user){
+		this.recipe = recipe;
 		this.createDate = new Date();
 		this.user = user;	
 	}
@@ -52,11 +52,11 @@ public class UserRezept{
 	public Date getCreateDate() {
 		return this.createDate;
 	}
-	public void setRezept(Rezept rezept) {
-		this.rezept = rezept;
+	public void setRezept(Recipe recipe) {
+		this.recipe = recipe;
 	}
-	public Rezept getRezept() {
-		return rezept;
+	public Recipe getRezept() {
+		return recipe;
 	}
 
 

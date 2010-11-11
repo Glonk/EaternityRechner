@@ -9,8 +9,8 @@ import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
-import ch.eaternity.shared.Rezept;
-import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.IngredientSpecification;
 
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.images.ImagesService;
@@ -28,8 +28,8 @@ public class DAO extends DAOBase
         ObjectifyService.register(IngredientCondition.class);
         ObjectifyService.register(MoTransportation.class);
         ObjectifyService.register(ProductLabel.class);
-        ObjectifyService.register(ZutatSpecification.class);
-        ObjectifyService.register(Rezept.class);
+        ObjectifyService.register(IngredientSpecification.class);
+        ObjectifyService.register(Recipe.class);
         ObjectifyService.register(UserRezept.class);
         ObjectifyService.register(ImageBlob.class);
     }
@@ -86,7 +86,7 @@ public class DAO extends DAOBase
         return true;
     }
     
-    public Boolean CreateIngredientSpecifications(ArrayList<ZutatSpecification> ingredientPecifications)
+    public Boolean CreateIngredientSpecifications(ArrayList<IngredientSpecification> ingredientPecifications)
     {
         ofy().put(ingredientPecifications);
         return true;
@@ -98,7 +98,7 @@ public class DAO extends DAOBase
 		return null;
 	}
 
-	public Boolean saveRecipe(Rezept recipe){
+	public Boolean saveRecipe(Recipe recipe){
         ofy().put(recipe);
         return true;
 	}
@@ -108,9 +108,9 @@ public class DAO extends DAOBase
         return userRezept;
 	}
 	
-	public List<Rezept> getYourRecipe(User user){
+	public List<Recipe> getYourRecipe(User user){
 		
-		List<Rezept> yourRecipes = new ArrayList<Rezept>();
+		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
 		Query<UserRezept> yourUserRecipes = ofy().query(UserRezept.class).filter("user", user);
@@ -118,18 +118,18 @@ public class DAO extends DAOBase
         
         while (iterator.hasNext()) {
         	UserRezept userRezept = iterator.next();
-        	Rezept rezept = userRezept.getRezept();
-        	rezept.setId( userRezept.id);
-        	yourRecipes.add(rezept);
+        	Recipe recipe = userRezept.getRezept();
+        	recipe.setId( userRezept.id);
+        	yourRecipes.add(recipe);
         }
         
         return yourRecipes;
 
 	}
 	
-	public List<Rezept> adminGetRecipe(User user){
+	public List<Recipe> adminGetRecipe(User user){
 		
-		List<Rezept> adminRecipes = new ArrayList<Rezept>();
+		List<Recipe> adminRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
 		Query<UserRezept> yourUserRecipes = ofy().query(UserRezept.class).filter("user !=", user);
@@ -137,18 +137,18 @@ public class DAO extends DAOBase
         
         while (iterator.hasNext()) {
         	UserRezept userRezept = iterator.next();
-        	Rezept rezept = userRezept.getRezept();
-        	rezept.setId( userRezept.id);
-        	adminRecipes.add(rezept);
+        	Recipe recipe = userRezept.getRezept();
+        	recipe.setId( userRezept.id);
+        	adminRecipes.add(recipe);
         }
         
         return adminRecipes;
 
 	}
 	
-	public List<Rezept> getOpenRecipe(){
+	public List<Recipe> getOpenRecipe(){
 		
-		List<Rezept> openRecipes = new ArrayList<Rezept>();
+		List<Recipe> openRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
 		Query<UserRezept> yourOpenRecipes = ofy().query(UserRezept.class).filter("approvedOpen", true);
@@ -156,9 +156,9 @@ public class DAO extends DAOBase
         
         while (iterator.hasNext()) {
         	UserRezept userRezept = iterator.next();
-        	Rezept rezept = userRezept.getRezept();
-        	rezept.setId( userRezept.id);
-        	openRecipes.add(rezept);
+        	Recipe recipe = userRezept.getRezept();
+        	recipe.setId( userRezept.id);
+        	openRecipes.add(recipe);
         }
         
         return openRecipes;

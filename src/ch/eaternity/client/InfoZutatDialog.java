@@ -10,9 +10,9 @@ import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.Production;
-import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.IngredientSpecification;
 
 
 import com.google.gwt.core.client.GWT;
@@ -73,14 +73,14 @@ public class InfoZutatDialog extends Composite {
 	Boolean handlerNotAdded = true;
 	
 	@UiField SelectionStyle selectionStyle;
-	ZutatSpecification zutatSpec;
+	IngredientSpecification zutatSpec;
 	Ingredient stdIngredient;
 	RezeptView rezeptviewParent;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
 	FlexTable specificationTable;
-	private Rezept rezept;
+	private Recipe recipe;
 	private FlexTable suggestTable;
 	FlowPanel flowTransport = null;
 	
@@ -125,7 +125,7 @@ public class InfoZutatDialog extends Composite {
 		
 	}
 
-	public InfoZutatDialog(ZutatSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Rezept rezept, FlexTable suggestTable, RezeptView rezeptview) {
+	public InfoZutatDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Recipe recipe, FlexTable suggestTable, RezeptView rezeptview) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML( zutatSpec.getName() );
 		specificationTable.setCellSpacing(0);
@@ -134,7 +134,7 @@ public class InfoZutatDialog extends Composite {
 		this.setZutatSpec(zutatSpec);
 		this.stdIngredient = zutat;
 		this.setSelectedRow(selectedRow);
-		this.setRezept(rezept);
+		this.setRezept(recipe);
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
 		setValues( zutat);
@@ -459,7 +459,7 @@ public class InfoZutatDialog extends Composite {
 		updateZutatCO2();
 	}
 	
-	public void updateSaison(ZutatSpecification zutatSpec) {
+	public void updateSaison(IngredientSpecification zutatSpec) {
 		// if it is Greenhouse, or conserved then it should be kohärent...
 		
 		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
@@ -537,8 +537,8 @@ public class InfoZutatDialog extends Composite {
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
 //				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
-				rezept.Zutaten.set(selectedRow, zutatSpec);
-//				Double MenuLabelWert = getRezeptCO2(rezept.Zutaten);
+				recipe.Zutaten.set(selectedRow, zutatSpec);
+//				Double MenuLabelWert = getRezeptCO2(recipe.Zutaten);
 				
 //				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
 //				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
@@ -564,10 +564,10 @@ public class InfoZutatDialog extends Composite {
 		}
 	
 }
-	public void setZutatSpec(ZutatSpecification zutatSpec) {
+	public void setZutatSpec(IngredientSpecification zutatSpec) {
 		this.zutatSpec = zutatSpec;
 	}
-	public ZutatSpecification getZutatSpec() {
+	public IngredientSpecification getZutatSpec() {
 		return zutatSpec;
 	}
 	public void setSelectedRow(int selectedRow) {
@@ -576,15 +576,15 @@ public class InfoZutatDialog extends Composite {
 	public int getSelectedRow() {
 		return selectedRow;
 	}
-	public void setRezept(Rezept rezept) {
-		this.rezept = rezept;
+	public void setRezept(Recipe recipe) {
+		this.recipe = recipe;
 	}
-	public Rezept getRezept() {
-		return rezept;
+	public Recipe getRezept() {
+		return recipe;
 	}
-	private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
+	private Double getRezeptCO2(List<IngredientSpecification> Zutaten) {
 		Double MenuLabelWert = 0.0;
-		for (ZutatSpecification zutatSpec : Zutaten) { 
+		for (IngredientSpecification zutatSpec : Zutaten) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 
 		}

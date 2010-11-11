@@ -27,8 +27,8 @@ import ch.eaternity.client.comparators.RezeptValueComparator;
 import ch.eaternity.client.comparators.ValueComparator;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Rezept;
-import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.IngredientSpecification;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -72,7 +73,7 @@ public class Search extends ResizeComposite {
 	}
 
 	public interface ListenerMeals {
-		void onItemSelected(Rezept item);
+		void onItemSelected(Recipe item);
 	}
 	
 	interface Binder extends UiBinder<Widget, Search> { }
@@ -115,8 +116,15 @@ public class Search extends ResizeComposite {
 	@UiField SplitLayoutPanel helpMealsSplitPanels;
 	@UiField HTMLPanel scrollAbleHtml;
 	@UiField Anchor legendAnchor;
-	@UiField HTML legendPanel;
+	@UiField Anchor legendAnchorClose;
+	@UiField HTMLPanel legendPanel;
 	@UiField HTMLPanel panelSouth;
+	@UiField Image imageCarot;
+	@UiField Image imageSmiley1;
+	@UiField Image imageSmiley2;
+	@UiField Image imageSmiley3;
+	@UiField Image imageRegloc;
+	@UiField Image imageBio;
 
 //	@UiField HTMLPanel scrollTriggerHtml;
 	
@@ -125,8 +133,8 @@ public class Search extends ResizeComposite {
 	
 	
 	private static Data clientData = new Data();
-	private static ArrayList<Rezept> FoundRezepte = new ArrayList<Rezept>();
-	private static ArrayList<Rezept> FoundRezepteYours = new ArrayList<Rezept>();
+	private static ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
+	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
 //	private static ArrayList<Zutat> FoundZutaten = new ArrayList<Zutat>();
 	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
 	
@@ -176,6 +184,38 @@ public class Search extends ResizeComposite {
 		alphOrder.addMouseListener(
 			    new TooltipListener(
 					      "Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
+		
+		 imageCarot.setUrl("pixel.png");
+		 imageSmiley1.setUrl("pixel.png");
+		 imageSmiley2.setUrl("pixel.png");
+		 imageSmiley3.setUrl("pixel.png");
+		 imageRegloc.setUrl("pixel.png");
+		 imageBio.setUrl("pixel.png");
+		 imageCarot.setPixelSize(20, 20);
+		 imageSmiley1.setPixelSize(20, 20);
+		 imageSmiley2.setPixelSize(20, 20);
+		 imageSmiley3.setPixelSize(20, 20);
+		 imageRegloc.setPixelSize(20, 20);
+		 imageBio.setPixelSize(20, 20);
+
+		imageCarot.addMouseListener(
+			    new TooltipListener(
+					      "ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageSmiley1.addMouseListener(
+			    new TooltipListener(
+					      "CO₂Äq-Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageSmiley2.addMouseListener(
+			    new TooltipListener(
+					      "CO₂Äq-Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageSmiley3.addMouseListener(
+			    new TooltipListener(
+					      "Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageRegloc.addMouseListener(
+			    new TooltipListener(
+					      "saisonale und regionale Ware", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageBio.addMouseListener(
+			    new TooltipListener(
+					      "biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
 
 	}
 
@@ -286,8 +326,17 @@ public class Search extends ResizeComposite {
 	  @UiHandler("legendAnchor")
 	  public void onLegendClick(ClickEvent event) {
 		  
-		  legendPanel.setStyleName("noen");
+		  legendPanel.setStyleName("legend1");
 		  leftSplitPanel.setWidgetSize(panelSouth, 220);
+		  leftSplitPanel.forceLayout();
+
+	  }
+	  
+	  @UiHandler("legendAnchorClose")
+	  public void onLegendCloseClick(ClickEvent event) {
+		  
+		  legendPanel.setStyleName("legend2");
+		  leftSplitPanel.setWidgetSize(panelSouth, 77);
 		  leftSplitPanel.forceLayout();
 
 	  }
@@ -345,7 +394,7 @@ public class Search extends ResizeComposite {
 		if (FoundRezepte.size() < row){
 			return;
 		}
-		Rezept item = FoundRezepte.get(row);
+		Recipe item = FoundRezepte.get(row);
 		if (item == null) {
 			return;
 		}
@@ -374,7 +423,7 @@ public class Search extends ResizeComposite {
 		if (FoundRezepteYours.size() < row){
 			return;
 		}
-		Rezept item = FoundRezepteYours.get(row);
+		Recipe item = FoundRezepteYours.get(row);
 		if (item == null) {
 			return;
 		}
@@ -510,12 +559,12 @@ public class Search extends ResizeComposite {
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
 		
-//		List<Rezept> allRezepte = getClientData().getPublicRezepte();
+//		List<Recipe> allRezepte = getClientData().getPublicRezepte();
 		if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
 			yourRezeptePanel.setVisible(true);
-//			for(Rezept rezept: getClientData().getYourRezepte()){
-//				if(!allRezepte.contains(rezept)){
-//					allRezepte.add(rezept);
+//			for(Recipe recipe: getClientData().getYourRezepte()){
+//				if(!allRezepte.contains(recipe)){
+//					allRezepte.add(recipe);
 //				}
 //			}
 //			allRezepte.addAll(getClientData().getYourRezepte());
@@ -590,10 +639,10 @@ public class Search extends ResizeComposite {
 					
 					if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
 						yourRezeptePanel.setVisible(true);
-						for(Rezept rezept : getClientData().getYourRezepte()){
-							if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
-								FoundRezepteYours.add(rezept);
-							displayRezept(rezept,true);
+						for(Recipe recipe : getClientData().getYourRezepte()){
+							if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
+								FoundRezepteYours.add(recipe);
+							displayRezept(recipe,true);
 							}
 						}
 					} else {
@@ -601,10 +650,10 @@ public class Search extends ResizeComposite {
 					}
 					
 					if(	getClientData().getPublicRezepte() != null){
-						for(Rezept rezept : getClientData().getPublicRezepte()){
-							if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
-								FoundRezepte.add(rezept);
-							displayRezept(rezept,false);
+						for(Recipe recipe : getClientData().getPublicRezepte()){
+							if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
+								FoundRezepte.add(recipe);
+							displayRezept(recipe,false);
 							}
 						}
 					}
@@ -617,23 +666,23 @@ public class Search extends ResizeComposite {
 		}
 
 	private static void searchRezept(String searchString,
-			List<Rezept> allRezepte, String[] searches, boolean yours) {
+			List<Recipe> allRezepte, String[] searches, boolean yours) {
 		if(allRezepte != null){
-		for(Rezept rezept : allRezepte){
-			if(rezept != null){
-				if( getLevenshteinDistance(rezept.getSymbol(),searchString) < 5){
-					if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
-						// Rezept zu Rezeptsuche
+		for(Recipe recipe : allRezepte){
+			if(recipe != null){
+				if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
+					if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
+						// Recipe zu Rezeptsuche
 						if(yours){
-							FoundRezepteYours.add(rezept);
+							FoundRezepteYours.add(recipe);
 						} else {
-							FoundRezepte.add(rezept);
+							FoundRezepte.add(recipe);
 						}
-						displayRezept(rezept,yours);
+						displayRezept(recipe,yours);
 						
 		// das ist unübersichtlich:
-//						// Zutaten des Rezept Ergerbnis Liste der Zutaten
-//						for(ZutatSpecification zutatSpSuche : rezept.getZutaten() ){
+//						// Zutaten des Recipe Ergerbnis Liste der Zutaten
+//						for(IngredientSpecification zutatSpSuche : recipe.getZutaten() ){
 //							for(Ingredient zutatSuche : getClientData().getIngredients() ){
 //								if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
 //									if(!FoundIngredient.contains(zutatSuche)){
@@ -648,10 +697,10 @@ public class Search extends ResizeComposite {
 					}
 				}
 
-				List<ZutatSpecification> zutatenRezept = rezept.getZutaten();
+				List<IngredientSpecification> zutatenRezept = recipe.getZutaten();
 				if(zutatenRezept != null){
 					int i = 0;
-					for(ZutatSpecification ZutatImRezept : zutatenRezept ){
+					for(IngredientSpecification ZutatImRezept : zutatenRezept ){
 						if(ZutatImRezept != null){
 							
 							for(String search2 : searches){
@@ -661,13 +710,13 @@ public class Search extends ResizeComposite {
 								}
 							}
 							if(i == searches.length){
-								if(!FoundRezepte.contains(rezept) && !FoundRezepteYours.contains(rezept)){
+								if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
 									if(yours){
-										FoundRezepteYours.add(rezept);
+										FoundRezepteYours.add(recipe);
 									} else {
-										FoundRezepte.add(rezept);
+										FoundRezepte.add(recipe);
 									}
-									displayRezept(rezept,yours);
+									displayRezept(recipe,yours);
 								}
 							}
 						}
@@ -709,7 +758,7 @@ public class Search extends ResizeComposite {
 			Collections.sort(FoundRezepte,new RezeptValueComparator());
 			tableMeals.removeAllRows();
 			if(FoundRezepte != null){
-				for (final Rezept item : FoundRezepte){
+				for (final Recipe item : FoundRezepte){
 					displayRezept(item,false);
 				}
 			}
@@ -717,7 +766,7 @@ public class Search extends ResizeComposite {
 			Collections.sort(FoundRezepteYours,new RezeptValueComparator());
 			tableMealsYours.removeAllRows();
 			if(FoundRezepteYours != null){
-				for (final Rezept item : FoundRezepteYours){
+				for (final Recipe item : FoundRezepteYours){
 					displayRezept(item,true);
 				}
 			}
@@ -754,7 +803,7 @@ public class Search extends ResizeComposite {
 			Collections.sort(FoundRezepte,new RezeptNameComparator());
 			tableMeals.removeAllRows();
 			if(FoundRezepte != null){
-				for (final Rezept item : FoundRezepte){
+				for (final Recipe item : FoundRezepte){
 					displayRezept(item,false);
 				}
 			}
@@ -762,7 +811,7 @@ public class Search extends ResizeComposite {
 			Collections.sort(FoundRezepteYours,new RezeptNameComparator());
 			tableMealsYours.removeAllRows();
 			if(FoundRezepteYours != null){
-				for (final Rezept item : FoundRezepteYours){
+				for (final Recipe item : FoundRezepteYours){
 					displayRezept(item,true);
 				}
 			}
@@ -778,14 +827,14 @@ public class Search extends ResizeComposite {
 
 	
 
-	public static void displayRezept(final Rezept rezept, boolean yours) {
+	public static void displayRezept(final Recipe recipe, boolean yours) {
 
 		// TODO no more add Button, but a click on the line is enough ... so when mousehover add a little triangle on top right edge
 //		Button AddRezeptButton = new Button(" + ");
 //		AddRezeptButton.addStyleDependentName("gwt-Button");
 //		AddRezeptButton.addClickHandler(new ClickHandler() {
 //			public void onClick(ClickEvent event) {
-//				EaternityRechner.ShowRezept(rezept);
+//				EaternityRechner.ShowRezept(recipe);
 //			}
 //		});
 		
@@ -797,12 +846,12 @@ public class Search extends ResizeComposite {
 			removeRezeptButton.addStyleDependentName("gwt-Button");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Rezept...");
+					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
 					dlg.statusLabel.setText("löschen?");
 					// TODO recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.removeRezept(rezept);
+							EaternityRechner.removeRezept(recipe);
 							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
 							dlg.hide();
 							dlg.clear();
@@ -815,18 +864,18 @@ public class Search extends ResizeComposite {
 				}
 			});
 			
-			tableMealsYours.setText(row,0,rezept.getSymbol());
+			tableMealsYours.setText(row,0,recipe.getSymbol());
 //			tableMealsYours.setWidget(row, 2, AddRezeptButton);
 			tableMealsYours.setWidget(row, 2, removeRezeptButton);
 			
 			if(EaternityRechner.loginInfo.isAdmin()){
-				if(!rezept.isOpen()){
-//					if(rezept.openRequested){
+				if(!recipe.isOpen()){
+//					if(recipe.openRequested){
 						// this should be a link to make it open
 						Anchor openThis = new Anchor("o");
 						openThis.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-							EaternityRechner.rezeptApproval(rezept,true);
+							EaternityRechner.rezeptApproval(recipe,true);
 							}
 						});
 						tableMealsYours.setWidget(row, 3,openThis);
@@ -836,22 +885,22 @@ public class Search extends ResizeComposite {
 						Anchor closeThis = new Anchor("c");
 						closeThis.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-							EaternityRechner.rezeptApproval(rezept,false);
+							EaternityRechner.rezeptApproval(recipe,false);
 							}
 						});
 						tableMealsYours.setWidget(row, 3,closeThis);
 					}
 			} else {
 
-				if(rezept.isOpen()){
+				if(recipe.isOpen()){
 					tableMealsYours.setText(row, 3,"o");
-				} else if(rezept.openRequested){
+				} else if(recipe.openRequested){
 					tableMealsYours.setText(row, 3,"r");
 				}
 			}
-			rezept.setCO2Value();
+			recipe.setCO2Value();
 
-			String formatted = NumberFormat.getFormat("##").format(rezept.getCO2Value());
+			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
 			tableMealsYours.setText(row, 1,  "ca "+formatted+"g *");
 			
 			if ((row % 2) == 1) {
@@ -863,24 +912,24 @@ public class Search extends ResizeComposite {
 			final int row = tableMeals.getRowCount();
 			HTML item = new HTML();
 			
-			if(rezept.eaternitySelected != null && rezept.eaternitySelected){
+			if(recipe.eaternitySelected != null && recipe.eaternitySelected){
 				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 				item.setStyleName("base-icons carrot");	
 			}
-			if(rezept.regsas != null && rezept.regsas){
+			if(recipe.regsas != null && recipe.regsas){
 				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
 			}
-			if(rezept.bio != null && rezept.bio){
+			if(recipe.bio != null && recipe.bio){
 				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
 			}
 			
-			item.setHTML(item.getHTML()+rezept.getSymbol());
+			item.setHTML(item.getHTML()+recipe.getSymbol());
 			
 			tableMeals.setWidget(row,0,item);
 //			tableMeals.setWidget(row, 2, AddRezeptButton);
 			
 			double MenuLabelWert = 0.0;
-			for (ZutatSpecification zutatSpec : rezept.Zutaten) { 
+			for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			}
 			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
@@ -893,12 +942,12 @@ public class Search extends ResizeComposite {
 			removeRezeptButton.addStyleDependentName("gwt-Button");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Rezept...");
+					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
 					dlg.statusLabel.setText("löschen?");
 					// TODO recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.removeRezept(rezept);
+							EaternityRechner.removeRezept(recipe);
 							tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));
 							dlg.hide();
 							dlg.clear();
@@ -912,13 +961,13 @@ public class Search extends ResizeComposite {
 			});
 			tableMeals.setWidget(row, 2, removeRezeptButton);
 			
-			if(!rezept.isOpen()){
-				if(rezept.openRequested){
+			if(!recipe.isOpen()){
+				if(recipe.openRequested){
 					// TODO this should be a link to make it open
 					Anchor openThis = new Anchor("o");
 					openThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-						EaternityRechner.rezeptApproval(rezept,true);
+						EaternityRechner.rezeptApproval(recipe,true);
 						}
 					});
 					tableMeals.setWidget(row, 3,openThis);
@@ -928,7 +977,7 @@ public class Search extends ResizeComposite {
 					Anchor closeThis = new Anchor("c");
 					closeThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-						EaternityRechner.rezeptApproval(rezept,false);
+						EaternityRechner.rezeptApproval(recipe,false);
 						}
 					});
 					tableMeals.setWidget(row, 3,closeThis);
@@ -1015,11 +1064,11 @@ public class Search extends ResizeComposite {
 
 	
 
-	public void setFoundRezepte(ArrayList<Rezept> foundRezepte) {
+	public void setFoundRezepte(ArrayList<Recipe> foundRezepte) {
 		FoundRezepte = foundRezepte;
 	}
 
-	public ArrayList<Rezept> getFoundRezepte() {
+	public ArrayList<Recipe> getFoundRezepte() {
 		return FoundRezepte;
 	}
 
@@ -1134,8 +1183,8 @@ public class Search extends ResizeComposite {
 //	  }
 //	}
 	
-//	class RezeptValueComparator implements Comparator<Rezept> {
-//		public int compare(Rezept r1, Rezept r2) {
+//	class RezeptValueComparator implements Comparator<Recipe> {
+//		public int compare(Recipe r1, Recipe r2) {
 //			Double o1 = getRezeptCO2(r1.getZutaten());
 //			Double o2 = getRezeptCO2(r2.getZutaten());
 //
@@ -1143,9 +1192,9 @@ public class Search extends ResizeComposite {
 //
 //		}
 //
-//		private Double getRezeptCO2(List<ZutatSpecification> Zutaten) {
+//		private Double getRezeptCO2(List<IngredientSpecification> Zutaten) {
 //			Double MenuLabelWert = 0.0;
-//			for (ZutatSpecification zutatSpec : Zutaten) { 
+//			for (IngredientSpecification zutatSpec : Zutaten) { 
 //				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 //
 //			}
@@ -1153,8 +1202,8 @@ public class Search extends ResizeComposite {
 //		}
 //	}
 //	
-//	class RezeptNameComparator implements Comparator<Rezept> {
-//		  public int compare(Rezept z1, Rezept z2) {
+//	class RezeptNameComparator implements Comparator<Recipe> {
+//		  public int compare(Recipe z1, Recipe z2) {
 //			  String o1 = z1.getSymbol();
 //			  String o2 = z2.getSymbol();
 //		    if(o1 instanceof String && o2 instanceof String) {

@@ -13,9 +13,9 @@ import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.Rezept;
+import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.ZutatSpecification;
+import ch.eaternity.shared.IngredientSpecification;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -165,47 +165,47 @@ public class EaternityRechner implements EntryPoint {
 
 	
 
-	static void addRezept(final Rezept rezept, final RezeptView rezeptView) {
-		rezeptService.addRezept(rezept, new AsyncCallback<Long>() {
+	static void addRezept(final Recipe recipe, final RezeptView rezeptView) {
+		rezeptService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 
 			public void onSuccess(Long id) {
 //Window.alert("good");
-//				Search.displayRezept(rezept);
-				rezept.setId(id);
-				Search.getClientData().getYourRezepte().add(rezept);
+//				Search.displayRezept(recipe);
+				recipe.setId(id);
+				Search.getClientData().getYourRezepte().add(recipe);
 				Search.updateResults(Search.SearchBox2.getText());
 				rezeptView.saved = true;
 				
 			}
 		});
 	}
-	static void removeRezept(final Rezept rezept) {
-		rezeptService.removeRezept(rezept.getId(), new AsyncCallback<Boolean>() {
+	static void removeRezept(final Recipe recipe) {
+		rezeptService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
-				Search.getClientData().getYourRezepte().remove(rezept);
-				if(rezept.isOpen()){
-				Search.getClientData().getPublicRezepte().remove(rezept);
+				Search.getClientData().getYourRezepte().remove(recipe);
+				if(recipe.isOpen()){
+				Search.getClientData().getPublicRezepte().remove(recipe);
 				}
 			}
 		});
 	}
 	
-	static void rezeptApproval(final Rezept rezept, final Boolean approve) {
-		rezeptService.approveRezept(rezept.getId(), approve,new AsyncCallback<Boolean>() {
+	static void rezeptApproval(final Recipe recipe, final Boolean approve) {
+		rezeptService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
 
-				Search.getClientData().getPublicRezepte().remove(rezept);
-				rezept.open = approve;
-				Search.getClientData().getPublicRezepte().add(rezept);
+				Search.getClientData().getPublicRezepte().remove(recipe);
+				recipe.open = approve;
+				Search.getClientData().getPublicRezepte().add(recipe);
 				
 				Search.updateResults(Search.SearchBox2.getText());
 			}
@@ -249,11 +249,11 @@ public class EaternityRechner implements EntryPoint {
 		topPanel.ingredientLink.setVisible(true);
 		
 		// TODO get all the other recipes
-		rezeptService.getAdminRezepte(new AsyncCallback<List<Rezept>>() {
+		rezeptService.getAdminRezepte(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
-			public void onSuccess(List<Rezept> rezepte) {
+			public void onSuccess(List<Recipe> rezepte) {
 				Data data = Search.getClientData();
 				data.setPublicRezepte(rezepte);
 				Search.setClientData(data);
@@ -265,18 +265,18 @@ public class EaternityRechner implements EntryPoint {
 		return adminHandler;
 	}
 
-	public static void ShowRezept(final Rezept rezept) {
+	public static void ShowRezept(final Recipe recipe) {
 		// create a new one
 		
 		styleRezept(selectedRezept, false);
 		
 		selectedRezept = -1;
-		ArrayList<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 		zutaten.clear();
-		for(ZutatSpecification zutatNew : rezept.getZutaten()){
+		for(IngredientSpecification zutatNew : recipe.getZutaten()){
 			
 			// TODO that nothing is missing
-			final ZutatSpecification zutat = new ZutatSpecification(zutatNew.getId(), zutatNew.getName(),
+			final IngredientSpecification zutat = new IngredientSpecification(zutatNew.getId(), zutatNew.getName(),
 					zutatNew.getCookingDate(),zutatNew.getZustand(),zutatNew.getProduktion(), 
 					zutatNew.getTransportmittel());
 			zutat.setDistance(zutatNew.getDistance());
@@ -294,32 +294,32 @@ public class EaternityRechner implements EntryPoint {
 		
 		
 		
-		rezeptView.RezeptName.setText(rezept.getSymbol());
-		if(rezept.getSubTitle() == null){
-			rezeptView.rezept.setSubTitle("Rezept Untertitel");
+		rezeptView.RezeptName.setText(recipe.getSymbol());
+		if(recipe.getSubTitle() == null){
+			rezeptView.recipe.setSubTitle("Recipe Untertitel");
 		} else {
-			rezeptView.rezept.setSubTitle(rezept.getSubTitle());
+			rezeptView.recipe.setSubTitle(recipe.getSubTitle());
 		}
 		
-		rezeptView.rezeptDetails.setText(rezept.getSubTitle());
-		rezeptView.rezept.setSymbol("Ihr " + rezept.getSymbol());
+		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
+		rezeptView.recipe.setSymbol("Ihr " + recipe.getSymbol());
 		
-		rezeptView.rezeptNameTop.setText("Ihr " + rezept.getSymbol());
-		rezeptView.titleHTML.setText(rezept.getSymbol());
+		rezeptView.rezeptNameTop.setText("Ihr " + recipe.getSymbol());
+		rezeptView.titleHTML.setText(recipe.getSymbol());
 		
-		rezeptView.rezeptSubTitleTop.setText(rezept.getSubTitle());
-		rezeptView.makePublic.setValue(!rezept.openRequested);
+		rezeptView.rezeptSubTitleTop.setText(recipe.getSubTitle());
+		rezeptView.makePublic.setValue(!recipe.openRequested);
 		
 		rezeptView.openHTML.setHTML("nicht veröffentlicht");
-		if(rezept.isOpen()){
+		if(recipe.isOpen()){
 			rezeptView.openHTML.setHTML("veröffentlicht");
-		} else if(rezept.openRequested){
+		} else if(recipe.openRequested){
 			rezeptView.openHTML.setHTML("Veröffentlichung angefragt");
 		}
 		
-		if(rezept.getCookInstruction() != null){
-			rezeptView.htmlCooking.setHTML(rezept.getCookInstruction());
-			rezeptView.rezept.setCookInstruction(rezept.getCookInstruction());
+		if(recipe.getCookInstruction() != null){
+			rezeptView.htmlCooking.setHTML(recipe.getCookInstruction());
+			rezeptView.recipe.setCookInstruction(recipe.getCookInstruction());
 		}
 		
 		rezeptView.showImageRezept = new Image();
@@ -333,7 +333,7 @@ public class EaternityRechner implements EntryPoint {
 				rezeptView.menuDecoInfo.remove(rezeptView.showImageRezept);
 				rezeptView.uploadWidget.setVisible(true);
 				rezeptView.bildEntfernen.setVisible(false);
-				rezeptView.rezept.image = null;
+				rezeptView.recipe.image = null;
 			}
     	});
     	
@@ -341,10 +341,10 @@ public class EaternityRechner implements EntryPoint {
     	rezeptView.bildEntfernen.setVisible(false);
 		}
     	
-	    if(rezept.image != null){
-	    	rezeptView.getRezept().image = rezept.image;
+	    if(recipe.image != null){
+	    	rezeptView.getRezept().image = recipe.image;
 	    	rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s150-c");
-//	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ rezept.image.getServingUrl() + "' />"+rezept.getCookInstruction());
+//	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
 //	    	rezeptView.imageUploaderHP.add(showImage);
 	    	
 	    	rezeptView.imagePopUpHandler = rezeptView.showImageRezept.addClickHandler(new ClickHandler() {
@@ -402,11 +402,11 @@ public class EaternityRechner implements EntryPoint {
 					}
 					
 				} else {
-					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezept.getCookInstruction());
+					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+recipe.getCookInstruction());
 					if(rezeptView.getRezept().image != null){
 
 //						rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
-//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezept.getCookInstruction());
+//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+recipe.getCookInstruction());
 						if(rezeptView.showImageHandler == null){
 							rezeptView.showImageHandler = rezeptView.showImageRezept.addLoadHandler(new LoadHandler(){
 								@Override
@@ -415,7 +415,7 @@ public class EaternityRechner implements EntryPoint {
 										rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
 
 										//				rezeptView.detailText.setHeight(height)
-										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.rezept.getCookInstruction());
+										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.recipe.getCookInstruction());
 										rezeptView.askForLess2 = false;
 									}
 								}
@@ -442,19 +442,19 @@ public class EaternityRechner implements EntryPoint {
 	    
 	    rezeptView.menuDecoInfo.insert(mehrDetails,1);
 	   
-	    if(rezept.getPersons() != null){
-	    	 rezeptView.rezept.setPersons(rezept.getPersons());	    	
+	    if(recipe.getPersons() != null){
+	    	 rezeptView.recipe.setPersons(recipe.getPersons());	    	
 	    } else {
-	    	rezeptView.rezept.setPersons(4l);
+	    	rezeptView.recipe.setPersons(4l);
 	    }
-	    rezeptView.amountPersons.setText(rezeptView.rezept.getPersons().toString());
+	    rezeptView.amountPersons.setText(rezeptView.recipe.getPersons().toString());
 	    
-	    rezeptView.cookingInstr.setText(rezept.getCookInstruction());
+	    rezeptView.cookingInstr.setText(recipe.getCookInstruction());
 //	    rezeptView.showRezept(rezeptView.rezept);
-	    rezeptView.showRezept(rezeptView.rezept);
+	    rezeptView.showRezept(rezeptView.recipe);
 	    rezeptView.saved = true;
-	    if(loginInfo.isAdmin() && rezept.getEmailAddressOwner() != null ) {
-	    	rezeptView.savedHTML.setHTML("gespeichert von "+rezept.getEmailAddressOwner());
+	    if(loginInfo.isAdmin() && recipe.getEmailAddressOwner() != null ) {
+	    	rezeptView.savedHTML.setHTML("gespeichert von "+recipe.getEmailAddressOwner());
 		} else {
 			rezeptView.savedHTML.setHTML("gespeichert");
 		}
@@ -463,13 +463,13 @@ public class EaternityRechner implements EntryPoint {
 	
 	@UiHandler("addRezeptButton")
 	public void onButtonPress(ClickEvent event) {
-		Rezept rezept = new Rezept();
-		rezept.setSymbol("unbenanntes Rezept");
-		rezept.setSubTitle(" ");
-		rezept.setCookInstruction("keine Kochanleitung.");
-		rezept.open = false;
-		rezept.openRequested = true;
-		ShowRezept(rezept);	
+		Recipe recipe = new Recipe();
+		recipe.setSymbol("unbenanntes Recipe");
+		recipe.setSubTitle(" ");
+		recipe.setCookInstruction("keine Kochanleitung.");
+		recipe.open = false;
+		recipe.openRequested = true;
+		ShowRezept(recipe);	
 	}
 	
 	@UiHandler("rezeptList")
@@ -511,27 +511,27 @@ public class EaternityRechner implements EntryPoint {
 				stdExtraction = extraction;
 			}
 		}
-		ZutatSpecification zutatSpecification = new ZutatSpecification(item.getId(), item.getSymbol(),
+		IngredientSpecification ingredientSpecification = new IngredientSpecification(item.getId(), item.getSymbol(),
 				 new Date(),stdExtraction.stdCondition, stdExtraction.stdProduction, 
 				 stdExtraction.stdMoTransportation);
-		zutatSpecification.setHerkunft(stdExtraction);
-		zutatSpecification.setMengeGramm(item.stdAmountGramm);
-		zutatSpecification.setSeason(stdExtraction.startSeason, stdExtraction.stopSeason);
-		zutatSpecification.setNormalCO2Value(item.getCo2eValue());
-		ArrayList<ZutatSpecification> zutaten = new ArrayList<ZutatSpecification>();
+		ingredientSpecification.setHerkunft(stdExtraction);
+		ingredientSpecification.setMengeGramm(item.stdAmountGramm);
+		ingredientSpecification.setSeason(stdExtraction.startSeason, stdExtraction.stopSeason);
+		ingredientSpecification.setNormalCO2Value(item.getCo2eValue());
+		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 		
 		
-		zutaten.add(zutatSpecification);
+		zutaten.add(ingredientSpecification);
 		int row = AddZutatZumMenu(zutaten);
 		
 		return row;
 	}
 
-	static int AddZutatZumMenu(final ArrayList<ZutatSpecification> zutatenNew) {
-		ArrayList<ZutatSpecification> zutaten = (ArrayList<ZutatSpecification>) zutatenNew.clone();
-		ListIterator<ZutatSpecification> iterator = zutaten.listIterator();
+	static int AddZutatZumMenu(final ArrayList<IngredientSpecification> zutatenNew) {
+		ArrayList<IngredientSpecification> zutaten = (ArrayList<IngredientSpecification>) zutatenNew.clone();
+		ListIterator<IngredientSpecification> iterator = zutaten.listIterator();
 		while(iterator.hasNext()){
-			ZutatSpecification zutatSpec = iterator.next();
+			IngredientSpecification zutatSpec = iterator.next();
 			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
 				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
@@ -545,8 +545,8 @@ public class EaternityRechner implements EntryPoint {
 		}
 		RezeptView rezeptView;
 		if (selectedRezept == -1){
-			// create new Rezept
-			Rezept newRezept = new Rezept();
+			// create new Recipe
+			Recipe newRezept = new Recipe();
 			selectedRezept = 0;
 			rezeptList.insertRow(0);
 			
@@ -555,7 +555,7 @@ public class EaternityRechner implements EntryPoint {
 			newRezept.addZutaten(zutaten);
 			rezeptView = new RezeptView(newRezept);
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
-			rezeptList.getRowFormatter().setStyleName(0, "rezept");
+			rezeptList.getRowFormatter().setStyleName(0, "recipe");
 			styleRezept(selectedRezept, true);
 			
 			// is it necessary to have a worksheet or is rezeptList already containing everything?
@@ -564,17 +564,17 @@ public class EaternityRechner implements EntryPoint {
 		} else {
 			// get the old one
 			rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
-			Rezept rezept = rezeptView.getRezept();
+			Recipe recipe = rezeptView.getRezept();
 			
 			// maybe same as above
 			//zutaten.addAll(zutaten);
-			rezept.addZutaten(zutaten);
-			rezeptView.setRezept(rezept);
+			recipe.addZutaten(zutaten);
+			rezeptView.setRezept(recipe);
 //			rezeptList.setWidget(selectedRezept, 1, rezeptView);
 			//worksheet.set(selectedRezept, rezeptView);
 		}
 		// is this necessary?
-		rezeptView.showRezept(rezeptView.rezept);
+		rezeptView.showRezept(rezeptView.recipe);
 		
 		return selectedRezept;
 	}
@@ -613,11 +613,11 @@ public class EaternityRechner implements EntryPoint {
 	
 
 	private void loadYourRezepte() {
-		rezeptService.getYourRezepte(new AsyncCallback<List<Rezept>>() {
+		rezeptService.getYourRezepte(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
-			public void onSuccess(List<Rezept> rezepte) {
+			public void onSuccess(List<Recipe> rezepte) {
 				
 				addClientDataRezepte(rezepte);
 //				displayRezepte(rezepte);
@@ -625,11 +625,11 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 
-	private void displayRezepte(List<Rezept> rezepte) {
-		for (Rezept rezept : rezepte) {
-			if(rezept != null){ //why can it be 0?
+	private void displayRezepte(List<Recipe> rezepte) {
+		for (Recipe recipe : rezepte) {
+			if(recipe != null){ //why can it be 0?
 //				TODO wtf is this?
-				Search.displayRezept(rezept,false);
+				Search.displayRezept(recipe,false);
 			}
 		}
 	}
@@ -663,7 +663,7 @@ public class EaternityRechner implements EntryPoint {
 		EaternityRechner.clientData = clientData;
 	}
 	
-	public static void addClientDataRezepte(List<Rezept> yourRezepte) {
+	public static void addClientDataRezepte(List<Recipe> yourRezepte) {
 		EaternityRechner.clientData.setYourRezepte(yourRezepte);
 	}
 
@@ -677,8 +677,8 @@ public class EaternityRechner implements EntryPoint {
 		for( Widget rezeptViewWidget : rezeptList){
 			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
 			rezeptView.updateSaison();
-			for(ZutatSpecification zutat : rezeptView.rezept.getZutaten()){
-				rezeptView.changeIcons(rezeptView.rezept.getZutaten().indexOf(zutat), zutat);
+			for(IngredientSpecification zutat : rezeptView.recipe.getZutaten()){
+				rezeptView.changeIcons(rezeptView.recipe.getZutaten().indexOf(zutat), zutat);
 			}
 		}
 	}
