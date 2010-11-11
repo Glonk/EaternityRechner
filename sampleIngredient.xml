@@ -8,174 +8,153 @@ factor is always the amount of CO2 associated with 1kg of the ingredient
  -->
 
 <Ingredients>
-
-	<ingredient>
-		<id>1</id>
-		<symbol>Tomate</symbol>
-		<co2eValue>200</co2eValue>
-		
-		<Alternatives>
-			<zutatId>2</zutatId>
-		</Alternatives>
-
-		<stdAmountGramm>100</stdAmountGramm>
-		<stdExtraction>Deutschland</stdExtraction>
-		
-		<hasSeason>true</hasSeason>
-		
-		<Extractions>
-			<extraction>
-				<symbol>Deutschland</symbol>
-				<startSeason>01.10</startSeason>
-				<stopSeason>21.03</stopSeason>
-				
-				<condition>frisch</condition>
-				<production>konventionell</production>
-				<moTransportation>LKW</moTransportation>
-
-				<Labels>
-					<label>naturaplan</label>
-				</Labels>
-			</extraction>
-		</Extractions>
-
-		<Conditions>
-			<condition>
-				<symbol>frisch</symbol>
-				<factor>1</factor>
-			</condition>
-			<condition>
-				<symbol>tiefgekühlt</symbol>
-				<factor>1.3</factor>
-			</condition>
-			<condition>
-				<symbol>getrocknet</symbol>
-				<factor>1.1</factor>
-			</condition>
-		</Conditions>
-		
-		<Productions>
-			<production>
-				<symbol>konventionell</symbol>
-				<factor>1</factor>
-			</production>
-			<production>
-				<symbol>BIO</symbol>
-				<factor>0.9</factor>
-			</production>
-			<production>
-				<symbol>Treibhaus</symbol>
-				<factor>1.9</factor>
-			</production>
-		</Productions>
-		
-		<Transportation>
-			<moTransportation>
-				<symbol>LKW</symbol>
-				<factor>1</factor>
-			</moTransportation>
-			<moTransportation>
-				<symbol>Schiff - Fluss</symbol>
-				<factor>0.1</factor>
-			</moTransportation>
-			<moTransportation>
-				<symbol>Zug</symbol>
-				<factor>0.8</factor>
-			</moTransportation>
-		</Transportation>
-		
-	</ingredient>
-	
-	<ingredient>
-		<id>2</id>
-		<symbol>Mozarella</symbol>
-		<co2eValue>700</co2eValue>
-		
-		<Alternatives>
-			<zutatId>1</zutatId>
-		</Alternatives>
-
-		<stdAmountGramm>100</stdAmountGramm>
-		<stdExtraction>Deutschland</stdExtraction>
-		
-		<hasSeason>true</hasSeason>
-		
-		<Extractions>
-			<extraction>
-				<symbol>Deutschland</symbol>
-				<startSeason>01.10</startSeason>
-				<stopSeason>21.03</stopSeason>
-				
-				<condition>frisch</condition>
-				<production>konventionell</production>
-				<moTransportation>LKW</moTransportation>
-
-				<Labels>
-					<label>naturaplan</label>
-				</Labels>
-			</extraction>
-			<extraction>
-				<symbol>Portugal</symbol>
-				<startSeason>01.10</startSeason>
-				<stopSeason>21.03</stopSeason>
-				
-				<condition>frisch</condition>
-				<production>konventionell</production>
-				<moTransportation>LKW</moTransportation>
-
-				<Labels>
-					<label>naturaplan</label>
-				</Labels>
-			</extraction>
-		</Extractions>
-
-		<Conditions>
-			<condition>
-				<symbol>frisch</symbol>
-				<factor>1</factor>
-			</condition>
-			<condition>
-				<symbol>tiefgekühlt</symbol>
-				<factor>1.3</factor>
-			</condition>
-			<condition>
-				<symbol>getrocknet</symbol>
-				<factor>1.1</factor>
-			</condition>
-		</Conditions>
-		
-		<Productions>
-			<production>
-				<symbol>konventionell</symbol>
-				<factor>1</factor>
-			</production>
-			<production>
-				<symbol>BIO</symbol>
-				<factor>0.9</factor>
-			</production>
-			<production>
-				<symbol>Treibhaus</symbol>
-				<factor>1.9</factor>
-			</production>
-		</Productions>
-		
-		<Transportation>
-			<moTransportation>
-				<symbol>LKW</symbol>
-				<factor>1</factor>
-			</moTransportation>
-			<moTransportation>
-				<symbol>Schiff - Fluss</symbol>
-				<factor>0.1</factor>
-			</moTransportation>
-			<moTransportation>
-				<symbol>Zug</symbol>
-				<factor>0.8</factor>
-			</moTransportation>
-		</Transportation>
-		
-	</ingredient>
-	
-	
-
+ <ingredient>
+      <id>101</id>
+      <symbol>Tomate</symbol>
+      <co2eValue>0.33</co2eValue>
+      <Alternatives>
+         <zutatId>115</zutatId>
+         <zutatId>122</zutatId>
+      </Alternatives>
+      <hasSeason>true</hasSeason>
+      <category>Gemüse und Obst</category>
+      <stdAmountGramm>100</stdAmountGramm>
+      <stdExtraction>Schweiz</stdExtraction>
+      <Extractions>
+         <extraction>
+             <symbol>Schweiz</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Marokko</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Frankreich</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Italien</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Spanien</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Niederlande</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Belgien</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+         <extraction>
+             <symbol>Deutschland</symbol>
+		<startSeason>15.06</startSeason>
+		<stopSeason>01.11</stopSeason>
+		<condition>frisch</condition>
+		<production>konventionell</production>
+		<moTransportation>LKW</moTransportation>
+		<Labels>
+			<label>nologo</label>
+		</Labels>
+         </extraction>
+      </Extractions>
+      <Conditions>
+         <condition>
+             <symbol>frisch</symbol>
+             <factor>0</factor>
+         </condition>
+         <condition>
+             <symbol>getrocknet</symbol>
+             <factor>3.12</factor>
+         </condition>
+      </Conditions>
+      <Productions>
+         <production>
+             <symbol>konventionell</symbol>
+             <factor>0</factor>
+         </production>
+         <production>
+             <symbol>GH</symbol>
+             <factor>2.87</factor>
+         </production>
+         <production>
+             <symbol>Bio</symbol>
+             <factor>-0.1</factor>
+         </production>
+      </Productions>
+      <Transportation>
+         <moTransportation>
+             <symbol>LKW</symbol>
+             <factor>0.188</factor>
+         </moTransportation>
+         <moTransportation>
+             <symbol>Zug</symbol>
+             <factor>0.014</factor>
+         </moTransportation>
+         <moTransportation>
+             <symbol>Schiff</symbol>
+             <factor>0.011</factor>
+         </moTransportation>
+         <moTransportation>
+             <symbol>Fluss</symbol>
+             <factor>0.046</factor>
+         </moTransportation>
+         <moTransportation>
+             <symbol>Flugzeug</symbol>
+             <factor>1.105</factor>
+         </moTransportation>
+      </Transportation>
+   </ingredient>
 </Ingredients>
