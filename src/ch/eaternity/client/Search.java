@@ -613,7 +613,9 @@ public class Search extends ResizeComposite {
 									}
 								}
 							}
+							break;
 						}
+						
 					}
 				}
 				// Rezepte
