@@ -764,26 +764,33 @@ public class RezeptView extends Composite {
 		
 		// get Comparator
 		ArrayList<ComparatorObject> comparator = comparator(recipe);
+		// comparator returns for each ingedient:
+		// (zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
+		
 		Double maxScore = 0.0;
 		for(ComparatorObject comparatorObject : comparator){
 			maxScore = maxScore+comparatorObject.value;
 		}
+		// this is the sum over all those ingredient values
+		// which equals about the number of different ingredients in the recipe...
 		
 		
 		// all Recipes
 		List<Recipe> allRecipes = new ArrayList<Recipe>();
 		allRecipes.clear();
+		// display context information...
 		Recipe compare = recipe;
 		compare.setSelected(true);
 		if(recipe.getSymbol() == null){
 			compare.setSymbol("Ihr Menu");
 		}
-		
 		if(recipe.getSubTitle() == null){
 			compare.setSubTitle("just like that");
 		}
 		
+		// add your specific recipe to the others in the database
 		allRecipes.add(compare);
+		// and all the others also
 		allRecipes.addAll( Search.getClientData().getPublicRezepte());
 		if(Search.getClientData().getYourRezepte() != null){
 			allRecipes.addAll(Search.getClientData().getYourRezepte());
@@ -794,9 +801,11 @@ public class RezeptView extends Composite {
 		// zuerst der Filter über die tatsächlichen Zutaten
 		ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
 		scoreMap.clear();
+		
+		// Init first boundaries, for indicator
 		Double MaxValueRezept = 0.0;
 		Double MinValueRezept = 10000000.0;
-		// first go over the Recipes in the Workspace
+		//  go over the Recipes in the Workspace
 		for(Widget widget : EaternityRechner.rezeptList){
 			RezeptView rezeptView = (RezeptView) widget;
 			rezeptView.recipe.setCO2Value();
@@ -808,8 +817,10 @@ public class RezeptView extends Composite {
 			}
 		}
 		
+		// go over the recipes in the database ( here our special one is already included...)
 		for( Recipe compareRecipe : allRecipes){
 			
+			// this is just to get the min and max values for the indicator
 			compareRecipe.setCO2Value();
 			if(compareRecipe.getCO2Value()>MaxValueRezept){
 				MaxValueRezept = compareRecipe.getCO2Value();
@@ -821,12 +832,21 @@ public class RezeptView extends Composite {
 			ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
 			comparatorRecipe.key = compareRecipe.getId();
 			comparatorRecipe.recipe = compareRecipe;
+			// get the direct comparison score... the bigger the worse...
 			comparatorRecipe.comparator = getExactScore(comparator,comparator(compareRecipe));
+			
+			// error is the max score of both added together, minus twice the disjunct region
+			
 			Double error = 0.0;
+			Double errorNeg = 0.0;
 			for(ComparatorObject comparatorObject : comparatorRecipe.comparator){
 				error = error+Math.abs(comparatorObject.value);
+				if(comparatorObject.value<0){
+					errorNeg = errorNeg+Math.abs(comparatorObject.value);
+				}
 			}
 			comparatorRecipe.value = error;
+			comparatorRecipe.valueNeg = errorNeg;
 			scoreMap.add(comparatorRecipe);
 		}
 		
@@ -834,13 +854,23 @@ public class RezeptView extends Composite {
 		ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
 		scoreMap2.clear();
 		for(ComparatorRecipe compRecipe: scoreMap){
-			// TODO 0.8 IS JUST A GUESS
-			if((compRecipe.value/maxScore)<0.8){ // this is min. 20% identical
+			// this is cool now!
+			if((compRecipe.value/(maxScore+compRecipe.valueNeg))<0.8){ // this is min. 20% identical _____==overlap==-----
+//			if((compRecipe.value)<0.8){ // this is min. 20% identical
 				Recipe compareRecipe = compRecipe.recipe;
 				ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
 				comparatorRecipe.recipe = compareRecipe;
 				comparatorRecipe.key = compareRecipe.getId();
-				comparatorRecipe.value = getAltScore(compRecipe);
+				// TODO here we got some error...
+				comparatorRecipe.value = getAltScore(compRecipe,maxScore);
+				Double errorNeg = 0.0;
+				for(ComparatorObject comparatorObject : compRecipe.comparator){
+					if(comparatorObject.value<0){
+						errorNeg = errorNeg+Math.abs(comparatorObject.value);
+					}
+				}
+				comparatorRecipe.valueNeg = errorNeg;
+				
 				scoreMap2.add(comparatorRecipe);
 			}
 		}
@@ -851,7 +881,8 @@ public class RezeptView extends Composite {
 		scoreMapFinal.clear();
 		for(ComparatorRecipe compRecipe: scoreMap2){
 			// TODO 0.6 IS JUST A GUESS
-			if((compRecipe.value/maxScore)<0.6){ // this is min. 20% identical and min. 60% alternative Identity
+//			if((compRecipe.value/maxScore)<0.6){ // this is min. 20% identical and min. 60% alternative Identity
+			if((compRecipe.value/(maxScore+compRecipe.valueNeg))<0.6){ // this is min. 20% identical and min. 60% alternative Identity
 				
 				compRecipe.recipe.setCO2Value();
 				scoreMapFinal.add(compRecipe);
@@ -957,7 +988,7 @@ public class RezeptView extends Composite {
 	
 	
 	
-	private Double getAltScore(ComparatorRecipe compRecipe) {
+	private Double getAltScore(ComparatorRecipe compRecipe, Double maxScore) {
 		// check for all the stuff thats negative: that means we had to much in the compareRecipe
 		// and check for all the alternatives of the negative one, if there is something left in the positive
 		ArrayList<ComparatorObject> resultComparator = null;
@@ -968,22 +999,23 @@ public class RezeptView extends Composite {
 			changed = false;
 			for(ComparatorObject compObj: resultComparator){
 				if(compObj.ingredient.getAlternatives() != null){
-					if(Math.abs(compObj.value)>0.1){
+					if((Math.abs(compObj.value)/(maxScore+compRecipe.valueNeg))>0.1){
 						// we take 10% as a tolerance value
 						for(Long altIngredientId :compObj.ingredient.getAlternatives()){
 							for(ComparatorObject compObj2: resultComparator){
 								if(altIngredientId.equals(compObj2.key)){
-									if((compObj.value+compObj2.value)<0.1){
+									if(Math.abs(compObj2.value)>0 && Math.abs(compObj.value+compObj2.value)<0.1){
 										// this means we have min. 10% improvement ( to have a converging situation)
 
 										int subtractHere = compRecipe.comparator.indexOf(compObj2);
 										int addHere = compRecipe.comparator.indexOf(compObj);
-										compObj2.value = compObj2.value-compObj.value;
-										compObj.value = compObj.value-compObj2.value;
-										compRecipe.comparator.set(subtractHere, compObj2);						
-										compRecipe.comparator.set(addHere, compObj);	
+										compObj2.value = compObj2.value+compObj.value;
+										compObj.value = compObj2.value;
+										resultComparator.set(subtractHere, compObj2);						
+										resultComparator.set(addHere, compObj);	
 
 										changed = true;
+										break;
 									}
 								}
 							}
@@ -996,26 +1028,28 @@ public class RezeptView extends Composite {
 		}
 		
 		
-		Double errorOrig = 0.0;
-		for(ComparatorObject comparatorObject : compRecipe.comparator){
-			errorOrig = errorOrig+Math.abs(comparatorObject.value);
-		}
-		
+		Double errorOrig = compRecipe.value;
+//		for(ComparatorObject comparatorObject : compRecipe.comparator){
+//			errorOrig = errorOrig+Math.abs(comparatorObject.value);
+//		}
+//		
 		Double errorHere = 0.0;
+		Double errorNeg = 0.0;
 		for(ComparatorObject comparatorObject : resultComparator){
 			errorHere = errorHere+Math.abs(comparatorObject.value);
 		}
 		
 
-		// return value should be the absolut values but just 1/3 of the score...
+		// return value should be the absolut values but 1/3 of the score...
 		// TODO 1/3 IS JUST A GUESS
-		return errorOrig+(errorOrig-errorHere)/3;
+		return errorHere;
 	}
 
 
 	private ArrayList<ComparatorObject> getExactScore(ArrayList<ComparatorObject> recipeOrigin, ArrayList<ComparatorObject> recipeComparator) {
 		
 		ArrayList<ComparatorObject> resultComparator = new ArrayList<ComparatorObject>();
+		resultComparator.clear();
 		
 		// takes this Recipe from this RezeptView
 		for(ComparatorObject comparatorObjectOrigin : recipeOrigin){
@@ -1024,7 +1058,8 @@ public class RezeptView extends Composite {
 			
 			ComparatorObject comparatorResultObject = new ComparatorObject();
 			// this is the positive error
-			// we have something in the origin, but not in the compare
+			// if we have something in the origin, but not in the compare
+			// we start with the maximum error
 			double newValue = comparatorObjectOrigin.value;
 			comparatorResultObject.key = comparatorObjectOrigin.key;
 			comparatorResultObject.ingredient  = comparatorObjectOrigin.ingredient;
@@ -1032,11 +1067,13 @@ public class RezeptView extends Composite {
 			// with the one from the database
 			for(ComparatorObject comparatorObject :recipeComparator){
 				
-				// on match
+				// on match - we substract this match...
 				if(comparatorObject.key.equals(comparatorObjectOrigin.key)){	
 					// calculate the error value
 					newValue = comparatorObjectOrigin.value-comparatorObject.value;
 					// if this is negative, we had too much of this in the compare
+					
+					// break for speed up ( as the map is injective)
 					break;
 				}
 			}
@@ -1077,7 +1114,7 @@ public class RezeptView extends Composite {
 		// everything would have been so easy!!
 		
 		 ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
-	
+		 recipeComparator.clear();
 		
 		for(IngredientSpecification zutatSpec : recipe.Zutaten){
 			Ingredient zutat = Search.getClientData().getIngredientByID(zutatSpec.getZutat_id());
@@ -1173,15 +1210,7 @@ public class RezeptView extends Composite {
 	      panelImages.add(image);
 	    }
 	  };
-
-	
-	
-	
-	
-	
-	
 }
-
 
 //class ComparatorObject{
 //	public Long key;

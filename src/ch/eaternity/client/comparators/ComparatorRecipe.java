@@ -9,6 +9,7 @@ public class ComparatorRecipe {
 	public Double value;
 	public Recipe recipe;
 	public ArrayList<ComparatorObject> comparator;
+	public Double valueNeg;
 	public ComparatorRecipe(){
 		
 	}
