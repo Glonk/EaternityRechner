@@ -377,14 +377,14 @@ public class Search extends ResizeComposite {
 //		table.getColumnFormatter().setWidth(1, "80px");
 //		table.getColumnFormatter().setWidth(2, "40px");
 		
-		tableMeals.getColumnFormatter().setWidth(0, "130px");
-		tableMeals.getColumnFormatter().setWidth(1, "70px");
+		tableMeals.getColumnFormatter().setWidth(0, "120px");
+//		tableMeals.getColumnFormatter().setWidth(1, "70px");
 //		tableMeals.getColumnFormatter().setWidth(2, "40px");
 		
-		tableMealsYours.getColumnFormatter().setWidth(0, "80px");
-		tableMealsYours.getColumnFormatter().setWidth(1, "40px");
-		tableMealsYours.getColumnFormatter().setWidth(2, "15px");
-		tableMealsYours.getColumnFormatter().setWidth(3, "15px");
+		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
+//		tableMealsYours.getColumnFormatter().setWidth(1, "2px");
+//		tableMealsYours.getColumnFormatter().setWidth(2, "15px");
+//		tableMealsYours.getColumnFormatter().setWidth(3, "15px");
 //		tableMealsYours.getColumnFormatter().setWidth(4, "15px");
 		
 	}
@@ -844,8 +844,11 @@ public class Search extends ResizeComposite {
 		if(yours){
 			final int row = tableMealsYours.getRowCount();
 			
-			Button removeRezeptButton = new Button(" - ");
-			removeRezeptButton.addStyleDependentName("gwt-Button");
+			
+//			Button removeRezeptButton = new Button(" - ");
+//			removeRezeptButton.addStyleDependentName("gwt-Button");
+			
+			Anchor removeRezeptButton = new Anchor(" - ");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
@@ -865,10 +868,37 @@ public class Search extends ResizeComposite {
 					
 				}
 			});
+//			tableMealsYours.setWidget(row, 2, removeRezeptButton);
 			
-			tableMealsYours.setText(row,0,recipe.getSymbol());
+//			tableMealsYours.setText(row,0,recipe.getSymbol());
 //			tableMealsYours.setWidget(row, 2, AddRezeptButton);
-			tableMealsYours.setWidget(row, 2, removeRezeptButton);
+			
+			
+
+			
+//			tableMealsYours.setText(row, 1,  "ca "+formatted+"g *");
+			
+			HTML item = new HTML();
+			
+			if(recipe.eaternitySelected != null && recipe.eaternitySelected){
+				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+				item.setStyleName("base-icons carrot");	
+			}
+			if(recipe.regsas != null && recipe.regsas){
+				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+			if(recipe.bio != null && recipe.bio){
+				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+			
+			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
+			tableMealsYours.setWidget(row,0,item);
+			
+			recipe.setCO2Value();
+			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
+			item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ "g* ("+removeRezeptButton+")</div>");
+			
+			
 			
 			if(EaternityRechner.loginInfo.isAdmin()){
 				if(!recipe.isOpen()){
@@ -894,16 +924,14 @@ public class Search extends ResizeComposite {
 					}
 			} else {
 
-				if(recipe.isOpen()){
-					tableMealsYours.setText(row, 3,"o");
-				} else if(recipe.openRequested){
-					tableMealsYours.setText(row, 3,"r");
-				}
+				// how to show, that this recipe is public??
+//				if(recipe.isOpen()){
+//					tableMealsYours.setText(row, 3,"o");
+//				} else if(recipe.openRequested){
+//					tableMealsYours.setText(row, 3,"r");
+//				}
+				
 			}
-			recipe.setCO2Value();
-
-			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
-			tableMealsYours.setText(row, 1,  "ca "+formatted+"g *");
 			
 			if ((row % 2) == 1) {
 				String style = evenStyleRow.evenRow();
@@ -925,7 +953,7 @@ public class Search extends ResizeComposite {
 				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
 			}
 			
-			item.setHTML(item.getHTML()+recipe.getSymbol());
+			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
 			
 			tableMeals.setWidget(row,0,item);
 //			tableMeals.setWidget(row, 2, AddRezeptButton);
@@ -936,7 +964,9 @@ public class Search extends ResizeComposite {
 			}
 			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 //			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
-			tableMeals.setText(row, 1,  "ca "+formatted+"g *");
+//			tableMeals.setText(row, 1,  "ca "+formatted+"g*");
+			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ "g*</div>");
+			
 			
 			if(EaternityRechner.loginInfo.isAdmin()){
 

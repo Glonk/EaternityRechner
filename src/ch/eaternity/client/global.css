@@ -111,7 +111,7 @@ width: 100%;
 	padding: 8px 24px 24px 14px;
 	border-top: 1.5px outset #fff;
 	
-	background-image:url('tooltip2.png');
+	background-image:url('tooltip3.png');
 	background-repeat:no-repeat;
 	background-position: left bottom;
 
@@ -123,6 +123,22 @@ float: right;
 margin-left: -65px;
 margin-right: 20px;
 width: 65px;
+	
+	/*
+	margin-left:-85px;
+	background:#fff;
+	border: .5px outset #ccc;
+	
+	*/
+	
+	}
+	
+	.putRight2{
+	display: inline;
+float: right;
+margin-left: -65px;
+margin-right: 20px;
+width: 85px;
 	
 	/*
 	margin-left:-85px;
