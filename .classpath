@@ -5,13 +5,27 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/auth.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/baseViewerImpl.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-2.2.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-2.2.3.jar" sourcepath="/Users/manuel/Documents/workspace/objectify-2.2.3/src">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/Users/manuel/Documents/workspace/objectify-2.2.3/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtupload-0.6.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtupload-gae-0.6.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-1.4.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT (3)"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT (7)"/>
+	<classpathentry kind="lib" path="/Users/manuel/Documents/workspace/EaternityRechner/war/WEB-INF/lib/gwt-maps-1.1.jar"/>
+	<classpathentry kind="lib" path="/Applications/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.1.0_2.1.0.v201010280047/gwt-2.1.0/gwt-user.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/Applications/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.1.0_2.1.0.v201010280047/gwt-2.1.0/doc/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Applications/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.1.0_2.1.0.v201010280047/gwt-2.1.0/gwt-dev.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/Applications/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.1.0_2.1.0.v201010280047/gwt-2.1.0/doc/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
