@@ -54,7 +54,7 @@ public class DAO extends DAOBase
         Query<Ingredient> found = ofy().query(Ingredient.class);
         
         
-        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>(found.countAll());
+        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>(found.count());
 
         QueryResultIterator<Ingredient> iterator = found.iterator();
         while (iterator.hasNext()) {

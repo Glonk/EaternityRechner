@@ -382,8 +382,8 @@ public class Search extends ResizeComposite {
 		//		tableMeals.getColumnFormatter().setWidth(2, "40px");
 
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
-//				tableMealsYours.getColumnFormatter().setWidth(1, "4px");
-		//		tableMealsYours.getColumnFormatter().setWidth(2, "15px");
+				tableMealsYours.getColumnFormatter().setWidth(1, "10px");
+				tableMealsYours.getColumnFormatter().setWidth(2, "10px");
 		//		tableMealsYours.getColumnFormatter().setWidth(3, "15px");
 		//		tableMealsYours.getColumnFormatter().setWidth(4, "15px");
 
@@ -845,15 +845,15 @@ public class Search extends ResizeComposite {
 			final int row = tableMealsYours.getRowCount();
 
 
-			//			Button removeRezeptButton = new Button(" - ");
-			//			removeRezeptButton.addStyleDependentName("gwt-Button");
+//						Button removeRezeptButton = new Button(" - ");
+//						removeRezeptButton.addStyleDependentName("gwt-Button");
 
 			Anchor removeRezeptButton = new Anchor(" - ");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
 					dlg.statusLabel.setText("löschen?");
-					// TODO recheck user if he really want to do this...
+					//  recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							EaternityRechner.removeRezept(recipe);
@@ -868,7 +868,7 @@ public class Search extends ResizeComposite {
 
 				}
 			});
-			//			tableMealsYours.setWidget(row, 2, removeRezeptButton);
+			tableMealsYours.setWidget(row, 1, removeRezeptButton);
 
 			//			tableMealsYours.setText(row,0,recipe.getSymbol());
 			//			tableMealsYours.setWidget(row, 2, AddRezeptButton);
@@ -876,7 +876,7 @@ public class Search extends ResizeComposite {
 
 
 
-			//			tableMealsYours.setText(row, 1,  "ca "+formatted+"g*");
+			//			tableMealsYours.setText(row, 1,  "ca "+formatted+" g*");
 
 			HTML item = new HTML();
 
@@ -896,7 +896,7 @@ public class Search extends ResizeComposite {
 
 			recipe.setCO2Value();
 			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
-			item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ "g* ("+removeRezeptButton+")</div>");
+			item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g*</div>");
 
 
 
@@ -910,8 +910,8 @@ public class Search extends ResizeComposite {
 							EaternityRechner.rezeptApproval(recipe,true);
 						}
 					});
-//					tableMealsYours.setWidget(row, 1,openThis);
-					item.setHTML(openThis+" "+item.getHTML());
+					tableMealsYours.setWidget(row, 2,openThis);
+//					item.setHTML(openThis+" "+item.getHTML());
 					//					}
 				} else {
 					// this should be a link to make it close
@@ -921,17 +921,17 @@ public class Search extends ResizeComposite {
 							EaternityRechner.rezeptApproval(recipe,false);
 						}
 					});
-//					tableMealsYours.setWidget(row, 1,closeThis);
-					item.setHTML(closeThis+" "+item.getHTML());
+					tableMealsYours.setWidget(row, 2,closeThis);
+//					item.setHTML(closeThis+" "+item.getHTML());
 				}
 			} else {
 
-				// how to show, that this recipe is public??
-				//				if(recipe.isOpen()){
-				//					tableMealsYours.setText(row, 3,"o");
-				//				} else if(recipe.openRequested){
-				//					tableMealsYours.setText(row, 3,"r");
-				//				}
+//				 how to show, that this recipe is public??
+				if(recipe.isOpen()){
+					tableMealsYours.setText(row, 2,"o");
+				} else if(recipe.openRequested){
+					tableMealsYours.setText(row, 2,"c");
+				}
 
 			}
 
@@ -960,15 +960,18 @@ public class Search extends ResizeComposite {
 			tableMeals.setWidget(row,0,item);
 			//			tableMeals.setWidget(row, 2, AddRezeptButton);
 
-			double MenuLabelWert = 0.0;
-			for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
-				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-			}
-			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
-			//			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
-			//			tableMeals.setText(row, 1,  "ca "+formatted+"g*");
+//			double MenuLabelWert = 0.0;
+//			for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
+//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+//			}
+			recipe.setCO2Value();
+			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
+//			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 			
-
+			//			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
+			//			tableMeals.setText(row, 1,  "ca "+formatted+" g*");
+			
+			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ " g*</div>");
 
 			if(EaternityRechner.loginInfo.isAdmin()){
 				
@@ -995,8 +998,8 @@ public class Search extends ResizeComposite {
 
 					}
 				});
-//				tableMeals.setWidget(row, 2, removeRezeptButton);
-				item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ "g* ("+removeRezeptButton+")</div>");
+				tableMeals.setWidget(row, 1, removeRezeptButton);
+//				item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g* ("+removeRezeptButton+")</div>");
 
 				if(!recipe.isOpen()){
 					if(recipe.openRequested){
@@ -1007,7 +1010,8 @@ public class Search extends ResizeComposite {
 								EaternityRechner.rezeptApproval(recipe,true);
 							}
 						});
-						tableMeals.setWidget(row, 1,openThis);
+						tableMeals.setWidget(row, 2,openThis);
+//						item.setHTML(openThis+" "+item.getHTML());
 					}
 				} else {
 					// TODO this should be a link to make it close
@@ -1017,10 +1021,9 @@ public class Search extends ResizeComposite {
 							EaternityRechner.rezeptApproval(recipe,false);
 						}
 					});
-					tableMeals.setWidget(row, 1,closeThis);
+					tableMeals.setWidget(row, 2,closeThis);
+//					item.setHTML(closeThis+" "+item.getHTML());
 				}
-			}else {
-				item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ "g*</div>");
 			}
 
 
@@ -1077,11 +1080,11 @@ public class Search extends ResizeComposite {
 			icon.setHTML(icon.getHTML()+"#: " +zutat2.getSymbol());
 		}
 
-		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g*")+"</div>");
+		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat(" g*")+"</div>");
 
 		table.setWidget(row,0,icon);
 
-		//		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat("g*"));
+		//		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat(" g*"));
 
 
 

@@ -211,7 +211,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		if(distance != 0){
 		wert += transportmittel.factor*distance/1000000*mengeGramm;
 		}
-		}
+		} 
 		
 		if(zustand != null && zustand.factor != null){
 		wert += zustand.factor*mengeGramm;

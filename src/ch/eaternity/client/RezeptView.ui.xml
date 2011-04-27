@@ -255,7 +255,9 @@
         					    <!--g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel-->
 
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
+                			
                 			</g:HTMLPanel>
+                				<g:Button styleName='{style.gwt-Button}'  ui:field="PrepareButton" text="Zubereitung hinzufügen"/>
                 	</g:HTMLPanel>
               		
                 	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>

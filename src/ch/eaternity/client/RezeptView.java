@@ -301,6 +301,44 @@ public class RezeptView extends Composite {
 		}
 	}
 	
+	@UiHandler("PrepareButton")
+	void onPrepareClicked(ClickEvent event) {
+		
+		 // we changed something -> so it isn't saved anymore
+		 saved = false;
+		 
+	
+		 
+		 
+		 // what is this???
+		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
+			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
+			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
+			 recipe.Zutaten.set(selectedRow , zutatSpec2);
+		 }
+		 
+		 // the selected row in the recipe is not highlighted anymore
+		 if (selectedRow != -1) {
+			 styleRow(selectedRow, false);
+			 Search.selectedRow = -1;
+		 }
+		 
+
+		// remove window
+		addInfoPanel.remove(2);
+		
+		// cooking instructions etc...
+		menuDecoInfo.setVisible(false);
+		
+		InfoPreparationDialog infoPrepare = new InfoPreparationDialog(MenuTable,recipe,SuggestTable,this);
+		
+		addInfoPanel.insert(infoPrepare, 2);
+		
+		// is this necessary... it should be only on change...
+		updateSuggestion();
+		
+	}
+	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
 		final RezeptView test = this;

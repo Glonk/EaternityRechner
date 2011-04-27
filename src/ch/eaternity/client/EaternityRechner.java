@@ -485,9 +485,7 @@ public class EaternityRechner implements EntryPoint {
 			suggestionPanel.clear();
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
 			rezeptView.updtTopSuggestion();
-			
-			
-			
+
 		}
 	}
 	

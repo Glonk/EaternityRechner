@@ -137,8 +137,8 @@ width: 65px;
 	display: inline;
 float: right;
 margin-left: -65px;
-margin-right: 20px;
-width: 85px;
+margin-right: 0px;
+width: 65px;
 	
 	/*
 	margin-left:-85px;
@@ -220,7 +220,7 @@ width: 85px;
 	padding-right:6px;
 	}
 
-.rezept {
+.recipe {
 	background: #F7A959;
 	-moz-border-radius: 3px;
 	-webkit-border-radius:3px;

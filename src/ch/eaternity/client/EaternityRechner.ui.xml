@@ -44,7 +44,7 @@
 	}
 </ui:style>
 
-  <ui:style field='selectionStyle'
+<ui:style field='selectionStyle'
     type='ch.eaternity.client.EaternityRechner.SelectionStyle'>
 
   .selectedRezept {
@@ -52,8 +52,7 @@
   }
 
  
- 
-  </ui:style>
+</ui:style>
 
   <g:DockLayoutPanel>
     <g:north size='74'>
