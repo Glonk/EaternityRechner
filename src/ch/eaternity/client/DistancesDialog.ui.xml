@@ -20,12 +20,14 @@
   </ui:style>
 
   <g:HTMLPanel width='640px' styleName='{style.panel}'>
+   <br />Legen Sie hier den Ort fest, an den alle Zutaten geliefert werden. Es werden alle möglichen Routen berechnet und angezeigt. <br /><br />
         <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte von: </g:InlineLabel>
-        <g:TextBox ui:field="clientLocationDialog">Schweiz</g:TextBox>
+        <g:TextBox ui:field="clientLocationDialog">Zürich, Schweiz</g:TextBox>
         <g:Button ui:field="locationButton" text="Adresse festlegen"/>
      <g:ScrollPanel ui:field="scrollPanel">
+     
      <g:HTMLPanel>
-    <br />Legen Sie hier den Ort fest, an den alle Zutaten geliefert werden. Es werden alle möglichen Routen berechnet und angezeigt. Google wünscht, dass hierbei auch die Karten angezeigt werden:the Directions API may only be used in conjunction with displaying results on a Google map; using Directions data without displaying a map for which directions data was requested is prohibited. Additionally, calculation of directions generates copyrights and warnings which must be displayed to the user in some fashion.
+   
     <g:FlexTable ui:field='summaryTable'></g:FlexTable>
     <g:FlexTable ui:field='mapsTable'></g:FlexTable>
     </g:HTMLPanel>

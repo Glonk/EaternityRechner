@@ -46,7 +46,7 @@
       	<g:ListBox ui:field="Monate">
 		</g:ListBox>
         <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in: </g:InlineLabel>
-        <g:TextBox ui:field="clientLocation">Schweiz</g:TextBox>
+        <g:TextBox ui:field="clientLocation">Zürich, Schweiz</g:TextBox>
           <g:Button ui:field="locationButton" text="Adresse festlegen"/>
 
     
