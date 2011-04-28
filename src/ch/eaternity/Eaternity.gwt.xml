@@ -46,9 +46,9 @@
   <inherits name='com.google.gwt.maps.GoogleMaps' />
   <inherits name="com.google.gwt.i18n.I18N"/>
   <!--script src="http://maps.google.com/maps?gwt=1&amp;file=api&amp;v=2&amp;sensor=false" /-->
-  <!-- this is the key for testing: ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw   -->
-   <script src="http://maps.google.com/maps?gwt=1&amp;hl=de&amp;file=api&amp;v=2&amp;language=de&amp;key=ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw" />
-
+  <!-- this is the key for testing 127.0.0.1: ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw   -->
+   <script src="http://maps.google.com/maps?gwt=1&amp;hl=de&amp;file=api&amp;v=2&amp;language=de&amp;key=ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hSGGkA6Fvl4dXnh8vif-I5OEPPqWhSDHDeVW9TCJQKsYqf_eXA_eOnz7g" />
+<!-- 10.0.1.2 key:  ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hSGGkA6Fvl4dXnh8vif-I5OEPPqWhSDHDeVW9TCJQKsYqf_eXA_eOnz7g -->
   
   
      <!-- Specify the app entry point class.                         -->
