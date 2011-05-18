@@ -31,7 +31,7 @@ public class Kitchen implements Serializable, Cloneable{
 	public ArrayList<Device> devices = new ArrayList<Device>();
 	
 	@Serialized
-	public ArrayList<String> personal = new ArrayList<String>();
+	public ArrayList<User> personal = new ArrayList<User>();
     
     
 	public Boolean openRequested;

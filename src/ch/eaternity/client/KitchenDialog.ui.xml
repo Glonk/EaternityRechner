@@ -26,26 +26,30 @@
 		}
   </ui:style>
 
-	<g:HTMLPanel width='640px' styleName='{style.panel}'>
+	<g:HTMLPanel width='680px' styleName='{style.panel}'>
 		Hier kann man die anderen Küchen auswählen, wenn man andere hat. Sowie auch den Rechner als Privatperson nutzen.
 		Admin hat Zugriff auf alle Küchen, und kann entsprechend Emailadressen hinzufügen, für Leute die dann diese Küche immer als 
 		standart Einstellung zu sehen bekommen. 
 		
 		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
 				<g:HTMLPanel ui:field='kitchen'>
+					<g:Anchor href='javascript:;' ui:field='newKitchen'>neue Küche</g:Anchor>
+					<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
 					<g:ListBox ui:field="kitchens" />
-
-					<g:Anchor href='javascript:;' ui:field='editKitchen'>bearbeiten</g:Anchor>
+					
+					
 				</g:HTMLPanel>
 		
-		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
+		
 			Add Picture/Logo
 			<br />
-		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
-		<g:ListBox ui:field="energyMix">
-      	</g:ListBox>
+
 		<g:ScrollPanel ui:field="scrollPanel">
 		<g:HTMLPanel>
+		
+		<br /><br />
+		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
+		<g:ListBox ui:field="energyMix"></g:ListBox>
 		<br /><br />
 		
 <!-- 		<g:Button ui:field="commitButton">Check Input</g:Button> -->
@@ -59,7 +63,7 @@
           <c:CellTable
             addStyleNames='{style.cellTable}'
             pageSize='15'
-            ui:field='cellTable' />
+            ui:field='devidesCellTable' />
         </td>
       </tr>
       <tr>
@@ -75,6 +79,27 @@
 		<g:FlexTable ui:field="deviceTable"></g:FlexTable>
 		
 		<g:Button ui:field="addPerson">Person hinzufügen</g:Button> Diese Personen können die Küche auswählen:
+		
+		
+		 <table cellspacing='0' cellpadding='0' style='width:100%;'>
+      <tr>
+        <td
+          valign='top'>
+          <c:CellTable
+            addStyleNames='{style.cellTable}'
+            pageSize='15'
+            ui:field='personsCellTable' />
+        </td>
+      </tr>
+      <tr>
+        <td
+          align='center'>
+<!--           <c:SimplePager -->
+<!--             ui:field='pager' /> -->
+        </td>
+      </tr>
+    </table>
+		
 		<g:FlexTable ui:field="personTable"></g:FlexTable>
 		
 		<br /><br />
@@ -91,6 +116,7 @@
 			
 		</g:HTMLPanel>
 		</g:ScrollPanel>
+		<g:Anchor href='javascript:;' ui:field='leaveKitchen'>Küche verlassen</g:Anchor>
 		<div class='{style.buttons}'>
 			<g:Button text='Küche speichern' ui:field='executeButton' />
 		</div>
