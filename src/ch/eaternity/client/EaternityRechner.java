@@ -12,6 +12,7 @@ import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -56,7 +57,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 public class EaternityRechner implements EntryPoint {
 
 	public static LoginInfo loginInfo = null;
-	private final static DataServiceAsync rezeptService = GWT.create(DataService.class);
+	private final static DataServiceAsync dataService = GWT.create(DataService.class);
 	private List<RezeptView> worksheet = new ArrayList<RezeptView>();
 	// private VerticalPanel loginPanel = new VerticalPanel();
 	// private Label loginLabel = new Label("Please sign in to your Google Account to access the eaternity Rechner application.");
@@ -166,7 +167,7 @@ public class EaternityRechner implements EntryPoint {
 	
 
 	static void addRezept(final Recipe recipe, final RezeptView rezeptView) {
-		rezeptService.addRezept(recipe, new AsyncCallback<Long>() {
+		dataService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
@@ -183,7 +184,7 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 	static void removeRezept(final Recipe recipe) {
-		rezeptService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
+		dataService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
@@ -197,7 +198,7 @@ public class EaternityRechner implements EntryPoint {
 	}
 	
 	static void rezeptApproval(final Recipe recipe, final Boolean approve) {
-		rezeptService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
+		dataService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
@@ -228,9 +229,24 @@ public class EaternityRechner implements EntryPoint {
 		topPanel.signOutLink.setHref(loginInfo.getLogoutUrl());
 		topPanel.signInLink.setVisible(false);
 		topPanel.signOutLink.setVisible(true);
+		
 		topPanel.loginLabel.setText("Willkommen "+ loginInfo.getNickname() +".");
-		// TODO only show when logged in:
-		//SaveRezeptPanel.setVisible(true);
+		
+		// load your kitchens
+		// loadYourKitchens();
+		
+		if(loginInfo.getInKitchen()){
+//			topPanel.stepIn.setVisible(false);
+//			topPanel.stepOut.setVisible(true);
+			topPanel.location.setVisible(false);
+//			topPanel.kitchen.setVisible(true);
+		} else {
+//			topPanel.stepIn.setVisible(true);
+//			topPanel.stepOut.setVisible(false);	
+			topPanel.location.setVisible(true);
+//			topPanel.kitchen.setVisible(false);
+		}
+		
 		//load your personal recipes
 		loadYourRezepte();
 
@@ -248,8 +264,11 @@ public class EaternityRechner implements EntryPoint {
 		});
 		topPanel.ingredientLink.setVisible(true);
 		
+		// Always display the Kitchen Dialog of all Customers...
+		// this means, pull all kitchens from the server
+		
 		// TODO get all the other recipes
-		rezeptService.getAdminRezepte(new AsyncCallback<List<Recipe>>() {
+		dataService.getAdminRezepte(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
@@ -258,7 +277,28 @@ public class EaternityRechner implements EntryPoint {
 				data.setPublicRezepte(rezepte);
 				Search.setClientData(data);
 				Search.updateResults(" ");
-//				displayRezepte(rezepte);
+			}
+		});
+		
+		
+		// TODO get all the other recipes
+		dataService.getAdminKitchens(new AsyncCallback<List<Kitchen>>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			
+			public void onSuccess(List<Kitchen> result) {
+				Data data = Search.getClientData();
+				
+				if(result.size() != 0){ // there must be somthing!
+				data.kitchens.addAll(result);
+				}
+				// this shouldn't be necessary, as we are working with pointers:
+//				Search.setClientData(data);
+				
+				// is there anything to update?
+//				Search.updateResults(" ");
+				
 			}
 		});
 		
@@ -584,21 +624,47 @@ public class EaternityRechner implements EntryPoint {
 
 
 	private void loadData() {
-		rezeptService.getData(new AsyncCallback<Data>() {
+		// here all the Data is loaded.
+		// is it necessary to have a seccond request for the admin, I don't think so. Yet it is still implemented
+		
+		dataService.getData(new AsyncCallback<Data>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Data data) {
+				// the data objects holds all the data
+				
 //				displayZutaten(data.getZutaten());
 //				displayRezepte(data.getPublicRezepte());
 //				displayRezepte(data.getYourRezepte());
 //				topPanel.loadingLabel.setText(" ");
 //				setClientData(data);
+				
+				// the search interface gets all the recipes and ingredients
 				Search.setClientData(data);
 				Search.SearchBox2.setText("");
 				Search.updateResults(" ");
 				
+				// the top panel grabs all the existing distances also from the search interface
 				topPanel.locationButton.setEnabled(true);
+				
+				
+				// the kitchens must be listed in the Kitchen Dialog
+				if(data.kitchens.size() == 0){
+					// what happens here?
+//					TopPanel.kDlg.kitchens.addItem("beliebige Zürcher Küche");
+				} else {
+					// he may edit the kitchen stuff
+					TopPanel.editKitchen.setVisible(true);
+					
+					
+					for(int i = 0;i<data.kitchens.size();i++){
+						// this should also not work
+//						TopPanel.kDlg.kitchens.addItem(data.kitchens.get(i).getSymbol());
+					}
+				}
+	
+				
 				
 				//TODO ist the oracle of need?
 				//Set<String> itemIndex = data.getOrcaleIndex();
@@ -611,7 +677,7 @@ public class EaternityRechner implements EntryPoint {
 	
 
 	private void loadYourRezepte() {
-		rezeptService.getYourRezepte(new AsyncCallback<List<Recipe>>() {
+		dataService.getYourRezepte(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}

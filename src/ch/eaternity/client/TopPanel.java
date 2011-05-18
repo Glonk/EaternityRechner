@@ -19,26 +19,20 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.TreeMap;
-
 import ch.eaternity.shared.SingleDistance;
 
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import com.google.gwt.maps.client.geocode.Placemark;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 
@@ -60,25 +54,41 @@ public class TopPanel extends Composite {
   @UiField Button locationButton;
   @UiField Anchor signOutLink;
   @UiField Anchor signInLink;
+//  @UiField Anchor stepIn;
+//  @UiField Anchor stepOut;
   @UiField Anchor ingredientLink;
+  @UiField
+static Anchor editKitchen;
   @UiField InlineLabel loginLabel;
   @UiField
 static ListBox Monate;
+//  @UiField
+//static ListBox kitchens;
+  @UiField HTMLPanel location;
+//  @UiField HTMLPanel kitchen;
   @UiField static Label locationLabel;
 //  @UiField Label loadingLabel;
   @UiField
 static TextBox clientLocation;
   public static Placemark currentLocation;
   public static DistancesDialog ddlg;
+  public static KitchenDialog kDlg;
 
+  
+ // here should be all the distances stored 
 protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
+
+
   
   public TopPanel() {
     initWidget(binder.createAndBindUi(this));
     locationButton.setEnabled(false);
     ingredientLink.setVisible(false);
     signOutLink.setVisible(false);
-  
+//    stepOut.setVisible(false);
+//    stepIn.setVisible(false);
+    editKitchen.setVisible(false);
+    
 	Monate.addItem("Januar");
 	Monate.addItem("Februar");
 	Monate.addItem("März");
@@ -91,6 +101,7 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
 	Monate.addItem("Oktober");
 	Monate.addItem("November");
 	Monate.addItem("Dezember");
+	
 	
 	Date date = new Date();
 	Monate.setSelectedIndex(date.getMonth());
@@ -105,19 +116,36 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
   void onChange(ChangeEvent event) {
 	  EaternityRechner.updateSaisonAndMore();
 	  Search.updateResults(Search.SearchBox2.getText());
-	  // TODO aktuallisiere die Saisonalität aller Rezepte... dieser Prozess muss gethreaded sein!
+	  // TODO aktualisiere die Saisonalität aller Rezepte... dieser Prozess muss gethreaded sein!
 	  // TODO close the InfozutatDialog when doing this...
   }
 
   @UiHandler("locationButton")
   public void onClick(ClickEvent event) {
-	  
-	  
 	  ddlg = new DistancesDialog(clientLocation.getText()); 
-
-
   }
   
+  
+//  @UiHandler("stepIn")
+//  public void onStepInClick(ClickEvent event) {
+//		stepIn.setVisible(false);
+//		stepOut.setVisible(true);
+//		location.setVisible(false);
+//		kitchen.setVisible(true);
+//  }
+//  
+//  @UiHandler("stepOut")
+//  public void onStepOutClick(ClickEvent event) {
+//		stepIn.setVisible(true);
+//		stepOut.setVisible(false);	
+//		location.setVisible(true);
+//		kitchen.setVisible(false);
+//	  
+//  }
 
-
+  @UiHandler("editKitchen")
+  public void onEditKitchenClick(ClickEvent event) {
+	  kDlg = new KitchenDialog(clientLocation.getText()); 
+  }
+  
 }

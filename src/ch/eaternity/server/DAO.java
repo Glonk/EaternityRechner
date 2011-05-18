@@ -7,6 +7,7 @@ import java.util.List;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
@@ -32,6 +33,7 @@ public class DAO extends DAOBase
         ObjectifyService.register(Recipe.class);
         ObjectifyService.register(UserRezept.class);
         ObjectifyService.register(ImageBlob.class);
+        ObjectifyService.register(Kitchen.class);
     }
 
     /** Your DAO can have your own useful methods */
@@ -98,6 +100,70 @@ public class DAO extends DAOBase
 		return null;
 	}
 
+
+	
+	public Boolean saveKitchen(Kitchen kitchen){
+        ofy().put(kitchen);
+        return true;
+	}
+
+	public Kitchen getKitchen(Long KitchenID){
+		Kitchen kitchen = ofy().get(Kitchen.class,KitchenID);
+        return kitchen;
+	}
+	
+	public List<Kitchen> getYourKitchens(User user){
+		
+		List<Kitchen> yourKitchens = new ArrayList<Kitchen>();
+
+		// The Query itself is Iterable
+		Query<Kitchen> yourUserKitchens = ofy().query(Kitchen.class).filter("emailAddressOwner", user.getEmail());
+        QueryResultIterator<Kitchen> iterator = yourUserKitchens.iterator();
+        
+        while (iterator.hasNext()) {
+        	Kitchen kitchen = iterator.next();
+        	yourKitchens.add(kitchen);
+        }
+        
+        return yourKitchens;
+
+	}
+	
+	public List<Kitchen> adminGetKitchens(User user){
+		
+		List<Kitchen> adminKitchens = new ArrayList<Kitchen>();
+
+		// The Query itself is Iterable
+		Query<Kitchen> yourUserKitchens = ofy().query(Kitchen.class).filter("emailAddressOwner !=", user.getEmail());
+        QueryResultIterator<Kitchen> iterator = yourUserKitchens.iterator();
+        
+        while (iterator.hasNext()) {
+        	Kitchen kitchen = iterator.next();
+        	adminKitchens.add(kitchen);
+        }
+        
+        return adminKitchens;
+
+	}
+	
+	public List<Kitchen> getOpenKitchen(){
+		
+		List<Kitchen> openKitchens = new ArrayList<Kitchen>();
+
+		// The Query itself is Iterable
+		Query<Kitchen> yourOpenKitchens = ofy().query(Kitchen.class).filter("approvedOpen", true);
+        QueryResultIterator<Kitchen> iterator = yourOpenKitchens.iterator();
+        
+        while (iterator.hasNext()) {
+        	Kitchen kitchen = iterator.next();
+        	openKitchens.add(kitchen);
+        }
+        
+        return openKitchens;
+
+	}
+	
+	
 	public Boolean saveRecipe(Recipe recipe){
         ofy().put(recipe);
         return true;

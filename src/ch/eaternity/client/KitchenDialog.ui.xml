@@ -1,0 +1,100 @@
+<ui:UiBinder 
+	xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client' 
+	xmlns:mail='urn:import:ch.eaternity.client'>
+
+
+
+	<ui:style>
+	.cellTable {
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+		.panel {
+		padding: 10px;
+		}
+
+		.aboutText {
+		text-align: left;
+		}
+
+		.buttons {
+
+		text-align: right;
+		}
+  </ui:style>
+
+	<g:HTMLPanel width='640px' styleName='{style.panel}'>
+		Hier kann man die anderen Küchen auswählen, wenn man andere hat. Sowie auch den Rechner als Privatperson nutzen.
+		Admin hat Zugriff auf alle Küchen, und kann entsprechend Emailadressen hinzufügen, für Leute die dann diese Küche immer als 
+		standart Einstellung zu sehen bekommen. 
+		
+		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
+				<g:HTMLPanel ui:field='kitchen'>
+					<g:ListBox ui:field="kitchens" />
+
+					<g:Anchor href='javascript:;' ui:field='editKitchen'>bearbeiten</g:Anchor>
+				</g:HTMLPanel>
+		
+		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
+			Add Picture/Logo
+			<br />
+		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
+		<g:ListBox ui:field="energyMix">
+      	</g:ListBox>
+		<g:ScrollPanel ui:field="scrollPanel">
+		<g:HTMLPanel>
+		<br /><br />
+		
+<!-- 		<g:Button ui:field="commitButton">Check Input</g:Button> -->
+		<g:Button ui:field="addDevice">Gerät hinzufügen</g:Button>
+		<!--  <g:CheckBox ui:field="makePublic">Geräte öffentlich einsehbar</g:CheckBox>  -->
+		
+		  <table cellspacing='0' cellpadding='0' style='width:100%;'>
+      <tr>
+        <td
+          valign='top'>
+          <c:CellTable
+            addStyleNames='{style.cellTable}'
+            pageSize='15'
+            ui:field='cellTable' />
+        </td>
+      </tr>
+      <tr>
+        <td
+          align='center'>
+<!--           <c:SimplePager -->
+<!--             ui:field='pager' /> -->
+        </td>
+      </tr>
+    </table>
+		
+		
+		<g:FlexTable ui:field="deviceTable"></g:FlexTable>
+		
+		<g:Button ui:field="addPerson">Person hinzufügen</g:Button> Diese Personen können die Küche auswählen:
+		<g:FlexTable ui:field="personTable"></g:FlexTable>
+		
+		<br /><br />
+		Legen Sie hier den Ort ihrer Küche fest (den Ort, an den alle Zutaten
+		geliefert werden). Es werden alle möglichen Routen berechnet und
+		angezeigt.
+		<!-- g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte 
+			von: </g:InlineLabel -->
+		<g:TextBox ui:field="clientLocationDialog">Zürich, Schweiz</g:TextBox>
+		<g:Button ui:field="locationButton" text="neue Adresse festlegen" />
+
+				<g:FlexTable ui:field='summaryTable' />
+				<g:FlexTable ui:field='mapsTable' />
+			
+		</g:HTMLPanel>
+		</g:ScrollPanel>
+		<div class='{style.buttons}'>
+			<g:Button text='Küche speichern' ui:field='executeButton' />
+		</div>
+	</g:HTMLPanel>
+	
+	
+</ui:UiBinder>

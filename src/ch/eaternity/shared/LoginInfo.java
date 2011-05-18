@@ -8,6 +8,8 @@ public class LoginInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 8516034014140362835L;
+	
+	// standard values
 	private boolean loggedIn = false;
 	private String loginUrl;
 	private String logoutUrl;
@@ -15,6 +17,12 @@ public class LoginInfo implements Serializable {
 	private String nickname;
 	private boolean admin = false;
 	private String id;
+	
+	// eaternity-rechner stuff
+	private boolean inKitchen = false;
+	private String lastKitchen;
+	private String lastLogin;
+	private String lastLocation;
 	
 	public String getId() {
 		return id;
@@ -70,5 +78,13 @@ public class LoginInfo implements Serializable {
 
 	public boolean isAdmin() {
 		return this.admin;
+	}
+
+	public void setInKitchen(Boolean inKitchen) {
+		this.inKitchen = inKitchen;
+	}
+
+	public Boolean getInKitchen() {
+		return inKitchen;
 	}
 }
