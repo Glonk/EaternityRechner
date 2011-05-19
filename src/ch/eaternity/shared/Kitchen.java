@@ -3,6 +3,8 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import javax.persistence.Embedded;
 import javax.persistence.Id;
 
 
@@ -27,11 +29,19 @@ public class Kitchen implements Serializable, Cloneable{
 	private String emailAddressOwner;
 
 	
+//	@Serialized
+	
+//	@Embedded
+	
 	@Serialized
 	public ArrayList<Device> devices = new ArrayList<Device>();
 	
+	// here the staff is also stored! (double storage)
+//	@Serialized
+//	@Embedded
+	
 	@Serialized
-	public ArrayList<User> personal = new ArrayList<User>();
+	public ArrayList<Staff> personal = new ArrayList<Staff>();
     
     
 	public Boolean openRequested;
@@ -45,6 +55,11 @@ public class Kitchen implements Serializable, Cloneable{
 
 	public Kitchen(String symbol) {
 		this.symbol = symbol;
+	}
+	
+	public Kitchen(String symbol, String location) {
+		this.symbol = symbol;
+		this.location = location;
 	}
 
 	public Kitchen(Long id, String symbol) {

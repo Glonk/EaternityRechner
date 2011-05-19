@@ -20,7 +20,7 @@ public class LoginInfo implements Serializable {
 	
 	// eaternity-rechner stuff
 	private boolean inKitchen = false;
-	private String lastKitchen;
+	private int lastKitchen;
 	private String lastLogin;
 	private String lastLocation;
 	
@@ -86,5 +86,13 @@ public class LoginInfo implements Serializable {
 
 	public Boolean getInKitchen() {
 		return inKitchen;
+	}
+
+	public void setLastKitchen(int lastKitchen) {
+		this.lastKitchen = lastKitchen;
+	}
+
+	public int getLastKitchen() {
+		return lastKitchen;
 	}
 }

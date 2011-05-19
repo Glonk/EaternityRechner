@@ -650,7 +650,7 @@ public class EaternityRechner implements EntryPoint {
 				
 				
 				// the kitchens must be listed in the Kitchen Dialog
-				if(data.kitchens.size() == 0){
+				if(data.kitchens.size() == 0 && !loginInfo.isAdmin()){
 					// what happens here?
 //					TopPanel.kDlg.kitchens.addItem("beliebige Zürcher Küche");
 				} else {
@@ -664,6 +664,19 @@ public class EaternityRechner implements EntryPoint {
 					}
 				}
 	
+				
+				if(data.kitchens.size() > 0){
+//					if(Search.getClientData().lastKitchen == 0){
+//						EaternityRechner.loginInfo.setLastKitchen(0);
+//					}
+					int lastkitchen = Search.getClientData().lastKitchen;
+					String kitchenName = data.kitchens.get(lastkitchen).getSymbol();
+					TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName);
+				} else {
+					if(!loginInfo.isAdmin()){ 
+						TopPanel.isCustomer.setVisible(false);
+					}
+				}
 				
 				
 				//TODO ist the oracle of need?

@@ -10,7 +10,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.User;
+import ch.eaternity.shared.Staff;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ButtonCell;
@@ -60,11 +60,12 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 
 public class KitchenDialog extends DialogBox{
-
+	
+		static Long[] longList ={1l,5l,10l,20l};
 	 private static List<Device> devicesHere = Arrays.asList(
-		      new Device("","",0.0,  Arrays.asList(1l,5l,10l,20l), 10l));
+		      new Device("","",0.0,  longList, 10l));
 	 
-	 private static List<User> personsHere = Arrays.asList(new User("Name","email"));
+	 private static List<Staff> personsHere = Arrays.asList(new Staff("Name","email"));
 	 
 	 
 	
@@ -96,7 +97,7 @@ public class KitchenDialog extends DialogBox{
 	static CellTable<Device> devidesCellTable  = new CellTable<Device>();
 	
 	@UiField
-	static CellTable<User> personsCellTable  = new CellTable<User>();
+	static CellTable<Staff> personsCellTable  = new CellTable<Staff>();
 	
 //	@UiField SimplePager pager;
 	
@@ -115,14 +116,16 @@ public class KitchenDialog extends DialogBox{
 //		String kitchenName = "neue Küche";
 		processAddress(location,true);
 		
+		// this is only necessary for the first time...
 		currentLocation = location;
-		
-		
-//		availableKitchens.add(new Kitchen(kitchenName));
-		
 		
 		availableKitchens = Search.getClientData().kitchens;
 		
+		if(availableKitchens == null || availableKitchens.size() == 0){
+			availableKitchens = new ArrayList<Kitchen>(1);
+			availableKitchens.add(new Kitchen("neue Küche",currentLocation));
+		}
+
 		selectedKitchen = availableKitchens.get(0);
 		this.kitchenName = selectedKitchen.getSymbol();
 		currentLocation = selectedKitchen.location;
@@ -130,9 +133,7 @@ public class KitchenDialog extends DialogBox{
 		devicesHere = selectedKitchen.devices;
 		personsHere = selectedKitchen.personal;
 		
-		if(!EaternityRechner.loginInfo.isAdmin() && availableKitchens.size() < 2){
-			kitchen.setVisible(false);
-		}
+
 		
 		openDialog();
 	
@@ -156,12 +157,20 @@ public class KitchenDialog extends DialogBox{
 		scrollPanel.setHeight("420px");
 		center();
 		clientLocationDialog.setText(currentLocation);
+		
+		kitchenNameTextBox.setText(kitchenName);
 		setText(kitchenName);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		
 		energyMix.addItem("NatureStar");
 		addKitchenNamesToList(availableKitchens);
+		
+		if(!EaternityRechner.loginInfo.isAdmin() && availableKitchens.size() < 2){
+			kitchen.setVisible(false);
+		} else if(!EaternityRechner.loginInfo.isAdmin()) {
+			newKitchen.setVisible(false);
+		}
 		
 		initCellTable();
 	    
@@ -210,12 +219,12 @@ public class KitchenDialog extends DialogBox{
 		        "Benutzer", new GetValueString<String>() {
 		          @Override
 				@SuppressWarnings("deprecation")
-		          public String getValue(User object) {
+		          public String getValue(Staff object) {
 		        	  return object.userName;
 		          }
-		        },  new FieldUpdater<User, String>() {
+		        },  new FieldUpdater<Staff, String>() {
 		  	      @Override
-				public void update(int index, User object, String value) {
+				public void update(int index, Staff object, String value) {
 		  	        pendingPersonChanges.add(new PersonNameChange(object, value));
 		  	      }
 		  	    });
@@ -224,12 +233,12 @@ public class KitchenDialog extends DialogBox{
 		        "Email-Adresse Benutzer", new GetValueString<String>() {
 		          @Override
 				@SuppressWarnings("deprecation")
-		          public String getValue(User object) {
+		          public String getValue(Staff object) {
 		        	  return object.userEmail;
 		          }
-		        },  new FieldUpdater<User, String>() {
+		        },  new FieldUpdater<Staff, String>() {
 		  	      @Override
-				public void update(int index, User object, String value) {
+				public void update(int index, Staff object, String value) {
 		  	        pendingPersonChanges.add(new PersonEmailChange(object, value));
 		  	      }
 		  	    });
@@ -257,7 +266,7 @@ public class KitchenDialog extends DialogBox{
 	          @Override
 			@SuppressWarnings("deprecation")
 	          public String getValue(Device object) {
-	        	  return object.durations.toString().replace(']', ' ').replace('[', ' ');
+	        	  return Arrays.asList(object.durations).toString().replace(']', ' ').replace('[', ' ');
 	          }
 	        },  new FieldUpdater<Device, String>() {
 		  	      @Override
@@ -358,12 +367,12 @@ public class KitchenDialog extends DialogBox{
 	    });
 	    
 	    // Add a selection model to handle user selection.
-	    final SingleSelectionModel<User> selectionPersonModel = new SingleSelectionModel<User>();
+	    final SingleSelectionModel<Staff> selectionPersonModel = new SingleSelectionModel<Staff>();
 	    personsCellTable.setSelectionModel(selectionPersonModel);
 	    selectionPersonModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	      @Override
 		public void onSelectionChange(SelectionChangeEvent event) {
-	    	  User selected = selectionPersonModel.getSelectedObject();
+	    	  Staff selected = selectionPersonModel.getSelectedObject();
 	        if (selected != null) {
 //	          Window.alert("You selected: " + selected.deviceName);
 	        }
@@ -393,12 +402,12 @@ public class KitchenDialog extends DialogBox{
 	    
 	    addPersonColumn(new ButtonCell(), "entfernen", new GetValueString<String>() {
 		      @Override
-			public String getValue(User contact) {
+			public String getValue(Staff contact) {
 		        return "x" ;
 		      }
-		    }, new FieldUpdater<User, String>() {
+		    }, new FieldUpdater<Staff, String>() {
 		      @Override
-			public void update(int index, User object, String value) {
+			public void update(int index, Staff object, String value) {
 		    	  
 //		        Window.alert("You clicked " + object.deviceName);
 //	              dataProvider.getList().remove(selected);
@@ -456,11 +465,11 @@ public class KitchenDialog extends DialogBox{
 		  }
 
 	  
-	  private <C> Column<User, C> addPersonColumn(Cell<C> cell, String headerText,
-		      final GetValueString<C> getter, FieldUpdater<User, C> fieldUpdater) {
-		    Column<User, C> column = new Column<User, C>(cell) {
+	  private <C> Column<Staff, C> addPersonColumn(Cell<C> cell, String headerText,
+		      final GetValueString<C> getter, FieldUpdater<Staff, C> fieldUpdater) {
+		    Column<Staff, C> column = new Column<Staff, C>(cell) {
 		      @Override
-		      public C getValue(User object) {
+		      public C getValue(Staff object) {
 		        return getter.getValue(object);
 		      }
 		    };
@@ -472,7 +481,7 @@ public class KitchenDialog extends DialogBox{
 		    return column;
 		  }
 		  private static interface GetValueString<C> {
-			    C getValue(User contact);
+			    C getValue(Staff contact);
 			  }
 	  
 	  /**
@@ -517,10 +526,10 @@ public class KitchenDialog extends DialogBox{
 	  
 	  
 	  private abstract static class PendingPersonChange<T> {
-		    private final User contact;
+		    private final Staff contact;
 		    private final T value;
 
-		    public PendingPersonChange(User contact, T value) {
+		    public PendingPersonChange(Staff contact, T value) {
 		      this.contact = contact;
 		      this.value = value;
 		    }
@@ -539,7 +548,7 @@ public class KitchenDialog extends DialogBox{
 		     * @param contact the contact to update
 		     * @param value the new value
 		     */
-		    protected abstract void doCommit(User contact, T value);
+		    protected abstract void doCommit(Staff contact, T value);
 		  }
 	  
 	  
@@ -571,7 +580,7 @@ public class KitchenDialog extends DialogBox{
 	   */
 	  private static class PersonEmailChange extends PendingPersonChange<String> {
 
-	    public PersonEmailChange(User contact, String value) {
+	    public PersonEmailChange(Staff contact, String value) {
 	      super(contact, value);
 	      
 //	      if (value.length() > 1){
@@ -583,14 +592,14 @@ public class KitchenDialog extends DialogBox{
 	    }
 
 	    @Override
-	    protected void doCommit(User contact, String value) {
+	    protected void doCommit(Staff contact, String value) {
 	      contact.userEmail = value;
 	    }
 	  }
 	  
 	  private static class PersonNameChange extends PendingPersonChange<String> {
 
-		    public PersonNameChange(User contact, String value) {
+		    public PersonNameChange(Staff contact, String value) {
 		      super(contact, value);
 		      
 //		      if (value.length() > 1){
@@ -602,7 +611,7 @@ public class KitchenDialog extends DialogBox{
 		    }
 
 		    @Override
-		    protected void doCommit(User contact, String value) {
+		    protected void doCommit(Staff contact, String value) {
 		      contact.userName = value;
 		    }
 		  }
@@ -674,16 +683,24 @@ public class KitchenDialog extends DialogBox{
 		    }
 
 		    @Override
-		    protected void doCommit(Device contact, String value) {
-		    	contact.stdDuration = Long.parseLong( value.trim());
-		    	if(!contact.durations.contains(contact.stdDuration)){
-		    		contact.durations.add(contact.stdDuration);
+		    protected void doCommit(Device device, String value) {
+		    	device.stdDuration = Long.parseLong( value.trim());
+		    	boolean doAdd = true;
+		    	for(Long duration: device.durations){
+		    		if(duration == device.stdDuration){
+		    			doAdd = false;
+		    			break;
+		    		}
+		    		
+		    	}
+		    	if(doAdd){
+		    		device.durations[device.durations.length] = device.stdDuration;
 		    	}
 		    }
 		  }
 	  
 	  
-	  public static List<Long> parsePropsToList(
+	  public static Long[] parsePropsToList(
 			  String propName,
 			  String delim){
 		  
@@ -691,7 +708,7 @@ public class KitchenDialog extends DialogBox{
 //			  listToFill.remove(i);
 //		  }
 //		  List<Long> listToFill = Arrays.asList({});
-		  ArrayList<Long>listToFill = new ArrayList<Long>();
+		  Long[] listToFill = {};
 		  
 		   //This is paired down for convenience - assume getSplitList correctly parses to List<String>
 		   List<String> stringList = getSplitList(propName, delim);
@@ -699,7 +716,7 @@ public class KitchenDialog extends DialogBox{
 //		       listToFill.add((T)s.trim());
 			   Long addLong = Long.parseLong( s.trim());
 			   if(addLong != null){
-			   listToFill.add(addLong);
+			   listToFill[listToFill.length] = addLong;
 			   }
 		   }
 		   return listToFill;
@@ -809,7 +826,7 @@ public class KitchenDialog extends DialogBox{
 		// we always want the dialog, as there are also other informations
 //		if(!distancesRequested.isEmpty() && firstTime){
 		
-		// TODO why was this here?:
+		// why was this here?:
 //			openDialog();
 		
 //		} else {
@@ -944,6 +961,7 @@ public class KitchenDialog extends DialogBox{
 					Placemark place = locations.get(0);
 					TopPanel.locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
 					currentLocation = place.getAddress();
+					selectedKitchen.location = currentLocation;
 					setText("Berechne alle Routen von: " + place.getAddress());
 					TopPanel.currentHerkunft = place.getAddress();
 
@@ -1080,6 +1098,13 @@ public class KitchenDialog extends DialogBox{
 		  }
 	  }
 	  
+	  @UiHandler("clientLocationDialog")
+	  void onLocationNameChange(KeyUpEvent event) {
+		  if(clientLocationDialog.getText().length()>1){
+			  selectedKitchen.location = kitchenNameTextBox.getText();
+		  }
+	  }
+	  
 	  @UiHandler("newKitchen")
 	  public void onNewKitchenClick(ClickEvent event) {
 		  selectedKitchen = new Kitchen("neue Küche");
@@ -1127,6 +1152,7 @@ public class KitchenDialog extends DialogBox{
 		   selectedKitchen = availableKitchens.get(kitchens.getSelectedIndex());
 		   switchKitchen();
 	  }
+
 	  
 	  @UiHandler("addDevice")
 	  void onAddDevicePress(ClickEvent event) {
@@ -1135,7 +1161,8 @@ public class KitchenDialog extends DialogBox{
 //    	  List<Device> newDevice = Arrays.asList(
 //    			      new Device("","",0.0,  Arrays.asList(1l,5l,10l,20l), 10l));
 //    	  cellTable.setRowData(rowCell, newDevice);
-    	  devicesHere.add(new Device("","",0.0,  Arrays.asList(1l,5l,10l,20l), 10l));
+		  Long[] longList ={1l,5l,10l,20l};
+    	  devicesHere.add(new Device("","",0.0, longList , 10l));
     	  devidesCellTable.setRowCount(devicesHere.size(), true);
     	  
     	  devidesCellTable.setRowData(0, devicesHere);
@@ -1171,7 +1198,7 @@ public class KitchenDialog extends DialogBox{
 	  void onAddPersonPress(ClickEvent event) {
 		  
 		  
-    	  personsHere.add(new User("Name","email"));
+    	  personsHere.add(new Staff("Name","email"));
     	  personsCellTable.setRowCount(personsHere.size(), true);
     	  
     	  personsCellTable.setRowData(0, personsHere);
@@ -1195,17 +1222,17 @@ public class KitchenDialog extends DialogBox{
 //		  personTable.setWidget(row,2,removePerson);
 	  }
 	  
-		private static int getWidgetRow(Widget widget, FlexTable table) {
-			for (int row = 0; row < table.getRowCount(); row++) {
-				for (int col = 0; col < table.getCellCount(row); col++) {
-					Widget w = table.getWidget(row, col);
-					if (w == widget) {
-						return row;
-					}
-				}
-			}
-			throw new RuntimeException("Unable to determine widget row");
-		}
+//		private static int getWidgetRow(Widget widget, FlexTable table) {
+//			for (int row = 0; row < table.getRowCount(); row++) {
+//				for (int col = 0; col < table.getCellCount(row); col++) {
+//					Widget w = table.getWidget(row, col);
+//					if (w == widget) {
+//						return row;
+//					}
+//				}
+//			}
+//			throw new RuntimeException("Unable to determine widget row");
+//		}
 		
 }
 

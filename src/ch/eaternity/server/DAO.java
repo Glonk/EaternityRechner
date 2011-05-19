@@ -12,6 +12,7 @@ import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Staff;
 
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.images.ImagesService;
@@ -34,6 +35,7 @@ public class DAO extends DAOBase
         ObjectifyService.register(UserRezept.class);
         ObjectifyService.register(ImageBlob.class);
         ObjectifyService.register(Kitchen.class);
+        ObjectifyService.register(Staff.class);
     }
 
     /** Your DAO can have your own useful methods */
@@ -102,9 +104,52 @@ public class DAO extends DAOBase
 
 
 	
-	public Boolean saveKitchen(Kitchen kitchen){
-        ofy().put(kitchen);
-        return true;
+	public Long saveKitchen(Kitchen kitchen){
+		
+		// here we need more logic
+		// got through the Users, find them in the Storage, add to each the key of this kitchen
+		
+		if(kitchen.id == null){
+			ofy().put(kitchen);
+		}
+        
+		// here we add more logic...
+		for(Staff staff:kitchen.personal){
+			Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", staff.userEmail);
+			
+			QueryResultIterator<Staff> iterator = kitchenStaff.iterator();
+	        
+			boolean foundOne = false;
+	        while (iterator.hasNext()) {
+	        	foundOne = true;
+	        	Staff staffer = iterator.next();
+	        	boolean doAdd = true;
+	        	for(Long aKitchenId:staffer.kitchensIds){
+	        		if(aKitchenId.compareTo(kitchen.id) == 0){
+	        			doAdd = false;
+	        			break;
+	        		}
+	        		
+	        	}
+	        	if(doAdd){
+	        		staffer.kitchensIds[staffer.kitchensIds.length] = kitchen.id;
+	        	}
+	        	staff = staffer;
+	        	ofy().put(staffer);
+	        }
+	        
+	        if(!foundOne){
+	        	// add a new one
+	        	staff.kitchensIds = new Long[1];
+	        	staff.kitchensIds[0] = kitchen.id;
+	        	ofy().put(staff);
+	        }
+			
+		}
+		
+		// save that kitchen again
+		ofy().put(kitchen);
+        return kitchen.id;
 	}
 
 	public Kitchen getKitchen(Long KitchenID){
@@ -124,6 +169,18 @@ public class DAO extends DAOBase
         	Kitchen kitchen = iterator.next();
         	yourKitchens.add(kitchen);
         }
+        
+        Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", user.getEmail());
+		QueryResultIterator<Staff> staffIterator = kitchenStaff.iterator();
+		while (staffIterator.hasNext()) {
+        	Staff staffer = staffIterator.next();
+        	for(Long getThisKitchen:staffer.kitchensIds){
+        		Kitchen newKitchen = ofy().get(Kitchen.class,getThisKitchen);
+        		if(!yourKitchens.contains(newKitchen)){
+        			yourKitchens.add(newKitchen);
+        		}
+        	}
+		}
         
         return yourKitchens;
 

@@ -20,6 +20,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Staff;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -44,16 +45,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 		DAO dao = new DAO();
 
+		if(kitchen.getEmailAddressOwner() == null){
 		if(userService.getCurrentUser().getEmail() != null){
 			kitchen.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
 		} else {
 			kitchen.setEmailAddressOwner(userService.getCurrentUser().getNickname());
 		}
+		}
 		kitchen.open = false;
 
-		dao.ofy().put(kitchen);
+		return dao.saveKitchen(kitchen);
+//		ofy().put(kitchen);
 
-		return kitchen.id;
+
 	}
 	
 	public Boolean approveKitchen(Long kitchenId, Boolean approve) throws NotLoggedInException {

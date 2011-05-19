@@ -10,40 +10,42 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.persistence.Embedded;
+import javax.persistence.Id;
 
-@PersistenceCapable
+import com.googlecode.objectify.annotation.Serialized;
+
+
 public class Device implements Serializable {
 
 	/** 
 	 * 
 	 */
 	private static final long serialVersionUID = 3172640409035191698L;
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-    private String id;
+
+	@Id String id;
      
-	@Persistent
+	 
 	public Double kWConsumption;
 	
-	@Persistent
+	 
 	public String deviceName;
 	
-	@Persistent
+	 
 	public String deviceSpec;
 	
-	@Persistent
+	 
 	public Long stdDuration;
 	
-	@Persistent
-	public List<Long> durations;
+	@Embedded
+	public Long[] durations;
 	
 
 	public Device() {
 
 	}
 
-	public Device(String deviceName,String deviceSpec, Double kWConsumption,List<Long>  list, Long stdDuration) {
+	public Device(String deviceName,String deviceSpec, Double kWConsumption,Long[]  list, Long stdDuration) {
 		this.deviceName = deviceName;
 		this.deviceSpec = deviceSpec;
 		this.kWConsumption = kWConsumption;

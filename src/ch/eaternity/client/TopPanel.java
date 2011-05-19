@@ -70,6 +70,11 @@ static ListBox Monate;
 //  @UiField Label loadingLabel;
   @UiField
 static TextBox clientLocation;
+  @UiField
+static HTMLPanel isCustomer;
+  @UiField
+static InlineLabel isCustomerLabel;
+  
   public static Placemark currentLocation;
   public static DistancesDialog ddlg;
   public static KitchenDialog kDlg;
@@ -105,6 +110,9 @@ protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDi
 	
 	Date date = new Date();
 	Monate.setSelectedIndex(date.getMonth());
+	
+
+	
 	
 	//.parse( Integer.toString( TopPanel.Monate.getSelectedIndex() ));
 	

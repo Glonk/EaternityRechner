@@ -188,8 +188,8 @@ public class InfoPreparationDialog extends Composite {
 			minutesBox.removeItem(i);
 		}
 		if(this.kitchen.devices.size()>0){
-		for(int i = 0; i< this.kitchen.devices.get(index).durations.size(); i++){
-			minutesBox.addItem(this.kitchen.devices.get(index).durations.get(i).toString());
+		for(int i = 0; i< this.kitchen.devices.get(index).durations.length; i++){
+			minutesBox.addItem(this.kitchen.devices.get(index).durations[i].toString());
 		}}
 		minutesBox.addItem("genauer");
 	}

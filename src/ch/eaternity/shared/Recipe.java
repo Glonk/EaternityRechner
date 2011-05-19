@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Serialized;
 
 
@@ -28,6 +29,7 @@ public class Recipe implements Serializable, Cloneable{
 	
 	public UploadedImage image;
 	
+	@Indexed
 	private String emailAddressOwner;
 	
 	private Long persons;

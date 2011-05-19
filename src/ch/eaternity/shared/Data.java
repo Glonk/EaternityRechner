@@ -17,6 +17,8 @@ public class Data implements Serializable{
 	public  List<SingleDistance> distances;
 	
 	public  List<Kitchen> kitchens;
+	
+	public int lastKitchen;
 
 	public Set<String> getOrcaleIndex() {
 

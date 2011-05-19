@@ -31,10 +31,9 @@
 		Admin hat Zugriff auf alle Küchen, und kann entsprechend Emailadressen hinzufügen, für Leute die dann diese Küche immer als 
 		standart Einstellung zu sehen bekommen. 
 		
-		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
+		
 				<g:HTMLPanel ui:field='kitchen'>
 					<g:Anchor href='javascript:;' ui:field='newKitchen'>neue Küche</g:Anchor>
-					<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
 					<g:ListBox ui:field="kitchens" />
 					
 					
@@ -43,10 +42,12 @@
 		
 			Add Picture/Logo
 			<br />
-
+		<hr />
 		<g:ScrollPanel ui:field="scrollPanel">
 		<g:HTMLPanel>
-		
+	
+		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
+		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
 		<br /><br />
 		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
 		<g:ListBox ui:field="energyMix"></g:ListBox>
@@ -116,7 +117,8 @@
 			
 		</g:HTMLPanel>
 		</g:ScrollPanel>
-		<g:Anchor href='javascript:;' ui:field='leaveKitchen'>Küche verlassen</g:Anchor>
+		<hr />
+		<g:Anchor href='javascript:;' ui:field='leaveKitchen'>Den eaternity Rechner nicht kommerziell benutzen (privat)</g:Anchor>
 		<div class='{style.buttons}'>
 			<g:Button text='Küche speichern' ui:field='executeButton' />
 		</div>
