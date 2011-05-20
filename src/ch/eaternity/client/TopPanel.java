@@ -19,6 +19,8 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.SingleDistance;
 
 import com.google.gwt.core.client.GWT;
@@ -64,7 +66,8 @@ static Anchor editKitchen;
 static ListBox Monate;
 //  @UiField
 //static ListBox kitchens;
-  @UiField HTMLPanel location;
+  @UiField 
+  static HTMLPanel location;
 //  @UiField HTMLPanel kitchen;
   @UiField static Label locationLabel;
 //  @UiField Label loadingLabel;
@@ -82,6 +85,8 @@ static InlineLabel isCustomerLabel;
   
  // here should be all the distances stored 
 protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
+public static boolean leftKitchen;
+public static Kitchen selectedKitchen;
 
 
   

@@ -21,6 +21,9 @@ public class UserRezept{
 	@Indexed
 	public User user;
 	
+	@Indexed
+	public Long kitchenId;
+	
 	public Boolean approvedOpen;
 	public Boolean requestedOpen;
 	

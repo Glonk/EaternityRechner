@@ -32,6 +32,8 @@ public class Recipe implements Serializable, Cloneable{
 	@Indexed
 	private String emailAddressOwner;
 	
+	public Long kitchenId = 0l;
+	
 	private Long persons;
 	
 	private Date createDate;

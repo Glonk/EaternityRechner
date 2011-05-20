@@ -203,10 +203,10 @@ public class Search extends ResizeComposite {
 						"ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
 		imageSmiley1.addMouseListener(
 				new TooltipListener(
-						"CO₂Äq-Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"CO₂-Äq. Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
 		imageSmiley2.addMouseListener(
 				new TooltipListener(
-						"CO₂Äq-Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"CO₂-Äq. Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
 		imageSmiley3.addMouseListener(
 				new TooltipListener(
 						"Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
@@ -560,14 +560,14 @@ public class Search extends ResizeComposite {
 		FoundRezepteYours.clear();
 
 		//		List<Recipe> allRezepte = getClientData().getPublicRezepte();
-		if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
+		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
 			yourRezeptePanel.setVisible(true);
-			//			for(Recipe recipe: getClientData().getYourRezepte()){
+			//			for(Recipe recipe: getYourRecipes()){
 			//				if(!allRezepte.contains(recipe)){
 			//					allRezepte.add(recipe);
 			//				}
 			//			}
-			//			allRezepte.addAll(getClientData().getYourRezepte());
+			//			allRezepte.addAll(getYourRecipes());
 		} else {
 			yourRezeptePanel.setVisible(false);
 		}
@@ -619,8 +619,8 @@ public class Search extends ResizeComposite {
 					}
 				}
 				// Rezepte
-				if(	getClientData().getYourRezepte() != null){
-					searchRezept(searchString, getClientData().getYourRezepte(), searches,true);
+				if(	getYourRecipes() != null){
+					searchRezept(searchString, getYourRecipes(), searches,true);
 				}
 
 				if(	getClientData().getPublicRezepte() != null){
@@ -639,9 +639,9 @@ public class Search extends ResizeComposite {
 					}
 				}
 
-				if(	getClientData().getYourRezepte() != null && getClientData().getYourRezepte().size() != 0){
+				if(	getYourRecipes() != null && getYourRecipes().size() != 0){
 					yourRezeptePanel.setVisible(true);
-					for(Recipe recipe : getClientData().getYourRezepte()){
+					for(Recipe recipe : getYourRecipes()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
 							FoundRezepteYours.add(recipe);
 							displayRezept(recipe,true);
@@ -665,6 +665,16 @@ public class Search extends ResizeComposite {
 
 			sortResults();
 		}	
+	}
+
+	private static List<Recipe> getYourRecipes() {
+		// TODO Auto-generated method stub
+		if(TopPanel.leftKitchen){
+			return getClientData().getYourRezepte();
+		} else {
+			return getClientData().KitchenRecipes;
+		}
+		
 	}
 
 	private static void searchRezept(String searchString,

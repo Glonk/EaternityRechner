@@ -106,6 +106,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 
 		UserRezept userRezept = new UserRezept(getUser());
+		
+		if(recipe.kitchenId != 0){
+			userRezept.kitchenId = recipe.kitchenId;
+		}
 		// TODO : this is not a propper approval process!!!
 		userRezept.requestedOpen = recipe.openRequested;
 		if(userService.getCurrentUser().getEmail() != null){
@@ -192,6 +196,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if (getUser() != null) {
 		List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
 		data.setYourRezepte(rezeptePersonal);
+		data.KitchenRecipes = dao.getKitchenRecipes(getUser());
 		}
 		
 		
@@ -199,8 +204,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if(rezepte.isEmpty()){
 			rezepte = dao.getOpenRecipe();
 		}
-		if(data.YourRezepte != null){
-			for(Recipe recipe: data.YourRezepte){
+		if(data.yourRecipes != null){
+			for(Recipe recipe: data.yourRecipes){
 				int removeIndex = -1;
 				for(Recipe rezept2:rezepte){
 					if(rezept2.getId().equals(recipe.getId())){
@@ -213,6 +218,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			}
 		}
 		data.setPublicRezepte(rezepte);
+		
+		
 		
 		
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();

@@ -138,11 +138,13 @@ public class InfoPreparationDialog extends Composite {
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
 		
-		ArrayList<Kitchen> kitchens = (ArrayList<Kitchen>) Search.getClientData().kitchens;
-		if(kitchens.size()>0){
-			this.kitchen = kitchens.get(KitchenDialog.kitchens.getSelectedIndex());
-			setValues();
-		}
+//		ArrayList<Kitchen> kitchens = (ArrayList<Kitchen>) Search.getClientData().kitchens;
+//		if(kitchens.size()>0){
+//			this.kitchen = kitchens.get(KitchenDialog.kitchens.getSelectedIndex());
+		if(TopPanel.selectedKitchen != null){
+		this.kitchen = TopPanel.selectedKitchen;
+		setValues();} 
+//		}
 
 	}
 

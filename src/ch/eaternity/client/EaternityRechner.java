@@ -167,6 +167,9 @@ public class EaternityRechner implements EntryPoint {
 	
 
 	static void addRezept(final Recipe recipe, final RezeptView rezeptView) {
+		if(!TopPanel.leftKitchen){
+			recipe.kitchenId = TopPanel.selectedKitchen.id;
+		}
 		dataService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -671,7 +674,9 @@ public class EaternityRechner implements EntryPoint {
 //					}
 					int lastkitchen = Search.getClientData().lastKitchen;
 					String kitchenName = data.kitchens.get(lastkitchen).getSymbol();
-					TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName);
+					TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
+					TopPanel.location.setVisible(false);
+					TopPanel.leftKitchen = false;
 				} else {
 					if(!loginInfo.isAdmin()){ 
 						TopPanel.isCustomer.setVisible(false);

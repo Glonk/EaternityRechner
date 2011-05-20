@@ -882,7 +882,16 @@ public class KitchenDialog extends DialogBox{
 	@UiHandler("executeButton")
 	void onOkayClicked(ClickEvent event) {
 		
-        for (PendingChange<?> pendingChange : pendingChanges) {
+		  TopPanel.location.setVisible(false);
+		  TopPanel.leftKitchen = false;
+		  TopPanel.isCustomerLabel.setText("Sie befinden sich in der Küche: "+kitchenName+" ");
+		  TopPanel.selectedKitchen = selectedKitchen;
+        saveAndCloseDialog();
+	}
+
+
+	private void saveAndCloseDialog() {
+		for (PendingChange<?> pendingChange : pendingChanges) {
 	          pendingChange.commit();
 	        }
         pendingChanges.clear();
@@ -931,11 +940,15 @@ public class KitchenDialog extends DialogBox{
 			}
 			@Override
 			public void onSuccess(Long ignore) {
+				TopPanel.selectedKitchen.id = ignore;
 //				Search.getClientData().kitchens.add(kitchen);
 //				kitchens.addItem(kitchen.getSymbol());
 			}
 		});
 		}
+		
+		Search.SearchBox2.setText("");
+		Search.updateResults(" ");
 		
 		hide();
 	}
@@ -1118,6 +1131,16 @@ public class KitchenDialog extends DialogBox{
 			  // devices
 			  switchKitchen();
 		  
+	  }
+
+	  
+	  @UiHandler("leaveKitchen")
+	  public void onLeaveKitchenClick(ClickEvent event) {
+		  TopPanel.location.setVisible(true);
+		  TopPanel.leftKitchen = true;
+		  TopPanel.isCustomerLabel.setText("Sie benutzen den Rechner privat ");
+		  TopPanel.selectedKitchen = null;
+		  saveAndCloseDialog();
 	  }
 
 

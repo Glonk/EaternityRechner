@@ -12,7 +12,8 @@ public class Data implements Serializable{
 	 */
 	private static final long serialVersionUID = -8325524250818128692L;
 	public  List<Recipe> PublicRezepte;
-	public  List<Recipe> YourRezepte;
+	public  List<Recipe> yourRecipes;
+	public  List<Recipe> KitchenRecipes;
 	public  List<Ingredient> ingredients;
 	public  List<SingleDistance> distances;
 	
@@ -40,8 +41,8 @@ public class Data implements Serializable{
 				}
 			}
 		}
-		if(this.YourRezepte != null){
-			for(Recipe recipe  : this.YourRezepte){
+		if(this.yourRecipes != null){
+			for(Recipe recipe  : this.yourRecipes){
 				if(recipe != null){
 					oracleIndex.add(recipe.getSymbol());
 				}
@@ -58,10 +59,10 @@ public class Data implements Serializable{
 		return PublicRezepte;
 	}
 	public void setYourRezepte(List<Recipe> yourRezepte) {
-		YourRezepte = yourRezepte;
+		yourRecipes = yourRezepte;
 	}
 	public List<Recipe> getYourRezepte() {
-		return YourRezepte;
+		return yourRecipes;
 	}
 	
 	public Ingredient getIngredientByID(long id){

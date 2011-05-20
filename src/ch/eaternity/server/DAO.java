@@ -287,5 +287,44 @@ public class DAO extends DAOBase
         return openRecipes;
 
 	}
+
+	public List<Recipe> getKitchenRecipes(User user) {
+		
+		
+		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+		
+		  Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", user.getEmail());
+			QueryResultIterator<Staff> staffIterator = kitchenStaff.iterator();
+			while (staffIterator.hasNext()) {
+				
+	        	Staff staffer = staffIterator.next();
+	        	for (Long kitchenId:staffer.kitchensIds){
+	        		
+//	        		Kitchen kitchen = ofy().get(Kitchen.class,kitchenId);
+	        		
+		        	Query<UserRezept> yourKitchenRecipes = ofy().query(UserRezept.class).filter("kitchenId", kitchenId);
+		            QueryResultIterator<UserRezept> iterator = yourKitchenRecipes.iterator();
+		            
+		            while (iterator.hasNext()) {
+		            	UserRezept userRezept = iterator.next();
+		            	Recipe recipe = userRezept.getRezept();
+		            	recipe.setId( userRezept.id);
+		            	if(!kitchenRecipes.contains(recipe)){
+		            		kitchenRecipes.add(recipe);
+		            	}
+		            }
+	        		
+	        	}
+
+
+			}
+	
+		
+
+		// The Query itself is Iterable
+		
+        
+        return kitchenRecipes;
+	}
     
 }

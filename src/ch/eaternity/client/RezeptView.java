@@ -83,6 +83,7 @@ public class RezeptView extends Composite {
 	@UiField
 	public FlowPanel menuDecoInfo;
 	@UiField Button RezeptButton;
+	@UiField Button PrepareButton;
 	@UiField TextBox RezeptName;
 	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
@@ -133,6 +134,10 @@ public class RezeptView extends Composite {
 	public RezeptView(Recipe recipe) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
+	    
+	    if(TopPanel.leftKitchen){
+	    	PrepareButton.setVisible(false);
+	    }
 	    setRezept(recipe);
 	    saved = true;
 	    initTable();
