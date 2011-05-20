@@ -48,7 +48,7 @@
       	&nbsp;
 				<g:HTMLPanel ui:field='isCustomer' styleName="{style.inline}">
 				<g:InlineLabel  ui:field='isCustomerLabel'></g:InlineLabel>
-				(<g:Anchor href='javascript:;' ui:field='editKitchen'>ändern</g:Anchor>)
+				<g:Anchor href='javascript:;' ui:field='editKitchen'>(ändern)</g:Anchor>
 				</g:HTMLPanel>
 <!-- 				<g:Anchor href='javascript:;' ui:field='stepOut'>Küche verlassen</g:Anchor> -->
          &nbsp;

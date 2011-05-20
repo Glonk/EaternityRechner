@@ -82,6 +82,19 @@
 			padding-right:3px;
 			padding-top:3px;
 			}
+			
+			.addDevice{
+			float:right;
+			width:200px;
+			background:#fff;
+			text-align:center;
+			color:#bbb;
+			font-weight:bold;
+			padding-right:3px;
+			padding-top:3px;
+			cursor: pointer;
+  			cursor: hand;
+			}
 		
 
 .menge{
@@ -128,7 +141,7 @@
              		
 					<g:HTMLPanel styleName="{style.wholePanel}">
 					<g:Label ui:field="closeLabel"  styleName='{style.close}'>x</g:Label>
-					<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Energiebedarf</g:Label>
+					<g:Anchor ui:field="addDevice"  styleName='{style.addDevice}'>Gerät hinzufügen</g:Anchor> <!--  -->
 					
 						<g:HTML ui:field="zutatName" styleName='{style.zutatName}'>
 						Rezept Zubereitung

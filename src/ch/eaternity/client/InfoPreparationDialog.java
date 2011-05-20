@@ -57,13 +57,14 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 public class InfoPreparationDialog extends Composite {
 	interface Binder extends UiBinder<Widget, InfoPreparationDialog> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	@UiField HTML zutatName;
 	@UiField PassedStyle passedStyle;
-	@UiField Label hinweisPanel;
+
 	@UiField Label hinweisDetails;
 	@UiField Label closeLabel;
 	
@@ -102,10 +103,10 @@ public class InfoPreparationDialog extends Composite {
 		String style = passedStyle.hinweisPassed();
 
 		if (selected) {
-			hinweisPanel.addStyleName(style);
+//			hinweisPanel.addStyleName(style);
 			hinweisDetails.setStyleName("black");
 		} else {
-			hinweisPanel.removeStyleName(style);
+//			hinweisPanel.removeStyleName(style);
 			hinweisDetails.setStyleName("grey");
 		}
 	
@@ -142,15 +143,19 @@ public class InfoPreparationDialog extends Composite {
 //		if(kitchens.size()>0){
 //			this.kitchen = kitchens.get(KitchenDialog.kitchens.getSelectedIndex());
 		if(TopPanel.selectedKitchen != null){
-		this.kitchen = TopPanel.selectedKitchen;
-		setValues();} 
+			this.kitchen = TopPanel.selectedKitchen;
+			
+		} 
 //		}
 
 	}
 
+	@UiHandler("addDevice")
+	void onTableClicked(ClickEvent event) {
+		addNewDevice();
+	}
 	
-	
-	public void setValues(){
+	public void addNewDevice(){
 		
 		final ListBox devicesBox = new ListBox();
 		for(int i = 0;i <this.kitchen.devices.size();i++){
