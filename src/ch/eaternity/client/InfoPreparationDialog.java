@@ -171,6 +171,7 @@ public class InfoPreparationDialog extends Composite {
 			public void onChange(ChangeEvent event){
 				
 				setMinutes(minutesBox,devicesBox.getSelectedIndex());
+				hinweisDetails.setText("CO2-Äquivalent durch Zubereitung");
 			}
 
 		};
@@ -194,7 +195,7 @@ public class InfoPreparationDialog extends Composite {
 		for(int i = 0; i< minutesBox.getItemCount(); i++){
 			minutesBox.removeItem(i);
 		}
-		if(this.kitchen.devices.size()>0){
+		if(!(this.kitchen.devices.size()<index)){
 		for(int i = 0; i< this.kitchen.devices.get(index).durations.length; i++){
 			minutesBox.addItem(this.kitchen.devices.get(index).durations[i].toString());
 		}}

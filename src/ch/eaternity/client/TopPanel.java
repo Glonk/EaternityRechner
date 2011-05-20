@@ -85,7 +85,7 @@ static InlineLabel isCustomerLabel;
   
  // here should be all the distances stored 
 protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
-public static boolean leftKitchen;
+public static boolean leftKitchen = true;
 public static Kitchen selectedKitchen;
 
 

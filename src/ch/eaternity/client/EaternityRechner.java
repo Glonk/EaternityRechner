@@ -677,9 +677,11 @@ public class EaternityRechner implements EntryPoint {
 					TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
 					TopPanel.location.setVisible(false);
 					TopPanel.leftKitchen = false;
+					TopPanel.selectedKitchen = data.kitchens.get(lastkitchen);
 				} else {
 					if(!loginInfo.isAdmin()){ 
 						TopPanel.isCustomer.setVisible(false);
+						
 					}
 				}
 				

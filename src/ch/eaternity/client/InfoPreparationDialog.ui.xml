@@ -151,7 +151,7 @@
 	<g:VerticalPanel styleName="{style.border}">
 
 		<g:FlexTable  styleName="{style.tableSpecs}" ui:field="specificationTable"></g:FlexTable>
-			<g:Label ui:field="hinweisDetails"  styleName='{style.hinweisDetails}'></g:Label>
+			<g:Label ui:field="hinweisDetails"  styleName='{style.hinweisDetails}'>Summe</g:Label>
 				
 		
 	</g:VerticalPanel>
