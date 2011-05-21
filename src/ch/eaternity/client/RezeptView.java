@@ -83,7 +83,7 @@ public class RezeptView extends Composite {
 	@UiField
 	public FlowPanel menuDecoInfo;
 	@UiField Button RezeptButton;
-	@UiField Button PrepareButton;
+	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
 	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;

@@ -7,6 +7,14 @@
 		background:#fff;
 		clear:both;
 	}
+	.prepare {
+	float:right;
+	margin-right:20px;
+	color:black;
+	text-decoration: underline;
+	cursor: pointer;
+  	cursor: hand;
+	}
 	.statusInfo{
 	color:#fff;
 	margin:0px 0px 0px 4px;
@@ -251,13 +259,14 @@
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>
         			<g:HTML ui:field='detailText' styleName='{style.detailText}'></g:HTML >
+        			<g:Anchor styleName='{style.prepare}'  ui:field="PrepareButton" text="Zubereitung hinzufügen"/>
         					<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
         					    <!--g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel-->
 
                 				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			
                 			</g:HTMLPanel>
-                				<g:Button styleName='{style.gwt-Button}'  ui:field="PrepareButton" text="Zubereitung hinzufügen"/>
+                				
                 	</g:HTMLPanel>
               		
                 	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>

@@ -45,6 +45,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -172,15 +173,17 @@ public class InfoPreparationDialog extends Composite {
 		
 		final ChangeHandler onDeviceChange = new ChangeHandler(){
 			public void onChange(ChangeEvent event){
+				// update device in List
 				
 				setMinutes(minutesBox,devicesBox.getSelectedIndex());
-				
+				updateDeviceEmissions();
 			}
 
 		};
 		
 		Device currentDevice = this.kitchen.devices.get(devicesBox.getSelectedIndex());
-		recipe.deviceSpecifications.add(new DeviceSpecification(currentDevice.deviceName, currentDevice.deviceSpec, currentDevice.kWConsumption, Long.parseLong(minutesBox.getItemText(minutesBox.getSelectedIndex()))));
+		final DeviceSpecification currentDevSpec = new DeviceSpecification(currentDevice.deviceName, currentDevice.deviceSpec, currentDevice.kWConsumption, Long.parseLong(minutesBox.getItemText(minutesBox.getSelectedIndex())));
+		recipe.deviceSpecifications.add(currentDevSpec);
 		
 		devicesBox.addChangeHandler(onDeviceChange);
 	    
@@ -188,7 +191,8 @@ public class InfoPreparationDialog extends Composite {
 	
 		final ChangeHandler onMinutesChange = new ChangeHandler(){
 			public void onChange(ChangeEvent event){
-				
+				currentDevSpec.duration = Long.parseLong( minutesBox.getItemText(minutesBox.getSelectedIndex()));
+				updateDeviceEmissions();
 				
 			}
 
@@ -199,19 +203,41 @@ public class InfoPreparationDialog extends Composite {
 			
 		specificationTable.setWidget(row,0,devicesBox);
 		specificationTable.setWidget(row,1,minutesBox);
+		
+		
+		final Anchor deleteAnchor = new Anchor("x");
+//		removeZutat.addStyleName("style.gwt-Button");
+//		removeZutat.addStyleDependentName("gwt-Button");
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				recipe.deviceSpecifications.remove(currentDevSpec);
+				int row = getWidgetRow(deleteAnchor, specificationTable);
+				specificationTable.removeRow(row);
+				updateDeviceEmissions();
+			}
+		});
+		
+		specificationTable.setWidget(row,2,deleteAnchor);
+		
+		updateDeviceEmissions();
+			
+	}
+	private void updateDeviceEmissions() {
 		String formatted = NumberFormat.getFormat("##").format( recipe.getDeviceCo2Value() );
 		hinweisDetails.setText("CO2-Äquivalent durch Zubereitung: "+formatted+ " g *");
-			
 	}
 	
 	private void setMinutes(ListBox minutesBox, int index) {
-		for(int i = 0; i< minutesBox.getItemCount(); i++){
+		int itemsCount =  minutesBox.getItemCount();
+		for(int i = 0; i<itemsCount; i++){
 			minutesBox.removeItem(i);
 		}
 		if(!(this.kitchen.devices.size()<index)){
 		for(int i = 0; i< this.kitchen.devices.get(index).durations.length; i++){
 			minutesBox.addItem(this.kitchen.devices.get(index).durations[i].toString());
-		}}
+		}} else {
+			// handle new entries...
+		}
 		minutesBox.addItem("genauer");
 	}
 		
@@ -283,4 +309,15 @@ public class InfoPreparationDialog extends Composite {
 		}
 		return MenuLabelWert;
 	}
+	private static int getWidgetRow(Widget widget, FlexTable table) {
+	for (int row = 0; row < table.getRowCount(); row++) {
+		for (int col = 0; col < table.getCellCount(row); col++) {
+			Widget w = table.getWidget(row, col);
+			if (w == widget) {
+				return row;
+			}
+		}
+	}
+	throw new RuntimeException("Unable to determine widget row");
+}
 }
