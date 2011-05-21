@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import javax.persistence.Embedded;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
@@ -32,6 +33,9 @@ public class Recipe implements Serializable, Cloneable{
 	@Indexed
 	private String emailAddressOwner;
 	
+	@Embedded
+	public EnergyMix energyMix;
+	
 	public Long kitchenId = 0l;
 	
 	private Long persons;
@@ -47,6 +51,10 @@ public class Recipe implements Serializable, Cloneable{
 //    @Element(dependent = "true")
 	@Serialized
 	public ArrayList<IngredientSpecification> Zutaten = new ArrayList<IngredientSpecification>();
+	
+	@Embedded
+	public ArrayList<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
+
     
 //    @Persistent 
 //    private List<String> ZutatSpecificationKeys = new ArrayList<String>(); 
@@ -146,7 +154,10 @@ public class Recipe implements Serializable, Cloneable{
 	}
 
 	public void setCO2Value() {
-		double sum = 0;
+
+		
+		double sum = getDeviceCo2Value();
+		
 		for ( IngredientSpecification zutatSpec : Zutaten){
 			sum += zutatSpec.getCalculatedCO2Value();
 		}
@@ -155,6 +166,16 @@ public class Recipe implements Serializable, Cloneable{
 		} else {
 			CO2Value = sum;
 		}
+	}
+
+	public double getDeviceCo2Value() {
+		double sum = 0;
+		if(energyMix != null && deviceSpecifications != null && deviceSpecifications.size()>0 ){
+		for(DeviceSpecification device:deviceSpecifications){
+			sum += device.duration * device.kWConsumption * energyMix.Co2PerKWh;
+		}
+		}
+		return sum;
 	}
 
 	public double getCO2Value() {

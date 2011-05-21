@@ -22,8 +22,9 @@ public class Kitchen implements Serializable, Cloneable{
 
 	public UploadedImage image;
 	
+	@Embedded
+	public EnergyMix energyMix;
 	
-	public String energyMix;
 	public String location;
 	
 	private String emailAddressOwner;

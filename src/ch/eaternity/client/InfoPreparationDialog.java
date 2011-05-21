@@ -6,6 +6,8 @@ import java.util.List;
 
 
 import ch.eaternity.client.widgets.ImageOverlay;
+import ch.eaternity.shared.Device;
+import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
@@ -144,6 +146,7 @@ public class InfoPreparationDialog extends Composite {
 //			this.kitchen = kitchens.get(KitchenDialog.kitchens.getSelectedIndex());
 		if(TopPanel.selectedKitchen != null){
 			this.kitchen = TopPanel.selectedKitchen;
+			recipe.energyMix = TopPanel.selectedKitchen.energyMix;
 			
 		} 
 //		}
@@ -171,23 +174,33 @@ public class InfoPreparationDialog extends Composite {
 			public void onChange(ChangeEvent event){
 				
 				setMinutes(minutesBox,devicesBox.getSelectedIndex());
-				hinweisDetails.setText("CO2-Äquivalent durch Zubereitung");
+				
 			}
 
 		};
+		
+		Device currentDevice = this.kitchen.devices.get(devicesBox.getSelectedIndex());
+		recipe.deviceSpecifications.add(new DeviceSpecification(currentDevice.deviceName, currentDevice.deviceSpec, currentDevice.kWConsumption, Long.parseLong(minutesBox.getItemText(minutesBox.getSelectedIndex()))));
+		
 		devicesBox.addChangeHandler(onDeviceChange);
 	    
 		
 	
-		
-		
+		final ChangeHandler onMinutesChange = new ChangeHandler(){
+			public void onChange(ChangeEvent event){
+				
+				
+			}
+
+		};
+		minutesBox.addChangeHandler(onMinutesChange);
 		
 		int row = specificationTable.getRowCount();
 			
 		specificationTable.setWidget(row,0,devicesBox);
 		specificationTable.setWidget(row,1,minutesBox);
-		
-			
+		String formatted = NumberFormat.getFormat("##").format( recipe.getDeviceCo2Value() );
+		hinweisDetails.setText("CO2-Äquivalent durch Zubereitung: "+formatted+ " g *");
 			
 	}
 	

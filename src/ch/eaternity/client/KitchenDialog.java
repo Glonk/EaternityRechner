@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import ch.eaternity.shared.Device;
+import ch.eaternity.shared.EnergyMix;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
@@ -134,7 +135,7 @@ public class KitchenDialog extends DialogBox{
 		personsHere = selectedKitchen.personal;
 		
 
-		
+		selectedKitchen.energyMix = new EnergyMix("EnergyStar",2.0);
 		openDialog();
 	
 	}
@@ -163,7 +164,9 @@ public class KitchenDialog extends DialogBox{
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		
-		energyMix.addItem("NatureStar");
+		energyMix.addItem(selectedKitchen.energyMix.Name);
+		
+		
 		addKitchenNamesToList(availableKitchens);
 		
 		if(!EaternityRechner.loginInfo.isAdmin() && availableKitchens.size() < 2){
@@ -255,7 +258,7 @@ public class KitchenDialog extends DialogBox{
 		        },  new FieldUpdater<Device, String>() {
 		  	      @Override
 				public void update(int index, Device object, String value) {
-		  	        pendingChanges.add(new DeviceSpecChange(object, value));
+		  	        pendingChanges.add(new DeviceKwChange(object, value));
 		  	      }
 		  	    });
 //	    cellTable.addColumn(numberColumn, "Energieverbrauch in kWh/h");
@@ -649,6 +652,20 @@ public class KitchenDialog extends DialogBox{
 	  /**
 	   * Updates the specifiation name.
 	   */
+	  private static class DeviceKwChange extends PendingChange<String> {
+
+	    public DeviceKwChange(Device contact, String value) {
+	      super(contact, value);
+	    }
+
+	    @Override
+	    protected void doCommit(Device contact, String value) {
+	      contact.kWConsumption = Double.valueOf(value);
+	    }
+	  }
+	  /**
+	   * Updates the specifiation name.
+	   */
 	  private static class DeviceSpecChange extends PendingChange<String> {
 
 	    public DeviceSpecChange(Device contact, String value) {
@@ -660,7 +677,6 @@ public class KitchenDialog extends DialogBox{
 	      contact.deviceSpec = value;
 	    }
 	  }
-	  
 	  /**
 	   * Updates the Durations List.
 	   */
