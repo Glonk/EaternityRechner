@@ -66,14 +66,15 @@
         </g:west>
         <g:center>
         <g:DockLayoutPanel>
-       			<g:north size='120'>
+        		<g:north size='40'>
+       			<!-- <g:north size='120'> -->
        			<g:HTMLPanel styleName='{style.Worksheet}' >
        			<!-- Add Rezept Button -->
        			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Rezept"/>
        			
-       			
+       			Ihre Rezepte:
        			<!-- suggest bar -->
-       			Im Vergleich:
+       			<!-- Im Vergleich: -->
        			<g:HorizontalPanel ui:field='suggestionPanel' styleName='{style.topScores}'>
 
        			</g:HorizontalPanel>

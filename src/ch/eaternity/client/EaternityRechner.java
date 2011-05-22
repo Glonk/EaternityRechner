@@ -135,6 +135,19 @@ public class EaternityRechner implements EntryPoint {
 		// TODO remove this with something that makes more sense
 		rezeptList.getColumnFormatter().setWidth(1, "750px");
 
+		
+		//TODO uncomment this when ready!
+		//TODO uncomment this when ready!
+		//TODO uncomment this when ready!
+		//TODO uncomment this when ready!
+		
+		suggestionPanel.setVisible(false);
+		//TODO uncomment this when ready!
+		//TODO uncomment this when ready!
+		//TODO uncomment this when ready!
+		//TODO uncomment this when ready!
+		
+		
 		//	  
 		// Check login status using login service.
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
