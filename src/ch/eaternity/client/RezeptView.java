@@ -115,7 +115,7 @@ public class RezeptView extends Composite {
 	HTML htmlCooking;
 	Boolean askForLess;
 	public Boolean askForLess2;
-	public Image showImageRezept;
+	public Image showImageRezept = new Image();
 	public Anchor bildEntfernen;
 	HandlerRegistration klicky;
 	public HandlerRegistration showImageHandler = null;
