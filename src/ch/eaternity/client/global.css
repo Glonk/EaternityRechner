@@ -117,6 +117,12 @@ width: 100%;
 
 	}
 
+.gwt-ListBox{
+/*  as these things effect all listboxes	*/
+margin-top:5px; 
+margin-right:6px; 
+}
+
 .putRight{
 	display: inline;
 float: right;
