@@ -10,6 +10,7 @@ import java.util.ListIterator;
 import ch.eaternity.client.widgets.ImageOverlay;
 import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
@@ -27,6 +28,7 @@ import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
@@ -191,10 +193,12 @@ public class EaternityRechner implements EntryPoint {
 			public void onSuccess(Long id) {
 //Window.alert("good");
 //				Search.displayRezept(recipe);
+				Search.yourRezeptePanel.setVisible(true);
 				recipe.setId(id);
 				Search.getClientData().getYourRezepte().add(recipe);
 				Search.updateResults(Search.SearchBox2.getText());
 				rezeptView.saved = true;
+				
 				
 			}
 		});
@@ -348,7 +352,18 @@ public class EaternityRechner implements EntryPoint {
 		AddZutatZumMenu(zutaten);
 		final RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
 		
-		
+		if(!recipe.deviceSpecifications.isEmpty()){
+		// add the devices...
+			rezeptView.recipe.deviceSpecifications = new ArrayList<DeviceSpecification>(recipe.deviceSpecifications.size());
+			for(DeviceSpecification devSpec:recipe.deviceSpecifications){
+				DeviceSpecification devSpecClone = new DeviceSpecification(devSpec.deviceName,devSpec.deviceSpec, devSpec.kWConsumption, devSpec.duration);
+				rezeptView.recipe.deviceSpecifications.add(devSpecClone);
+			}
+			String formatted = NumberFormat.getFormat("##").format( recipe.getDeviceCo2Value() );
+			rezeptView.SuggestTable.setText(0,0,"Zubereitung");
+			rezeptView.SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
+			rezeptView.PrepareButton.setText("Zubereitung bearbeiten");
+		}
 		
 		rezeptView.RezeptName.setText(recipe.getSymbol());
 		if(recipe.getSubTitle() == null){

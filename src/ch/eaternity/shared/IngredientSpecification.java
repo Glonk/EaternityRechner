@@ -213,13 +213,15 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		}
 		} 
 		
-		if(zustand != null && zustand.factor != null){
-		wert += zustand.factor*mengeGramm;
+		if(produktion != null && produktion.factor != null){
+			wert += produktion.factor*mengeGramm;
 		}
 		
-		if(produktion != null && produktion.factor != null){
-		wert += produktion.factor*mengeGramm;
+		if(zustand != null && zustand.factor != null){
+			wert += zustand.factor*mengeGramm;
 		}
+		
+
 
 		return wert;
 		

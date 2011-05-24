@@ -1,6 +1,7 @@
 package ch.eaternity.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -129,6 +130,9 @@ public class InfoPreparationDialog extends Composite {
 		rezeptviewParent.menuDecoInfo.setVisible(true);
 		rezeptviewParent.styleRow(selectedRow, false);
 //		rezeptviewParent.addInfoPanel.insert(new HTML("test"), 1);
+		rezeptviewParent.PrepareButton.setVisible(true);
+		
+		
 		
 	}
 
@@ -137,53 +141,140 @@ public class InfoPreparationDialog extends Composite {
 		
 		specificationTable.setCellSpacing(0);
 
+		rezeptview.PrepareButton.setVisible(false);
+		
 		this.rezeptviewParent = rezeptview;
 		this.setRezept(recipe);
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
 		
-//		ArrayList<Kitchen> kitchens = (ArrayList<Kitchen>) Search.getClientData().kitchens;
-//		if(kitchens.size()>0){
-//			this.kitchen = kitchens.get(KitchenDialog.kitchens.getSelectedIndex());
 		if(TopPanel.selectedKitchen != null){
 			this.kitchen = TopPanel.selectedKitchen;
 			recipe.energyMix = TopPanel.selectedKitchen.energyMix;
 			
 		} 
-//		}
+
+		
+		if(!recipe.deviceSpecifications.isEmpty()){
+			rezeptviewParent.PrepareButton.setText("Zubereitung bearbeiten");
+			// add those to the list!
+			
+			for(DeviceSpecification devSpec : recipe.deviceSpecifications){
+				
+				
+				// find the according Device in the available list, if not there include it
+				boolean found = false;
+				int i = 0;
+				for(Device device: kitchen.devices){
+					
+					if(device.deviceName.equals(devSpec.deviceName)){
+						found = true;
+						// found in the list
+						
+						// get minutes selection
+						int j = 0;
+						if(kitchen.devices.size()>(i)){
+							for(long durationHere: device.durations){
+								if(durationHere >= devSpec.duration){
+									break;
+								}
+							j++;
+							}
+						}
+						
+						addDevice(i,j,devSpec);
+					}
+					i++;
+				}
+				if(!found){
+					//add to list
+					Long[] durationsHere = new Long[1];
+					durationsHere[0] = devSpec.duration;
+					kitchen.devices.add(new Device(devSpec.deviceName,devSpec.deviceSpec, devSpec.kWConsumption, durationsHere , devSpec.duration));
+					addDevice(kitchen.devices.size()-1,0,devSpec);
+				}
+				
+				
+		}
+		
+		// update the status info
+		updateDeviceEmissions();
+	}
+		
+		
 
 	}
 
 	@UiHandler("addDevice")
 	void onTableClicked(ClickEvent event) {
-		addNewDevice();
+		rezeptviewParent.PrepareButton.setText("Zubereitung bearbeiten");
+		// if there is no device yet:
+		if(specificationTable.getRowCount() == 0){
+			suggestTable.setText(0,0,"Zubereitung");
+		}
+			
+		addDevice(0,0,null);
 	}
 	
-	public void addNewDevice(){
+	public void addDevice(int deviceSelected, int minutesSelected,  DeviceSpecification newDevSpec){
 		
 		final ListBox devicesBox = new ListBox();
 		for(int i = 0;i <this.kitchen.devices.size();i++){
 			devicesBox.addItem(this.kitchen.devices.get(i).deviceName);
 		}
 		devicesBox.addItem("anderes Gerät");
-		devicesBox.setItemSelected(0, true);
+		
+		// this is relevant
+		devicesBox.setItemSelected(deviceSelected, true);
+		
 		final ListBox minutesBox = new ListBox();
-		setMinutes(minutesBox,0);
+		
 			
+		
+		setMinutes(minutesBox,deviceSelected);
+		minutesBox.setSelectedIndex(minutesSelected);
+		
+		final Device currentDevice = kitchen.devices.get(devicesBox.getSelectedIndex());
+		if(newDevSpec == null){
+			newDevSpec = new DeviceSpecification(currentDevice.deviceName, currentDevice.deviceSpec, currentDevice.kWConsumption, Long.parseLong(minutesBox.getItemText(minutesBox.getSelectedIndex())));
+			recipe.deviceSpecifications.add(newDevSpec);
+		}
+		final DeviceSpecification currentDevSpec = newDevSpec;
+		
+		
 		
 		final ChangeHandler onDeviceChange = new ChangeHandler(){
 			public void onChange(ChangeEvent event){
 				// update device in List
+				int index = devicesBox.getSelectedIndex();
+				int countDevices = kitchen.devices.size();
+				if(countDevices>(index)){
+					Device deviceNow = kitchen.devices.get(devicesBox.getSelectedIndex());
+					currentDevSpec.deviceName = deviceNow.deviceName;
+					currentDevSpec.deviceSpec = deviceNow.deviceSpec;
+					currentDevSpec.kWConsumption = deviceNow.kWConsumption;
+					currentDevSpec.duration = kitchen.devices.get(devicesBox.getSelectedIndex()).stdDuration;
+				} else {
+					currentDevSpec.duration= 0l;
+				}
 				
-				setMinutes(minutesBox,devicesBox.getSelectedIndex());
+				setMinutes(minutesBox,index);
+				int i = 0;
+				if(countDevices>(index)){
+				for(long durationHere: kitchen.devices.get(devicesBox.getSelectedIndex()).durations){
+					
+					if(durationHere >= currentDevSpec.duration){
+						break;
+					}
+					i++;
+				}
+				}
+				
+				minutesBox.setSelectedIndex(i);
 				updateDeviceEmissions();
 			}
 
 		};
-		
-		Device currentDevice = this.kitchen.devices.get(devicesBox.getSelectedIndex());
-		final DeviceSpecification currentDevSpec = new DeviceSpecification(currentDevice.deviceName, currentDevice.deviceSpec, currentDevice.kWConsumption, Long.parseLong(minutesBox.getItemText(minutesBox.getSelectedIndex())));
-		recipe.deviceSpecifications.add(currentDevSpec);
 		
 		devicesBox.addChangeHandler(onDeviceChange);
 	    
@@ -192,6 +283,7 @@ public class InfoPreparationDialog extends Composite {
 		final ChangeHandler onMinutesChange = new ChangeHandler(){
 			public void onChange(ChangeEvent event){
 				currentDevSpec.duration = Long.parseLong( minutesBox.getItemText(minutesBox.getSelectedIndex()));
+				
 				updateDeviceEmissions();
 				
 			}
@@ -224,20 +316,31 @@ public class InfoPreparationDialog extends Composite {
 	}
 	private void updateDeviceEmissions() {
 		String formatted = NumberFormat.getFormat("##").format( recipe.getDeviceCo2Value() );
-		hinweisDetails.setText("CO2-Äquivalent durch Zubereitung: "+formatted+ " g *");
+		hinweisDetails.setText("CO₂-Äquivalent durch Zubereitung: "+formatted+ " g*");
+		suggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
 	}
 	
 	private void setMinutes(ListBox minutesBox, int index) {
+
+		// remove all previous items
 		int itemsCount =  minutesBox.getItemCount();
 		for(int i = 0; i<itemsCount; i++){
-			minutesBox.removeItem(i);
+			// 0 as items reorder!
+			minutesBox.removeItem(0);
 		}
-		if(!(this.kitchen.devices.size()<index)){
-		for(int i = 0; i< this.kitchen.devices.get(index).durations.length; i++){
-			minutesBox.addItem(this.kitchen.devices.get(index).durations[i].toString());
-		}} else {
-			// handle new entries...
+		
+		
+		// case that there is actually a device selected:
+		if(this.kitchen.devices.size()>(index)){
+			//
+			for(int i = 0; i< this.kitchen.devices.get(index).durations.length; i++){
+				minutesBox.addItem(this.kitchen.devices.get(index).durations[i].toString());
+			}
+		} else {
+				// handle new entries...
 		}
+
+		
 		minutesBox.addItem("genauer");
 	}
 		

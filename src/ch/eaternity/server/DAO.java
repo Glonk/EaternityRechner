@@ -4,6 +4,8 @@ package ch.eaternity.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.eaternity.shared.Device;
+import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
@@ -36,6 +38,8 @@ public class DAO extends DAOBase
         ObjectifyService.register(ImageBlob.class);
         ObjectifyService.register(Kitchen.class);
         ObjectifyService.register(Staff.class);
+//        ObjectifyService.register(DeviceSpecification.class);
+//        ObjectifyService.register(Device.class);
     }
 
     /** Your DAO can have your own useful methods */

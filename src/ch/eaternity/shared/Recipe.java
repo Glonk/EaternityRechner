@@ -52,7 +52,7 @@ public class Recipe implements Serializable, Cloneable{
 	@Serialized
 	public ArrayList<IngredientSpecification> Zutaten = new ArrayList<IngredientSpecification>();
 	
-	@Embedded
+	@Serialized
 	public ArrayList<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
 
     

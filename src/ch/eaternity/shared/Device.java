@@ -23,7 +23,7 @@ public class Device implements Serializable {
 	 */
 	private static final long serialVersionUID = 3172640409035191698L;
 
-	@Id String id;
+	@Id Long id;
      
 	 
 	public Double kWConsumption;
@@ -53,11 +53,11 @@ public class Device implements Serializable {
 		this.stdDuration =stdDuration;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 

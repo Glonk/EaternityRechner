@@ -1,6 +1,7 @@
 package ch.eaternity.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -11,9 +12,9 @@ public class Data implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -8325524250818128692L;
-	public  List<Recipe> PublicRezepte;
-	public  List<Recipe> yourRecipes;
-	public  List<Recipe> KitchenRecipes;
+	public  List<Recipe> PublicRezepte = new ArrayList<Recipe>();
+	public  List<Recipe> yourRecipes = new ArrayList<Recipe>();
+	public  List<Recipe> KitchenRecipes = new ArrayList<Recipe>();
 	public  List<Ingredient> ingredients;
 	public  List<SingleDistance> distances;
 	

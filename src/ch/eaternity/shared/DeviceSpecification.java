@@ -16,14 +16,20 @@ import javax.persistence.Id;
 import com.googlecode.objectify.annotation.Serialized;
 
 
-public class DeviceSpecification implements Serializable {
+public class DeviceSpecification implements Serializable,Cloneable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2701096899616747762L;
+
 
 	/** 
 	 * 
 	 */
-	private static final long serialVersionUID = 3172640409035191698L;
 
-	@Id String id;
+
+	@Id Long id;
      
 	 
 	public Double kWConsumption;
@@ -50,11 +56,11 @@ public class DeviceSpecification implements Serializable {
 		this.duration =duration;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 

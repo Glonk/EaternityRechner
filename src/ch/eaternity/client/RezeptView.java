@@ -381,6 +381,10 @@ public class RezeptView extends Composite {
 		MenuTable.getColumnFormatter().setWidth(1, "180px");
 		MenuTable.setCellPadding(1);
 		
+		
+
+		
+		
 	    if(recipe.getCookInstruction() != null){
 	    	htmlCooking = new HTML(recipe.getCookInstruction());
 	    } else {
@@ -465,7 +469,8 @@ public class RezeptView extends Composite {
 	
 
 	 void selectRow(int row) {
-		
+		 
+		 PrepareButton.setVisible(true);
 		//TODO uncomment this:
 		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
 //		Window.alert(Integer.toString(row));
@@ -775,9 +780,9 @@ public class RezeptView extends Composite {
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
 		SuggestTable.setCellSpacing(2);
-		SuggestTable.setText(0,0,"SUMME");
+		SuggestTable.setText(1,0,"SUMME");
 		SuggestTable.getColumnFormatter().setWidth(0, "215px");
-		SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
+		SuggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
 		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
