@@ -372,7 +372,7 @@ public class Search extends ResizeComposite {
 	}
 
 
-	private void initTable() {
+	private static void initTable() {
 		table.getColumnFormatter().setWidth(0, "120px");
 		//		table.getColumnFormatter().setWidth(1, "80px");
 		//		table.getColumnFormatter().setWidth(2, "40px");
@@ -1018,6 +1018,8 @@ public class Search extends ResizeComposite {
 						openThis.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								EaternityRechner.rezeptApproval(recipe,true);
+//								 initTable();
+								// why does the layout suck after this button press?????
 							}
 						});
 						tableMeals.setWidget(row, 2,openThis);
@@ -1029,6 +1031,7 @@ public class Search extends ResizeComposite {
 					closeThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							EaternityRechner.rezeptApproval(recipe,false);
+//							 initTable();
 						}
 					});
 					tableMeals.setWidget(row, 2,closeThis);
