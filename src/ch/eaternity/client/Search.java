@@ -99,7 +99,7 @@ public class Search extends ResizeComposite {
 	@UiField Anchor legendAnchor;
 	@UiField Anchor legendAnchorClose;
 	
-	@UiField Image imageCarot;
+	@UiField Image imageCarrot;
 	@UiField Image imageSmiley1;
 	@UiField Image imageSmiley2;
 	@UiField Image imageSmiley3;
@@ -173,7 +173,12 @@ public class Search extends ResizeComposite {
 	@UiHandler("SearchInput")
 	public void onKeyUp(KeyUpEvent event) {
 		// this matches up to 2 words!
-		updateResults(SearchInput.getText());
+		
+		// only update on text change
+		if( !SearchInput.getText().trim().equals(searchString)){
+			searchString = SearchInput.getText().trim();
+			updateResults(searchString);
+		}
 	}
 
 	
@@ -190,7 +195,7 @@ public class Search extends ResizeComposite {
 	public void onLegendCloseClick(ClickEvent event) {
 
 		legendPanel.setStyleName("legend2");
-		displayResultsPanel.setWidgetSize(panelSouth, 77);
+		displayResultsPanel.setWidgetSize(panelSouth, 80);
 		displayResultsPanel.forceLayout();
 
 	}
@@ -238,7 +243,7 @@ public class Search extends ResizeComposite {
 	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
 	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
 
-
+	public static String searchString = "";
 
 
 
@@ -266,37 +271,37 @@ public class Search extends ResizeComposite {
 	@SuppressWarnings("deprecation")
 	private void initToolTips() {
 		
-		imageCarot.setUrl("pixel.png");
+		imageCarrot.setUrl("pixel.png");
 		imageSmiley1.setUrl("pixel.png");
 		imageSmiley2.setUrl("pixel.png");
 		imageSmiley3.setUrl("pixel.png");
 		imageRegloc.setUrl("pixel.png");
 		imageBio.setUrl("pixel.png");
-		imageCarot.setPixelSize(20, 20);
+		imageCarrot.setPixelSize(20, 20);
 		imageSmiley1.setPixelSize(20, 20);
 		imageSmiley2.setPixelSize(20, 20);
 		imageSmiley3.setPixelSize(20, 20);
 		imageRegloc.setPixelSize(20, 20);
 		imageBio.setPixelSize(20, 20);
 
-		imageCarot.addMouseListener(
+		imageCarrot.addMouseListener(
 				new TooltipListener(
-						"ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 		imageSmiley1.addMouseListener(
 				new TooltipListener(
-						"CO₂-Äq. Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"CO₂-Äq. Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 		imageSmiley2.addMouseListener(
 				new TooltipListener(
-						"CO₂-Äq. Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"CO₂-Äq. Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 		imageSmiley3.addMouseListener(
 				new TooltipListener(
-						"Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 		imageRegloc.addMouseListener(
 				new TooltipListener(
-						"saisonale und regionale Ware", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"saisonale und regionale Ware", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 		imageBio.addMouseListener(
 				new TooltipListener(
-						"biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+						"biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 		
 		
 		
@@ -507,7 +512,7 @@ public class Search extends ResizeComposite {
 	 * The search algorithm
 	 */
 	
-	
+	// TODO this is getting called twice all the time...
 	
 	static void updateResults(String searchString) {
 		table.removeAllRows();
@@ -989,12 +994,14 @@ public class Search extends ResizeComposite {
 
 		// these value (400,1200) are based on the 0.2 and 0.5 quantile of all ingredients
 		if(ingredient.getCo2eValue() < 400){
-			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons smiley2");	
+//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+			icon.setStyleName("base-icons");
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
 		} else	if(ingredient.getCo2eValue() < 1200){
-			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons smiley2");			
+//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+			icon.setStyleName("base-icons");	
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 
 		}
 

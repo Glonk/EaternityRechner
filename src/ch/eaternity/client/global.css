@@ -40,19 +40,21 @@ a:link, a:visited, a:hover, a:active {
 	margin:0px 0px 0px -6px;
 	text-wrap:none;
 	word-wrap:none;
-	white-space: nowrap;  
+
 	display: block;
 	/*
-	
+		white-space: nowrap;  
 	width: 30px; 
 	text-indent: -9999px;
 	*/ 
 	text-indent: 5px;
 	height: 22px;
-	background-image: url(icons-small.png);
-	background-position: top;
+
 	/* get it done
 	overflow:hidden;
+	
+
+	
 	*/
 
 	background-color     : transparent;
@@ -82,6 +84,11 @@ width: 100%;
 	word-wrap:none;
 	white-space: nowrap;  
 		}
+		
+.baseCarrot {
+		background-image: url(icons-small.png);
+		background-position  : -1px -4px;
+}
 
 .smiley1 {
 		background-position  : -2px -33px;

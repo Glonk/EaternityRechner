@@ -24,9 +24,9 @@
 		display: none;
 		clear:both;
 		width: 100%;
-			text-wrap:none;
-	word-wrap:none;
-	white-space: nowrap;  
+		text-wrap:none;
+		word-wrap:none;
+		white-space: nowrap;  
 		}
 	.legendClose{
 		float:right;
@@ -83,7 +83,8 @@
   		 
   	}
   	  .sortThing {
-  		  	border-top: 1.5px solid #bbb;
+  		border-top: 1.5px solid #bbb;
+
   	}
 
 
@@ -192,15 +193,15 @@
     <g:center>
     
 	  <g:DockLayoutPanel ui:field="displayResultsPanel">
-	  	<g:south  size="77" >
+	  	<g:south  size="80" >
 		  	<g:HTMLPanel ui:field="panelSouth" styleName='{style.sortThing}'>
-		  		<p>
-				&nbsp;
-				sortiere:
-				&nbsp;
-				<g:Anchor href='javascript:;' ui:field='alphOrder'>alphabetisch</g:Anchor>
-				&nbsp;
-				<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂Äq-Wert</g:Anchor>
+		  		<p style='white-space: nowrap; overflow:hidden;'>
+					&nbsp;
+					sortiere:
+					&nbsp;
+					<g:Anchor href='javascript:;' ui:field='alphOrder'>alphabetisch</g:Anchor>
+					&nbsp;
+					<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂Äq-Wert</g:Anchor>
 				</p>
 				<hr />
 				<g:HTMLPanel  ui:field="legendPanel" styleName='{style.legend}'>
@@ -215,13 +216,13 @@
 					</div>
 				</g:HTMLPanel>
 		 		&nbsp;&nbsp;<g:Anchor href='javascript:;' ui:field='legendAnchor'>Legende</g:Anchor>
-		  		<div style='float:right;margin: -4px 4px 0px 0px;padding: 0px 0px 8px;' class='base-icons carrot'>
-		  			<g:Image ui:field="imageCarot"  /> 
+		  		<div style='float:right;margin: -4px 4px 0px 0px;padding: 0px 0px 8px 0px;' class='base-icons baseCarrot'>
+		  			<g:Image ui:field="imageCarrot"    />
 					<div class='extra-icon smiley1'><g:Image ui:field="imageSmiley1"  /></div> 
 				  	<div class='extra-icon smiley2'><g:Image ui:field="imageSmiley2"  /></div>
 				  	<div class='extra-icon smiley3'><g:Image ui:field="imageSmiley3"  /></div> 
-				  	<div class='extra-icon regloc'><g:Image ui:field="imageRegloc"  /></div> 
-				  	<div class='extra-icon bio'><g:Image ui:field="imageBio"  /></div> 
+				  	<div class='extra-icon regloc'><g:Image ui:field="imageRegloc"    /></div> 
+				  	<div class='extra-icon bio'   ><g:Image ui:field="imageBio"    	  /></div> 
 		  		</div>
 		  </g:HTMLPanel>
 	  </g:south>
