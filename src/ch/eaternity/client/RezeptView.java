@@ -493,7 +493,7 @@ public class RezeptView extends Composite {
 		}
 		
 		Long ParentZutatId = zutatSpec.getZutat_id();
-		Ingredient zutat = Search.getClientData().getIngredientByID(ParentZutatId);
+		Ingredient zutat = Search.clientData.getIngredientByID(ParentZutatId);
 		
 		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 0), MenuTable,row);
 		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
@@ -839,9 +839,9 @@ public class RezeptView extends Composite {
 		// add your specific recipe to the others in the database
 		allRecipes.add(compare);
 		// and all the others also
-		allRecipes.addAll( Search.getClientData().getPublicRezepte());
-		if(Search.getClientData().getYourRezepte() != null){
-			allRecipes.addAll(Search.getClientData().getYourRezepte());
+		allRecipes.addAll( Search.clientData.getPublicRezepte());
+		if(Search.clientData.getYourRezepte() != null){
+			allRecipes.addAll(Search.clientData.getYourRezepte());
 		}
 
 		
@@ -1165,7 +1165,7 @@ public class RezeptView extends Composite {
 		 recipeComparator.clear();
 		
 		for(IngredientSpecification zutatSpec : recipe.Zutaten){
-			Ingredient zutat = Search.getClientData().getIngredientByID(zutatSpec.getZutat_id());
+			Ingredient zutat = Search.clientData.getIngredientByID(zutatSpec.getZutat_id());
 //			amount of Persons needs to be assigned always!
 			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
 			Double alreadyAmount = 0.0;

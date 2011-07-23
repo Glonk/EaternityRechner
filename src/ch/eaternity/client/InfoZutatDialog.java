@@ -350,7 +350,7 @@ public class InfoZutatDialog extends Composite {
 		Boolean notChanged = true;
 		// TODO update also choice for moTransportations
 		zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
-		for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+		for(SingleDistance singleDistance : Search.clientData.getDistances()){
 			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 				

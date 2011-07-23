@@ -128,7 +128,7 @@ public static Kitchen selectedKitchen;
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {
 	  EaternityRechner.updateSaisonAndMore();
-	  Search.updateResults(Search.SearchBox2.getText());
+	  Search.updateResults(Search.SearchInput.getText());
 	  // TODO aktualisiere die Saisonalität aller Rezepte... dieser Prozess muss gethreaded sein!
 	  // TODO close the InfozutatDialog when doing this...
   }

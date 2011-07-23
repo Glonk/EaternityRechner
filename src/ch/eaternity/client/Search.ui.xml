@@ -177,126 +177,118 @@
   </ui:style>
 
   <g:DockLayoutPanel unit='EM'>
+  
     <g:north size='5'>
 	 	<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'  unit='EM'>
 	 		<g:west size='4'>
 	 			<g:HTML ui:field="SearchLabel" styleName='{style.searchLabel}'><p >Suche:</p></g:HTML>
 	 		</g:west>
 	 		<g:center>
-	 			<g:SuggestBox styleName='{style.spacer}' ui:field="SearchBox2" />
+	 			<g:SuggestBox styleName='{style.spacer}' ui:field="SearchInput" />
 	 		</g:center>
-	 		
 	 	</g:DockLayoutPanel>
-
     </g:north>
 
     <g:center>
-	  <g:DockLayoutPanel ui:field="leftSplitPanel">
-	  <g:south  size="77" >
-	  <g:HTMLPanel ui:field="panelSouth" styleName='{style.sortThing}'>
-	  <p>
-	  &nbsp;
-	  sortiere:
-	  &nbsp;
-	  <g:Anchor href='javascript:;' ui:field='alphOrder'>alphabetisch</g:Anchor>
-	  &nbsp;
-	  <g:Anchor href='javascript:;' ui:field='co2Order'>CO₂Äq-Wert</g:Anchor>
-	  </p>
-	  <hr />
-		<g:HTMLPanel  ui:field="legendPanel" styleName='{style.legend}'>
-		<g:Anchor href='javascript:;' styleName='{style.legendClose}' ui:field='legendAnchorClose'>x</g:Anchor>
-		<img style='float:left;margin-left:3px;' height='155' src='icons-3.png' /><div style='height: 180px;width:300px;line-height: 25px;padding: 9px 0px 5px 0px;'>
-		ausgezeichnet klimafreundlich<br />
-		CO₂Äq-Wert unter besten 20%<br />
-		CO₂Äq-Wert über Durchschnitt<br />
-		Angaben unvollständig<br />
-		saisonale und regionale Ware<br />
-		biologische Zutat / Rezept<br />
-		</div>
-		</g:HTMLPanel>
-	  &nbsp;&nbsp;<g:Anchor href='javascript:;' ui:field='legendAnchor'>Legende</g:Anchor>
-	  <div style='float:right;margin: -4px 4px 0px 0px;padding: 0px 0px 8px;' class='base-icons carrot'>
-	  			<g:Image ui:field="imageCarot"  /> 
-	  <div class='extra-icon smiley1'><g:Image ui:field="imageSmiley1"  /></div> 
-	  <div class='extra-icon smiley2'><g:Image ui:field="imageSmiley2"  /></div>
-	  <div class='extra-icon smiley3'><g:Image ui:field="imageSmiley3"  /></div> 
-	  <div class='extra-icon regloc'><g:Image ui:field="imageRegloc"  /></div> 
-	  <div class='extra-icon bio'><g:Image ui:field="imageBio"  />
-	   
-	  </div> 
-	  
-	  </div>
-	  </g:HTMLPanel>
-		  	<!--  mail:InfoZutat ui:field='infoZutat' /-->
+    
+	  <g:DockLayoutPanel ui:field="displayResultsPanel">
+	  	<g:south  size="77" >
+		  	<g:HTMLPanel ui:field="panelSouth" styleName='{style.sortThing}'>
+		  		<p>
+				&nbsp;
+				sortiere:
+				&nbsp;
+				<g:Anchor href='javascript:;' ui:field='alphOrder'>alphabetisch</g:Anchor>
+				&nbsp;
+				<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂Äq-Wert</g:Anchor>
+				</p>
+				<hr />
+				<g:HTMLPanel  ui:field="legendPanel" styleName='{style.legend}'>
+					<g:Anchor href='javascript:;' styleName='{style.legendClose}' ui:field='legendAnchorClose'>x</g:Anchor>
+					<img style='float:left;margin-left:3px;' height='155' src='icons-3.png' /><div style='height: 180px;width:300px;line-height: 25px;padding: 9px 0px 5px 0px;'>
+					ausgezeichnet klimafreundlich<br />
+					CO₂Äq-Wert unter besten 20%<br />
+					CO₂Äq-Wert über Durchschnitt<br />
+					Angaben unvollständig<br />
+					saisonale und regionale Ware<br />
+					biologische Zutat / Rezept<br />
+					</div>
+				</g:HTMLPanel>
+		 		&nbsp;&nbsp;<g:Anchor href='javascript:;' ui:field='legendAnchor'>Legende</g:Anchor>
+		  		<div style='float:right;margin: -4px 4px 0px 0px;padding: 0px 0px 8px;' class='base-icons carrot'>
+		  			<g:Image ui:field="imageCarot"  /> 
+					<div class='extra-icon smiley1'><g:Image ui:field="imageSmiley1"  /></div> 
+				  	<div class='extra-icon smiley2'><g:Image ui:field="imageSmiley2"  /></div>
+				  	<div class='extra-icon smiley3'><g:Image ui:field="imageSmiley3"  /></div> 
+				  	<div class='extra-icon regloc'><g:Image ui:field="imageRegloc"  /></div> 
+				  	<div class='extra-icon bio'><g:Image ui:field="imageBio"  /></div> 
+		  		</div>
+		  </g:HTMLPanel>
 	  </g:south>
+	  
 	  <g:center>
-	  <g:DockLayoutPanel>
-	  <g:north size='38'>
-		<g:HTML >
-	      
-	     <p>&nbsp;als Zutat</p>
-        	
-	      </g:HTML>
-	      </g:north>
-	      <g:center>
-<g:SplitLayoutPanel ui:field='mealsSplitPanels'>
-	<g:south size='260'>
-
-		     <g:SplitLayoutPanel ui:field='helpMealsSplitPanels'>
-		     
-		     <g:center>
-
-	        <g:ScrollPanel styleName='{style.scroll}'>
-	        <g:HTMLPanel ui:field='scrollAbleHtml'>
-	        
-	
-	        	<g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
-	        		      <!--  g:HTMLPanel ui:field='scrollTriggerHtml'>  -->
-		      
-		      <g:HTMLPanel ui:field="yourRezeptePanel" >
-	      		
-				<g:HTMLPanel  styleName='{style.someSpace}'>
-	        	    <hr /><br />&nbsp;in eigenen Rezepten
-        	    </g:HTMLPanel>
-	        <g:ScrollPanel styleName='{style.scroll}'>
-	        
-	        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table2}' cellSpacing='0' cellPadding='0'/>
-	        </g:ScrollPanel>
-	        </g:HTMLPanel>
-	        	        
-	            
-
-	        </g:HTMLPanel>
-	        </g:ScrollPanel>
-	        </g:center>
-	        
-	        <g:north size='44'>
-	        	<g:HTMLPanel>
-	         		<hr  /><br />&nbsp;in Rezeptvorschlägen
-	        	</g:HTMLPanel>
-	         </g:north>
-	        
-	        </g:SplitLayoutPanel>
-	        	      <!--  
-	        </g:HTMLPanel> -->
-
-	</g:south>
-	<g:center>
-	      <g:ScrollPanel styleName='{style.scroll}'>
-	      <g:HTMLPanel>
-
-	        <g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
-	        	       </g:HTMLPanel>
-	      </g:ScrollPanel>
-	 </g:center>
-
-
-</g:SplitLayoutPanel>
-	    </g:center>
+		  <g:DockLayoutPanel>
+			  <g:north size='38'>
+				<g:HTML >
+			      
+			     <p>&nbsp;als Zutat</p>
+		        	
+			      </g:HTML>
+		      </g:north>
+	      	<g:center>
+				<g:SplitLayoutPanel ui:field='mealsSplitPanels'>
+					<g:south size='260'>
+						<g:SplitLayoutPanel ui:field='subMealsSplitPanels'>
+							<g:center>
+					        	<g:ScrollPanel styleName='{style.scroll}'>
+					        		<g:HTMLPanel ui:field='scrollAbleHtml'>
+					        			
+					        			<!-- Here is the Table for displaying the results of the meals -->
+								        <g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+								        
+										<g:HTMLPanel ui:field="yourMealsPanel" >
+									      	<g:HTMLPanel  styleName='{style.someSpace}'>
+				        	    				<hr /><br />&nbsp;in eigenen Rezepten
+			        	    				</g:HTMLPanel>
+				        					<g:ScrollPanel styleName='{style.scroll}'>
+				        					
+				        						<!-- Here is the Table for displaying the results of the meals that belong to you-->
+										        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table2}' cellSpacing='0' cellPadding='0'/>
+										        
+				        					</g:ScrollPanel>
+					        			</g:HTMLPanel>
+									</g:HTMLPanel>
+					        	</g:ScrollPanel>
+					        </g:center>
+					        
+					        <g:north size='44'>
+					        	<g:HTMLPanel>
+					         		<hr  /><br />&nbsp;in Rezeptvorschlägen
+					        	</g:HTMLPanel>
+					        </g:north>
+					        
+						</g:SplitLayoutPanel>
+					</g:south>
+					
+					<g:center>
+	      				<g:ScrollPanel styleName='{style.scroll}'>
+	      					<g:HTMLPanel>
+	      					
+								<!-- Here is the Table for displaying the results of the ingredients -->
+	        					<g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        					
+	        	       		</g:HTMLPanel>
+	      				</g:ScrollPanel>
+	 				</g:center>
+	 				
+				</g:SplitLayoutPanel>
+	    	</g:center>
 	    </g:DockLayoutPanel>
-	     </g:center>
-	   </g:DockLayoutPanel>
+	</g:center>
+</g:DockLayoutPanel>
 	   
     </g:center>
-  </g:DockLayoutPanel>
+</g:DockLayoutPanel>
+
+
 </ui:UiBinder>

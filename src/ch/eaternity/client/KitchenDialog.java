@@ -120,7 +120,7 @@ public class KitchenDialog extends DialogBox{
 		// this is only necessary for the first time...
 		currentLocation = location;
 		
-		availableKitchens = Search.getClientData().kitchens;
+		availableKitchens = Search.clientData.kitchens;
 		
 		if(availableKitchens == null || availableKitchens.size() == 0){
 			availableKitchens = new ArrayList<Kitchen>(1);
@@ -803,7 +803,7 @@ public class KitchenDialog extends DialogBox{
 				}
 				@Override
 				public void onSuccess(Integer ignore) {
-					Search.getClientData().getDistances().addAll(allDistances);
+					Search.clientData.getDistances().addAll(allDistances);
 					updateAllZutaten(); 
 					//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
 				}
@@ -814,10 +814,10 @@ public class KitchenDialog extends DialogBox{
 	}
 
 	private  void calculateDistances(String string, boolean firstTime) {
-		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.getClientData().getDistances();
+		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.clientData.getDistances();
 		ArrayList<String> distancesRequested = new ArrayList<String>();
 		boolean notFound;
-		List<Ingredient> zutaten = Search.getClientData().getIngredients();
+		List<Ingredient> zutaten = Search.clientData.getIngredients();
 		for( Ingredient zutat : zutaten){
 			for(Extraction herkunft : zutat.getExtractions()){
 
@@ -858,7 +858,7 @@ public class KitchenDialog extends DialogBox{
 			zutaten.addAll(rezeptView.getRezept().Zutaten);
 			for(IngredientSpecification zutatSpec : zutaten ){
 				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
-				for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+				for(SingleDistance singleDistance : Search.clientData.getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 
@@ -957,13 +957,13 @@ public class KitchenDialog extends DialogBox{
 			@Override
 			public void onSuccess(Long ignore) {
 				TopPanel.selectedKitchen.id = ignore;
-//				Search.getClientData().kitchens.add(kitchen);
+//				Search.clientData.kitchens.add(kitchen);
 //				kitchens.addItem(kitchen.getSymbol());
 			}
 		});
 		}
 		
-		Search.SearchBox2.setText("");
+		Search.SearchInput.setText("");
 		Search.updateResults(" ");
 		
 		hide();

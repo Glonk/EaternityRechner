@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import ch.eaternity.client.comparators.NameComparator;
 import ch.eaternity.client.comparators.RezeptNameComparator;
@@ -34,8 +33,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -44,291 +41,148 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox; // TODO check why we need a suggestBox!
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 /**
- * A composite that displays a list of zutaten that can be selected.
+ * A composite that displays a list of ingredients that can be selected.
  */
 public class Search extends ResizeComposite {
+	
+	// GWT UI-Binder (to display the search class)
+	interface Binder extends UiBinder<Widget, Search> { }
+	private static final Binder binder = GWT.create(Binder.class);
 
 	/**
-	 * Callback when items are selected. 
+	 * Call-back when items are selected. 
 	 */
-	public interface Listener {
+	public interface Listener { // Call-back for ingredient click
 		void onItemSelected(Ingredient item);
-
-
 	}
 
-	public interface ListenerMeals {
+	public interface ListenerMeals { // Call-back for menu click
 		void onItemSelected(Recipe item);
 	}
 
-	interface Binder extends UiBinder<Widget, Search> { }
+	private Listener listener;
+	private ListenerMeals listenerMeals;
+	
+	// CSS of selected row
+	static int selectedRow = 0;
+	//TODO check why everything crashes for selectedRow = -1
 	interface SelectionStyle extends CssResource {
 		String selectedRow();
 	}
-
+	
+	// Color the rows alternating
 	interface EvenStyleRow extends CssResource {
 		String evenRow();
 	}
 
 
-
-
-	private static final Binder binder = GWT.create(Binder.class);
-	static final int VISIBLE_EMAIL_COUNT = 4;
-
-	@UiField
-	static FlexTable table;
-	@UiField
-	static FlexTable tableMeals;
-	@UiField
-	static FlexTable tableMealsYours;
-	//	@UiField Button SearchButton;
-	@UiField
-	static SuggestBox SearchBox2;
-	@UiField DockLayoutPanel SearchBox;
-	@UiField HTML SearchLabel;
-	@UiField
-	static SelectionStyle selectionStyle;
-	@UiField
-	static EvenStyleRow evenStyleRow;
-	//	@UiField TabLayoutPanel tabLayoutPanel;
-	@UiField DockLayoutPanel leftSplitPanel;
-	@UiField Anchor co2Order;
-	@UiField Anchor alphOrder;
-	static
-	@UiField HTMLPanel yourRezeptePanel;
-	@UiField SplitLayoutPanel mealsSplitPanels;
-	@UiField SplitLayoutPanel helpMealsSplitPanels;
-	@UiField HTMLPanel scrollAbleHtml;
+	/**
+	 * User interface elements
+	 */
+	
+	// Legend and informations:
+	@UiField HTMLPanel panelSouth;
+	@UiField HTMLPanel legendPanel;
+	
 	@UiField Anchor legendAnchor;
 	@UiField Anchor legendAnchorClose;
-	@UiField HTMLPanel legendPanel;
-	@UiField HTMLPanel panelSouth;
+	
 	@UiField Image imageCarot;
 	@UiField Image imageSmiley1;
 	@UiField Image imageSmiley2;
 	@UiField Image imageSmiley3;
 	@UiField Image imageRegloc;
 	@UiField Image imageBio;
+	
+	
+	// Search Panel (Box and Button)
+	@UiField DockLayoutPanel SearchBox;
+	@UiField HTML SearchLabel;
+	@UiField
+	static SuggestBox SearchInput;
+	
+	
+	// Display Results in:
+	@UiField DockLayoutPanel displayResultsPanel;
+	static
+	@UiField HTMLPanel yourMealsPanel;
+	@UiField SplitLayoutPanel mealsSplitPanels;
+	@UiField SplitLayoutPanel subMealsSplitPanels;
+	@UiField HTMLPanel scrollAbleHtml;
 
-	//	@UiField HTMLPanel scrollTriggerHtml;
-
-	//@UiField
-	//static InfoZutat infoZutat;
-
-
-	private static Data clientData = new Data();
-	private static ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
-	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
-	//	private static ArrayList<Zutat> FoundZutaten = new ArrayList<Zutat>();
-	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
-
-	static int sortMethod = 1;
-
-	public static Data getClientData() {
-		return clientData;
-	}
-
-	public static void setClientData(Data clientData) {
-
-		Search.clientData = clientData;
-
-
-	}
-
-	private Listener listener;
-	private ListenerMeals listenerMeals;
-	//TODO check why everything crashes for selectedRow = -1
-	static int  selectedRow = 0;
+	
+	// Search results Tables
+	@UiField
+	static FlexTable table;
+	@UiField
+	static FlexTable tableMeals;
+	@UiField
+	static FlexTable tableMealsYours;
 
 
-	private static MultiWordSuggestOracle oracle;
-	//  private SearchBar navBar;
-
-
-	public Search() {
-
-
-		initWidget(binder.createAndBindUi(this));
-		SuggestOracle soracle = SearchBox2.getSuggestOracle();
-		oracle = (MultiWordSuggestOracle) soracle;
-		SearchBox2.setText("wird geladen...");
-		initTable();
-		//    updateResults("all");
-		SearchBox2.setFocus(true);
-		yourRezeptePanel.setVisible(false);
-		helpMealsSplitPanels.addStyleName("noSplitter");
-		setVDraggerHeight("0px");
-
-		SearchLabel.addMouseListener(
-				new TooltipListener(
-						"Suche nach Zutaten und Rezepten hier.", 5000 /* timeout in milliseconds*/,"yourcssclass",5,-34));
-		co2Order.addMouseListener(
-				new TooltipListener(
-						"Sortiere Suchergebnisse nach CO₂-Äquivalent Wert.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
-		alphOrder.addMouseListener(
-				new TooltipListener(
-						"Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
-
-		imageCarot.setUrl("pixel.png");
-		imageSmiley1.setUrl("pixel.png");
-		imageSmiley2.setUrl("pixel.png");
-		imageSmiley3.setUrl("pixel.png");
-		imageRegloc.setUrl("pixel.png");
-		imageBio.setUrl("pixel.png");
-		imageCarot.setPixelSize(20, 20);
-		imageSmiley1.setPixelSize(20, 20);
-		imageSmiley2.setPixelSize(20, 20);
-		imageSmiley3.setPixelSize(20, 20);
-		imageRegloc.setPixelSize(20, 20);
-		imageBio.setPixelSize(20, 20);
-
-		imageCarot.addMouseListener(
-				new TooltipListener(
-						"ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
-		imageSmiley1.addMouseListener(
-				new TooltipListener(
-						"CO₂-Äq. Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
-		imageSmiley2.addMouseListener(
-				new TooltipListener(
-						"CO₂-Äq. Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
-		imageSmiley3.addMouseListener(
-				new TooltipListener(
-						"Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
-		imageRegloc.addMouseListener(
-				new TooltipListener(
-						"saisonale und regionale Ware", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
-		imageBio.addMouseListener(
-				new TooltipListener(
-						"biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
-
-	}
-
-	public void setVDraggerHeight (String height)
-	{
-		//	  SplitLayoutPanel p = (SplitLayoutPanel) this.getWidget ();
-		SplitLayoutPanel p = 	helpMealsSplitPanels;
-		int widgetCount = p.getWidgetCount ();
-		for (int i = 0; i < widgetCount; i++) {
-			Widget w = p.getWidget (i);
-			if (w.getStyleName ().equals ("gwt-SplitLayoutPanel-VDragger")) {
-				w.setHeight (height);
-			}
-		}
-	}
-
-	public static void initializeOracle(Set<String> itemIndex){
-		if (itemIndex != null){
-			//TODO switch on Oracle...
-			//oracle.addAll(itemIndex);
-		}
-	}
-
+	// CSS reference for the alternating row coloring
+	@UiField
+	static SelectionStyle selectionStyle;
+	@UiField
+	static EvenStyleRow evenStyleRow;
+	
+	
+	// sorting of the tables:
+	@UiField Anchor co2Order;
+	@UiField Anchor alphOrder;
+	
 	/**
-	 * Sets the listener that will be notified when an item is selected.
+	 * User sorting handlers
 	 */
-	public void setListener(Listener listener) {
-		this.listener = listener;
+	
+	// choose this sorting method
+	static int sortMethod = 1;
+	
+	
+	/**
+	 * Ui-Handlers
+	 * 
+	 * those who handle the interactions
+	 */
+	
+	@UiHandler("co2Order")
+	void onCo2Clicked(ClickEvent event) {
+		sortMethod = 1;
+		sortResults();
 	}
 
-	public void setMealListener(ListenerMeals listener) {
-		this.listenerMeals = listener;
+	@UiHandler("alphOrder")
+	void onAlphClicked(ClickEvent event) {
+		sortMethod = 5;
+		sortResults();
 	}
+	
 
-	@Override
-	protected void onLoad() {
-		// Select the first row if none is selected.
-		if (selectedRow == -1) {
-			selectRow(0);
-		}
-	}
-
-
-	//	@UiHandler("SearchButton")
-	//	public void onClick(ClickEvent event) {
-	//		updateResults(SearchBox2.getText());
-	//	}
-
-
-	// Listen for keyboard events in the input box.
-	//	@UiHandler("SearchBox2")
-	//	public void onKeyPress(KeyPressEvent event) {
-	//		if (event.getCharCode() == KeyCodes.KEY_ENTER) {
-	//
-	//			
-	//
-	//			// simulate button press
-	////			SearchButton.setEnabled(false);
-	//			Timer t = new Timer() {
-	//				public void run() {
-	////					SearchButton.setEnabled(true);
-	//					updateResults(SearchBox2.getText());
-	//				}
-	//			};
-	//			t.schedule(200);
-	//		}
-	//	}
-
-	//	
-	//	@UiHandler("mealsSplitPanels")
-	//	public void onDrag(MouseUpEvent change){
-	//		scrollAbleHtml.setHeight(Integer.toString(mealsSplitPanels.getOffsetHeight()));
-	//	}
-
-
-	@UiHandler("SearchBox2")
+	@UiHandler("SearchInput")
 	public void onKeyUp(KeyUpEvent event) {
-		// this matches up to 2 words
-		updateResults(SearchBox2.getText());
-		//		
-		//		Set<String> itemIndex = getClientData().getOrcaleIndex();
-		//		if(SearchBox2.getText().length() > 2 ){
-		//			if(itemIndex.contains( (SearchBox2.getText().substring(0, SearchBox2.getText().length()-1)).trim() ) & !SearchBox2.getText().endsWith(" ")){
-		//
-		//				Set<String> itemIndexLong = new TreeSet<String>();
-		//				for(String item : itemIndex){
-		//					if(!SearchBox2.getText().trim().contains(item)){
-		//						itemIndexLong.add( (SearchBox2.getText().substring(0, SearchBox2.getText().length()-1)).concat(item));
-		//					}
-		//				}
-		//				oracle.clear();
-		//				initializeOracle(itemIndexLong);
-		//			}
-		//		}
-		//
-		//		if(!SearchBox2.getText().trim().contains(" ") | SearchBox2.getText().endsWith(" ")){
-		//			oracle.clear();
-		//			initializeOracle(itemIndex);
-		//		}
+		// this matches up to 2 words!
+		updateResults(SearchInput.getText());
 	}
 
-	//	
-	//	@UiHandler("table")
-	//	void onTableHover(MouseOverEvent event){
-	//		 new TooltipListener(
-	//			      "add", 15000 /* timeout in milliseconds*/,"bla",100,0);
-	//	}
+	
 	@UiHandler("legendAnchor")
 	public void onLegendClick(ClickEvent event) {
 
 		legendPanel.setStyleName("legend1");
-		leftSplitPanel.setWidgetSize(panelSouth, 220);
-		leftSplitPanel.forceLayout();
+		displayResultsPanel.setWidgetSize(panelSouth, 220);
+		displayResultsPanel.forceLayout();
 
 	}
 
@@ -336,8 +190,8 @@ public class Search extends ResizeComposite {
 	public void onLegendCloseClick(ClickEvent event) {
 
 		legendPanel.setStyleName("legend2");
-		leftSplitPanel.setWidgetSize(panelSouth, 77);
-		leftSplitPanel.forceLayout();
+		displayResultsPanel.setWidgetSize(panelSouth, 77);
+		displayResultsPanel.forceLayout();
 
 	}
 
@@ -372,23 +226,134 @@ public class Search extends ResizeComposite {
 	}
 
 
+	
+	
+	/**
+	 * Important Variables
+	 */
+
+	// here is the database of all data pushed to....
+	public static Data clientData = new Data();
+	private static ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
+	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
+	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
+
+
+
+
+
+	public Search() {
+
+		// bind and display the Search
+		initWidget(binder.createAndBindUi(this));
+
+		// we have to wait till the database is loaded:
+		SearchInput.setText("wird geladen...");
+		initTable();
+		SearchInput.setFocus(true);
+		yourMealsPanel.setVisible(false);
+		
+		subMealsSplitPanels.addStyleName("noSplitter");
+		setVDraggerHeight("0px");
+
+		initToolTips();
+
+	}
+
+	
+	
+	
+	@SuppressWarnings("deprecation")
+	private void initToolTips() {
+		
+		imageCarot.setUrl("pixel.png");
+		imageSmiley1.setUrl("pixel.png");
+		imageSmiley2.setUrl("pixel.png");
+		imageSmiley3.setUrl("pixel.png");
+		imageRegloc.setUrl("pixel.png");
+		imageBio.setUrl("pixel.png");
+		imageCarot.setPixelSize(20, 20);
+		imageSmiley1.setPixelSize(20, 20);
+		imageSmiley2.setPixelSize(20, 20);
+		imageSmiley3.setPixelSize(20, 20);
+		imageRegloc.setPixelSize(20, 20);
+		imageBio.setPixelSize(20, 20);
+
+		imageCarot.addMouseListener(
+				new TooltipListener(
+						"ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageSmiley1.addMouseListener(
+				new TooltipListener(
+						"CO₂-Äq. Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageSmiley2.addMouseListener(
+				new TooltipListener(
+						"CO₂-Äq. Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageSmiley3.addMouseListener(
+				new TooltipListener(
+						"Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageRegloc.addMouseListener(
+				new TooltipListener(
+						"saisonale und regionale Ware", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		imageBio.addMouseListener(
+				new TooltipListener(
+						"biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-40));
+		
+		
+		
+		SearchLabel.addMouseListener(
+				new TooltipListener(
+						"Suche nach Zutaten und Rezepten hier.", 5000 /* timeout in milliseconds*/,"yourcssclass",5,-34));
+		co2Order.addMouseListener(
+				new TooltipListener(
+						"Sortiere Suchergebnisse nach CO₂-Äquivalent Wert.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
+		alphOrder.addMouseListener(
+				new TooltipListener(
+						"Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
+
+	}
+
+	
+	// what is this thing for?
+	public void setVDraggerHeight (String height)
+	{
+		//	  SplitLayoutPanel p = (SplitLayoutPanel) this.getWidget ();
+		SplitLayoutPanel p = 	subMealsSplitPanels;
+		int widgetCount = p.getWidgetCount ();
+		for (int i = 0; i < widgetCount; i++) {
+			Widget w = p.getWidget (i);
+			if (w.getStyleName ().equals ("gwt-SplitLayoutPanel-VDragger")) {
+				w.setHeight (height);
+			}
+		}
+	}
+
+
+
+	/**
+	 * Sets the listener that will be notified when an item is selected.
+	 */
+	public void setListener(Listener listener) {
+		this.listener = listener;
+	}
+
+	public void setMealListener(ListenerMeals listener) {
+		this.listenerMeals = listener;
+	}
+
+
+	
 	private static void initTable() {
+		// this is just basic design stuff
 		table.getColumnFormatter().setWidth(0, "120px");
-		//		table.getColumnFormatter().setWidth(1, "80px");
-		//		table.getColumnFormatter().setWidth(2, "40px");
 
 		tableMeals.getColumnFormatter().setWidth(0, "120px");
-		//		tableMeals.getColumnFormatter().setWidth(1, "70px");
-		//		tableMeals.getColumnFormatter().setWidth(2, "40px");
 
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
 				tableMealsYours.getColumnFormatter().setWidth(1, "10px");
 				tableMealsYours.getColumnFormatter().setWidth(2, "10px");
-		//		tableMealsYours.getColumnFormatter().setWidth(3, "15px");
-		//		tableMealsYours.getColumnFormatter().setWidth(4, "15px");
-
 	}
 
+	
 	private void selectRowMeals(final int row) {
 
 		if (FoundRezepte.size() < row){
@@ -449,11 +414,6 @@ public class Search extends ResizeComposite {
 
 	private void selectRow(final int row) {
 
-
-
-		//TODO uncomment this:
-		//leftSplitPanel.setWidgetMinSize(infoZutat, 448);
-		//    Zutat item = MailItems.getMailItemName(table.getText(row, 1));
 		if (FoundIngredient.size() < row){
 			return;
 		}
@@ -468,7 +428,7 @@ public class Search extends ResizeComposite {
 		styleRow(selectedRow, false);
 		styleRow(row, true);
 
-		//TODO uncomment this:
+		//TODO uncomment this: idea is to animate some effects
 		//infoZutat.setZutat(item);
 
 		//		leftSplitPanel.setHeight("500px");
@@ -478,23 +438,15 @@ public class Search extends ResizeComposite {
 		//		leftSplitPanel.forceLayout();
 		//		leftSplitPanel.setWidgetTopHeight(infoZutat, 0, PX, 2, EM);
 		//		leftSplitPanel.animate(500);
-		//TODO uncomment this:
+		
+		//TODO uncomment this: idea is to provide a tooltip with more informations
+		
 		//infoZutat.stylePanel(true);
-
+		
 		// infotext über angeklickte zutat
-
 		// Groß:Name, Foto, Liste:Labels: Text:Beschreibung Wikipedia klein:Alternativen
+		//
 
-
-
-
-
-
-		//TODO uncomment this:
-		//if(EaternityRechner.MenuTable.getRowCount() > 0){
-		//	EaternityRechner.styleRow(EaternityRechner.selectedRow,false);
-		//	EaternityRechner.selectedRow = -1;
-		//}
 
 		Timer t = new Timer() {
 			public void run() {
@@ -503,7 +455,6 @@ public class Search extends ResizeComposite {
 		};
 
 		EaternityRechner.AddZutatZumMenu(item);
-
 
 		t.schedule(200);
 
@@ -550,6 +501,14 @@ public class Search extends ResizeComposite {
 		}
 	}
 
+	
+	
+	/**
+	 * The search algorithm
+	 */
+	
+	
+	
 	static void updateResults(String searchString) {
 		table.removeAllRows();
 		tableMeals.removeAllRows();
@@ -559,22 +518,18 @@ public class Search extends ResizeComposite {
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
 
-		//		List<Recipe> allRezepte = getClientData().getPublicRezepte();
 		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
-			yourRezeptePanel.setVisible(true);
-			//			for(Recipe recipe: getYourRecipes()){
-			//				if(!allRezepte.contains(recipe)){
-			//					allRezepte.add(recipe);
-			//				}
-			//			}
-			//			allRezepte.addAll(getYourRecipes());
+			yourMealsPanel.setVisible(true);
+
 		} else {
-			yourRezeptePanel.setVisible(false);
+			yourMealsPanel.setVisible(false);
 		}
 
-		if ((getClientData().getIngredients() != null) ){
+		if ((clientData.getIngredients() != null) ){
 
 			// Zutaten
+			
+			// when the search string has a length 
 			if(searchString.trim().length() != 0){
 
 				String[] searches = searchString.split(" ");
@@ -582,14 +537,14 @@ public class Search extends ResizeComposite {
 				for(String search : searches){
 
 					// Zutaten
-					for(Ingredient zutat : getClientData().getIngredients()){
+					for(Ingredient zutat : clientData.getIngredients()){
 						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
 							//if(,search) < 3){
 							//Window.alert(zutat.getSymbol().substring(0, search.trim().length()));
 							if(!FoundIngredient.contains(zutat)){
 								zutat.noAlternative = true;
 								FoundIngredient.add(zutat);
-								displayZutat(zutat);
+								displayIngredient(zutat);
 							}
 
 
@@ -602,12 +557,12 @@ public class Search extends ResizeComposite {
 						for(Ingredient zutat :FoundIngredient){
 							if(zutat.getAlternatives() != null){
 								for(Long alternativen_id : zutat.getAlternatives()){
-									for(Ingredient zutat2 : getClientData().getIngredients()){
+									for(Ingredient zutat2 : clientData.getIngredients()){
 										if(zutat2.getId().equals(alternativen_id)){
 											if(!FoundIngredient.contains(zutat2)){
 												zutat2.noAlternative = false;
 												FoundIngredient.add(zutat2);
-												displayZutat(zutat2);
+												displayIngredient(zutat2);
 											}
 										}
 									}
@@ -623,56 +578,60 @@ public class Search extends ResizeComposite {
 					searchRezept(searchString, getYourRecipes(), searches,true);
 				}
 
-				if(	getClientData().getPublicRezepte() != null){
-					searchRezept(searchString, getClientData().getPublicRezepte(), searches,false);
+				if(	clientData.getPublicRezepte() != null){
+					searchRezept(searchString, clientData.getPublicRezepte(), searches,false);
 				}
 
 
 			} 
+			// the search string was empty (so just display everything!)
+			// TODO yet a little slow...
 			else {
 
-				for(Ingredient zutat : getClientData().getIngredients()){
-					if(!FoundIngredient.contains(zutat)){
+				for(Ingredient zutat : clientData.getIngredients()){
+//					if(!FoundIngredient.contains(zutat)){ // not necessary, as we are getting anyway all of them (no alternatives...)
 						FoundIngredient.add(zutat);
 						zutat.noAlternative = true;
-						displayZutat(zutat);
-					}
+						displayIngredient(zutat);
+//					}
 				}
 
 				if(	getYourRecipes() != null && getYourRecipes().size() != 0){
-					yourRezeptePanel.setVisible(true);
+					yourMealsPanel.setVisible(true);
 					for(Recipe recipe : getYourRecipes()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
 							FoundRezepteYours.add(recipe);
-							displayRezept(recipe,true);
+							displayRecipe(recipe,true);
 						}
 					}
 				} else {
-					yourRezeptePanel.setVisible(false);
+					yourMealsPanel.setVisible(false);
 				}
 
-				if(	getClientData().getPublicRezepte() != null){
-					for(Recipe recipe : getClientData().getPublicRezepte()){
+				if(	clientData.getPublicRezepte() != null){
+					for(Recipe recipe : clientData.getPublicRezepte()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
 							FoundRezepte.add(recipe);
-							displayRezept(recipe,false);
+							displayRecipe(recipe,false);
 						}
 					}
 				}
 
-
 			}
+			// all found items are now displayed
 
 			sortResults();
+			// and sorted
+			
 		}	
 	}
 
 	private static List<Recipe> getYourRecipes() {
 		// TODO Auto-generated method stub
 		if(TopPanel.leftKitchen){
-			return getClientData().getYourRezepte();
+			return clientData.getYourRezepte();
 		} else {
-			return getClientData().KitchenRecipes;
+			return clientData.KitchenRecipes;
 		}
 		
 	}
@@ -690,22 +649,7 @@ public class Search extends ResizeComposite {
 							} else {
 								FoundRezepte.add(recipe);
 							}
-							displayRezept(recipe,yours);
-
-							// das ist unübersichtlich:
-							//						// Zutaten des Recipe Ergerbnis Liste der Zutaten
-							//						for(IngredientSpecification zutatSpSuche : recipe.getZutaten() ){
-							//							for(Ingredient zutatSuche : getClientData().getIngredients() ){
-							//								if(zutatSpSuche.getZutat_id().equals(zutatSuche.getId() )){
-							//									if(!FoundIngredient.contains(zutatSuche)){
-							//										FoundIngredient.add(zutatSuche);
-							//										displayZutat(zutatSuche);
-							//									}
-							//								}
-							//
-							//							}
-							//
-							//						}
+							displayRecipe(recipe,yours);
 						}
 					}
 
@@ -728,7 +672,7 @@ public class Search extends ResizeComposite {
 										} else {
 											FoundRezepte.add(recipe);
 										}
-										displayRezept(recipe,yours);
+										displayRecipe(recipe,yours);
 									}
 								}
 							}
@@ -740,18 +684,9 @@ public class Search extends ResizeComposite {
 		}
 	}
 
-
-	@UiHandler("co2Order")
-	void onCo2Clicked(ClickEvent event) {
-		sortMethod = 1;
-		sortResults();
-	}
-
-	@UiHandler("alphOrder")
-	void onAlphClicked(ClickEvent event) {
-		sortMethod = 5;
-		sortResults();
-	}
+	/**
+	 * The sorting functions
+	 */
 
 	private static void sortResults() {
 
@@ -763,7 +698,7 @@ public class Search extends ResizeComposite {
 			table.removeAllRows();
 			if(FoundIngredient != null){
 				for (final Ingredient item : FoundIngredient){
-					displayZutat(item);
+					displayIngredient(item);
 				}
 			}
 
@@ -771,7 +706,7 @@ public class Search extends ResizeComposite {
 			tableMeals.removeAllRows();
 			if(FoundRezepte != null){
 				for (final Recipe item : FoundRezepte){
-					displayRezept(item,false);
+					displayRecipe(item,false);
 				}
 			}
 
@@ -779,7 +714,7 @@ public class Search extends ResizeComposite {
 			tableMealsYours.removeAllRows();
 			if(FoundRezepteYours != null){
 				for (final Recipe item : FoundRezepteYours){
-					displayRezept(item,true);
+					displayRecipe(item,true);
 				}
 			}
 
@@ -808,7 +743,7 @@ public class Search extends ResizeComposite {
 			table.removeAllRows();
 			if(FoundIngredient != null){
 				for (final Ingredient item : FoundIngredient){
-					displayZutat(item);
+					displayIngredient(item);
 				}
 			}
 
@@ -816,7 +751,7 @@ public class Search extends ResizeComposite {
 			tableMeals.removeAllRows();
 			if(FoundRezepte != null){
 				for (final Recipe item : FoundRezepte){
-					displayRezept(item,false);
+					displayRecipe(item,false);
 				}
 			}
 
@@ -824,7 +759,7 @@ public class Search extends ResizeComposite {
 			tableMealsYours.removeAllRows();
 			if(FoundRezepteYours != null){
 				for (final Recipe item : FoundRezepteYours){
-					displayRezept(item,true);
+					displayRecipe(item,true);
 				}
 			}
 
@@ -838,31 +773,23 @@ public class Search extends ResizeComposite {
 	}
 
 
+	/**
+	 * the displaying functions for recipes
+	 */
 
-	public static void displayRezept(final Recipe recipe, boolean yours) {
-
-		// TODO no more add Button, but a click on the line is enough ... so when mousehover add a little triangle on top right edge
-		//		Button AddRezeptButton = new Button(" + ");
-		//		AddRezeptButton.addStyleDependentName("gwt-Button");
-		//		AddRezeptButton.addClickHandler(new ClickHandler() {
-		//			public void onClick(ClickEvent event) {
-		//				EaternityRechner.ShowRezept(recipe);
-		//			}
-		//		});
+	public static void displayRecipe(final Recipe recipe, boolean yours) {
 
 
 		if(yours){
 			final int row = tableMealsYours.getRowCount();
 
 
-//						Button removeRezeptButton = new Button(" - ");
-//						removeRezeptButton.addStyleDependentName("gwt-Button");
-
 			Anchor removeRezeptButton = new Anchor(" - ");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
 					dlg.statusLabel.setText("löschen?");
+					
 					//  recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
@@ -880,13 +807,6 @@ public class Search extends ResizeComposite {
 			});
 			tableMealsYours.setWidget(row, 1, removeRezeptButton);
 
-			//			tableMealsYours.setText(row,0,recipe.getSymbol());
-			//			tableMealsYours.setWidget(row, 2, AddRezeptButton);
-
-
-
-
-			//			tableMealsYours.setText(row, 1,  "ca "+formatted+" g*");
 
 			HTML item = new HTML();
 
@@ -1048,8 +968,12 @@ public class Search extends ResizeComposite {
 
 	} 
 
-
-	public static void displayZutat(final Ingredient zutat2) {
+	/**
+	 * the displaying functions for ingredients
+	 */
+	
+	
+	public static void displayIngredient(final Ingredient ingredient) {
 		int row = table.getRowCount();
 
 		if ((row % 2) == 1) {
@@ -1063,22 +987,23 @@ public class Search extends ResizeComposite {
 		//			    new TooltipListener(
 		//			      "add", 15000 /* timeout in milliseconds*/,"bla",400,10));
 
-		if(zutat2.getCo2eValue() < 400){
+		// these value (400,1200) are based on the 0.2 and 0.5 quantile of all ingredients
+		if(ingredient.getCo2eValue() < 400){
 			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 			icon.setStyleName("base-icons smiley2");	
 			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
-		} else	if(zutat2.getCo2eValue() < 1200){
+		} else	if(ingredient.getCo2eValue() < 1200){
 			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
 			icon.setStyleName("base-icons smiley2");			
 
 		}
 
-		if(zutat2.hasSeason != null && zutat2.hasSeason){
+		if(ingredient.hasSeason != null && ingredient.hasSeason){
 			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
 			// In Tagen
 			//		String test = InfoZutat.zutat.getStartSeason();
-			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat2.stdExtraction.startSeason);		
-			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat2.stdExtraction.stopSeason );
+			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.startSeason);		
+			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.stopSeason );
 
 			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
@@ -1086,31 +1011,17 @@ public class Search extends ResizeComposite {
 			} 
 		}
 
-		if(zutat2.noAlternative){
-			icon.setHTML(icon.getHTML()+"<div class='ingText'>"+zutat2.getSymbol()+"</div>");
+		if(ingredient.noAlternative){
+			icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
 
 		} else {
-			icon.setHTML(icon.getHTML()+"#: " +zutat2.getSymbol());
+			icon.setHTML(icon.getHTML()+"#: " +ingredient.getSymbol());
 		}
 
-		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat(" g*")+"</div>");
+		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
 
 		table.setWidget(row,0,icon);
 
-		//		table.setText(row, 1, "ca "+Integer.toString((int) zutat2.getCo2eValue()/10).concat(" g*"));
-
-
-
-		//		Button AddZutatButton = new Button(" + ");
-		//		AddZutatButton.addStyleDependentName("gwt-Button");
-		//		AddZutatButton.addClickHandler(new ClickHandler() {
-		//			public void onClick(ClickEvent event) {
-		//				int row = EaternityRechner.AddZutatZumMenu(zutat);
-		//				// TODO uncomment this:
-		//				//EaternityRechner.selectRow(row);
-		//			}
-		//		});
-		//		table.setWidget(row, 0, AddZutatButton);
 
 	}
 
@@ -1124,6 +1035,10 @@ public class Search extends ResizeComposite {
 		return FoundRezepte;
 	}
 
+	
+	/**
+	 * This function may proof to be useful for a more fuzzy matching!
+	 */
 
 	private static int getLevenshteinDistance(String s, String t) {
 		if (s == null || t == null) {
@@ -1209,7 +1124,16 @@ public class Search extends ResizeComposite {
 	public static ArrayList<Ingredient> getFoundIngredient() {
 		return FoundIngredient;
 	}
+	
+	
 }
+
+
+/**
+ * Some Comparator classes to match Recipes
+ */
+
+// TODO check if there is already another class!
 
 //class NameComparator implements Comparator<Ingredient> {
 //	  public int compare(Ingredient z1, Ingredient z2) {

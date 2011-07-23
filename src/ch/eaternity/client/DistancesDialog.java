@@ -126,7 +126,7 @@ public class DistancesDialog extends DialogBox{
 					Window.alert("Fehler : "+ error.getMessage());
 				}
 				public void onSuccess(Integer ignore) {
-					Search.getClientData().getDistances().addAll(allDistances);
+					Search.clientData.getDistances().addAll(allDistances);
 					updateAllZutaten(); 
 					//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
 				}
@@ -137,10 +137,10 @@ public class DistancesDialog extends DialogBox{
 	}
 
 	private  void calculateDistances(String string, boolean firstTime) {
-		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.getClientData().getDistances();
+		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.clientData.getDistances();
 		ArrayList<String> distancesRequested = new ArrayList<String>();
 		boolean notFound;
-		List<Ingredient> zutaten = Search.getClientData().getIngredients();
+		List<Ingredient> zutaten = Search.clientData.getIngredients();
 		for( Ingredient zutat : zutaten){
 			for(Extraction herkunft : zutat.getExtractions()){
 
@@ -176,7 +176,7 @@ public class DistancesDialog extends DialogBox{
 			zutaten.addAll(rezeptView.getRezept().Zutaten);
 			for(IngredientSpecification zutatSpec : zutaten ){
 				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
-				for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+				for(SingleDistance singleDistance : Search.clientData.getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 

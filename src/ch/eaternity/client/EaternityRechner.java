@@ -193,10 +193,10 @@ public class EaternityRechner implements EntryPoint {
 			public void onSuccess(Long id) {
 //Window.alert("good");
 //				Search.displayRezept(recipe);
-				Search.yourRezeptePanel.setVisible(true);
+				Search.yourMealsPanel.setVisible(true);
 				recipe.setId(id);
-				Search.getClientData().getYourRezepte().add(recipe);
-				Search.updateResults(Search.SearchBox2.getText());
+				Search.clientData.getYourRezepte().add(recipe);
+				Search.updateResults(Search.SearchInput.getText());
 				rezeptView.saved = true;
 				
 				
@@ -209,9 +209,9 @@ public class EaternityRechner implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
-				Search.getClientData().getYourRezepte().remove(recipe);
+				Search.clientData.getYourRezepte().remove(recipe);
 				if(recipe.isOpen()){
-				Search.getClientData().getPublicRezepte().remove(recipe);
+				Search.clientData.getPublicRezepte().remove(recipe);
 				}
 			}
 		});
@@ -224,11 +224,11 @@ public class EaternityRechner implements EntryPoint {
 			}
 			public void onSuccess(Boolean ignore) {
 // here happens some graphics clinch... or somewhere else...
-				Search.getClientData().getPublicRezepte().remove(recipe);
+				Search.clientData.getPublicRezepte().remove(recipe);
 				recipe.open = approve;
-				Search.getClientData().getPublicRezepte().add(recipe);
+				Search.clientData.getPublicRezepte().add(recipe);
 				
-				Search.updateResults(Search.SearchBox2.getText());
+				Search.updateResults(Search.SearchInput.getText());
 			}
 		});
 	}
@@ -293,9 +293,9 @@ public class EaternityRechner implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(List<Recipe> rezepte) {
-				Data data = Search.getClientData();
+				Data data = Search.clientData;
 				data.setPublicRezepte(rezepte);
-				Search.setClientData(data);
+				Search.clientData = data;
 				Search.updateResults(" ");
 			}
 		});
@@ -308,7 +308,7 @@ public class EaternityRechner implements EntryPoint {
 			}
 			
 			public void onSuccess(List<Kitchen> result) {
-				Data data = Search.getClientData();
+				Data data = Search.clientData;
 				
 				if(result.size() != 0){ // there must be somthing!
 				data.kitchens.addAll(result);
@@ -601,7 +601,7 @@ public class EaternityRechner implements EntryPoint {
 		ListIterator<IngredientSpecification> iterator = zutaten.listIterator();
 		while(iterator.hasNext()){
 			IngredientSpecification zutatSpec = iterator.next();
-			for(SingleDistance singleDistance : Search.getClientData().getDistances()){
+			for(SingleDistance singleDistance : Search.clientData.getDistances()){
 				if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 					
@@ -672,8 +672,8 @@ public class EaternityRechner implements EntryPoint {
 //				setClientData(data);
 				
 				// the search interface gets all the recipes and ingredients
-				Search.setClientData(data);
-				Search.SearchBox2.setText("");
+				Search.clientData =data;
+				Search.SearchInput.setText("");
 				Search.updateResults(" ");
 				
 				// the top panel grabs all the existing distances also from the search interface
@@ -697,10 +697,10 @@ public class EaternityRechner implements EntryPoint {
 	
 				
 				if(data.kitchens.size() > 0){
-//					if(Search.getClientData().lastKitchen == 0){
+//					if(Search.clientData.lastKitchen == 0){
 //						EaternityRechner.loginInfo.setLastKitchen(0);
 //					}
-					int lastkitchen = Search.getClientData().lastKitchen;
+					int lastkitchen = Search.clientData.lastKitchen;
 					String kitchenName = data.kitchens.get(lastkitchen).getSymbol();
 					TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
 					TopPanel.location.setVisible(false);
@@ -741,7 +741,7 @@ public class EaternityRechner implements EntryPoint {
 		for (Recipe recipe : rezepte) {
 			if(recipe != null){ //why can it be 0?
 //				TODO wtf is this?
-				Search.displayRezept(recipe,false);
+				Search.displayRecipe(recipe,false);
 			}
 		}
 	}
@@ -749,7 +749,7 @@ public class EaternityRechner implements EntryPoint {
 	private void displayZutaten(List<Ingredient> zutaten) {
 		for (Ingredient zutat : zutaten) {
 			if(zutat != null){ //why can it be 0?
-				Search.displayZutat(zutat);
+				Search.displayIngredient(zutat);
 			}
 		}
 		
@@ -779,9 +779,7 @@ public class EaternityRechner implements EntryPoint {
 		EaternityRechner.clientData.setYourRezepte(yourRezepte);
 	}
 
-	public static Data getClientData() {
-		return clientData;
-	}
+
 
 
 
