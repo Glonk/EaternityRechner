@@ -983,7 +983,7 @@ public class Search extends ResizeComposite {
 			
 			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ " g*</div>");
 
-			if(EaternityRechner.loginInfo.isAdmin()){
+			if(EaternityRechner.loginInfo != null && EaternityRechner.loginInfo.isAdmin()){
 				
 
 //				Button removeRezeptButton = new Button(" - ");

@@ -681,7 +681,7 @@ public class EaternityRechner implements EntryPoint {
 				
 				
 				// the kitchens must be listed in the Kitchen Dialog
-				if(data.kitchens.size() == 0 && !loginInfo.isAdmin()){
+				if(data.kitchens.size() == 0 && (loginInfo == null || !loginInfo.isAdmin() )){
 					// what happens here?
 //					TopPanel.kDlg.kitchens.addItem("beliebige Zürcher Küche");
 				} else {
@@ -707,7 +707,7 @@ public class EaternityRechner implements EntryPoint {
 					TopPanel.leftKitchen = false;
 					TopPanel.selectedKitchen = data.kitchens.get(lastkitchen);
 				} else {
-					if(!loginInfo.isAdmin()){ 
+					if(loginInfo == null || !loginInfo.isAdmin()){ 
 						TopPanel.isCustomer.setVisible(false);
 						
 					}
