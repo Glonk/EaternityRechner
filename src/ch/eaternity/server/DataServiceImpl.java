@@ -1,5 +1,6 @@
 package ch.eaternity.server;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -17,6 +18,7 @@ import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.DataService;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -221,7 +223,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		
 		
-		
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
 		data.setIngredients(ingredients);
 		
@@ -235,6 +236,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			List<Kitchen> kitchensOpen = dao.getOpenKitchen();
 			data.kitchens = kitchensOpen;
 		}
+		
+		
+		
 		
 		return data;
 	}
