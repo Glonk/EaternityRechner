@@ -8,6 +8,7 @@
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="java.util.List" %>
+
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
 
@@ -19,7 +20,7 @@
 	    UserService userService = UserServiceFactory.getUserService();
 	    User user = userService.getCurrentUser();
 		
-		String email = request.getParameter("user");
+		String kitchenIds = request.getParameter("ids");
 
 		DAO dao = new DAO();
 		
@@ -31,8 +32,8 @@
 		rezeptePersonal = dao.getYourRecipe(user);
 		kitchenRecipes = dao.getKitchenRecipes(user);
 		} else {
-		 if(email != null){
-			rezeptePersonal = dao.getYourRecipeByName(email);
+		 if(kitchenIds != null){
+			rezeptePersonal = dao.getRecipeByIds(kitchenIds);
 		  }
 		}
 		
@@ -61,7 +62,7 @@
 <head>
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<title>Eaternity Menu Optimierung für <%= email %></title>
+<title>Eaternity Menu Optimierung</title>
 
 <style type="text/css">
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);

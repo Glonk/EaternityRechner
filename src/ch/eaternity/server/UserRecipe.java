@@ -21,6 +21,7 @@ public class UserRecipe{
 	@Indexed
 	public User user;
 	
+	
 	@Indexed
 	public Long kitchenId;
 	
@@ -60,6 +61,10 @@ public class UserRecipe{
 	}
 	public Recipe getRezept() {
 		return recipe;
+	}
+
+	public String getUserName() {
+		return user.getNickname();
 	}
 
 
