@@ -18,7 +18,8 @@
 
 	    UserService userService = UserServiceFactory.getUserService();
 	    User user = userService.getCurrentUser();
-
+		
+		String email = request.getParameter("user");
 
 		DAO dao = new DAO();
 		
@@ -29,6 +30,10 @@
 		if (user != null) {
 		rezeptePersonal = dao.getYourRecipe(user);
 		kitchenRecipes = dao.getKitchenRecipes(user);
+		} else {
+		 if(email != null){
+			rezeptePersonal = dao.getYourRecipeByName(email);
+		  }
 		}
 		
 		
@@ -56,7 +61,7 @@
 <head>
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<title>Eaternity Menu Optimierung</title>
+<title>Eaternity Menu Optimierung für <%= email %></title>
 
 <style type="text/css">
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
@@ -252,6 +257,7 @@ margin-left: -10pt;
 }
 
 .zutat {
+margin-top: -10pt;
 margin-left: -10pt;
 }
 
@@ -442,6 +448,7 @@ for(Recipe recipe: rezeptePersonal){
 			
 			DecimalFormat formatter = new DecimalFormat("##");
 			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
 			%>
 			
 			
@@ -454,7 +461,7 @@ for(Recipe recipe: rezeptePersonal){
 			<td class="bottom-border">
 			<img class="smile" src="smiley8.png" alt="smiley" />
 			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3> <div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			<h3><%= recipe.getSymbol() %></h3><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
 			</td>
 			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
 			</tr>
@@ -462,7 +469,7 @@ for(Recipe recipe: rezeptePersonal){
 
 			
 			<tr>
-			<td>
+			<td><span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
 			<ul class="zutat">
 			
 			<%	
