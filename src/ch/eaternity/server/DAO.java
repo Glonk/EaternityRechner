@@ -254,6 +254,25 @@ public class DAO extends DAOBase
 
 	}
 	
+	public List<Recipe> getYourRecipeByName(String userName){
+		
+		List<Recipe> yourRecipes = new ArrayList<Recipe>();
+
+		// The Query itself is Iterable
+		Query<UserRecipe> yourUserRecipes = ofy().query(UserRecipe.class).filter("userEmail ==", userName);
+        QueryResultIterator<UserRecipe> iterator = yourUserRecipes.iterator();
+        
+        while (iterator.hasNext()) {
+        	UserRecipe userRezept = iterator.next();
+        	Recipe recipe = userRezept.getRezept();
+        	recipe.setId( userRezept.id);
+        	yourRecipes.add(recipe);
+        }
+        
+        return yourRecipes;
+
+	}
+	
 	public List<Recipe> adminGetRecipe(User user){
 		
 		List<Recipe> adminRecipes = new ArrayList<Recipe>();
