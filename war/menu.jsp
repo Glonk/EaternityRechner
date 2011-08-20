@@ -7,8 +7,10 @@
 <%@ page import="ch.eaternity.server.DAO" %>
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
-<%@ page import="java.util.List" %>
+<%@ page import="ch.eaternity.shared.Converter" %>
 
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
 
@@ -21,7 +23,15 @@
 	    User user = userService.getCurrentUser();
 		
 		String kitchenIds = request.getParameter("ids");
-
+		String thresholdString = request.getParameter("median");
+		Integer threshold = 1500;
+		if(thresholdString != null){
+			threshold = Integer.valueOf(thresholdString);
+		} 
+		
+		Double third = (double)threshold / 3;
+		
+		
 		DAO dao = new DAO();
 		
 		List<Recipe> adminRecipes = new ArrayList<Recipe>();
@@ -54,7 +64,9 @@
 				}
 			}
 		}
-
+		
+		DecimalFormat formatter = new DecimalFormat("##");
+		
 %>
 
 
@@ -122,7 +134,7 @@ h2 {
 
   text-align: center;
     text-align: left;
-    font-size: 13pt;
+    font-size: 12pt;
     font-weight: 400;
 }
       
@@ -275,6 +287,16 @@ a:hover {text-decoration:underline }
 .login {
 visibility: hidden;
 }
+
+.id {
+visibility: hidden;
+	font-weight: 400;
+    font-size: 12pt;
+    padding: 0px;
+    margin: 0px;
+    word-wrap: normal;
+    display: inline;
+}
  
 #toc, #ix {
 visibility: hidden;
@@ -314,6 +336,9 @@ color:black;
     font-size: 9pt;
     font-weight: 400;
     
+  }
+  .id {
+  visibility: visible;
   }
 
   h1 {
@@ -421,6 +446,23 @@ padding: 1em 4em 0.5em 3em;
 
 <ul id=toc></ul>
 
+<%
+
+Calendar rightNow = Calendar.getInstance();
+Integer date = rightNow.get(Calendar.DAY_OF_YEAR);
+
+
+boolean doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+		if(recipe.getCO2Value() < third){
+			doIt = true;
+		}
+	}
+}
+if(doIt){
+%>
+
 <table cellspacing="0" cellpadding="0" class="table" >
 
 
@@ -430,7 +472,7 @@ padding: 1em 4em 0.5em 3em;
 </tr>
 	
 <tr>
-<td><p>Diese Rezepte sind unsere besten Menü Plus. Sie haben unter 450 g CO2* pro Person. Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.</p></td>
+<td><p>Diese Rezepte sind unsere Besten. Sie haben unter <%= formatter.format( third ) %> g CO<sub>2</sub>* pro Person. Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.</p></td>
 <td></td>
 </tr>
 
@@ -442,12 +484,16 @@ padding: 1em 4em 0.5em 3em;
 <!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
 <%
 
+
 for(Recipe recipe: rezeptePersonal){
 
+long compute = recipe.getId() * date;
+String code = Converter.toString(compute,34);
+
 			recipe.setCO2Value();
-			if(recipe.getCO2Value() < 450){
+			if(recipe.getCO2Value() < third){
 			
-			DecimalFormat formatter = new DecimalFormat("##");
+			
 			String formatted = formatter.format( recipe.getCO2Value() );
 			String persons = Long.toString(recipe.getPersons());
 			%>
@@ -462,7 +508,7 @@ for(Recipe recipe: rezeptePersonal){
 			<td class="bottom-border">
 			<img class="smile" src="smiley8.png" alt="smiley" />
 			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
 			</td>
 			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
 			</tr>
@@ -594,11 +640,239 @@ for(Recipe recipe: rezeptePersonal){
 	-->
 
 </table>
+<%
+}
 
 
+doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+	if(recipe.getCO2Value() >= third && recipe.getCO2Value() < (2*third)){
+	doIt = true;
+	}
+	}
+}
+if(doIt){
+%>
 
 
+<table cellspacing="0" cellpadding="0" class="table" >
+
+
+<tr>
+<td class="table-header">Gut</td>
+<td></td>
+</tr>
+	
+<tr>
+<td><p>Diese Rezepte sind mit unter <%= formatter.format( 2*third ) %> g CO<sub>2</sub>* bereits klimafreundlich. Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.</p></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+</tr>
+	
+<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<%
+
+
+for(Recipe recipe: rezeptePersonal){
+
+long compute = recipe.getId() * date;
+String code = Converter.toString(compute,34);
+
+			recipe.setCO2Value();
+			if(recipe.getCO2Value() >= third && recipe.getCO2Value() < (2*third)){
+
+			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
+			%>
+			
+			
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td class="bottom-border">
+			<img class="smile" src="smiley8.png" alt="smiley" />
+			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			</td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			</tr>
+
+
+			
+			<tr>
+			<td><span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
+			<ul class="zutat">
+			
+			<%	
+			for(IngredientSpecification ingredient: recipe.Zutaten){
+			
+			%>
+			
+			<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>
+			
+			<%
+			}
+			%>
+						
+			</ul>
+			
+			    <!--<ul class="tips">
+			      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
+			      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
+			    </ul> -->
+			</td>
+			<td class="left-border"><br></td>
+			</tr>
+			<%
+		}
+
+%>
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+<%		
+
+}
+
+%>
+
+
+</table>
+
+<%
+}
+
+
+doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+	if(recipe.getCO2Value() > (2*third)){
+	doIt = true;
+	}
+	}
+}
+if(doIt){
+%>
+
+<table cellspacing="0" cellpadding="0" class="table" >
+
+
+<tr>
+<td class="table-header">Über ⅔ Richtwert</td>
+<td></td>
+</tr>
+	
+<tr>
+<td><p>An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. Diese Rezepte haben über <%= formatter.format( 2*third ) %> g CO<sub>2</sub>*.</p></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+</tr>
+	
+<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<%
+
+
+for(Recipe recipe: rezeptePersonal){
+
+long compute = recipe.getId() * date;
+String code = Converter.toString(compute,34);
+
+			recipe.setCO2Value();
+			if(recipe.getCO2Value() > (2*third)){
+			
+
+			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
+			%>
+			
+			
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td class="bottom-border">
+			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			</td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			</tr>
+
+
+			
+			<tr>
+			<td><span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
+			<ul class="zutat">
+			
+			<%	
+			for(IngredientSpecification ingredient: recipe.Zutaten){
+			
+			%>
+			
+			<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>
+			
+			<%
+			}
+			%>
+						
+			</ul>
+			
+			    <!--<ul class="tips">
+			      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
+			      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
+			    </ul> -->
+			</td>
+			<td class="left-border"><br></td>
+			</tr>
+			<%
+		}
+
+%>
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+<%		
+
+}
+
+%>
+
+
+</table>
+
+
+<%
+}
+if(rezeptePersonal.size() != 0){
+
+%>
+
+<p>
+<h2>Alle Zutaten</h2>
+</p>
 <ul id=ix></ul>
+
+<%
+} else {
+%>
+Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie uns.
+
+<%
+} 
+%>
 
 </div>
 

@@ -2,8 +2,11 @@ package ch.eaternity.server;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.IngredientCondition;
@@ -257,14 +260,26 @@ public class DAO extends DAOBase
 	public List<Recipe> getRecipeByIds(String kitchenIdsString){
 		
 		String[] kitchenIds = kitchenIdsString.split(",");
+		Calendar rightNow = Calendar.getInstance();
+		int date = rightNow.get(Calendar.DAY_OF_YEAR);
+
+ 
 		
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 		
 		for (String kitchenIdString : kitchenIds){
-			UserRecipe userRezept = ofy().get(UserRecipe.class, Long.parseLong(kitchenIdString));
-        	Recipe recipe = userRezept.getRezept();
-        	recipe.setId( userRezept.id);
-        	yourRecipes.add(recipe);
+
+			int code = Converter.fromString(kitchenIdString, 34);
+			long computeId = code / date;
+			
+			if(computeId != 0){
+				UserRecipe userRezept = ofy().find(UserRecipe.class, computeId);
+				if(userRezept != null){
+		        	Recipe recipe = userRezept.getRezept();
+		        	recipe.setId( userRezept.id);
+		        	yourRecipes.add(recipe);
+				}
+			}
 		}
         
         return yourRecipes;
@@ -347,5 +362,8 @@ public class DAO extends DAOBase
         
         return kitchenRecipes;
 	}
+	
+   
+
     
 }
