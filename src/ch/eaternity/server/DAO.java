@@ -261,7 +261,7 @@ public class DAO extends DAOBase
 		
 		String[] kitchenIds = kitchenIdsString.split(",");
 		Calendar rightNow = Calendar.getInstance();
-		int date = rightNow.get(Calendar.DAY_OF_YEAR);
+		int date = rightNow.get(Calendar.WEEK_OF_YEAR);
 
  
 		

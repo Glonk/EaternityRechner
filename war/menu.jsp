@@ -28,7 +28,7 @@
 		if(thresholdString != null){
 			threshold = Integer.valueOf(thresholdString);
 		} 
-		
+
 		Double third = (double)threshold / 3;
 		
 		
@@ -44,7 +44,7 @@
 		} else {
 		 if(kitchenIds != null){
 			rezeptePersonal = dao.getRecipeByIds(kitchenIds);
-		  }
+		 }
 		}
 		
 		
@@ -449,7 +449,7 @@ padding: 1em 4em 0.5em 3em;
 <%
 
 Calendar rightNow = Calendar.getInstance();
-Integer date = rightNow.get(Calendar.DAY_OF_YEAR);
+Integer date = rightNow.get(Calendar.WEEK_OF_YEAR);
 
 
 boolean doIt = false;
