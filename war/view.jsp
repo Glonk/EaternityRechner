@@ -24,7 +24,7 @@
 		
 		String kitchenIds = request.getParameter("ids");
 		String thresholdString = request.getParameter("median");
-		Integer threshold = 1500;
+		Integer threshold = 1350;
 		if(thresholdString != null){
 			threshold = Integer.valueOf(thresholdString);
 		} 
@@ -75,6 +75,22 @@
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <title>Eaternity Menu Optimierung</title>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+<script src="jquery.docraptor.js" type="text/javascript"></script>
+
+<script  type="text/javascript">
+$(document).ready(function () {
+	$(".whatever").docraptor({
+	    document_type: 'pdf',
+	    test: true
+	  },
+	  'sYkJlCnJYRitdIvkAW'
+	);
+});
+</script>
+
 
 <style type="text/css">
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
@@ -286,6 +302,7 @@ a:hover {text-decoration:underline }
 
 .login {
 visibility: hidden;
+display: none;
 }
 
 .id {
@@ -300,7 +317,6 @@ visibility: hidden;
  
 #toc, #ix {
 visibility: hidden;
-
 }
  
 #toc, #ix, li { list-style-type: none; margin: 0; padding: 0 }
@@ -328,6 +344,7 @@ color:black;
   .login {
   	color: #383838;
   	visibility: visible;
+  display: block;
   	width: 840px;
   	
     margin: auto;
@@ -407,7 +424,7 @@ padding: 1em 4em 0.5em 3em;
 
 </head>
 
-<body onload="makeix(); maketoc();">
+<body>
 
 <div class="website-content">
 <div id="header-right">
@@ -429,7 +446,7 @@ padding: 1em 4em 0.5em 3em;
 </div>
 
 <h1>Menu Optimierung</h1>
-
+<a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever">Click me for a PDF</a>
 <div id="footer-left">
 	<img class="logo-karotte" src="karotte.jpg" alt="karotte"  />
 	Eaternity
@@ -444,7 +461,6 @@ padding: 1em 4em 0.5em 3em;
 
 <div class="content">
 
-<ul id=toc></ul>
 
 <%
 
@@ -860,10 +876,11 @@ if(rezeptePersonal.size() != 0){
 
 %>
 
-<p>
+<!--
 <h2>Alle Zutaten</h2>
-</p>
+
 <ul id=ix></ul>
+-->
 
 <%
 } else {
@@ -906,121 +923,6 @@ Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie un
 
 </body>
 
-<script>
-function getText(e)
-{
-    var text = "";
-
-    for (var x = e.firstChild; x != null; x = x.nextSibling)
-    {
-	if (x.nodeType == x.TEXT_NODE)
-	{
-	    text += x.data;
-	}
-	else if (x.nodeType == x.ELEMENT_NODE)
-	{
-	    text += getText(x);
-	}
-    }
-
-    return text;
-}
-
-function getElementsByClassName(oElm, strTagName, strClassName){
-	var arrElements = (strTagName == "*" && oElm.all)? oElm.all : oElm.getElementsByTagName(strTagName);
-	var arrReturnElements = new Array();
-	strClassName = strClassName.replace(/\-/g, "\\-");
-	var oRegExp = new RegExp("(^|\\s)" + strClassName + "(\\s|$)");
-	var oElement;
-	for(var i=0; i<arrElements.length; i++){
-		oElement = arrElements[i];
-		if(oRegExp.test(oElement.className)){
-			arrReturnElements.push(oElement);
-		}
-	}
-	return (arrReturnElements)
-}
-
-
-function maketoc()
-{
-    var hs = document.getElementsByTagName("h3");
-    var toc = document.getElementById('toc');
-    for(var i=0; i<hs.length; i++)
-    {
-	var text = document.createTextNode(getText(hs[i]));
-        hs[i].setAttribute("id", "ch"+i);
-	var link = document.createElement("a");
-	link.setAttribute("href", "#ch"+i);
-	link.appendChild(text);
-	var li = document.createElement("li");
-        li.appendChild(link);
-	toc.appendChild(li); 
-    }
-}
-
-
-function makeix()
-{
-  var ixcontainer = document.getElementById('ix');
-  var ids = new Array();
-  var ent = new Array();
-
-// find all elements that contain index entries, go through them sequentially
-
-  ix = getElementsByClassName(document, "*", "ix");
-  for(var i=0; i<ix.length; i++)
-    {
-        ix[i].setAttribute("id", "ix"+i);
-
-// store the reference in a string in an associative array
-
-	var str = getText(ix[i]);
-        if (ids[str]) {
-	  ids[str] = ids[str]+",ix"+i;
-        } else {
-          ids[str] = "ix"+i;
-        }
-
-// check to see if the index entry is there already, if not add it
-
-	if ((ent.join("")).indexOf(str) < 0)
-          { ent.push(str) }
-    }
-
-// the ent array now contains list of index entries, sort it!
-
-  ent.sort();
-
-// go through list of index entries, create one li element per entry
-
-  for (var i=0; i<ent.length; i++)
-    {
-       var li = document.createElement("li");
-
-       var text = document.createTextNode(ent[i]);
-       var span = document.createElement("span");
-       span.appendChild(text);
-       li.appendChild(span); 
-
-       var text = document.createTextNode(" ");
-       li.appendChild(text); 
-
-       var idsa = ids[ent[i]].split(",");
-
-       for (var j=0; j<idsa.length; j++)
-         {
-           var id = document.createTextNode(idsa[j]);
-           var link = document.createElement("a");
-           link.setAttribute("href", "#"+idsa[j]);
-           link.appendChild(id);
-           li.appendChild(link); 
-         }
-       ixcontainer.appendChild(li); 
-    }
- 
-}
-</script>
 
 </HTML>
 
