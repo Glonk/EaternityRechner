@@ -14,6 +14,11 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
 
+<html>
+<head>
+
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<title>Eaternity Menu Optimierung</title>
 
 
 <%
@@ -39,57 +44,60 @@
 		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 		
 		if (user != null) {
-		rezeptePersonal = dao.getYourRecipe(user);
-		kitchenRecipes = dao.getKitchenRecipes(user);
+			rezeptePersonal = dao.getYourRecipe(user);
+			kitchenRecipes = dao.getKitchenRecipes(user);
+			
+			adminRecipes = dao.adminGetRecipe(user);
+			
+			// remove double entries for admin
+			if(rezeptePersonal != null){
+				for(Recipe recipe: rezeptePersonal){
+					int removeIndex = -1;
+					for(Recipe rezept2:adminRecipes){
+						if(rezept2.getId().equals(recipe.getId())){
+							removeIndex = adminRecipes.indexOf(rezept2);
+						}
+					}
+					if(removeIndex != -1){
+						adminRecipes.remove(removeIndex);
+					}
+				}
+			}
+			
+					 			%>
+
+			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+			<script src="jquery.docraptor.js" type="text/javascript"></script>
+			
+			<script  type="text/javascript">
+			$(document).ready(function () {
+			$(".whatever").docraptor({
+			document_type: 'pdf',
+			test: true
+			},
+			'sYkJlCnJYRitdIvkAW'
+			);
+			});
+			</script>
+
+	<%
+		
 		} else {
 		 if(kitchenIds != null){
 			rezeptePersonal = dao.getRecipeByIds(kitchenIds);
-		 }
+
+		 } 
 		}
 		
 		
-		adminRecipes = dao.adminGetRecipe(user);
-		
-		// remove double entries for admin
-		if(rezeptePersonal != null){
-			for(Recipe recipe: rezeptePersonal){
-				int removeIndex = -1;
-				for(Recipe rezept2:adminRecipes){
-					if(rezept2.getId().equals(recipe.getId())){
-						removeIndex = adminRecipes.indexOf(rezept2);
-					}
-				}
-				if(removeIndex != -1){
-					adminRecipes.remove(removeIndex);
-				}
-			}
-		}
+
 		
 		DecimalFormat formatter = new DecimalFormat("##");
 		
 %>
 
 
-<html>
-<head>
 
-<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<title>Eaternity Menu Optimierung</title>
-
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-<script src="jquery.docraptor.js" type="text/javascript"></script>
-
-<script  type="text/javascript">
-$(document).ready(function () {
-	$(".whatever").docraptor({
-	    document_type: 'pdf',
-	    test: true
-	  },
-	  'sYkJlCnJYRitdIvkAW'
-	);
-});
-</script>
 
 
 <style type="text/css">
@@ -911,10 +919,18 @@ Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie un
 	Diese Angaben sind für den Benutzer <%= user.getNickname() %>. <a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Abmelden</a>?
 	<%
 	    } else {
+	    	if (kitchenIds == null){
 	%>
 	Sie sind nicht angemeldet.
 	<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Anmelden</a>?
-	<%
+	<%	
+			} else {
+			
+			%>
+			Zurück zur <a href="/view.jsp">Übersicht</a>?
+			<%
+			
+			}
 	    }
 	%>
 
