@@ -30,7 +30,7 @@
         <url-pattern>/menus/*</url-pattern>
     </servlet-mapping>
    <welcome-file-list>
-        <welcome-file>menu.jsp</welcome-file>
+        <welcome-file>view.jsp</welcome-file>
     </welcome-file-list> -->
     
     
