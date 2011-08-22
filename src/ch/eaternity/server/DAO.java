@@ -94,6 +94,35 @@ public class DAO extends DAOBase
     public Boolean CreateIngredients(ArrayList<Ingredient> ingredients)
     {
         ofy().put(ingredients);
+        
+
+        // and now update all the recipes, that got changed...
+        
+        // get all recipes
+        Query<UserRecipe> found = ofy().query(UserRecipe.class);
+
+        //iterate over them
+        QueryResultIterator<UserRecipe> iterator = found.iterator();
+        while (iterator.hasNext()) {
+        	UserRecipe recipe = iterator.next();
+        	
+        	// for each recipe find all ingredients Specifications
+        	for(IngredientSpecification ingSpec : recipe.recipe.Zutaten ){
+        		for(Ingredient ingredient: ingredients){
+        			if(ingSpec.getZutat_id().equals(ingredient.getId())){
+        				ingSpec.setNormalCO2Value(ingredient.getCo2eValue());
+        				break;
+        			}
+        		}
+        		
+        	}
+        	recipe.recipe.setCO2Value();
+    		ofy().put(recipe);
+        	
+        }
+        
+        
+        
         return true;
     }
     
