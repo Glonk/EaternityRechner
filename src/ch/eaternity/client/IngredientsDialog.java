@@ -411,6 +411,8 @@ public class IngredientsDialog extends DialogBox{
 			public void onSuccess(Boolean success) {
 				if(success){
 					Window.alert("yipiieee!");
+					
+					
 				}
 			}
 		});
