@@ -36,28 +36,34 @@
 
 	.gwt-Button {
 	  margin: 5px 10px 5px 0px;
-	  padding: 3px 5px;
-	  text-decoration: none;
-	  font-size: small;
-	  cursor: pointer;
-	  cursor: hand;
-	  background: url("hborder.png") repeat-x 0px -27px;
-	  border: 1px outset #ccc;
-	}
-	.gwt-Button:active {
-	  border: 1px inset #ccc;
-	}
-	.gwt-Button:hover {
-	  border-color: #9cf #69e #69e #7af;
-	}
-	.gwt-Button[disabled] {
-	  cursor: default;
-	  color: #888;
-	}
-	.gwt-Button[disabled]:hover {
-	  border: 1px outset #ccc;
-	}
-
+	 padding: 2px 5px 3px 5px;
+  text-decoration: none;
+ /* cursor: pointer;
+  cursor: hand;*/
+  cursor: default;
+  font-size:11px;
+  color:#000;
+  background: url("hborder.png") repeat-x 0px -27px;
+  border:1px solid #787878;
+  /* border-bottom: 1px solid #a0a0a0;*/
+  border-radius: 4px;
+ -moz-border-radius: 4px;
+}
+.gwt-Button:active {
+ /* border: 1px inset #fff; */
+ border:1px solid #787878;
+    background: url("hborder.png") repeat-x 0px -1455px;
+}
+.gwt-Button:hover {
+  border-color: #787878; 
+}
+.gwt-Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.gwt-Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
 
   .outer {
     border-right: 1.5px solid #bbb;

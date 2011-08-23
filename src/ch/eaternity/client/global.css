@@ -249,27 +249,26 @@ width: 65px;
 	}
 .gwt-Button {
   margin: 0;
-  padding: 3px 5px;
+  padding: 2px 5px 3px 5px;
   text-decoration: none;
-  font-size: small;
-  cursor: pointer;
-  cursor: hand;
+ /* cursor: pointer;
+  cursor: hand;*/
+  cursor: default;
+  font-size:11px;
+  color:#000;
   background: url("hborder.png") repeat-x 0px -27px;
-  border: 1px outset #ccc;
+  border:1px solid #787878;
+  /* border-bottom: 1px solid #a0a0a0;*/
+  border-radius: 4px;
+ -moz-border-radius: 4px;
 }
 .gwt-Button:active {
-  border: 1px inset #ccc;
+ /* border: 1px inset #fff; */
+ border:1px solid #787878;
+    background: url("hborder.png") repeat-x 0px -1455px;
 }
-
-.gwt-Button-active {
-  border: 1px inset #ccc;
-}
-.active {
-  border: 1px inset #ccc;
-}
-
 .gwt-Button:hover {
-  border-color: #9cf #69e #69e #7af;
+  border-color: #787878; 
 }
 .gwt-Button[disabled] {
   cursor: default;

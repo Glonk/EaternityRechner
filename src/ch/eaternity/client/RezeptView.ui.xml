@@ -168,27 +168,35 @@
 	.gwt-Button {
 
 	  margin: -1px -3px 0px 0px;
-	  padding: 0px 3px;
-	  text-decoration: none;
-	  font-size: small;
-	  cursor: pointer;
-	  cursor: hand;
-	  background: url("hborder.png") repeat-x 0px -27px;
-	  border: 1px outset #ccc;
-	}
-	.gwt-Button:active {
-	  border: 1px inset #ccc;
-	}
-	.gwt-Button:hover {
-	  border-color: #9cf #69e #69e #7af;
-	}
-	.gwt-Button[disabled] {
-	  cursor: default;
-	  color: #888;
-	}
-	.gwt-Button[disabled]:hover {
-	  border: 1px outset #ccc;
-	}
+	 padding: 2px 5px 3px 5px;
+  text-decoration: none;
+ /* cursor: pointer;
+  cursor: hand;*/
+  cursor: default;
+  font-size:11px;
+  color:#000;
+  background: url("hborder.png") repeat-x 0px -27px;
+  border:1px solid #787878;
+  /* border-bottom: 1px solid #a0a0a0;*/
+  border-radius: 4px;
+ -moz-border-radius: 4px;
+}
+.gwt-Button:active {
+ /* border: 1px inset #fff; */
+ border:1px solid #787878;
+    background: url("hborder.png") repeat-x 0px -1455px;
+}
+.gwt-Button:hover {
+  border-color: #787878; 
+}
+.gwt-Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.gwt-Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
+
 </ui:style>
 
   <ui:style field='selectionStyleRow'
@@ -223,7 +231,7 @@
            			    <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
            			</g:HTMLPanel>
            			<g:HTMLPanel styleName='{style.floatRight}'>
-           				<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="X"/>
+           				<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="x"/>
            			</g:HTMLPanel>
            		</g:HTMLPanel>
 

@@ -41,6 +41,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -354,8 +355,8 @@ public class Search extends ResizeComposite {
 		tableMeals.getColumnFormatter().setWidth(0, "120px");
 
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
-				tableMealsYours.getColumnFormatter().setWidth(1, "10px");
-				tableMealsYours.getColumnFormatter().setWidth(2, "10px");
+				tableMealsYours.getColumnFormatter().setWidth(1, "20px");
+//				tableMealsYours.getColumnFormatter().setWidth(2, "10px");
 	}
 
 	
@@ -789,7 +790,7 @@ public class Search extends ResizeComposite {
 			final int row = tableMealsYours.getRowCount();
 
 
-			Anchor removeRezeptButton = new Anchor(" - ");
+			Button removeRezeptButton = new Button(" x ");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
@@ -862,11 +863,14 @@ public class Search extends ResizeComposite {
 			} else {
 
 //				 how to show, that this recipe is public??
-				if(recipe.isOpen()){
-					tableMealsYours.setText(row, 2,"o");
-				} else if(recipe.openRequested){
-					tableMealsYours.setText(row, 2,"c");
-				}
+				
+//				if(recipe.isOpen()){
+//					tableMealsYours.setText(row, 2,"o");
+//				} else if(recipe.openRequested){
+//					tableMealsYours.setText(row, 2,"c");
+//				}
+				
+				//TODO better show in the menu itself
 
 			}
 
