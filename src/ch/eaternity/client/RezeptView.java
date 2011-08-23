@@ -354,7 +354,7 @@ public class RezeptView extends Composite {
 			EaternityRechner.selectedRezept = -1;
 			EaternityRechner.suggestionPanel.clear();
 		} else {
-		final ConfirmDialog dlg = new ConfirmDialog("Diese Zusammenstellungen wurde noch nicht gespeichert!");
+		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
 		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
 		// TODO recheck user if he really want to do this...
 		
