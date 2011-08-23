@@ -378,13 +378,13 @@ html>body .gwt-DialogBox {
 
 /* Splitters */
 .gwt-SplitLayoutPanel-HDragger {
-background-color: #fff;
-  cursor: col-resize;
-    	border-left: 1.5px solid #bbb; 
+	background: #fff url(images/thumb_vertical.png) center center no-repeat;
+  	cursor: col-resize;
+    border-left: 1.5px solid #bbb; 
 }
 
 .noSplitter .gwt-SplitLayoutPanel-VDragger {
-	background: #f00;
+	background: #f00 url(images/thumb_horz.png) center center no-repeat;
 	border: 0px;
 	margin: 0px;
 	padding : 0px;
@@ -392,10 +392,9 @@ background-color: #fff;
 	}
 
 .gwt-SplitLayoutPanel-VDragger {
-	  	border-top: 1.5px solid #bbb;
-
-	background-color: #fff;
-  cursor: row-resize;
+	border-top: 1.5px solid #bbb;
+	background: #fff url(images/thumb_horz.png) center center no-repeat;
+  	cursor: row-resize;
 }
 
 .rating{
