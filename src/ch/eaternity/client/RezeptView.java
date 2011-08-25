@@ -452,7 +452,7 @@ public class RezeptView extends Composite {
 						if(rezeptDetails.getText() != ""){
 							recipe.setSubTitle(rezeptDetails.getText());
 						} else {
-							recipe.setSubTitle("just like that");
+							recipe.setSubTitle("Menü Beschreibung");
 						}
 						recipe.openRequested = !makePublic.getValue();
 						recipe.open = false;

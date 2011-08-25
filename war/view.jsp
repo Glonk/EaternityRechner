@@ -116,7 +116,9 @@
 		 padding-right: 20pt;
 		 padding-top: 5pt;
     }
-    
+    @bottom { 
+      font: 9pt 'Open Sans',  sans-serif; font-weight: 300;
+      }
     @bottom-left { 
       content: flow(footer,start);
      
@@ -241,8 +243,9 @@ float:left;
 
 .smile{
 height: 18pt;
-margin-bottom: -2pt;
+margin-bottom: -4pt;
 margin-left: -4pt;
+margin-top: -2pt;
 }
 
 .bar {
@@ -270,12 +273,31 @@ padding-right: 4pt;
 width: 100pt;
 }
 
+.gray {
+color: white;
+background-repeat: repeat-x;
+background-image: url(light-gray.png);
+background: light-gray.png;
+	font-size: 10pt;
+	font-weight: 700;
+text-align: right;
+padding: 2pt;
+padding-right: 4pt;
+width: 100pt;
+}
+
 
 .amount {
 float: right;
 padding-right: 4pt;
 margin-top: -1.5em;
+}
 
+.menu-name {
+vertical-align:top;
+padding-left: 1em;
+padding-top: 0.5em;
+width: 20em;
 }
 
 .suggest {
@@ -470,6 +492,8 @@ padding: 1em 4em 0.5em 3em;
 <div class="content">
 
 
+<!-- Overview -->
+
 <%
 
 Calendar rightNow = Calendar.getInstance();
@@ -477,6 +501,81 @@ Integer date = rightNow.get(Calendar.WEEK_OF_YEAR);
 
 
 boolean doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+		if(recipe.getCO2Value() < third){
+			doIt = true;
+		}
+	}
+}
+if(doIt){
+%>
+
+<table cellspacing="0" cellpadding="0" class="table" >
+
+
+<tr>
+<td></td>
+<td class="gray left-border">g CO<sub>2</sub>*</td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border">Grossartig</td>
+<td class="left-border"></td>
+</tr>
+
+	
+<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<%
+
+
+for(Recipe recipe: rezeptePersonal){
+
+long compute = recipe.getId() * date;
+String code = Converter.toString(compute,34);
+
+			recipe.setCO2Value();
+			if(recipe.getCO2Value() < third){
+			
+			
+			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
+			%>
+			
+			
+			
+			<tr>
+			<td class="menu-name">
+			<img class="smile" src="smiley8.png" alt="smiley" />
+			<img class="smile" src="smiley8.png" alt="smiley" />
+			<%= recipe.getSymbol() %> <!-- div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div -->
+			</td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			</tr>
+
+
+			<%
+		}	
+
+}
+
+%>
+
+
+</table>
+<%
+}
+%>
+
+
+
+<!-- Details follow -->
+
+
+<%
+
+
+doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
 		if(recipe.getCO2Value() < third){

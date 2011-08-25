@@ -355,7 +355,7 @@ public class Search extends ResizeComposite {
 		tableMeals.getColumnFormatter().setWidth(0, "120px");
 
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
-				tableMealsYours.getColumnFormatter().setWidth(1, "20px");
+				tableMealsYours.getColumnFormatter().setWidth(1, "18px");
 //				tableMealsYours.getColumnFormatter().setWidth(2, "10px");
 	}
 
