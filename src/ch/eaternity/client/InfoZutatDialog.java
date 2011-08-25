@@ -263,6 +263,14 @@ public class InfoZutatDialog extends Composite {
 			
 			for(final MoTransportation moTransportations : zutat.moTransportations){
 				RadioButton transport = new RadioButton("Transportations",moTransportations.symbol);
+				
+				// hack to take the first one...
+				if(zutatSpec.getTransportmittel() == null){
+					MoTransportation transportmittel = new MoTransportation(moTransportations.symbol);
+					zutatSpec.setTransportmittel(transportmittel);
+				}
+				
+				
 				if(moTransportations.symbol.equalsIgnoreCase(zutatSpec.getTransportmittel().symbol)){
 					transport.setValue(true);
 				}
@@ -289,9 +297,17 @@ public class InfoZutatDialog extends Composite {
 			
 			for(final Production production : zutat.productions){
 				RadioButton productionBox = new RadioButton("productions",production.symbol);
+				
+				// hack to take the first one...
+				if(zutatSpec.getProduktion() == null){
+					Production herstellung = new Production(production.symbol);
+					zutatSpec.setProduktion(herstellung);
+				}
+
 				if(production.symbol.equalsIgnoreCase(zutatSpec.getProduktion().symbol)){
 					productionBox.setValue(true);
 				}
+				
 				productionBox.addClickHandler(new ClickHandler() {
 				      public void onClick(ClickEvent event) {
 				        boolean checked = ((RadioButton) event.getSource()).isChecked();
