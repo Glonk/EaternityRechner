@@ -247,6 +247,8 @@ width: 65px;
 .littleZutatSpec .gwt-HTML {
 	margin-top:5px;
 	}
+	
+
 .gwt-Button {
   margin: 2px;
   padding: 2px 5px 3px 5px;
@@ -375,6 +377,14 @@ html>body .gwt-DialogBox {
 .gwt-Tree .gwt-TreeItem-selected {
   background: #ccc;
 }
+
+/* Draggers */
+.dragMe {
+	cursor: url(images/hand-open.cur), -moz-grab;
+	background: url(images/row_dragger.png) center center no-repeat;
+	width:10px;
+	}
+		
 
 /* Splitters */
 .gwt-SplitLayoutPanel-HDragger {

@@ -239,7 +239,11 @@ float:left;
 	height:14pt;
 }
 
-
+.subTitle {
+margin-left: 1em;
+display: block;
+margin-bottom: 0.5em;
+}
 
 .smile{
 height: 18pt;
@@ -283,9 +287,19 @@ background: light-gray.png;
 text-align: right;
 padding: 2pt;
 padding-right: 4pt;
-width: 100pt;
+/* width: 100pt; */
 }
 
+.co2value {
+text-align: right;
+padding-left: 0.2em;
+padding-right: 0.5em;
+/* color:gray; */
+}
+
+.alternate {
+background-color: #FBF9F8;
+}
 
 .amount {
 float: right;
@@ -297,7 +311,10 @@ margin-top: -1.5em;
 vertical-align:top;
 padding-left: 1em;
 padding-top: 0.5em;
-width: 20em;
+/* width: 25em; */
+display: inline-table;
+padding-right: 3em;
+
 }
 
 .suggest {
@@ -476,7 +493,11 @@ padding: 1em 4em 0.5em 3em;
 </div>
 
 <h1>Menu Optimierung</h1>
-<a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever">Click me for a PDF</a>
+
+
+<!--a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever">Click me for a PDF</a-->
+
+
 <div id="footer-left">
 	<img class="logo-karotte" src="karotte.jpg" alt="karotte"  />
 	Eaternity
@@ -511,16 +532,17 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 %>
 
-<table cellspacing="0" cellpadding="0" class="table" >
+<table cellspacing="0" cellpadding="0" class="table page-break" >
 
 
 <tr>
 <td></td>
-<td class="gray left-border">g CO<sub>2</sub>*</td>
+<td class="gray left-border"></td>
+<td class="gray">g CO<sub>2</sub>*</td>
 </tr>
 
 <tr>
-<td class="table-header bottom-border">Grossartig</td>
+<td class="table-header bottom-border">Menu</td>
 <td class="left-border"></td>
 </tr>
 
@@ -528,34 +550,55 @@ if(doIt){
 <!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
 <%
 
+		Double MaxValueRezept = 0.0;
+		Double MinValueRezept = 10000000.0;
+		//  go over the Recipes in the Workspace
+		for(Recipe recipe: rezeptePersonal){
+			recipe.setCO2Value();
+			if(recipe.getCO2Value()>MaxValueRezept){
+				MaxValueRezept = recipe.getCO2Value();
+			} 
+			if(recipe.getCO2Value()<MinValueRezept){
+				MinValueRezept = recipe.getCO2Value();
+			}
+		}
+
 
 for(Recipe recipe: rezeptePersonal){
+
+
+
 
 long compute = recipe.getId() * date;
 String code = Converter.toString(compute,34);
 
-			recipe.setCO2Value();
-			if(recipe.getCO2Value() < third){
+			//recipe.setCO2Value();
+//			if(recipe.getCO2Value() < third){
 			
-			
+			String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*300);
 			String formatted = formatter.format( recipe.getCO2Value() );
 			String persons = Long.toString(recipe.getPersons());
 			%>
 			
 			
 			
-			<tr>
+			<tr <%
+			int order = rezeptePersonal.indexOf(recipe) % 2; 
+			if(order == 1) { %>
+			class="alternate"
+			<% }%> > 
 			<td class="menu-name">
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<img class="smile" src="smiley8.png" alt="smiley" />
+			<!--img class="smile" src="smiley8.png" alt="smiley" />
+			<img class="smile" src="smiley8.png" alt="smiley" /-->
 			<%= recipe.getSymbol() %> <!-- div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div -->
 			</td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="<%= length %>" /></td>
+			<td class="co2value"><%= formatted %></td>
 			</tr>
 
 
 			<%
-		}	
+//		}	
 
 }
 
@@ -619,6 +662,8 @@ String code = Converter.toString(compute,34);
 			
 			String formatted = formatter.format( recipe.getCO2Value() );
 			String persons = Long.toString(recipe.getPersons());
+			
+			
 			%>
 			
 			
@@ -639,7 +684,11 @@ String code = Converter.toString(compute,34);
 
 			
 			<tr>
-			<td><span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
+			<td>
+			
+			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			
+			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
 			<ul class="zutat">
 			
 			<%	

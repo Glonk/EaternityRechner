@@ -217,6 +217,7 @@
   }
 
   </ui:style>
+  <g:AbsolutePanel ui:field="dragArea">
 		<g:HTMLPanel ui:field="htmlRezept" >
            	<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
            	<g:HTMLPanel styleName='{style.rezeptDecoration}'>
@@ -279,6 +280,6 @@
               		
                 	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
         			</g:HTMLPanel>
-      			
+      			</g:AbsolutePanel>
       			
   </ui:UiBinder>

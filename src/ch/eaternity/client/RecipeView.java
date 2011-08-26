@@ -47,6 +47,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -74,6 +75,8 @@ public class RecipeView extends Composite {
 	interface Binder extends UiBinder<Widget, RecipeView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
+	
+	@UiField AbsolutePanel dragArea;
 	@UiField SelectionStyleRow selectionStyleRow;
 	@UiField EvenStyleRow evenStyleRow;
 
@@ -119,13 +122,15 @@ public class RecipeView extends Composite {
 	public Anchor bildEntfernen;
 	HandlerRegistration klicky;
 	public HandlerRegistration showImageHandler = null;
+	public FlexTableRowDragController tableRowDragController = null;
+	public FlexTableRowDropController flexTableRowDropController = null;
 	
 	boolean saved;
 	
 	private Listener listener;
 	int  selectedRow = 0;
 	int  selectedRezept = -1;
-	Recipe recipe;
+	public Recipe recipe;
 
 	
 //	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
@@ -134,6 +139,13 @@ public class RecipeView extends Composite {
 	public RecipeView(Recipe recipe) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
+	    
+	    tableRowDragController = new FlexTableRowDragController(dragArea);
+	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
+    
+	    tableRowDragController.registerDropController(flexTableRowDropController);
+
+	    
 	    
 	    if(TopPanel.leftKitchen){
 	    	PrepareButton.setVisible(false);
@@ -198,6 +210,17 @@ public class RecipeView extends Composite {
 	
 	public void setListener(Listener listener) {
 		this.listener = listener;
+	}
+	
+	
+	@UiHandler("MenuTable")
+	void onClick(ClickEvent event) {
+		// Select the row that was clicked (-1 to account for header row).
+		Cell cell = MenuTable.getCellForEvent(event);
+		if (cell != null) {
+			int row = cell.getRowIndex();
+			selectRow(row);
+		}
 	}
 	
 	@UiHandler("amountPersons")
@@ -294,17 +317,7 @@ public class RecipeView extends Composite {
 	}
 	
 	
-
 	
-	@UiHandler("MenuTable")
-	void onTableClicked(ClickEvent event) {
-		// Select the row that was clicked (-1 to account for header row).
-		Cell cell = MenuTable.getCellForEvent(event);
-		if (cell != null) {
-			int row = cell.getRowIndex();
-			selectRow(row);
-		}
-	}
 	
 	@UiHandler("PrepareButton")
 	void onPrepareClicked(ClickEvent event) {
@@ -377,8 +390,10 @@ public class RecipeView extends Composite {
 
 	
 	private void initTable() {
-		MenuTable.getColumnFormatter().setWidth(0, "40px");
-		MenuTable.getColumnFormatter().setWidth(1, "180px");
+		MenuTable.getColumnFormatter().setWidth(0, "10px");
+		MenuTable.getColumnFormatter().setWidth(1, "40px");
+		MenuTable.getColumnFormatter().setWidth(2, "170px");
+		MenuTable.getColumnFormatter().setWidth(4, "80px");
 		MenuTable.setCellPadding(1);
 		
 		
@@ -495,7 +510,7 @@ public class RecipeView extends Composite {
 		Long ParentZutatId = zutatSpec.getZutat_id();
 		Ingredient zutat = Search.clientData.getIngredientByID(ParentZutatId);
 		
-		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 0), MenuTable,row);
+		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
 		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
 //
 //		infoZutat.stylePanel(true);
@@ -548,7 +563,11 @@ public class RecipeView extends Composite {
 
 
 	
-	private void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
+	void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
+		
+		
+		
+		
 		if(askForLess != null){
 
 			if(showImageHandler != null){
@@ -565,22 +584,26 @@ public class RecipeView extends Composite {
 			}
 		}
 		
+	// TODO here i don't want to re-initialize everything over and over again.
 	MenuTable.removeAllRows();;
 	Integer row = MenuTable.getRowCount();
-//	ArrayList<IngredientSpecification> zutatenNew = (ArrayList<IngredientSpecification>) zutaten.clone();
+
 	for(final IngredientSpecification zutat : zutaten){
 //		
 	Button removeZutat = new Button("x");
-//	removeZutat.addStyleName("style.gwt-Button");
-//	removeZutat.addStyleDependentName("gwt-Button");
+
 	removeZutat.addClickHandler(new ClickHandler() {
 		public void onClick(ClickEvent event) {
+			
+			// this list is kept in sync with the table...
 			int removedIndex = recipe.Zutaten.indexOf(zutat);
+			
+			// by button press both get deleted
 			recipe.Zutaten.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
-//			recipe.removeZutat(removedIndex);
 			
-			// does this work to prevent the error?
+			// does this work to prevent the error? which error?
+			// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
 			styleRow(removedIndex, false);
 			
 			if(selectedRow == removedIndex){
@@ -603,6 +626,8 @@ public class RecipeView extends Composite {
 					MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
 				}
 			}
+			
+			// what is this for?
 			if(askForLess != null){
 				
 					if(showImageHandler != null){
@@ -619,6 +644,7 @@ public class RecipeView extends Composite {
 					}
 			}
 			
+			// update all values, that change as there is one ingredient less...
 			updateSuggestion();
 		}
 	});
@@ -668,11 +694,18 @@ public class RecipeView extends Composite {
 		String style = evenStyleRow.evenRow();
 		MenuTable.getRowFormatter().addStyleName(row, style);
 	}
-	MenuTable.setWidget(row, 0, MengeZutat);
+	MenuTable.setWidget(row, 1, MengeZutat);
 	
 	changeIcons(row, zutat);
-	MenuTable.setWidget(row, 5, removeZutat);
+	
 	// Remove Button
+	MenuTable.setWidget(row, 6, removeZutat);
+	
+	
+	// drag Handler
+    HTML handle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
+    tableRowDragController.makeDraggable(handle);
+    MenuTable.setWidget(row, 0, handle);
 
 	
 
@@ -750,7 +783,7 @@ public class RecipeView extends Composite {
 		
 		icon.setHTML(icon.getHTML()+zutat.getName());
 		
-		MenuTable.setWidget(row, 1,  icon);
+		MenuTable.setWidget(row, 2,  icon);
 	}
 	
 	void updateSuggestion() {
@@ -773,8 +806,8 @@ public class RecipeView extends Composite {
 		}
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),3,"ca "+formatted+"g *");
-			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 4, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
+			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
+			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
@@ -1201,8 +1234,8 @@ public class RecipeView extends Composite {
 		saved = false;
 		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 		
-		MenuTable.getColumnFormatter().setWidth(3, "80px");
-		MenuTable.setText(row,3,": ca. "+formatted+" g CO₂-Äquivalent ");
+		
+		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent ");
 		
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
 		updateSuggestion();

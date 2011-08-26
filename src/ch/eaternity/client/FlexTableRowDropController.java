@@ -13,6 +13,10 @@ package ch.eaternity.client;
  * the License.
  */
 
+import java.util.ArrayList;
+
+import ch.eaternity.shared.IngredientSpecification;
+
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.InsertPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -34,6 +38,7 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
   private static final String CSS_DEMO_TABLE_POSITIONER = "demo-table-positioner";
 
   private FlexTable flexTable;
+  private RecipeView recipeView;
 
   private InsertPanel flexTableRowsAsIndexPanel = new InsertPanel() {
 
@@ -72,16 +77,33 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
 
   private int targetRow;
 
-  public FlexTableRowDropController(FlexTable flexTable) {
+  public FlexTableRowDropController(FlexTable flexTable, RecipeView recipeView) {
     super(flexTable);
     this.flexTable = flexTable;
+    this.recipeView = recipeView;
   }
 
   @Override
   public void onDrop(DragContext context) {
     FlexTableRowDragController trDragController = (FlexTableRowDragController) context.dragController;
-    FlexTableUtil.moveRow(trDragController.getDraggableTable(), flexTable,
-        trDragController.getDragRow(), targetRow + 1);
+    
+    // my additions
+    int sourceRow = trDragController.getDragRow();
+//    if (targetRow >= sourceRow) {
+//        targetRow++;
+//      }
+    
+    IngredientSpecification switchIng = recipeView.recipe.Zutaten.get(sourceRow);
+    recipeView.recipe.Zutaten.remove(sourceRow);
+    recipeView.recipe.Zutaten.add(targetRow+1, switchIng);
+    
+    recipeView.displayZutatImMenu( recipeView.recipe.Zutaten );
+    // end here
+    
+    
+//    FlexTableUtil.moveRow(trDragController.getDraggableTable(), flexTable,
+//        trDragController.getDragRow(), targetRow + 1);
+    
     super.onDrop(context);
   }
 
@@ -115,7 +137,7 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
 
   Widget newPositioner(DragContext context) {
     Widget p = new SimplePanel();
-    p.addStyleName(CSS_DEMO_TABLE_POSITIONER);
+    p.addStyleName("dragHere");
     p.setPixelSize(flexTable.getOffsetWidth(), 1);
     return p;
   }

@@ -793,8 +793,8 @@ public class Search extends ResizeComposite {
 			Button removeRezeptButton = new Button(" x ");
 			removeRezeptButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
-					dlg.statusLabel.setText("löschen?");
+					final ConfirmDialog dlg = new ConfirmDialog("Hiermit werden Sie das...");
+					dlg.statusLabel.setText("Rezept löschen.");
 					
 					//  recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
