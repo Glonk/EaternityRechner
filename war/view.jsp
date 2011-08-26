@@ -13,6 +13,7 @@
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.util.Collections" %>
 
 <html>
 <head>
@@ -138,9 +139,8 @@
 body { 
 	font-family: 'Open Sans',  sans-serif; 
 	font-weight: 300;
-    font-size: 12pt;
+    font-size: 11pt;
      }
-
 
 
 h1 { 
@@ -160,17 +160,22 @@ h2 {
 
   text-align: center;
     text-align: left;
-    font-size: 12pt;
+    font-size: 11pt;
     font-weight: 400;
 }
       
 h3 { 
+  page-break-after: avoid;
 	font-weight: 400;
-    font-size: 12pt;
+    font-size: 11pt;
     padding: 0px;
     margin: 0px;
     word-wrap: normal;
-    display: inline;
+    clear: none;
+    display:compact;
+    float:left;
+    margin-bottom: -1em;
+/*     display: inline; */
 }
 
 .content {
@@ -189,7 +194,10 @@ h3 {
 
 table {
  font-weight: 300;
-  font-size: 12pt;
+  font-size: 11pt;
+  width: 35em;
+  padding-bottom: 1em;
+  page-break-inside: avoid;
 }
 
 .kopf { 
@@ -240,7 +248,9 @@ float:left;
 }
 
 .subTitle {
+margin-top: -1.5em;
 margin-left: 1em;
+padding-right: 8em;
 display: block;
 margin-bottom: 0.5em;
 }
@@ -250,6 +260,9 @@ height: 18pt;
 margin-bottom: -4pt;
 margin-left: -4pt;
 margin-top: -2pt;
+margin-right: 4px;
+    display: inline;
+    float:left;
 }
 
 .bar {
@@ -265,12 +278,13 @@ padding-top: 4pt;
 }
 
 .green {
+page-break-after: avoid;
 color: white;
 background-repeat: repeat-x;
 background-image: url(green.png);
 background: green.png;
-	font-size: 10pt;
-	font-weight: 700;
+font-size: 10pt;
+font-weight: 700;
 text-align: right;
 padding: 2pt;
 padding-right: 4pt;
@@ -278,22 +292,28 @@ width: 100pt;
 }
 
 .gray {
+page-break-after: avoid;
 color: white;
 background-repeat: repeat-x;
 background-image: url(light-gray.png);
 background: light-gray.png;
-	font-size: 10pt;
-	font-weight: 700;
+font-size: 10pt;
+font-weight: 700;
 text-align: right;
 padding: 2pt;
 padding-right: 4pt;
 /* width: 100pt; */
 }
+.co2label {
+display: inline-table;
+}
 
 .co2value {
 text-align: right;
 padding-left: 0.2em;
-padding-right: 0.5em;
+padding-right: 0.2em;
+display: inline-table;
+
 /* color:gray; */
 }
 
@@ -304,7 +324,7 @@ background-color: #FBF9F8;
 .amount {
 float: right;
 padding-right: 4pt;
-margin-top: -1.5em;
+margin-top: -0.5em;
 }
 
 .menu-name {
@@ -312,8 +332,8 @@ vertical-align:top;
 padding-left: 1em;
 padding-top: 0.5em;
 /* width: 25em; */
-display: inline-table;
-padding-right: 3em;
+/* display: inline-table; */
+padding-right: 2em;
 
 }
 
@@ -341,7 +361,6 @@ margin-left: -10pt;
 	list-style-position: outside;
 	list-style-type: none;
 }
-
 
 a { padding-left: 5pt; color: #0e5396; text-decoration: none }
 
@@ -379,8 +398,13 @@ color:black;
 
 @media screen {
   html { background: gray; }
+  table {
+  	font-size: 12pt;
+  }
+  
   body {
   	margin-top: 2em;
+  	font-size: 12pt;
   }
   .website-content { 
     width: 840px;
@@ -409,6 +433,14 @@ color:black;
   margin-top: 1em;
 /*   display:none; */
   }
+  
+  h2 {
+  font-size: 12pt;
+  }
+  h3 {
+  font-size: 12pt;
+  }
+  
   #header-right {
   	display: none;
   	}
@@ -429,6 +461,10 @@ color:black;
 		margin-bottom: 2em;
 
 	}
+	
+	.table {
+  		width: 45em;
+	}
  
 }
 
@@ -440,6 +476,7 @@ border-width: 0pt;
 }
 
 .table-header {
+page-break-after: avoid;
 	font-size: 12pt;
 	font-weight: 600;
 text-align: left;
@@ -524,21 +561,21 @@ Integer date = rightNow.get(Calendar.WEEK_OF_YEAR);
 boolean doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
-		if(recipe.getCO2Value() < third){
+		//if(recipe.getCO2Value() < third){
 			doIt = true;
-		}
+		//}
 	}
 }
 if(doIt){
 %>
 
-<table cellspacing="0" cellpadding="0" class="table page-break" >
+<table cellspacing="0" cellpadding="0" class="table" >
 
 
 <tr>
 <td></td>
 <td class="gray left-border"></td>
-<td class="gray">g CO<sub>2</sub>*</td>
+<td class="gray co2label"><span>g CO<sub>2</sub>*</span></td>
 </tr>
 
 <tr>
@@ -549,11 +586,17 @@ if(doIt){
 	
 <!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
 <%
-
+		ArrayList<Double> values = new ArrayList<Double>();
 		Double MaxValueRezept = 0.0;
 		Double MinValueRezept = 10000000.0;
+		Double average = 0.0;
+		Double median = 0.0;
+		Integer counter = 0;
 		//  go over the Recipes in the Workspace
 		for(Recipe recipe: rezeptePersonal){
+			values.add((double) recipe.getCO2Value());
+			average = average + recipe.getCO2Value();
+			counter++;
 			recipe.setCO2Value();
 			if(recipe.getCO2Value()>MaxValueRezept){
 				MaxValueRezept = recipe.getCO2Value();
@@ -562,7 +605,20 @@ if(doIt){
 				MinValueRezept = recipe.getCO2Value();
 			}
 		}
-
+		average = average /counter;
+		
+		
+	Collections.sort(values);
+  
+    if (values.size() % 2 == 1)
+	median = values.get((values.size()+1)/2-1);
+    else
+    {
+	double lower = values.get(values.size()/2-1);
+	double upper = values.get(values.size()/2);
+ 
+	median = (lower + upper) / 2.0;
+    }	    
 
 for(Recipe recipe: rezeptePersonal){
 
@@ -575,7 +631,7 @@ String code = Converter.toString(compute,34);
 			//recipe.setCO2Value();
 //			if(recipe.getCO2Value() < third){
 			
-			String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*300);
+			String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
 			String formatted = formatter.format( recipe.getCO2Value() );
 			String persons = Long.toString(recipe.getPersons());
 			%>
@@ -593,7 +649,7 @@ String code = Converter.toString(compute,34);
 			<%= recipe.getSymbol() %> <!-- div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div -->
 			</td>
 			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="<%= length %>" /></td>
-			<td class="co2value"><%= formatted %></td>
+			<td class="co2value" ><%= formatted %></td>
 			</tr>
 
 
@@ -606,6 +662,14 @@ String code = Converter.toString(compute,34);
 
 
 </table>
+
+<ul class="page-break">
+<li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* pro Person.</li>
+<li>Die Menus haben einen Median von: <%= formatter.format(median) %> g CO<sub>2</sub>* pro Person.</li>
+</ul>
+
+
+
 <%
 }
 %>
@@ -676,12 +740,15 @@ String code = Converter.toString(compute,34);
 			<td class="bottom-border">
 			<img class="smile" src="smiley8.png" alt="smiley" />
 			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span>
 			</td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			<td class="left-border"></td>
 			</tr>
 
-
+			<tr>
+			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			</tr>
 			
 			<tr>
 			<td>
@@ -871,15 +938,22 @@ String code = Converter.toString(compute,34);
 			<tr>
 			<td class="bottom-border">
 			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span>
 			</td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			<td class="left-border"></td>
 			</tr>
 
-
+			<tr>
+			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			</tr>
 			
 			<tr>
-			<td><span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
+			<td>
+			
+			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			
+			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
 			<ul class="zutat">
 			
 			<%	
@@ -904,7 +978,6 @@ String code = Converter.toString(compute,34);
 			</tr>
 			<%
 		}
-
 %>
 <tr>
 <td></td>
@@ -977,15 +1050,22 @@ String code = Converter.toString(compute,34);
 			
 			<tr>
 			<td class="bottom-border">
-			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div>
+			<h3><%= recipe.getSymbol() %></h3> <span class="id">(<%= code %>)</span>
 			</td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			<td class="left-border"></td>
 			</tr>
 
-
+			<tr>
+			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
+			</tr>
 			
 			<tr>
-			<td><span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
+			<td>
+			
+			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			
+			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
 			<ul class="zutat">
 			
 			<%	
@@ -1010,7 +1090,6 @@ String code = Converter.toString(compute,34);
 			</tr>
 			<%
 		}
-
 %>
 <tr>
 <td></td>
