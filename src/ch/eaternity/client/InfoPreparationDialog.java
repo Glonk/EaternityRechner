@@ -82,7 +82,7 @@ public class InfoPreparationDialog extends Composite {
 	@UiField SelectionStyle selectionStyle;
 	IngredientSpecification zutatSpec;
 	Ingredient stdIngredient;
-	RezeptView rezeptviewParent;
+	RecipeView rezeptviewParent;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
@@ -136,7 +136,7 @@ public class InfoPreparationDialog extends Composite {
 		
 	}
 
-	public InfoPreparationDialog(FlexTable menuTable, Recipe recipe, FlexTable suggestTable, RezeptView rezeptview) {
+	public InfoPreparationDialog(FlexTable menuTable, Recipe recipe, FlexTable suggestTable, RecipeView rezeptview) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		specificationTable.setCellSpacing(0);

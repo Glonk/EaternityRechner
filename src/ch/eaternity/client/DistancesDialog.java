@@ -171,7 +171,7 @@ public class DistancesDialog extends DialogBox{
 
 	private void updateAllZutaten() {
 		for(Widget widget : EaternityRechner.rezeptList){
-			RezeptView rezeptView = ((RezeptView) widget);
+			RecipeView rezeptView = ((RecipeView) widget);
 			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 			zutaten.addAll(rezeptView.getRezept().Zutaten);
 			for(IngredientSpecification zutatSpec : zutaten ){

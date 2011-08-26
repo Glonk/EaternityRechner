@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
-import ch.eaternity.client.RezeptView;
+import ch.eaternity.client.RecipeView;
 import ch.eaternity.client.UserImageService;
 import ch.eaternity.client.UserImageServiceAsync;
 import ch.eaternity.shared.LoginInfo;
@@ -53,7 +53,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 	
 	Recipe recipe;
 
-	public UploadPhoto(final LoginInfo loginInfo,final RezeptView rezeptView) {
+	public UploadPhoto(final LoginInfo loginInfo,final RecipeView rezeptView) {
 		handlerManager = new HandlerManager(this);
 		
 		this.recipe = recipe;

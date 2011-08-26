@@ -75,7 +75,7 @@ public class InfoZutatDialog extends Composite {
 	@UiField SelectionStyle selectionStyle;
 	IngredientSpecification zutatSpec;
 	Ingredient stdIngredient;
-	RezeptView rezeptviewParent;
+	RecipeView rezeptviewParent;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
@@ -125,7 +125,7 @@ public class InfoZutatDialog extends Composite {
 		
 	}
 
-	public InfoZutatDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Recipe recipe, FlexTable suggestTable, RezeptView rezeptview) {
+	public InfoZutatDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Recipe recipe, FlexTable suggestTable, RecipeView rezeptview) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML( zutatSpec.getName() );
 		specificationTable.setCellSpacing(0);

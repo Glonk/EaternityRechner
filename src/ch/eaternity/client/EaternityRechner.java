@@ -60,7 +60,7 @@ public class EaternityRechner implements EntryPoint {
 
 	public static LoginInfo loginInfo = null;
 	private final static DataServiceAsync dataService = GWT.create(DataService.class);
-	private List<RezeptView> worksheet = new ArrayList<RezeptView>();
+	private List<RecipeView> worksheet = new ArrayList<RecipeView>();
 	// private VerticalPanel loginPanel = new VerticalPanel();
 	// private Label loginLabel = new Label("Please sign in to your Google Account to access the eaternity Rechner application.");
 	// private Anchor signInLink = new Anchor("Sign In");
@@ -181,7 +181,7 @@ public class EaternityRechner implements EntryPoint {
 
 	
 
-	static void addRezept(final Recipe recipe, final RezeptView rezeptView) {
+	static void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		if(!TopPanel.leftKitchen){
 			recipe.kitchenId = TopPanel.selectedKitchen.id;
 		}
@@ -350,7 +350,7 @@ public class EaternityRechner implements EntryPoint {
 
 		
 		AddZutatZumMenu(zutaten);
-		final RezeptView rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+		final RecipeView rezeptView = (RecipeView) rezeptList.getWidget(selectedRezept,1);
 		
 		if(!recipe.deviceSpecifications.isEmpty()){
 		// add the devices...
@@ -552,7 +552,7 @@ public class EaternityRechner implements EntryPoint {
 			styleRezept(selectedRezept, true);
 			
 			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
-			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
+			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			suggestionPanel.clear();
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
 			rezeptView.updtTopSuggestion();
@@ -612,7 +612,7 @@ public class EaternityRechner implements EntryPoint {
 
 			}
 		}
-		RezeptView rezeptView;
+		RecipeView rezeptView;
 		if (selectedRezept == -1){
 			// create new Recipe
 			Recipe newRezept = new Recipe();
@@ -622,7 +622,7 @@ public class EaternityRechner implements EntryPoint {
 			
 			//same as below
 			newRezept.addZutaten(zutaten);
-			rezeptView = new RezeptView(newRezept);
+			rezeptView = new RecipeView(newRezept);
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
 			rezeptList.getRowFormatter().setStyleName(0, "recipe");
 			styleRezept(selectedRezept, true);
@@ -632,7 +632,7 @@ public class EaternityRechner implements EntryPoint {
 			
 		} else {
 			// get the old one
-			rezeptView = (RezeptView) rezeptList.getWidget(selectedRezept,1);
+			rezeptView = (RecipeView) rezeptList.getWidget(selectedRezept,1);
 			Recipe recipe = rezeptView.getRezept();
 			
 			// maybe same as above
@@ -785,7 +785,7 @@ public class EaternityRechner implements EntryPoint {
 
 	public static void updateSaisonAndMore() {
 		for( Widget rezeptViewWidget : rezeptList){
-			RezeptView rezeptView = (RezeptView) rezeptViewWidget;
+			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			rezeptView.updateSaison();
 			for(IngredientSpecification zutat : rezeptView.recipe.getZutaten()){
 				rezeptView.changeIcons(rezeptView.recipe.getZutaten().indexOf(zutat), zutat);

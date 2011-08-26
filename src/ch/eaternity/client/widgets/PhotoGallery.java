@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-import ch.eaternity.client.RezeptView;
+import ch.eaternity.client.RecipeView;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
 import ch.eaternity.client.EaternityRechner;
@@ -42,9 +42,9 @@ public class PhotoGallery extends Composite implements GalleryUpdatedEventHandle
 	@UiField
 	FlexTable galleryTable;
 	
-	RezeptView parent;
+	RecipeView parent;
 	
-	public PhotoGallery(RezeptView parent) {
+	public PhotoGallery(RecipeView parent) {
 		this.parent = parent;
 		
 		initWidget(uiBinder.createAndBindUi(this));

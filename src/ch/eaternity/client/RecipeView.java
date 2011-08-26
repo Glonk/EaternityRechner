@@ -70,8 +70,8 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 
-public class RezeptView extends Composite {
-	interface Binder extends UiBinder<Widget, RezeptView> { }
+public class RecipeView extends Composite {
+	interface Binder extends UiBinder<Widget, RecipeView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	@UiField SelectionStyleRow selectionStyleRow;
@@ -131,7 +131,7 @@ public class RezeptView extends Composite {
 //	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
 	
 	
-	public RezeptView(Recipe recipe) {
+	public RecipeView(Recipe recipe) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
 	    
@@ -346,7 +346,7 @@ public class RezeptView extends Composite {
 	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
-		final RezeptView test = this;
+		final RecipeView test = this;
 		if(saved){
 			int row = getWidgetRow(test , EaternityRechner.rezeptList);
 			EaternityRechner.rezeptList.remove(test);
@@ -427,7 +427,7 @@ public class RezeptView extends Composite {
 				Long persons = Long.parseLong(amountPersons.getText());
 				recipe.setPersons(persons);
 			}
-			final RezeptView rezeptView = this;
+			final RecipeView rezeptView = this;
 			displayZutatImMenu(recipe.Zutaten);
 			updateSuggestion();
 //			zutatImMenu.clear();
@@ -855,7 +855,7 @@ public class RezeptView extends Composite {
 		Double MinValueRezept = 10000000.0;
 		//  go over the Recipes in the Workspace
 		for(Widget widget : EaternityRechner.rezeptList){
-			RezeptView rezeptView = (RezeptView) widget;
+			RecipeView rezeptView = (RecipeView) widget;
 			rezeptView.recipe.setCO2Value();
 			if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
 				MaxValueRezept = rezeptView.recipe.getCO2Value();
@@ -973,7 +973,7 @@ public class RezeptView extends Composite {
 
 		// update all widgets bars!
 		for(Widget widget : EaternityRechner.rezeptList){
-			RezeptView rezeptView = (RezeptView) widget;
+			RecipeView rezeptView = (RecipeView) widget;
 			rezeptView.recipe.setCO2Value();
 			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
 			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
