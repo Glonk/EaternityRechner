@@ -174,7 +174,7 @@ h3 {
     clear: none;
     display:compact;
     float:left;
-    margin-bottom: -1em;
+    margin-bottom: -0.8em;
 /*     display: inline; */
 }
 
@@ -269,7 +269,7 @@ margin-right: 4px;
 height: 7pt;
 padding: 1pt;
 padding-bottom: 4pt;
-padding-top: 4pt;
+padding-top: 5pt;
 
 }
 
@@ -313,7 +313,7 @@ text-align: right;
 padding-left: 0.2em;
 padding-right: 0.2em;
 display: inline-table;
-
+vertical-align: middle;
 /* color:gray; */
 }
 
@@ -406,6 +406,7 @@ color:black;
   	margin-top: 2em;
   	font-size: 12pt;
   }
+
   .website-content { 
     width: 840px;
     background: white;
@@ -494,6 +495,7 @@ padding: 1em 4em 0.5em 3em;
 	border-left-color: #929292;
 	border-left-style: solid;
 	border-left-width: 1px;
+	vertical-align: center;
 }
 
 .bottom-border{
@@ -702,7 +704,7 @@ if(doIt){
 </tr>
 	
 <tr>
-<td><p>Diese Rezepte sind unsere Besten. Sie haben unter <%= formatter.format( third ) %> g CO<sub>2</sub>* pro Person. Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.</p></td>
+<td><p>Diese Rezepte sind unsere Besten. Sie haben unter <%= formatter.format( third ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
 <td></td>
 </tr>
 
@@ -904,7 +906,7 @@ if(doIt){
 </tr>
 	
 <tr>
-<td><p>Diese Rezepte sind mit unter <%= formatter.format( 2*third ) %> g CO<sub>2</sub>* bereits klimafreundlich. Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.</p></td>
+<td><p>Diese Rezepte sind mit unter <%= formatter.format( 2*third ) %> g CO<sub>2</sub>* bereits klimafreundlich. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 <td></td>
 </tr>
 
@@ -1016,7 +1018,7 @@ if(doIt){
 </tr>
 	
 <tr>
-<td><p>An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. Diese Rezepte haben über <%= formatter.format( 2*third ) %> g CO<sub>2</sub>*.</p></td>
+<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( 2*third ) %> g CO<sub>2</sub>*. Sie sind nicht optimiert und dienen somit Vergleich.</p></td>
 <td></td>
 </tr>
 
