@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/Users/manuel/Downloads/gwtupload-gae-0.6.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/Users/manuel/Downloads/gwtupload-0.6.4-20110712.073705-11.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dnd-3.1.1.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
