@@ -214,8 +214,8 @@
 					<g:Anchor href='javascript:;' styleName='{style.legendClose}' ui:field='legendAnchorClose'>x</g:Anchor>
 					<img style='float:left;margin-left:3px;' height='155' src='icons-3.png' /><div style='height: 180px;width:300px;line-height: 25px;padding: 9px 0px 5px 0px;'>
 					ausgezeichnet klimafreundlich<br />
-					CO₂Äq-Wert unter besten 20%<br />
-					CO₂Äq-Wert über Durchschnitt<br />
+					CO₂Äq-Wert unter den besten 20%<br />
+					CO₂Äq-Wert überdurchschnittlich gut<br />
 					Angaben unvollständig<br />
 					saisonale und regionale Ware<br />
 					biologische Zutat / Rezept<br />
