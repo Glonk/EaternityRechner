@@ -32,7 +32,7 @@
 		
 		String kitchenIds = request.getParameter("ids");
 		String thresholdString = request.getParameter("median");
-		Integer threshold = 1350;
+		Integer threshold = 1550;
 		if(thresholdString != null){
 			threshold = Integer.valueOf(thresholdString);
 		} 
@@ -189,6 +189,9 @@ body {
     image-resolution: 70dpi;
      }
 
+.hiddenOnPage {
+display: none;
+}
 
 h1 { 
 	font-size: 32pt;
@@ -575,6 +578,10 @@ color:black;
 	.subTitle {
 	margin-top: -1.5em;
 	}
+	
+	.hiddenOnPage {
+		display:inherit;
+	}
  
 }
 
@@ -621,6 +628,7 @@ padding: 1em 4em 0.5em 3em;
 
 function initThis(){
 idsToAdd = new Array(); 
+baseUrl = getBaseURL();
 <% 
 for(Recipe recipe: rezeptePersonal){
 	long compute = recipe.getId() * date;
@@ -661,7 +669,7 @@ function addRemoveMenu(code){
 }
 
 function setHref(hrefAdd){
-    document.getElementById('getPdf').href=getBaseURL()+"view.jsp?ids="+hrefAdd
+    document.getElementById('getPdf').href=baseUrl+"view.jsp?ids="+hrefAdd
 }
 
 function getBaseURL() {
@@ -690,7 +698,7 @@ function getBaseURL() {
 </head>
 
 <body onLoad="initThis()">
-<form name="htmlAdder" method="POST" action=";">
+
 
 <div class="website-content">
 <div id="header-right">
@@ -714,7 +722,7 @@ function getBaseURL() {
 <h1>Das Menu Dokument</h1>
 
 
-<a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever" id="getPdf">Dieses Dokument als PDF herunterladen.</a>
+<a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Dokument für die markierten Menus als PDF herunterladen.</a>
 
 
 <div id="footer-left">
@@ -749,7 +757,7 @@ if(rezeptePersonal.size() != 0){
 }
 if(doIt){
 %>
-
+<form name="htmlAdder" method="POST" action=";">
 <table cellspacing="0" cellpadding="0" class="table" >
 
 
@@ -791,7 +799,7 @@ for(Recipe recipe: rezeptePersonal){
 	<td class="menu-name">
 	<!--img class="smile" src="smiley8.png" alt="smiley" />
 	<img class="smile" src="smiley8.png" alt="smiley" /-->
-	<input type="checkbox" name="<%= code %>" checked="checked" onclick="javascript:addRemoveMenu('<%= code %>')">
+	<input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
 	<%= recipe.getSymbol() %>
 	<!-- <%= recipe.getSymbol() %>  div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div -->
 	</td>
@@ -807,9 +815,8 @@ for(Recipe recipe: rezeptePersonal){
 
 %>
 
-</form>
-
 </table>
+</form>
 
 <ul class="page-break">
 <li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* pro Person.</li>
@@ -1511,7 +1518,7 @@ String code = Converter.toString(compute,34);
 						 </td>
 						 
 						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;" class="left-border">
-						 	<img src="http://chart.apis.google.com/chart?cht=qr&chs=84x84&chld=M%7C0&chl=ur.ly%2F11ORL" width="42" height="42" />
+						 	<img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=ur.ly/F11ORL" width="42" height="42" />
 							
 						 </td>
 						</tr>
