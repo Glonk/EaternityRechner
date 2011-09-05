@@ -269,6 +269,7 @@ h3 {
 
 #header-right {
 	float:right;
+	margin-bottom: -20px;
 	flow: static(header);
 }
 
@@ -349,7 +350,7 @@ font-weight: 400;
 
 .logo-klein {
 margin-top: 50pt;
-	height:52pt;
+	height:46pt;
 }
 
 
@@ -1297,10 +1298,7 @@ String code = Converter.toString(compute,34);
 
 
 </table>
-
-<% } // just the simple version %>
-
-<%
+<% } // just the simple version %><%
 }
 
 
@@ -1319,15 +1317,6 @@ if(rezeptePersonal.size() != 0){
 	}
 }
 if(doIt){
-%>
-
-
-<!-- <h1>Menu Beschriftung</h1> -->
-
-
-	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
 
 
 for(Recipe recipe: rezeptePersonal){
@@ -1371,19 +1360,15 @@ for(Recipe recipe: rezeptePersonal){
 			
 			String persons = Long.toString(recipe.getPersons());
 			
-			%>
-			
-			<table style="font-weight: 300;font-size: 14pt;">
+			%>			
+			<table style="font-weight: 300;font-size: 14pt; margin-top:-4em" class="page-break">
 						<!-- label of table -->
 			<tr>
-			<td height="200">
-				<br />
+			<td height="140">
 				<h3 style="font-size: 20pt; padding-bottom:0em; display:block;"><%= recipe.getSymbol() %></h3>
 				<br /><br />
-				<%= recipe.getSubTitle() %> 
-				<br />
-				<%= formatted %> g CO<sub>2</sub>* pro Person
-				<br />
+				<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.
+				
 			</td>
 			</tr>
 			
@@ -1591,11 +1576,18 @@ for(Recipe recipe: rezeptePersonal){
 				</td>
 			</tr>
 		</table>
+		<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 	</td>
 </tr>
 
 
 </table>
+
 <% if(!DoItAll) { %>
 
 <span style="color:gray;">Angegeben wurden folgende Zutaten für <%= persons %> Personen:</span>
