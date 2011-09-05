@@ -286,7 +286,7 @@ public class DAO extends DAOBase
 
 	}
 	
-	public List<Recipe> getRecipeByIds(String kitchenIdsString){
+	public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
 		
 		String[] kitchenIds = kitchenIdsString.split(",");
 		Calendar rightNow = Calendar.getInstance();
@@ -299,7 +299,13 @@ public class DAO extends DAOBase
 		for (String kitchenIdString : kitchenIds){
 
 			int code = Converter.fromString(kitchenIdString, 34);
-			long computeId = code / date;
+			
+			long computeId;
+			if(isCoded){
+				computeId = code / date;
+			} else {
+				computeId = code;
+			}
 			
 			if(computeId != 0){
 				UserRecipe userRezept = ofy().find(UserRecipe.class, computeId);
