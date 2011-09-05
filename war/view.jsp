@@ -32,8 +32,8 @@
 <%
 // Hole Rezepte die zum Benutzer gehören
 
-		// String BASEURL = "http://next.eaternityrechner.appspot.com/";
-		String BASEURL = "http://10.0.1.4:8888/";
+		String BASEURL = "http://next.eaternityrechner.appspot.com/";
+		// String BASEURL = "http://10.0.1.4:8888/";
 
 
 
@@ -172,7 +172,7 @@
 
 @page {
   size: A4;
-  margin: 40pt 40pt 70pt 50pt;
+  margin: 40pt 20pt 70pt 50pt;
    padding: 0pt 0pt 0pt 0pt;
 	prince-image-resolution: 300dpi;
 
@@ -269,7 +269,7 @@ h3 {
 
 #header-right {
 	float:right;
-	margin-bottom: -20px;
+	margin-bottom: -10px;
 	flow: static(header);
 }
 
@@ -281,6 +281,7 @@ table {
   font-size: 11pt;
   width: 35em;
   padding-bottom: 1em;
+  margin-bottom: 4em;
 }
 
 .label-table {
@@ -336,7 +337,7 @@ font-weight: 400;
 	font-weight: 300;
 	font-size: 13px;
 	margin-top: -24pt;
-	margin-right: -14pt;
+	margin-right: 6pt;
 }
 
 .kopf ul {
@@ -489,7 +490,7 @@ margin-left: -10pt;
 
 .zutatRow {
 width: 40em;
-margin-left: -10pt;
+margin-left: 5pt;
 }
 
 .zutatRow li {
@@ -617,6 +618,9 @@ color:black;
 		display:inherit;
 	}
  
+ 	.kopf { 
+ 	margin-right: -14pt;
+ 	}
 }
 
 .table {
@@ -797,7 +801,7 @@ if(rezeptePersonal.size() != 0){
 }
 if(doIt){
 %>
-<form name="htmlAdder" method="POST" action=";">
+<form name="htmlAdder" method="POST" action=";" class="page-break">
 <table cellspacing="0" cellpadding="0" class="table" >
 
 
@@ -856,14 +860,14 @@ for(Recipe recipe: rezeptePersonal){
 %>
 
 </table>
-</form>
 
-<ul class="page-break">
+
+<ul >
 <li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* pro Person.</li>
 <li>Die Menus haben einen Median von: <%= formatter.format(median) %> g CO<sub>2</sub>* pro Person.</li>
 </ul>
 
-
+</form>
 
 <%
 }
@@ -888,7 +892,7 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 %>
 
-<table cellspacing="0" cellpadding="0" class="table" >
+<table cellspacing="0" cellpadding="0" class="table page-break" >
 
 
 <tr>
@@ -1090,7 +1094,7 @@ if(doIt){
 %>
 
 
-<table cellspacing="0" cellpadding="0" class="table" >
+<table cellspacing="0" cellpadding="0" class="table page-break" >
 
 
 <tr>
@@ -1202,7 +1206,7 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 %>
 
-<table cellspacing="0" cellpadding="0" class="table" >
+<table cellspacing="0" cellpadding="0" class="table page-break" >
 
 
 <tr>
@@ -1211,7 +1215,7 @@ if(doIt){
 </tr>
 	
 <tr>
-<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie sind nicht optimiert und dienen als Vergleich.</p></td>
+<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 <td></td>
 </tr>
 
@@ -1365,7 +1369,7 @@ for(Recipe recipe: rezeptePersonal){
 						<!-- label of table -->
 			<tr>
 			<td height="140">
-				<h3 style="font-size: 20pt; padding-bottom:0em; display:block;"><%= recipe.getSymbol() %></h3>
+				<h3 style="font-size: 20pt; padding-bottom:0em; display:inherit; margin-right:5em;"><%= recipe.getSymbol() %></h3>
 				<br /><br />
 				<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.
 				
@@ -1541,7 +1545,7 @@ for(Recipe recipe: rezeptePersonal){
 							
 						 </td>
 						 
-						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:5em;" class="left-border"><% if(DoItAll) { %>
+						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItAll) { %>
 						 
 	<a href="<%= BASEURL %>view.jsp?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%					 
 						 
@@ -1603,10 +1607,9 @@ for(IngredientSpecification ingredient: recipe.Zutaten){
 <%
 }
 %>
-<li>Vielen Dank für Ihre Mithilfe.</li>
 </ul>
 <br /><br />
-Finden Sie einen Fehler, oder haben Sie einen anderen Kommentar können Sie uns gerne kontaktieren:
+Finden Sie einen Fehler, oder haben Sie einen Kommentar können Sie uns gerne kontaktieren:
 <!--If you already have jquery on the page you don't need to insert this script tag-->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 
