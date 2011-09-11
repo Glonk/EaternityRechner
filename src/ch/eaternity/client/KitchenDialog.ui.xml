@@ -50,7 +50,8 @@
 		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
 		<br /><br />
 		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
-		<g:ListBox ui:field="energyMix"></g:ListBox>
+		<g:TextBox ui:field="energyMix">Name des Angebots</g:TextBox> verursacht  
+		<g:TextBox ui:field="energyMixco2">1.487</g:TextBox> kg CO2-Äq. / kWh.
 		<br /><br />
 		
 <!-- 		<g:Button ui:field="commitButton">Check Input</g:Button> -->

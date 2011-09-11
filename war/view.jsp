@@ -494,7 +494,6 @@ margin-left: 5pt;
 }
 
 .zutatRow li {
-	list-style-position: inside;
 	list-style-type: circle;
 	display: inline;
 }
@@ -862,7 +861,7 @@ for(Recipe recipe: rezeptePersonal){
 </table>
 
 
-<ul >
+<ul style="font-size:9pt;color:grey;">
 <li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* pro Person.</li>
 <li>Die Menus haben einen Median von: <%= formatter.format(median) %> g CO<sub>2</sub>* pro Person.</li>
 </ul>
@@ -1607,9 +1606,10 @@ for(IngredientSpecification ingredient: recipe.Zutaten){
 <%
 }
 %>
+<li>–</li>
 </ul>
 <br /><br />
-Finden Sie einen Fehler, oder haben Sie einen Kommentar können Sie uns gerne kontaktieren:
+Finden Sie einen Fehler, oder haben Sie einen Kommentar, können Sie uns gerne kontaktieren:
 <!--If you already have jquery on the page you don't need to insert this script tag-->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 

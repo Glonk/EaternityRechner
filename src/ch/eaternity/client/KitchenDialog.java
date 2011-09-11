@@ -87,7 +87,8 @@ public class KitchenDialog extends DialogBox{
 	@UiField Button addPerson;
 	@UiField TextBox clientLocationDialog;
 	@UiField TextBox kitchenNameTextBox;
-	@UiField static ListBox energyMix;
+	@UiField static TextBox energyMix;
+	@UiField static TextBox energyMixco2;
 	@UiField static ListBox kitchens;
 	@UiField Anchor leaveKitchen;
 	@UiField Anchor newKitchen;
@@ -164,7 +165,7 @@ public class KitchenDialog extends DialogBox{
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		
-		energyMix.addItem(selectedKitchen.energyMix.Name);
+		energyMix.setText(selectedKitchen.energyMix.Name);
 		
 		
 		addKitchenNamesToList(availableKitchens);
