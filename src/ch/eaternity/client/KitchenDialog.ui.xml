@@ -24,6 +24,20 @@
 
 		text-align: right;
 		}
+		
+		.buttonPerson {
+		float: right;
+		margin-right:15px;
+		text-align: right;
+		}
+		
+		.buttonDevice {
+		float: right;
+		margin-right:15px;
+		text-align: right;
+		}
+		
+		
   </ui:style>
 
 	<g:HTMLPanel width='680px' styleName='{style.panel}'>
@@ -51,11 +65,11 @@
 		<br /><br />
 		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
 		<g:TextBox ui:field="energyMix">Name des Angebots</g:TextBox> verursacht  
-		<g:TextBox ui:field="energyMixco2">1.487</g:TextBox> kg CO2-Äq. / kWh.
+		<g:TextBox ui:field="energyMixco2">0.013</g:TextBox> kg CO2-Äq. / kWh.
 		<br /><br />
 		
 <!-- 		<g:Button ui:field="commitButton">Check Input</g:Button> -->
-		<g:Button ui:field="addDevice">Gerät hinzufügen</g:Button>
+		
 		<!--  <g:CheckBox ui:field="makePublic">Geräte öffentlich einsehbar</g:CheckBox>  -->
 		
 		  <table cellspacing='0' cellpadding='0' style='width:100%;'>
@@ -79,8 +93,9 @@
 		
 		
 		<g:FlexTable ui:field="deviceTable"></g:FlexTable>
-		
-		<g:Button ui:field="addPerson">Person hinzufügen</g:Button> Diese Personen können die Küche auswählen:
+		<g:Button styleName='{style.buttonDevice}' ui:field="addDevice">Gerät hinzufügen</g:Button>
+		<br />
+		Diese Personen können die Küche auswählen:
 		
 		
 		 <table cellspacing='0' cellpadding='0' style='width:100%;'>
@@ -103,6 +118,8 @@
     </table>
 		
 		<g:FlexTable ui:field="personTable"></g:FlexTable>
+		<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
+		
 		
 		<br /><br />
 		Legen Sie hier den Ort ihrer Küche fest (den Ort, an den alle Zutaten
@@ -121,7 +138,7 @@
 		<hr />
 		<g:Anchor href='javascript:;' ui:field='leaveKitchen'>Den eaternity Rechner nicht kommerziell benutzen (privat)</g:Anchor>
 		<div class='{style.buttons}'>
-			<g:Button text='Küche speichern' ui:field='executeButton' />
+			<g:Button text='Küche speichern und betreten' ui:field='executeButton' />
 		</div>
 	</g:HTMLPanel>
 	

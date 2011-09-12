@@ -111,7 +111,7 @@ public class KitchenDialog extends DialogBox{
 	Kitchen selectedKitchen;
 	
 
-	Integer timeToWaitForGeocode = 1;
+	Integer timeToWaitForGeocode = 1; // in seconds ( to not flood, and be blocked)
 
 	public KitchenDialog(String location) {	
 //		String kitchenName = kitchens.getItemText(kitchens.getSelectedIndex());
@@ -125,18 +125,19 @@ public class KitchenDialog extends DialogBox{
 		
 		if(availableKitchens == null || availableKitchens.size() == 0){
 			availableKitchens = new ArrayList<Kitchen>(1);
-			availableKitchens.add(new Kitchen("neue Küche",currentLocation));
+			Kitchen newKitchen = new Kitchen("neue Küche",currentLocation);
+			newKitchen.energyMix = new EnergyMix("ewz.naturpower",0.01345);
+			availableKitchens.add(newKitchen);
+			
 		}
 
 		selectedKitchen = availableKitchens.get(0);
 		this.kitchenName = selectedKitchen.getSymbol();
 		currentLocation = selectedKitchen.location;
-//		selectedKitchen.location = currentLocation;
 		devicesHere = selectedKitchen.devices;
 		personsHere = selectedKitchen.personal;
 		
 
-		selectedKitchen.energyMix = new EnergyMix("EnergyStar",2.0);
 		openDialog();
 	
 	}
@@ -166,6 +167,7 @@ public class KitchenDialog extends DialogBox{
 		setGlassEnabled(true);
 		
 		energyMix.setText(selectedKitchen.energyMix.Name);
+		energyMixco2.setText(selectedKitchen.energyMix.Co2PerKWh.toString());
 		
 		
 		addKitchenNamesToList(availableKitchens);
@@ -898,11 +900,12 @@ public class KitchenDialog extends DialogBox{
 
 	@UiHandler("executeButton")
 	void onOkayClicked(ClickEvent event) {
+		// this button finalizes the decision to enter the kitchen
+		TopPanel.location.setVisible(false);
+		TopPanel.leftKitchen = false;
+		TopPanel.isCustomerLabel.setText("Sie befinden sich in der Küche: "+kitchenName+" ");
+		TopPanel.selectedKitchen = selectedKitchen;
 		
-		  TopPanel.location.setVisible(false);
-		  TopPanel.leftKitchen = false;
-		  TopPanel.isCustomerLabel.setText("Sie befinden sich in der Küche: "+kitchenName+" ");
-		  TopPanel.selectedKitchen = selectedKitchen;
         saveAndCloseDialog();
 	}
 
@@ -919,9 +922,11 @@ public class KitchenDialog extends DialogBox{
         pendingPersonChanges.clear();
         
 		saveDistances();
+		
+//		kitchen.energyMix = energyMix.getItemText(energyMix.getSelectedIndex());
 //		
 //		final Kitchen kitchen = new Kitchen(kitchenName);
-//		kitchen.energyMix = energyMix.getItemText(energyMix.getSelectedIndex());
+		
 //		kitchen.location = currentLocation;
 //		kitchen.setEmailAddressOwner(EaternityRechner.loginInfo.getEmailAddress());
 //		
@@ -949,21 +954,22 @@ public class KitchenDialog extends DialogBox{
 //		}
 		
 		for(final Kitchen kitchen: availableKitchens){
-		
-		dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
-			@Override
-			public void onFailure(Throwable error) {
-				Window.alert("Fehler : "+ error.getMessage());
-			}
-			@Override
-			public void onSuccess(Long ignore) {
-				TopPanel.selectedKitchen.id = ignore;
-//				Search.clientData.kitchens.add(kitchen);
-//				kitchens.addItem(kitchen.getSymbol());
-			}
-		});
+			// save all kitchens at once
+			dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
+				@Override
+				public void onFailure(Throwable error) {
+					Window.alert("Fehler : "+ error.getMessage());
+				}
+				@Override
+				public void onSuccess(Long kitchenID) {
+					TopPanel.selectedKitchen.id = kitchenID;
+	//				Search.clientData.kitchens.add(kitchen);
+	//				kitchens.addItem(kitchen.getSymbol());
+				}
+			});
 		}
 		
+		// update search... this should also be done when loaded regular
 		Search.SearchInput.setText("");
 		Search.updateResults(" ");
 		
@@ -1125,6 +1131,20 @@ public class KitchenDialog extends DialogBox{
 			  setText(this.kitchenName);
 			  kitchens.setItemText(kitchens.getSelectedIndex(), this.kitchenName);
 			  selectedKitchen.setSymbol(this.kitchenName);
+		  }
+	  }
+	  
+	  @UiHandler("energyMix")
+	  void onEnergyMixChange(KeyUpEvent event) {
+		  if(energyMix.getText().length()>1){			  
+			  selectedKitchen.energyMix.Name = energyMix.getText();
+		  }
+	  }
+	  
+	  @UiHandler("energyMixco2")
+	  void onEnergyMixco2Change(KeyUpEvent event) {
+		  if(energyMixco2.getText().length()>1){ // check of parseDouble is possible
+			  selectedKitchen.energyMix.Co2PerKWh = Double.parseDouble(energyMixco2.getText());
 		  }
 	  }
 	  
