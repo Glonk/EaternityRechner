@@ -19,6 +19,9 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.IngredientSpecification;
 
+import com.google.api.gwt.client.impl.ClientGoogleApiRequestTransport;
+import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
+import com.google.api.gwt.shared.GoogleApiRequestTransport;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,6 +31,7 @@ import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -48,6 +52,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 
 /**
@@ -106,6 +112,7 @@ public class EaternityRechner implements EntryPoint {
 		// now load the data
 
 		loadData();
+		initializeUrlshortener();
 
 		// Inject global styles.
 		GWT.<GlobalResources>create(GlobalResources.class).css().ensureInjected();
@@ -270,9 +277,38 @@ public class EaternityRechner implements EntryPoint {
 		//load your personal recipes
 		loadYourRezepte();
 
-
+		
 
 	}
+	
+	// e.g., Buzz.class, Moderator.class, Shopping.class, etc...
+	static Urlshortener urlshortener = GWT.create(Urlshortener.class);
+
+	private void initializeUrlshortener() {
+	  new ClientGoogleApiRequestTransport()
+	      .setApiAccessKey("AIzaSyAkdIvs2SM0URQn5656q9NugoU-3Ix2LYg")
+	      .setApplicationName("eaternityrechner")
+	      .create(new Receiver<GoogleApiRequestTransport>() {
+	        @Override
+	        public void onSuccess(GoogleApiRequestTransport transport) {
+	          urlshortener.initialize(new SimpleEventBus(), transport);
+
+	          // Now that your service is initialized, you can make a request.
+	          // It may be better to publish a "ready" event on the eventBus
+	          // and listen for it to make requests elsewhere in your code.
+//	          makeRequest();
+	          //TODO block creating a new recipe until this event has fired! (or do this event bus stuff)
+	          
+	        }
+
+	        @Override
+	        public void onFailure(ServerFailure error) {
+	          Window.alert("Failed to initialize Transport!");
+	        }
+	      });
+	}
+	
+	
 	private HandlerRegistration loadAdmin() {
 		
 		ingredientHandler = topPanel.ingredientLink.addClickHandler(new ClickHandler(){

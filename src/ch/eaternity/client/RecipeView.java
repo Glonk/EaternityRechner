@@ -28,6 +28,8 @@ import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
 
+import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
+import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -70,6 +72,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
+import com.google.web.bindery.requestfactory.shared.Receiver;
 
 public class RecipeView extends Composite {
 	interface Binder extends UiBinder<Widget, RecipeView> { }
@@ -192,8 +195,29 @@ public class RecipeView extends Composite {
 			SaveRezeptPanel.setVisible(false);
 			topStatusBar.setVisible(false);
 		}
+		
+		makeRequest();
 	  }
 	
+	
+//	Urlshortener urlshortener = GWT.create(Urlshortener.class); 
+	
+	private void makeRequest() {
+		  String shortUrl = "http://goo.gl/h8cEU";
+		  EaternityRechner.urlshortener.url().get(shortUrl)
+		      // If the service had any optional parameters, they would go here, e.g.:
+		      // .setOptionalParameter("optionalParam")
+		      // .setAnotherOptionalParameter("anotherOptionalParameter")
+		      .to(new Receiver<Url>() {
+		        @Override
+		        public void onSuccess(Url url) {
+		          String longUrl = url.getLongUrl();
+//		          Window.alert(longUrl);
+		          
+		        }
+		      })
+		      .fire();
+		}
 	
 	public interface Listener {
 		void onItemSelected(IngredientSpecification item);
