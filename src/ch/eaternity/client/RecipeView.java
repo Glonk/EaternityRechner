@@ -1,15 +1,12 @@
 package ch.eaternity.client;
 
 import gwtupload.client.IUploader;
-import gwtupload.client.MultiUploader;
 import gwtupload.client.PreloadedImage;
 import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader.Utils;
 import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -21,14 +18,13 @@ import ch.eaternity.client.comparators.ComparatorObject;
 import ch.eaternity.client.comparators.ComparatorRecipe;
 import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.client.widgets.UploadPhoto;
-import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.MoTransportation;
-import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
 
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
+
+
+import com.google.api.gwt.services.urlshortener.shared.Urlshortener.UrlContext;
 import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,9 +32,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -54,10 +48,8 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -67,12 +59,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.XMLParser;
 import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 public class RecipeView extends Composite {
 	interface Binder extends UiBinder<Widget, RecipeView> { }
@@ -196,7 +185,7 @@ public class RecipeView extends Composite {
 			topStatusBar.setVisible(false);
 		}
 		
-		makeRequest();
+		shorten();
 	  }
 	
 	
@@ -218,6 +207,35 @@ public class RecipeView extends Composite {
 		      })
 		      .fire();
 		}
+	
+	
+	private void shorten() {
+
+	    String longUrl = "http://www.heise.de";
+	    // Get a new RequestContext which we will execute.
+	    UrlContext urlContext = EaternityRechner.urlshortener.url();
+
+	    // Create a new Url instance with the longUrl we want to insert.
+	    Url url = urlContext.create(Url.class);
+	    url.setLongUrl(longUrl);
+//	    Url url = urlContext.create(Url.class).setLongUrl(longUrl);
+
+	    // Fire an insert() request with the Url to insert.
+	    urlContext.insert(url).fire(new Receiver<Url>() {
+	      @Override
+	      public void onSuccess(Url response) {
+	        Window.alert("Long URL: " + response.getLongUrl() + "\n" //
+	            + "Short URL: " + response.getId() + "\n" //
+	            + "Status: " + response.getStatus());
+	      }
+
+	      @Override
+	      public void onFailure(ServerFailure error) {
+	        Window.alert("Error shortening a URL\n" + error.getMessage());
+	      }
+	    });
+	  }
+	
 	
 	public interface Listener {
 		void onItemSelected(IngredientSpecification item);
