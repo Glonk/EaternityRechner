@@ -767,7 +767,7 @@ function getBaseURL() {
 <% } // just do it simple %>
 
 
-<div id="footer-left">
+<div class="page-break" id="footer-left">
 	<img class="logo-karotte" src="karotte.jpg" alt="karotte"  />
 	Eaternity
 	<a href="mailto:info@eaternity.ch" >info@eaternity.ch</a>
@@ -800,6 +800,8 @@ if(rezeptePersonal.size() != 0){
 }
 if(doIt){
 %>
+<h1>Das Menu Plus Angebot</h1>
+
 <form name="htmlAdder" method="POST" action=";" class="page-break">
 <table cellspacing="0" cellpadding="0" class="table" >
 
@@ -1557,7 +1559,7 @@ for(Recipe recipe: rezeptePersonal){
             while ((line = reader.readLine()) != null) {
                 // ...
                 if(line.length() > 10){
-                out.println(line.substring(7, line.length()));
+                //out.println(line.substring(7, line.length()));
                 }
             }
             reader.close();

@@ -158,6 +158,8 @@ Test targets suppressed because -junit argument was not specified when running w
   </target>
 -->
 
+
+	
 	<target name="hosted" depends="devmode" description="Run development mode (NOTE: the 'hosted' target is deprecated)" />
 
 	<target name="build" depends="gwtc" description="Build this project" />

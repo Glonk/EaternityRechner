@@ -16,5 +16,12 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dnd-3.1.1.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT (2)"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-urlshortener-v1-0.2-alpha.jar"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/requestfactory-server-2.4.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
