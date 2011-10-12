@@ -16,7 +16,13 @@
   <inherits name='com.google.gwt.user.User' />
   <inherits name='com.google.gwt.user.theme.standard.Standard'/> 
   <inherits name="com.google.gwt.xml.XML" />
-  
+  <inherits name="com.google.api.gwt.ApiCore" />
+  <inherits name="com.google.web.bindery.requestfactory.RequestFactory" />
+  <inherits name="com.googlecode.objectify.Objectify" />
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  <inherits name='com.google.gwt.maps.GoogleMaps' />
+  <inherits name='com.google.api.gwt.services.Urlshortener' />
+  <inherits name="com.google.gwt.i18n.I18N"/>
 
 
   <!-- Include GWTUpload library -->
@@ -41,16 +47,16 @@
   <source path='shared'/>
   
   <!-- Okay, let's try this one -->
-  <inherits name="com.googlecode.objectify.Objectify" />
-  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
-  <inherits name='com.google.gwt.maps.GoogleMaps' />
+
   
-  <inherits name="com.google.gwt.i18n.I18N"/>
   <!--script src="http://maps.google.com/maps?gwt=1&amp;file=api&amp;v=2&amp;sensor=false" /-->
 <!-- this is the key for testing 127.0.0.1: ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQn-55_zfV8pmPmd2ElsF48Hk2yBhTm95U3cPbvh4K-DTPHeavreNRonw   -->
 <!-- 10.0.1.2 key:  ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hSGGkA6Fvl4dXnh8vif-I5OEPPqWhSDHDeVW9TCJQKsYqf_eXA_eOnz7g -->
+<!-- 10.0.1.4 key:  ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hQJY3dkDr6Uabg3UNndL4hd1vPHnxSWZvMjUQdIF0EcO3DeyNiCPKTfBQ -->
 <!-- 10.0.1.5 key:  ABQIAAAA_TAXZfK0ept-1T1kCGZ_KhRW9qXBthDLgpBICmbXam8lu_ui_hQqBCIrNwW2EOCAqHoBWevHxLZuJQ -->
 <!-- 10.0.1.6 key:  ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hTONfliDyX7bsHnWAg8QGjS1NA0VBRXdKTL-oplJSZWCZjZe1Ud1Atq5w -->
+<!-- 127.0.0.1 key: ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hRi_j0U6kJrkFvY4-OX2XYmEAa76BRIA6RqddnVPJ39qyHiyPF5XR0LMA -->  
+  
   
 <!-- eaternityrechner.appspot.com key: ABQIAAAA_TAXZfK0ept-1T1kCGZ_KhQHoFlT9PIXrSR8WWAf7BHR3_RspBTltHkibQqKHgjNjc8YXMRwvDhtjg -->
  
@@ -58,7 +64,7 @@
   <entry-point class='ch.eaternity.client.EaternityRechner' />
  
   
-<script src="http://maps.google.com/maps?gwt=1&amp;hl=de&amp;file=api&amp;v=2.x&amp;language=de&amp;key=ABQIAAAA_TAXZfK0ept-1T1kCGZ_KhQHoFlT9PIXrSR8WWAf7BHR3_RspBTltHkibQqKHgjNjc8YXMRwvDhtjg" />
+<script src="http://maps.google.com/maps?gwt=1&amp;hl=de&amp;file=api&amp;v=2.x&amp;language=de&amp;key=ABQIAAAA4VjGO5Dk0GidfYPXSmZM9hRi_j0U6kJrkFvY4-OX2XYmEAa76BRIA6RqddnVPJ39qyHiyPF5XR0LMA" />
   
 
 
