@@ -11,6 +11,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Serialized;
 
@@ -35,6 +36,8 @@ public class Recipe implements Serializable, Cloneable{
 	
 	@Embedded
 	public EnergyMix energyMix;
+	
+	public String ShortUrl;
 	
 	public Long kitchenId = 0l;
 	

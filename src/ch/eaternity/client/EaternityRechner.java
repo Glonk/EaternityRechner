@@ -8,7 +8,6 @@ import java.util.ListIterator;
 
 
 import ch.eaternity.client.widgets.ImageOverlay;
-import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
@@ -29,8 +28,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -103,7 +100,7 @@ public class EaternityRechner implements EntryPoint {
 	private HandlerRegistration adminHandler;
 	private HandlerRegistration ingredientHandler;
 	static String styleNameOverlap = "overlap";
-	
+
 	/**
 	 * This method constructs the application user interface by instantiating
 	 * controls and hooking up event handler.

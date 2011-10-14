@@ -18,9 +18,11 @@ import ch.eaternity.client.comparators.ComparatorObject;
 import ch.eaternity.client.comparators.ComparatorRecipe;
 import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.client.widgets.UploadPhoto;
+import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
+
 
 
 
@@ -191,27 +193,29 @@ public class RecipeView extends Composite {
 	
 //	Urlshortener urlshortener = GWT.create(Urlshortener.class); 
 	
-	private void makeRequest() {
-		  String shortUrl = "http://goo.gl/h8cEU";
-		  EaternityRechner.urlshortener.url().get(shortUrl)
-		      // If the service had any optional parameters, they would go here, e.g.:
-		      // .setOptionalParameter("optionalParam")
-		      // .setAnotherOptionalParameter("anotherOptionalParameter")
-		      .to(new Receiver<Url>() {
-		        @Override
-		        public void onSuccess(Url url) {
-		          String longUrl = url.getLongUrl();
-//		          Window.alert(longUrl);
-		          
-		        }
-		      })
-		      .fire();
-		}
+//	private void makeRequest() {
+//		  String shortUrl = "http://goo.gl/h8cEU";
+//		  EaternityRechner.urlshortener.url().get(shortUrl)
+//		      // If the service had any optional parameters, they would go here, e.g.:
+//		      // .setOptionalParameter("optionalParam")
+//		      // .setAnotherOptionalParameter("anotherOptionalParameter")
+//		      .to(new Receiver<Url>() {
+//		        @Override
+//		        public void onSuccess(Url url) {
+//		          String longUrl = url.getLongUrl();
+////		          Window.alert(longUrl);
+//		          
+//		        }
+//		      })
+//		      .fire();
+//		}
 	
 	
 	private void shorten() {
 
-	    String longUrl = "http://www.heise.de";
+		String clear = Converter.toString(recipe.getId(),34);
+	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
+	    
 	    // Get a new RequestContext which we will execute.
 	    UrlContext urlContext = EaternityRechner.urlshortener.url();
 
@@ -227,8 +231,9 @@ public class RecipeView extends Composite {
 	        Window.alert("Long URL: " + response.getLongUrl() + "\n" //
 	            + "Short URL: " + response.getId() + "\n" //
 	            + "Status: " + response.getStatus());
+	        recipe.ShortUrl = response.getId();
 	      }
-
+	     
 	      @Override
 	      public void onFailure(ServerFailure error) {
 	        Window.alert("Error shortening a URL\n" + error.getMessage());

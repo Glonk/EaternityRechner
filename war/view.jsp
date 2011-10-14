@@ -32,10 +32,7 @@
 <%
 // Hole Rezepte die zum Benutzer gehören
 
-		String BASEURL = "http://next.eaternityrechner.appspot.com/";
-		// String BASEURL = "http://10.0.1.4:8888/";
-
-
+		String BASEURL = request.getRequestURL().toString();
 
 
 	    UserService userService = UserServiceFactory.getUserService();
@@ -161,8 +158,6 @@
 		}
 		
 %>
-
-
 
 
 
@@ -666,6 +661,8 @@ padding: 1em 4em 0.5em 3em;
 function initThis(){
 idsToAdd = new Array(); 
 baseUrl = getBaseURL();
+
+
 <% 
 for(Recipe recipe: rezeptePersonal){
 	long compute = recipe.getId() * date;
@@ -753,7 +750,7 @@ function getBaseURL() {
 	<li>Grabenwies 18</li>
 	<li>CH-8057 Zürich</li>
 	<li><a href="mailto:info@eaternity.ch" >info@eaternity.ch</a></li>
-	<li><a href="www.eaternity.ch">www.eaternity.ch</a></li>
+	<li><a href="http://www.eaternity.ch">www.eaternity.ch</a></li>
 	</ul>
 
 </div>
@@ -1327,8 +1324,8 @@ if(doIt){
 for(Recipe recipe: rezeptePersonal){
 
 			long compute = recipe.getId() * date;
-
 			String code = Converter.toString(compute,34);
+			
 			String clear = Converter.toString(recipe.getId(),34);
 
 			recipe.setCO2Value();
@@ -1548,11 +1545,11 @@ for(Recipe recipe: rezeptePersonal){
 						 
 						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItAll) { %>
 						 
-	<a href="<%= BASEURL %>view.jsp?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%					 
+	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%					 
 						 
 		String line;
        try {
-            URL url = new URL("http://ur.ly/new.txt?href="+BASEURL+"view.jsp?pid="+clear);
+            URL url = new URL("http://ur.ly/new.txt?href="+BASEURL+"?pid="+clear);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             
 
