@@ -89,17 +89,21 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
     
     // my additions
     int sourceRow = trDragController.getDragRow();
-//    if (targetRow >= sourceRow) {
-//        targetRow++;
-//      }
     
-    IngredientSpecification switchIng = recipeView.recipe.Zutaten.get(sourceRow);
-    recipeView.recipe.Zutaten.remove(sourceRow);
-    recipeView.recipe.Zutaten.add(targetRow+1, switchIng);
+    if (targetRow >= sourceRow) {
+        targetRow--;
+      }
     
-    recipeView.displayZutatImMenu( recipeView.recipe.Zutaten );
-    // end here
-    
+    if (sourceRow != 0 || targetRow != 0){ // this case nothing happens
+    	
+	    IngredientSpecification switchIng = recipeView.recipe.Zutaten.get(sourceRow);
+	    
+	    recipeView.recipe.Zutaten.remove(sourceRow);
+	    recipeView.recipe.Zutaten.add(targetRow+1, switchIng);
+	    
+	    recipeView.displayZutatImMenu( recipeView.recipe.Zutaten );
+	    // end here
+    }
     
 //    FlexTableUtil.moveRow(trDragController.getDraggableTable(), flexTable,
 //        trDragController.getDragRow(), targetRow + 1);

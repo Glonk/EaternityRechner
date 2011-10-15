@@ -13,6 +13,11 @@ hr {
 a:link, a:visited, a:hover, a:active {
   color: #000;
 }
+
+.dragHere {
+	background:#000;
+	}
+
 .extra-icon{
 	width:20px;
 	display:inline;
