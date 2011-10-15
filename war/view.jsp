@@ -1544,7 +1544,7 @@ for(Recipe recipe: rezeptePersonal){
 						 </td>
 						 
 						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItAll) { %>
-	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl %>" width="42" height="42" /></a>
+	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>" width="42" height="42" /></a>
 							<% } else { %> <span style="color:red;font-size:9pt;">Helfen Sie die Rezepte kontrollieren!</span> <% } %>
 						 </td>
 						</tr>

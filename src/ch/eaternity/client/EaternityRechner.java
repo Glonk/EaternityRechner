@@ -214,7 +214,7 @@ public class EaternityRechner implements EntryPoint {
 						+ "view.jsp?pid="
 						+ Converter.toString(recipe.getId(), 34)
 						+ " ><img src=http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="
-						+ recipe.ShortUrl 
+						+ recipe.ShortUrl.substring(7, recipe.ShortUrl.length())
 						+ " width=42 height=42 /></a>");
 				
 			}
