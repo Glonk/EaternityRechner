@@ -44,6 +44,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
@@ -102,6 +103,7 @@ public class RecipeView extends Composite {
 	@UiField HTML openHTML;
 	@UiField HTML savedHTML;
 	@UiField HTML detailText;
+	@UiField HTML codeImage;
 	
 	private FlowPanel panelImages = new FlowPanel();
 	private PhotoGallery galleryWidget;
@@ -187,7 +189,7 @@ public class RecipeView extends Composite {
 			topStatusBar.setVisible(false);
 		}
 		
-		shorten();
+		
 	  }
 	
 	
@@ -211,8 +213,8 @@ public class RecipeView extends Composite {
 //		}
 	
 	
-	private void shorten() {
-
+	void shortenAndSave() {
+		final RecipeView rezeptView = this;
 		String clear = Converter.toString(recipe.getId(),34);
 	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
 	    
@@ -232,6 +234,8 @@ public class RecipeView extends Composite {
 	            + "Short URL: " + response.getId() + "\n" //
 	            + "Status: " + response.getStatus());
 	        recipe.ShortUrl = response.getId();
+	        
+	        EaternityRechner.addRezept(recipe,rezeptView);
 	      }
 	     
 	      @Override
@@ -489,7 +493,7 @@ public class RecipeView extends Composite {
 				Long persons = Long.parseLong(amountPersons.getText());
 				recipe.setPersons(persons);
 			}
-			final RecipeView rezeptView = this;
+			
 			displayZutatImMenu(recipe.Zutaten);
 			updateSuggestion();
 //			zutatImMenu.clear();
@@ -520,7 +524,22 @@ public class RecipeView extends Composite {
 						recipe.open = false;
 						recipe.setCookInstruction(cookingInstr.getText()); 
 						
-						EaternityRechner.addRezept(recipe,rezeptView);
+						if(recipe.getId() == null){
+							String UserId = EaternityRechner.loginInfo.getId();
+	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
+							
+							// TODO
+							// there should be a collision check!
+							String randomNumber = Integer.toString(Random.nextInt(999999999));
+							Long newId = Long.parseLong(randomNumber+UserId.hashCode());
+							
+							recipe.setId(newId);
+						}
+						shortenAndSave();
+//						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
+//						toString(recipe.getId(),34);
+						
+//						EaternityRechner.addRezept(recipe,rezeptView);
 					}
 				}
 			});

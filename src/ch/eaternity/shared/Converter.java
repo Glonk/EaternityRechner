@@ -27,9 +27,9 @@ public class Converter {
 	    }
 
 	    // convert a String representing a base b integer into an int
-	    public static int fromString(String s, int b) {
-	       int result = 0;
-	       int digit = 0;
+	    public static long fromString(String s, int b) {
+	       long result = 0;
+	       long digit = 0;
 	       for (int i = 0; i < s.length(); i++) {
 	          char c = s.charAt(i);
 	          if (c >= '0' && c <= '9')
@@ -44,8 +44,8 @@ public class Converter {
 	       return result;
 	    }
 
-	    public static int fromBinaryString(String s) { return fromString(s,  2); }
-	    public static int fromHexString(String s)    { return fromString(s, 16); }
+	    public static long fromBinaryString(String s) { return fromString(s,  2); }
+	    public static long fromHexString(String s)    { return fromString(s, 16); }
 
 
 	    // sample test client

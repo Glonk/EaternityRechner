@@ -269,12 +269,12 @@
  					</g:HorizontalPanel>
         			<g:HTML ui:field='detailText' styleName='{style.detailText}'></g:HTML >
         			<g:Anchor styleName='{style.prepare}'  ui:field="PrepareButton" text="Zubereitung hinzufügen"/>
-        					<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
-        					    <!--g:HorizontalPanel ui:field='imageUploaderHP'></g:HorizontalPanel-->
-
-                				<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
+        			<g:HTML ui:field='codeImage'>bla</g:HTML >
+        				<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
+        					  
+                			<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
                 			
-                			</g:HTMLPanel>
+                		</g:HTMLPanel>
                 				
                 	</g:HTMLPanel>
               		

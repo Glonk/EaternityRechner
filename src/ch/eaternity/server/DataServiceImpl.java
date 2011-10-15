@@ -108,6 +108,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 
 		UserRecipe userRezept = new UserRecipe(getUser());
+		userRezept.id = recipe.getId();
 		
 		if(recipe.kitchenId != 0){
 			userRezept.kitchenId = recipe.kitchenId;

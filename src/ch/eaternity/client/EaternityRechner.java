@@ -8,6 +8,7 @@ import java.util.ListIterator;
 
 
 import ch.eaternity.client.widgets.ImageOverlay;
+import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
@@ -198,16 +199,28 @@ public class EaternityRechner implements EntryPoint {
 			public void onSuccess(Long id) {
 //Window.alert("good");
 //				Search.displayRezept(recipe);
+				
 				Search.yourMealsPanel.setVisible(true);
 				recipe.setId(id);
+	
 				Search.clientData.getYourRezepte().add(recipe);
 				Search.updateResults(Search.SearchInput.getText());
 				rezeptView.saved = true;
 				
 				
+				rezeptView.codeImage.setHTML(
+						"<a href="
+						+ GWT.getHostPageBaseURL()
+						+ "view.jsp?pid="
+						+ Converter.toString(recipe.getId(), 34)
+						+ " ><img src=http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="
+						+ recipe.ShortUrl 
+						+ " width=42 height=42 /></a>");
+				
 			}
 		});
 	}
+	
 	static void removeRezept(final Recipe recipe) {
 		dataService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {

@@ -298,7 +298,7 @@ public class DAO extends DAOBase
 		
 		for (String kitchenIdString : kitchenIds){
 
-			int code = Converter.fromString(kitchenIdString, 34);
+			long code = Converter.fromString(kitchenIdString, 34);
 			
 			long computeId;
 			if(isCoded){

@@ -1544,30 +1544,7 @@ for(Recipe recipe: rezeptePersonal){
 						 </td>
 						 
 						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItAll) { %>
-						 
-	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%					 
-						 
-		String line;
-       try {
-            URL url = new URL("http://ur.ly/new.txt?href="+BASEURL+"?pid="+clear);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            
-
-            while ((line = reader.readLine()) != null) {
-                // ...
-                if(line.length() > 10){
-                //out.println(line.substring(7, line.length()));
-                }
-            }
-            reader.close();
-
-        } catch (MalformedURLException e) {
-            out.println("www.eaternity.ch");
-        } catch (IOException e) {
-            out.println("www.eaternity.ch");
-        }
-
-			%>" width="42" height="42" /></a>
+	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl %>" width="42" height="42" /></a>
 							<% } else { %> <span style="color:red;font-size:9pt;">Helfen Sie die Rezepte kontrollieren!</span> <% } %>
 						 </td>
 						</tr>
