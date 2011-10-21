@@ -37,7 +37,7 @@ public class DAO extends DAOBase
         ObjectifyService.register(ProductLabel.class);
         ObjectifyService.register(IngredientSpecification.class);
         ObjectifyService.register(Recipe.class);
-        ObjectifyService.register(UserRecipe.class);
+        ObjectifyService.register(UserRecipeWrapper.class);
         ObjectifyService.register(ImageBlob.class);
         ObjectifyService.register(Kitchen.class);
         ObjectifyService.register(Staff.class);
@@ -99,12 +99,12 @@ public class DAO extends DAOBase
         // and now update all the recipes, that got changed...
         
         // get all recipes
-        Query<UserRecipe> found = ofy().query(UserRecipe.class);
+        Query<UserRecipeWrapper> found = ofy().query(UserRecipeWrapper.class);
 
         //iterate over them
-        QueryResultIterator<UserRecipe> iterator = found.iterator();
+        QueryResultIterator<UserRecipeWrapper> iterator = found.iterator();
         while (iterator.hasNext()) {
-        	UserRecipe recipe = iterator.next();
+        	UserRecipeWrapper recipe = iterator.next();
         	
         	// for each recipe find all ingredients Specifications
         	for(IngredientSpecification ingSpec : recipe.recipe.Zutaten ){
@@ -262,8 +262,8 @@ public class DAO extends DAOBase
         return true;
 	}
 	
-	public UserRecipe getRecipe(Long recipeID){
-		UserRecipe userRezept = ofy().get(UserRecipe.class,recipeID);
+	public UserRecipeWrapper getRecipe(Long recipeID){
+		UserRecipeWrapper userRezept = ofy().get(UserRecipeWrapper.class,recipeID);
         return userRezept;
 	}
 	
@@ -272,11 +272,11 @@ public class DAO extends DAOBase
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
-		Query<UserRecipe> yourUserRecipes = ofy().query(UserRecipe.class).filter("user", user);
-        QueryResultIterator<UserRecipe> iterator = yourUserRecipes.iterator();
+		Query<UserRecipeWrapper> yourUserRecipes = ofy().query(UserRecipeWrapper.class).filter("user", user);
+        QueryResultIterator<UserRecipeWrapper> iterator = yourUserRecipes.iterator();
         
         while (iterator.hasNext()) {
-        	UserRecipe userRezept = iterator.next();
+        	UserRecipeWrapper userRezept = iterator.next();
         	Recipe recipe = userRezept.getRezept();
         	recipe.setId( userRezept.id);
         	yourRecipes.add(recipe);
@@ -308,7 +308,7 @@ public class DAO extends DAOBase
 			}
 			
 			if(computeId != 0){
-				UserRecipe userRezept = ofy().find(UserRecipe.class, computeId);
+				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
 				if(userRezept != null){
 		        	Recipe recipe = userRezept.getRezept();
 		        	recipe.setId( userRezept.id);
@@ -326,11 +326,11 @@ public class DAO extends DAOBase
 		List<Recipe> adminRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
-		Query<UserRecipe> yourUserRecipes = ofy().query(UserRecipe.class).filter("user !=", user);
-        QueryResultIterator<UserRecipe> iterator = yourUserRecipes.iterator();
+		Query<UserRecipeWrapper> yourUserRecipes = ofy().query(UserRecipeWrapper.class).filter("user !=", user);
+        QueryResultIterator<UserRecipeWrapper> iterator = yourUserRecipes.iterator();
         
         while (iterator.hasNext()) {
-        	UserRecipe userRezept = iterator.next();
+        	UserRecipeWrapper userRezept = iterator.next();
         	Recipe recipe = userRezept.getRezept();
         	recipe.setId(userRezept.id);
         	adminRecipes.add(recipe);
@@ -345,11 +345,11 @@ public class DAO extends DAOBase
 		List<Recipe> openRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
-		Query<UserRecipe> yourOpenRecipes = ofy().query(UserRecipe.class).filter("approvedOpen", true);
-        QueryResultIterator<UserRecipe> iterator = yourOpenRecipes.iterator();
+		Query<UserRecipeWrapper> yourOpenRecipes = ofy().query(UserRecipeWrapper.class).filter("approvedOpen", true);
+        QueryResultIterator<UserRecipeWrapper> iterator = yourOpenRecipes.iterator();
         
         while (iterator.hasNext()) {
-        	UserRecipe userRezept = iterator.next();
+        	UserRecipeWrapper userRezept = iterator.next();
         	Recipe recipe = userRezept.getRezept();
         	recipe.setId( userRezept.id);
         	openRecipes.add(recipe);
@@ -373,11 +373,11 @@ public class DAO extends DAOBase
 	        		
 //	        		Kitchen kitchen = ofy().get(Kitchen.class,kitchenId);
 	        		
-		        	Query<UserRecipe> yourKitchenRecipes = ofy().query(UserRecipe.class).filter("kitchenId", kitchenId);
-		            QueryResultIterator<UserRecipe> iterator = yourKitchenRecipes.iterator();
+		        	Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenId", kitchenId);
+		            QueryResultIterator<UserRecipeWrapper> iterator = yourKitchenRecipes.iterator();
 		            
 		            while (iterator.hasNext()) {
-		            	UserRecipe userRezept = iterator.next();
+		            	UserRecipeWrapper userRezept = iterator.next();
 		            	Recipe recipe = userRezept.getRezept();
 		            	recipe.setId( userRezept.id);
 		            	if(!kitchenRecipes.contains(recipe)){

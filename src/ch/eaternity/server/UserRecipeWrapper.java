@@ -12,7 +12,7 @@ import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Serialized;
 
 
-public class UserRecipe{
+public class UserRecipeWrapper{
 
 	@Id Long id;
 	
@@ -38,16 +38,16 @@ public class UserRecipe{
 		return user;
 	}
 	
-	public UserRecipe(){
+	public UserRecipeWrapper(){
 		
 	}
 
-	public UserRecipe( User user){
+	public UserRecipeWrapper( User user){
 		this.createDate = new Date();
 		this.user = user;	
 	}
 	
-	public UserRecipe( Recipe recipe ,User user){
+	public UserRecipeWrapper( Recipe recipe ,User user){
 		this.recipe = recipe;
 		this.createDate = new Date();
 		this.user = user;	

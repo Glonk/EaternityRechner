@@ -107,7 +107,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 		DAO dao = new DAO();
 
-		UserRecipe userRezept = new UserRecipe(getUser());
+		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
 		userRezept.id = recipe.getId();
 		
 		if(recipe.kitchenId != 0){
@@ -134,7 +134,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		UserRecipe userRezept =  dao.getRecipe(rezeptId);
+		UserRecipeWrapper userRezept =  dao.getRecipe(rezeptId);
 		userRezept.recipe.open = approve;
 		userRezept.approvedOpen = approve;
 		dao.ofy().put(userRezept);
@@ -144,7 +144,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		dao.ofy().delete(UserRecipe.class,rezeptId);
+		dao.ofy().delete(UserRecipeWrapper.class,rezeptId);
 		return true;
 	}
 
