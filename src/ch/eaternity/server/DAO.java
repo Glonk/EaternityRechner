@@ -289,8 +289,11 @@ public class DAO extends DAOBase
 	public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
 		
 		String[] kitchenIds = kitchenIdsString.split(",");
-		Calendar rightNow = Calendar.getInstance();
-		int date = rightNow.get(Calendar.WEEK_OF_YEAR);
+//		Calendar rightNow = Calendar.getInstance();
+//		long date = rightNow.get(Calendar.WEEK_OF_YEAR);
+		
+        Date date = new Date();
+        int iTimeStamp = (int) (date.getTime() * .00003);
 
  
 		
@@ -302,7 +305,7 @@ public class DAO extends DAOBase
 			
 			long computeId;
 			if(isCoded){
-				computeId = code / date;
+				computeId = code / iTimeStamp;
 			} else {
 				computeId = code;
 			}

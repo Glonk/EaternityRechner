@@ -38,7 +38,7 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
   private static final String CSS_DEMO_TABLE_POSITIONER = "demo-table-positioner";
 
   private FlexTable flexTable;
-  private RecipeView recipeView;
+  private RecipeEditView recipeView;
 
   private InsertPanel flexTableRowsAsIndexPanel = new InsertPanel() {
 
@@ -77,10 +77,10 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
 
   private int targetRow;
 
-  public FlexTableRowDropController(FlexTable flexTable, RecipeView recipeView) {
+  public FlexTableRowDropController(FlexTable flexTable, RecipeEditView editRecipeView) {
     super(flexTable);
     this.flexTable = flexTable;
-    this.recipeView = recipeView;
+    this.recipeView = editRecipeView;
   }
 
   @Override

@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
+import ch.eaternity.client.RecipeEditView;
 import ch.eaternity.client.RecipeView;
 import ch.eaternity.client.UserImageService;
 import ch.eaternity.client.UserImageServiceAsync;
@@ -53,7 +54,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 	
 	Recipe recipe;
 
-	public UploadPhoto(final LoginInfo loginInfo,final RecipeView rezeptView) {
+	public UploadPhoto(final LoginInfo loginInfo,final RecipeEditView editRecipeView) {
 		handlerManager = new HandlerManager(this);
 		
 		this.recipe = recipe;
@@ -91,22 +92,22 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									@Override
 									public void onSuccess(final UploadedImage result) {
 										
-										rezeptView.getRezept().image = result;
+										editRecipeView.getRezept().image = result;
 									    
-									    	Image showImage = rezeptView.showImageRezept;
+									    	Image showImage = editRecipeView.showImageRezept;
 									    	showImage.setUrl(result.getServingUrl()+"=s150-c");
 //									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
 //									    	rezeptView.imageUploaderHP.add(showImage);
 //									    	showImage.setStylePrimaryName("cursorStyle");
-									    	if(rezeptView.imagePopUpHandler != null){
-									    		rezeptView.imagePopUpHandler.removeHandler();
+									    	if(editRecipeView.imagePopUpHandler != null){
+									    		editRecipeView.imagePopUpHandler.removeHandler();
 									    	}
-									    	if(rezeptView.showImageHandler != null){
-									    		rezeptView.showImageHandler.removeHandler();
-									    		rezeptView.showImageHandler = null;
+									    	if(editRecipeView.showImageHandler != null){
+									    		editRecipeView.showImageHandler.removeHandler();
+									    		editRecipeView.showImageHandler = null;
 									    	}
 									    	
-									    	rezeptView.imagePopUpHandler = showImage.addClickHandler(new ClickHandler() {
+									    	editRecipeView.imagePopUpHandler = showImage.addClickHandler(new ClickHandler() {
 
 												@Override
 												public void onClick(ClickEvent event) {
@@ -126,10 +127,10 @@ public class UploadPhoto extends Composite implements HasHandlers {
 											});
 //									    	showImage.addStyleName("inline");
 									    	
-									    	rezeptView.menuDecoInfo.insert(showImage,0);
-									    	rezeptView.askForLess2 = true;
-									    	rezeptView.bildEntfernen.setVisible(true);
-									    	rezeptView.uploadWidget.setVisible(false);
+									    	editRecipeView.menuDecoInfo.insert(showImage,0);
+									    	editRecipeView.askForLess2 = true;
+									    	editRecipeView.bildEntfernen.setVisible(true);
+									    	editRecipeView.uploadWidget.setVisible(false);
 									    
 										
 										ImageOverlay overlay = new ImageOverlay(

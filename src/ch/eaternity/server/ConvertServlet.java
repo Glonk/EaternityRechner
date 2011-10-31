@@ -10,23 +10,28 @@ import com.google.appengine.api.conversion.ConversionResult;
 import com.google.appengine.api.conversion.ConversionService;
 import com.google.appengine.api.conversion.ConversionServiceFactory;
 import com.google.appengine.api.conversion.Document;
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
+
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.util.Streams;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
@@ -36,221 +41,296 @@ import javax.servlet.http.*;
  * @author laihaiming@google.com (Haiming Lai)
  */
 public class ConvertServlet extends HttpServlet {
-  /**
+	/**
 	 * 
 	 */
-	 private final List<Asset> assets = new ArrayList<Asset>();
+	private final List<Asset> assets = new ArrayList<Asset>();
 	private static final long serialVersionUID = 2708668642046127395L;
-private static final Logger log = Logger.getLogger(ConvertServlet.class.getName());
-  
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse resp)
-      throws ServletException, IOException, MalformedURLException { 
-	  // TODO get the key, check the user, urlfetch the date, send the pdf
-	  String tempIds = request.getParameter("ids");
-		String permanentId = request.getParameter("pid");
-		
+	private static final Logger log = Logger.getLogger(ConvertServlet.class.getName());
+
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse resp)
+	throws ServletException, IOException, MalformedURLException { 
+		// TODO get the key, check the user, urlfetch the date, send the pdf
+		String tempIds = request.getParameter("ids");
+
+
 		String outputType = "application/pdf";
-		Boolean DoItAll = true;
-	  
-//	    UserService userService = UserServiceFactory.getUserService();
-		
-	    ConversionService service = ConversionServiceFactory.getConversionService();
-//	    DAO dao = new DAO();
-//	    
-//	    User user = userService.getCurrentUser();
-//	    
-//	    
-//		
-//		
-//		List<Recipe> adminRecipes = new ArrayList<Recipe>();
-//		List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
-//		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-//		
-//		if (user != null) {
-//			rezeptePersonal = dao.getYourRecipe(user);
-//			kitchenRecipes = dao.getKitchenRecipes(user);
-//			
-//			adminRecipes = dao.adminGetRecipe(user);
-//			
-//			// remove double entries for admin
-//			if(rezeptePersonal != null){
-//				for(Recipe recipe: rezeptePersonal){
-//					int removeIndex = -1;
-//					for(Recipe rezept2:adminRecipes){
-//						if(rezept2.getId().equals(recipe.getId())){
-//							removeIndex = adminRecipes.indexOf(rezept2);
-//						}
-//					}
-//					if(removeIndex != -1){
-//						adminRecipes.remove(removeIndex);
-//					}
-//				}
-//			}
-//		} else {
-//			 if(tempIds != null){
-//				rezeptePersonal = dao.getRecipeByIds(tempIds,true);
-//			 } else {
-//				 if(permanentId != null){
-//					rezeptePersonal = dao.getRecipeByIds(permanentId,false);
-//					DoItAll = false;
-//				 } 
-//			 }
-//			}
-//		
+
+		ConversionService service = ConversionServiceFactory.getConversionService();
+
+		//		
 		String RAWURL = request.getRequestURL().toString();
 		String BASEURL = RAWURL.substring(0, RAWURL.length()-7);
+
+
+		// this is stuped to set the number manually
+		// the resources should be added anyway by parsing the html file, in my opinion
+
+		List<String> assetMimeTypeList = new ArrayList<String>();
+		List<byte[]> assetDataList = new ArrayList<byte[]>();
+		List<String> assetNameList = new ArrayList<String>();
+
+		URL url = new URL(BASEURL + "view.jsp?ids=" + tempIds);
 		
-	    int assetsNumber = 1;
-	    List<String> assetMimeTypeList = new ArrayList<String>();
-	    List<byte[]> assetDataList = new ArrayList<byte[]>();
-	    List<String> assetNameList = new ArrayList<String>();
-	    
-	    URL url = new URL(BASEURL + "view.jsp?ids=" + tempIds);
-        InputStream stream = url.openStream();
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		InputStream stream = null;
+		try {
+			
+	        URLConnection yc = url.openConnection();
+	        yc.setReadTimeout(10000);
+	        yc.setConnectTimeout(10000);
+	        stream = yc.getInputStream();
+	        
+		} catch (IOException e) {
+			// just try again
+			resp.setContentType("text/plain");
+			resp.getWriter().println("Sorry. Das Programm musste neu geladen werden, starten Sie die Anfrage einfach ein zweites mal. Danke.");
+		}
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 		try {
-            
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-         
 			assetMimeTypeList.add(0, "text/html");
-            assetNameList.add(0, "MKB_zert.jsp");
-            Streams.copy(stream, byteStream, true);
-            // Added as the data of first asset.
-            assetDataList.add(0, byteStream.toByteArray());
-            
-//            
-//            String line;
-//      	  resp.setContentType("text/plain");
-//    	  
-//            while ((line = reader.readLine()) != null) {
-//                // ...
-//            	resp.getWriter().println(line);
-//            }
-//            reader.close();
+			assetNameList.add(0, "Menü_Klimabilanz_Zertifikat.pdf");
+			Streams.copy(stream, byteStream, true);
 
-        } catch (MalformedURLException e) {
-            // ...
-      	  resp.setContentType("text/plain");
-    	  resp.getWriter().println(e.toString());
-    	  
-        } catch (IOException e) {
-            // ...
-      	  resp.setContentType("text/plain");
-    	  resp.getWriter().println(e.toString());
-    	  
-          } finally {
-            stream.close();
-            byteStream.reset();
-          }
-          
-          if (assetMimeTypeList.get(0) == null) {
-              throw new IOException("Input type must be selected.");
-            }
-            
- 
-            
-            if (assetNameList.get(0) == null) {
-              throw new IOException("Upload file must be selected.");
-            }
-            
-            if (assetDataList.get(0) == null) {
-              throw new IOException("Upload file can not be found.");
-            }
-            
+			// Added as the data of first asset.
+			assetDataList.add(0, byteStream.toByteArray());
+
+		} catch (MalformedURLException e) {
+			// ...
+			resp.setContentType("text/plain");
+			resp.getWriter().println(e.toString());
+
+		} catch (IOException e) {
+			// ...
+			resp.setContentType("text/plain");
+			resp.getWriter().println(e.toString());
+
+		} finally {
+
+			stream.close();
+			byteStream.reset();
+		}
+
+		// find each appearence of: src="QR-xxx" in the html file
+		// take this code: xxx and fetch the corresponding carts
+		// load those charts into the Asset()
+		byte[] htmlFile = assetDataList.get(0);
+		String element = new String(htmlFile);
+	
 		
-          // Add all the assets. Primary inputs are added into first asset.
-          // Additional assets may also be included, e.g. images in HTML.
-          for (int i = 0; i < assetsNumber; i++) {
-            assets.add(new Asset(
-                assetMimeTypeList.get(i), assetDataList.get(i), assetNameList.get(i)));
-          }
-          
+		String[] tokens = element.split("QR-");
 		
-	    Document document = new Document(Collections.unmodifiableList(assets));
-	    Conversion conversion = new Conversion(document, outputType);
+		InputStream imageStream = null;
+		for (String codeRaw : tokens ){
+			int test = codeRaw.indexOf("-CODE");
+			if(test != -1){
+			String code = codeRaw.substring(0, codeRaw.indexOf("-CODE"));
+			URL qrCodeUrl =new URL("http://chart.apis.google.com/chart?cht=qr&chs=84x84&chl="+code+"&chld=M%7C0");
+//			URL qrCodeUrl =new URL("http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="+code);
+				
+			imageStream = qrCodeUrl.openStream();
+			
+				try {
+					
+					
+					
+					assetMimeTypeList.add("image/png");
+					assetNameList.add("QR-"+code+"-CODE");
+					Streams.copy(imageStream, byteStream, true);
 
-	  
-	   ConversionResult result = service.convert(conversion);
+					// Added as the data of first asset.
+					assetDataList.add(byteStream.toByteArray());
+					
+				} catch (MalformedURLException e) {
+					// ...
+					resp.setContentType("text/plain");
+					resp.getWriter().println(e.toString());
+
+				} catch (IOException e) {
+					// ...
+					resp.setContentType("text/plain");
+					resp.getWriter().println(e.toString());
+
+				} finally {
+
+					imageStream.close();
+					byteStream.reset();
+				}
+			}
+		}
 		
-	   if (!result.success()) {
-		      // Conversion failed! Print out the error code.
-		      resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, String.format(
-		          "Failed to convert %s from %s to %s: %s",
-		          assets.get(0).getName(), assets.get(0).getMimeType(),
-		          outputType, result.getErrorCode().toString()));
-		    }
-		    
-		    int assetsNum = result.getOutputDoc().getAssets().size();
-		    if (assetsNum == 0) {
-		      resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No result was returned.");
-		    }
-		    
-		    // Conversion succeeded! Send the converted result as an attachment.
-		    resp.setContentType(outputType);
-		    resp.setHeader(
-		        "Content-Disposition",
-		        "attachment; filename=" + assets.get(0).getName().split("\\.")[0]);
-		    List<Asset> assets = result.getOutputDoc().getAssets();
-		    // Print the first/primary asset to servlet output steam.
-		    resp.getOutputStream().write(assets.get(0).getData());
-		    // Additional assets may be returned, e.g. images in HTML.
-		    // Here we simply write them into log, you may want to handle them
-		    // in your own way.
-		    for (int i = 1; i < assetsNum; i++) {
-		      log.info(String.format(
-		          "Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
-		          assets.get(i).getMimeType(), assets.get(i).getData().length));
-		    }
-  }
+		
 
 
-  @Override
-  public void doPost(HttpServletRequest req, HttpServletResponse res)
-      throws ServletException, IOException {
-    UploadFormManager uploadFormManager = new UploadFormManager(req);
-    try {
-      uploadFormManager.processForm();
-    } catch (FileUploadException ex) {
-      throw new ServletException(ex);
-    }
+		
 
-    Document document = new Document(uploadFormManager.getAssets());
-    Conversion conversion = new Conversion(document, uploadFormManager.getOutputType());
+		// parse images, and get them from local filespace (if they are there)
 
-    // Perform the conversion and retrieve the result.
-    ConversionService service = ConversionServiceFactory.getConversionService();
-    ConversionResult result = service.convert(conversion);
+		// images can be inside a <img tag or in the css...
+		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
 
-    if (!result.success()) {
-      // Conversion failed! Print out the error code.
-      res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, String.format(
-          "Failed to convert %s from %s to %s: %s",
-          uploadFormManager.getFileName(), uploadFormManager.getInputType(),
-          uploadFormManager.getOutputType(), result.getErrorCode().toString()));
-    }
-    
-    int assetsNum = result.getOutputDoc().getAssets().size();
-    if (assetsNum == 0) {
-      res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No result was returned.");
-    }
-    
-    // Conversion succeeded! Send the converted result as an attachment.
-    res.setContentType(uploadFormManager.getOutputType());
-    res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=" + uploadFormManager.getFileName().split("\\.")[0]);
-    List<Asset> assets = result.getOutputDoc().getAssets();
-    // Print the first/primary asset to servlet output steam.
-    res.getOutputStream().write(assets.get(0).getData());
-    // Additional assets may be returned, e.g. images in HTML.
-    // Here we simply write them into log, you may want to handle them
-    // in your own way.
-    for (int i = 1; i < assetsNum; i++) {
-      log.info(String.format(
-          "Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
-          assets.get(i).getMimeType(), assets.get(i).getData().length));
-    }
-  }
+		ServletContext context = getServletContext();
+		for (int i = 0; i < pngImagesReport.length; i++)
+		{
+
+			InputStream reader = context.getResourceAsStream("/report/"+pngImagesReport[i]);
+
+			try {
+				// reading over input stream
+				assetMimeTypeList.add("image/png");
+				assetNameList.add(pngImagesReport[i]);
+
+				Streams.copy(reader, byteStream, true);
+				assetDataList.add(byteStream.toByteArray());
+
+			} catch (IOException e) {
+				// ...
+				resp.setContentType("text/plain");
+				resp.getWriter().println(e.toString());
+
+			} finally {
+
+				reader.close();
+				byteStream.reset();
+			}
+
+
+		}
+
+		// get the rest of the images from external sources
+
+
+		// font test
+		InputStream reader2 = context.getResourceAsStream("/opensans300.woff");
+
+		try {
+			// reading over input stream
+			assetMimeTypeList.add(2, "application/x-woff");
+			assetNameList.add(2, "opensans300.woff");
+
+			Streams.copy(reader2, byteStream, true);
+			assetDataList.add(2, byteStream.toByteArray());
+
+		} catch (IOException e) {
+			// ...
+			resp.setContentType("text/plain");
+			resp.getWriter().println(e.toString());
+
+		} finally {
+
+			reader2.close();
+			byteStream.reset();
+		}
+
+
+
+
+		if (assetMimeTypeList.get(0) == null) {
+			throw new IOException("Input type must be selected.");
+		}
+
+		if (assetNameList.get(0) == null) {
+			throw new IOException("Upload file must be selected.");
+		}
+
+		if (assetDataList.get(0) == null) {
+			throw new IOException("Upload file can not be found.");
+		}
+
+		int assetsNumber = assetDataList.size();
+		// Add all the assets. Primary inputs are added into first asset.
+		// Additional assets may also be included, e.g. images in HTML.
+		assets.clear();
+		for (int i = 0; i < assetsNumber; i++) {
+			assets.add(new Asset(
+					assetMimeTypeList.get(i), assetDataList.get(i), assetNameList.get(i)));
+		}
+
+
+		Document document = new Document(Collections.unmodifiableList(assets));
+		Conversion conversion = new Conversion(document, outputType);
+
+
+		ConversionResult result = service.convert(conversion);
+
+		if (!result.success()) {
+			// Conversion failed! Print out the error code.
+			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, String.format(
+					"Failed to convert %s from %s to %s: %s",
+					assets.get(0).getName(), assets.get(0).getMimeType(),
+					outputType, result.getErrorCode().toString()));
+		}
+
+		int assetsNum = result.getOutputDoc().getAssets().size();
+		if (assetsNum == 0) {
+			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No result was returned.");
+		}
+
+		// Conversion succeeded! Send the converted result as an attachment.
+		resp.setContentType(outputType);
+		resp.setHeader(
+				"Content-Disposition",
+				"attachment; filename=" + assets.get(0).getName().split("\\.")[0]);
+		List<Asset> assets = result.getOutputDoc().getAssets();
+		// Print the first/primary asset to servlet output steam.
+		resp.getOutputStream().write(assets.get(0).getData());
+		// Additional assets may be returned, e.g. images in HTML.
+		// Here we simply write them into log, you may want to handle them
+		// in your own way.
+		for (int i = 1; i < assetsNum; i++) {
+			log.info(String.format(
+					"Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
+					assets.get(i).getMimeType(), assets.get(i).getData().length));
+		}
+	}
+
+
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse res)
+	throws ServletException, IOException {
+		UploadFormManager uploadFormManager = new UploadFormManager(req);
+		try {
+			uploadFormManager.processForm();
+		} catch (FileUploadException ex) {
+			throw new ServletException(ex);
+		}
+
+		Document document = new Document(uploadFormManager.getAssets());
+		Conversion conversion = new Conversion(document, uploadFormManager.getOutputType());
+
+		// Perform the conversion and retrieve the result.
+		ConversionService service = ConversionServiceFactory.getConversionService();
+		ConversionResult result = service.convert(conversion);
+
+		if (!result.success()) {
+			// Conversion failed! Print out the error code.
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, String.format(
+					"Failed to convert %s from %s to %s: %s",
+					uploadFormManager.getFileName(), uploadFormManager.getInputType(),
+					uploadFormManager.getOutputType(), result.getErrorCode().toString()));
+		}
+
+		int assetsNum = result.getOutputDoc().getAssets().size();
+		if (assetsNum == 0) {
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No result was returned.");
+		}
+
+		// Conversion succeeded! Send the converted result as an attachment.
+		res.setContentType(uploadFormManager.getOutputType());
+		res.setHeader(
+				"Content-Disposition",
+				"attachment; filename=" + uploadFormManager.getFileName().split("\\.")[0]);
+		List<Asset> assets = result.getOutputDoc().getAssets();
+		// Print the first/primary asset to servlet output steam.
+		res.getOutputStream().write(assets.get(0).getData());
+		// Additional assets may be returned, e.g. images in HTML.
+		// Here we simply write them into log, you may want to handle them
+		// in your own way.
+		for (int i = 1; i < assetsNum; i++) {
+			log.info(String.format(
+					"Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
+					assets.get(i).getMimeType(), assets.get(i).getData().length));
+		}
+	}
 }

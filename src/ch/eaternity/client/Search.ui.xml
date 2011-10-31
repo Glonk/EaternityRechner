@@ -238,13 +238,13 @@
 			  <g:north size='38'>
 				<g:HTML >
 			      
-			     <p>&nbsp;als Zutat</p>
+			     <div style="margin-top:10px;">&nbsp;in Zutaten<div class="big-add" >Dem Menü hinzufügen</div></div>
 		        	
 			      </g:HTML>
 		      </g:north>
 	      	<g:center>
 				<g:SplitLayoutPanel ui:field='mealsSplitPanels'>
-					<g:south size='260'>
+					<g:south size='21'><!-- before was: 260 -->
 						<g:SplitLayoutPanel ui:field='subMealsSplitPanels'>
 							<g:center>
 					        	<g:ScrollPanel styleName='{style.scroll}'>

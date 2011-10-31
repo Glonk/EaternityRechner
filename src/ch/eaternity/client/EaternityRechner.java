@@ -29,6 +29,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -40,15 +42,19 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollListener;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.web.bindery.requestfactory.shared.Receiver;
@@ -90,6 +96,21 @@ public class EaternityRechner implements EntryPoint {
 	@UiField Search search;  
 	@UiField
 	static FlexTable rezeptList;
+	@UiField
+	static FlexTable rezeptEditList;
+	@UiField
+	static FlexTable MenuTable;
+	@UiField
+	static FlexTable SuggestTable;
+	@UiField
+	static HorizontalPanel addInfoPanel;
+	@UiField HTML titleHTML;
+	@UiField DockLayoutPanel topSticky;
+	@UiField HTMLPanel panelNorth;
+	@UiField HTMLPanel htmlRezept;
+	@UiField AbsolutePanel dragArea;
+	
+	@UiField ScrollPanel scrollWorkspace;
 	@UiField Button addRezeptButton;
 	@UiField
 	static SelectionStyle selectionStyle;
@@ -142,6 +163,7 @@ public class EaternityRechner implements EntryPoint {
 		// TODO Move cursor focus to the Search box.
 		// TODO remove this with something that makes more sense
 		rezeptList.getColumnFormatter().setWidth(1, "750px");
+		rezeptEditList.getColumnFormatter().setWidth(1, "750px");
 
 		
 		//TODO uncomment this when ready!
@@ -183,11 +205,12 @@ public class EaternityRechner implements EntryPoint {
 		
 
 
+
 	}
 
 	
 
-	static void addRezept(final Recipe recipe, final RecipeView rezeptView) {
+	static void addRezept(final Recipe recipe, final RecipeEditView rezeptView) {
 		if(!TopPanel.leftKitchen){
 			recipe.kitchenId = TopPanel.selectedKitchen.id;
 		}
@@ -380,6 +403,7 @@ public class EaternityRechner implements EntryPoint {
 		selectedRezept = -1;
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 		zutaten.clear();
+		
 		for(IngredientSpecification zutatNew : recipe.getZutaten()){
 			
 			// TODO that nothing is missing
@@ -579,10 +603,63 @@ public class EaternityRechner implements EntryPoint {
 		
 	}
 	
+	boolean reset = true;
+	int displayHeight = 120;
+	
+	@UiHandler("scrollWorkspace")
+    public void onScroll(ScrollEvent event) { 
+		
+//		use this to check the scrolling events
+//		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
+
+		if(rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight)){
+			
+//			Window.alert("yes!!");
+			topSticky.setWidgetSize(panelNorth, 40+displayHeight);
+			
+			
+			
+//			int offsetheight = rezeptEditView.htmlRezept.getOffsetHeight();
+			if(dragArea.getWidgetCount() > 0){
+				dragArea.remove(0);
+			}
+			
+			dragArea.add(rezeptEditView.htmlRezept);
+//			HorizontalPanel addPanel = rezeptEditView.addInfoPanel;
+//			rezeptEditView.htmlRezept.clear();
+//			rezeptEditView.dragArea.add(new HTML("<div style='height: "+Integer.toString(offsetheight) + "px'></div>" ));
+			
+//			htmlRezept.clear();
+//			htmlRezept.add(addPanel);
+			
+			
+			if(reset){
+				scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()+1);
+				reset = false;
+			}
+		}
+		
+//		if(rezeptEditView.getOffsetHeight() > (scrollWorkspace.getVerticalScrollPosition()) && !reset){
+		if(0 == (scrollWorkspace.getVerticalScrollPosition()) && !reset){
+			topSticky.setWidgetSize(panelNorth, 40);
+			
+			rezeptEditView.dragArea.add(dragArea.getWidget(0));
+//			rezeptEditView.htmlRezept.clear();
+//			rezeptEditView.htmlRezept.add(htmlRezept.getWidget(0));
+//			htmlRezept.clear();
+			
+			scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()-displayHeight);
+			reset = true;
+		}
+		
+		
+    } 
+
+	
 	@UiHandler("addRezeptButton")
 	public void onButtonPress(ClickEvent event) {
 		Recipe recipe = new Recipe();
-		recipe.setSymbol("unbenanntes Recipe");
+		recipe.setSymbol("unbenanntes Rezept");
 		recipe.setSubTitle(" ");
 		recipe.setCookInstruction("keine Kochanleitung.");
 		recipe.open = false;
@@ -600,6 +677,11 @@ public class EaternityRechner implements EntryPoint {
 			
 			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
+			
+			// put this recipe into the edit panel...
+			rezeptEditView.setRezept(rezeptView.recipe);
+			rezeptEditView.showRezept(rezeptEditView.recipe);
+			
 			suggestionPanel.clear();
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
 			rezeptView.updtTopSuggestion();
@@ -620,7 +702,7 @@ public class EaternityRechner implements EntryPoint {
 	}
 	
 	public static int AddZutatZumMenu( Ingredient item) {
-		// convert zutat to ZutatSpex and call the real method
+		// convert zutat to ZutatSpec and call the real method
 		Extraction stdExtraction = null;
 		for(Extraction extraction: item.getExtractions()){
 			if(item.stdExtractionSymbol.equalsIgnoreCase(extraction.symbol)){
@@ -643,6 +725,8 @@ public class EaternityRechner implements EntryPoint {
 		return row;
 	}
 
+	static RecipeEditView rezeptEditView;
+	
 	static int AddZutatZumMenu(final ArrayList<IngredientSpecification> zutatenNew) {
 		ArrayList<IngredientSpecification> zutaten = (ArrayList<IngredientSpecification>) zutatenNew.clone();
 		ListIterator<IngredientSpecification> iterator = zutaten.listIterator();
@@ -659,20 +743,37 @@ public class EaternityRechner implements EntryPoint {
 
 			}
 		}
+		
 		RecipeView rezeptView;
+//		RecipeEditView rezeptEditView;
+		
+		// on case this is going to be a new one
 		if (selectedRezept == -1){
 			// create new Recipe
 			Recipe newRezept = new Recipe();
 			selectedRezept = 0;
-			rezeptList.insertRow(0);
 			
+//			both lists
+			rezeptList.insertRow(0);
+			if(rezeptEditList.getRowCount() == 0){
+				rezeptEditList.insertRow(0);
+			}
 			
 			//same as below
 			newRezept.addZutaten(zutaten);
+			
+			// both get added
 			rezeptView = new RecipeView(newRezept);
+			rezeptEditView = new RecipeEditView(newRezept);
+			
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
 			rezeptList.getRowFormatter().setStyleName(0, "recipe");
 			styleRezept(selectedRezept, true);
+			
+			// the edit form
+			rezeptEditList.setWidget(0, 1, rezeptEditView);
+			rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
+			
 			
 			// is it necessary to have a worksheet or is rezeptList already containing everything?
 			// worksheet.add(rezeptView);
@@ -680,23 +781,36 @@ public class EaternityRechner implements EntryPoint {
 		} else {
 			// get the old one
 			rezeptView = (RecipeView) rezeptList.getWidget(selectedRezept,1);
-			Recipe recipe = rezeptView.getRezept();
 			
-			// maybe same as above
-			//zutaten.addAll(zutaten);
+			// there is only one recipe getting handled by both views!
+			Recipe recipe = rezeptView.getRezept();
 			recipe.addZutaten(zutaten);
 			rezeptView.setRezept(recipe);
-//			rezeptList.setWidget(selectedRezept, 1, rezeptView);
-			//worksheet.set(selectedRezept, rezeptView);
+
+			
+			// also manipulate the edit one...
+			// this better should be mirrored
+			rezeptEditView = (RecipeEditView) rezeptEditList.getWidget(0,1);
+			rezeptEditView.setRezept(recipe);
+			
 		}
-		// is this necessary?
+		// this is necessary.
+		rezeptEditView.showRezept(rezeptEditView.recipe);
 		rezeptView.showRezept(rezeptView.recipe);
 		
 		return selectedRezept;
 	}
 	
 
-
+	@UiHandler("MenuTable")
+	void onClick(ClickEvent event) {
+		// Select the row that was clicked (-1 to account for header row).
+		Cell cell = MenuTable.getCellForEvent(event);
+		if (cell != null) {
+			int row = cell.getRowIndex();
+			rezeptEditView.selectRow(row);
+		}
+	}
 	
 
 

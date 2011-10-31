@@ -75,7 +75,7 @@ public class InfoZutatDialog extends Composite {
 	@UiField SelectionStyle selectionStyle;
 	IngredientSpecification zutatSpec;
 	Ingredient stdIngredient;
-	RecipeView rezeptviewParent;
+	RecipeEditView rezeptviewParent;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
@@ -125,12 +125,12 @@ public class InfoZutatDialog extends Composite {
 		
 	}
 
-	public InfoZutatDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Recipe recipe, FlexTable suggestTable, RecipeView rezeptview) {
+	public InfoZutatDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable menuTable, int selectedRow, Recipe recipe, FlexTable suggestTable, RecipeEditView editRecipeView) {
 		initWidget(uiBinder.createAndBindUi(this));
 		zutatName.setHTML( zutatSpec.getName() );
 		specificationTable.setCellSpacing(0);
 		// TODO Auto-generated constructor stub
-		this.rezeptviewParent = rezeptview;
+		this.rezeptviewParent = editRecipeView;
 		this.setZutatSpec(zutatSpec);
 		this.stdIngredient = zutat;
 		this.setSelectedRow(selectedRow);
@@ -560,7 +560,8 @@ public class InfoZutatDialog extends Composite {
 //				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
 				
 				rezeptviewParent.changeIcons(selectedRow, zutatSpec);
-				rezeptviewParent.updateSuggestion();
+				rezeptviewParent.updateSuggestion(suggestTable, menuTable);
+				rezeptviewParent.updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 //			}
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");

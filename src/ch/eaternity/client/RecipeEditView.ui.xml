@@ -197,10 +197,11 @@
   border: 1px outset #ccc;
 }
 
+
 </ui:style>
 
   <ui:style field='selectionStyleRow'
-    type='ch.eaternity.client.RecipeView.SelectionStyleRow'>
+    type='ch.eaternity.client.RecipeEditView.SelectionStyleRow'>
 
   .selectedRow td{
     background: #fff;
@@ -210,7 +211,7 @@
   </ui:style>
   
   <ui:style field='evenStyleRow'
-    type='ch.eaternity.client.RecipeView.EvenStyleRow'>
+    type='ch.eaternity.client.RecipeEditView.EvenStyleRow'>
 
   .evenRow {
     background: #FEE6C6;
@@ -218,8 +219,8 @@
 
   </ui:style>
   <g:AbsolutePanel ui:field="dragArea">
-		<g:HTMLPanel ui:field="htmlRezept" >
-           	<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
+		<g:HTMLPanel ui:field="htmlRezept">
+           	<!--  <g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>  -->
            	<g:HTMLPanel styleName='{style.rezeptDecoration}'>
            		<g:HTMLPanel styleName='{style.statusInfo}'>
            			<g:HTMLPanel styleName='{style.closeButton}' ui:field='topStatusBar'>
@@ -238,32 +239,32 @@
 
            		<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
            			<g:VerticalPanel>
-           				<g:HorizontalPanel  styleName='{style.recipeTitle}' >
-           					<g:HTMLPanel ui:field="rezeptTitle">
-           						<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>
-           						<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Rezept Name</g:TextBox>
-           					</g:HTMLPanel>
-  
-           				</g:HorizontalPanel >
-           				
-           				<g:HTMLPanel  styleName='{style.recipeSmallDetail}'>
-           					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' ></g:Label>
-           					<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept Untertitel</g:TextBox>
-           				    <g:HTMLPanel styleName='{style.recipePersons}'>
-           						für <g:HTML ui:field='amountPersons'>4</g:HTML > Personen
-           					</g:HTMLPanel>
-           				</g:HTMLPanel >
-
-           				<g:VerticalPanel  ui:field='MenuTableWrapper' styleName='{style.MenuTableWrapper}' >
-           				<g:HTMLPanel >
-           					<img src='tabs-bg.png' height='88px' width='1px' style='float:left;' />
-        					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
-        				</g:HTMLPanel>
-        					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
-        					
-        				</g:VerticalPanel>
-        				<g:HTML ><div style='padding-left:274px;margin-top:0px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
-        				</g:VerticalPanel>
+	           				<g:HorizontalPanel  styleName='{style.recipeTitle}' >
+	           					<g:HTMLPanel ui:field="rezeptTitle">
+	           						<g:Label ui:field="rezeptNameTop" styleName='{style.rezeptNameTop}' >Ihr Menu</g:Label>
+	           						<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Rezept Name</g:TextBox>
+	           					</g:HTMLPanel>
+	  
+	           				</g:HorizontalPanel >
+	           				
+	           				<g:HTMLPanel  styleName='{style.recipeSmallDetail}'>
+	           					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' ></g:Label>
+	           					<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept Untertitel</g:TextBox>
+	           				    <g:HTMLPanel styleName='{style.recipePersons}'>
+	           						für <g:TextBox ui:field="amountPersons" width="2em">4</g:TextBox> Personen
+	           					</g:HTMLPanel>
+	           				</g:HTMLPanel >
+	
+		           				<g:VerticalPanel  ui:field='MenuTableWrapper' styleName='{style.MenuTableWrapper}' >
+			           				<g:HTMLPanel >
+			           					<img src='tabs-bg.png' height='88px' width='1px' style='float:left;' />
+			        					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
+			        				</g:HTMLPanel>
+		        					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
+		        				</g:VerticalPanel>
+	        				
+	        				<g:HTML ><div style='padding-left:274px;margin-top:0px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
+	        			</g:VerticalPanel>
         				<g:FlowPanel styleName='{style.menuDecoPanel}' ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>

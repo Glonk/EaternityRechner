@@ -68,14 +68,14 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
-public class RecipeView extends Composite {
-	interface Binder extends UiBinder<Widget, RecipeView> { }
+public class RecipeEditView extends Composite {
+	interface Binder extends UiBinder<Widget, RecipeEditView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	
 	@UiField AbsolutePanel dragArea;
-//	@UiField SelectionStyleRow selectionStyleRow;
-//	@UiField EvenStyleRow evenStyleRow;
+	@UiField SelectionStyleRow selectionStyleRow;
+	@UiField EvenStyleRow evenStyleRow;
 
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
@@ -94,11 +94,11 @@ public class RecipeView extends Composite {
 	@UiField HTMLPanel rezeptTitle;
 	@UiField Label rezeptNameTop;
 	@UiField Label rezeptSubTitleTop;
-	@UiField HTML topIndikator;
+
 	@UiField HTML bottomIndikator;
 //	@UiField HorizontalPanel imageUploaderHP;
 	@UiField TextArea cookingInstr;
-	@UiField HTML amountPersons;
+	@UiField TextBox amountPersons;
 	@UiField TextBox rezeptDetails;
 	@UiField VerticalPanel MenuTableWrapper;
 	
@@ -126,23 +126,27 @@ public class RecipeView extends Composite {
 	
 	boolean saved;
 	
-//	private Listener listener;
+	private Listener listener;
 	int  selectedRow = 0;
 	int  selectedRezept = -1;
 	public Recipe recipe;
 
 	
+	public int heightOfView;
+	
 //	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
 	
 	
-	public RecipeView(Recipe recipe) {
+	public RecipeEditView(Recipe recipe) {
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
 	    
-//	    no more edit here
-//	    tableRowDragController = new FlexTableRowDragController(dragArea);
-//	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
-//	    tableRowDragController.registerDropController(flexTableRowDropController);
+	    tableRowDragController = new FlexTableRowDragController(dragArea);
+	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
+	    
+//	    EaternityRechner.MenuTable = MenuTable;
+    
+	    tableRowDragController.registerDropController(flexTableRowDropController);
 
 	    
 	    
@@ -163,9 +167,8 @@ public class RecipeView extends Composite {
 //	    menuDecoInfo.add(galleryWidget);
 	    
 		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			no more edit here
-//			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
-//			uploadWidget.setStyleName("notInline");
+			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
+			uploadWidget.setStyleName("notInline");
 			
 			// Bind it to event so uploadWidget can refresh the gallery
 //			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
@@ -218,7 +221,7 @@ public class RecipeView extends Composite {
 	
 	
 	void shortenAndSave() {
-		final RecipeView rezeptView = this;
+		final RecipeEditView rezeptView = this;
 		String clear = Converter.toString(recipe.getId(),34);
 	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
 	    
@@ -239,8 +242,7 @@ public class RecipeView extends Composite {
 //	            + "Status: " + response.getStatus());
 	        recipe.ShortUrl = response.getId();
 	        
-//	        no more edit here
-//	        EaternityRechner.addRezept(recipe,rezeptView);
+	        EaternityRechner.addRezept(recipe,rezeptView);
 	      }
 	     
 	      @Override
@@ -253,23 +255,23 @@ public class RecipeView extends Composite {
 	    
 	  }
 	
-//	
-//	public interface Listener {
-//		void onItemSelected(IngredientSpecification item);
-//	}
-//
-//
-//	
-//	interface SelectionStyleRow extends CssResource {
-//		String selectedRow();
-//	}
-//	interface EvenStyleRow extends CssResource {
-//		String evenRow();
-//	}
-//	
-//	public void setListener(Listener listener) {
-//		this.listener = listener;
-//	}
+	
+	public interface Listener {
+		void onItemSelected(IngredientSpecification item);
+	}
+
+
+	
+	interface SelectionStyleRow extends CssResource {
+		String selectedRow();
+	}
+	interface EvenStyleRow extends CssResource {
+		String evenRow();
+	}
+	
+	public void setListener(Listener listener) {
+		this.listener = listener;
+	}
 	
 	@UiHandler("reportButton")
 	void onReportClick(ClickEvent event) {
@@ -288,156 +290,155 @@ public class RecipeView extends Composite {
 //    	return $wnd.open(url, 'target=_blank')
 //	}-*/;
 	
+	@UiHandler("MenuTable")
+	void onClick(ClickEvent event) {
+		// Select the row that was clicked (-1 to account for header row).
+		Cell cell = MenuTable.getCellForEvent(event);
+		if (cell != null) {
+			int row = cell.getRowIndex();
+			selectRow(row);
+		}
+	}
 	
-//	the table is not clickable anymore here
-//	@UiHandler("MenuTable")
-//	void onClick(ClickEvent event) {
-//		// Select the row that was clicked (-1 to account for header row).
-//		Cell cell = MenuTable.getCellForEvent(event);
-//		if (cell != null) {
-//			int row = cell.getRowIndex();
-//			selectRow(row);
-//		}
-//	}
-	
-//	@UiHandler("amountPersons")
-//	void onKeyUp(KeyUpEvent event) {
-//		int keyCode = event.getNativeKeyCode();
-//		if ((Character.isDigit((char) keyCode)) 
-//				|| (keyCode == KeyCodes.KEY_BACKSPACE)
-//				|| (keyCode == KeyCodes.KEY_DELETE) ) {
-//			// TextBox.cancelKey() suppresses the current keyboard event.
-//			Long persons = 1l;
-//			recipe.setPersons(persons);
-//			if(!amountPersons.getText().isEmpty()){
-//				persons = Long.parseLong(amountPersons.getText().trim());
-//				if(persons > 0){
-//					recipe.setPersons(persons);
-//					updateSuggestion();
-//				} else {
-////					amountPersons.setText("1");
-//				}
-//			} else {
-////				amountPersons.setText("1");
-//			}
-//			
-//			
-//		} else {
-//			amountPersons.cancelKey();
-//		}
-//	}
+	@UiHandler("amountPersons")
+	void onKeyUp(KeyUpEvent event) {
+		int keyCode = event.getNativeKeyCode();
+		if ((Character.isDigit((char) keyCode)) 
+				|| (keyCode == KeyCodes.KEY_BACKSPACE)
+				|| (keyCode == KeyCodes.KEY_DELETE) ) {
+			// TextBox.cancelKey() suppresses the current keyboard event.
+			Long persons = 1l;
+			recipe.setPersons(persons);
+			if(!amountPersons.getText().isEmpty()){
+				persons = Long.parseLong(amountPersons.getText().trim());
+				if(persons > 0){
+					recipe.setPersons(persons);
+					updateSuggestion(SuggestTable, MenuTable);
+					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+				} else {
+//					amountPersons.setText("1");
+				}
+			} else {
+//				amountPersons.setText("1");
+			}
+			
+			
+		} else {
+			amountPersons.cancelKey();
+		}
+	}
 
 
-//	@UiHandler("rezeptNameTop")
-//	void onMouseOver(MouseOverEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			RezeptName.setVisible(true);
-//			rezeptNameTop.setVisible(false);
-//		}
-//	}
-//	
-//	@UiHandler("RezeptName")
-//	void onEdit(KeyUpEvent event) {
-//		if(RezeptName.getText() != ""){
-//			rezeptNameTop.setText(RezeptName.getText());
-//			recipe.setSymbol(RezeptName.getText());
-//		}
-//	}
-//	
-//	@UiHandler("RezeptName")
-//	void onMouseOut(MouseOutEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			RezeptName.setVisible(false);
-//			rezeptNameTop.setVisible(true);
-//		}
-//	}
-//	
-//	@UiHandler("cookingInstr")
-//	void onEditCook(KeyUpEvent event) {
-//		if(cookingInstr.getText() != ""){
-//			htmlCooking.setText(cookingInstr.getText());
-//			recipe.setCookInstruction(cookingInstr.getText());
-//		}
-//	}
-//	
-//	@UiHandler("cookingInstr")
-//	void onMouseOutCook(MouseOutEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			cookingInstr.setVisible(false);
-//			htmlCooking.setVisible(true);
-//		}
-//	}
-//	
-//
-//	@UiHandler("rezeptSubTitleTop")
-//	void onMouseOverSub(MouseOverEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			rezeptDetails.setVisible(true);
-//			rezeptSubTitleTop.setVisible(false);
-//		}
-//	}
-//	
-//	@UiHandler("rezeptDetails")
-//	void onEditSub(KeyUpEvent event) {
-//		if(rezeptDetails.getText() != ""){
-//			rezeptSubTitleTop.setText(rezeptDetails.getText());
-//			recipe.setSubTitle(rezeptDetails.getText());
-//		}
-//	}
-//	
-//	@UiHandler("rezeptDetails")
-//	void onMouseOutSub(MouseOutEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			rezeptDetails.setVisible(false);
-//			rezeptSubTitleTop.setVisible(true);
-//		}
-//	}
-//	
-//	
+	@UiHandler("rezeptNameTop")
+	void onMouseOver(MouseOverEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			RezeptName.setVisible(true);
+			rezeptNameTop.setVisible(false);
+		}
+	}
 	
-//	
-//	@UiHandler("PrepareButton")
-//	void onPrepareClicked(ClickEvent event) {
-//		
-//		 // we changed something -> so it isn't saved anymore
-//		 saved = false;
-//		 
-//	
-//		 
-//		 
-//		 // what is this???
-//		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
-//			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
-//			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-//			 recipe.Zutaten.set(selectedRow , zutatSpec2);
-//		 }
-//		 
-//		 // the selected row in the recipe is not highlighted anymore
-//		 if (selectedRow != -1) {
-//			 styleRow(selectedRow, false);
-//			 Search.selectedRow = -1;
-//		 }
-//		 
-//
-//		// remove window
-//		addInfoPanel.remove(2);
-//		
-//		// cooking instructions etc...
-//		menuDecoInfo.setVisible(false);
-//		
-////		no more edit here
-////		InfoPreparationDialog infoPrepare = new InfoPreparationDialog(MenuTable,recipe,SuggestTable,this);
-////		
-////		addInfoPanel.insert(infoPrepare, 2);
-//		
-//		// is this necessary... it should be only on change...
-//		updateSuggestion();
-//		
-//	}
-//	
+	@UiHandler("RezeptName")
+	void onEdit(KeyUpEvent event) {
+		if(RezeptName.getText() != ""){
+			rezeptNameTop.setText(RezeptName.getText());
+			recipe.setSymbol(RezeptName.getText());
+		}
+	}
+	
+	@UiHandler("RezeptName")
+	void onMouseOut(MouseOutEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			RezeptName.setVisible(false);
+			rezeptNameTop.setVisible(true);
+		}
+	}
+	
+	@UiHandler("cookingInstr")
+	void onEditCook(KeyUpEvent event) {
+		if(cookingInstr.getText() != ""){
+			htmlCooking.setText(cookingInstr.getText());
+			recipe.setCookInstruction(cookingInstr.getText());
+		}
+	}
+	
+	@UiHandler("cookingInstr")
+	void onMouseOutCook(MouseOutEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			cookingInstr.setVisible(false);
+			htmlCooking.setVisible(true);
+		}
+	}
+	
+
+	@UiHandler("rezeptSubTitleTop")
+	void onMouseOverSub(MouseOverEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			rezeptDetails.setVisible(true);
+			rezeptSubTitleTop.setVisible(false);
+		}
+	}
+	
+	@UiHandler("rezeptDetails")
+	void onEditSub(KeyUpEvent event) {
+		if(rezeptDetails.getText() != ""){
+			rezeptSubTitleTop.setText(rezeptDetails.getText());
+			recipe.setSubTitle(rezeptDetails.getText());
+		}
+	}
+	
+	@UiHandler("rezeptDetails")
+	void onMouseOutSub(MouseOutEvent event) {
+		if (EaternityRechner.loginInfo.isLoggedIn()) {
+			rezeptDetails.setVisible(false);
+			rezeptSubTitleTop.setVisible(true);
+		}
+	}
+	
+	
+	
+	
+	@UiHandler("PrepareButton")
+	void onPrepareClicked(ClickEvent event) {
+		
+		 // we changed something -> so it isn't saved anymore
+		 saved = false;
+		 
+	
+		 
+		 
+		 // what is this???
+		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
+			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
+			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
+			 recipe.Zutaten.set(selectedRow , zutatSpec2);
+		 }
+		 
+		 // the selected row in the recipe is not highlighted anymore
+		 if (selectedRow != -1) {
+			 styleRow(selectedRow, false);
+			 Search.selectedRow = -1;
+		 }
+		 
+
+		// remove window
+		addInfoPanel.remove(2);
+		
+		// cooking instructions etc...
+		menuDecoInfo.setVisible(false);
+		
+		InfoPreparationDialog infoPrepare = new InfoPreparationDialog(MenuTable,recipe,SuggestTable,this);
+		
+		addInfoPanel.insert(infoPrepare, 2);
+		
+		// is this necessary... it should be only on change...
+		updateSuggestion(SuggestTable, MenuTable);
+		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+		
+	}
+	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
-		final RecipeView test = this;
+		final RecipeEditView test = this;
 		if(saved){
 			int row = getWidgetRow(test , EaternityRechner.rezeptList);
 			EaternityRechner.rezeptList.remove(test);
@@ -522,7 +523,8 @@ public class RecipeView extends Composite {
 			}
 			
 			displayZutatImMenu(recipe.Zutaten);
-			updateSuggestion();
+			updateSuggestion(SuggestTable, MenuTable);
+			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 //			zutatImMenu.clear();
 			
 //			int row = AddZutatZumMenu(recipe.getZutaten());
@@ -579,11 +581,11 @@ public class RecipeView extends Composite {
 
 	
 	
-//	should not be called here anymore...
+
 	 void selectRow(int row) {
 		 
 		 PrepareButton.setVisible(true);
-		//TODO uncomment this:
+		//TODO uncomment this: why?
 		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
 //		Window.alert(Integer.toString(row));
 		
@@ -608,6 +610,7 @@ public class RecipeView extends Composite {
 		Ingredient zutat = Search.clientData.getIngredientByID(ParentZutatId);
 		
 		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
+//		openSpecificationDialog(zutatSpec,zutat, (TextBox) EaternityRechner.MenuTable.getWidget(row, 1), EaternityRechner.MenuTable,row);
 		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
 //
 //		infoZutat.stylePanel(true);
@@ -625,7 +628,8 @@ public class RecipeView extends Composite {
 			listener.onItemSelected(zutatSpec);
 		}
 		
-		updateSuggestion();
+		updateSuggestion(SuggestTable, MenuTable);
+		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 
 	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
@@ -633,13 +637,14 @@ public class RecipeView extends Composite {
 		
 //		if(addInfoPanel.getWidgetCount() ==2){
 			addInfoPanel.remove(2);
+//			EaternityRechner.addInfoPanel.remove(2);
 //		}
 		menuDecoInfo.setVisible(false);
-		
-//		no more edit here
-//		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
-//		addInfoPanel.insert(infoZutat, 2);
-
+		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
+//		addInfoPanel.add(infoZutat);
+		addInfoPanel.insert(infoZutat, 2);
+//		EaternityRechner.addInfoPanel.insert(infoZutat, 2);
+//		addInfoPanel.add(new HTML("test"));
 		
 	}
 	
@@ -663,9 +668,6 @@ public class RecipeView extends Composite {
 	
 	void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
 		
-		
-		
-		
 		if(askForLess != null){
 
 			if(showImageHandler != null){
@@ -683,7 +685,9 @@ public class RecipeView extends Composite {
 		}
 		
 	// TODO here i don't want to re-initialize everything over and over again.
-	MenuTable.removeAllRows();;
+	MenuTable.removeAllRows();
+//	EaternityRechner.MenuTable.removeAllRows();
+	
 	Integer row = MenuTable.getRowCount();
 
 	for(final IngredientSpecification zutat : zutaten){
@@ -699,6 +703,7 @@ public class RecipeView extends Composite {
 			// by button press both get deleted
 			recipe.Zutaten.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
+//			EaternityRechner.MenuTable.removeRow(removedIndex);
 			
 			// does this work to prevent the error? which error?
 			// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
@@ -743,7 +748,8 @@ public class RecipeView extends Composite {
 			}
 			
 			// update all values, that change as there is one ingredient less...
-			updateSuggestion();
+			updateSuggestion(SuggestTable, MenuTable);
+			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 		}
 	});
 	
@@ -793,6 +799,7 @@ public class RecipeView extends Composite {
 		MenuTable.getRowFormatter().addStyleName(row, style);
 	}
 	MenuTable.setWidget(row, 1, MengeZutat);
+//	EaternityRechner.MenuTable.setWidget(row, 1, MengeZutat);
 	
 	changeIcons(row, zutat);
 	
@@ -802,11 +809,7 @@ public class RecipeView extends Composite {
 	
 	// drag Handler
     HTML handle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
-    
-//	  no more edit here   
-//    tableRowDragController.makeDraggable(handle);
-
-    
+    tableRowDragController.makeDraggable(handle);
     MenuTable.setWidget(row, 0, handle);
 
 	
@@ -888,7 +891,7 @@ public class RecipeView extends Composite {
 		MenuTable.setWidget(row, 2,  icon);
 	}
 	
-	void updateSuggestion() {
+	void updateSuggestion(FlexTable suggestTable,FlexTable menuTable) {
 
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
@@ -907,24 +910,23 @@ public class RecipeView extends Composite {
 			
 		}
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
-			// as it is also here!
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
-			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
+			menuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
+			menuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
-		SuggestTable.setCellSpacing(2);
-		SuggestTable.setText(1,0,"SUMME");
-		SuggestTable.getColumnFormatter().setWidth(0, "215px");
-		SuggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
-		SuggestTable.getColumnFormatter().setWidth(1, "140px");
+		suggestTable.setCellSpacing(2);
+		suggestTable.setText(1,0,"SUMME");
+		suggestTable.getColumnFormatter().setWidth(0, "215px");
+		suggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
+		suggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
 		updtTopSuggestion();
 		
-		
+		heightOfView = this.getOffsetHeight();
 		
 	}
 
@@ -990,8 +992,8 @@ public class RecipeView extends Composite {
 		Double MaxValueRezept = 0.0;
 		Double MinValueRezept = 10000000.0;
 		//  go over the Recipes in the Workspace
-		for(Widget widget : EaternityRechner.rezeptList){
-			RecipeView rezeptView = (RecipeView) widget;
+		for(Widget widget : EaternityRechner.rezeptEditList){
+			RecipeEditView rezeptView = (RecipeEditView) widget;
 			rezeptView.recipe.setCO2Value();
 			if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
 				MaxValueRezept = rezeptView.recipe.getCO2Value();
@@ -1108,13 +1110,16 @@ public class RecipeView extends Composite {
 
 
 		// update all widgets bars!
-		for(Widget widget : EaternityRechner.rezeptList){
-			RecipeView rezeptView = (RecipeView) widget;
+		for(Widget widget : EaternityRechner.rezeptEditList){
+			RecipeEditView rezeptView = (RecipeEditView) widget;
 			rezeptView.recipe.setCO2Value();
 			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
-			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
+//			
+//			no need here because this is the top
+//			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
 			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
-			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
+//			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
+			
 			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
 		}
 
@@ -1335,11 +1340,14 @@ public class RecipeView extends Composite {
 
 	private void updateTable(int row,IngredientSpecification zutatSpec){
 		saved = false;
+		
+//		ancient, should be handled by updateSuggestion()
 //		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-//		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent "); // what is this good for?
+//		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent ");
 		
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
-		updateSuggestion();
+		updateSuggestion(SuggestTable, MenuTable);
+		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 	
 	private static int getWidgetRow(Widget widget, FlexTable table) {

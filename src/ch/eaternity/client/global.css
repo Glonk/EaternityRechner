@@ -14,6 +14,20 @@ a:link, a:visited, a:hover, a:active {
   color: #000;
 }
 
+.big-add{
+	height: 40px;
+	width: 200px;
+	padding:12px 40px 10px 30px;
+	margin-left:0px;
+	display:inline;
+	text-wrap:none;
+	word-wrap:none;
+	white-space: nowrap; 
+	
+	background-image: url(add-big.png);
+	background-position: top;
+	}
+
 .dragHere {
 	background:#000;
 	}

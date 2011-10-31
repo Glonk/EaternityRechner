@@ -82,7 +82,7 @@ public class InfoPreparationDialog extends Composite {
 	@UiField SelectionStyle selectionStyle;
 	IngredientSpecification zutatSpec;
 	Ingredient stdIngredient;
-	RecipeView rezeptviewParent;
+	RecipeEditView rezeptviewParent;
 	private int selectedRow;
 	private FlexTable menuTable;
 	@UiField
@@ -136,14 +136,14 @@ public class InfoPreparationDialog extends Composite {
 		
 	}
 
-	public InfoPreparationDialog(FlexTable menuTable, Recipe recipe, FlexTable suggestTable, RecipeView rezeptview) {
+	public InfoPreparationDialog(FlexTable menuTable, Recipe recipe, FlexTable suggestTable, RecipeEditView editRecipeView) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		specificationTable.setCellSpacing(0);
 
-		rezeptview.PrepareButton.setVisible(false);
+		editRecipeView.PrepareButton.setVisible(false);
 		
-		this.rezeptviewParent = rezeptview;
+		this.rezeptviewParent = editRecipeView;
 		this.setRezept(recipe);
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
@@ -366,7 +366,8 @@ public class InfoPreparationDialog extends Composite {
 //				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
 				
 				rezeptviewParent.changeIcons(selectedRow, zutatSpec);
-				rezeptviewParent.updateSuggestion();
+				rezeptviewParent.updateSuggestion(suggestTable, menuTable);
+				rezeptviewParent.updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 //			}
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");
