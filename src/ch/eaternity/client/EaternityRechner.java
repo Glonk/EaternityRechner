@@ -605,6 +605,8 @@ public class EaternityRechner implements EntryPoint {
 		} else {
 			rezeptView.savedHTML.setHTML("gespeichert");
 		}
+	    
+	    
 		
 	}
 	
@@ -615,6 +617,12 @@ public class EaternityRechner implements EntryPoint {
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
 		
+		adjustStickyEdit();
+    }
+
+
+
+	private void adjustStickyEdit() {
 		//		use this to check the scrolling events:
 		//	titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
@@ -645,13 +653,11 @@ public class EaternityRechner implements EntryPoint {
 			reset = true;
 			
 		}
-		
-		
-    } 
+	} 
 
 	
 	@UiHandler("addRezeptButton")
-	public void onButtonPress(ClickEvent event) {
+	public void onAddRezeptButtonPress(ClickEvent event) {
 		Recipe recipe = new Recipe();
 		
 		// TODO I don't want those to be set here... those are the standarts, and should be set elsewhere
@@ -663,6 +669,7 @@ public class EaternityRechner implements EntryPoint {
 		recipe.openRequested = true;
 		
 		ShowRezept(recipe);	
+		adjustStickyEdit();
 	}
 	
 	@UiHandler("rezeptList")
@@ -699,6 +706,8 @@ public class EaternityRechner implements EntryPoint {
 			suggestionPanel.clear();
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
 			rezeptView.updtTopSuggestion();
+			
+			adjustStickyEdit();
 
 		}
 	}
