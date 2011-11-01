@@ -35,8 +35,9 @@
 		.savePanel {
 		padding:3px;
 		display:block;
-		width:600px;
+		width:740px;
 		clear:both;
+		text-align:right;
 		margin-top:-20px;
 		}
 		.inline {
@@ -62,7 +63,7 @@
 		.cookingInstr {
 		float:left;
 		margin-left:6px;
-		height:153px;
+		height:113px;
 		width:200px;
 		display:inline;
 		margin-top:0px;
@@ -308,7 +309,6 @@
 				<g:HTML ui:field='codeImage'></g:HTML>
 
 				<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
-
 					<g:Button styleName='{style.gwt-Button}' ui:field="RezeptButton"
 						text="Rezept Speichern" />
 					<g:Button styleName='{style.gwt-Button}' ui:field="reportButton"
