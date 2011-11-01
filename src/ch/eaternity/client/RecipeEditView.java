@@ -92,8 +92,8 @@ public class RecipeEditView extends Composite {
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
 	@UiField HTMLPanel rezeptTitle;
-	@UiField Label rezeptNameTop;
-	@UiField Label rezeptSubTitleTop;
+//	@UiField Label rezeptNameTop;
+//	@UiField Label rezeptSubTitleTop;
 
 	@UiField HTML bottomIndikator;
 //	@UiField HorizontalPanel imageUploaderHP;
@@ -144,23 +144,23 @@ public class RecipeEditView extends Composite {
 	    tableRowDragController = new FlexTableRowDragController(dragArea);
 	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
 	    
-//	    EaternityRechner.MenuTable = MenuTable;
     
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
 	    
-	    
+	    // this grap becomes visible even when not logged in...
 	    if(TopPanel.leftKitchen){
 	    	PrepareButton.setVisible(false);
 	    }
+	    
 	    setRezept(recipe);
 	    saved = true;
 	    initTable();
-	    
-	    RezeptName.setVisible(false);
-	    rezeptDetails.setVisible(false);
-	    cookingInstr.setVisible(false);
-	    detailText.setVisible(false);
+//	    
+//	    RezeptName.setVisible(false);
+//	    rezeptDetails.setVisible(false);
+//	    cookingInstr.setVisible(false);
+//	    detailText.setVisible(false);
 	    
 //	    galleryWidget = new PhotoGallery(this);
 ////	    addInfoPanel.insert(galleryWidget,0);
@@ -281,14 +281,10 @@ public class RecipeEditView extends Composite {
 
 		String clear = Converter.toString(code,34);
 		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
-//		Window.Location.assign(url);
 		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
-//		getURL(url);
+
 	}
 
-//	public static native String getURL(String url)/*-{
-//    	return $wnd.open(url, 'target=_blank')
-//	}-*/;
 	
 	@UiHandler("MenuTable")
 	void onClick(ClickEvent event) {
@@ -329,70 +325,74 @@ public class RecipeEditView extends Composite {
 	}
 
 
-	@UiHandler("rezeptNameTop")
-	void onMouseOver(MouseOverEvent event) {
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			RezeptName.setVisible(true);
-			rezeptNameTop.setVisible(false);
-		}
-	}
+//	@UiHandler("rezeptNameTop")
+//	void onMouseOver(ClickEvent event) {
+////		if (EaternityRechner.loginInfo.isLoggedIn()) {
+//			RezeptName.setVisible(true);
+//			rezeptNameTop.setVisible(false);
+////		}
+//	}
 	
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
-			rezeptNameTop.setText(RezeptName.getText());
+//			rezeptNameTop.setText(RezeptName.getText());
+			rezeptViewOrigin.rezeptNameTop.setText(RezeptName.getText());
 			recipe.setSymbol(RezeptName.getText());
+			EaternityRechner.titleHTML.setHTML("Sie bearbeiten soeben: " +RezeptName.getText());
 		}
 	}
 	
-	@UiHandler("RezeptName")
-	void onMouseOut(MouseOutEvent event) {
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			RezeptName.setVisible(false);
-			rezeptNameTop.setVisible(true);
-		}
-	}
+//	@UiHandler("RezeptName")
+//	void onMouseOut(MouseOutEvent event) {
+////		if (EaternityRechner.loginInfo.isLoggedIn()) {
+//			RezeptName.setVisible(false);
+//			rezeptNameTop.setVisible(true);
+////		}
+//	}
 	
 	@UiHandler("cookingInstr")
 	void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
-			htmlCooking.setText(cookingInstr.getText());
+//			htmlCooking.setText(cookingInstr.getText());
+			rezeptViewOrigin.cookingInstr.setText(cookingInstr.getText());
 			recipe.setCookInstruction(cookingInstr.getText());
 		}
 	}
 	
-	@UiHandler("cookingInstr")
-	void onMouseOutCook(MouseOutEvent event) {
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			cookingInstr.setVisible(false);
-			htmlCooking.setVisible(true);
-		}
-	}
-	
+//	@UiHandler("cookingInstr")
+//	void onMouseOutCook(MouseOutEvent event) {
+////		if (EaternityRechner.loginInfo.isLoggedIn()) {
+//			cookingInstr.setVisible(false);
+//			htmlCooking.setVisible(true);
+////		}
+//	}
+//	
 
-	@UiHandler("rezeptSubTitleTop")
-	void onMouseOverSub(MouseOverEvent event) {
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			rezeptDetails.setVisible(true);
-			rezeptSubTitleTop.setVisible(false);
-		}
-	}
+//	@UiHandler("rezeptSubTitleTop")
+//	void onMouseOverSub(ClickEvent event) {
+////		if (EaternityRechner.loginInfo.isLoggedIn()) {
+//			rezeptDetails.setVisible(true);
+//			rezeptSubTitleTop.setVisible(false);
+////		}
+//	}
 	
 	@UiHandler("rezeptDetails")
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
-			rezeptSubTitleTop.setText(rezeptDetails.getText());
+//			rezeptSubTitleTop.setText(rezeptDetails.getText());
+			rezeptViewOrigin.detailText.setText(rezeptDetails.getText());
 			recipe.setSubTitle(rezeptDetails.getText());
 		}
 	}
 	
-	@UiHandler("rezeptDetails")
-	void onMouseOutSub(MouseOutEvent event) {
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			rezeptDetails.setVisible(false);
-			rezeptSubTitleTop.setVisible(true);
-		}
-	}
+//	@UiHandler("rezeptDetails")
+//	void onMouseOutSub(MouseOutEvent event) {
+////		if (EaternityRechner.loginInfo.isLoggedIn()) {
+//			rezeptDetails.setVisible(false);
+//			rezeptSubTitleTop.setVisible(true);
+////		}
+//	}
 	
 	
 	
@@ -432,7 +432,13 @@ public class RecipeEditView extends Composite {
 		
 		// is this necessary... it should be only on change...
 		updateSuggestion(SuggestTable, MenuTable);
-		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+		
+
+//		RecipeView rezeptView = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 0);
+////		rezeptView.setRezept(recipe);
+////		rezeptView.updateSuggestion();
+//		rezeptView.showRezept(recipe);
+//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 		
 	}
 	
@@ -480,31 +486,34 @@ public class RecipeEditView extends Composite {
 		
 		
 	    if(recipe.getCookInstruction() != null){
-	    	htmlCooking = new HTML(recipe.getCookInstruction());
+	    	cookingInstr.setText(recipe.getCookInstruction());
 	    } else {
-	    	htmlCooking = new HTML("Kochanleitung.");
+	    	cookingInstr.setText("Kochanleitung.");
+//	    	htmlCooking = new HTML("Kochanleitung.");
 	    }
-	    	htmlCooking.addStyleName("cookingInstr");
-	    	menuDecoInfo.insert(htmlCooking,0);
+//	    	htmlCooking.addStyleName("cookingInstr");
+//	    	menuDecoInfo.insert(htmlCooking,0);
+//	    	
 	    	
-	    	
-	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
-
-				@Override
-				public void onMouseOver(MouseOverEvent event) {
-					// TODO Auto-generated method stub
-					if (EaternityRechner.loginInfo.isLoggedIn()) {
-						cookingInstr.setVisible(true);
-						htmlCooking.setVisible(false);
-					}
-				}
-			});
+//	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
+//
+//				@Override
+//				public void onMouseOver(MouseOverEvent event) {
+//					// TODO Auto-generated method stub
+//					if (EaternityRechner.loginInfo.isLoggedIn()) {
+//						cookingInstr.setVisible(true);
+//						htmlCooking.setVisible(false);
+//					}
+//				}
+//			});
 	    	
 	    
 	}
 	
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
+		rezeptViewOrigin = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 1);
+		
 //		showRezept(recipe);
 	}
 
@@ -513,6 +522,8 @@ public class RecipeEditView extends Composite {
 	}	
 	
 	public void showRezept(final Recipe recipe) {
+		
+		
 
 			if(recipe.getPersons() != null){
 				amountPersons.setText(recipe.getPersons().toString());
@@ -524,7 +535,10 @@ public class RecipeEditView extends Composite {
 			
 			displayZutatImMenu(recipe.Zutaten);
 			updateSuggestion(SuggestTable, MenuTable);
-			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+//			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+			
+			RezeptName.setText(recipe.getSymbol());
+			EaternityRechner.titleHTML.setHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
 //			zutatImMenu.clear();
 			
 //			int row = AddZutatZumMenu(recipe.getZutaten());
@@ -629,7 +643,7 @@ public class RecipeEditView extends Composite {
 		}
 		
 		updateSuggestion(SuggestTable, MenuTable);
-		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 
 	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
@@ -749,7 +763,7 @@ public class RecipeEditView extends Composite {
 			
 			// update all values, that change as there is one ingredient less...
 			updateSuggestion(SuggestTable, MenuTable);
-			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+//			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 		}
 	});
 	
@@ -890,9 +904,13 @@ public class RecipeEditView extends Composite {
 		
 		MenuTable.setWidget(row, 2,  icon);
 	}
-	
+	RecipeView rezeptViewOrigin;
 	void updateSuggestion(FlexTable suggestTable,FlexTable menuTable) {
 
+//		in the list
+			
+		rezeptViewOrigin.showRezept(recipe);
+		
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
 
@@ -911,7 +929,7 @@ public class RecipeEditView extends Composite {
 		}
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			menuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
+			menuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+" g*");
 			menuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
@@ -920,10 +938,11 @@ public class RecipeEditView extends Composite {
 		suggestTable.setCellSpacing(2);
 		suggestTable.setText(1,0,"SUMME");
 		suggestTable.getColumnFormatter().setWidth(0, "215px");
-		suggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
+		suggestTable.setHTML(1,1,"ca <b>"+formatted+" g</b>* CO₂-Äq.");
 		suggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
+		// this is right now not relevant, yet gets executed
 		updtTopSuggestion();
 		
 		heightOfView = this.getOffsetHeight();
@@ -992,8 +1011,8 @@ public class RecipeEditView extends Composite {
 		Double MaxValueRezept = 0.0;
 		Double MinValueRezept = 10000000.0;
 		//  go over the Recipes in the Workspace
-		for(Widget widget : EaternityRechner.rezeptEditList){
-			RecipeEditView rezeptView = (RecipeEditView) widget;
+		for(Widget widget : EaternityRechner.rezeptList){
+			RecipeView rezeptView = (RecipeView) widget;
 			rezeptView.recipe.setCO2Value();
 			if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
 				MaxValueRezept = rezeptView.recipe.getCO2Value();
@@ -1110,20 +1129,23 @@ public class RecipeEditView extends Composite {
 
 
 		// update all widgets bars!
-		for(Widget widget : EaternityRechner.rezeptEditList){
-			RecipeEditView rezeptView = (RecipeEditView) widget;
+		for(Widget widget : EaternityRechner.rezeptList){
+			RecipeView rezeptView = (RecipeView) widget;
 			rezeptView.recipe.setCO2Value();
 			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
-//			
-//			no need here because this is the top
-//			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
+
+			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
 			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
-//			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
+			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
 			
 			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
 		}
 
-			
+		// and the one from the edit!
+		recipe.setCO2Value();
+		Long indikatorLeft = new Long(Math.round(580/(stop-start)*(recipe.getCO2Value()-start)));
+		String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(recipe.getCO2Value())+" g* (pro Person)</div>");
+		bottomIndikator.setHTML(indikatorHTMLunten);
 		
 		// und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
 	}
@@ -1347,7 +1369,7 @@ public class RecipeEditView extends Composite {
 		
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
 		updateSuggestion(SuggestTable, MenuTable);
-		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 	
 	private static int getWidgetRow(Widget widget, FlexTable table) {

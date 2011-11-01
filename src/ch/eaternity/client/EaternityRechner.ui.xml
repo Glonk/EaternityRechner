@@ -180,7 +180,7 @@ position:relative;
 	       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Rezept"/> 
 	       			
 	       			<!--  Ihre Rezepte:  -->
-	       			Sie bearbeiten soeben: <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Dieses Rezept</g:HTML>
+	       			<g:HTML ui:field="titleHTML" styleName='{style.inline}'>Wählen Sie eine Zutat um sie dem Menu hinzuzufügen.</g:HTML>
 	       			
 	       			<!-- suggest bar -->
 	       			<!-- Im Vergleich: -->

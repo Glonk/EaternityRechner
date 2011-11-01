@@ -104,7 +104,8 @@ public class EaternityRechner implements EntryPoint {
 	static FlexTable SuggestTable;
 	@UiField
 	static HorizontalPanel addInfoPanel;
-	@UiField HTML titleHTML;
+	@UiField
+	static HTML titleHTML;
 	@UiField DockLayoutPanel topSticky;
 	@UiField HTMLPanel panelNorth;
 	@UiField HTMLPanel htmlRezept;
@@ -679,6 +680,7 @@ public class EaternityRechner implements EntryPoint {
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			
 			// put this recipe into the edit panel...
+			
 			rezeptEditView.setRezept(rezeptView.recipe);
 			rezeptEditView.showRezept(rezeptEditView.recipe);
 			
@@ -764,13 +766,12 @@ public class EaternityRechner implements EntryPoint {
 			
 			// both get added
 			rezeptView = new RecipeView(newRezept);
-			rezeptEditView = new RecipeEditView(newRezept);
-			
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
 			rezeptList.getRowFormatter().setStyleName(0, "recipe");
 			styleRezept(selectedRezept, true);
 			
 			// the edit form
+			rezeptEditView = new RecipeEditView(newRezept);
 			rezeptEditList.setWidget(0, 1, rezeptEditView);
 			rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
 			

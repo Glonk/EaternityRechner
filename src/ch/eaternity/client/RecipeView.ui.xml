@@ -133,6 +133,10 @@
 		display: inline;
 	}
 	
+	.recipePersonsHTML{
+		margin-right:20px;
+		}
+		
 	.recipeSmallDetail{
 	margin-left:10px;
 	 height:10px;
@@ -157,12 +161,13 @@
 	}
 	.MenuTable {
 		width:360px;
-	    cursor: pointer;
-    	cursor: hand;
+	 /*   cursor: pointer;
+    	cursor: hand; */
   
 	}
 	.MenuTable tr{
-	 
+	 	height: 25px;
+	 	vertical-align:center;
 	}
 	
 	.gwt-Button {
@@ -199,7 +204,7 @@
 
 </ui:style>
 
-  <ui:style field='selectionStyleRow'
+  <!--ui:style field='selectionStyleRow'
     type='ch.eaternity.client.RecipeView.SelectionStyleRow'>
 
   .selectedRow td{
@@ -207,7 +212,7 @@
   }
 
  
-  </ui:style>
+  </ui:style-->
   
   <ui:style field='evenStyleRow'
     type='ch.eaternity.client.RecipeView.EvenStyleRow'>
@@ -250,7 +255,7 @@
            					<g:Label ui:field="rezeptSubTitleTop" styleName='{style.rezeptSubTitleTop}' ></g:Label>
            					<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept Untertitel</g:TextBox>
            				    <g:HTMLPanel styleName='{style.recipePersons}'>
-           						für <g:HTML ui:field='amountPersons'>4</g:HTML > Personen
+           						<g:HTML ui:field='amountPersons' styleName='{style.recipePersonsHTML}'>für 4 Personen</g:HTML >
            					</g:HTMLPanel>
            				</g:HTMLPanel >
 
