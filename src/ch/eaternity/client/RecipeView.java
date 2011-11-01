@@ -94,13 +94,12 @@ public class RecipeView extends Composite {
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
 	@UiField HTMLPanel rezeptTitle;
-	@UiField Label rezeptNameTop;
-	@UiField Label rezeptSubTitleTop;
+
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
 //	@UiField HorizontalPanel imageUploaderHP;
 	@UiField TextArea cookingInstr;
-	@UiField HTML amountPersons;
+	@UiField TextBox amountPersons;
 	@UiField TextBox rezeptDetails;
 	@UiField VerticalPanel MenuTableWrapper;
 	
@@ -155,10 +154,10 @@ public class RecipeView extends Composite {
 	    saved = true;
 	    initTable();
 	    
-	    RezeptName.setVisible(false);
-	    rezeptDetails.setVisible(false);
-	    cookingInstr.setVisible(false);
-	    detailText.setVisible(false);
+//	    RezeptName.setVisible(false);
+//	    rezeptDetails.setVisible(false);
+//	    cookingInstr.setVisible(false);
+//	    detailText.setVisible(false);
 	    
 //	    galleryWidget = new PhotoGallery(this);
 ////	    addInfoPanel.insert(galleryWidget,0);
@@ -338,13 +337,14 @@ public class RecipeView extends Composite {
 //		}
 //	}
 //	
-//	@UiHandler("RezeptName")
-//	void onEdit(KeyUpEvent event) {
-//		if(RezeptName.getText() != ""){
+	@UiHandler("RezeptName")
+	void onEdit(KeyUpEvent event) {
+		if(RezeptName.getText() != ""){
 //			rezeptNameTop.setText(RezeptName.getText());
-//			recipe.setSymbol(RezeptName.getText());
-//		}
-//	}
+			recipe.setSymbol(RezeptName.getText());
+			
+		}
+	}
 //	
 //	@UiHandler("RezeptName")
 //	void onMouseOut(MouseOutEvent event) {
@@ -354,13 +354,13 @@ public class RecipeView extends Composite {
 //		}
 //	}
 //	
-//	@UiHandler("cookingInstr")
-//	void onEditCook(KeyUpEvent event) {
-//		if(cookingInstr.getText() != ""){
+	@UiHandler("cookingInstr")
+	void onEditCook(KeyUpEvent event) {
+		if(cookingInstr.getText() != ""){
 //			htmlCooking.setText(cookingInstr.getText());
-//			recipe.setCookInstruction(cookingInstr.getText());
-//		}
-//	}
+			recipe.setCookInstruction(cookingInstr.getText());
+		}
+	}
 //	
 //	@UiHandler("cookingInstr")
 //	void onMouseOutCook(MouseOutEvent event) {
@@ -379,13 +379,22 @@ public class RecipeView extends Composite {
 //		}
 //	}
 //	
-//	@UiHandler("rezeptDetails")
-//	void onEditSub(KeyUpEvent event) {
-//		if(rezeptDetails.getText() != ""){
+	
+	RecipeEditView rezeptViewEdit;
+	@UiHandler("rezeptDetails")
+	void onEditSub(KeyUpEvent event) {
+		if(rezeptDetails.getText() != ""){
 //			rezeptSubTitleTop.setText(rezeptDetails.getText());
-//			recipe.setSubTitle(rezeptDetails.getText());
-//		}
-//	}
+			recipe.setSubTitle(rezeptDetails.getText());
+			
+			// only do this, if this is the recipe that is getting edited
+			rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
+			
+			
+			rezeptViewEdit.rezeptDetails.setText(rezeptDetails.getText());
+			rezeptViewEdit.recipe.setSubTitle(rezeptDetails.getText());
+		}
+	}
 //	
 //	@UiHandler("rezeptDetails")
 //	void onMouseOutSub(MouseOutEvent event) {
@@ -481,26 +490,26 @@ public class RecipeView extends Composite {
 		
 		
 	    if(recipe.getCookInstruction() != null){
-	    	htmlCooking = new HTML(recipe.getCookInstruction());
+	    	cookingInstr.setText(recipe.getCookInstruction());
 	    } else {
-	    	htmlCooking = new HTML("Kochanleitung.");
+	    	cookingInstr.setText("Kochanleitung.");
 	    }
-	    	htmlCooking.addStyleName("cookingInstr");
-	    	menuDecoInfo.insert(htmlCooking,0);
+//	    	htmlCooking.addStyleName("cookingInstr");
+//	    	menuDecoInfo.insert(htmlCooking,0);
 	    	
 	    	
-	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
-
-				@Override
-				public void onMouseOver(MouseOverEvent event) {
-					// TODO Auto-generated method stub
-					if (EaternityRechner.loginInfo.isLoggedIn()) {
-						cookingInstr.setVisible(true);
-						htmlCooking.setVisible(false);
-					}
-				}
-			});
-	    	
+//	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
+//
+//				@Override
+//				public void onMouseOver(MouseOverEvent event) {
+//					// TODO Auto-generated method stub
+//					if (EaternityRechner.loginInfo.isLoggedIn()) {
+//						cookingInstr.setVisible(true);
+//						htmlCooking.setVisible(false);
+//					}
+//				}
+//			});
+//	    	
 	    
 	}
 	
@@ -516,9 +525,9 @@ public class RecipeView extends Composite {
 	public void showRezept(final Recipe recipe) {
 
 			if(recipe.getPersons() != null){
-				amountPersons.setText("für " + recipe.getPersons().toString() + " Personen");
+				amountPersons.setText(recipe.getPersons().toString());
 			} else {
-				amountPersons.setText("für 4 Personen");
+				amountPersons.setText("4");
 //				Long persons = Long.parseLong(amountPersons.getText());
 //				recipe.setPersons(persons);
 			}
@@ -537,7 +546,7 @@ public class RecipeView extends Composite {
 				public void onClick(ClickEvent event) {
 					if(RezeptName.getText() != ""){
 						// TODO warn that it wasn't saved in the other case
-						amountPersons.setText("für " + recipe.getPersons().toString() + " Personen");
+						amountPersons.setText(recipe.getPersons().toString());
 //						Speichere Recipe ab. 
 //						Recipe rezeptSave = new Recipe(RezeptName.getText());
 //						rezeptSave.setOpen(makePublic.getValue());

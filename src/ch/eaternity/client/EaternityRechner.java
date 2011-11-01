@@ -146,23 +146,13 @@ public class EaternityRechner implements EntryPoint {
 		Window.setMargin("0px");
 
 
-
-		// Listen for item selection, displaying the currently-selected item in
-		// the detail area.
-		//	    mailList.setListener(new MailList.Listener() {
-		//	      public void onItemSelected(MailItem item) {
-		//	        mailDetail.setItem(item);
-		//	      }
-		//	    });
-
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get();
 		root.add(outer);
-		// mainPanel.add(signOutLink);
 		
 		// TODO Move cursor focus to the Search box.
-		// TODO remove this with something that makes more sense
+		// TODO adjust this with something that makes more sense / what would that be?
 		rezeptList.getColumnFormatter().setWidth(1, "750px");
 		rezeptEditList.getColumnFormatter().setWidth(1, "750px");
 
@@ -196,6 +186,7 @@ public class EaternityRechner implements EntryPoint {
 					} 
 				} else   {
 					loadLogin();
+					// are you even an admin?
 					if(adminHandler != null){
 						adminHandler.removeHandler();
 						ingredientHandler.removeHandler();
@@ -203,9 +194,6 @@ public class EaternityRechner implements EntryPoint {
 				}
 			}
 		});
-		
-
-
 
 	}
 
@@ -221,9 +209,11 @@ public class EaternityRechner implements EntryPoint {
 			}
 
 			public void onSuccess(Long id) {
-//Window.alert("good");
+				
+// why would i want to display the menu after it is saved?
 //				Search.displayRezept(recipe);
 				
+				// when this is your first one... so show the panel...
 				Search.yourMealsPanel.setVisible(true);
 				recipe.setId(id);
 	
@@ -231,7 +221,8 @@ public class EaternityRechner implements EntryPoint {
 				Search.updateResults(Search.SearchInput.getText());
 				rezeptView.saved = true;
 				
-				
+				// TODO make same sense out of this
+				// this is just a test functionality...
 				rezeptView.codeImage.setHTML(
 						"<a href="
 						+ GWT.getHostPageBaseURL()
@@ -275,6 +266,7 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 	
+	// TODO who needs this??? please clean
 	private static void undisplayRezept(String rezept_id) {
 
 	}
@@ -284,6 +276,7 @@ public class EaternityRechner implements EntryPoint {
 		topPanel.signInLink.setHref(loginInfo.getLoginUrl());
 		
 		// TODO only show when logged in:
+		// do I really want only for logged in people to save this?
 		//SaveRezeptPanel.setVisible(false);
 	}
 
@@ -338,7 +331,7 @@ public class EaternityRechner implements EntryPoint {
 
 	        @Override
 	        public void onFailure(ServerFailure error) {
-	          Window.alert("Failed to initialize Transport!");
+	          Window.alert("Failed to initialize Url-shortener!");
 	        }
 	      });
 	}
@@ -359,6 +352,7 @@ public class EaternityRechner implements EntryPoint {
 		// this means, pull all kitchens from the server
 		
 		// TODO get all the other recipes
+		// what are the other recipes?
 		dataService.getAdminRezepte(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -373,6 +367,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		
 		// TODO get all the other recipes
+		// what are the other recipes?
 		dataService.getAdminKitchens(new AsyncCallback<List<Kitchen>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -397,7 +392,10 @@ public class EaternityRechner implements EntryPoint {
 	}
 
 	public static void ShowRezept(final Recipe recipe) {
-		// create a new one
+		// This is basically right now a clone procedure!
+		// which is okay, if you don't own that recipe already...
+		// otherwise you would want to edit the old one (or at least signal the 
+		// clone procedure by pressing a "Duplicate this Menu" Button.
 		
 		styleRezept(selectedRezept, false);
 		
@@ -407,7 +405,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		for(IngredientSpecification zutatNew : recipe.getZutaten()){
 			
-			// TODO that nothing is missing
+			// TODO check that nothing is missing
 			final IngredientSpecification zutat = new IngredientSpecification(zutatNew.getId(), zutatNew.getName(),
 					zutatNew.getCookingDate(),zutatNew.getZustand(),zutatNew.getProduktion(), 
 					zutatNew.getTransportmittel());
@@ -447,10 +445,10 @@ public class EaternityRechner implements EntryPoint {
 		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.recipe.setSymbol("Ihr " + recipe.getSymbol());
 		
-		rezeptView.rezeptNameTop.setText("Ihr " + recipe.getSymbol());
+		rezeptView.RezeptName.setText("Ihr " + recipe.getSymbol());
 		rezeptView.titleHTML.setText(recipe.getSymbol());
 		
-		rezeptView.rezeptSubTitleTop.setText(recipe.getSubTitle());
+		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.makePublic.setValue(!recipe.openRequested);
 		
 		rezeptView.openHTML.setHTML("nicht veröffentlicht");
@@ -461,7 +459,7 @@ public class EaternityRechner implements EntryPoint {
 		}
 		
 		if(recipe.getCookInstruction() != null){
-			rezeptView.htmlCooking.setHTML(recipe.getCookInstruction());
+			rezeptView.cookingInstr.setText(recipe.getCookInstruction());
 			rezeptView.recipe.setCookInstruction(recipe.getCookInstruction());
 		}
 		
@@ -487,6 +485,8 @@ public class EaternityRechner implements EntryPoint {
 	    if(recipe.image != null){
 	    	rezeptView.getRezept().image = recipe.image;
 	    	rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s150-c");
+	    	
+	    	// TODO check if the following is legacy code...
 //	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
 //	    	rezeptView.imageUploaderHP.add(showImage);
 	    	
@@ -604,36 +604,28 @@ public class EaternityRechner implements EntryPoint {
 		
 	}
 	
+	// some local variables for the scrolling behavior
 	boolean reset = true;
 	int displayHeight = 120;
 	
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
 		
-//		use this to check the scrolling events
-//		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
+		//		use this to check the scrolling events:
+		//	titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
 		if(rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight)){
 			
-//			Window.alert("yes!!");
 			topSticky.setWidgetSize(panelNorth, 40+displayHeight);
 			
-			
-			
-//			int offsetheight = rezeptEditView.htmlRezept.getOffsetHeight();
 			if(dragArea.getWidgetCount() > 0){
 				dragArea.remove(0);
 			}
 			
+			// TODO check if adding, means in deed, deleting it from the old place 
+			// (and if anything is still correctly wired... )
 			dragArea.add(rezeptEditView.htmlRezept);
-//			HorizontalPanel addPanel = rezeptEditView.addInfoPanel;
-//			rezeptEditView.htmlRezept.clear();
-//			rezeptEditView.dragArea.add(new HTML("<div style='height: "+Integer.toString(offsetheight) + "px'></div>" ));
-			
-//			htmlRezept.clear();
-//			htmlRezept.add(addPanel);
-			
-			
+
 			if(reset){
 				scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()+1);
 				reset = false;
@@ -642,15 +634,12 @@ public class EaternityRechner implements EntryPoint {
 		
 //		if(rezeptEditView.getOffsetHeight() > (scrollWorkspace.getVerticalScrollPosition()) && !reset){
 		if(0 == (scrollWorkspace.getVerticalScrollPosition()) && !reset){
+			
 			topSticky.setWidgetSize(panelNorth, 40);
-			
 			rezeptEditView.dragArea.add(dragArea.getWidget(0));
-//			rezeptEditView.htmlRezept.clear();
-//			rezeptEditView.htmlRezept.add(htmlRezept.getWidget(0));
-//			htmlRezept.clear();
-			
 			scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()-displayHeight);
 			reset = true;
+			
 		}
 		
 		
@@ -660,11 +649,14 @@ public class EaternityRechner implements EntryPoint {
 	@UiHandler("addRezeptButton")
 	public void onButtonPress(ClickEvent event) {
 		Recipe recipe = new Recipe();
+		
+		// TODO I don't want those to be set here... those are the standarts, and should be set elsewhere
 		recipe.setSymbol("unbenanntes Rezept");
 		recipe.setSubTitle(" ");
 		recipe.setCookInstruction("keine Kochanleitung.");
 		recipe.open = false;
 		recipe.openRequested = true;
+		
 		ShowRezept(recipe);	
 	}
 	
@@ -680,6 +672,13 @@ public class EaternityRechner implements EntryPoint {
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			
 			// put this recipe into the edit panel...
+			if(rezeptEditList.getRowCount() == 0){
+				rezeptEditList.insertRow(0);
+			}
+			rezeptEditView = new RecipeEditView(rezeptView.recipe);
+			rezeptEditList.setWidget(0, 1, rezeptEditView);
+			rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
+			
 			
 			rezeptEditView.setRezept(rezeptView.recipe);
 			rezeptEditView.showRezept(rezeptEditView.recipe);
@@ -696,7 +695,9 @@ public class EaternityRechner implements EntryPoint {
 			String style = selectionStyle.selectedRezept();
 
 			if (selected) {
+				// color the recipe
 				rezeptList.getRowFormatter().addStyleName(row, style);
+				// TODO maybe it makes sense to color even more elements in here
 			} else {
 				rezeptList.getRowFormatter().removeStyleName(row, style);
 			}

@@ -56,12 +56,14 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -310,7 +312,7 @@ public class RecipeEditView extends Composite {
 				if(persons > 0){
 					recipe.setPersons(persons);
 					updateSuggestion(SuggestTable, MenuTable);
-					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+//					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 				} else {
 //					amountPersons.setText("1");
 				}
@@ -337,7 +339,7 @@ public class RecipeEditView extends Composite {
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
 //			rezeptNameTop.setText(RezeptName.getText());
-			rezeptViewOrigin.rezeptNameTop.setText(RezeptName.getText());
+			rezeptViewOrigin.RezeptName.setText(RezeptName.getText());
 			recipe.setSymbol(RezeptName.getText());
 			EaternityRechner.titleHTML.setHTML("Sie bearbeiten soeben: " +RezeptName.getText());
 		}
@@ -381,7 +383,7 @@ public class RecipeEditView extends Composite {
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
 //			rezeptSubTitleTop.setText(rezeptDetails.getText());
-			rezeptViewOrigin.detailText.setText(rezeptDetails.getText());
+			rezeptViewOrigin.rezeptDetails.setText(rezeptDetails.getText());
 			recipe.setSubTitle(rezeptDetails.getText());
 		}
 	}
@@ -458,9 +460,10 @@ public class RecipeEditView extends Composite {
 		
 		dlg.executeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				int row = getWidgetRow(test , EaternityRechner.rezeptList);
-				EaternityRechner.rezeptList.remove(test);
-				EaternityRechner.rezeptList.removeRow(row);
+				int row = getWidgetRow(test , EaternityRechner.rezeptEditList);
+				EaternityRechner.rezeptEditList.remove(test);
+				EaternityRechner.rezeptEditList.removeRow(row);
+				EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
 				EaternityRechner.selectedRezept = -1;
 				EaternityRechner.suggestionPanel.clear();
 				dlg.hide();
@@ -598,10 +601,13 @@ public class RecipeEditView extends Composite {
 
 	 void selectRow(int row) {
 		 
-		 PrepareButton.setVisible(true);
+		 // only show the buttom if we are in a kitchen...
+		 if(TopPanel.selectedKitchen != null){
+			 PrepareButton.setVisible(true);
+		 }
 		//TODO uncomment this: why?
 		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
-//		Window.alert(Integer.toString(row));
+
 		
 		 saved = false;
 		 
@@ -767,7 +773,9 @@ public class RecipeEditView extends Composite {
 		}
 	});
 	
+//	HasHorizontalAlignment.ALIGN_RIGHT
 	final TextBox MengeZutat = new TextBox();
+	MengeZutat.setAlignment(TextAlignment.RIGHT);
 	MengeZutat.setText(Integer.toString(zutat.getMengeGramm()));
 	MengeZutat.setWidth("36px");
 	
