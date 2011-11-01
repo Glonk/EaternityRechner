@@ -517,7 +517,7 @@ public class RecipeEditView extends Composite {
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
 		rezeptViewOrigin = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 1);
-		
+		RecipeEditView.currentEdit = EaternityRechner.selectedRezept;
 //		showRezept(recipe);
 	}
 

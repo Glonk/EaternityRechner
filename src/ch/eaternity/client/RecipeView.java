@@ -345,8 +345,8 @@ public class RecipeView extends Composite {
 			// only do this, if this is the recipe that is getting edited
 			
 			// the case this recipe is also open
-			RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
-			if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+			if(isSelected){
+				RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
 				rezeptViewEdit.RezeptName.setText(RezeptName.getText());
 				rezeptViewEdit.recipe.setSymbol(RezeptName.getText());
 			}
@@ -371,8 +371,8 @@ public class RecipeView extends Composite {
 			// only do this, if this is the recipe that is getting edited
 			
 			// the case this recipe is also open
-			RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
-			if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+			if(isSelected){
+				RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
 				rezeptViewEdit.cookingInstr.setText(cookingInstr.getText());
 				rezeptViewEdit.recipe.setCookInstruction(cookingInstr.getText());
 			}
@@ -410,8 +410,8 @@ public class RecipeView extends Composite {
 			// only do this, if this is the recipe that is getting edited
 			
 			// the case this recipe is also open
-			RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
-			if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+			if(isSelected){
+				RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
 				rezeptViewEdit.rezeptDetails.setText(rezeptDetails.getText());
 				rezeptViewEdit.recipe.setSubTitle(rezeptDetails.getText());
 			}
@@ -442,8 +442,10 @@ public class RecipeView extends Composite {
 					// only do this, if this is the recipe that is getting edited
 					
 					// the case this recipe is also open
-					RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
-					if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+					
+					
+					if(isSelected){
+						RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
 						rezeptViewEdit.amountPersons.setText(Long.toString(persons));
 						rezeptViewEdit.recipe.setPersons(persons);
 						rezeptViewEdit.updateSuggestion();
@@ -530,6 +532,10 @@ public class RecipeView extends Composite {
 		dlg.executeButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int row = getWidgetRow(test , EaternityRechner.rezeptList);
+				
+				if(isSelected){
+//					close also the Editview!
+				}
 				EaternityRechner.rezeptList.remove(test);
 				EaternityRechner.rezeptList.removeRow(row);
 				EaternityRechner.selectedRezept = -1;
@@ -1470,6 +1476,9 @@ public class RecipeView extends Composite {
 	      panelImages.add(image);
 	    }
 	  };
+
+
+	public boolean isSelected;
 }
 
 //class ComparatorObject{

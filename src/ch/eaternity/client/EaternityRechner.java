@@ -401,8 +401,8 @@ public class EaternityRechner implements EntryPoint {
 		
 		styleRezept(selectedRezept, false);
 		
-		// warum wird hier kein rezept markiert?
-//		selectedRezept = -1;
+		// hier wird zurückgestzt, da sonst kein neues gemacht wird
+		selectedRezept = -1;
 		
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 		zutaten.clear();
@@ -520,6 +520,7 @@ public class EaternityRechner implements EntryPoint {
 	    	rezeptView.bildEntfernen.setVisible(true);
 	    	}
 	    }
+	    
 	    final Anchor mehrDetails = new Anchor("mehr Details");
 	    mehrDetails.setStyleName("floatRight");
 	    rezeptView.askForLess = false;
@@ -669,12 +670,17 @@ public class EaternityRechner implements EntryPoint {
 		Cell cell = rezeptList.getCellForEvent(event);
 		if (cell != null) {
 			
+			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
+			RecipeView rezeptViewOld = (RecipeView) rezeptViewWidget;
+			rezeptViewOld.isSelected = false;
+			
 			styleRezept(selectedRezept, false);
 			selectedRezept = cell.getRowIndex();
 			styleRezept(selectedRezept, true);
 			
-			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
+			rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
+			rezeptView.isSelected = true;
 			
 			// put this recipe into the edit panel...
 			if(rezeptEditList.getRowCount() == 0){
@@ -932,7 +938,7 @@ public class EaternityRechner implements EntryPoint {
 
 
 	private static void handleError(Throwable error) {
-		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
+//		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}
