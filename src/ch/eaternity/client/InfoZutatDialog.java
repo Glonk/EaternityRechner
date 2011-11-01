@@ -560,8 +560,8 @@ public class InfoZutatDialog extends Composite {
 //				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
 				
 				rezeptviewParent.changeIcons(selectedRow, zutatSpec);
-				rezeptviewParent.updateSuggestion(suggestTable, menuTable);
-				rezeptviewParent.updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+				rezeptviewParent.updateSuggestion();
+//				rezeptviewParent.updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 //			}
 			//TODO uncomment this:
 			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");

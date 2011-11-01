@@ -397,9 +397,13 @@ public class EaternityRechner implements EntryPoint {
 		// otherwise you would want to edit the old one (or at least signal the 
 		// clone procedure by pressing a "Duplicate this Menu" Button.
 		
+		// and it only gets called when pressing the new recipe button?
+		
 		styleRezept(selectedRezept, false);
 		
-		selectedRezept = -1;
+		// warum wird hier kein rezept markiert?
+//		selectedRezept = -1;
+		
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 		zutaten.clear();
 		
@@ -417,9 +421,8 @@ public class EaternityRechner implements EntryPoint {
 			zutat.setNormalCO2Value(zutatNew.getNormalCO2Value());
 			zutaten.add(zutat);
 		}
-
-		
 		AddZutatZumMenu(zutaten);
+		
 		final RecipeView rezeptView = (RecipeView) rezeptList.getWidget(selectedRezept,1);
 		
 		if(!recipe.deviceSpecifications.isEmpty()){
@@ -437,25 +440,25 @@ public class EaternityRechner implements EntryPoint {
 		
 		rezeptView.RezeptName.setText(recipe.getSymbol());
 		if(recipe.getSubTitle() == null){
-			rezeptView.recipe.setSubTitle("Recipe Untertitel");
+			rezeptView.recipe.setSubTitle("Menu Beschriftung");
 		} else {
 			rezeptView.recipe.setSubTitle(recipe.getSubTitle());
 		}
 		
 		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
-		rezeptView.recipe.setSymbol("Ihr " + recipe.getSymbol());
+		rezeptView.recipe.setSymbol(recipe.getSymbol());
 		
-		rezeptView.RezeptName.setText("Ihr " + recipe.getSymbol());
+		rezeptView.RezeptName.setText(recipe.getSymbol());
 		rezeptView.titleHTML.setText(recipe.getSymbol());
 		
 		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
-		rezeptView.makePublic.setValue(!recipe.openRequested);
+//		rezeptView.makePublic.setValue(!recipe.openRequested);
 		
-		rezeptView.openHTML.setHTML("nicht veröffentlicht");
+		rezeptView.openHTML.setHTML("Nicht veröffentlicht.");
 		if(recipe.isOpen()){
-			rezeptView.openHTML.setHTML("veröffentlicht");
+			rezeptView.openHTML.setHTML("Veröffentlicht.");
 		} else if(recipe.openRequested){
-			rezeptView.openHTML.setHTML("Veröffentlichung angefragt");
+			rezeptView.openHTML.setHTML("Veröffentlichung angefragt.");
 		}
 		
 		if(recipe.getCookInstruction() != null){
@@ -535,8 +538,8 @@ public class EaternityRechner implements EntryPoint {
 						
 					}
 					rezeptView.detailText.setVisible(false);
-//					rezeptView.cookingInstr.setVisible(true);
-					rezeptView.htmlCooking.setVisible(true);
+					rezeptView.cookingInstr.setVisible(true);
+//					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
 					rezeptView.askForLess = false;
 					if(rezeptView.showImageHandler != null){
@@ -574,7 +577,7 @@ public class EaternityRechner implements EntryPoint {
 					rezeptView.detailText.setWidth("730px");
 					rezeptView.detailText.setVisible(true);
 					rezeptView.cookingInstr.setVisible(false);
-					rezeptView.htmlCooking.setVisible(false);
+//					rezeptView.htmlCooking.setVisible(false);
 					mehrDetails.setText("weniger Details");
 					rezeptView.askForLess = true;
 
@@ -651,9 +654,10 @@ public class EaternityRechner implements EntryPoint {
 		Recipe recipe = new Recipe();
 		
 		// TODO I don't want those to be set here... those are the standarts, and should be set elsewhere
-		recipe.setSymbol("unbenanntes Rezept");
-		recipe.setSubTitle(" ");
-		recipe.setCookInstruction("keine Kochanleitung.");
+		recipe.setSymbol("Ihr Menu");
+		recipe.setSubTitle("Menu Beschreibung");
+		recipe.setCookInstruction("Kochanleitung.");
+		
 		recipe.open = false;
 		recipe.openRequested = true;
 		
@@ -664,6 +668,7 @@ public class EaternityRechner implements EntryPoint {
 	void onRezeptClicked(ClickEvent event) {
 		Cell cell = rezeptList.getCellForEvent(event);
 		if (cell != null) {
+			
 			styleRezept(selectedRezept, false);
 			selectedRezept = cell.getRowIndex();
 			styleRezept(selectedRezept, true);
@@ -682,6 +687,8 @@ public class EaternityRechner implements EntryPoint {
 			
 			rezeptEditView.setRezept(rezeptView.recipe);
 			rezeptEditView.showRezept(rezeptEditView.recipe);
+			
+			
 			
 			suggestionPanel.clear();
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
@@ -754,6 +761,10 @@ public class EaternityRechner implements EntryPoint {
 		if (selectedRezept == -1){
 			// create new Recipe
 			Recipe newRezept = new Recipe();
+			
+			
+			// what of the following becomes hence obsolete?
+			// TODO check this:
 			selectedRezept = 0;
 			
 //			both lists
@@ -794,11 +805,12 @@ public class EaternityRechner implements EntryPoint {
 			// this better should be mirrored
 			rezeptEditView = (RecipeEditView) rezeptEditList.getWidget(0,1);
 			rezeptEditView.setRezept(recipe);
+			rezeptView.showRezept(rezeptView.recipe);
 			
 		}
 		// this is necessary.
 		rezeptEditView.showRezept(rezeptEditView.recipe);
-		rezeptView.showRezept(rezeptView.recipe);
+		
 		
 		return selectedRezept;
 	}
@@ -920,7 +932,7 @@ public class EaternityRechner implements EntryPoint {
 
 
 	private static void handleError(Throwable error) {
-		Window.alert(error.getMessage());
+		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}

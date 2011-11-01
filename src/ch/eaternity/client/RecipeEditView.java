@@ -133,7 +133,7 @@ public class RecipeEditView extends Composite {
 	int  selectedRezept = -1;
 	public Recipe recipe;
 
-	
+	static int currentEdit;
 	public int heightOfView;
 	
 //	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
@@ -149,6 +149,7 @@ public class RecipeEditView extends Composite {
     
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
+	    currentEdit = EaternityRechner.selectedRezept;
 	    
 	    // this grap becomes visible even when not logged in...
 	    if(TopPanel.leftKitchen){
@@ -311,7 +312,7 @@ public class RecipeEditView extends Composite {
 				persons = Long.parseLong(amountPersons.getText().trim());
 				if(persons > 0){
 					recipe.setPersons(persons);
-					updateSuggestion(SuggestTable, MenuTable);
+					updateSuggestion();
 //					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 				} else {
 //					amountPersons.setText("1");
@@ -433,7 +434,7 @@ public class RecipeEditView extends Composite {
 		addInfoPanel.insert(infoPrepare, 2);
 		
 		// is this necessary... it should be only on change...
-		updateSuggestion(SuggestTable, MenuTable);
+		updateSuggestion();
 		
 
 //		RecipeView rezeptView = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 0);
@@ -537,7 +538,7 @@ public class RecipeEditView extends Composite {
 			}
 			
 			displayZutatImMenu(recipe.Zutaten);
-			updateSuggestion(SuggestTable, MenuTable);
+			updateSuggestion();
 //			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 			
 			RezeptName.setText(recipe.getSymbol());
@@ -648,7 +649,7 @@ public class RecipeEditView extends Composite {
 			listener.onItemSelected(zutatSpec);
 		}
 		
-		updateSuggestion(SuggestTable, MenuTable);
+		updateSuggestion();
 //		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 
@@ -768,7 +769,7 @@ public class RecipeEditView extends Composite {
 			}
 			
 			// update all values, that change as there is one ingredient less...
-			updateSuggestion(SuggestTable, MenuTable);
+			updateSuggestion();
 //			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 		}
 	});
@@ -913,7 +914,7 @@ public class RecipeEditView extends Composite {
 		MenuTable.setWidget(row, 2,  icon);
 	}
 	RecipeView rezeptViewOrigin;
-	void updateSuggestion(FlexTable suggestTable,FlexTable menuTable) {
+	void updateSuggestion() {
 
 //		in the list
 			
@@ -937,17 +938,17 @@ public class RecipeEditView extends Composite {
 		}
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			menuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+" g*");
-			menuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
+			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+" g*");
+			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
-		suggestTable.setCellSpacing(2);
-		suggestTable.setText(1,0,"SUMME");
-		suggestTable.getColumnFormatter().setWidth(0, "215px");
-		suggestTable.setHTML(1,1,"ca <b>"+formatted+" g</b>* CO₂-Äq.");
-		suggestTable.getColumnFormatter().setWidth(1, "140px");
+		SuggestTable.setCellSpacing(2);
+		SuggestTable.setText(1,0,"SUMME");
+		SuggestTable.getColumnFormatter().setWidth(0, "215px");
+		SuggestTable.setHTML(1,1,"ca <b>"+formatted+" g</b>* CO₂-Äq.");
+		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
 		// this is right now not relevant, yet gets executed
@@ -1376,7 +1377,7 @@ public class RecipeEditView extends Composite {
 //		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent ");
 		
 //		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
-		updateSuggestion(SuggestTable, MenuTable);
+		updateSuggestion();
 //		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 	

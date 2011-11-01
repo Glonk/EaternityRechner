@@ -177,7 +177,7 @@ position:relative;
        			<!-- <g:north size='120'> -->
 	       		<g:HTMLPanel ui:field="panelNorth" styleName='{style.Worksheet}' >
 	       			<!-- Add Rezept Button -->
-	       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Rezept"/> 
+	       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Menu"/> 
 	       			
 	       			<!--  Ihre Rezepte:  -->
 	       			<g:HTML ui:field="titleHTML" styleName='{style.inline}'>Wählen Sie eine Zutat um sie dem Menu hinzuzufügen.</g:HTML>

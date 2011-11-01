@@ -262,13 +262,13 @@
 					<g:VerticalPanel>
 						<g:HorizontalPanel styleName='{style.recipeTitle}'>
 							<g:HTMLPanel ui:field="rezeptTitle">
-								<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Name Ihres Menus
+								<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Ihr Menu
 								</g:TextBox>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 
 						<g:HTMLPanel styleName='{style.recipeSmallDetail}'>
-							<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Rezept
+							<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Menu
 								Beschreibung</g:TextBox>
 							<g:HTMLPanel styleName='{style.recipePersons}'>
 								für

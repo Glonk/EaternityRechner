@@ -34,6 +34,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -78,6 +79,9 @@ static HTMLPanel isCustomer;
   @UiField
 static InlineLabel isCustomerLabel;
   
+  @UiField HTML pinHTML;
+  @UiField HTML calHTML;
+  
   public static Placemark currentLocation;
   public static DistancesDialog ddlg;
   public static KitchenDialog kDlg;
@@ -116,8 +120,15 @@ public static Kitchen selectedKitchen;
 	Date date = new Date();
 	Monate.setSelectedIndex(date.getMonth());
 	
-
 	
+	calHTML.addMouseListener(
+			new TooltipListener(
+					"Der Monat in dem Sie kochen.", 5000 /* timeout in milliseconds*/,"toolTipDown",-130,10));
+	
+	
+	pinHTML.addMouseListener(
+			new TooltipListener(
+					"Der Ort in dem Sie kochen.", 5000 /* timeout in milliseconds*/,"toolTipDown",-110,10));
 	
 	//.parse( Integer.toString( TopPanel.Monate.getSelectedIndex() ));
 	

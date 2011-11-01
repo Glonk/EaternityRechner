@@ -81,14 +81,15 @@ public class RecipeView extends Composite {
 
 	@UiField FlexTable MenuTable;
 	@UiField HTMLPanel SaveRezeptPanel;
-	@UiField HTMLPanel topStatusBar;
+
 	@UiField
 	public FlowPanel menuDecoInfo;
-	@UiField Button RezeptButton;
-	@UiField Button reportButton;
+//	@UiField Button RezeptButton;
+//	@UiField Button reportButton;
 	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
-	@UiField CheckBox makePublic;
+	@UiField HTMLPanel topStatusBar;
+//	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
@@ -171,7 +172,7 @@ public class RecipeView extends Composite {
 			// Bind it to event so uploadWidget can refresh the gallery
 //			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
 //			addInfoPanel.insert(uploadWidget,0);
-			menuDecoInfo.add(uploadWidget);
+//			menuDecoInfo.add(uploadWidget);
 		}
 		
 		
@@ -184,16 +185,16 @@ public class RecipeView extends Composite {
 //	    defaultUploader.setMaximumFiles(1);
 //	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 
-	    
-		if(EaternityRechner.loginInfo.isLoggedIn()) {
-			// TODO even more....
-			SaveRezeptPanel.setVisible(true);
-			topStatusBar.setVisible(true);
-		} else   {
-			SaveRezeptPanel.setVisible(false);
-			topStatusBar.setVisible(false);
-		}
-		
+//	    
+//		if(EaternityRechner.loginInfo.isLoggedIn()) {
+//			// TODO even more....
+//			SaveRezeptPanel.setVisible(true);
+//			topStatusBar.setVisible(true);
+//		} else   {
+//			SaveRezeptPanel.setVisible(false);
+//			topStatusBar.setVisible(false);
+//		}
+//		
 		
 	  }
 	
@@ -272,18 +273,18 @@ public class RecipeView extends Composite {
 //		this.listener = listener;
 //	}
 	
-	@UiHandler("reportButton")
-	void onReportClick(ClickEvent event) {
-        Date date = new Date();
-        long iTimeStamp = (long) (date.getTime() * .00003);
-        long code = recipe.getId()*iTimeStamp;
-
-		String clear = Converter.toString(code,34);
-		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
-//		Window.Location.assign(url);
-		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
-//		getURL(url);
-	}
+//	@UiHandler("reportButton")
+//	void onReportClick(ClickEvent event) {
+//        Date date = new Date();
+//        long iTimeStamp = (long) (date.getTime() * .00003);
+//        long code = recipe.getId()*iTimeStamp;
+//
+//		String clear = Converter.toString(code,34);
+//		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
+////		Window.Location.assign(url);
+//		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
+////		getURL(url);
+//	}
 
 //	public static native String getURL(String url)/*-{
 //    	return $wnd.open(url, 'target=_blank')
@@ -340,7 +341,16 @@ public class RecipeView extends Composite {
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
-//			rezeptNameTop.setText(RezeptName.getText());
+
+			// only do this, if this is the recipe that is getting edited
+			
+			// the case this recipe is also open
+			RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
+			if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+				rezeptViewEdit.RezeptName.setText(RezeptName.getText());
+				rezeptViewEdit.recipe.setSymbol(RezeptName.getText());
+			}
+			
 			recipe.setSymbol(RezeptName.getText());
 			
 		}
@@ -357,7 +367,16 @@ public class RecipeView extends Composite {
 	@UiHandler("cookingInstr")
 	void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
-//			htmlCooking.setText(cookingInstr.getText());
+
+			// only do this, if this is the recipe that is getting edited
+			
+			// the case this recipe is also open
+			RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
+			if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+				rezeptViewEdit.cookingInstr.setText(cookingInstr.getText());
+				rezeptViewEdit.recipe.setCookInstruction(cookingInstr.getText());
+			}
+			
 			recipe.setCookInstruction(cookingInstr.getText());
 		}
 	}
@@ -380,19 +399,67 @@ public class RecipeView extends Composite {
 //	}
 //	
 	
-	RecipeEditView rezeptViewEdit;
+
 	@UiHandler("rezeptDetails")
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
 //			rezeptSubTitleTop.setText(rezeptDetails.getText());
 			recipe.setSubTitle(rezeptDetails.getText());
 			
+			
 			// only do this, if this is the recipe that is getting edited
-			rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
+			
+			// the case this recipe is also open
+			RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
+			if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+				rezeptViewEdit.rezeptDetails.setText(rezeptDetails.getText());
+				rezeptViewEdit.recipe.setSubTitle(rezeptDetails.getText());
+			}
+			
+
+		}
+	}
+	
+	
+	@UiHandler("amountPersons")
+	void onKeyUp(KeyUpEvent event) {
+		int keyCode = event.getNativeKeyCode();
+		if ((Character.isDigit((char) keyCode)) 
+				|| (keyCode == KeyCodes.KEY_BACKSPACE)
+				|| (keyCode == KeyCodes.KEY_DELETE) ) {
+			// TextBox.cancelKey() suppresses the current keyboard event.
+			Long persons = 1l;
+			recipe.setPersons(persons);
+			
+
 			
 			
-			rezeptViewEdit.rezeptDetails.setText(rezeptDetails.getText());
-			rezeptViewEdit.recipe.setSubTitle(rezeptDetails.getText());
+			if(!amountPersons.getText().isEmpty()){
+				persons = Long.parseLong(amountPersons.getText().trim());
+				if(persons > 0){
+					recipe.setPersons(persons);
+					updateSuggestion();
+					// only do this, if this is the recipe that is getting edited
+					
+					// the case this recipe is also open
+					RecipeEditView rezeptViewEdit = (RecipeEditView) EaternityRechner.rezeptEditList.getWidget(0, 1);
+					if(RecipeEditView.currentEdit == EaternityRechner.selectedRezept){
+						rezeptViewEdit.amountPersons.setText(Long.toString(persons));
+						rezeptViewEdit.recipe.setPersons(persons);
+						rezeptViewEdit.updateSuggestion();
+					}
+				
+//					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+				} else {
+//					amountPersons.setText("1");
+				}
+			} else {
+//				amountPersons.setText("1");
+			}
+			
+			
+		} else {
+			amountPersons.cancelKey();
 		}
 	}
 //	
@@ -538,53 +605,53 @@ public class RecipeView extends Composite {
 			
 //			int row = AddZutatZumMenu(recipe.getZutaten());
 			// add Speicher Recipe Button
-			if(klicky != null){
-				klicky.removeHandler();
-			}
-			
-			klicky = RezeptButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					if(RezeptName.getText() != ""){
-						// TODO warn that it wasn't saved in the other case
-						amountPersons.setText(recipe.getPersons().toString());
-//						Speichere Recipe ab. 
-//						Recipe rezeptSave = new Recipe(RezeptName.getText());
-//						rezeptSave.setOpen(makePublic.getValue());
-//						rezeptSave.addZutaten(recipe.getZutaten());
-//						EaternityRechner.addRezept(rezeptSave);
-						recipe.setSymbol(RezeptName.getText());
-						if(rezeptDetails.getText() != ""){
-							recipe.setSubTitle(rezeptDetails.getText());
-						} else {
-							recipe.setSubTitle("Menü Beschreibung");
-						}
-						recipe.openRequested = !makePublic.getValue();
-						recipe.open = false;
-						recipe.setCookInstruction(cookingInstr.getText()); 
-						
-						if(recipe.getId() == null){
-//							String UserId = EaternityRechner.loginInfo.getId();
-	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
-							
-							// TODO
-							// there should be a collision check!
-							String randomNumber = Integer.toString(Random.nextInt(99999999));
-							
-							Long newId = Long.parseLong(randomNumber);
-//							if(newId*100> newId.MAX_VALUE){
-//								newId = Long.parseLong(randomNumber);
-//							}
+//			if(klicky != null){
+//				klicky.removeHandler();
+//			}
+//			
+//			klicky = RezeptButton.addClickHandler(new ClickHandler() {
+//				public void onClick(ClickEvent event) {
+//					if(RezeptName.getText() != ""){
+//						// TODO warn that it wasn't saved in the other case
+//						amountPersons.setText(recipe.getPersons().toString());
+////						Speichere Recipe ab. 
+////						Recipe rezeptSave = new Recipe(RezeptName.getText());
+////						rezeptSave.setOpen(makePublic.getValue());
+////						rezeptSave.addZutaten(recipe.getZutaten());
+////						EaternityRechner.addRezept(rezeptSave);
+//						recipe.setSymbol(RezeptName.getText());
+//						if(rezeptDetails.getText() != ""){
+//							recipe.setSubTitle(rezeptDetails.getText());
+//						} else {
+//							recipe.setSubTitle("Menü Beschreibung");
+//						}
+//						recipe.openRequested = !makePublic.getValue();
+//						recipe.open = false;
+//						recipe.setCookInstruction(cookingInstr.getText()); 
+//						
+//						if(recipe.getId() == null){
+////							String UserId = EaternityRechner.loginInfo.getId();
+//	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
 //							
-							recipe.setId(newId);
-						}
-						shortenAndSave();
-//						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
-//						toString(recipe.getId(),34);
-						
-//						EaternityRechner.addRezept(recipe,rezeptView);
-					}
-				}
-			});
+//							// TODO
+//							// there should be a collision check!
+//							String randomNumber = Integer.toString(Random.nextInt(99999999));
+//							
+//							Long newId = Long.parseLong(randomNumber);
+////							if(newId*100> newId.MAX_VALUE){
+////								newId = Long.parseLong(randomNumber);
+////							}
+////							
+//							recipe.setId(newId);
+//						}
+//						shortenAndSave();
+////						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
+////						toString(recipe.getId(),34);
+//						
+////						EaternityRechner.addRezept(recipe,rezeptView);
+//					}
+//				}
+//			});
 		
 	}
 
@@ -673,10 +740,7 @@ public class RecipeView extends Composite {
 
 	
 	void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
-		
-		
-		
-		
+
 		if(askForLess != null){
 
 			if(showImageHandler != null){
