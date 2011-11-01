@@ -1053,7 +1053,7 @@ public class RecipeView extends Composite {
 			compare.setSymbol("Ihr Menu");
 		}
 		if(recipe.getSubTitle() == null){
-			compare.setSubTitle("just like that");
+			compare.setSubTitle("Menu Beschreibung");
 		}
 		
 		// add your specific recipe to the others in the database

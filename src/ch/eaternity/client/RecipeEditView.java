@@ -517,7 +517,6 @@ public class RecipeEditView extends Composite {
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
 		rezeptViewOrigin = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 1);
-		RecipeEditView.currentEdit = EaternityRechner.selectedRezept;
 //		showRezept(recipe);
 	}
 
@@ -542,6 +541,8 @@ public class RecipeEditView extends Composite {
 //			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 			
 			RezeptName.setText(recipe.getSymbol());
+			rezeptDetails.setText(recipe.getSubTitle());
+			
 			EaternityRechner.titleHTML.setHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
 //			zutatImMenu.clear();
 			
@@ -999,7 +1000,7 @@ public class RecipeEditView extends Composite {
 			compare.setSymbol("Ihr Menu");
 		}
 		if(recipe.getSubTitle() == null){
-			compare.setSubTitle("just like that");
+			compare.setSubTitle("Menu Beschreibung");
 		}
 		
 		// add your specific recipe to the others in the database
@@ -1010,8 +1011,6 @@ public class RecipeEditView extends Composite {
 			allRecipes.addAll(Search.clientData.getYourRezepte());
 		}
 
-		
-		
 		// zuerst der Filter über die tatsächlichen Zutaten
 		ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
 		scoreMap.clear();
