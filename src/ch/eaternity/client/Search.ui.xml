@@ -244,8 +244,9 @@
 		      </g:north>
 	      	<g:center>
 				<g:SplitLayoutPanel ui:field='mealsSplitPanels'>
-					<g:south size='21'><!-- before was: 260 -->
+					<g:south size='4'><!-- before was: 260 -->
 						<g:SplitLayoutPanel ui:field='subMealsSplitPanels'>
+						
 							<g:center>
 					        	<g:ScrollPanel styleName='{style.scroll}'>
 					        		<g:HTMLPanel ui:field='scrollAbleHtml'>
@@ -253,17 +254,8 @@
 					        			<!-- Here is the Table for displaying the results of the meals -->
 								        <g:FlexTable ui:field='tableMeals' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
 								        
-										<g:HTMLPanel ui:field="yourMealsPanel" >
-									      	<g:HTMLPanel  styleName='{style.someSpace}'>
-				        	    				<hr /><br />&nbsp;in eigenen Rezepten
-			        	    				</g:HTMLPanel>
-				        					<g:ScrollPanel styleName='{style.scroll}'>
-				        					
-				        						<!-- Here is the Table for displaying the results of the meals that belong to you-->
-										        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table2}' cellSpacing='0' cellPadding='0'/>
-										        
-				        					</g:ScrollPanel>
-					        			</g:HTMLPanel>
+		<!-- was here before -->
+					        			
 									</g:HTMLPanel>
 					        	</g:ScrollPanel>
 					        </g:center>
@@ -283,6 +275,20 @@
 	      					
 								<!-- Here is the Table for displaying the results of the ingredients -->
 	        					<g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
+	        					
+	        					
+	        					<!-- now is here -->
+	        							<g:HTMLPanel ui:field="yourMealsPanel" >
+									      	<g:HTMLPanel  styleName='{style.someSpace}'>
+				        	    				<hr /><br />&nbsp;in eigenen Rezepten
+			        	    				</g:HTMLPanel>
+				        					<g:ScrollPanel styleName='{style.scroll}'>
+				        					
+				        						<!-- Here is the Table for displaying the results of the meals that belong to you-->
+										        <g:FlexTable ui:field='tableMealsYours' styleName='{style.table2}' cellSpacing='0' cellPadding='0'/>
+										        
+				        					</g:ScrollPanel>
+					        			</g:HTMLPanel>
 	        					
 	        	       		</g:HTMLPanel>
 	      				</g:ScrollPanel>
