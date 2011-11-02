@@ -39,7 +39,7 @@ public class Recipe implements Serializable, Cloneable{
 	
 	public String ShortUrl;
 	
-	public Long kitchenId = 0l;
+	public Long[] kitchenIds = {0L}; // 0L is no kitchen...
 	
 	private Long persons;
 	

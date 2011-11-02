@@ -30,7 +30,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -53,7 +52,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -71,11 +69,6 @@ public class EaternityRechner implements EntryPoint {
 
 	public static LoginInfo loginInfo = null;
 	private final static DataServiceAsync dataService = GWT.create(DataService.class);
-	private List<RecipeView> worksheet = new ArrayList<RecipeView>();
-	// private VerticalPanel loginPanel = new VerticalPanel();
-	// private Label loginLabel = new Label("Please sign in to your Google Account to access the eaternity Rechner application.");
-	// private Anchor signInLink = new Anchor("Sign In");
-	//private Anchor signOutLink = new Anchor("Sign Out");
 	private static Data clientData = new Data();
 	
 	interface Binder extends UiBinder<DockLayoutPanel, EaternityRechner> { }
@@ -132,7 +125,6 @@ public class EaternityRechner implements EntryPoint {
 	public void onModuleLoad() {
 		
 		// now load the data
-
 		loadData();
 		initializeUrlshortener();
 
@@ -162,7 +154,6 @@ public class EaternityRechner implements EntryPoint {
 		//TODO uncomment this when ready!
 		//TODO uncomment this when ready!
 		//TODO uncomment this when ready!
-		
 		suggestionPanel.setVisible(false);
 		//TODO uncomment this when ready!
 		//TODO uncomment this when ready!
@@ -201,22 +192,25 @@ public class EaternityRechner implements EntryPoint {
 	
 
 	static void addRezept(final Recipe recipe, final RecipeEditView rezeptView) {
+		
+		// assign this recipe if necessary to a kitchen:
 		if(!TopPanel.leftKitchen){
-			recipe.kitchenId = TopPanel.selectedKitchen.id;
+			// then we are in a kitchen :-)
+			// so this recipe belongs into this kitchen, so we add its id
+			recipe.kitchenIds[recipe.kitchenIds.length] = TopPanel.selectedKitchen.id;
 		}
+		
+		// and then save it.
 		dataService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 
 			public void onSuccess(Long id) {
-				
-// why would i want to display the menu after it is saved?
-//				Search.displayRezept(recipe);
+
 				
 				// when this is your first one... so show the panel...
 				Search.yourMealsPanel.setVisible(true);
-				recipe.setId(id);
 	
 				Search.clientData.getYourRezepte().add(recipe);
 				Search.updateResults(Search.SearchInput.getText());
@@ -224,6 +218,7 @@ public class EaternityRechner implements EntryPoint {
 				
 				// TODO make same sense out of this
 				// this is just a test functionality...
+				// but it could be displayed somewhere else...
 				rezeptView.codeImage.setHTML(
 						"<a href="
 						+ GWT.getHostPageBaseURL()
@@ -245,7 +240,7 @@ public class EaternityRechner implements EntryPoint {
 			public void onSuccess(Boolean ignore) {
 				Search.clientData.getYourRezepte().remove(recipe);
 				if(recipe.isOpen()){
-				Search.clientData.getPublicRezepte().remove(recipe);
+					Search.clientData.getPublicRezepte().remove(recipe);
 				}
 			}
 		});
@@ -267,18 +262,9 @@ public class EaternityRechner implements EntryPoint {
 		});
 	}
 	
-	// TODO who needs this??? please clean
-	private static void undisplayRezept(String rezept_id) {
-
-	}
-
 	private void loadLogin() {
 		// Assemble login panel.
 		topPanel.signInLink.setHref(loginInfo.getLoginUrl());
-		
-		// TODO only show when logged in:
-		// do I really want only for logged in people to save this?
-		//SaveRezeptPanel.setVisible(false);
 	}
 
 	private void loadYourRechner() {
@@ -292,25 +278,16 @@ public class EaternityRechner implements EntryPoint {
 		// loadYourKitchens();
 		
 		if(loginInfo.getInKitchen()){
-//			topPanel.stepIn.setVisible(false);
-//			topPanel.stepOut.setVisible(true);
-			topPanel.location.setVisible(false);
-//			topPanel.kitchen.setVisible(true);
+			TopPanel.location.setVisible(false);
 		} else {
-//			topPanel.stepIn.setVisible(true);
-//			topPanel.stepOut.setVisible(false);	
-			topPanel.location.setVisible(true);
-//			topPanel.kitchen.setVisible(false);
+			TopPanel.location.setVisible(true);
 		}
 		
 		//load your personal recipes
 		loadYourRezepte();
-
-		
-
 	}
 	
-	// e.g., Buzz.class, Moderator.class, Shopping.class, etc...
+	// registering the class is an essential procedure to access the api
 	static Urlshortener urlshortener = GWT.create(Urlshortener.class);
 
 	private void initializeUrlshortener() {
@@ -326,7 +303,7 @@ public class EaternityRechner implements EntryPoint {
 	          // It may be better to publish a "ready" event on the eventBus
 	          // and listen for it to make requests elsewhere in your code.
 //	          makeRequest();
-	          //TODO block creating a new recipe until this event has fired! (or do this event bus stuff)
+	          //TODO block saving of a new recipe until this event has fired! (or do this event bus stuff - yeah, right, I have no idea howto :)
 	          
 	        }
 
@@ -340,6 +317,7 @@ public class EaternityRechner implements EntryPoint {
 	
 	private HandlerRegistration loadAdmin() {
 		
+		// um neue Zutaten hinzuzufügen (allein eine Funktion für den Admin)
 		ingredientHandler = topPanel.ingredientLink.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event) {
 				IngredientsDialog dlg = new IngredientsDialog();
@@ -350,25 +328,26 @@ public class EaternityRechner implements EntryPoint {
 		topPanel.ingredientLink.setVisible(true);
 		
 		// Always display the Kitchen Dialog of all Customers...
-		// this means, pull all kitchens from the server
 		
-		// TODO get all the other recipes
-		// what are the other recipes?
+		// you are the admin, this means, pull all kitchens from the server
+		
 		dataService.getAdminRezepte(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(List<Recipe> rezepte) {
+				// this shouldn't be necessary, as we are working with pointers:
 				Data data = Search.clientData;
+				// add all recipes to the public ones, this is an arbitrary choice...
+				// TODO display this fact somewhere, to see which recipes are yours, and which are not.
 				data.setPublicRezepte(rezepte);
+				// this shouldn't be necessary, as we are working with pointers: 
 				Search.clientData = data;
 				Search.updateResults(" ");
 			}
 		});
 		
 		
-		// TODO get all the other recipes
-		// what are the other recipes?
 		dataService.getAdminKitchens(new AsyncCallback<List<Kitchen>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -378,7 +357,7 @@ public class EaternityRechner implements EntryPoint {
 				Data data = Search.clientData;
 				
 				if(result.size() != 0){ // there must be somthing!
-				data.kitchens.addAll(result);
+					data.kitchens.addAll(result);
 				}
 				// this shouldn't be necessary, as we are working with pointers:
 //				Search.setClientData(data);

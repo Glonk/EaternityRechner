@@ -244,7 +244,7 @@
 		      </g:north>
 	      	<g:center>
 				<g:SplitLayoutPanel ui:field='mealsSplitPanels'>
-					<g:south size='4'><!-- before was: 260 -->
+					<g:south size='2'><!-- before was: 260 -->
 						<g:SplitLayoutPanel ui:field='subMealsSplitPanels'>
 						
 							<g:center>

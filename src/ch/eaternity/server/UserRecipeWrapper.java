@@ -23,7 +23,7 @@ public class UserRecipeWrapper{
 	
 	
 	@Indexed
-	public Long kitchenId;
+	public Long[] kitchenIds;
 	
 	public Boolean approvedOpen;
 	public Boolean requestedOpen;

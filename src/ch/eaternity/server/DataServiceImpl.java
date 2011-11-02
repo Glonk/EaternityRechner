@@ -110,8 +110,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
 		userRezept.id = recipe.getId();
 		
-		if(recipe.kitchenId != 0){
-			userRezept.kitchenId = recipe.kitchenId;
+		if(recipe.kitchenIds.length > 0){
+			userRezept.kitchenIds = recipe.kitchenIds;
 		}
 		// TODO : this is not a propper approval process!!!
 		userRezept.requestedOpen = recipe.openRequested;
