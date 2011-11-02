@@ -109,7 +109,8 @@ public class EaternityRechner implements EntryPoint {
 	@UiField DockLayoutPanel topSticky;
 	@UiField HTMLPanel panelNorth;
 	@UiField HTMLPanel htmlRezept;
-	@UiField AbsolutePanel dragArea;
+	@UiField
+	static AbsolutePanel dragArea;
 	
 	@UiField ScrollPanel scrollWorkspace;
 	@UiField Button addRezeptButton;
@@ -401,7 +402,7 @@ public class EaternityRechner implements EntryPoint {
 		
 		styleRezept(selectedRezept, false);
 		
-		// hier wird zurückgestzt, da sonst kein neues gemacht wird
+		// hier wird zurückgesetzt, da sonst kein neues gemacht wird
 		selectedRezept = -1;
 		
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
@@ -677,9 +678,13 @@ public class EaternityRechner implements EntryPoint {
 		Cell cell = rezeptList.getCellForEvent(event);
 		if (cell != null) {
 			
-			Widget rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
-			RecipeView rezeptViewOld = (RecipeView) rezeptViewWidget;
-			rezeptViewOld.isSelected = false;
+			Widget rezeptViewWidget;
+			
+			if(selectedRezept != -1){
+				rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
+				RecipeView rezeptViewOld = (RecipeView) rezeptViewWidget;
+				rezeptViewOld.isSelected = false;
+			}
 			
 			styleRezept(selectedRezept, false);
 			selectedRezept = cell.getRowIndex();
@@ -688,6 +693,13 @@ public class EaternityRechner implements EntryPoint {
 			rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			rezeptView.isSelected = true;
+			
+			
+			rezeptEditList.removeRow(0);
+			if(dragArea.getWidgetCount() > 0){
+				dragArea.remove(0);
+			}
+			
 			
 			// put this recipe into the edit panel...
 			if(rezeptEditList.getRowCount() == 0){
@@ -974,6 +986,12 @@ public class EaternityRechner implements EntryPoint {
 
 
 	public static void updateSaisonAndMore() {
+
+		rezeptEditView.updateSaison();
+		for(IngredientSpecification zutat : rezeptEditView.recipe.getZutaten()){
+			rezeptEditView.changeIcons(rezeptEditView.recipe.getZutaten().indexOf(zutat), zutat);
+		}
+		
 		for( Widget rezeptViewWidget : rezeptList){
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			rezeptView.updateSaison();

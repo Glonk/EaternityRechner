@@ -219,6 +219,7 @@ position:relative;
        					<g:VerticalPanel>
 	       					<g:FlexTable styleName='{style.WorksheetEditTable}' ui:field='rezeptEditList' cellSpacing='0' cellPadding='0' />
 							<g:FlexTable styleName='{style.WorksheetTable}' ui:field='rezeptList' cellSpacing='0' cellPadding='0'/>
+							<g:HTML><div style="height:400px">:)</div></g:HTML>
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 					

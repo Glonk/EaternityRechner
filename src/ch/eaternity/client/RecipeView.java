@@ -535,6 +535,12 @@ public class RecipeView extends Composite {
 				
 				if(isSelected){
 //					close also the Editview!
+					EaternityRechner.rezeptEditList.removeRow(0);
+					
+					if(EaternityRechner.dragArea.getWidgetCount() > 0){
+						EaternityRechner.dragArea.remove(0);
+					}
+					
 				}
 				EaternityRechner.rezeptList.remove(test);
 				EaternityRechner.rezeptList.removeRow(row);

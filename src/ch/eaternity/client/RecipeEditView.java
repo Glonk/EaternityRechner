@@ -448,31 +448,37 @@ public class RecipeEditView extends Composite {
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
 		final RecipeEditView test = this;
-		if(saved){
-			int row = getWidgetRow(test , EaternityRechner.rezeptList);
-			EaternityRechner.rezeptList.remove(test);
-			EaternityRechner.rezeptList.removeRow(row);
+//		if(saved){
+			int row = getWidgetRow(test , EaternityRechner.rezeptEditList);
+			EaternityRechner.rezeptEditList.remove(test);
+			EaternityRechner.rezeptEditList.removeRow(row);
+			
+			if(EaternityRechner.dragArea.getWidgetCount() > 0){
+				EaternityRechner.dragArea.remove(0);
+			}
+			
+			EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
 			EaternityRechner.selectedRezept = -1;
 			EaternityRechner.suggestionPanel.clear();
-		} else {
-		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
-		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
-		// TODO recheck user if he really want to do this...
-		
-		dlg.executeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				int row = getWidgetRow(test , EaternityRechner.rezeptEditList);
-				EaternityRechner.rezeptEditList.remove(test);
-				EaternityRechner.rezeptEditList.removeRow(row);
-				EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
-				EaternityRechner.selectedRezept = -1;
-				EaternityRechner.suggestionPanel.clear();
-				dlg.hide();
-			}
-		});
-		dlg.show();
-		dlg.center();
-		}
+//		} else {
+//		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
+//		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
+//		// TODO recheck user if he really want to do this...
+//		
+//		dlg.executeButton.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				int row = getWidgetRow(test , EaternityRechner.rezeptEditList);
+//				EaternityRechner.rezeptEditList.remove(test);
+//				EaternityRechner.rezeptEditList.removeRow(row);
+//				EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
+//				EaternityRechner.selectedRezept = -1;
+//				EaternityRechner.suggestionPanel.clear();
+//				dlg.hide();
+//			}
+//		});
+//		dlg.show();
+//		dlg.center();
+//		}
 	}
 	
 
