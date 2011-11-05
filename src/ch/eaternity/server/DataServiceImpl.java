@@ -231,22 +231,39 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		
 		if (getUser() != null) {
-			List<Kitchen> kitchenPersonal = dao.getYourKitchens(getUser());
-			data.kitchens = kitchenPersonal;
 			// if you are the admin, you also get all the others!
 			data.kitchens.addAll(getAdminKitchens());
+			
+			List<Kitchen> kitchenPersonal = dao.getYourKitchens(getUser());
+			
+			for(Kitchen yourKitchen : kitchenPersonal){
+				Boolean notFound = true;
+				for(Kitchen isThere : data.kitchens){
+					if(isThere.id == yourKitchen.id){
+						notFound = false;
+					}
+				}
+				if(notFound){
+					data.kitchens.add(yourKitchen);
+				}
+			}
+			
+			
 		} else {
 			List<Kitchen> kitchensOpen = dao.getOpenKitchen();
 			data.kitchens = kitchensOpen;
 		}
 		
-	
-	    try {
-	    	LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
-	    	data.lastKitchen = loginInfo.getLastKitchen();
-	    } catch (NotFoundException e) {
-	    	
-	    }
+		if (getUser() != null) {
+		    try {
+		    	LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
+		    	data.lastKitchen = loginInfo.getLastKitchen();
+		    } catch (NotFoundException e) {
+		    	
+		    }
+		} else {
+			data.lastKitchen = 0L;
+		}
 	
 		return data;
 	}

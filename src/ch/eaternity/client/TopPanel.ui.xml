@@ -13,6 +13,7 @@
 		background: url("header_rechner.jpg") no-repeat 0px 0px;
 		border-bottom: 2.5px solid #bbb;
 		height:58px;
+		vertical-align:top;
 		}
 
 		.inline {
