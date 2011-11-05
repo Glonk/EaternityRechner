@@ -80,15 +80,15 @@ public class RecipeEditView extends Composite {
 	@UiField EvenStyleRow evenStyleRow;
 
 	@UiField FlexTable MenuTable;
-	@UiField HTMLPanel SaveRezeptPanel;
-	@UiField HTMLPanel topStatusBar;
+//	@UiField HTMLPanel SaveRezeptPanel;
+//	@UiField HTMLPanel topStatusBar;
 	@UiField
 	public FlowPanel menuDecoInfo;
-	@UiField Button RezeptButton;
-	@UiField Button reportButton;
+//	@UiField Button RezeptButton;
+//	@UiField Button reportButton;
 	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
-	@UiField CheckBox makePublic;
+//	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
@@ -104,9 +104,9 @@ public class RecipeEditView extends Composite {
 	@UiField TextBox rezeptDetails;
 	@UiField VerticalPanel MenuTableWrapper;
 	
-	@UiField HTML titleHTML;
-	@UiField HTML openHTML;
-	@UiField HTML savedHTML;
+//	@UiField HTML titleHTML;
+//	@UiField HTML openHTML;
+//	@UiField HTML savedHTML;
 	@UiField HTML detailText;
 	@UiField HTML codeImage;
 	
@@ -192,11 +192,11 @@ public class RecipeEditView extends Composite {
 	    
 		if(EaternityRechner.loginInfo.isLoggedIn()) {
 			// TODO even more....
-			SaveRezeptPanel.setVisible(true);
-			topStatusBar.setVisible(true);
+//			SaveRezeptPanel.setVisible(true);
+//			topStatusBar.setVisible(true);
 		} else   {
-			SaveRezeptPanel.setVisible(false);
-			topStatusBar.setVisible(false);
+//			SaveRezeptPanel.setVisible(false);
+//			topStatusBar.setVisible(false);
 		}
 		
 		
@@ -223,41 +223,41 @@ public class RecipeEditView extends Composite {
 //		}
 	
 	
-	void shortenAndSave() {
-		final RecipeEditView rezeptView = this;
-		String clear = Converter.toString(recipe.getId(),34);
-	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
-	    
-	    // Get a new RequestContext which we will execute.
-	    UrlContext urlContext = EaternityRechner.urlshortener.url();
-
-	    // Create a new Url instance with the longUrl we want to insert.
-	    Url url = urlContext.create(Url.class);
-	    url.setLongUrl(longUrl);
-//	    Url url = urlContext.create(Url.class).setLongUrl(longUrl);
-
-	    // Fire an insert() request with the Url to insert.
-	    urlContext.insert(url).fire(new Receiver<Url>() {
-	      @Override
-	      public void onSuccess(Url response) {
-//	        Window.alert("Long URL: " + response.getLongUrl() + "\n" //
-//	            + "Short URL: " + response.getId() + "\n" //
-//	            + "Status: " + response.getStatus());
-	        recipe.ShortUrl = response.getId();
-	        
-	        EaternityRechner.addRezept(recipe,rezeptView);
-	      }
-	     
-	      @Override
-	      public void onFailure(ServerFailure error) {
-	        Window.alert("Error shortening a URL\n" + error.getMessage());
-	      }
-	    });
-	    
-	    // show the report Button
-	    
-	  }
-	
+//	void shortenAndSave() {
+//		final RecipeEditView rezeptView = this;
+//		String clear = Converter.toString(recipe.getId(),34);
+//	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
+//	    
+//	    // Get a new RequestContext which we will execute.
+//	    UrlContext urlContext = EaternityRechner.urlshortener.url();
+//
+//	    // Create a new Url instance with the longUrl we want to insert.
+//	    Url url = urlContext.create(Url.class);
+//	    url.setLongUrl(longUrl);
+////	    Url url = urlContext.create(Url.class).setLongUrl(longUrl);
+//
+//	    // Fire an insert() request with the Url to insert.
+//	    urlContext.insert(url).fire(new Receiver<Url>() {
+//	      @Override
+//	      public void onSuccess(Url response) {
+////	        Window.alert("Long URL: " + response.getLongUrl() + "\n" //
+////	            + "Short URL: " + response.getId() + "\n" //
+////	            + "Status: " + response.getStatus());
+//	        recipe.ShortUrl = response.getId();
+//	        
+//	        EaternityRechner.addRezept(recipe,rezeptView);
+//	      }
+//	     
+//	      @Override
+//	      public void onFailure(ServerFailure error) {
+//	        Window.alert("Error shortening a URL\n" + error.getMessage());
+//	      }
+//	    });
+//	    
+//	    // show the report Button
+//	    
+//	  }
+//	
 	
 	public interface Listener {
 		void onItemSelected(IngredientSpecification item);
@@ -276,17 +276,17 @@ public class RecipeEditView extends Composite {
 		this.listener = listener;
 	}
 	
-	@UiHandler("reportButton")
-	void onReportClick(ClickEvent event) {
-        Date date = new Date();
-        long iTimeStamp = (long) (date.getTime() * .00003);
-        long code = recipe.getId()*iTimeStamp;
-
-		String clear = Converter.toString(code,34);
-		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
-		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
-
-	}
+//	@UiHandler("reportButton")
+//	void onReportClick(ClickEvent event) {
+//        Date date = new Date();
+//        long iTimeStamp = (long) (date.getTime() * .00003);
+//        long code = recipe.getId()*iTimeStamp;
+//
+//		String clear = Converter.toString(code,34);
+//		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
+//		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
+//
+//	}
 
 	
 	@UiHandler("MenuTable")
@@ -554,53 +554,53 @@ public class RecipeEditView extends Composite {
 			
 //			int row = AddZutatZumMenu(recipe.getZutaten());
 			// add Speicher Recipe Button
-			if(klicky != null){
-				klicky.removeHandler();
-			}
-			
-			klicky = RezeptButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					if(RezeptName.getText() != ""){
-						// TODO warn that it wasn't saved in the other case
-						amountPersons.setText(recipe.getPersons().toString());
-//						Speichere Recipe ab. 
-//						Recipe rezeptSave = new Recipe(RezeptName.getText());
-//						rezeptSave.setOpen(makePublic.getValue());
-//						rezeptSave.addZutaten(recipe.getZutaten());
-//						EaternityRechner.addRezept(rezeptSave);
-						recipe.setSymbol(RezeptName.getText());
-						if(rezeptDetails.getText() != ""){
-							recipe.setSubTitle(rezeptDetails.getText());
-						} else {
-							recipe.setSubTitle("Menü Beschreibung");
-						}
-						recipe.openRequested = !makePublic.getValue();
-						recipe.open = false;
-						recipe.setCookInstruction(cookingInstr.getText()); 
-						
-						if(recipe.getId() == null){
-//							String UserId = EaternityRechner.loginInfo.getId();
-	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
-							
-							// TODO
-							// there should be a collision check!
-							String randomNumber = Integer.toString(Random.nextInt(99999999));
-							
-							Long newId = Long.parseLong(randomNumber);
-//							if(newId*100> newId.MAX_VALUE){
-//								newId = Long.parseLong(randomNumber);
-//							}
+//			if(klicky != null){
+//				klicky.removeHandler();
+//			}
+//			
+//			klicky = RezeptButton.addClickHandler(new ClickHandler() {
+//				public void onClick(ClickEvent event) {
+//					if(RezeptName.getText() != ""){
+//						// TODO warn that it wasn't saved in the other case
+//						amountPersons.setText(recipe.getPersons().toString());
+////						Speichere Recipe ab. 
+////						Recipe rezeptSave = new Recipe(RezeptName.getText());
+////						rezeptSave.setOpen(makePublic.getValue());
+////						rezeptSave.addZutaten(recipe.getZutaten());
+////						EaternityRechner.addRezept(rezeptSave);
+//						recipe.setSymbol(RezeptName.getText());
+//						if(rezeptDetails.getText() != ""){
+//							recipe.setSubTitle(rezeptDetails.getText());
+//						} else {
+//							recipe.setSubTitle("Menü Beschreibung");
+//						}
+//						recipe.openRequested = !makePublic.getValue();
+//						recipe.open = false;
+//						recipe.setCookInstruction(cookingInstr.getText()); 
+//						
+//						if(recipe.getId() == null){
+////							String UserId = EaternityRechner.loginInfo.getId();
+//	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
 //							
-							recipe.setId(newId);
-						}
-						shortenAndSave();
-//						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
-//						toString(recipe.getId(),34);
-						
-//						EaternityRechner.addRezept(recipe,rezeptView);
-					}
-				}
-			});
+//							// TODO
+//							// there should be a collision check!
+//							String randomNumber = Integer.toString(Random.nextInt(99999999));
+//							
+//							Long newId = Long.parseLong(randomNumber);
+////							if(newId*100> newId.MAX_VALUE){
+////								newId = Long.parseLong(randomNumber);
+////							}
+////							
+//							recipe.setId(newId);
+//						}
+//						shortenAndSave();
+////						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
+////						toString(recipe.getId(),34);
+//						
+////						EaternityRechner.addRezept(recipe,rezeptView);
+//					}
+//				}
+//			});
 		
 	}
 
@@ -920,6 +920,7 @@ public class RecipeEditView extends Composite {
 		
 		MenuTable.setWidget(row, 2,  icon);
 	}
+	
 	RecipeView rezeptViewOrigin;
 	void updateSuggestion() {
 
@@ -958,422 +959,420 @@ public class RecipeEditView extends Composite {
 		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
-		// this is right now not relevant, yet gets executed
+		
 		updtTopSuggestion();
+	
 		
 		heightOfView = this.getOffsetHeight();
 		
 	}
 
-
-	public void updtTopSuggestion() {
-		// TODO Algorithm for the Top Suggestions
-		// Von jedem Gericht gibt es einen CO2 Wert für 4Personen (mit oder ohne Herkunft? oder aus der nächsten Distanz?), 
-		// so wie sie gepeichert wurde.
-		// Es werden bei der Anzeige Rezepte berücksichtigt, die: 
-		// min 20% identische Zutaten ( Zutat*(Menge im Recipe)/StdMenge ) und das pro Zutat, und davon min 20%identisch
-		// min +50% Zutaten die in den alternativen Vorkommen
-		// hierbei wird die 2 passendsten Rezepte jeweils aus den nicht durch das markierte Recipe belegten Bereich angezeigt
-		// Bereich sind 0-20%	20%-50%		50%-100%
-		
-		// Rezepte sollten sich bewerten lassen, und deren Popularität gemessen werden. ( Über die Zeit?)
-		// 
-
-		// diese Filter sollten in der Reihenfolge ausgeführt werden, in der sie am wenigsten Berechnungen benötigen:
-		
-		// TODO alle Rezepte für 4 Personen, sonst macht der Vergleich keinen Sinn
-		
-		// get Comparator
-		ArrayList<ComparatorObject> comparator = comparator(recipe);
-		// comparator returns for each ingedient:
-		// (zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
-		
-		Double maxScore = 0.0;
-		for(ComparatorObject comparatorObject : comparator){
-			maxScore = maxScore+comparatorObject.value;
-		}
-		// this is the sum over all those ingredient values
-		// which equals about the number of different ingredients in the recipe...
-		
-		
-		// all Recipes
-		List<Recipe> allRecipes = new ArrayList<Recipe>();
-		allRecipes.clear();
-		// display context information...
-		Recipe compare = recipe;
-		compare.setSelected(true);
-		if(recipe.getSymbol() == null){
-			compare.setSymbol("Ihr Menu");
-		}
-		if(recipe.getSubTitle() == null){
-			compare.setSubTitle("Menu Beschreibung");
-		}
-		
-		// add your specific recipe to the others in the database
-		allRecipes.add(compare);
-		// and all the others also
-		allRecipes.addAll( Search.clientData.getPublicRezepte());
-		if(Search.clientData.getYourRezepte() != null){
-			allRecipes.addAll(Search.clientData.getYourRezepte());
-		}
-
-		// zuerst der Filter über die tatsächlichen Zutaten
-		ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
-		scoreMap.clear();
-		
-		// Init first boundaries, for indicator
-		Double MaxValueRezept = 0.0;
-		Double MinValueRezept = 10000000.0;
-		//  go over the Recipes in the Workspace
-		for(Widget widget : EaternityRechner.rezeptList){
-			RecipeView rezeptView = (RecipeView) widget;
-			rezeptView.recipe.setCO2Value();
-			if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
-				MaxValueRezept = rezeptView.recipe.getCO2Value();
-			} 
-			if(rezeptView.recipe.getCO2Value()<MinValueRezept){
-				MinValueRezept = rezeptView.recipe.getCO2Value();
-			}
-		}
-		
-		// go over the recipes in the database ( here our special one is already included...)
-		for( Recipe compareRecipe : allRecipes){
-			
-			// this is just to get the min and max values for the indicator
-			compareRecipe.setCO2Value();
-			if(compareRecipe.getCO2Value()>MaxValueRezept){
-				MaxValueRezept = compareRecipe.getCO2Value();
-			} 
-			if(compareRecipe.getCO2Value()<MinValueRezept){
-				MinValueRezept = compareRecipe.getCO2Value();
-			}
-			
-			ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
-			comparatorRecipe.key = compareRecipe.getId();
-			comparatorRecipe.recipe = compareRecipe;
-			// get the direct comparison score... the bigger the worse...
-			comparatorRecipe.comparator = getExactScore(comparator,comparator(compareRecipe));
-			
-			// error is the max score of both added together, minus twice the disjunct region
-			
-			Double error = 0.0;
-			Double errorNeg = 0.0;
-			for(ComparatorObject comparatorObject : comparatorRecipe.comparator){
-				error = error+Math.abs(comparatorObject.value);
-				if(comparatorObject.value<0){
-					errorNeg = errorNeg+Math.abs(comparatorObject.value);
-				}
-			}
-			comparatorRecipe.value = error;
-			comparatorRecipe.valueNeg = errorNeg;
-			scoreMap.add(comparatorRecipe);
-		}
-		
-		// dann der gröbere über die definierten Alternativen der Zutaten
-		ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
-		scoreMap2.clear();
-		for(ComparatorRecipe compRecipe: scoreMap){
-			// this is cool now!
-			if((compRecipe.value/(maxScore+compRecipe.valueNeg))<0.8){ // this is min. 20% identical _____==overlap==-----
-//			if((compRecipe.value)<0.8){ // this is min. 20% identical
-				Recipe compareRecipe = compRecipe.recipe;
-				ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
-				comparatorRecipe.recipe = compareRecipe;
-				comparatorRecipe.key = compareRecipe.getId();
-				// TODO here we got some error...
-				comparatorRecipe.value = getAltScore(compRecipe,maxScore);
-				Double errorNeg = 0.0;
-				for(ComparatorObject comparatorObject : compRecipe.comparator){
-					if(comparatorObject.value<0){
-						errorNeg = errorNeg+Math.abs(comparatorObject.value);
-					}
-				}
-				comparatorRecipe.valueNeg = errorNeg;
-				
-				scoreMap2.add(comparatorRecipe);
-			}
-		}
-
-		
-		// alles was jetzt noch da ist (alle errors  <0.6), werden verglichen, das heisst die Statistik ausgerechnet
-		ArrayList<ComparatorRecipe> scoreMapFinal = new ArrayList<ComparatorRecipe>();
-		scoreMapFinal.clear();
-		for(ComparatorRecipe compRecipe: scoreMap2){
-			// TODO 0.6 IS JUST A GUESS
-//			if((compRecipe.value/maxScore)<0.6){ // this is min. 20% identical and min. 60% alternative Identity
-			if((compRecipe.value/(maxScore+compRecipe.valueNeg))<0.6){ // this is min. 20% identical and min. 60% alternative Identity
-				
-				compRecipe.recipe.setCO2Value();
-				scoreMapFinal.add(compRecipe);
-			}
-		}
-		
-		Collections.sort(scoreMapFinal,new ComparatorComparator());
-
-		// this is just a test
-		if(scoreMapFinal.size()>0){
-			EaternityRechner.suggestionPanel.clear();
-
-			displayTops(scoreMapFinal, 0.8, 1.0);
-			displayTops(scoreMapFinal, 0.5, 0.8);
-			displayTops(scoreMapFinal, 0.0, 0.5);
-			
-		}
-		
-////		if(scoreMapFinal.size()>2){
-//			recipe.setCO2Value();
-//			double indikator = recipe.getCO2Value();
-////			double stop = scoreMapFinal.get(0).recipe.getCO2Value();
-//			double stop = MaxValueRezept;
-////			double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
-//			double start = MinValueRezept;
-//			
-//			Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
-//			String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(recipe.getCO2Value())+"g CO2</div>";
-//			topIndikator.setHTML(indikatorHTML);
-//			bottomIndikator.setHTML(indikatorHTML);
-			
-//		}
-		
-
-		//		double stop = scoreMapFinal.get(0).recipe.getCO2Value();
-		double stop = MaxValueRezept;
-		//		double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
-		double start = MinValueRezept;
-
-
-		// update all widgets bars!
-		for(Widget widget : EaternityRechner.rezeptList){
-			RecipeView rezeptView = (RecipeView) widget;
-			rezeptView.recipe.setCO2Value();
-			Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
-
-			String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
-			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
-			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
-			
-			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
-		}
-
-		// and the one from the edit!
-		recipe.setCO2Value();
-		Long indikatorLeft = new Long(Math.round(580/(stop-start)*(recipe.getCO2Value()-start)));
-		String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(recipe.getCO2Value())+" g* (pro Person)</div>");
-		bottomIndikator.setHTML(indikatorHTMLunten);
-		
-		// und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
-	}
-
-
-	private void displayTops(ArrayList<ComparatorRecipe> scoreMapFinal,
-			Double startDouble, Double stopDouble) {
-		// maybe it shouldn't be 20% of the best rezepte, but a another scaling...
-		int beginRange = (int) Math.floor((scoreMapFinal.size())*startDouble);
-		int stopRange = (int) Math.floor((scoreMapFinal.size())*stopDouble);
-
-		List<ComparatorRecipe> selectionList =  scoreMapFinal.subList(beginRange, stopRange);
-		if(stopRange-beginRange != 0){
-			Double minValue = 100000.0;
-			Recipe selectedMax = null;
-			Iterator<ComparatorRecipe> iterator = selectionList.iterator();
-			while(iterator.hasNext()){
-				ComparatorRecipe takeMax = iterator.next();
-				if(takeMax.value<minValue){
-					selectedMax = takeMax.recipe;
-					minValue = takeMax.value;
-				}
-			}
-			final Recipe takeThisOne = selectedMax;
-			
-//			Double MenuLabelWert = new Double(0.0);
-//			for (IngredientSpecification zutatSpec : selectedMax.Zutaten) { 
-//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-//			}
-			selectedMax.setCO2Value();
-			Double MenuLabelWert = selectedMax.getCO2Value();
-			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:230px;background:#F9C88C;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +" g</b></div>");
-			HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					// add receipe to the Worksheet Panel
-					EaternityRechner.ShowRezept(takeThisOne);
-				}
-			});
-			
-			if(selectedMax.getSelected() != null){
-				if(selectedMax.getSelected()){
-					handler.removeHandler();
-					suggestText = new HTML("<div style='height:60px;width:230px;background:#F48F28;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +" g</b></div>");
-				}
-			}
-			//HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
-//			suggestText.setHTML();
-			EaternityRechner.suggestionPanel.add(suggestText);
-		}
-	}
+	   public void updtTopSuggestion() {
+	      // TODO Algorithm for the Top Suggestions
+	      // Von jedem Gericht gibt es einen CO2 Wert für 4Personen (mit oder ohne Herkunft? oder aus der nächsten Distanz?), 
+	      // so wie sie gepeichert wurde.
+	      // Es werden bei der Anzeige Rezepte berücksichtigt, die: 
+	      // min 20% identische Zutaten ( Zutat*(Menge im Recipe)/StdMenge ) und das pro Zutat, und davon min 20%identisch
+	      // min +50% Zutaten die in den alternativen Vorkommen
+	      // hierbei wird die 2 passendsten Rezepte jeweils aus den nicht durch das markierte Recipe belegten Bereich angezeigt
+	      // Bereich sind 0-20%    20%-50%        50%-100%
+	      
+	      // Rezepte sollten sich bewerten lassen, und deren Popularität gemessen werden. ( Über die Zeit?)
+	      // 
+		   
+	      // diese Filter sollten in der Reihenfolge ausgeführt werden, in der sie am wenigsten Berechnungen benötigen:
+	      
+	      // TODO alle Rezepte für 4 Personen, sonst macht der Vergleich keinen Sinn
+	      
+	      // get Comparator
+	      ArrayList<ComparatorObject> comparator = comparator(recipe);
+	      // comparator returns for each ingedient:
+	      // (zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
+	      
+	      Double maxScore = 0.0;
+	      for(ComparatorObject comparatorObject : comparator){
+	          maxScore = maxScore+comparatorObject.value;
+	      }
+	      // this is the sum over all those ingredient values
+	      // which equals about the number of different ingredients in the recipe...
+	      
+	      
+	      // all Recipes
+	      List<Recipe> allRecipes = new ArrayList<Recipe>();
+	      allRecipes.clear();
+	      // display context information...
+	      Recipe compare = recipe;
+	      compare.setSelected(true);
+	      if(recipe.getSymbol() == null){
+	          compare.setSymbol("Ihr Menu");
+	      }
+	      if(recipe.getSubTitle() == null){
+	          compare.setSubTitle("Menu Beschreibung");
+	      }
+	      
+	      // add your specific recipe to the others in the database
+	      allRecipes.add(compare);
+	      // and all the others also
+	      allRecipes.addAll( Search.clientData.getPublicRezepte());
+	      if(Search.clientData.getYourRezepte() != null){
+	          allRecipes.addAll(Search.clientData.getYourRezepte());
+	      }
+		   
+	      // zuerst der Filter über die tatsächlichen Zutaten
+	      ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
+	      scoreMap.clear();
+	      
+	      // Init first boundaries, for indicator
+	      Double MaxValueRezept = 0.0;
+	      Double MinValueRezept = 10000000.0;
+	      //  go over the Recipes in the Workspace
+	      for(Widget widget : EaternityRechner.rezeptList){
+	          RecipeView rezeptView = (RecipeView) widget;
+	          rezeptView.recipe.setCO2Value();
+	          if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
+	              MaxValueRezept = rezeptView.recipe.getCO2Value();
+	          } 
+	          if(rezeptView.recipe.getCO2Value()<MinValueRezept){
+	              MinValueRezept = rezeptView.recipe.getCO2Value();
+	          }
+	      }
+	      
+	      // go over the recipes in the database ( here our special one is already included...)
+	      for( Recipe compareRecipe : allRecipes){
+	          
+	          // this is just to get the min and max values for the indicator
+	          compareRecipe.setCO2Value();
+	          if(compareRecipe.getCO2Value()>MaxValueRezept){
+	              MaxValueRezept = compareRecipe.getCO2Value();
+	          } 
+	          if(compareRecipe.getCO2Value()<MinValueRezept){
+	              MinValueRezept = compareRecipe.getCO2Value();
+	          }
+	          
+	          ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
+	          comparatorRecipe.key = compareRecipe.getId();
+	          comparatorRecipe.recipe = compareRecipe;
+	          // get the direct comparison score... the bigger the worse...
+	          comparatorRecipe.comparator = getExactScore(comparator,comparator(compareRecipe));
+	          
+	          // error is the max score of both added together, minus twice the disjunct region
+	          
+	          Double error = 0.0;
+	          Double errorNeg = 0.0;
+	          for(ComparatorObject comparatorObject : comparatorRecipe.comparator){
+	              error = error+Math.abs(comparatorObject.value);
+	              if(comparatorObject.value<0){
+	                  errorNeg = errorNeg+Math.abs(comparatorObject.value);
+	              }
+	          }
+	          comparatorRecipe.value = error;
+	          comparatorRecipe.valueNeg = errorNeg;
+	          scoreMap.add(comparatorRecipe);
+	      }
+	      
+	      // dann der gröbere über die definierten Alternativen der Zutaten
+	      ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
+	      scoreMap2.clear();
+	      for(ComparatorRecipe compRecipe: scoreMap){
+	          // this is cool now!
+	          if((compRecipe.value/(maxScore+compRecipe.valueNeg))<0.8){ // this is min. 20% identical _____==overlap==-----
+		   //            if((compRecipe.value)<0.8){ // this is min. 20% identical
+	              Recipe compareRecipe = compRecipe.recipe;
+	              ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
+	              comparatorRecipe.recipe = compareRecipe;
+	              comparatorRecipe.key = compareRecipe.getId();
+	              // TODO here we got some error...
+	              comparatorRecipe.value = getAltScore(compRecipe,maxScore);
+	              Double errorNeg = 0.0;
+	              for(ComparatorObject comparatorObject : compRecipe.comparator){
+	                  if(comparatorObject.value<0){
+	                      errorNeg = errorNeg+Math.abs(comparatorObject.value);
+	                  }
+	              }
+	              comparatorRecipe.valueNeg = errorNeg;
+	              
+	              scoreMap2.add(comparatorRecipe);
+	          }
+	      }
+		   
+	      
+	      // alles was jetzt noch da ist (alle errors  <0.6), werden verglichen, das heisst die Statistik ausgerechnet
+	      ArrayList<ComparatorRecipe> scoreMapFinal = new ArrayList<ComparatorRecipe>();
+	      scoreMapFinal.clear();
+	      for(ComparatorRecipe compRecipe: scoreMap2){
+	          // TODO 0.6 IS JUST A GUESS
+		   //            if((compRecipe.value/maxScore)<0.6){ // this is min. 20% identical and min. 60% alternative Identity
+	          if((compRecipe.value/(maxScore+compRecipe.valueNeg))<0.6){ // this is min. 20% identical and min. 60% alternative Identity
+	              
+	              compRecipe.recipe.setCO2Value();
+	              scoreMapFinal.add(compRecipe);
+	          }
+	      }
+	      
+	      Collections.sort(scoreMapFinal,new ComparatorComparator());
+		   
+	      // this is just a test
+	      if(scoreMapFinal.size()>0){
+	          EaternityRechner.suggestionPanel.clear();
+		   
+	          displayTops(scoreMapFinal, 0.8, 1.0);
+	          displayTops(scoreMapFinal, 0.5, 0.8);
+	          displayTops(scoreMapFinal, 0.0, 0.5);
+	          
+	      }
+	      
+		   ////        if(scoreMapFinal.size()>2){
+		   //            recipe.setCO2Value();
+		   //            double indikator = recipe.getCO2Value();
+		   ////            double stop = scoreMapFinal.get(0).recipe.getCO2Value();
+		   //            double stop = MaxValueRezept;
+		   ////            double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
+		   //            double start = MinValueRezept;
+		   //            
+		   //            Long indikatorLeft = Math.round(800/(stop-start)*(indikator-start));
+		   //            String indikatorHTML = "<div style='padding-left:"+indikatorLeft.toString()+"px'>für 1ne Person: "+NumberFormat.getFormat("##").format(recipe.getCO2Value())+"g CO2</div>";
+		   //            topIndikator.setHTML(indikatorHTML);
+		   //            bottomIndikator.setHTML(indikatorHTML);
+	          
+		   //        }
+	      
+		   
+	      //        double stop = scoreMapFinal.get(0).recipe.getCO2Value();
+	      double stop = MaxValueRezept;
+	      //        double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
+	      double start = MinValueRezept;
+		   
+		   
+	      // update all widgets bars!
+	      for(Widget widget : EaternityRechner.rezeptList){
+	          RecipeView rezeptView = (RecipeView) widget;
+	          rezeptView.recipe.setCO2Value();
+	          Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
+		   
+	          String indikatorHTMLoben = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeoben.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
+	          String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
+	          rezeptView.topIndikator.setHTML(indikatorHTMLoben);
+	          
+	          rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
+	      }
+		   
+	      // and the one from the edit!
+	      recipe.setCO2Value();
+	      Long indikatorLeft = new Long(Math.round(580/(stop-start)*(recipe.getCO2Value()-start)));
+	      String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(recipe.getCO2Value())+" g* (pro Person)</div>");
+	      bottomIndikator.setHTML(indikatorHTMLunten);
+	      
+	      // und die 2 Rezepte mit den höchsten Scores aus den entspr. Bereichen selektiert und angezeigt.
+	  }
+		   
+		   
+	  private void displayTops(ArrayList<ComparatorRecipe> scoreMapFinal,
+	          Double startDouble, Double stopDouble) {
+	      // maybe it shouldn't be 20% of the best rezepte, but a another scaling...
+	      int beginRange = (int) Math.floor((scoreMapFinal.size())*startDouble);
+	      int stopRange = (int) Math.floor((scoreMapFinal.size())*stopDouble);
+		   
+	      List<ComparatorRecipe> selectionList =  scoreMapFinal.subList(beginRange, stopRange);
+	      if(stopRange-beginRange != 0){
+	          Double minValue = 100000.0;
+	          Recipe selectedMax = null;
+	          Iterator<ComparatorRecipe> iterator = selectionList.iterator();
+	          while(iterator.hasNext()){
+	              ComparatorRecipe takeMax = iterator.next();
+	              if(takeMax.value<minValue){
+	                  selectedMax = takeMax.recipe;
+	                  minValue = takeMax.value;
+	              }
+	          }
+	          final Recipe takeThisOne = selectedMax;
+	          
+		   //            Double MenuLabelWert = new Double(0.0);
+		   //            for (IngredientSpecification zutatSpec : selectedMax.Zutaten) { 
+		   //                MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
+		   //            }
+	          selectedMax.setCO2Value();
+	          Double MenuLabelWert = selectedMax.getCO2Value();
+	          HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:230px;background:#F9C88C;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +" g</b></div>");
+	          HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
+	              public void onClick(ClickEvent event) {
+	                  // add receipe to the Worksheet Panel
+	                  EaternityRechner.ShowRezept(takeThisOne);
+	              }
+	          });
+	          
+	          if(selectedMax.getSelected() != null){
+	              if(selectedMax.getSelected()){
+	                  handler.removeHandler();
+	                  suggestText = new HTML("<div style='height:60px;width:230px;background:#F48F28;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +" g</b></div>");
+	              }
+	          }
+	          //HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
+		   //            suggestText.setHTML();
+	          EaternityRechner.suggestionPanel.add(suggestText);
+	      }
+	  }
+	  
+	  
+	  
+	  private Double getAltScore(ComparatorRecipe compRecipe, Double maxScore) {
+	      // check for all the stuff thats negative: that means we had to much in the compareRecipe
+	      // and check for all the alternatives of the negative one, if there is something left in the positive
+	      ArrayList<ComparatorObject> resultComparator = null;
+		   
+	      boolean changed = true;
+	      while(changed){
+	          resultComparator = compRecipe.comparator;
+	          changed = false;
+	          for(ComparatorObject compObj: resultComparator){
+	              if(compObj.ingredient.getAlternatives() != null){
+	                  if((Math.abs(compObj.value)/(maxScore+compRecipe.valueNeg))>0.1){
+	                      // we take 10% as a tolerance value
+	                      for(Long altIngredientId :compObj.ingredient.getAlternatives()){
+	                          for(ComparatorObject compObj2: resultComparator){
+	                              if(altIngredientId.equals(compObj2.key)){
+	                                  if(Math.abs(compObj2.value)>0 && Math.abs(compObj.value+compObj2.value)<0.1){
+	                                      // this means we have min. 10% improvement ( to have a converging situation)
+		   
+	                                      int subtractHere = compRecipe.comparator.indexOf(compObj2);
+	                                      int addHere = compRecipe.comparator.indexOf(compObj);
+	                                      compObj2.value = compObj2.value+compObj.value;
+	                                      compObj.value = compObj2.value;
+	                                      resultComparator.set(subtractHere, compObj2);                        
+	                                      resultComparator.set(addHere, compObj);    
+		   
+	                                      changed = true;
+	                                      break;
+	                                  }
+	                              }
+	                          }
+	                      }
+		   
+	                  }
+	              }
+	          }
+	          
+	      }
+	      
+	      
+	      Double errorOrig = compRecipe.value;
+		   //        for(ComparatorObject comparatorObject : compRecipe.comparator){
+		   //            errorOrig = errorOrig+Math.abs(comparatorObject.value);
+		   //        }
+		   //        
+	      Double errorHere = 0.0;
+	      Double errorNeg = 0.0;
+	      for(ComparatorObject comparatorObject : resultComparator){
+	          errorHere = errorHere+Math.abs(comparatorObject.value);
+	      }
+	      
+		   
+	      // return value should be the absolut values but 1/3 of the score...
+	      // TODO 1/3 IS JUST A GUESS
+	      return errorHere;
+	  }
+		   
+		   
+	  private ArrayList<ComparatorObject> getExactScore(ArrayList<ComparatorObject> recipeOrigin, ArrayList<ComparatorObject> recipeComparator) {
+	      
+	      ArrayList<ComparatorObject> resultComparator = new ArrayList<ComparatorObject>();
+	      resultComparator.clear();
+	      
+	      // takes this Recipe from this RezeptView
+	      for(ComparatorObject comparatorObjectOrigin : recipeOrigin){
+	          // and compares every ingredient
+		   
+	          
+	          ComparatorObject comparatorResultObject = new ComparatorObject();
+	          // this is the positive error
+	          // if we have something in the origin, but not in the compare
+	          // we start with the maximum error
+	          double newValue = comparatorObjectOrigin.value;
+	          comparatorResultObject.key = comparatorObjectOrigin.key;
+	          comparatorResultObject.ingredient  = comparatorObjectOrigin.ingredient;
+	          
+	          // with the one from the database
+	          for(ComparatorObject comparatorObject :recipeComparator){
+	              
+	              // on match - we substract this match...
+	              if(comparatorObject.key.equals(comparatorObjectOrigin.key)){    
+	                  // calculate the error value
+	                  newValue = comparatorObjectOrigin.value-comparatorObject.value;
+	                  // if this is negative, we had too much of this in the compare
+	                  
+	                  // break for speed up ( as the map is injective)
+	                  break;
+	              }
+	          }
+	          
+	          // store the error value
+	          comparatorResultObject.value = newValue;
+	          resultComparator.add(comparatorResultObject);
+		   
+	      }
+	      
+	      // this is the case that we have more ingredients, then in the origin one.
+	      // they will be added as negative error... ( as it was also too much...)
+	      for(ComparatorObject comparatorObject :recipeComparator){
+	          boolean notFound = true;
+	          for(ComparatorObject resultCompObj : resultComparator){
+	              if(comparatorObject.key.equals(resultCompObj.key)){
+	                  notFound = false;
+	              }
+	          }
+	          if(notFound){
+	              ComparatorObject comparatorResultObject = new ComparatorObject();
+	              comparatorResultObject.key = comparatorObject.key;
+	              comparatorResultObject.value = -comparatorObject.value;
+	              comparatorResultObject.ingredient  = comparatorObject.ingredient;
+	              resultComparator.add(comparatorResultObject);
+	          }
+	      
+	      }
+	      
+	      
+	      return resultComparator;
+	  }
 	
-	
-	
-	private Double getAltScore(ComparatorRecipe compRecipe, Double maxScore) {
-		// check for all the stuff thats negative: that means we had to much in the compareRecipe
-		// and check for all the alternatives of the negative one, if there is something left in the positive
-		ArrayList<ComparatorObject> resultComparator = null;
-
-		boolean changed = true;
-		while(changed){
-			resultComparator = compRecipe.comparator;
-			changed = false;
-			for(ComparatorObject compObj: resultComparator){
-				if(compObj.ingredient.getAlternatives() != null){
-					if((Math.abs(compObj.value)/(maxScore+compRecipe.valueNeg))>0.1){
-						// we take 10% as a tolerance value
-						for(Long altIngredientId :compObj.ingredient.getAlternatives()){
-							for(ComparatorObject compObj2: resultComparator){
-								if(altIngredientId.equals(compObj2.key)){
-									if(Math.abs(compObj2.value)>0 && Math.abs(compObj.value+compObj2.value)<0.1){
-										// this means we have min. 10% improvement ( to have a converging situation)
-
-										int subtractHere = compRecipe.comparator.indexOf(compObj2);
-										int addHere = compRecipe.comparator.indexOf(compObj);
-										compObj2.value = compObj2.value+compObj.value;
-										compObj.value = compObj2.value;
-										resultComparator.set(subtractHere, compObj2);						
-										resultComparator.set(addHere, compObj);	
-
-										changed = true;
-										break;
-									}
-								}
-							}
-						}
-
-					}
-				}
-			}
-			
-		}
-		
-		
-		Double errorOrig = compRecipe.value;
-//		for(ComparatorObject comparatorObject : compRecipe.comparator){
-//			errorOrig = errorOrig+Math.abs(comparatorObject.value);
-//		}
-//		
-		Double errorHere = 0.0;
-		Double errorNeg = 0.0;
-		for(ComparatorObject comparatorObject : resultComparator){
-			errorHere = errorHere+Math.abs(comparatorObject.value);
-		}
-		
-
-		// return value should be the absolut values but 1/3 of the score...
-		// TODO 1/3 IS JUST A GUESS
-		return errorHere;
-	}
-
-
-	private ArrayList<ComparatorObject> getExactScore(ArrayList<ComparatorObject> recipeOrigin, ArrayList<ComparatorObject> recipeComparator) {
-		
-		ArrayList<ComparatorObject> resultComparator = new ArrayList<ComparatorObject>();
-		resultComparator.clear();
-		
-		// takes this Recipe from this RezeptView
-		for(ComparatorObject comparatorObjectOrigin : recipeOrigin){
-			// and compares every ingredient
-
-			
-			ComparatorObject comparatorResultObject = new ComparatorObject();
-			// this is the positive error
-			// if we have something in the origin, but not in the compare
-			// we start with the maximum error
-			double newValue = comparatorObjectOrigin.value;
-			comparatorResultObject.key = comparatorObjectOrigin.key;
-			comparatorResultObject.ingredient  = comparatorObjectOrigin.ingredient;
-			
-			// with the one from the database
-			for(ComparatorObject comparatorObject :recipeComparator){
-				
-				// on match - we substract this match...
-				if(comparatorObject.key.equals(comparatorObjectOrigin.key)){	
-					// calculate the error value
-					newValue = comparatorObjectOrigin.value-comparatorObject.value;
-					// if this is negative, we had too much of this in the compare
-					
-					// break for speed up ( as the map is injective)
-					break;
-				}
-			}
-			
-			// store the error value
-			comparatorResultObject.value = newValue;
-			resultComparator.add(comparatorResultObject);
-
-		}
-		
-		// this is the case that we have more ingredients, then in the origin one.
-		// they will be added as negative error... ( as it was also too much...)
-		for(ComparatorObject comparatorObject :recipeComparator){
-			boolean notFound = true;
-			for(ComparatorObject resultCompObj : resultComparator){
-				if(comparatorObject.key.equals(resultCompObj.key)){
-					notFound = false;
-				}
-			}
-			if(notFound){
-				ComparatorObject comparatorResultObject = new ComparatorObject();
-				comparatorResultObject.key = comparatorObject.key;
-				comparatorResultObject.value = -comparatorObject.value;
-				comparatorResultObject.ingredient  = comparatorObject.ingredient;
-				resultComparator.add(comparatorResultObject);
-			}
-		
-		}
-		
-		
-		return resultComparator;
-	}
-
-
-	private ArrayList<ComparatorObject> comparator(Recipe recipe){
-		// wtf is up with the Map() ???
-//		Map<Long,Double> recipeComparator = Collections.emptyMap();
-		// everything would have been so easy!!
-		
-		 ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
-		 recipeComparator.clear();
-		
-		for(IngredientSpecification zutatSpec : recipe.Zutaten){
-			Ingredient zutat = Search.clientData.getIngredientByID(zutatSpec.getZutat_id());
-//			amount of Persons needs to be assigned always!
-			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
-			Double alreadyAmount = 0.0;
-			int index = -1;
-//			check if the indgredient is already in there...
-			for(ComparatorObject comparatorObject :recipeComparator){
-				if(comparatorObject.key.equals(zutat.getId())){
-					alreadyAmount =  comparatorObject.value;
-					index = recipeComparator.indexOf(comparatorObject);
-					// if so take the found index
-					break;
-				}
-			}
-			
-			ComparatorObject comparatorObject = new ComparatorObject();
-			comparatorObject.ingredient = zutat;
-			comparatorObject.key = zutat.getId();
-			comparatorObject.value = amount+alreadyAmount;
-			
-			if(index!=-1){
-				recipeComparator.set(index, comparatorObject);
-			} else {
-				recipeComparator.add(comparatorObject);
-			}
-
-		}
-
-		return recipeComparator;
-	}
-
-
+	  private ArrayList<ComparatorObject> comparator(Recipe recipe){
+	      // wtf is up with the Map() ???
+		   //        Map<Long,Double> recipeComparator = Collections.emptyMap();
+	      // everything would have been so easy!!
+	      
+	       ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
+	       recipeComparator.clear();
+	      
+	      for(IngredientSpecification zutatSpec : recipe.Zutaten){
+	          Ingredient zutat = Search.clientData.getIngredientByID(zutatSpec.getZutat_id());
+		   //            amount of Persons needs to be assigned always!
+	          Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
+	          Double alreadyAmount = 0.0;
+	          int index = -1;
+		   //            check if the indgredient is already in there...
+	          for(ComparatorObject comparatorObject :recipeComparator){
+	              if(comparatorObject.key.equals(zutat.getId())){
+	                  alreadyAmount =  comparatorObject.value;
+	                  index = recipeComparator.indexOf(comparatorObject);
+	                  // if so take the found index
+	                  break;
+	              }
+	          }
+	          
+	          ComparatorObject comparatorObject = new ComparatorObject();
+	          comparatorObject.ingredient = zutat;
+	          comparatorObject.key = zutat.getId();
+	          comparatorObject.value = amount+alreadyAmount;
+	          
+	          if(index!=-1){
+	              recipeComparator.set(index, comparatorObject);
+	          } else {
+	              recipeComparator.add(comparatorObject);
+	          }
+		   
+	      }
+		   
+	      return recipeComparator;
+	  }
+		   
 	private void updateTable(int row,IngredientSpecification zutatSpec){
 		saved = false;
 		
