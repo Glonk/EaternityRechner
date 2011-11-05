@@ -9,6 +9,7 @@ import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -31,4 +32,5 @@ public interface DataService extends RemoteService {
   public List<Kitchen> getYourKitchens() throws NotLoggedInException;
   public List<Kitchen> getAdminKitchens() throws NotLoggedInException;
   public Boolean approveKitchen(Long kitchenId, Boolean approve) throws NotLoggedInException;
+  public Boolean setYourLastKitchen(Long i) throws NotLoggedInException;
 }

@@ -20,11 +20,13 @@ import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Staff;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.googlecode.objectify.NotFoundException;
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -48,11 +50,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 
 		if(kitchen.getEmailAddressOwner() == null){
-		if(userService.getCurrentUser().getEmail() != null){
-			kitchen.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
-		} else {
-			kitchen.setEmailAddressOwner(userService.getCurrentUser().getNickname());
-		}
+			if(userService.getCurrentUser().getEmail() != null){
+				kitchen.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
+			} else {
+				kitchen.setEmailAddressOwner(userService.getCurrentUser().getNickname());
+			}
 		}
 		kitchen.open = false;
 
@@ -89,10 +91,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		UserService userService = UserServiceFactory.getUserService();
 		List<Kitchen> adminRecipes = new ArrayList<Kitchen>();
 		if(userService.getCurrentUser() != null){
-		if(userService.isUserAdmin()){
-			DAO dao = new DAO();
-			adminRecipes = dao.adminGetKitchens(userService.getCurrentUser());
-		}
+			if(userService.isUserAdmin()){
+				DAO dao = new DAO();
+				adminRecipes = dao.adminGetKitchens(userService.getCurrentUser());
+			}
 		}
 		return adminRecipes;
 		
@@ -110,7 +112,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
 		userRezept.id = recipe.getId();
 		
-		if(recipe.kitchenIds.length > 0){
+		if(!recipe.kitchenIds.isEmpty()){
 			userRezept.kitchenIds = recipe.kitchenIds;
 		}
 		// TODO : this is not a propper approval process!!!
@@ -197,9 +199,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		
 		if (getUser() != null) {
-		List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
-		data.setYourRezepte(rezeptePersonal);
-		data.KitchenRecipes = dao.getKitchenRecipes(getUser());
+			List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
+			data.setYourRezepte(rezeptePersonal);
+			data.KitchenRecipes = dao.getKitchenRecipes(getUser());
 		}
 		
 		
@@ -238,9 +240,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.kitchens = kitchensOpen;
 		}
 		
-		
-		
-		
+	
+	    try {
+	    	LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
+	    	data.lastKitchen = loginInfo.getLastKitchen();
+	    } catch (NotFoundException e) {
+	    	
+	    }
+	
 		return data;
 	}
 
@@ -288,5 +295,21 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	{
 		DAO dao = new DAO();
 		return dao.getAllIngredientsXml();
+	}
+
+	@Override
+	public Boolean setYourLastKitchen(Long lastKitchen) throws NotLoggedInException {
+		DAO dao = new DAO();
+		boolean tryIt = false;
+		try {
+			LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
+			loginInfo.setLastKitchen(lastKitchen);
+			dao.ofy().put(loginInfo);
+			tryIt = true;
+		} catch (NotFoundException e) {
+			tryIt = false;
+		} 
+		// TODO Auto-generated method stub
+		return tryIt;
 	}
 }

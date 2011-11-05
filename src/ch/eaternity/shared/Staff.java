@@ -13,9 +13,7 @@ public class Staff implements Serializable {
 	 */
 	private static final long serialVersionUID = 3172640409035191698L;
 	
-//    @PrimaryKey
-//    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-//    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	// this object should be matched with the login-info, don't you think...
 	
 	@Id 
 	public Long id;

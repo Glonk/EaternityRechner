@@ -3,6 +3,7 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+
+
 
 import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.googlecode.objectify.annotation.Indexed;
@@ -38,8 +41,7 @@ public class Recipe implements Serializable, Cloneable{
 	public EnergyMix energyMix;
 	
 	public String ShortUrl;
-	
-	public Long[] kitchenIds = {0L}; // 0L is no kitchen...
+	public List<Long> kitchenIds =  new ArrayList<Long>(); // empty is no kitchen...
 	
 	private Long persons;
 	

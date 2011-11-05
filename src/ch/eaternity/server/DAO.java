@@ -13,6 +13,7 @@ import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
@@ -41,6 +42,7 @@ public class DAO extends DAOBase
         ObjectifyService.register(ImageBlob.class);
         ObjectifyService.register(Kitchen.class);
         ObjectifyService.register(Staff.class);
+        ObjectifyService.register(LoginInfo.class);
 //        ObjectifyService.register(DeviceSpecification.class);
 //        ObjectifyService.register(Device.class);
     }

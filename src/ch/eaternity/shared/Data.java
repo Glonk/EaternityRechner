@@ -20,7 +20,7 @@ public class Data implements Serializable{
 	
 	public  List<Kitchen> kitchens;
 	
-	public int lastKitchen;
+	public Long lastKitchen;
 
 	public Set<String> getOrcaleIndex() {
 
@@ -70,6 +70,16 @@ public class Data implements Serializable{
 		for(Ingredient zutat : ingredients){
 			if (zutat.getId() == id){
 				return zutat;
+			}
+		}
+		return null;
+	}
+	
+	
+	public Kitchen getKitchenByID(long id){
+		for(Kitchen kitchen : kitchens){
+			if (kitchen.id == id){
+				return kitchen;
 			}
 		}
 		return null;

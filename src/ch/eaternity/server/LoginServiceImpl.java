@@ -7,6 +7,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.googlecode.objectify.NotFoundException;
 
 public class LoginServiceImpl extends RemoteServiceServlet implements
     LoginService {
@@ -19,15 +20,27 @@ public class LoginServiceImpl extends RemoteServiceServlet implements
 public LoginInfo login(String requestUri) {
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
+    DAO dao = new DAO();
     LoginInfo loginInfo = new LoginInfo();
 
     if (user != null) {
+    	
+	    try {
+	    	loginInfo = dao.ofy().get(LoginInfo.class, user.getUserId());
+	    } catch (NotFoundException e) {
+	    	
+	    }
+
+      loginInfo.setId(user.getUserId());
       loginInfo.setLoggedIn(true);
       loginInfo.setEmailAddress(user.getEmail());
       loginInfo.setNickname(user.getNickname());
       loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
       loginInfo.setAdmin(userService.isUserAdmin());
-      loginInfo.setId(user.getUserId());
+      
+     
+      dao.ofy().put(loginInfo);
+      
     } else {
       loginInfo.setLoggedIn(false);
       loginInfo.setLoginUrl(userService.createLoginURL(requestUri));

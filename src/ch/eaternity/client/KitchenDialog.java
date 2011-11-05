@@ -923,6 +923,18 @@ public class KitchenDialog extends DialogBox{
         
 		saveDistances();
 		
+		dataService.setYourLastKitchen(TopPanel.selectedKitchen.id, new AsyncCallback<Boolean>() {
+				@Override
+				public void onFailure(Throwable error) {
+					Window.alert("Fehler : "+ error.getMessage());
+				}
+				@Override
+				public void onSuccess(Boolean okay) {
+					Search.clientData.lastKitchen = TopPanel.selectedKitchen.id;
+				}
+			});
+		
+		
 //		kitchen.energyMix = energyMix.getItemText(energyMix.getSelectedIndex());
 //		
 //		final Kitchen kitchen = new Kitchen(kitchenName);
@@ -1177,6 +1189,17 @@ public class KitchenDialog extends DialogBox{
 		  TopPanel.leftKitchen = true;
 		  TopPanel.isCustomerLabel.setText("Sie benutzen den Rechner privat ");
 		  TopPanel.selectedKitchen = null;
+		  dataService.setYourLastKitchen(0L, new AsyncCallback<Boolean>() {
+				@Override
+				public void onFailure(Throwable error) {
+					Window.alert("Fehler : "+ error.getMessage());
+				}
+				@Override
+				public void onSuccess(Boolean okay) {
+					Search.clientData.lastKitchen = 0L;
+				}
+			});
+	
 		  saveAndCloseDialog();
 	  }
 

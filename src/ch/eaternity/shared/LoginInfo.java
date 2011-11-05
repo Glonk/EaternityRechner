@@ -2,6 +2,9 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
 public class LoginInfo implements Serializable {
 
 	/**
@@ -9,28 +12,28 @@ public class LoginInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 8516034014140362835L;
 	
+	@Id private String id;
+	
 	// standard values
 	private boolean loggedIn = false;
+	
+	@Transient
 	private String loginUrl;
+	@Transient
 	private String logoutUrl;
+	
 	private String emailAddress;
 	private String nickname;
 	private boolean admin = false;
-	private String id;
-	
+
 	// eaternity-rechner stuff
 	private boolean inKitchen = false;
-	private int lastKitchen;
+	private Long lastKitchen;
 	private String lastLogin;
 	private String lastLocation;
 	
-	public String getId() {
-		return id;
-	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
+	public LoginInfo() {}
 	
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -88,11 +91,20 @@ public class LoginInfo implements Serializable {
 		return inKitchen;
 	}
 
-	public void setLastKitchen(int lastKitchen) {
+	public void setLastKitchen(Long lastKitchen) {
 		this.lastKitchen = lastKitchen;
 	}
 
-	public int getLastKitchen() {
+	public Long getLastKitchen() {
 		return lastKitchen;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
 	}
 }

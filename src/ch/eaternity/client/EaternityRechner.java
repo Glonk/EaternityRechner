@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.lang.ArrayUtils;
+
 
 
 import ch.eaternity.client.widgets.ImageOverlay;
@@ -191,13 +193,13 @@ public class EaternityRechner implements EntryPoint {
 
 	
 
-	static void addRezept(final Recipe recipe, final RecipeEditView rezeptView) {
+	static void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
 		if(!TopPanel.leftKitchen){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
-			recipe.kitchenIds[recipe.kitchenIds.length] = TopPanel.selectedKitchen.id;
+			recipe.kitchenIds.add(TopPanel.selectedKitchen.id);
 		}
 		
 		// and then save it.
@@ -429,16 +431,30 @@ public class EaternityRechner implements EntryPoint {
 		rezeptView.recipe.setSymbol(recipe.getSymbol());
 		
 		rezeptView.RezeptName.setText(recipe.getSymbol());
-		rezeptView.titleHTML.setText(recipe.getSymbol());
+//		rezeptView.titleHTML.setText(recipe.getSymbol());
 		
 		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
-//		rezeptView.makePublic.setValue(!recipe.openRequested);
+		rezeptView.makePublic.setValue(!recipe.openRequested);
 		
-		rezeptView.openHTML.setHTML("Nicht veröffentlicht.");
+		//TODO hinzufügen zu welchen Küchen das Rezept gehört.
+		String kitchenString = "";
+		Boolean gotOne = false;
+		for(Long kitchenId : recipe.kitchenIds){
+			Kitchen kitchen = Search.clientData.getKitchenByID(kitchenId);
+			if(kitchen != null){
+				kitchenString = kitchenString + " [" + kitchen.getSymbol() +"]";
+				gotOne = true;
+			}	
+		}
+		if(gotOne){
+			kitchenString = " Ist den Küchen zugeordnet: " + kitchenString;
+		}
+		
+		rezeptView.openHTML.setHTML("Nicht veröffentlicht."+kitchenString);
 		if(recipe.isOpen()){
-			rezeptView.openHTML.setHTML("Veröffentlicht.");
+			rezeptView.openHTML.setHTML("Veröffentlicht."+kitchenString);
 		} else if(recipe.openRequested){
-			rezeptView.openHTML.setHTML("Veröffentlichung angefragt.");
+			rezeptView.openHTML.setHTML("Veröffentlichung angefragt."+kitchenString);
 		}
 		
 		if(recipe.getCookInstruction() != null){
@@ -458,6 +474,7 @@ public class EaternityRechner implements EntryPoint {
 				rezeptView.uploadWidget.setVisible(true);
 				rezeptView.bildEntfernen.setVisible(false);
 				rezeptView.recipe.image = null;
+//TODO				image should also be pulled out of the database to save space
 			}
     	});
     	
@@ -877,16 +894,27 @@ public class EaternityRechner implements EntryPoint {
 				}
 	
 				
+				// here is save the last kitchen thing
 				if(data.kitchens.size() > 0){
-//					if(Search.clientData.lastKitchen == 0){
-//						EaternityRechner.loginInfo.setLastKitchen(0);
-//					}
-					int lastkitchen = Search.clientData.lastKitchen;
-					String kitchenName = data.kitchens.get(lastkitchen).getSymbol();
-					TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
-					TopPanel.location.setVisible(false);
-					TopPanel.leftKitchen = false;
-					TopPanel.selectedKitchen = data.kitchens.get(lastkitchen);
+
+					Long lastKitchenId = Search.clientData.lastKitchen;
+					Kitchen lastKitchen = null;
+					for(Kitchen kitchIt : data.kitchens){
+						if(kitchIt.id == lastKitchenId){
+							lastKitchen = kitchIt;
+						}
+					}
+					if(lastKitchen != null){
+						String kitchenName = lastKitchen.getSymbol();
+						TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
+						TopPanel.location.setVisible(false);
+						TopPanel.leftKitchen = false;
+						TopPanel.selectedKitchen = lastKitchen;
+					} else {
+						if(lastKitchenId != 0){
+							Window.alert("Ihre letzte Küche wurde nicht gefunden.");
+						}
+					}
 				} else {
 					if(loginInfo == null || !loginInfo.isAdmin()){ 
 						TopPanel.isCustomer.setVisible(false);

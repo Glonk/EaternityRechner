@@ -84,12 +84,14 @@ public class RecipeView extends Composite {
 
 	@UiField
 	public FlowPanel menuDecoInfo;
-//	@UiField Button RezeptButton;
-//	@UiField Button reportButton;
+	
+	// add Rezept here
+	@UiField Button RezeptButton;
+	@UiField Button reportButton;
 	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
 	@UiField HTMLPanel topStatusBar;
-//	@UiField CheckBox makePublic;
+	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
@@ -104,7 +106,7 @@ public class RecipeView extends Composite {
 	@UiField TextBox rezeptDetails;
 	@UiField VerticalPanel MenuTableWrapper;
 	
-	@UiField HTML titleHTML;
+//	@UiField HTML titleHTML;
 	@UiField HTML openHTML;
 	@UiField HTML savedHTML;
 	@UiField HTML detailText;
@@ -242,7 +244,7 @@ public class RecipeView extends Composite {
 	        recipe.ShortUrl = response.getId();
 	        
 //	        no more edit here
-//	        EaternityRechner.addRezept(recipe,rezeptView);
+	        EaternityRechner.addRezept(recipe,rezeptView);
 	      }
 	     
 	      @Override
@@ -273,23 +275,19 @@ public class RecipeView extends Composite {
 //		this.listener = listener;
 //	}
 	
-//	@UiHandler("reportButton")
-//	void onReportClick(ClickEvent event) {
-//        Date date = new Date();
-//        long iTimeStamp = (long) (date.getTime() * .00003);
-//        long code = recipe.getId()*iTimeStamp;
-//
-//		String clear = Converter.toString(code,34);
-//		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
-////		Window.Location.assign(url);
-//		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
-////		getURL(url);
-//	}
+	@UiHandler("reportButton")
+	void onReportClick(ClickEvent event) {
+        Date date = new Date();
+        long iTimeStamp = (long) (date.getTime() * .00003);
+        long code = recipe.getId()*iTimeStamp;
 
-//	public static native String getURL(String url)/*-{
-//    	return $wnd.open(url, 'target=_blank')
-//	}-*/;
-	
+		String clear = Converter.toString(code,34);
+		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
+//		Window.Location.assign(url);
+		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
+//		getURL(url);
+	}
+
 	
 //	the table is not clickable anymore here
 //	@UiHandler("MenuTable")
@@ -524,6 +522,17 @@ public class RecipeView extends Composite {
 			EaternityRechner.rezeptList.removeRow(row);
 			EaternityRechner.selectedRezept = -1;
 			EaternityRechner.suggestionPanel.clear();
+			
+			if(isSelected){
+//				close also the Editview!
+				EaternityRechner.rezeptEditList.removeRow(0);
+				
+				if(EaternityRechner.dragArea.getWidgetCount() > 0){
+					EaternityRechner.dragArea.remove(0);
+				}
+				
+			}
+			
 		} else {
 		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
 		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
@@ -617,53 +626,53 @@ public class RecipeView extends Composite {
 			
 //			int row = AddZutatZumMenu(recipe.getZutaten());
 			// add Speicher Recipe Button
-//			if(klicky != null){
-//				klicky.removeHandler();
-//			}
-//			
-//			klicky = RezeptButton.addClickHandler(new ClickHandler() {
-//				public void onClick(ClickEvent event) {
-//					if(RezeptName.getText() != ""){
-//						// TODO warn that it wasn't saved in the other case
-//						amountPersons.setText(recipe.getPersons().toString());
-////						Speichere Recipe ab. 
-////						Recipe rezeptSave = new Recipe(RezeptName.getText());
-////						rezeptSave.setOpen(makePublic.getValue());
-////						rezeptSave.addZutaten(recipe.getZutaten());
-////						EaternityRechner.addRezept(rezeptSave);
-//						recipe.setSymbol(RezeptName.getText());
-//						if(rezeptDetails.getText() != ""){
-//							recipe.setSubTitle(rezeptDetails.getText());
-//						} else {
-//							recipe.setSubTitle("Menü Beschreibung");
-//						}
-//						recipe.openRequested = !makePublic.getValue();
-//						recipe.open = false;
-//						recipe.setCookInstruction(cookingInstr.getText()); 
-//						
-//						if(recipe.getId() == null){
-////							String UserId = EaternityRechner.loginInfo.getId();
-//	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
+			if(klicky != null){
+				klicky.removeHandler();
+			}
+			
+			klicky = RezeptButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					if(RezeptName.getText() != ""){
+						// TODO warn that it wasn't saved in the other case
+						amountPersons.setText(recipe.getPersons().toString());
+//						Speichere Recipe ab. 
+//						Recipe rezeptSave = new Recipe(RezeptName.getText());
+//						rezeptSave.setOpen(makePublic.getValue());
+//						rezeptSave.addZutaten(recipe.getZutaten());
+//						EaternityRechner.addRezept(rezeptSave);
+						recipe.setSymbol(RezeptName.getText());
+						if(rezeptDetails.getText() != ""){
+							recipe.setSubTitle(rezeptDetails.getText());
+						} else {
+							recipe.setSubTitle("Menü Beschreibung");
+						}
+						recipe.openRequested = !makePublic.getValue();
+						recipe.open = false;
+						recipe.setCookInstruction(cookingInstr.getText()); 
+						
+						if(recipe.getId() == null){
+//							String UserId = EaternityRechner.loginInfo.getId();
+	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
+							
+							// TODO
+							// there should be a collision check!
+							String randomNumber = Integer.toString(Random.nextInt(99999999));
+							
+							Long newId = Long.parseLong(randomNumber);
+//							if(newId*100> newId.MAX_VALUE){
+//								newId = Long.parseLong(randomNumber);
+//							}
 //							
-//							// TODO
-//							// there should be a collision check!
-//							String randomNumber = Integer.toString(Random.nextInt(99999999));
-//							
-//							Long newId = Long.parseLong(randomNumber);
-////							if(newId*100> newId.MAX_VALUE){
-////								newId = Long.parseLong(randomNumber);
-////							}
-////							
-//							recipe.setId(newId);
-//						}
-//						shortenAndSave();
-////						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
-////						toString(recipe.getId(),34);
-//						
-////						EaternityRechner.addRezept(recipe,rezeptView);
-//					}
-//				}
-//			});
+							recipe.setId(newId);
+						}
+						shortenAndSave();
+//						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
+//						toString(recipe.getId(),34);
+						
+//						EaternityRechner.addRezept(recipe,rezeptView);
+					}
+				}
+			});
 		
 	}
 
@@ -1012,7 +1021,9 @@ public class RecipeView extends Composite {
 		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
-		updtTopSuggestion();
+		// this is right now not relevant, yet gets executed
+//		updtTopSuggestion();
+		// should be in recipe edit view!
 		
 		
 		
@@ -1206,6 +1217,7 @@ public class RecipeView extends Composite {
 			String indikatorHTMLunten = new String("<div style='padding-left: 30px;display:inline;background:#000;background-image:url(eckeunten.png);margin-left:"+indikatorLeft.toString()+"px'>"+NumberFormat.getFormat("##").format(rezeptView.recipe.getCO2Value())+" g* (pro Person)</div>");
 			rezeptView.topIndikator.setHTML(indikatorHTMLoben);
 			rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
+			
 		}
 
 			

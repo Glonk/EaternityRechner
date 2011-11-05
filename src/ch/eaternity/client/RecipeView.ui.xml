@@ -243,13 +243,13 @@
            	<g:HTMLPanel styleName='{style.rezeptDecoration}'>
            		<g:HTMLPanel styleName='{style.statusInfo}'>
            			<g:HTMLPanel styleName='{style.closeButton}' ui:field='topStatusBar'>
-           			    <g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML>
-           			     - 
+           			    <!-- g:HTML ui:field="titleHTML" styleName='{style.inline}'>Neue Zusammenstellung</g:HTML>
+           			     -  -->
            			    <g:HTML ui:field="openHTML" styleName='{style.inline}'>nicht veröffentlicht</g:HTML>
            			      - 
            			    <g:HTML ui:field="savedHTML" styleName='{style.inline}'>nicht gespeichert</g:HTML> 
            			      -
-           			    <!--  g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox  -->
+           			    <g:CheckBox ui:field="makePublic">Rezept nicht veröffentlichen</g:CheckBox>
            			</g:HTMLPanel>
            			<g:HTMLPanel styleName='{style.floatRight}'>
            				<g:Button styleName='{style.gwt-Button}'  ui:field="removeRezeptButton" text="x"/>
@@ -295,8 +295,8 @@
         			<g:HTML ui:field='codeImage'></g:HTML >
         				<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
         					  
-                			<!-- g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
-                			<g:Button styleName='{style.gwt-Button}'  ui:field="reportButton" text="Klima-Bilanz PDF"/  -->
+                			<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
+                			<g:Button styleName='{style.gwt-Button}'  ui:field="reportButton" text="Klima-Bilanz PDF"/>
                 			
                 		</g:HTMLPanel>
                 				

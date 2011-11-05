@@ -31,4 +31,5 @@ public interface DataServiceAsync {
   public void getAdminKitchens(AsyncCallback<List<Kitchen>> asyncCallback);
   public void approveKitchen(Long id, Boolean approve,
 			AsyncCallback<Boolean> asyncCallback);
+public void setYourLastKitchen(Long i, AsyncCallback<Boolean> asyncCallback);
 }

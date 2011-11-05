@@ -1,6 +1,7 @@
 package ch.eaternity.server;
 
 import java.util.Date;
+import java.util.List;
 
 
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class UserRecipeWrapper{
 	
 	
 	@Indexed
-	public Long[] kitchenIds;
+	public List<Long> kitchenIds;
 	
 	public Boolean approvedOpen;
 	public Boolean requestedOpen;
