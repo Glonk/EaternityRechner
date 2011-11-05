@@ -232,7 +232,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		if (getUser() != null) {
 			// if you are the admin, you also get all the others!
-			data.kitchens.addAll(getAdminKitchens());
+			data.kitchens = getAdminKitchens();
 			
 			List<Kitchen> kitchenPersonal = dao.getYourKitchens(getUser());
 			
