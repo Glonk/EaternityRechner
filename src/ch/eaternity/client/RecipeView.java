@@ -154,7 +154,7 @@ public class RecipeView extends Composite {
 	    	PrepareButton.setVisible(false);
 	    }
 	    setRezept(recipe);
-	    saved = true;
+	    setRecipeSavedMode(true);
 	    initTable();
 	    
 //	    RezeptName.setVisible(false);
@@ -199,6 +199,17 @@ public class RecipeView extends Composite {
 //		
 		
 	  }
+
+
+	public void setRecipeSavedMode(boolean isSaved) {
+		saved = isSaved;
+		reportButton.setEnabled(isSaved);
+		
+		// the button switches -> faded out until some change happened
+		RezeptButton.setEnabled(!isSaved);
+		reportButton.setVisible(isSaved);
+		reportButton.setEnabled(isSaved);
+	}
 	
 	
 //	Urlshortener urlshortener = GWT.create(Urlshortener.class); 
@@ -1436,7 +1447,7 @@ public class RecipeView extends Composite {
 
 
 	private void updateTable(int row,IngredientSpecification zutatSpec){
-		saved = false;
+		setRecipeSavedMode(false);
 //		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 //		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent "); // what is this good for?
 		

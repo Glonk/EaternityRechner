@@ -179,7 +179,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		try {
 //			
-			
 			ArrayList<SingleDistance> distances = new ArrayList<SingleDistance>();
 			Query q4 = pm.newQuery(SingleDistance.class);
 			List<SingleDistance> singleDistances = (List<SingleDistance>) q4.execute();
@@ -201,6 +200,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if (getUser() != null) {
 			List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
 			data.setYourRezepte(rezeptePersonal);
+			
+			// here we add the persons recipes belonging to a kitchen
+			// this should be getting all recipes the person belongs to
 			data.KitchenRecipes = dao.getKitchenRecipes(getUser());
 		}
 		
@@ -209,6 +211,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if(rezepte.isEmpty()){
 			rezepte = dao.getOpenRecipe();
 		}
+		// remove double entries
 		if(data.yourRecipes != null){
 			for(Recipe recipe: data.yourRecipes){
 				int removeIndex = -1;
@@ -223,9 +226,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			}
 		}
 		data.setPublicRezepte(rezepte);
-		
-		
-		
+
+		// add all ingredients
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
 		data.setIngredients(ingredients);
 		

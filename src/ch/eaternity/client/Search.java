@@ -112,6 +112,8 @@ public class Search extends ResizeComposite {
 	@UiField DockLayoutPanel SearchBox;
 	@UiField HTML SearchLabel;
 	@UiField
+	static HTML yourRecipesText;
+	@UiField
 	static SuggestBox SearchInput;
 	
 	
@@ -240,6 +242,9 @@ public class Search extends ResizeComposite {
 
 	// here is the database of all data pushed to....
 	public static Data clientData = new Data();
+	
+	public static  List<Recipe> selectedKitchenRecipes = new ArrayList<Recipe>();
+	
 	private static ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
 	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
 	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
@@ -255,10 +260,10 @@ public class Search extends ResizeComposite {
 
 		// we have to wait till the database is loaded:
 		SearchInput.setText("wird geladen...");
-		initTable();
+		initTable(); // just the size
 		SearchInput.setFocus(true);
-		yourMealsPanel.setVisible(false);
 		
+
 		subMealsSplitPanels.addStyleName("noSplitter");
 		setVDraggerHeight("0px");
 
@@ -524,9 +529,10 @@ public class Search extends ResizeComposite {
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
 
+		
 		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
+			// then we have at least one recipe...
 			yourMealsPanel.setVisible(true);
-
 		} else {
 			yourMealsPanel.setVisible(false);
 		}
@@ -637,7 +643,8 @@ public class Search extends ResizeComposite {
 		if(TopPanel.leftKitchen){
 			return clientData.getYourRezepte();
 		} else {
-			return clientData.KitchenRecipes;
+			// this should only return the selected Kitchen ones
+			return selectedKitchenRecipes;
 		}
 		
 	}

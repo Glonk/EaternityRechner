@@ -20,6 +20,9 @@
 	.someSpace {
 		padding-bottom: 7px;		
 	}
+	.inline{
+		display: inline;
+		}
 	.legend {
 		display: none;
 		clear:both;
@@ -280,7 +283,7 @@
 	        					<!-- now is here -->
 	        							<g:HTMLPanel ui:field="yourMealsPanel" >
 									      	<g:HTMLPanel  styleName='{style.someSpace}'>
-				        	    				<hr /><br />&nbsp;in eigenen Rezepten
+				        	    				<hr /><br />&nbsp;<g:HTML ui:field="yourRecipesText" styleName='{style.inline}'> in eigenen Rezepten</g:HTML>
 			        	    				</g:HTMLPanel>
 				        					<g:ScrollPanel styleName='{style.scroll}'>
 				        					

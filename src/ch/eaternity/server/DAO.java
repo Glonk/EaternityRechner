@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.users.User;
+import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
 import com.googlecode.objectify.helper.DAOBase;
@@ -170,7 +171,7 @@ public class DAO extends DAOBase
 	        		
 	        	}
 	        	if(doAdd){
-	        		staffer.kitchensIds[staffer.kitchensIds.length] = kitchen.id;
+	        		staffer.kitchensIds.add(kitchen.id);
 	        	}
 	        	staff = staffer;
 	        	ofy().put(staffer);
@@ -178,8 +179,8 @@ public class DAO extends DAOBase
 	        
 	        if(!foundOne){
 	        	// add a new one
-	        	staff.kitchensIds = new Long[1];
-	        	staff.kitchensIds[0] = kitchen.id;
+	        	staff.kitchensIds = new ArrayList<Long>(1);
+	        	staff.kitchensIds.add(kitchen.id);
 	        	ofy().put(staff);
 	        }
 			
@@ -213,9 +214,13 @@ public class DAO extends DAOBase
 		while (staffIterator.hasNext()) {
         	Staff staffer = staffIterator.next();
         	for(Long getThisKitchen:staffer.kitchensIds){
-        		Kitchen newKitchen = ofy().get(Kitchen.class,getThisKitchen);
-        		if(!yourKitchens.contains(newKitchen)){
-        			yourKitchens.add(newKitchen);
+        		try {
+	        		Kitchen newKitchen = ofy().get(Kitchen.class,getThisKitchen);
+	        		if(!yourKitchens.contains(newKitchen)){
+	        			yourKitchens.add(newKitchen);
+	        		}
+        		} catch (NotFoundException e){
+        			
         		}
         	}
 		}
@@ -377,8 +382,9 @@ public class DAO extends DAOBase
 	        	for (Long kitchenId:staffer.kitchensIds){
 	        		
 //	        		Kitchen kitchen = ofy().get(Kitchen.class,kitchenId);
-	        		
-		        	Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenId", kitchenId);
+	        		//TODO this is obviously wrong, when we have more kitchens, per recipe ... is this the answer?: does it work?
+	        		//  http://code.google.com/p/objectify-appengine/wiki/IntroductionToObjectify#Multi-Value_Relationship
+		        	Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
 		            QueryResultIterator<UserRecipeWrapper> iterator = yourKitchenRecipes.iterator();
 		            
 		            while (iterator.hasNext()) {

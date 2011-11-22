@@ -210,13 +210,29 @@ public class EaternityRechner implements EntryPoint {
 
 			public void onSuccess(Long id) {
 
-				
-				// when this is your first one... so show the panel...
-				Search.yourMealsPanel.setVisible(true);
+				// when this is your first one... so show the panel... should be automatic
+//				Search.yourMealsPanel.setVisible(true);
 	
-				Search.clientData.getYourRezepte().add(recipe);
-				Search.updateResults(Search.SearchInput.getText());
-				rezeptView.saved = true;
+				// only add when it is not in there yet... (update)
+				// and corresponds to the kitchen
+				if(TopPanel.leftKitchen){
+					if(!Search.clientData.getYourRezepte().contains(recipe)){
+						Search.clientData.getYourRezepte().add(recipe);
+					}
+				} else {
+					if(!Search.clientData.KitchenRecipes.contains(recipe)){
+						Search.clientData.KitchenRecipes.add(recipe);
+					}
+					if(!Search.selectedKitchenRecipes.contains(recipe)){
+						Search.selectedKitchenRecipes.add(recipe);
+					}
+				}
+				
+//				Search.updateResults(" ");
+				String searchString = Search.SearchInput.getText().trim();
+				Search.updateResults(searchString);
+				
+				rezeptView.setRecipeSavedMode(true);
 				
 				// TODO make same sense out of this
 				// this is just a test functionality...
@@ -870,13 +886,16 @@ public class EaternityRechner implements EntryPoint {
 //				setClientData(data);
 				
 				// the search interface gets all the recipes and ingredients
-				Search.clientData =data;
-				Search.SearchInput.setText("");
-				Search.updateResults(" ");
-				
+				Search.clientData = data;
+
+
 				// the top panel grabs all the existing distances also from the search interface
 				topPanel.locationButton.setEnabled(true);
 				
+				// is this necessary?:
+				TopPanel.leftKitchen = true;
+				TopPanel.location.setVisible(true);
+				// it should not...
 				
 				// the kitchens must be listed in the Kitchen Dialog
 				if(data.kitchens.size() == 0 && (loginInfo == null || !loginInfo.isAdmin() )){
@@ -904,16 +923,20 @@ public class EaternityRechner implements EntryPoint {
 							lastKitchen = kitchIt;
 						}
 					}
-					if(lastKitchen != null){
-						String kitchenName = lastKitchen.getSymbol();
-						TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
-						TopPanel.location.setVisible(false);
-						TopPanel.leftKitchen = false;
-						TopPanel.selectedKitchen = lastKitchen;
-					} else {
-						if(lastKitchenId != 0){
-							Window.alert("Ihre letzte Küche wurde nicht gefunden.");
+					
+					if(lastKitchenId != null){
+						if(lastKitchen != null){
+							String kitchenName = lastKitchen.getSymbol();
+							TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
+							TopPanel.location.setVisible(false);
+							TopPanel.leftKitchen = false;
+							TopPanel.selectedKitchen = lastKitchen;
+							Search.yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
 						}
+					} else {
+						
+							Window.alert("Ihre letzte Küche wurde nicht gefunden.");
+						
 					}
 				} else {
 					if(loginInfo == null || !loginInfo.isAdmin()){ 
@@ -922,7 +945,8 @@ public class EaternityRechner implements EntryPoint {
 					}
 				}
 				
-				
+				Search.SearchInput.setText("");
+				Search.updateResults(" ");
 				//TODO ist the oracle of need?
 				//Set<String> itemIndex = data.getOrcaleIndex();
 				//Search.initializeOracle(itemIndex);

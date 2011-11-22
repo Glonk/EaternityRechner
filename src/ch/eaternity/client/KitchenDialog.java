@@ -9,6 +9,7 @@ import ch.eaternity.shared.EnergyMix;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Staff;
@@ -903,8 +904,29 @@ public class KitchenDialog extends DialogBox{
 		// this button finalizes the decision to enter the kitchen
 		TopPanel.location.setVisible(false);
 		TopPanel.leftKitchen = false;
-		TopPanel.isCustomerLabel.setText("Sie befinden sich in der Küche: "+kitchenName+" ");
+		TopPanel.isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
 		TopPanel.selectedKitchen = selectedKitchen;
+		
+		Search.selectedKitchenRecipes.clear();
+		for(Recipe recipe : Search.clientData.KitchenRecipes){
+			for(Long kitchenId : recipe.kitchenIds){
+				if(kitchenId == selectedKitchen.id){
+					Search.selectedKitchenRecipes.add(recipe);
+				}
+			}
+		}
+		
+		dataService.setYourLastKitchen(TopPanel.selectedKitchen.id, new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable error) {
+				Window.alert("Fehler : "+ error.getMessage());
+			}
+			@Override
+			public void onSuccess(Boolean okay) {
+				Search.clientData.lastKitchen = TopPanel.selectedKitchen.id;
+			}
+		});
+		Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 		
         saveAndCloseDialog();
 	}
@@ -923,16 +945,7 @@ public class KitchenDialog extends DialogBox{
         
 		saveDistances();
 		
-		dataService.setYourLastKitchen(TopPanel.selectedKitchen.id, new AsyncCallback<Boolean>() {
-				@Override
-				public void onFailure(Throwable error) {
-					Window.alert("Fehler : "+ error.getMessage());
-				}
-				@Override
-				public void onSuccess(Boolean okay) {
-					Search.clientData.lastKitchen = TopPanel.selectedKitchen.id;
-				}
-			});
+		
 		
 		
 //		kitchen.energyMix = energyMix.getItemText(energyMix.getSelectedIndex());
@@ -965,6 +978,7 @@ public class KitchenDialog extends DialogBox{
 ////			kitchen.personal.add(email.getText());
 //		}
 		
+		// this shoots to many rpc calls... (one should be enough)
 		for(final Kitchen kitchen: availableKitchens){
 			// save all kitchens at once
 			dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
@@ -974,16 +988,19 @@ public class KitchenDialog extends DialogBox{
 				}
 				@Override
 				public void onSuccess(Long kitchenID) {
-					TopPanel.selectedKitchen.id = kitchenID;
+					// this adds a new kitchen, yet must not be the selected one:
+					kitchen.id = kitchenID;
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());
 				}
 			});
 		}
 		
+
 		// update search... this should also be done when loaded regular
 		Search.SearchInput.setText("");
 		Search.updateResults(" ");
+		
 		
 		hide();
 	}
@@ -1187,8 +1204,11 @@ public class KitchenDialog extends DialogBox{
 	  public void onLeaveKitchenClick(ClickEvent event) {
 		  TopPanel.location.setVisible(true);
 		  TopPanel.leftKitchen = true;
-		  TopPanel.isCustomerLabel.setText("Sie benutzen den Rechner privat ");
+		  TopPanel.isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
 		  TopPanel.selectedKitchen = null;
+		  
+		  Search.yourRecipesText.setHTML(" in eigenen Rezepten");
+		  
 		  dataService.setYourLastKitchen(0L, new AsyncCallback<Boolean>() {
 				@Override
 				public void onFailure(Throwable error) {

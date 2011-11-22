@@ -2,6 +2,7 @@ package ch.eaternity.shared;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Id;
 
@@ -27,7 +28,7 @@ public class Staff implements Serializable {
 	
 // this is for the many-to-many relationship of kitchens and the staff
 	
-	public Long[] kitchensIds;
+	public List<Long> kitchensIds;
 	
 	public Staff() {
 
