@@ -295,7 +295,7 @@
         			<g:HTML ui:field='codeImage'></g:HTML >
         				<g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
         					  
-                			<g:Button styleName='{style.gwt-Button}'  ui:field="RezeptButton" text="Rezept Speichern"/>
+                			<g:Button styleName='{style.gwt-Button}'  ui:field="saveRecipeButton" text="Rezept Speichern"/>
                 			<g:Button styleName='{style.gwt-Button}'  ui:field="reportButton" text="Klima-Bilanz PDF"/>
                 			
                 		</g:HTMLPanel>

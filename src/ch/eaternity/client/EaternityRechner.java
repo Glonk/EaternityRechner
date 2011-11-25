@@ -940,7 +940,7 @@ public class EaternityRechner implements EntryPoint {
 
 					} else {
 						
-						Window.alert("Ihre letzte Küche wurde nicht gefunden.");
+//						Window.alert("Ihre letzte Küche wurde nicht gefunden.");
 						
 					}
 				} else {

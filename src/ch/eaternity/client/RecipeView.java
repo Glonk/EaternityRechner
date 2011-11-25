@@ -86,7 +86,7 @@ public class RecipeView extends Composite {
 	public FlowPanel menuDecoInfo;
 	
 	// add Rezept here
-	@UiField Button RezeptButton;
+	@UiField Button saveRecipeButton;
 	@UiField Button reportButton;
 	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
@@ -169,7 +169,7 @@ public class RecipeView extends Composite {
 		if (!EaternityRechner.loginInfo.isLoggedIn()) {
 			
 			SaveRezeptPanel.setVisible(false);
-			detailText.setHTML("Sie müssen sich anmelden um Rezepte zu speichern.");
+			detailText.setHTML("Sie müssen sich anmelden um Rezepte speichern zu können.");
 			
 //			no more edit here
 //			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
@@ -210,14 +210,16 @@ public class RecipeView extends Composite {
 		reportButton.setEnabled(isSaved);
 		
 		// the button switches -> faded out until some change happened
-		RezeptButton.setEnabled(!isSaved);
+		saveRecipeButton.setEnabled(!isSaved);
 		reportButton.setVisible(isSaved);
 		reportButton.setEnabled(isSaved);
 		
-		if(isSaved){
+		if(!isSaved){
 			savedHTML.setHTML("nicht gespeichert");
+			saveRecipeButton.setText("Rezept speichern");
 		} else {
 			savedHTML.setHTML("gespeichert");
+			saveRecipeButton.setText("Rezept ist gespeichert");
 		}
 	}
 	
@@ -651,8 +653,10 @@ public class RecipeView extends Composite {
 				klicky.removeHandler();
 			}
 			
-			klicky = RezeptButton.addClickHandler(new ClickHandler() {
+			klicky = saveRecipeButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
+					//TODO if the recipe is already in your personal data-store, don't create a new one.
+					
 					if(RezeptName.getText() != ""){
 						// TODO warn that it wasn't saved in the other case
 						amountPersons.setText(recipe.getPersons().toString());
@@ -678,6 +682,8 @@ public class RecipeView extends Composite {
 							// TODO
 							// there should be a collision check!
 							String randomNumber = Integer.toString(Random.nextInt(99999999));
+							
+							//TODO actually, this should not be done here, but the goo.gl shortener request should be made on the server
 							
 							Long newId = Long.parseLong(randomNumber);
 //							if(newId*100> newId.MAX_VALUE){
