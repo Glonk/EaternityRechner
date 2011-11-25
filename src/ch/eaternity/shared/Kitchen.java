@@ -49,6 +49,8 @@ public class Kitchen implements Serializable, Cloneable{
 	public Boolean open;
 	public Boolean approvedOpen;
 
+	public Boolean hasChanged;
+
 
 	public Kitchen() {
 

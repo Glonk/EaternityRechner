@@ -128,6 +128,7 @@ public class KitchenDialog extends DialogBox{
 			availableKitchens = new ArrayList<Kitchen>(1);
 			Kitchen newKitchen = new Kitchen("neue Küche",currentLocation);
 			newKitchen.energyMix = new EnergyMix("ewz.naturpower",0.01345);
+			newKitchen.hasChanged = true;
 			availableKitchens.add(newKitchen);
 			
 		}
@@ -157,6 +158,8 @@ public class KitchenDialog extends DialogBox{
 
 	private void openDialog() {
 		setWidget(binder.createAndBindUi(this));
+		setAnimationEnabled(true);
+		setGlassEnabled(true);
 		show();
 		scrollPanel.setHeight("420px");
 		center();
@@ -164,8 +167,7 @@ public class KitchenDialog extends DialogBox{
 		
 		kitchenNameTextBox.setText(kitchenName);
 		setText(kitchenName);
-		setAnimationEnabled(true);
-		setGlassEnabled(true);
+
 		
 		energyMix.setText(selectedKitchen.energyMix.Name);
 		energyMixco2.setText(selectedKitchen.energyMix.Co2PerKWh.toString());
@@ -916,19 +918,28 @@ public class KitchenDialog extends DialogBox{
 			}
 		}
 		
-		dataService.setYourLastKitchen(TopPanel.selectedKitchen.id, new AsyncCallback<Boolean>() {
+
+		
+        saveAndCloseDialog();
+        
+        
+        saveLastKitchen(TopPanel.selectedKitchen.id);
+		
+		Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
+	}
+
+
+	public void saveLastKitchen(final Long id) {
+		dataService.setYourLastKitchen(id, new AsyncCallback<Boolean>() {
 			@Override
 			public void onFailure(Throwable error) {
 				Window.alert("Fehler : "+ error.getMessage());
 			}
 			@Override
 			public void onSuccess(Boolean okay) {
-				Search.clientData.lastKitchen = TopPanel.selectedKitchen.id;
+				Search.clientData.lastKitchen = id;
 			}
 		});
-		Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
-		
-        saveAndCloseDialog();
 	}
 
 
@@ -948,40 +959,13 @@ public class KitchenDialog extends DialogBox{
 		
 		
 		
-//		kitchen.energyMix = energyMix.getItemText(energyMix.getSelectedIndex());
-//		
-//		final Kitchen kitchen = new Kitchen(kitchenName);
-		
-//		kitchen.location = currentLocation;
-//		kitchen.setEmailAddressOwner(EaternityRechner.loginInfo.getEmailAddress());
-//		
-//		
-//		  
-//		for(int i = 0; i < deviceTable.getRowCount();i++){
-//			TextBox name = (TextBox) deviceTable.getWidget(i, 0);
-//			TextBox cons = (TextBox) deviceTable.getWidget(i, 1);
-//			TextBox dura = (TextBox) deviceTable.getWidget(i, 2);
-//			
-//			String[] test = dura.getText().split(",");
-//			Long[] durations = null;
-//			for(int j = 0; j < test.length; j++){
-//				durations[j] = Long.parseLong(test[i]);
-//			}
-//			
-////			kitchen.devices.add(new Device(name.getText(),Double.valueOf(cons.getText()),durations));
-//		}
-//		
-//		for(int i = 0; i < personTable.getRowCount();i++){
-////			TextBox name = (TextBox) personTable.getWidget(i, 0);
-//			TextBox email = (TextBox) personTable.getWidget(i, 1);		
-//			
-////			kitchen.personal.add(email.getText());
-//		}
-		
 		// this shoots to many rpc calls... (one should be enough)
-		for(final Kitchen kitchen: availableKitchens){
-			// save all kitchens at once
-			dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
+		// shouldn't shoot any, if there is no change...
+		if(TopPanel.selectedKitchen != null){
+			// this is a hacK:
+			TopPanel.selectedKitchen.hasChanged = false;
+			
+			dataService.addKitchen(TopPanel.selectedKitchen, new AsyncCallback<Long>() {
 				@Override
 				public void onFailure(Throwable error) {
 					Window.alert("Fehler : "+ error.getMessage());
@@ -989,11 +973,34 @@ public class KitchenDialog extends DialogBox{
 				@Override
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
-					kitchen.id = kitchenID;
+					TopPanel.selectedKitchen.id = kitchenID;
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());
+					saveLastKitchen(kitchenID);
+					
 				}
 			});
+		}
+		
+		// The other kitchens need also to be saved...
+		
+		for(final Kitchen kitchen: availableKitchens){
+			// save all kitchens at once
+			if(kitchen != null && kitchen.hasChanged){ // has changed still needs to be set false	
+				dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
+					@Override
+					public void onFailure(Throwable error) {
+						Window.alert("Fehler : "+ error.getMessage());
+					}
+					@Override
+					public void onSuccess(Long kitchenID) {
+						// this adds a new kitchen, yet must not be the selected one:
+						kitchen.id = kitchenID;
+		//				Search.clientData.kitchens.add(kitchen);
+		//				kitchens.addItem(kitchen.getSymbol());
+					}
+				});
+			}
 		}
 		
 
@@ -1209,16 +1216,7 @@ public class KitchenDialog extends DialogBox{
 		  
 		  Search.yourRecipesText.setHTML(" in eigenen Rezepten");
 		  
-		  dataService.setYourLastKitchen(0L, new AsyncCallback<Boolean>() {
-				@Override
-				public void onFailure(Throwable error) {
-					Window.alert("Fehler : "+ error.getMessage());
-				}
-				@Override
-				public void onSuccess(Boolean okay) {
-					Search.clientData.lastKitchen = 0L;
-				}
-			});
+		  saveLastKitchen(0L);
 	
 		  saveAndCloseDialog();
 	  }
@@ -1301,7 +1299,7 @@ public class KitchenDialog extends DialogBox{
 	  void onAddPersonPress(ClickEvent event) {
 		  
 		  
-    	  personsHere.add(new Staff("Name","email"));
+    	  personsHere.add(new Staff("Name","Email"));
     	  personsCellTable.setRowCount(personsHere.size(), true);
     	  
     	  personsCellTable.setRowData(0, personsHere);
