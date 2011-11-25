@@ -166,7 +166,11 @@ public class RecipeView extends Composite {
 ////	    addInfoPanel.insert(galleryWidget,0);
 //	    menuDecoInfo.add(galleryWidget);
 	    
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
+		if (!EaternityRechner.loginInfo.isLoggedIn()) {
+			
+			SaveRezeptPanel.setVisible(false);
+			detailText.setHTML("Sie müssen sich anmelden um Rezepte zu speichern.");
+			
 //			no more edit here
 //			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
 //			uploadWidget.setStyleName("notInline");
@@ -209,6 +213,12 @@ public class RecipeView extends Composite {
 		RezeptButton.setEnabled(!isSaved);
 		reportButton.setVisible(isSaved);
 		reportButton.setEnabled(isSaved);
+		
+		if(isSaved){
+			savedHTML.setHTML("nicht gespeichert");
+		} else {
+			savedHTML.setHTML("gespeichert");
+		}
 	}
 	
 	

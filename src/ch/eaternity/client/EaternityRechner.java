@@ -275,6 +275,8 @@ public class EaternityRechner implements EntryPoint {
 				recipe.open = approve;
 				Search.clientData.getPublicRezepte().add(recipe);
 				
+				//TODO in the display of the recipes show, that is now public
+				
 				Search.updateResults(Search.SearchInput.getText());
 			}
 		});
@@ -629,7 +631,7 @@ public class EaternityRechner implements EntryPoint {
 	
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
-		
+		// here we still have an error, when the recipes differ in size...
 		adjustStickyEdit();
     }
 
@@ -917,6 +919,8 @@ public class EaternityRechner implements EntryPoint {
 				if(data.kitchens.size() > 0){
 
 					Long lastKitchenId = Search.clientData.lastKitchen;
+					if(lastKitchenId == null) { lastKitchenId = 0L; }
+					
 					Kitchen lastKitchen = null;
 					for(Kitchen kitchIt : data.kitchens){
 						if(kitchIt.id == lastKitchenId){
@@ -924,18 +928,19 @@ public class EaternityRechner implements EntryPoint {
 						}
 					}
 					
-					if(lastKitchenId != null){
-						if(lastKitchen != null){
-							String kitchenName = lastKitchen.getSymbol();
-							TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
-							TopPanel.location.setVisible(false);
-							TopPanel.leftKitchen = false;
-							TopPanel.selectedKitchen = lastKitchen;
-							Search.yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
-						}
+
+					if(lastKitchenId != null && lastKitchen != null){
+						String kitchenName = lastKitchen.getSymbol();
+						TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
+						TopPanel.location.setVisible(false);
+						TopPanel.leftKitchen = false;
+						TopPanel.selectedKitchen = lastKitchen;
+						Search.yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
+						Search.selectKitchenRecipesForSearch(TopPanel.selectedKitchen.id);
+
 					} else {
 						
-							Window.alert("Ihre letzte Küche wurde nicht gefunden.");
+						Window.alert("Ihre letzte Küche wurde nicht gefunden.");
 						
 					}
 				} else {

@@ -271,7 +271,18 @@ public class Search extends ResizeComposite {
 
 	}
 
-	
+	// Select the KitchenRecipes
+
+	public static void selectKitchenRecipesForSearch(Long id) {
+		Search.selectedKitchenRecipes.clear();
+		for(Recipe recipe : Search.clientData.KitchenRecipes){
+			for(Long kitchenId : recipe.kitchenIds){
+				if(kitchenId == id){
+					Search.selectedKitchenRecipes.add(recipe);
+				}
+			}
+		}
+	}
 	
 	
 	@SuppressWarnings("deprecation")

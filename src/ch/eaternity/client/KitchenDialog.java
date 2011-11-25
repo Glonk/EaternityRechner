@@ -909,14 +909,7 @@ public class KitchenDialog extends DialogBox{
 		TopPanel.isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
 		TopPanel.selectedKitchen = selectedKitchen;
 		
-		Search.selectedKitchenRecipes.clear();
-		for(Recipe recipe : Search.clientData.KitchenRecipes){
-			for(Long kitchenId : recipe.kitchenIds){
-				if(kitchenId == selectedKitchen.id){
-					Search.selectedKitchenRecipes.add(recipe);
-				}
-			}
-		}
+		Search.selectKitchenRecipesForSearch(selectedKitchen.id);
 		
 
 		
@@ -927,6 +920,8 @@ public class KitchenDialog extends DialogBox{
 		
 		Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	}
+
+
 
 
 	public void saveLastKitchen(final Long id) {
