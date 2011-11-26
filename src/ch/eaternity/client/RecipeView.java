@@ -166,10 +166,7 @@ public class RecipeView extends Composite {
 ////	    addInfoPanel.insert(galleryWidget,0);
 //	    menuDecoInfo.add(galleryWidget);
 	    
-		if (!EaternityRechner.loginInfo.isLoggedIn()) {
-			
-			SaveRezeptPanel.setVisible(false);
-			detailText.setHTML("Sie müssen sich anmelden um Rezepte speichern zu können.");
+
 			
 //			no more edit here
 //			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
@@ -179,8 +176,7 @@ public class RecipeView extends Composite {
 //			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
 //			addInfoPanel.insert(uploadWidget,0);
 //			menuDecoInfo.add(uploadWidget);
-		}
-		
+
 		
 	    
 //	    imageUploaderHP.add(panelImages);
@@ -220,6 +216,13 @@ public class RecipeView extends Composite {
 		} else {
 			savedHTML.setHTML("gespeichert");
 			saveRecipeButton.setText("Rezept ist gespeichert");
+		}
+		
+		if (!EaternityRechner.loginInfo.isLoggedIn()) {
+			saveRecipeButton.setVisible(false);
+			reportButton.setVisible(true);
+			reportButton.setEnabled(true);
+			detailText.setHTML("Sie müssen sich anmelden um geänderte Rezepte speichern zu können.");
 		}
 	}
 	
@@ -302,6 +305,9 @@ public class RecipeView extends Composite {
 	void onReportClick(ClickEvent event) {
         Date date = new Date();
         long iTimeStamp = (long) (date.getTime() * .00003);
+        
+        // if there is no way to save, it should not be created a new one...
+        
         long code = recipe.getId()*iTimeStamp;
 
 		String clear = Converter.toString(code,34);

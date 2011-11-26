@@ -753,6 +753,7 @@ public class EaternityRechner implements EntryPoint {
 	}
 	
 	public static int AddZutatZumMenu( Ingredient item) {
+		
 		// convert zutat to ZutatSpec and call the real method
 		Extraction stdExtraction = null;
 		for(Extraction extraction: item.getExtractions()){
@@ -779,6 +780,7 @@ public class EaternityRechner implements EntryPoint {
 	static RecipeEditView rezeptEditView;
 	
 	static int AddZutatZumMenu(final ArrayList<IngredientSpecification> zutatenNew) {
+		
 		ArrayList<IngredientSpecification> zutaten = (ArrayList<IngredientSpecification>) zutatenNew.clone();
 		ListIterator<IngredientSpecification> iterator = zutaten.listIterator();
 		while(iterator.hasNext()){
@@ -880,16 +882,8 @@ public class EaternityRechner implements EntryPoint {
 			}
 			public void onSuccess(Data data) {
 				// the data objects holds all the data
-				
-//				displayZutaten(data.getZutaten());
-//				displayRezepte(data.getPublicRezepte());
-//				displayRezepte(data.getYourRezepte());
-//				topPanel.loadingLabel.setText(" ");
-//				setClientData(data);
-				
-				// the search interface gets all the recipes and ingredients
+				// the search interface gets all the data (recipes and ingredients)
 				Search.clientData = data;
-
 
 				// the top panel grabs all the existing distances also from the search interface
 				topPanel.locationButton.setEnabled(true);
@@ -899,21 +893,15 @@ public class EaternityRechner implements EntryPoint {
 				TopPanel.location.setVisible(true);
 				// it should not...
 				
-				// the kitchens must be listed in the Kitchen Dialog
+				// who may change the kitchen
 				if(data.kitchens.size() == 0 && (loginInfo == null || !loginInfo.isAdmin() )){
-					// what happens here?
-//					TopPanel.kDlg.kitchens.addItem("beliebige Zürcher Küche");
+					// there is no kitchen available and you are a normal user (or not logged in)
+					TopPanel.isCustomer.setVisible(false);
 				} else {
-					// he may edit the kitchen stuff
+					// otherwise may edit the kitchen stuff
 					TopPanel.editKitchen.setVisible(true);
-					
-					
-					for(int i = 0;i<data.kitchens.size();i++){
-						// this should also not work
-//						TopPanel.kDlg.kitchens.addItem(data.kitchens.get(i).getSymbol());
-					}
 				}
-	
+
 				
 				// here is save the last kitchen thing
 				if(data.kitchens.size() > 0){
@@ -928,7 +916,6 @@ public class EaternityRechner implements EntryPoint {
 						}
 					}
 					
-
 					if(lastKitchenId != null && lastKitchen != null){
 						String kitchenName = lastKitchen.getSymbol();
 						TopPanel.isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
@@ -938,26 +925,14 @@ public class EaternityRechner implements EntryPoint {
 						Search.yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
 						Search.selectKitchenRecipesForSearch(TopPanel.selectedKitchen.id);
 
-					} else {
-						
-//						Window.alert("Ihre letzte Küche wurde nicht gefunden.");
-						
-					}
-				} else {
-					if(loginInfo == null || !loginInfo.isAdmin()){ 
-						TopPanel.isCustomer.setVisible(false);
-						
-					}
-				}
+					} 
+				} 
 				
 				Search.SearchInput.setText("");
 				Search.updateResults(" ");
-				//TODO ist the oracle of need?
-				//Set<String> itemIndex = data.getOrcaleIndex();
-				//Search.initializeOracle(itemIndex);
-				
-				
+
 			}
+			
 		});
 	}
 	
