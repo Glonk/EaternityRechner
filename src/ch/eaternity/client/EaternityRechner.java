@@ -399,9 +399,10 @@ public class EaternityRechner implements EntryPoint {
 		
 		// and it only gets called when pressing the new recipe button?
 		
+		// unstyle the old one
 		styleRezept(selectedRezept, false);
 		
-		// hier wird zurückgesetzt, da sonst kein neues gemacht wird
+		// hier wird zurückgesetzt, da sonst kein neues gemacht wird (this is a hack)
 		selectedRezept = -1;
 		
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
@@ -448,8 +449,12 @@ public class EaternityRechner implements EntryPoint {
 		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.recipe.setSymbol(recipe.getSymbol());
 		
+		// here we set the ancestor if available
+		if(recipe.getId() != null){
+			rezeptView.recipe.setDirectAncestorID(recipe.getId());
+		}
+		
 		rezeptView.RezeptName.setText(recipe.getSymbol());
-//		rezeptView.titleHTML.setText(recipe.getSymbol());
 		
 		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.makePublic.setValue(!recipe.openRequested);
@@ -954,7 +959,7 @@ public class EaternityRechner implements EntryPoint {
 		for (Recipe recipe : rezepte) {
 			if(recipe != null){ //why can it be 0?
 //				TODO wtf is this?
-				Search.displayRecipe(recipe,false);
+				Search.displayRecipeItem(recipe,false);
 			}
 		}
 	}

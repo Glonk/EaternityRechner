@@ -18,6 +18,7 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.eaternity.client.comparators.NameComparator;
@@ -248,6 +249,10 @@ public class Search extends ResizeComposite {
 	private static ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
 	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
 	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
+	
+	// re-check this list
+	private static ArrayList<Recipe> FoundRezepteHasDesc = new ArrayList<Recipe>();
+	private static ArrayList<Recipe> FoundRezepteYoursHasDesc = new ArrayList<Recipe>();
 
 	public static String searchString = "";
 
@@ -371,8 +376,15 @@ public class Search extends ResizeComposite {
 		tableMeals.getColumnFormatter().setWidth(0, "120px");
 
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
-				tableMealsYours.getColumnFormatter().setWidth(1, "18px");
-//				tableMealsYours.getColumnFormatter().setWidth(2, "10px");
+		tableMealsYours.getColumnFormatter().setWidth(1, "18px");
+		
+		if(EaternityRechner.loginInfo.isAdmin()){
+			tableMeals.getColumnFormatter().setWidth(1, "18px");
+			tableMeals.getColumnFormatter().setWidth(2, "10px");
+			
+			tableMealsYours.getColumnFormatter().setWidth(2, "10px");
+		}
+		
 	}
 
 	
@@ -539,6 +551,9 @@ public class Search extends ResizeComposite {
 		FoundIngredient.clear();
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
+		
+		FoundRezepteHasDesc.clear();
+		FoundRezepteYoursHasDesc.clear();
 
 		
 		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
@@ -567,7 +582,7 @@ public class Search extends ResizeComposite {
 							if(!FoundIngredient.contains(zutat)){
 								zutat.noAlternative = true;
 								FoundIngredient.add(zutat);
-								displayIngredient(zutat);
+//								displayIngredient(zutat);
 							}
 
 
@@ -585,7 +600,7 @@ public class Search extends ResizeComposite {
 											if(!FoundIngredient.contains(zutat2)){
 												zutat2.noAlternative = false;
 												FoundIngredient.add(zutat2);
-												displayIngredient(zutat2);
+//												displayIngredient(zutat2);
 											}
 										}
 									}
@@ -615,7 +630,7 @@ public class Search extends ResizeComposite {
 //					if(!FoundIngredient.contains(zutat)){ // not necessary, as we are getting anyway all of them (no alternatives...)
 						FoundIngredient.add(zutat);
 						zutat.noAlternative = true;
-						displayIngredient(zutat);
+//						displayIngredient(zutat);
 //					}
 				}
 
@@ -623,8 +638,13 @@ public class Search extends ResizeComposite {
 					yourMealsPanel.setVisible(true);
 					for(Recipe recipe : getYourRecipes()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							FoundRezepteYours.add(recipe);
-							displayRecipe(recipe,true);
+							
+							if(recipe.getDirectDescandentID() != null){
+								FoundRezepteYoursHasDesc.add(recipe);
+							} else {
+								FoundRezepteYours.add(recipe);
+							}
+//							displayRecipeItemCheck(recipe,true);
 						}
 					}
 				} else {
@@ -634,20 +654,30 @@ public class Search extends ResizeComposite {
 				if(	clientData.getPublicRezepte() != null){
 					for(Recipe recipe : clientData.getPublicRezepte()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							FoundRezepte.add(recipe);
-							displayRecipe(recipe,false);
+							if(recipe.getDirectDescandentID() != null){
+								FoundRezepteHasDesc.add(recipe);
+							} else {
+								FoundRezepte.add(recipe);
+							}
+//							displayRecipeItemCheck(recipe,false);
 						}
 					}
 				}
 
 			}
 			// all found items are now displayed
+			
+			// display recipes if there is no descendant of them in the list
+			displayUnDescendantedRecipes(FoundRezepteHasDesc,FoundRezepte);
+			displayUnDescendantedRecipes(FoundRezepteYoursHasDesc,FoundRezepteYours);
 
 			sortResults();
-			// and sorted
+			// sort and display results
 			
 		}	
 	}
+
+
 
 	private static List<Recipe> getYourRecipes() {
 		// TODO Auto-generated method stub
@@ -673,7 +703,7 @@ public class Search extends ResizeComposite {
 							} else {
 								FoundRezepte.add(recipe);
 							}
-							displayRecipe(recipe,yours);
+//							displayRecipeItem(recipe,yours);
 						}
 					}
 
@@ -696,7 +726,7 @@ public class Search extends ResizeComposite {
 										} else {
 											FoundRezepte.add(recipe);
 										}
-										displayRecipe(recipe,yours);
+//										displayRecipeItem(recipe,yours);
 									}
 								}
 							}
@@ -708,6 +738,48 @@ public class Search extends ResizeComposite {
 		}
 	}
 
+	/**
+	 * The filtering function
+	 */
+	private static void displayUnDescendantedRecipes(List<Recipe> possibleRecipes, List<Recipe> alreadyFound) {
+		
+		// check if descendant is also in the own list
+		Iterator<Recipe> iterator = possibleRecipes.iterator();
+		while(iterator.hasNext()){
+			Recipe recipeHasDesc = iterator.next();
+			for( Recipe recipeIsPossibleDesc :possibleRecipes){
+				// is the descendant in the own list
+				if(recipeHasDesc.getDirectDescandentID() == recipeIsPossibleDesc.getId()){
+					// remove recipeHasDesc
+					possibleRecipes.remove(recipeHasDesc);
+				}
+			}
+		}
+		
+		// check if descendant is also in the public list
+		Iterator<Recipe> iteratorAgain = possibleRecipes.iterator();
+		while(iteratorAgain.hasNext()){
+			Recipe recipeHasDesc = iteratorAgain.next();
+			for( Recipe recipeIsPossibleDesc :alreadyFound){
+				// is the descendant in the own list
+				if(recipeHasDesc.getDirectDescandentID() == recipeIsPossibleDesc.getId()){
+					// remove recipeHasDesc
+					possibleRecipes.remove(recipeHasDesc);
+				}
+			}
+		}
+		
+		
+		//if not display itself
+		for(Recipe addRecipe : possibleRecipes){
+			alreadyFound.add(addRecipe);
+		}
+
+		// (also mark ancestors as old... by displaying the descendant)
+		//TODO ( also display the old versions, but only in RecipeView)
+
+	}
+	
 	/**
 	 * The sorting functions
 	 */
@@ -730,7 +802,7 @@ public class Search extends ResizeComposite {
 			tableMeals.removeAllRows();
 			if(FoundRezepte != null){
 				for (final Recipe item : FoundRezepte){
-					displayRecipe(item,false);
+					displayRecipeItem(item,false);
 				}
 			}
 
@@ -738,7 +810,7 @@ public class Search extends ResizeComposite {
 			tableMealsYours.removeAllRows();
 			if(FoundRezepteYours != null){
 				for (final Recipe item : FoundRezepteYours){
-					displayRecipe(item,true);
+					displayRecipeItem(item,true);
 				}
 			}
 
@@ -775,7 +847,7 @@ public class Search extends ResizeComposite {
 			tableMeals.removeAllRows();
 			if(FoundRezepte != null){
 				for (final Recipe item : FoundRezepte){
-					displayRecipe(item,false);
+					displayRecipeItem(item,false);
 				}
 			}
 
@@ -783,7 +855,7 @@ public class Search extends ResizeComposite {
 			tableMealsYours.removeAllRows();
 			if(FoundRezepteYours != null){
 				for (final Recipe item : FoundRezepteYours){
-					displayRecipe(item,true);
+					displayRecipeItem(item,true);
 				}
 			}
 
@@ -800,10 +872,8 @@ public class Search extends ResizeComposite {
 	/**
 	 * the displaying functions for recipes
 	 */
-
-	public static void displayRecipe(final Recipe recipe, boolean yours) {
-
-
+	
+	public static void displayRecipeItem(final Recipe recipe, boolean yours) {
 		if(yours){
 			final int row = tableMealsYours.getRowCount();
 
@@ -829,6 +899,7 @@ public class Search extends ResizeComposite {
 
 				}
 			});
+			// remove button is 1
 			tableMealsYours.setWidget(row, 1, removeRezeptButton);
 
 
@@ -846,6 +917,7 @@ public class Search extends ResizeComposite {
 			}
 
 			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
+			// Text and CO2 is 0
 			tableMealsYours.setWidget(row,0,item);
 
 			recipe.setCO2Value();
@@ -855,6 +927,7 @@ public class Search extends ResizeComposite {
 
 
 			if(EaternityRechner.loginInfo.isAdmin()){
+				// This is ugly, but that's the way it is...
 				if(!recipe.isOpen()){
 					//					if(recipe.openRequested){
 					// this should be a link to make it open
@@ -891,7 +964,8 @@ public class Search extends ResizeComposite {
 				//TODO better show in the menu itself
 
 			}
-
+			
+			//TODO should this not be called after the sort?
 			if ((row % 2) == 1) {
 				String style = evenStyleRow.evenRow();
 				tableMealsYours.getRowFormatter().addStyleName(row, style);
@@ -914,32 +988,20 @@ public class Search extends ResizeComposite {
 
 			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
 
+			// Text and CO2 is 0
 			tableMeals.setWidget(row,0,item);
-			//			tableMeals.setWidget(row, 2, AddRezeptButton);
 
-//			double MenuLabelWert = 0.0;
-//			for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
-//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-//			}
 			recipe.setCO2Value();
 			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
-//			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
-			
-			//			tableMeals.setText(row, 2,  "ca "+formatted+"g CO₂-Äquivalent");
-			//			tableMeals.setText(row, 1,  "ca "+formatted+" g*");
-			
 			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ " g*</div>");
 
 			if(EaternityRechner.loginInfo != null && EaternityRechner.loginInfo.isAdmin()){
 				
-
-//				Button removeRezeptButton = new Button(" - ");
-//				removeRezeptButton.addStyleDependentName("gwt-Button");
-				Anchor removeRezeptButton = new Anchor(" - ");
+				Anchor removeRezeptButton = new Anchor(" x ");
 				removeRezeptButton.addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses Recipe...");
-						dlg.statusLabel.setText("löschen?");
+						final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses...");
+						dlg.statusLabel.setText("Rezept löschen?");
 						// TODO recheck user if he really want to do this...
 						dlg.executeButton.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
@@ -951,10 +1013,10 @@ public class Search extends ResizeComposite {
 						});
 						dlg.show();
 						dlg.center();
-
-
 					}
 				});
+				
+				// remove button is 1
 				tableMeals.setWidget(row, 1, removeRezeptButton);
 //				item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g* ("+removeRezeptButton+")</div>");
 
@@ -986,14 +1048,16 @@ public class Search extends ResizeComposite {
 				}
 			}
 
-
+			//TODO should this not be called after the sort?
 			if ((row % 2) == 1) {
 				String style = evenStyleRow.evenRow();
 				tableMeals.getRowFormatter().addStyleName(row, style);
 			}
 		}
 
-	} 
+
+	}
+
 
 	/**
 	 * the displaying functions for ingredients
@@ -1067,6 +1131,7 @@ public class Search extends ResizeComposite {
 	
 	/**
 	 * This function may proof to be useful for a more fuzzy matching!
+	 * This is used for a matching in the recipes names
 	 */
 
 	private static int getLevenshteinDistance(String s, String t) {

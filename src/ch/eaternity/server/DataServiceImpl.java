@@ -199,11 +199,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		if (getUser() != null) {
 			List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
-			data.setYourRezepte(rezeptePersonal);
+			data.setYourRezepte(rezeptePersonal); // personal
 			
 			// here we add the persons recipes belonging to a kitchen
 			// this should be getting all recipes the person belongs to
-			data.KitchenRecipes = dao.getKitchenRecipes(getUser());
+			data.KitchenRecipes = dao.getKitchenRecipes(getUser()); // kitchen
 		}
 		
 		
@@ -225,13 +225,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				}
 			}
 		}
-		data.setPublicRezepte(rezepte);
+		data.setPublicRezepte(rezepte); // public
+		
+		// mark descendants of the recipes
+		markDescendant(data.yourRecipes);
+		markDescendant(data.KitchenRecipes);
+		markDescendant(data.PublicRezepte);
+		
 
 		// add all ingredients
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
 		data.setIngredients(ingredients);
 		
-		
+		// get kitchen
 		if (getUser() != null) {
 			// if you are the admin, you also get all the others!
 			data.kitchens = getAdminKitchens();
@@ -250,12 +256,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				}
 			}
 			
-			
 		} else {
 			List<Kitchen> kitchensOpen = dao.getOpenKitchen();
 			data.kitchens = kitchensOpen;
 		}
 		
+		// get last kitchen id
 		if (getUser() != null) {
 		    try {
 		    	LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
@@ -268,6 +274,24 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 	
 		return data;
+	}
+
+	public void markDescendant(List<Recipe> recipesList) {
+		for( Recipe checkRecipe: recipesList){
+			if(checkRecipe.getDirectAncestorID() != null){
+				// has ancestor...
+				for( Recipe markRecipe: recipesList){
+					if(markRecipe.getId() == checkRecipe.getDirectAncestorID()){
+						// found descendants and mark him
+						markRecipe.setDirectDescandentID(checkRecipe.getDirectAncestorID());
+//						checkRecipe.ancestorAlreadyMarked = true;
+//						break;
+					}
+					
+				}
+							
+			}
+		}
 	}
 
 	private void checkLoggedIn() throws NotLoggedInException {

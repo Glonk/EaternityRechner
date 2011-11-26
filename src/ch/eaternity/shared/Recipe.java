@@ -26,6 +26,10 @@ public class Recipe implements Serializable, Cloneable{
 
 	@Id Long id;
     
+	private Long directAncestorID;
+	private Long directDescandentID;
+	public Boolean ancestorAlreadyMarked;
+	
 	private String symbol;
 	
 	private String subTitle;
@@ -70,6 +74,8 @@ public class Recipe implements Serializable, Cloneable{
 	public Boolean eaternitySelected;
 	public Boolean bio;
 	public Boolean regsas;
+
+	
 
 	public Recipe() {
 
@@ -233,6 +239,22 @@ public class Recipe implements Serializable, Cloneable{
 
 	public String getEmailAddressOwner() {
 		return emailAddressOwner;
+	}
+
+	public void setDirectAncestorID(Long directAncestorID) {
+		this.directAncestorID = directAncestorID;
+	}
+
+	public Long getDirectAncestorID() {
+		return directAncestorID;
+	}
+
+	public void setDirectDescandentID(Long directDescandentID) {
+		this.directDescandentID = directDescandentID;
+	}
+
+	public Long getDirectDescandentID() {
+		return directDescandentID;
 	}
 
 
