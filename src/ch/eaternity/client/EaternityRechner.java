@@ -272,10 +272,18 @@ public class EaternityRechner implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
-				Search.clientData.getYourRezepte().remove(recipe);
+				
+				if(Search.clientData.getYourRezepte().contains(recipe)){
+					Search.clientData.getYourRezepte().remove(recipe);
+				}
 				if(recipe.isOpen()){
 					Search.clientData.getPublicRezepte().remove(recipe);
 				}
+				if(Search.clientData.KitchenRecipes.contains(recipe)){
+					Search.clientData.KitchenRecipes.remove(recipe);
+				}
+				Search.selectKitchenRecipesForSearch(TopPanel.selectedKitchen.id);
+				Search.updateResults(Search.SearchInput.getText());
 			}
 		});
 	}
