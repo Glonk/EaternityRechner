@@ -199,7 +199,10 @@ public class EaternityRechner implements EntryPoint {
 		if(!TopPanel.leftKitchen){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
-			recipe.kitchenIds.add(TopPanel.selectedKitchen.id);
+			if(!recipe.kitchenIds.contains(TopPanel.selectedKitchen.id)){
+				recipe.kitchenIds.add(TopPanel.selectedKitchen.id);
+			}
+			
 		}
 		
 		// and then save it.
@@ -212,7 +215,20 @@ public class EaternityRechner implements EntryPoint {
 
 				// when this is your first one... so show the panel... should be automatic
 //				Search.yourMealsPanel.setVisible(true);
-	
+				if(recipe.getDirectAncestorID() != null){
+					for(Recipe recipeDesc : Search.clientData.getYourRezepte()){
+						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
+							recipeDesc.setDirectDescandentID(id);
+						}
+					}
+					for(Recipe recipeDesc : Search.clientData.KitchenRecipes){
+						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
+							recipeDesc.setDirectDescandentID(id);
+						}
+					}
+
+				}
+				
 				// only add when it is not in there yet... (update)
 				// and corresponds to the kitchen
 				if(TopPanel.leftKitchen){

@@ -378,7 +378,7 @@ public class Search extends ResizeComposite {
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
 		tableMealsYours.getColumnFormatter().setWidth(1, "18px");
 		
-		if(EaternityRechner.loginInfo.isAdmin()){
+		if(EaternityRechner.loginInfo != null && EaternityRechner.loginInfo.isAdmin()){
 			tableMeals.getColumnFormatter().setWidth(1, "18px");
 			tableMeals.getColumnFormatter().setWidth(2, "10px");
 			
@@ -638,13 +638,15 @@ public class Search extends ResizeComposite {
 					yourMealsPanel.setVisible(true);
 					for(Recipe recipe : getYourRecipes()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							
-							if(recipe.getDirectDescandentID() != null){
-								FoundRezepteYoursHasDesc.add(recipe);
-							} else {
-								FoundRezepteYours.add(recipe);
+							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
+								
+								if(recipe.getDirectDescandentID() != null){
+									FoundRezepteYoursHasDesc.add(recipe);
+								} else {
+									FoundRezepteYours.add(recipe);
+								}
+	//							displayRecipeItemCheck(recipe,true);
 							}
-//							displayRecipeItemCheck(recipe,true);
 						}
 					}
 				} else {
@@ -654,12 +656,14 @@ public class Search extends ResizeComposite {
 				if(	clientData.getPublicRezepte() != null){
 					for(Recipe recipe : clientData.getPublicRezepte()){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							if(recipe.getDirectDescandentID() != null){
-								FoundRezepteHasDesc.add(recipe);
-							} else {
-								FoundRezepte.add(recipe);
+							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
+								if(recipe.getDirectDescandentID() != null){
+									FoundRezepteHasDesc.add(recipe);
+								} else {
+									FoundRezepte.add(recipe);
+								}
+	//							displayRecipeItemCheck(recipe,false);
 							}
-//							displayRecipeItemCheck(recipe,false);
 						}
 					}
 				}
@@ -697,13 +701,23 @@ public class Search extends ResizeComposite {
 				if(recipe != null){
 					if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
 						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							// Recipe zu Rezeptsuche
-							if(yours){
-								FoundRezepteYours.add(recipe);
-							} else {
-								FoundRezepte.add(recipe);
+							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
+								// Recipe zu Rezeptsuche
+								if(yours){
+									if(recipe.getDirectDescandentID() != null){
+										FoundRezepteYoursHasDesc.add(recipe);
+									} else {
+										FoundRezepteYours.add(recipe);
+									}
+								} else {
+									if(recipe.getDirectDescandentID() != null){
+										FoundRezepteHasDesc.add(recipe);
+									} else {
+										FoundRezepte.add(recipe);
+									}
+								}
+	//							displayRecipeItem(recipe,yours);
 							}
-//							displayRecipeItem(recipe,yours);
 						}
 					}
 
@@ -721,12 +735,22 @@ public class Search extends ResizeComposite {
 								}
 								if(i == searches.length){
 									if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-										if(yours){
-											FoundRezepteYours.add(recipe);
-										} else {
-											FoundRezepte.add(recipe);
+										if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
+											if(yours){
+												if(recipe.getDirectDescandentID() != null){
+													FoundRezepteYoursHasDesc.add(recipe);
+												} else {
+													FoundRezepteYours.add(recipe);
+												}
+											} else {
+												if(recipe.getDirectDescandentID() != null){
+													FoundRezepteHasDesc.add(recipe);
+												} else {
+													FoundRezepte.add(recipe);
+												}
+											}
+	//										displayRecipeItem(recipe,yours);
 										}
-//										displayRecipeItem(recipe,yours);
 									}
 								}
 							}
@@ -749,22 +773,27 @@ public class Search extends ResizeComposite {
 			Recipe recipeHasDesc = iterator.next();
 			for( Recipe recipeIsPossibleDesc :possibleRecipes){
 				// is the descendant in the own list
-				if(recipeHasDesc.getDirectDescandentID() == recipeIsPossibleDesc.getId()){
+				if(recipeHasDesc.getDirectDescandentID().equals(recipeIsPossibleDesc.getId())){
 					// remove recipeHasDesc
-					possibleRecipes.remove(recipeHasDesc);
+					iterator.remove();
+					break;
+//					possibleRecipes.remove(recipeHasDesc);
 				}
 			}
 		}
+	
 		
 		// check if descendant is also in the public list
 		Iterator<Recipe> iteratorAgain = possibleRecipes.iterator();
 		while(iteratorAgain.hasNext()){
-			Recipe recipeHasDesc = iteratorAgain.next();
+			Recipe recipeHasDescAgain = iteratorAgain.next();
 			for( Recipe recipeIsPossibleDesc :alreadyFound){
 				// is the descendant in the own list
-				if(recipeHasDesc.getDirectDescandentID() == recipeIsPossibleDesc.getId()){
+				if(recipeHasDescAgain.getDirectDescandentID().equals(recipeIsPossibleDesc.getId())){
 					// remove recipeHasDesc
-					possibleRecipes.remove(recipeHasDesc);
+//					possibleRecipes.remove(recipeHasDescAgain);
+					iteratorAgain.remove();
+					break;
 				}
 			}
 		}
@@ -832,9 +861,12 @@ public class Search extends ResizeComposite {
 		}
 		case 5:{
 			//"alphabetisch"
+			
+			// could there be a better method to do this? like that:
 			//			   ComparatorChain chain = new ComparatorChain();
 			//			    chain.addComparator(new NameComparator());
 			//			    chain.addComparator(new NumberComparator()
+			
 			Collections.sort(FoundIngredient,new NameComparator());
 			table.removeAllRows();
 			if(FoundIngredient != null){
