@@ -284,7 +284,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 					
 					if(markRecipe.getId().equals(checkRecipe.getDirectAncestorID())){
 						// found descendants and mark him
-						markRecipe.setDirectDescandentID(checkRecipe.getId());
+						markRecipe.addDirectDescandentID(checkRecipe.getId());
 //						checkRecipe.ancestorAlreadyMarked = true;
 //						break;
 					}

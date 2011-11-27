@@ -27,7 +27,7 @@ public class Recipe implements Serializable, Cloneable{
 	@Id Long id;
     
 	private Long directAncestorID;
-	private Long directDescandentID;
+	private List<Long> descandentsIds =  new ArrayList<Long>();
 	public Boolean ancestorAlreadyMarked;
 	
 	private String symbol;
@@ -249,12 +249,18 @@ public class Recipe implements Serializable, Cloneable{
 		return directAncestorID;
 	}
 
-	public void setDirectDescandentID(Long directDescandentID) {
-		this.directDescandentID = directDescandentID;
+	public void setDirectDescandentID(List<Long> directDescandentID) {
+		this.descandentsIds = directDescandentID;
+	}
+	
+	public void addDirectDescandentID(Long directDescandentID) {
+		if(!this.descandentsIds.contains(directDescandentID)){
+			this.descandentsIds.add(directDescandentID);
+		}
 	}
 
-	public Long getDirectDescandentID() {
-		return directDescandentID;
+	public List<Long> getDirectDescandentID() {
+		return descandentsIds;
 	}
 
 

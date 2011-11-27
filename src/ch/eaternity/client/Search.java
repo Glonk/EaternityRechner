@@ -773,7 +773,7 @@ public class Search extends ResizeComposite {
 			Recipe recipeHasDesc = iterator.next();
 			for( Recipe recipeIsPossibleDesc :possibleRecipes){
 				// is the descendant in the own list
-				if(recipeHasDesc.getDirectDescandentID().equals(recipeIsPossibleDesc.getId())){
+				if(recipeHasDesc.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
 					// remove recipeHasDesc
 					iterator.remove();
 					break;
@@ -789,7 +789,7 @@ public class Search extends ResizeComposite {
 			Recipe recipeHasDescAgain = iteratorAgain.next();
 			for( Recipe recipeIsPossibleDesc :alreadyFound){
 				// is the descendant in the own list
-				if(recipeHasDescAgain.getDirectDescandentID().equals(recipeIsPossibleDesc.getId())){
+				if(recipeHasDescAgain.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
 					// remove recipeHasDesc
 //					possibleRecipes.remove(recipeHasDescAgain);
 					iteratorAgain.remove();

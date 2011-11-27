@@ -218,12 +218,12 @@ public class EaternityRechner implements EntryPoint {
 				if(recipe.getDirectAncestorID() != null){
 					for(Recipe recipeDesc : Search.clientData.getYourRezepte()){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
-							recipeDesc.setDirectDescandentID(id);
+							recipeDesc.addDirectDescandentID(id);
 						}
 					}
 					for(Recipe recipeDesc : Search.clientData.KitchenRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
-							recipeDesc.setDirectDescandentID(id);
+							recipeDesc.addDirectDescandentID(id);
 						}
 					}
 
