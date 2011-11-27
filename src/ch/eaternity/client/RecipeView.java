@@ -219,10 +219,11 @@ public class RecipeView extends Composite {
 		}
 		
 		if (!EaternityRechner.loginInfo.isLoggedIn()) {
-			saveRecipeButton.setVisible(false);
-			reportButton.setVisible(true);
-			reportButton.setEnabled(true);
-			detailText.setHTML("Sie müssen sich anmelden um geänderte Rezepte speichern zu können.");
+			SaveRezeptPanel.setVisible(false);
+//			saveRecipeButton.setVisible(false);
+//			reportButton.setVisible(true);
+//			reportButton.setEnabled(true);
+			detailText.setHTML("Sie müssen sich anmelden um geänderte Rezepte speichern zu können und Pdf's zu erstellen.");
 		}
 	}
 	

@@ -253,14 +253,14 @@ public class EaternityRechner implements EntryPoint {
 				// TODO make same sense out of this
 				// this is just a test functionality...
 				// but it could be displayed somewhere else...
-				rezeptView.codeImage.setHTML(
-						"<a href="
-						+ GWT.getHostPageBaseURL()
-						+ "view.jsp?pid="
-						+ Converter.toString(recipe.getId(), 34)
-						+ " ><img src=http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="
-						+ recipe.ShortUrl.substring(7, recipe.ShortUrl.length())
-						+ " width=42 height=42 /></a>");
+//				rezeptView.codeImage.setHTML(
+//						"<a href="
+//						+ GWT.getHostPageBaseURL()
+//						+ "view.jsp?pid="
+//						+ Converter.toString(recipe.getId(), 34)
+//						+ " ><img src=http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="
+//						+ recipe.ShortUrl.substring(7, recipe.ShortUrl.length())
+//						+ " width=42 height=42 /></a>");
 				
 			}
 		});
