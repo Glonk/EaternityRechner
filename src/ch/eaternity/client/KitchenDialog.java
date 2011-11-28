@@ -521,6 +521,7 @@ public class KitchenDialog extends DialogBox{
 		     * Commit the change to the contact.
 		     */
 		    public void commit() {
+		    	// my question... should here be standing anything with the eventbus or the requestfactory?
 		      doCommit(contact, value);
 		    }
 
@@ -956,6 +957,7 @@ public class KitchenDialog extends DialogBox{
 		
 		// this shoots to many rpc calls... (one should be enough)
 		// shouldn't shoot any, if there is no change...
+		// which exactly for this purpose the requestFactory in GWT 2.1 was developed...
 		if(TopPanel.selectedKitchen != null){
 			// this is a hacK:
 			TopPanel.selectedKitchen.hasChanged = false;
