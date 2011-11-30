@@ -22,7 +22,7 @@
 			ui:field='previewMenuHtmlPanel'>
 		</g:HTMLPanel>
 		<div class='{style.buttons}'>
-			<g:Button text='Gehe zum Rechner' ui:field='closeButton' />
+			<g:Button text='Einverstanden. Gehe zum Rechner.' ui:field='closeButton' />
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder>

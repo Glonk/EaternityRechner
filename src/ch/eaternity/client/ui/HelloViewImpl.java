@@ -43,6 +43,13 @@ public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 	}
 
 	@Override
+	public void onResize() {
+		if(menuPreviewDialog != null){
+			menuPreviewDialog.center();
+		}
+	}
+	
+	@Override
 	public void setName(String name)
 	{
 		this.name = name;
