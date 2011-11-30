@@ -1,5 +1,5 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:rechner='urn:import:ch.eaternity.client'>
 
 
@@ -16,11 +16,13 @@
 			text-align: right;
 		}
 	</ui:style>
-	
+
 	<g:HTMLPanel>
-		<g:HTMLPanel width='640px' styleName='{style.panel}'
-			ui:field='previewMenuHtmlPanel'>
-		</g:HTMLPanel>
+		<!-- g:ScrollPanel ui:field="scrollPanel">  -->
+			<g:HTMLPanel width='960px' styleName='{style.panel}'
+				ui:field='previewMenuHtmlPanel'>
+			</g:HTMLPanel>
+		<!--  /g:ScrollPanel>  -->
 		<div class='{style.buttons}'>
 			<g:Button text='Einverstanden. Gehe zum Rechner.' ui:field='closeButton' />
 		</div>

@@ -11,6 +11,7 @@ import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.GoodbyeViewImpl;
 import ch.eaternity.client.ui.HelloView;
 import ch.eaternity.client.ui.HelloViewImpl;
+import ch.eaternity.client.ui.MenuPreviewView;
 
 public class ClientFactoryImpl implements ClientFactory
 {
@@ -20,6 +21,7 @@ public class ClientFactoryImpl implements ClientFactory
 	private static final EaternityRechnerView eaternityRechnerView = new EaternityRechnerViewImpl();
 	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
 	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
+	private static final MenuPreviewView menuPreviewView = new MenuPreviewView();
 
 	@Override
 	public EventBus getEventBus()
@@ -49,6 +51,12 @@ public class ClientFactoryImpl implements ClientFactory
 	public GoodbyeView getGoodbyeView()
 	{
 		return goodbyeView;
+	}
+	
+	@Override
+	public MenuPreviewView getMenuPreviewView()
+	{
+		return menuPreviewView;
 	}
 
 	@Override

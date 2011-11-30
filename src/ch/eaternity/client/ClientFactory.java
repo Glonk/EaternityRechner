@@ -6,6 +6,7 @@ import com.google.gwt.place.shared.PlaceController;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.HelloView;
+import ch.eaternity.client.ui.MenuPreviewView;
 
 public interface ClientFactory {
 	
@@ -20,5 +21,6 @@ public interface ClientFactory {
 	
     // services
     DataServiceAsync getDataServiceRPC();
+	MenuPreviewView getMenuPreviewView();
 
 }

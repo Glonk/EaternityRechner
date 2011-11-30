@@ -78,4 +78,8 @@ public interface EaternityRechnerView<T> extends IsWidget
 	void styleRezept(int selectedRezept, boolean b);
 	void updateSaisonAndMore();
 	int AddZutatZumMenu(Ingredient item);
+	void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog);
+	
+
+	void onResize();
 }

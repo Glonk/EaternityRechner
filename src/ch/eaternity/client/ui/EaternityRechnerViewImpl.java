@@ -210,6 +210,8 @@ public class EaternityRechnerViewImpl<T> extends Composite implements EaternityR
 	// some local variables for the scrolling behavior
 	boolean reset = true;
 	int displayHeight = 120;
+	private MenuPreviewView menuPreview;
+	private MenuPreviewView menuPreviewDialog;
 	
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
@@ -730,6 +732,22 @@ public int AddZutatZumMenu( Ingredient item) {
 	public void setTitleHTML(String string) {
 		titleHTML.setHTML(string);
 	}
+
+	@Override
+	public void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog){
+		this.menuPreviewDialog = menuPreviewDialog;
+		menuPreviewDialog.setName(name);
+	}
+
+	@Override
+	public void onResize() {
+		// this is not getting called
+		if(menuPreviewDialog != null){
+			menuPreviewDialog.center();
+			menuPreviewDialog.positionDialog();
+		}
+	}
+
 
 
 

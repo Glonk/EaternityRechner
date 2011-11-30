@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.users.User;
+import com.google.gwt.core.client.GWT;
 import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
@@ -308,8 +309,13 @@ public class DAO extends DAOBase
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 
 		for (String kitchenIdString : kitchenIds){
-
-			long code = Converter.fromString(kitchenIdString, 34);
+			long code = 0L;
+			
+			try{
+				code = Converter.fromString(kitchenIdString, 34);
+			} catch(RuntimeException e){
+				GWT.log(e.getLocalizedMessage());
+			}
 
 			long computeId;
 			if(isCoded){

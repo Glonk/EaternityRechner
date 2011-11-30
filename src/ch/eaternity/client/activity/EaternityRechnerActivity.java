@@ -44,6 +44,7 @@ import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.HelloPlace;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.HelloView;
+import ch.eaternity.client.ui.MenuPreviewView;
 import ch.eaternity.client.widgets.ImageOverlay;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.DeviceSpecification;
@@ -69,6 +70,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 
 	private PlaceController placeController;
 	private HandlerRegistration adminHandler;
+	private MenuPreviewView menuPreview;
 	
 	
 	// Used to obtain views, eventBus, placeController
@@ -81,8 +83,12 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		this.placeController = factory.getPlaceController();
 		this.place = place;
 		
+		this.menuPreview = factory.getMenuPreviewView();
+		
 	}
 
+	
+	
 	@Override
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
 
@@ -93,6 +99,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		
 //		container.setWidget(display.asWidget());
 		container.setWidget(display);
+		display.setMenuPreviewDialog(menuPreview);
 
 		// now load the data
 		loadData();

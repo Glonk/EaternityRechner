@@ -36,16 +36,17 @@ public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 //		menuPreviewDialog.show();
 	}
 	
-	public void displayDialog(){
-		menuPreviewDialog = new MenuPreviewView(this); 
+	public void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog){
+		this.menuPreviewDialog = menuPreviewDialog;
 		menuPreviewDialog.setName(name);
-		menuPreviewDialog.setListener(listener);
+//		menuPreviewDialog.setListener(listener);
 	}
 
 	@Override
 	public void onResize() {
 		if(menuPreviewDialog != null){
 			menuPreviewDialog.center();
+			menuPreviewDialog.positionDialog();
 		}
 	}
 	

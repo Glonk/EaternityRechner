@@ -1,6 +1,7 @@
 package ch.eaternity.client.ui;
 
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
@@ -17,7 +18,10 @@ public interface HelloView extends IsWidget
 	public interface Presenter
 	{
 		void goTo(Place place);
+
+
+		DialogBox getDialogBox();
 	}
 
-	void displayDialog();
+	void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog);
 }
