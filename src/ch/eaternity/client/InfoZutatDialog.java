@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -85,7 +86,7 @@ public class InfoZutatDialog<T> extends Composite {
 	private FlexTable suggestTable;
 	FlowPanel flowTransport = null;
 	
-	private HTML kmText = new HTML();
+	private InlineHTML kmText = new InlineHTML();
 	
 	private Presenter<T> presenter;
 	private Ingredient zutat;
@@ -177,12 +178,13 @@ public class InfoZutatDialog<T> extends Composite {
 		    
 			int row = specificationTable.getRowCount();
 			specificationTable.setHTML(row, 0, "Herkunft");
-			final HorizontalPanel flow = new HorizontalPanel();
-			flow.setBorderWidth(0);
-			flow.setSpacing(0);
+			final FlowPanel flow = new FlowPanel();
+//			flow.setBorderWidth(0);
+//			flow.setSpacing(0);
 			flow.addStyleName("littleZutatSpec");
 			specificationTable.setWidget(row,1,flow);
 			flow.add(herkuenfte);
+			
 			
 	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
 	    	if(formatted.contentEquals("0")){
