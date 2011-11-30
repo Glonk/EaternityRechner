@@ -17,6 +17,8 @@ import java.util.List;
 import ch.eaternity.client.comparators.ComparatorComparator;
 import ch.eaternity.client.comparators.ComparatorObject;
 import ch.eaternity.client.comparators.ComparatorRecipe;
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.client.widgets.PhotoGallery;
 import ch.eaternity.client.widgets.UploadPhoto;
 import ch.eaternity.shared.Converter;
@@ -70,12 +72,13 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
-public class RecipeEditView extends Composite {
+public class RecipeEditView<T> extends Composite {
 	interface Binder extends UiBinder<Widget, RecipeEditView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	
-	@UiField AbsolutePanel dragArea;
+	@UiField
+	public AbsolutePanel dragArea;
 	@UiField SelectionStyleRow selectionStyleRow;
 	@UiField EvenStyleRow evenStyleRow;
 
@@ -92,7 +95,8 @@ public class RecipeEditView extends Composite {
 	@UiField FlexTable SuggestTable;
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
-	@UiField HTMLPanel htmlRezept;
+	@UiField
+	public HTMLPanel htmlRezept;
 	@UiField HTMLPanel rezeptTitle;
 //	@UiField Label rezeptNameTop;
 //	@UiField Label rezeptSubTitleTop;
@@ -133,13 +137,45 @@ public class RecipeEditView extends Composite {
 	int  selectedRezept = -1;
 	public Recipe recipe;
 
-	static int currentEdit;
+//	static int currentEdit;
 	public int heightOfView;
+	
+	private Presenter<T> presenter;
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+		
+	    // this grap becomes visible even when not logged in...
+	    if(presenter.getTopPanel().leftKitchen){
+	    	PrepareButton.setVisible(false);
+	    }
+	    
+		if (presenter.getLoginInfo().isLoggedIn()) {
+			uploadWidget = new UploadPhoto(presenter.getLoginInfo(), this);
+			uploadWidget.setStyleName("notInline");
+			
+			// Bind it to event so uploadWidget can refresh the gallery
+//			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
+//			addInfoPanel.insert(uploadWidget,0);
+			menuDecoInfo.add(uploadWidget);
+		}
+//	    
+//		if(presenter.getLoginInfo().isLoggedIn()) {
+//			// TODO even more....
+////			SaveRezeptPanel.setVisible(true);
+////			topStatusBar.setVisible(true);
+//		} else   {
+////			SaveRezeptPanel.setVisible(false);
+////			topStatusBar.setVisible(false);
+//		}
+//		
+	}
+	private EaternityRechnerView superDisplay;
 	
 //	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
 	
 	
-	public RecipeEditView(Recipe recipe) {
+	public RecipeEditView(Recipe recipe,EaternityRechnerView superDisplay) {
+		this.superDisplay = superDisplay;
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
 	    
@@ -149,13 +185,9 @@ public class RecipeEditView extends Composite {
     
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
-	    currentEdit = EaternityRechner.selectedRezept;
+//	    currentEdit = EaternityRechner.selectedRezept;
 	    
-	    // this grap becomes visible even when not logged in...
-	    if(TopPanel.leftKitchen){
-	    	PrepareButton.setVisible(false);
-	    }
-	    
+
 	    setRezept(recipe);
 	    saved = true;
 	    initTable();
@@ -169,15 +201,7 @@ public class RecipeEditView extends Composite {
 ////	    addInfoPanel.insert(galleryWidget,0);
 //	    menuDecoInfo.add(galleryWidget);
 	    
-		if (EaternityRechner.loginInfo.isLoggedIn()) {
-			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
-			uploadWidget.setStyleName("notInline");
-			
-			// Bind it to event so uploadWidget can refresh the gallery
-//			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
-//			addInfoPanel.insert(uploadWidget,0);
-			menuDecoInfo.add(uploadWidget);
-		}
+
 		
 		
 	    
@@ -189,16 +213,7 @@ public class RecipeEditView extends Composite {
 //	    defaultUploader.setMaximumFiles(1);
 //	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 
-	    
-		if(EaternityRechner.loginInfo.isLoggedIn()) {
-			// TODO even more....
-//			SaveRezeptPanel.setVisible(true);
-//			topStatusBar.setVisible(true);
-		} else   {
-//			SaveRezeptPanel.setVisible(false);
-//			topStatusBar.setVisible(false);
-		}
-		
+
 		
 	  }
 	
@@ -342,7 +357,7 @@ public class RecipeEditView extends Composite {
 //			rezeptNameTop.setText(RezeptName.getText());
 			rezeptViewOrigin.RezeptName.setText(RezeptName.getText());
 			recipe.setSymbol(RezeptName.getText());
-			EaternityRechner.titleHTML.setHTML("Sie bearbeiten soeben: " +RezeptName.getText());
+			superDisplay.setTitleHTML("Sie bearbeiten soeben: " +RezeptName.getText());
 		}
 	}
 	
@@ -437,7 +452,7 @@ public class RecipeEditView extends Composite {
 		updateSuggestion();
 		
 
-//		RecipeView rezeptView = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 0);
+//		RecipeView rezeptView = (RecipeView) superDisplay.getRezeptList().getWidget(EaternityRechner.selectedRezept, 0);
 ////		rezeptView.setRezept(recipe);
 ////		rezeptView.updateSuggestion();
 //		rezeptView.showRezept(recipe);
@@ -449,17 +464,17 @@ public class RecipeEditView extends Composite {
 	void onRemoveClicked(ClickEvent event) {
 		final RecipeEditView test = this;
 //		if(saved){
-			int row = getWidgetRow(test , EaternityRechner.rezeptEditList);
-			EaternityRechner.rezeptEditList.remove(test);
-			EaternityRechner.rezeptEditList.removeRow(row);
+			int row = getWidgetRow(test , superDisplay.getRezeptEditList());
+			superDisplay.getRezeptEditList().remove(test);
+			superDisplay.getRezeptEditList().removeRow(row);
 			
-			if(EaternityRechner.dragArea.getWidgetCount() > 0){
-				EaternityRechner.dragArea.remove(0);
+			if(superDisplay.getDragArea().getWidgetCount() > 0){
+				superDisplay.getDragArea().remove(0);
 			}
 			
-			EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
-			EaternityRechner.selectedRezept = -1;
-			EaternityRechner.suggestionPanel.clear();
+			superDisplay.styleRezept(superDisplay.getSelectedRezept(), false);
+			superDisplay.setSelectedRezept(-1);
+			superDisplay.getSuggestionPanel().clear();
 //		} else {
 //		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
 //		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
@@ -467,9 +482,9 @@ public class RecipeEditView extends Composite {
 //		
 //		dlg.executeButton.addClickHandler(new ClickHandler() {
 //			public void onClick(ClickEvent event) {
-//				int row = getWidgetRow(test , EaternityRechner.rezeptEditList);
-//				EaternityRechner.rezeptEditList.remove(test);
-//				EaternityRechner.rezeptEditList.removeRow(row);
+//				int row = getWidgetRow(test , superDisplay.getRezeptEditList());
+//				superDisplay.getRezeptEditList().remove(test);
+//				superDisplay.getRezeptEditList().removeRow(row);
 //				EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
 //				EaternityRechner.selectedRezept = -1;
 //				EaternityRechner.suggestionPanel.clear();
@@ -522,7 +537,7 @@ public class RecipeEditView extends Composite {
 	
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
-		rezeptViewOrigin = (RecipeView) EaternityRechner.rezeptList.getWidget(EaternityRechner.selectedRezept, 1);
+		rezeptViewOrigin = (RecipeView) superDisplay.getRezeptList().getWidget(superDisplay.getSelectedRezept(), 1);
 //		showRezept(recipe);
 	}
 
@@ -549,7 +564,7 @@ public class RecipeEditView extends Composite {
 			RezeptName.setText(recipe.getSymbol());
 			rezeptDetails.setText(recipe.getSubTitle());
 			
-			EaternityRechner.titleHTML.setHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
+			superDisplay.setTitleHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
 //			zutatImMenu.clear();
 			
 //			int row = AddZutatZumMenu(recipe.getZutaten());
@@ -607,10 +622,10 @@ public class RecipeEditView extends Composite {
 	
 	
 
-	 void selectRow(int row) {
+	 public void selectRow(int row) {
 		 
 		 // only show the buttom if we are in a kitchen...
-		 if(TopPanel.selectedKitchen != null){
+		 if(presenter.getTopPanel().selectedKitchen != null){
 			 PrepareButton.setVisible(true);
 		 }
 		//TODO uncomment this: why?
@@ -635,7 +650,7 @@ public class RecipeEditView extends Composite {
 		}
 		
 		Long ParentZutatId = zutatSpec.getZutat_id();
-		Ingredient zutat = Search.clientData.getIngredientByID(ParentZutatId);
+		Ingredient zutat = presenter.getClientData().getIngredientByID(ParentZutatId);
 		
 		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
 //		openSpecificationDialog(zutatSpec,zutat, (TextBox) EaternityRechner.MenuTable.getWidget(row, 1), EaternityRechner.MenuTable,row);
@@ -669,6 +684,7 @@ public class RecipeEditView extends Composite {
 //		}
 		menuDecoInfo.setVisible(false);
 		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
+		infoZutat.setPresenter(presenter);
 //		addInfoPanel.add(infoZutat);
 		addInfoPanel.insert(infoZutat, 2);
 //		EaternityRechner.addInfoPanel.insert(infoZutat, 2);
@@ -861,7 +877,7 @@ public class RecipeEditView extends Composite {
 	}
 }
 
-	void changeIcons(Integer row, final IngredientSpecification zutat) {
+	public void changeIcons(Integer row, final IngredientSpecification zutat) {
 		HTML icon = new HTML();
 		Boolean itsOkay = true;
 		
@@ -869,7 +885,7 @@ public class RecipeEditView extends Composite {
 		if(zutat.getZustand() != null){
 			if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
 				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
-					Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+					Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
 					// In Tagen
 					//		String test = InfoZutat.zutat.getStartSeason();
 					Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStartSeason());		
@@ -1013,9 +1029,9 @@ public class RecipeEditView extends Composite {
 	      // add your specific recipe to the others in the database
 	      allRecipes.add(compare);
 	      // and all the others also
-	      allRecipes.addAll( Search.clientData.getPublicRezepte());
-	      if(Search.clientData.getYourRezepte() != null){
-	          allRecipes.addAll(Search.clientData.getYourRezepte());
+	      allRecipes.addAll( presenter.getClientData().getPublicRezepte());
+	      if(presenter.getClientData().getYourRezepte() != null){
+	          allRecipes.addAll(presenter.getClientData().getYourRezepte());
 	      }
 		   
 	      // zuerst der Filter über die tatsächlichen Zutaten
@@ -1026,7 +1042,7 @@ public class RecipeEditView extends Composite {
 	      Double MaxValueRezept = 0.0;
 	      Double MinValueRezept = 10000000.0;
 	      //  go over the Recipes in the Workspace
-	      for(Widget widget : EaternityRechner.rezeptList){
+	      for(Widget widget : superDisplay.getRezeptList()){
 	          RecipeView rezeptView = (RecipeView) widget;
 	          rezeptView.recipe.setCO2Value();
 	          if(rezeptView.recipe.getCO2Value()>MaxValueRezept){
@@ -1113,7 +1129,7 @@ public class RecipeEditView extends Composite {
 		   
 	      // this is just a test
 	      if(scoreMapFinal.size()>0){
-	          EaternityRechner.suggestionPanel.clear();
+	          superDisplay.getSuggestionPanel().clear();
 		   
 	          displayTops(scoreMapFinal, 0.8, 1.0);
 	          displayTops(scoreMapFinal, 0.5, 0.8);
@@ -1144,7 +1160,7 @@ public class RecipeEditView extends Composite {
 		   
 		   
 	      // update all widgets bars!
-	      for(Widget widget : EaternityRechner.rezeptList){
+	      for(Widget widget : superDisplay.getRezeptList()){
 	          RecipeView rezeptView = (RecipeView) widget;
 	          rezeptView.recipe.setCO2Value();
 	          Long indikatorLeft = new Long(Math.round(580/(stop-start)*(rezeptView.recipe.getCO2Value()-start)));
@@ -1196,7 +1212,7 @@ public class RecipeEditView extends Composite {
 	          HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
 	              public void onClick(ClickEvent event) {
 	                  // add receipe to the Worksheet Panel
-	                  EaternityRechner.ShowRezept(takeThisOne);
+	            	  superDisplay.showRecipeClone(takeThisOne);
 	              }
 	          });
 	          
@@ -1208,7 +1224,7 @@ public class RecipeEditView extends Composite {
 	          }
 	          //HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
 		   //            suggestText.setHTML();
-	          EaternityRechner.suggestionPanel.add(suggestText);
+	          superDisplay.getSuggestionPanel().add(suggestText);
 	      }
 	  }
 	  
@@ -1342,7 +1358,7 @@ public class RecipeEditView extends Composite {
 	       recipeComparator.clear();
 	      
 	      for(IngredientSpecification zutatSpec : recipe.Zutaten){
-	          Ingredient zutat = Search.clientData.getIngredientByID(zutatSpec.getZutat_id());
+	          Ingredient zutat = presenter.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 		   //            amount of Persons needs to be assigned always!
 	          Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
 	          Double alreadyAmount = 0.0;

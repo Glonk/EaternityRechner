@@ -1,0 +1,235 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:rechner='urn:import:ch.eaternity.client'>
+  
+<ui:style>
+
+	.Worksheet {
+		/* 
+		margin: 10px 15px 15px 10px;
+		*/
+		
+		margin: 10px 15px 0px 4px;
+		padding:4px;
+		width:765px;
+		background: #7CC158; 
+
+	}
+	.noOverflow {
+		margin-top:11px;
+		height:120px;
+		bottom:0px;
+		overflow:hidden;
+		position:relative;
+		}
+	
+	.WorksheetTable {
+		margin-left:8px;
+	}
+	
+	.WorksheetEditTable {
+		margin-left:4px;
+		padding:0px 4px 4px 4px;
+		background: #7CC158; 
+	}
+	
+	.topScores{
+		margin-top:15px;
+		padding: 0px 1px 10px 0px;
+	}
+
+	.SuggestTable {
+
+		float: left;
+		clear: both;
+		text-align: left;
+		background: #323533;
+		color: #fff;
+
+	}
+	.MenuTableWrapper {
+		background:#F9C88C;
+		margin: 15px 15px 0px 10px;
+	}
+	.MenuTable {
+		width:360px;
+	    cursor: pointer;
+    	cursor: hand;
+  
+	}
+	.MenuTable tr{
+	 
+	}
+		.hideOverflow {
+		/* overflow:hidden;
+		padding-top:10px; 
+		vertical-align: bottom;
+		*/
+		
+		position:absolute;
+		bottom:4px;
+
+	}
+	.rezeptDecoration {
+		width:750px;
+		padding: 7px;
+	
+		
+	}
+	.cookingInstr {
+		float:left;
+		margin-left:6px;
+		height:124px;
+		width:168px;
+		display:inline;
+		margin-top:2px;
+		margin-bottom:4px;
+		resize: none;
+		
+	}
+	.menuDecoPanel {
+		width:340px;
+	}
+	
+	.gwt-Button {
+	 float:right;
+	  margin: 0px 10px 0px 0px;
+	 padding: 2px 5px 3px 5px;
+  text-decoration: none;
+ /* cursor: pointer;
+  cursor: hand;*/
+  cursor: default;
+  font-size:11px;
+  color:#000;
+  background: url("hborder.png") repeat-x 0px -27px;
+  border:1px solid #787878;
+  /* border-bottom: 1px solid #a0a0a0;*/
+  border-radius: 4px;
+ -moz-border-radius: 4px;
+}
+.gwt-Button:active {
+ /* border: 1px inset #fff; */
+ border:1px solid #787878;
+    background: url("hborder.png") repeat-x 0px -1455px;
+}
+.gwt-Button:hover {
+  border-color: #787878; 
+}
+.gwt-Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.gwt-Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
+
+.inline {
+	display:inline;
+}
+.indikator {
+	background:#fff;
+	clear:both;
+}
+
+.cloneStyle {
+overflow:hidden;
+margin-top:12px;
+padding-left:7px;
+height: 100px;
+background: #F7A959;
+position:relative;
+}
+.relativePosition {
+	/* this is a hack... what would you do? */
+	position:absolute !important;
+	bottom:4px;
+	background: #F7A959; 
+	overflow:hidden;
+	padding-right:1px;
+	}
+
+</ui:style>
+
+<ui:style field='selectionStyle'
+    type='ch.eaternity.client.ui.EaternityRechnerViewImpl.SelectionStyle'>
+
+  .selectedRezept {
+    background: #F48F28;
+  }
+
+ 
+</ui:style>
+
+  <g:DockLayoutPanel>
+    <g:north size='74'>
+      <rechner:TopPanel ui:field='topPanel' />
+    </g:north>
+
+    <g:center>
+      <g:SplitLayoutPanel>
+        <g:west size='265'>
+          	<rechner:Search ui:field='searchPanel' />
+        </g:west>
+        <g:center>
+        <g:DockLayoutPanel ui:field="topSticky" >
+        		<g:north  size='40'>
+       			<!-- <g:north size='120'> -->
+	       		<g:HTMLPanel ui:field="panelNorth" styleName='{style.Worksheet}' >
+	       			<!-- Add Rezept Button -->
+	       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Menu"/> 
+	       			
+	       			<!--  Ihre Rezepte:  -->
+	       			<g:HTML ui:field="titleHTML" styleName='{style.inline}'>Wählen Sie eine Zutat um sie dem Menu hinzuzufügen.</g:HTML>
+	       			
+	       			<!-- suggest bar -->
+	       			<!-- Im Vergleich: -->
+		       			<g:HorizontalPanel ui:field='suggestionPanel' styleName='{style.topScores}'>
+		
+		       			</g:HorizontalPanel>
+	       			
+	       			<!-- here comes the inserted table as illusion of sticky display -->
+	       			<g:HTMLPanel styleName='{style.noOverflow}'>
+	       			<g:AbsolutePanel ui:field="dragArea" styleName='{style.relativePosition}'>
+		       			<g:HTMLPanel styleName='{style.cloneStyle}' ui:field="htmlRezept" >
+			       			<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
+			           			<g:VerticalPanel>
+					       			<g:VerticalPanel  ui:field='MenuTableWrapper' styleName='{style.MenuTableWrapper}' >
+						           				<g:HTMLPanel >
+						           					<img src='tabs-bg.png' height='88px' width='1px' style='float:left;' />
+						        					<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'  cellSpacing='0' cellPadding='0'/>
+						        				</g:HTMLPanel>
+					        					<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'  cellSpacing='0' cellPadding='0'/>
+					        		</g:VerticalPanel>
+			       				 </g:VerticalPanel>
+		        				<g:FlowPanel styleName='{style.menuDecoPanel}' ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
+		        				<g:HTMLPanel></g:HTMLPanel >
+		 					</g:HorizontalPanel>
+	 					   	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
+	        			</g:HTMLPanel>
+	        		</g:AbsolutePanel>
+	       			</g:HTMLPanel>
+	       		</g:HTMLPanel>
+	       			
+       			</g:north>
+       			<g:center>
+       			
+       			<!-- List of Rezepte -->
+       				<g:ScrollPanel ui:field='scrollWorkspace' >
+       					<g:VerticalPanel>
+	       					<g:FlexTable styleName='{style.WorksheetEditTable}' ui:field='rezeptEditList' cellSpacing='0' cellPadding='0' />
+							<g:FlexTable styleName='{style.WorksheetTable}' ui:field='rezeptList' cellSpacing='0' cellPadding='0'/>
+							<g:HTML><div style="height:400px">:)</div></g:HTML>
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+					
+				</g:center>
+        	</g:DockLayoutPanel>
+        </g:center>
+
+
+      </g:SplitLayoutPanel>
+    </g:center>
+  </g:DockLayoutPanel>
+
+</ui:UiBinder>

@@ -4,6 +4,9 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.EnergyMix;
 import ch.eaternity.shared.Extraction;
@@ -61,7 +64,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 
-public class KitchenDialog extends DialogBox{
+public class KitchenDialog<T> extends DialogBox{
 	
 		static Long[] longList ={1l,5l,10l,20l};
 	 private static List<Device> devicesHere = Arrays.asList(
@@ -111,10 +114,18 @@ public class KitchenDialog extends DialogBox{
 	List<Kitchen> availableKitchens;
 	Kitchen selectedKitchen;
 	
+	private Presenter<T> presenter;
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+	}
+	
+	private EaternityRechnerView superDisplay;
 
+	
 	Integer timeToWaitForGeocode = 1; // in seconds ( to not flood, and be blocked)
 
-	public KitchenDialog(String location) {	
+	public KitchenDialog(String location, EaternityRechnerView superDisplay) {
+		this.superDisplay = superDisplay;
 //		String kitchenName = kitchens.getItemText(kitchens.getSelectedIndex());
 //		String kitchenName = "neue Küche";
 		processAddress(location,true);
@@ -122,7 +133,7 @@ public class KitchenDialog extends DialogBox{
 		// this is only necessary for the first time...
 		currentLocation = location;
 		
-		availableKitchens = Search.clientData.kitchens;
+		availableKitchens = presenter.getClientData().kitchens;
 		
 		if(availableKitchens == null || availableKitchens.size() == 0){
 			availableKitchens = new ArrayList<Kitchen>(1);
@@ -175,9 +186,9 @@ public class KitchenDialog extends DialogBox{
 		
 		addKitchenNamesToList(availableKitchens);
 		
-		if(!EaternityRechner.loginInfo.isAdmin() && availableKitchens.size() < 2){
+		if(!presenter.getLoginInfo().isAdmin() && availableKitchens.size() < 2){
 			kitchen.setVisible(false);
-		} else if(!EaternityRechner.loginInfo.isAdmin()) {
+		} else if(!presenter.getLoginInfo().isAdmin()) {
 			newKitchen.setVisible(false);
 		}
 		
@@ -810,7 +821,7 @@ public class KitchenDialog extends DialogBox{
 				}
 				@Override
 				public void onSuccess(Integer ignore) {
-					Search.clientData.getDistances().addAll(allDistances);
+					presenter.getClientData().getDistances().addAll(allDistances);
 					updateAllZutaten(); 
 					//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
 				}
@@ -821,10 +832,10 @@ public class KitchenDialog extends DialogBox{
 	}
 
 	private  void calculateDistances(String string, boolean firstTime) {
-		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.clientData.getDistances();
+		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) presenter.getClientData().getDistances();
 		ArrayList<String> distancesRequested = new ArrayList<String>();
 		boolean notFound;
-		List<Ingredient> zutaten = Search.clientData.getIngredients();
+		List<Ingredient> zutaten = presenter.getClientData().getIngredients();
 		for( Ingredient zutat : zutaten){
 			for(Extraction herkunft : zutat.getExtractions()){
 
@@ -859,13 +870,13 @@ public class KitchenDialog extends DialogBox{
 
 
 	private void updateAllZutaten() {
-		for(Widget widget : EaternityRechner.rezeptList){
+		for(Widget widget : superDisplay.getRezeptList()){
 			RecipeView rezeptView = ((RecipeView) widget);
 			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 			zutaten.addAll(rezeptView.getRezept().Zutaten);
 			for(IngredientSpecification zutatSpec : zutaten ){
 				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
-				for(SingleDistance singleDistance : Search.clientData.getDistances()){
+				for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 
@@ -905,19 +916,19 @@ public class KitchenDialog extends DialogBox{
 	@UiHandler("executeButton")
 	void onOkayClicked(ClickEvent event) {
 		// this button finalizes the decision to enter the kitchen
-		TopPanel.location.setVisible(false);
-		TopPanel.leftKitchen = false;
-		TopPanel.isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
-		TopPanel.selectedKitchen = selectedKitchen;
+		presenter.getTopPanel().location.setVisible(false);
+		presenter.getTopPanel().leftKitchen = false;
+		presenter.getTopPanel().isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
+		presenter.getTopPanel().selectedKitchen = selectedKitchen;
 		
-		Search.selectKitchenRecipesForSearch(selectedKitchen.id);
+		presenter.getSearchPanel().selectKitchenRecipesForSearch(selectedKitchen.id);
 		
 
 		
         saveAndCloseDialog();
         
         
-        saveLastKitchen(TopPanel.selectedKitchen.id);
+        saveLastKitchen(presenter.getTopPanel().selectedKitchen.id);
 		
 		Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	}
@@ -933,7 +944,7 @@ public class KitchenDialog extends DialogBox{
 			}
 			@Override
 			public void onSuccess(Boolean okay) {
-				Search.clientData.lastKitchen = id;
+				presenter.getClientData().lastKitchen = id;
 			}
 		});
 	}
@@ -958,11 +969,11 @@ public class KitchenDialog extends DialogBox{
 		// this shoots to many rpc calls... (one should be enough)
 		// shouldn't shoot any, if there is no change...
 		// which exactly for this purpose the requestFactory in GWT 2.1 was developed...
-		if(TopPanel.selectedKitchen != null){
+		if(presenter.getTopPanel().selectedKitchen != null){
 			// this is a hacK:
-			TopPanel.selectedKitchen.hasChanged = false;
+			presenter.getTopPanel().selectedKitchen.hasChanged = false;
 			
-			dataService.addKitchen(TopPanel.selectedKitchen, new AsyncCallback<Long>() {
+			dataService.addKitchen(presenter.getTopPanel().selectedKitchen, new AsyncCallback<Long>() {
 				@Override
 				public void onFailure(Throwable error) {
 					Window.alert("Fehler : "+ error.getMessage());
@@ -970,7 +981,7 @@ public class KitchenDialog extends DialogBox{
 				@Override
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
-					TopPanel.selectedKitchen.id = kitchenID;
+					presenter.getTopPanel().selectedKitchen.id = kitchenID;
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());
 					saveLastKitchen(kitchenID);
@@ -1002,8 +1013,9 @@ public class KitchenDialog extends DialogBox{
 		
 
 		// update search... this should also be done when loaded regular
-		Search.SearchInput.setText("");
-		Search.updateResults(" ");
+		
+		presenter.getSearchPanel().SearchInput.setText("");
+		presenter.getSearchPanel().updateResults(" ");
 		
 		
 		hide();
@@ -1022,13 +1034,13 @@ public class KitchenDialog extends DialogBox{
 			geocoder.getLocations(address, new LocationCallback() {
 				@Override
 				public void onFailure(int statusCode) {
-					TopPanel.locationLabel.setText("Wir können diese Adresse nicht finden: ");
+					presenter.getTopPanel().locationLabel.setText("Wir können diese Adresse nicht finden: ");
 				}
 
 				@Override
 				public void onSuccess(JsArray<Placemark> locations) {
 					Placemark place = locations.get(0);
-					TopPanel.locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
+					presenter.getTopPanel().locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
 					currentLocation = place.getAddress();
 					selectedKitchen.location = currentLocation;
 					setText("Berechne alle Routen von: " + place.getAddress());
@@ -1039,7 +1051,7 @@ public class KitchenDialog extends DialogBox{
 				}
 			});
 		} else {
-			TopPanel.locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
+			presenter.getTopPanel().locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
 		}
 
 	}
@@ -1206,10 +1218,10 @@ public class KitchenDialog extends DialogBox{
 	  
 	  @UiHandler("leaveKitchen")
 	  public void onLeaveKitchenClick(ClickEvent event) {
-		  TopPanel.location.setVisible(true);
-		  TopPanel.leftKitchen = true;
-		  TopPanel.isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
-		  TopPanel.selectedKitchen = null;
+		  presenter.getTopPanel().location.setVisible(true);
+		  presenter.getTopPanel().leftKitchen = true;
+		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
+		  presenter.getTopPanel().selectedKitchen = null;
 		  
 		  Search.yourRecipesText.setHTML(" in eigenen Rezepten");
 		  

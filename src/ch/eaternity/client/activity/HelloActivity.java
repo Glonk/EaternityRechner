@@ -17,7 +17,7 @@ public class HelloActivity extends AbstractActivity implements
 	private String name;
 
 	public HelloActivity(HelloPlace place, ClientFactory clientFactory) {
-		this.name = place.getHelloName();
+		this.name = place.getPlaceName();
 		this.clientFactory = clientFactory;
 	}
 

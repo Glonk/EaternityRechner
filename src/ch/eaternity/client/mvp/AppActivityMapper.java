@@ -2,10 +2,13 @@ package ch.eaternity.client.mvp;
 
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.Place;
 import ch.eaternity.client.ClientFactory;
+import ch.eaternity.client.activity.EaternityRechnerActivity;
 import ch.eaternity.client.activity.GoodbyeActivity;
 import ch.eaternity.client.activity.HelloActivity;
+import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.GoodbyePlace;
 import ch.eaternity.client.place.HelloPlace;
 
@@ -31,9 +34,13 @@ public class AppActivityMapper implements ActivityMapper {
 	 */
 	@Override
 	public Activity getActivity(Place place) {
+		GWT.log("Place called: " + place);
+		
 		// This is begging for GIN
 		if (place instanceof HelloPlace)
 			return new HelloActivity((HelloPlace) place, clientFactory);
+		else if (place instanceof EaternityRechnerPlace)
+			return new EaternityRechnerActivity((EaternityRechnerPlace) place, clientFactory);
 		else if (place instanceof GoodbyePlace)
 			return new GoodbyeActivity((GoodbyePlace) place, clientFactory);
 

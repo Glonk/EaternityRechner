@@ -5,11 +5,11 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 //public class HelloPlace extends ActivityPlace<HelloActivity>
-public class HelloPlace extends Place
+public class EaternityRechnerPlace extends Place
 {
 	private String placeName;
 	
-	public HelloPlace(String token)
+	public EaternityRechnerPlace(String token)
 	{
 		this.placeName = token;
 	}
@@ -19,20 +19,20 @@ public class HelloPlace extends Place
 		return placeName;
 	}
 
-	@Prefix("hello")
-	public static class Tokenizer implements PlaceTokenizer<HelloPlace>
+	@Prefix("menu") // with "!" -> "!menu" this one gets indexed
+	public static class Tokenizer implements PlaceTokenizer<EaternityRechnerPlace>
 	{
 
 		@Override
-		public String getToken(HelloPlace place)
+		public String getToken(EaternityRechnerPlace place)
 		{
 			return place.getPlaceName();
 		}
 
 		@Override
-		public HelloPlace getPlace(String token)
+		public EaternityRechnerPlace getPlace(String token)
 		{
-			return new HelloPlace(token);
+			return new EaternityRechnerPlace(token);
 		}
 
 	}

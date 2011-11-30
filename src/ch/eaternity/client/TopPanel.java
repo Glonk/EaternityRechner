@@ -20,6 +20,8 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.SingleDistance;
 
@@ -48,59 +50,69 @@ import com.google.gwt.user.client.ui.Label;
 /**
  * The top panel, which contains the 'welcome' message and various links.
  */
-public class TopPanel extends Composite {
+public class TopPanel<T> extends Composite {
 
   interface Binder extends UiBinder<Widget, TopPanel> { }
   private static final Binder binder = GWT.create(Binder.class);
-  static String currentHerkunft = "Zürich, Schweiz";
+  public static String currentHerkunft = "Zürich, Schweiz";
 
-  @UiField Button locationButton;
-  @UiField Anchor signOutLink;
-  @UiField Anchor signInLink;
-//  @UiField Anchor stepIn;
-//  @UiField Anchor stepOut;
-  @UiField Anchor ingredientLink;
   @UiField
-static Anchor editKitchen;
-  @UiField InlineLabel loginLabel;
+public Button locationButton;
   @UiField
-static ListBox Monate;
-//  @UiField
-//static ListBox kitchens;
-  @UiField 
-  static HTMLPanel location;
-//  @UiField HTMLPanel kitchen;
-  @UiField static Label locationLabel;
-//  @UiField Label loadingLabel;
+public Anchor signOutLink;
   @UiField
-static TextBox clientLocation;
+public Anchor signInLink;
   @UiField
-static HTMLPanel isCustomer;
+public Anchor ingredientLink;
   @UiField
-static InlineLabel isCustomerLabel;
+public
+ Anchor editKitchen;
+  @UiField
+public InlineLabel loginLabel;
+  @UiField
+public
+ ListBox Monate;
+  @UiField
+public HTMLPanel location;
+  @UiField Label locationLabel;
+  @UiField
+ TextBox clientLocation;
+  @UiField
+public
+ HTMLPanel isCustomer;
+  @UiField
+public
+ InlineLabel isCustomerLabel;
   
   @UiField HTML pinHTML;
   @UiField HTML calHTML;
   
-  public static Placemark currentLocation;
-  public static DistancesDialog ddlg;
-  public static KitchenDialog kDlg;
-
+  public  Placemark currentLocation;
+  public  DistancesDialog ddlg;
+  public  KitchenDialog kDlg;
+  private EaternityRechnerView superDisplay;
   
  // here should be all the distances stored 
-protected static ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
-public static boolean leftKitchen = true;
-public static Kitchen selectedKitchen;
+protected  ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
+public  boolean leftKitchen = true;
+public  Kitchen selectedKitchen;
 
+private Presenter<T> presenter;
+public void setPresenter(Presenter<T> presenter){
+	this.presenter = presenter;
+}
 
+public void setSuperDisplay(EaternityRechnerView superDisplay){
+	this.superDisplay = superDisplay;
+}
   
   public TopPanel() {
+		
+		
     initWidget(binder.createAndBindUi(this));
     locationButton.setEnabled(false);
     ingredientLink.setVisible(false);
     signOutLink.setVisible(false);
-//    stepOut.setVisible(false);
-//    stepIn.setVisible(false);
     editKitchen.setVisible(false);
     
 	Monate.addItem("Januar");
@@ -138,38 +150,23 @@ public static Kitchen selectedKitchen;
 
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {
-	  EaternityRechner.updateSaisonAndMore();
-	  Search.updateResults(Search.SearchInput.getText());
+	  superDisplay.updateSaisonAndMore();
+	  presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
 	  // TODO aktualisiere die Saisonalität aller Rezepte... dieser Prozess muss gethreaded sein!
 	  // TODO close the InfozutatDialog when doing this...
   }
 
   @UiHandler("locationButton")
   public void onClick(ClickEvent event) {
-	  ddlg = new DistancesDialog(clientLocation.getText()); 
+	  ddlg = new DistancesDialog(clientLocation.getText(),superDisplay); 
+	  ddlg.setPresenter(presenter);
   }
   
-  
-//  @UiHandler("stepIn")
-//  public void onStepInClick(ClickEvent event) {
-//		stepIn.setVisible(false);
-//		stepOut.setVisible(true);
-//		location.setVisible(false);
-//		kitchen.setVisible(true);
-//  }
-//  
-//  @UiHandler("stepOut")
-//  public void onStepOutClick(ClickEvent event) {
-//		stepIn.setVisible(true);
-//		stepOut.setVisible(false);	
-//		location.setVisible(true);
-//		kitchen.setVisible(false);
-//	  
-//  }
 
   @UiHandler("editKitchen")
   public void onEditKitchenClick(ClickEvent event) {
-	  kDlg = new KitchenDialog(clientLocation.getText()); 
+	  kDlg = new KitchenDialog(clientLocation.getText(),superDisplay); 
+	  kDlg.setPresenter(presenter);
   }
   
 }

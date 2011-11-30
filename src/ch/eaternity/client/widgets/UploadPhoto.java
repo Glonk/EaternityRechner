@@ -21,10 +21,10 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.RecipeEditView;
 import ch.eaternity.client.RecipeView;
-import ch.eaternity.client.UserImageService;
-import ch.eaternity.client.UserImageServiceAsync;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;
@@ -34,7 +34,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 	private static UploadPhotoUiBinder uiBinder = GWT
 			.create(UploadPhotoUiBinder.class);
 
-	UserImageServiceAsync userImageService = GWT.create(UserImageService.class);
+	DataServiceAsync userImageService = GWT.create(DataService.class);
 
 	private HandlerManager handlerManager;
 
@@ -111,7 +111,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 
 												@Override
 												public void onClick(ClickEvent event) {
-													ImageOverlay imageOverlay = new ImageOverlay(result, loginInfo);
+													ImageOverlay imageOverlay = new ImageOverlay(result);
 //													imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
 													
 													final PopupPanel imagePopup = new PopupPanel(true);
@@ -134,7 +134,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									    
 										
 										ImageOverlay overlay = new ImageOverlay(
-												result, loginInfo);
+												result);
 										GalleryUpdatedEvent event = new GalleryUpdatedEvent();
 										fireEvent(event);
 

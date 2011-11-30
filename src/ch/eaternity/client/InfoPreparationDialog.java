@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.client.widgets.ImageOverlay;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
@@ -63,7 +64,7 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
-public class InfoPreparationDialog extends Composite {
+public class InfoPreparationDialog<T> extends Composite {
 	interface Binder extends UiBinder<Widget, InfoPreparationDialog> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	@UiField HTML zutatName;
@@ -93,6 +94,11 @@ public class InfoPreparationDialog extends Composite {
 	
 	private HTML kmText = new HTML();
 	private Kitchen kitchen;
+	
+	private Presenter<T> presenter;
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+	}
 	
 	interface SelectionStyle extends CssResource {
 		String selectedBlob();
@@ -148,9 +154,9 @@ public class InfoPreparationDialog extends Composite {
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
 		
-		if(TopPanel.selectedKitchen != null){
-			this.kitchen = TopPanel.selectedKitchen;
-			recipe.energyMix = TopPanel.selectedKitchen.energyMix;
+		if(presenter.getTopPanel().selectedKitchen != null){
+			this.kitchen = presenter.getTopPanel().selectedKitchen;
+			recipe.energyMix = presenter.getTopPanel().selectedKitchen.energyMix;
 			
 		} 
 

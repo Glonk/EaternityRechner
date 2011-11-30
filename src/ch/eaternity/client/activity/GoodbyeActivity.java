@@ -13,7 +13,7 @@ public class GoodbyeActivity extends AbstractActivity {
 	private String name;
 
 	public GoodbyeActivity(GoodbyePlace place, ClientFactory clientFactory) {
-		this.name = place.getGoodbyeName();
+		this.name = place.getPlaceName();
 		this.clientFactory = clientFactory;
 	}
 

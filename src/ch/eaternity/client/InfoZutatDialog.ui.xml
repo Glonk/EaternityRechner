@@ -128,7 +128,7 @@
              		
 					<g:HTMLPanel styleName="{style.wholePanel}">
 					<g:Label ui:field="closeLabel"  styleName='{style.close}'>x</g:Label>
-					<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Angaben sind kohärent.</g:Label>
+					<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Die Angaben sind kohärent.</g:Label>
 					
 						<g:HTML ui:field="zutatName" styleName='{style.zutatName}'>
 						Zutat Name

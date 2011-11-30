@@ -2,6 +2,7 @@ package ch.eaternity.server;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -11,6 +12,8 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -24,6 +27,8 @@ import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Staff;
+import ch.eaternity.shared.Tag;
+import ch.eaternity.shared.UploadedImage;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.NotFoundException;
@@ -341,7 +346,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return dao.getAllIngredientsXml();
 	}
 
-	@Override
 	public Boolean setYourLastKitchen(Long lastKitchen) throws NotLoggedInException {
 		DAO dao = new DAO();
 		boolean tryIt = false;
@@ -353,7 +357,92 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		} catch (NotFoundException e) {
 			tryIt = false;
 		} 
-		// TODO Auto-generated method stub
 		return tryIt;
 	}
+	
+	
+
+	public LoginInfo login(String requestUri) {
+	    UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    DAO dao = new DAO();
+	    LoginInfo loginInfo = new LoginInfo();
+
+	    if (user != null) {
+	    	
+		    try {
+		    	loginInfo = dao.ofy().get(LoginInfo.class, user.getUserId());
+		    } catch (NotFoundException e) {
+		    	
+		    }
+
+	      loginInfo.setId(user.getUserId());
+	      loginInfo.setLoggedIn(true);
+	      loginInfo.setEmailAddress(user.getEmail());
+	      loginInfo.setNickname(user.getNickname());
+	      loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
+	      loginInfo.setAdmin(userService.isUserAdmin());
+	      
+	     
+	      dao.ofy().put(loginInfo);
+	      
+	    } else {
+	      loginInfo.setLoggedIn(false);
+	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
+	    }
+	    return loginInfo;
+	  }
+	
+	public String getBlobstoreUploadUrl() {
+		BlobstoreService blobstoreService = BlobstoreServiceFactory
+				.getBlobstoreService();
+		return blobstoreService.createUploadUrl("/upload");
+	}
+
+	@Override
+	public UploadedImage get(String key) {
+		UploadedImageDao dao = new UploadedImageDao();
+		UploadedImage image = dao.get(key);
+		return image;
+	}
+
+	@Override
+	public List<UploadedImage> getRecentlyUploaded() {
+		UploadedImageDao dao = new UploadedImageDao();
+		List<UploadedImage> images = dao.getRecent(); 
+		return images;
+	}
+
+	@Override
+	public void deleteImage(String key) {
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
+		UploadedImageDao dao = new UploadedImageDao();
+		UploadedImage image = dao.get(key);
+		if(image.getOwnerId().equals(user.getUserId())) {
+			dao.delete(key);
+		}
+	}
+
+	public String tagImage(Tag tag) {
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
+		TagDao dao = new TagDao();
+
+		// TODO: Do validation here of x, y, ImageId
+		
+		tag.setTaggerId(user.getUserId());
+		tag.setCreatedAt(new Date());
+		
+		String key = dao.put(tag);
+		return key;
+	}
+
+	@Override
+	public List<Tag> getTagsForImage(UploadedImage image) {
+		TagDao dao = new TagDao();
+		List<Tag> tags = dao.getForImage(image);
+		return tags;
+	}
+	
 }

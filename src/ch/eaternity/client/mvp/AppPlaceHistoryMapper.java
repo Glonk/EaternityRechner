@@ -2,6 +2,8 @@ package ch.eaternity.client.mvp;
 
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.place.shared.WithTokenizers;
+
+import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.GoodbyePlace;
 import ch.eaternity.client.place.HelloPlace;
 
@@ -11,6 +13,6 @@ import ch.eaternity.client.place.HelloPlace;
  * annotation or by extending PlaceHistoryMapperWithFactory and creating a
  * separate TokenizerFactory.
  */
-@WithTokenizers( { HelloPlace.Tokenizer.class, GoodbyePlace.Tokenizer.class })
+@WithTokenizers( { HelloPlace.Tokenizer.class,EaternityRechnerPlace.Tokenizer.class, GoodbyePlace.Tokenizer.class })
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 }

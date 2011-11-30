@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.SingleDistance;
@@ -41,7 +43,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DistancesDialog extends DialogBox{
+public class DistancesDialog<T> extends DialogBox{
 	interface Binder extends UiBinder<Widget, DistancesDialog> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
@@ -59,8 +61,15 @@ public class DistancesDialog extends DialogBox{
 	String currentLocation;
 
 	Integer TimeToWait = 1;
-
-	public DistancesDialog(String string) {		
+	
+	private Presenter<T> presenter;
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+	}
+	private EaternityRechnerView superDisplay;
+	
+	public DistancesDialog(String string, EaternityRechnerView superDisplay) {
+		this.superDisplay = superDisplay;		
 		processAddress(string,true);
 	}
 
@@ -126,7 +135,7 @@ public class DistancesDialog extends DialogBox{
 					Window.alert("Fehler : "+ error.getMessage());
 				}
 				public void onSuccess(Integer ignore) {
-					Search.clientData.getDistances().addAll(allDistances);
+					presenter.getClientData().getDistances().addAll(allDistances);
 					updateAllZutaten(); 
 					//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
 				}
@@ -137,10 +146,10 @@ public class DistancesDialog extends DialogBox{
 	}
 
 	private  void calculateDistances(String string, boolean firstTime) {
-		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) Search.clientData.getDistances();
+		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) presenter.getClientData().getDistances();
 		ArrayList<String> distancesRequested = new ArrayList<String>();
 		boolean notFound;
-		List<Ingredient> zutaten = Search.clientData.getIngredients();
+		List<Ingredient> zutaten = presenter.getClientData().getIngredients();
 		for( Ingredient zutat : zutaten){
 			for(Extraction herkunft : zutat.getExtractions()){
 
@@ -170,13 +179,13 @@ public class DistancesDialog extends DialogBox{
 
 
 	private void updateAllZutaten() {
-		for(Widget widget : EaternityRechner.rezeptList){
+		for(Widget widget : superDisplay.getRezeptList()){
 			RecipeView rezeptView = ((RecipeView) widget);
 			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 			zutaten.addAll(rezeptView.getRezept().Zutaten);
 			for(IngredientSpecification zutatSpec : zutaten ){
 				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
-				for(SingleDistance singleDistance : Search.clientData.getDistances()){
+				for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 
@@ -231,12 +240,12 @@ public class DistancesDialog extends DialogBox{
 			geocoder.setBaseCountryCode("ch");
 			geocoder.getLocations(address, new LocationCallback() {
 				public void onFailure(int statusCode) {
-					TopPanel.locationLabel.setText("Wir können diese Adresse nicht finden: ");
+					presenter.getTopPanel().locationLabel.setText("Wir können diese Adresse nicht finden: ");
 				}
 
 				public void onSuccess(JsArray<Placemark> locations) {
 					Placemark place = locations.get(0);
-					TopPanel.locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
+					presenter.getTopPanel().locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
 					currentLocation = place.getAddress();
 					setText("Berechne alle Routen von: " + place.getAddress());
 					TopPanel.currentHerkunft = place.getAddress();
@@ -246,7 +255,7 @@ public class DistancesDialog extends DialogBox{
 				}
 			});
 		} else {
-			TopPanel.locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
+			presenter.getTopPanel().locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
 		}
 
 	}

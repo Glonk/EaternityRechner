@@ -5,10 +5,16 @@
 		.important {
 			font-weight: bold;
 		}
+		
+		.panel {
+		padding: 10px;
+		}
+		
 	</ui:style>
-	<g:HTMLPanel>
-		Hello,
+	
+	<g:HTMLPanel width='680px' styleName='{style.panel}'>
+		Herzliche Willkommen,
 		<span class="{style.important}" ui:field="nameSpan" />
-		<g:Anchor ui:field="goodbyeLink" text="Say good-bye"></g:Anchor>
+		<g:Anchor ui:field="startYourEngineLink" text="Gehe zum Rechner"></g:Anchor>
 	</g:HTMLPanel>
 </ui:UiBinder>

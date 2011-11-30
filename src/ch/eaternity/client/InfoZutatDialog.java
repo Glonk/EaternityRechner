@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.client.widgets.ImageOverlay;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
@@ -56,7 +57,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class InfoZutatDialog extends Composite {
+public class InfoZutatDialog<T> extends Composite {
 	interface Binder extends UiBinder<Widget, InfoZutatDialog> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	@UiField HTML zutatName;
@@ -85,6 +86,13 @@ public class InfoZutatDialog extends Composite {
 	FlowPanel flowTransport = null;
 	
 	private HTML kmText = new HTML();
+	
+	private Presenter<T> presenter;
+	private Ingredient zutat;
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+		setValues( zutat);
+	}
 	
 	interface SelectionStyle extends CssResource {
 		String selectedBlob();
@@ -137,7 +145,8 @@ public class InfoZutatDialog extends Composite {
 		this.setRezept(recipe);
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
-		setValues( zutat);
+		this.zutat = zutat;
+
 	}
 
 	
@@ -366,7 +375,7 @@ public class InfoZutatDialog extends Composite {
 		Boolean notChanged = true;
 		// TODO update also choice for moTransportations
 		zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
-		for(SingleDistance singleDistance : Search.clientData.getDistances()){
+		for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
 			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 				
@@ -478,7 +487,7 @@ public class InfoZutatDialog extends Composite {
 	public void updateSaison(IngredientSpecification zutatSpec) {
 		// if it is Greenhouse, or conserved then it should be kohärent...
 		
-		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
 		// In Tagen
 //		String test = InfoZutat.zutat.getStartSeason();
 		Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutatSpec.getStartSeason() );		

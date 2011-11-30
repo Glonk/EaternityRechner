@@ -54,36 +54,39 @@
     
     
   <!-- Servlets -->
+   <!--   
   <servlet>
     <servlet-name>loginService</servlet-name>
     <servlet-class>ch.eaternity.server.LoginServiceImpl</servlet-class>
-  </servlet>
+  </servlet>-->
 
 
   <servlet>
     <servlet-name>dataService</servlet-name>
     <servlet-class>ch.eaternity.server.DataServiceImpl</servlet-class>
   </servlet>
-  
+  <!--   
    <servlet>
     <servlet-name>userImageServlet</servlet-name>
     <servlet-class>ch.eaternity.server.UserImageServiceImpl</servlet-class>
-  </servlet>
+  </servlet> -->
   
+   <!--   
   <servlet-mapping>
     <servlet-name>loginService</servlet-name>
     <url-pattern>/eaternity/login</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
   
    <servlet-mapping>
     <servlet-name>dataService</servlet-name>
     <url-pattern>/eaternity/data</url-pattern>
   </servlet-mapping>
   
+  <!--   
   <servlet-mapping>
     <servlet-name>userImageServlet</servlet-name>
     <url-pattern>/eaternity/images</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
   
   <context-param>
     <!-- max size of the upload request -->

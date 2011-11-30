@@ -1,8 +1,12 @@
 package ch.eaternity.client;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
+
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.EaternityRechnerViewImpl;
 import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.GoodbyeViewImpl;
 import ch.eaternity.client.ui.HelloView;
@@ -13,7 +17,9 @@ public class ClientFactoryImpl implements ClientFactory
 	private static final EventBus eventBus = new SimpleEventBus();
 	private static final PlaceController placeController = new PlaceController(eventBus);
 	private static final HelloView helloView = new HelloViewImpl();
+	private static final EaternityRechnerView eaternityRechnerView = new EaternityRechnerViewImpl();
 	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
+	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
 
 	@Override
 	public EventBus getEventBus()
@@ -26,6 +32,12 @@ public class ClientFactoryImpl implements ClientFactory
 	{
 		return helloView;
 	}
+	
+	@Override
+	public EaternityRechnerView getEaternityRechnerView()
+	{
+		return eaternityRechnerView;
+	}
 
 	@Override
 	public PlaceController getPlaceController()
@@ -37,6 +49,11 @@ public class ClientFactoryImpl implements ClientFactory
 	public GoodbyeView getGoodbyeView()
 	{
 		return goodbyeView;
+	}
+
+	@Override
+	public DataServiceAsync getDataServiceRPC() {
+		return dataRpcService;
 	}
 
 }

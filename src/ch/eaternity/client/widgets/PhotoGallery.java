@@ -22,9 +22,10 @@ import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.RecipeView;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.EaternityRechner;
-import ch.eaternity.client.UserImageService;
-import ch.eaternity.client.UserImageServiceAsync;
+import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.UploadedImage;
 
 public class PhotoGallery extends Composite implements GalleryUpdatedEventHandler {
@@ -32,7 +33,7 @@ public class PhotoGallery extends Composite implements GalleryUpdatedEventHandle
 	private static PhotoGalleryUiBinder uiBinder = GWT
 			.create(PhotoGalleryUiBinder.class);
 
-	UserImageServiceAsync userImageService = GWT.create(UserImageService.class);
+	DataServiceAsync userImageService = GWT.create(DataService.class);
 
 	interface PhotoGalleryUiBinder extends UiBinder<Widget, PhotoGallery> {
 	}
@@ -118,7 +119,7 @@ public class PhotoGallery extends Composite implements GalleryUpdatedEventHandle
 
 			@Override
 			public void onClick(ClickEvent event) {
-				ImageOverlay imageOverlay = new ImageOverlay(image, EaternityRechner.loginInfo);
+				ImageOverlay imageOverlay = new ImageOverlay(image);
 				imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
 				
 				final PopupPanel imagePopup = new PopupPanel(true);

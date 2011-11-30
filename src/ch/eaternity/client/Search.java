@@ -25,6 +25,8 @@ import ch.eaternity.client.comparators.NameComparator;
 import ch.eaternity.client.comparators.RezeptNameComparator;
 import ch.eaternity.client.comparators.RezeptValueComparator;
 import ch.eaternity.client.comparators.ValueComparator;
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
@@ -57,7 +59,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 /**
  * A composite that displays a list of ingredients that can be selected.
  */
-public class Search extends ResizeComposite {
+public class Search<T> extends ResizeComposite {
 	
 	// GWT UI-Binder (to display the search class)
 	interface Binder extends UiBinder<Widget, Search> { }
@@ -113,8 +115,10 @@ public class Search extends ResizeComposite {
 	@UiField DockLayoutPanel SearchBox;
 	@UiField HTML SearchLabel;
 	@UiField
+	public
 	static HTML yourRecipesText;
 	@UiField
+	public
 	static SuggestBox SearchInput;
 	
 	
@@ -242,30 +246,38 @@ public class Search extends ResizeComposite {
 	 */
 
 	// here is the database of all data pushed to....
-	public static Data clientData = new Data();
+	public Data clientData = new Data();
 	
-	public static  List<Recipe> selectedKitchenRecipes = new ArrayList<Recipe>();
+	public  List<Recipe> selectedKitchenRecipes = new ArrayList<Recipe>();
 	
-	private static ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
-	private static ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
-	private static ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
+	private ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
+	private ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
+	private ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
 	
 	// re-check this list
-	private static ArrayList<Recipe> FoundRezepteHasDesc = new ArrayList<Recipe>();
-	private static ArrayList<Recipe> FoundRezepteYoursHasDesc = new ArrayList<Recipe>();
+	private ArrayList<Recipe> FoundRezepteHasDesc = new ArrayList<Recipe>();
+	private ArrayList<Recipe> FoundRezepteYoursHasDesc = new ArrayList<Recipe>();
 
-	public static String searchString = "";
+	public String searchString = "";
 
-
+	private Presenter<T> presenter;
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+		initTable(); // just the size
+	}
+	private EaternityRechnerView superDisplay;
+	public void setSuperDisplay(EaternityRechnerView superDisplay){
+		this.superDisplay = superDisplay;
+	}
 
 	public Search() {
-
+		
 		// bind and display the Search
 		initWidget(binder.createAndBindUi(this));
 
 		// we have to wait till the database is loaded:
 		SearchInput.setText("wird geladen...");
-		initTable(); // just the size
+	
 		SearchInput.setFocus(true);
 		
 
@@ -278,12 +290,12 @@ public class Search extends ResizeComposite {
 
 	// Select the KitchenRecipes
 
-	public static void selectKitchenRecipesForSearch(Long id) {
-		Search.selectedKitchenRecipes.clear();
-		for(Recipe recipe : Search.clientData.KitchenRecipes){
+	public void selectKitchenRecipesForSearch(Long id) {
+		selectedKitchenRecipes.clear();
+		for(Recipe recipe : clientData.KitchenRecipes){
 			for(Long kitchenId : recipe.kitchenIds){
 				if(kitchenId == id){
-					Search.selectedKitchenRecipes.add(recipe);
+					selectedKitchenRecipes.add(recipe);
 				}
 			}
 		}
@@ -369,7 +381,7 @@ public class Search extends ResizeComposite {
 
 
 	
-	private static void initTable() {
+	private void initTable() {
 		// this is just basic design stuff
 		table.getColumnFormatter().setWidth(0, "120px");
 
@@ -378,7 +390,7 @@ public class Search extends ResizeComposite {
 		tableMealsYours.getColumnFormatter().setWidth(0, "120px");
 		tableMealsYours.getColumnFormatter().setWidth(1, "18px");
 		
-		if(EaternityRechner.loginInfo != null && EaternityRechner.loginInfo.isAdmin()){
+		if(presenter.getLoginInfo() != null && presenter.getLoginInfo().isAdmin()){
 			tableMeals.getColumnFormatter().setWidth(1, "18px");
 			tableMeals.getColumnFormatter().setWidth(2, "10px");
 			
@@ -407,7 +419,7 @@ public class Search extends ResizeComposite {
 			}
 		};
 
-		EaternityRechner.ShowRezept(item);
+		superDisplay.showRecipeClone(item);
 		t.schedule(200);
 
 		selectedRow = row;
@@ -436,7 +448,7 @@ public class Search extends ResizeComposite {
 			}
 		};
 
-		EaternityRechner.ShowRezept(item);
+		superDisplay.showRecipeClone(item);
 		t.schedule(200);
 
 		selectedRow = row;
@@ -488,7 +500,7 @@ public class Search extends ResizeComposite {
 			}
 		};
 
-		EaternityRechner.AddZutatZumMenu(item);
+		superDisplay.AddZutatZumMenu(item);
 
 		t.schedule(200);
 
@@ -543,7 +555,7 @@ public class Search extends ResizeComposite {
 	
 	// TODO this is getting called twice all the time...
 	
-	static void updateResults(String searchString) {
+	public void updateResults(String searchString) {
 		table.removeAllRows();
 		tableMeals.removeAllRows();
 		tableMealsYours.removeAllRows();
@@ -683,9 +695,9 @@ public class Search extends ResizeComposite {
 
 
 
-	private static List<Recipe> getYourRecipes() {
+	private List<Recipe> getYourRecipes() {
 		// TODO Auto-generated method stub
-		if(TopPanel.leftKitchen){
+		if(presenter.getTopPanel().leftKitchen){
 			return clientData.getYourRezepte();
 		} else {
 			// this should only return the selected Kitchen ones
@@ -694,7 +706,7 @@ public class Search extends ResizeComposite {
 		
 	}
 
-	private static void searchRezept(String searchString,
+	private void searchRezept(String searchString,
 			List<Recipe> allRezepte, String[] searches, boolean yours) {
 		if(allRezepte != null){
 			for(Recipe recipe : allRezepte){
@@ -813,7 +825,7 @@ public class Search extends ResizeComposite {
 	 * The sorting functions
 	 */
 
-	private static void sortResults() {
+	private void sortResults() {
 
 
 		switch(sortMethod){
@@ -905,7 +917,7 @@ public class Search extends ResizeComposite {
 	 * the displaying functions for recipes
 	 */
 	
-	public static void displayRecipeItem(final Recipe recipe, boolean yours) {
+	public void displayRecipeItem(final Recipe recipe, boolean yours) {
 		if(yours){
 			final int row = tableMealsYours.getRowCount();
 
@@ -919,7 +931,7 @@ public class Search extends ResizeComposite {
 					//  recheck user if he really want to do this...
 					dlg.executeButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.removeRezept(recipe);
+							presenter.removeRecipe(recipe);
 							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
 							dlg.hide();
 							dlg.clear();
@@ -958,7 +970,7 @@ public class Search extends ResizeComposite {
 
 
 
-			if(EaternityRechner.loginInfo.isAdmin()){
+			if(presenter.getLoginInfo().isAdmin()){
 				// This is ugly, but that's the way it is...
 				if(!recipe.isOpen()){
 					//					if(recipe.openRequested){
@@ -966,7 +978,7 @@ public class Search extends ResizeComposite {
 					Anchor openThis = new Anchor("o");
 					openThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.rezeptApproval(recipe,true);
+							presenter.recipeApproval(recipe,true);
 						}
 					});
 					tableMealsYours.setWidget(row, 2,openThis);
@@ -977,7 +989,7 @@ public class Search extends ResizeComposite {
 					Anchor closeThis = new Anchor("c");
 					closeThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.rezeptApproval(recipe,false);
+							presenter.recipeApproval(recipe,false);
 						}
 					});
 					tableMealsYours.setWidget(row, 2,closeThis);
@@ -1027,7 +1039,7 @@ public class Search extends ResizeComposite {
 			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
 			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ " g*</div>");
 
-			if(EaternityRechner.loginInfo != null && EaternityRechner.loginInfo.isAdmin()){
+			if(presenter.getLoginInfo() != null && presenter.getLoginInfo().isAdmin()){
 				
 				Anchor removeRezeptButton = new Anchor(" x ");
 				removeRezeptButton.addClickHandler(new ClickHandler() {
@@ -1037,7 +1049,7 @@ public class Search extends ResizeComposite {
 						// TODO recheck user if he really want to do this...
 						dlg.executeButton.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								EaternityRechner.removeRezept(recipe);
+								presenter.removeRecipe(recipe);
 								tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));
 								dlg.hide();
 								dlg.clear();
@@ -1058,7 +1070,7 @@ public class Search extends ResizeComposite {
 						Anchor openThis = new Anchor("o");
 						openThis.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								EaternityRechner.rezeptApproval(recipe,true);
+								presenter.recipeApproval(recipe,true);
 //								 initTable();
 								// why does the layout suck after this button press?????
 							}
@@ -1071,7 +1083,7 @@ public class Search extends ResizeComposite {
 					Anchor closeThis = new Anchor("c");
 					closeThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							EaternityRechner.rezeptApproval(recipe,false);
+							presenter.recipeApproval(recipe,false);
 //							 initTable();
 						}
 					});
@@ -1096,7 +1108,7 @@ public class Search extends ResizeComposite {
 	 */
 	
 	
-	public static void displayIngredient(final Ingredient ingredient) {
+	public void displayIngredient(final Ingredient ingredient) {
 		int row = table.getRowCount();
 
 		if ((row % 2) == 1) {
@@ -1124,7 +1136,13 @@ public class Search extends ResizeComposite {
 		}
 
 		if(ingredient.hasSeason != null && ingredient.hasSeason){
-			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+//			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+//			presenter
+			Date date = null;
+			if (presenter != null) {
+				date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
+			}
+			
 			// In Tagen
 			//		String test = InfoZutat.zutat.getStartSeason();
 			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.startSeason);		
@@ -1243,11 +1261,11 @@ public class Search extends ResizeComposite {
 		return p[n];
 	}
 
-	public static void setFoundIngredient(ArrayList<Ingredient> foundIngredient) {
+	public void setFoundIngredient(ArrayList<Ingredient> foundIngredient) {
 		FoundIngredient = foundIngredient;
 	}
 
-	public static ArrayList<Ingredient> getFoundIngredient() {
+	public ArrayList<Ingredient> getFoundIngredient() {
 		return FoundIngredient;
 	}
 	

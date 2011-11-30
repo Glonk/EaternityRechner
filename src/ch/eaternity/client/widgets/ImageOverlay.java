@@ -29,8 +29,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
-import ch.eaternity.client.UserImageService;
-import ch.eaternity.client.UserImageServiceAsync;
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
@@ -48,8 +48,8 @@ public class ImageOverlay extends Composite implements HasHandlers {
 
 	private static ImageOverlayUiBinder uiBinder = GWT
 			.create(ImageOverlayUiBinder.class);
-
-	UserImageServiceAsync imageService = GWT.create(UserImageService.class);
+	
+	DataServiceAsync imageService = GWT.create(DataService.class);
 
 	private HandlerManager handlerManager;
 
@@ -71,7 +71,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 	protected UploadedImage uploadedImage;
 	LoginInfo loginInfo;
 
-	public ImageOverlay(UploadedImage uploadedImage, LoginInfo loginInfo) {
+	public ImageOverlay(UploadedImage uploadedImage) {
 		handlerManager = new HandlerManager(this);
 
 		this.uploadedImage = uploadedImage;
@@ -82,8 +82,9 @@ public class ImageOverlay extends Composite implements HasHandlers {
 		image.setUrl(uploadedImage.getServingUrl() + "=s640");
 		timestamp.setText("Created at:" + uploadedImage.getCreatedAt());
 
-		if (loginInfo.isLoggedIn()
-				&& (loginInfo.getId().equals(uploadedImage.getOwnerId()))) {
+//		if (loginInfo.isLoggedIn()
+//				&& (loginInfo.getId().equals(uploadedImage.getOwnerId()))) {
+		if(false){
 			deleteButton.setText("Delete image");
 			deleteButton.setVisible(true);
 		} else {
@@ -240,6 +241,10 @@ public class ImageOverlay extends Composite implements HasHandlers {
 	public HandlerRegistration addGalleryUpdatedEventHandler(
 			GalleryUpdatedEventHandler handler) {
 		return handlerManager.addHandler(GalleryUpdatedEvent.TYPE, handler);
+	}
+
+	public void setLoginInfo(LoginInfo loginInfo) {
+		this.loginInfo = loginInfo;
 	}
 
 }
