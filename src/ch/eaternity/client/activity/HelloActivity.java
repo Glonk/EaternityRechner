@@ -30,6 +30,7 @@ public class HelloActivity extends AbstractActivity implements
 		helloView.setName(name);
 		helloView.setPresenter(this);
 		containerWidget.setWidget(helloView.asWidget());
+		helloView.displayDialog();
 	}
 
 	/**

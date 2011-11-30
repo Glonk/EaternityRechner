@@ -18,4 +18,6 @@ public interface HelloView extends IsWidget
 	{
 		void goTo(Place place);
 	}
+
+	void displayDialog();
 }
