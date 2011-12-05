@@ -436,6 +436,12 @@ html>body .gwt-DialogBox {
   	cursor: row-resize;
 }
 
+
+/* some stuff about the dialog box i don't now if it should be general... */
+.dialogMiddleCenter{
+	padding:0px;
+	}
+
 .rating{
 	width:80px;
 	height:16px;

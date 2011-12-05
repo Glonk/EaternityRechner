@@ -1,6 +1,7 @@
 package ch.eaternity.client.ui;
 
 
+import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 
@@ -40,7 +41,7 @@ public class MenuPreviewView<T> extends DialogBox{
 	}
 	
 	public void setName(String menuName){
-		setText("Ein leckeres Menu: " +menuName);
+//		setText("Ein leckeres Menu: " +menuName);
 		this.name = menuName;
 		
 		openDialog();
@@ -53,13 +54,15 @@ public class MenuPreviewView<T> extends DialogBox{
 		setGlassEnabled(true);
 ////		show();
 		center();
-		setHTML("bla");
+//		setHTML("bla");
 		positionDialog();
 		return this;
 	}
 
 	
 	Frame frame = null;
+
+	private ClientFactory clientFactory;
 	void positionDialog(){
 		int left = (Window.getClientWidth() - getOffsetWidth()) >> 1;
 		//	    int top = (Window.getClientHeight() - getOffsetHeight()) >> 1;
@@ -76,14 +79,10 @@ public class MenuPreviewView<T> extends DialogBox{
 	}
 
 	private void loadContent() {
-
+		String contentURl;
 		if(name != null){
-		    String contentURl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + name;
-		    frame = new Frame(contentURl);
-		    frame.setWidth("100%");
-		    int large =  Window.getClientHeight() -100;
-		    frame.setHeight(Integer.toString(large-40) + "px");
-		    previewMenuHtmlPanel.add(frame);
+			contentURl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + name;
+
 
 //		    
 //			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(contentURl));
@@ -112,8 +111,15 @@ public class MenuPreviewView<T> extends DialogBox{
 //				// Couldn't connect to server    
 //				GWT.log(e.getLocalizedMessage());
 //			}
+		} else {
+			contentURl = "http://www.eaternity.ch/newsletter/herbstmarkt-2011";
 		}
 		
+	    frame = new Frame(contentURl);
+	    frame.setWidth("100%");
+	    int large =  Window.getClientHeight() -100;
+	    frame.setHeight(Integer.toString(large-40) + "px");
+	    previewMenuHtmlPanel.add(frame);
 		
 	}
 
@@ -125,7 +131,13 @@ public class MenuPreviewView<T> extends DialogBox{
 	@UiHandler("closeButton")
 	void onClickGoodbye(ClickEvent e)
 	{	
-		hide();
+		clientFactory.getPlaceController().goTo(new EaternityRechnerPlace(name));
+		closeButton.setText("Bitte einen Moment warten, der Rechner wird geladen.");
+		closeButton.setEnabled(false);
+	}
+
+	public void setClientFactory(ClientFactory clientFactory) {
+		this.clientFactory = clientFactory;
 	}
 
 

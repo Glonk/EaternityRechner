@@ -200,6 +200,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				
 				display.getSearchPanel().SearchInput.setText("");
 				display.getSearchPanel().updateResults(" ");
+				menuPreview.hide();
 
 			}
 			

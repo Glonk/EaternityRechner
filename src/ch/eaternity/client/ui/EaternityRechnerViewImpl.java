@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
@@ -56,7 +57,7 @@ import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 
-public class EaternityRechnerViewImpl<T> extends Composite implements EaternityRechnerView<T>
+public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements EaternityRechnerView<T>
 {
 	@UiTemplate("EaternityRechnerViewImpl.ui.xml")
 	interface EaternityRechnerViewUiBinder extends UiBinder<DockLayoutPanel, EaternityRechnerViewImpl> {}
@@ -108,7 +109,7 @@ public class EaternityRechnerViewImpl<T> extends Composite implements EaternityR
 
 	public EaternityRechnerViewImpl()
 	{
-		initWidget(uiBinder.createAndBindUi(this));
+		setWidget(uiBinder.createAndBindUi(this));
 		// Get rid of scrollbars, and clear out the window's built-in margin,
 		// because we want to take advantage of the entire client area.
 		Window.enableScrolling(false);
@@ -736,7 +737,7 @@ public int AddZutatZumMenu( Ingredient item) {
 	@Override
 	public void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog){
 		this.menuPreviewDialog = menuPreviewDialog;
-		menuPreviewDialog.setName(name);
+//		menuPreviewDialog.setName(name);
 	}
 
 	@Override

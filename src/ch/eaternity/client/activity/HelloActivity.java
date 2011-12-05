@@ -32,20 +32,24 @@ public class HelloActivity extends AbstractActivity implements
 	 */
 	@Override
 	public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
+		
 		HelloView helloView = clientFactory.getHelloView();
 		helloView.setName(name);
 		helloView.setPresenter(this);
 		containerWidget.setWidget(helloView.asWidget());
 		
 		dialogBox = clientFactory.getMenuPreviewView();
+		dialogBox.setClientFactory(clientFactory);
+		
 		helloView.setMenuPreviewDialog(dialogBox);
 		
-	    Timer t = new Timer() {
-			public void run() {	
-				goTo(new EaternityRechnerPlace(name));
-			}
-		};
-		t.schedule(6000);
+//	    Timer t = new Timer() {
+//			public void run() {	
+//				goTo(new EaternityRechnerPlace(name));
+//			}
+//		};
+//		t.schedule(6000);
+		
 	}
 
 	/**

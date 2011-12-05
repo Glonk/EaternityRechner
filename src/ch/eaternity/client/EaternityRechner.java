@@ -74,7 +74,7 @@ import ch.eaternity.client.place.HelloPlace;
  */
 public class EaternityRechner implements EntryPoint {
 //	private Place defaultEntryPlace = new EaternityRechnerPlace("Besucher");
-	private Place defaultEntryPlace = new HelloPlace("Besucher");
+	private Place defaultEntryPlace = new HelloPlace(null);
 //	private SimplePanel appWidget = new SimplePanel();
 	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
 	

@@ -5,7 +5,9 @@
 
 	<ui:style>
 		.panel {
-			padding: 10px;
+			
+			padding: 0px;
+			
 		}
 		
 		.aboutText {
@@ -19,7 +21,7 @@
 
 	<g:HTMLPanel>
 		<!-- g:ScrollPanel ui:field="scrollPanel">  -->
-			<g:HTMLPanel width='960px' styleName='{style.panel}'
+			<g:HTMLPanel width='966px' styleName='{style.panel}'
 				ui:field='previewMenuHtmlPanel'>
 			</g:HTMLPanel>
 		<!--  /g:ScrollPanel>  -->
