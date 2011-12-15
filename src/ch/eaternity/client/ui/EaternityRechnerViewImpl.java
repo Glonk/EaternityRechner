@@ -53,7 +53,7 @@ import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 
@@ -333,7 +333,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		String kitchenString = "";
 		Boolean gotOne = false;
 		for(Long kitchenId : recipe.kitchenIds){
-			Kitchen kitchen = presenter.getClientData().getKitchenByID(kitchenId);
+			Workgroup kitchen = presenter.getClientData().getKitchenByID(kitchenId);
 			if(kitchen != null){
 				kitchenString = kitchenString + " [" + kitchen.getSymbol() +"]";
 				gotOne = true;
@@ -744,7 +744,7 @@ public int AddZutatZumMenu( Ingredient item) {
 	public void onResize() {
 		// this is not getting called
 		if(menuPreviewDialog != null){
-			menuPreviewDialog.center();
+//			menuPreviewDialog.center();
 			menuPreviewDialog.positionDialog();
 		}
 	}

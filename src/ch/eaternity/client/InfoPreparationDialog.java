@@ -13,7 +13,7 @@ import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Recipe;
@@ -93,7 +93,7 @@ public class InfoPreparationDialog<T> extends Composite {
 	FlowPanel flowTransport = null;
 	
 	private HTML kmText = new HTML();
-	private Kitchen kitchen;
+	private Workgroup kitchen;
 	
 	private Presenter<T> presenter;
 	public void setPresenter(Presenter<T> presenter){

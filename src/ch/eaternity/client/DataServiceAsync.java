@@ -6,7 +6,7 @@ import java.util.List;
 
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -28,10 +28,10 @@ public interface DataServiceAsync {
 	public void persistIngredients(ArrayList<Ingredient> ingredients,
 			AsyncCallback<Boolean> asyncCallback);
 
-	public void addKitchen(Kitchen kitchen, AsyncCallback<Long> async);
+	public void addKitchen(Workgroup kitchen, AsyncCallback<Long> async);
 	public void removeKitchen(Long kitchenId, AsyncCallback<Boolean> async);
-	public void getYourKitchens(AsyncCallback<List<Kitchen>> async);
-	public void getAdminKitchens(AsyncCallback<List<Kitchen>> asyncCallback);
+	public void getYourKitchens(AsyncCallback<List<Workgroup>> async);
+	public void getAdminKitchens(AsyncCallback<List<Workgroup>> asyncCallback);
 	public void approveKitchen(Long id, Boolean approve,
 			AsyncCallback<Boolean> asyncCallback);
 	public void setYourLastKitchen(Long i, AsyncCallback<Boolean> asyncCallback);

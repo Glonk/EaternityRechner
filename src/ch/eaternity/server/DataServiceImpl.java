@@ -22,7 +22,7 @@ import ch.eaternity.client.DataService;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -46,7 +46,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 	
-	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
+	public Long addKitchen(Workgroup kitchen) throws NotLoggedInException {
 //		checkLoggedIn();
 		UserService userService = UserServiceFactory.getUserService();
 		if(userService.getCurrentUser() == null){
@@ -72,7 +72,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public Boolean approveKitchen(Long kitchenId, Boolean approve) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		Kitchen kitchen =  dao.getKitchen(kitchenId);
+		Workgroup kitchen =  dao.getKitchen(kitchenId);
 		kitchen.open = approve;
 		kitchen.approvedOpen = approve;
 		dao.ofy().put(kitchen);
@@ -82,19 +82,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		dao.ofy().delete(Kitchen.class,kitchenId);
+		dao.ofy().delete(Workgroup.class,kitchenId);
 		return true;
 	}
 	
-	public List<Kitchen> getYourKitchens() throws NotLoggedInException {
+	public List<Workgroup> getYourKitchens() throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
 		return dao.getYourKitchens(getUser());	
 	}
 	
-	public List<Kitchen> getAdminKitchens() throws NotLoggedInException{
+	public List<Workgroup> getAdminKitchens() throws NotLoggedInException{
 		UserService userService = UserServiceFactory.getUserService();
-		List<Kitchen> adminRecipes = new ArrayList<Kitchen>();
+		List<Workgroup> adminRecipes = new ArrayList<Workgroup>();
 		if(userService.getCurrentUser() != null){
 			if(userService.isUserAdmin()){
 				DAO dao = new DAO();
@@ -247,11 +247,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			// if you are the admin, you also get all the others!
 			data.kitchens = getAdminKitchens();
 			
-			List<Kitchen> kitchenPersonal = dao.getYourKitchens(getUser());
+			List<Workgroup> kitchenPersonal = dao.getYourKitchens(getUser());
 			
-			for(Kitchen yourKitchen : kitchenPersonal){
+			for(Workgroup yourKitchen : kitchenPersonal){
 				Boolean notFound = true;
-				for(Kitchen isThere : data.kitchens){
+				for(Workgroup isThere : data.kitchens){
 					if(isThere.id == yourKitchen.id){
 						notFound = false;
 					}
@@ -262,7 +262,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			}
 			
 		} else {
-			List<Kitchen> kitchensOpen = dao.getOpenKitchen();
+			List<Workgroup> kitchensOpen = dao.getOpenKitchen();
 			data.kitchens = kitchensOpen;
 		}
 		

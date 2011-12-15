@@ -1,5 +1,6 @@
 package ch.eaternity.client.widgets;
 
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -29,7 +30,7 @@ import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;
 
-public class UploadPhoto extends Composite implements HasHandlers {
+public class UploadPhoto<T> extends Composite implements HasHandlers {
 
 	private static UploadPhotoUiBinder uiBinder = GWT
 			.create(UploadPhotoUiBinder.class);
@@ -54,10 +55,10 @@ public class UploadPhoto extends Composite implements HasHandlers {
 	
 	Recipe recipe;
 
-	public UploadPhoto(final LoginInfo loginInfo,final RecipeEditView editRecipeView) {
+	public UploadPhoto(final LoginInfo loginInfo,final RecipeEditView<T> editRecipeView) {
 		handlerManager = new HandlerManager(this);
 		
-		this.recipe = recipe;
+		this.recipe = editRecipeView.recipe;
 		this.loginInfo = loginInfo;
 
 		initWidget(uiBinder.createAndBindUi(this));
@@ -79,6 +80,8 @@ public class UploadPhoto extends Composite implements HasHandlers {
 						startNewBlobstoreSession();
 
 						String key = event.getResults();
+						
+						if(key != null){
 
 						userImageService.get(key,
 								new AsyncCallback<UploadedImage>() {
@@ -153,8 +156,14 @@ public class UploadPhoto extends Composite implements HasHandlers {
 
 									}
 								});
+						} else {
+							GWT.log("no image object key was found");
+							
+						}
 
 					}
+				
+	
 				});
 	}
 

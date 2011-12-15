@@ -11,7 +11,7 @@ import ch.eaternity.shared.Device;
 import ch.eaternity.shared.EnergyMix;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.IngredientSpecification;
@@ -111,8 +111,8 @@ public class KitchenDialog<T> extends DialogBox{
 	String currentLocation;
 	String kitchenName;
 	
-	List<Kitchen> availableKitchens;
-	Kitchen selectedKitchen;
+	List<Workgroup> availableKitchens;
+	Workgroup selectedKitchen;
 	
 	private Presenter<T> presenter;
 	public void setPresenter(Presenter<T> presenter){
@@ -136,8 +136,8 @@ public class KitchenDialog<T> extends DialogBox{
 		availableKitchens = presenter.getClientData().kitchens;
 		
 		if(availableKitchens == null || availableKitchens.size() == 0){
-			availableKitchens = new ArrayList<Kitchen>(1);
-			Kitchen newKitchen = new Kitchen("neue Küche",currentLocation);
+			availableKitchens = new ArrayList<Workgroup>(1);
+			Workgroup newKitchen = new Workgroup("neue Küche",currentLocation);
 			newKitchen.energyMix = new EnergyMix("ewz.naturpower",0.01345);
 			newKitchen.hasChanged = true;
 			availableKitchens.add(newKitchen);
@@ -156,8 +156,8 @@ public class KitchenDialog<T> extends DialogBox{
 	}
 
 
-	private void addKitchenNamesToList(List<Kitchen> availableKitchens) {
-		for(Kitchen kitchen : availableKitchens){
+	private void addKitchenNamesToList(List<Workgroup> availableKitchens) {
+		for(Workgroup kitchen : availableKitchens){
 			if(kitchen != null){
 				kitchens.addItem(kitchen.getSymbol(),Integer.toString(availableKitchens.indexOf(kitchen))); // +kitchen.location  kitchen.id.toString()+ kitchen.getSymbol() 
 			}
@@ -992,7 +992,7 @@ public class KitchenDialog<T> extends DialogBox{
 		
 		// The other kitchens need also to be saved...
 		
-		for(final Kitchen kitchen: availableKitchens){
+		for(final Workgroup kitchen: availableKitchens){
 			// save all kitchens at once
 			if(kitchen != null && kitchen.hasChanged){ // has changed still needs to be set false	
 				dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
@@ -1202,7 +1202,7 @@ public class KitchenDialog<T> extends DialogBox{
 	  
 	  @UiHandler("newKitchen")
 	  public void onNewKitchenClick(ClickEvent event) {
-		  selectedKitchen = new Kitchen("neue Küche");
+		  selectedKitchen = new Workgroup("neue Küche");
 		  selectedKitchen.location = "Zürich, Schweiz";
 		  availableKitchens.add(selectedKitchen);
 		  kitchens.addItem(selectedKitchen.getSymbol());

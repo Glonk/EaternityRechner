@@ -51,7 +51,7 @@ import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -179,8 +179,8 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 					Long lastKitchenId = clientData.lastKitchen;
 					if(lastKitchenId == null) { lastKitchenId = 0L; }
 					
-					Kitchen lastKitchen = null;
-					for(Kitchen kitchIt : data.kitchens){
+					Workgroup lastKitchen = null;
+					for(Workgroup kitchIt : data.kitchens){
 						if(kitchIt.id == lastKitchenId){
 							lastKitchen = kitchIt;
 						}
@@ -376,12 +376,12 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		});
 		
 		
-		dataRpcService.getAdminKitchens(new AsyncCallback<List<Kitchen>>() {
+		dataRpcService.getAdminKitchens(new AsyncCallback<List<Workgroup>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			
-			public void onSuccess(List<Kitchen> result) {
+			public void onSuccess(List<Workgroup> result) {
 				// this shouldn't be necessary
 				clientData = getSearchPanel().clientData;
 				
@@ -414,7 +414,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(List<Recipe> rezepte) {
 				
-				addClientDataRezepte(rezepte);
+				if(rezepte != null && rezepte.size() > 0){
+					addClientDataRezepte(rezepte);
+				}
 //				displayRezepte(rezepte);
 			}
 		});

@@ -71,7 +71,7 @@ public class ConvertServlet extends HttpServlet {
 		List<byte[]> assetDataList = new ArrayList<byte[]>();
 		List<String> assetNameList = new ArrayList<String>();
 
-		URL url = new URL(BASEURL + "view.jsp?ids=" + tempIds);
+		URL url = new URL(BASEURL + "pdf.jsp?ids=" + tempIds);
 		
 		InputStream stream = null;
 		try {

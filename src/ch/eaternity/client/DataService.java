@@ -5,7 +5,7 @@ import java.util.List;
 
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -30,10 +30,10 @@ public interface DataService extends RemoteService {
 	public Boolean persistIngredients(ArrayList<Ingredient> ingredients) throws NotLoggedInException;
 
 
-	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException;
+	public Long addKitchen(Workgroup kitchen) throws NotLoggedInException;
 	public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException;
-	public List<Kitchen> getYourKitchens() throws NotLoggedInException;
-	public List<Kitchen> getAdminKitchens() throws NotLoggedInException;
+	public List<Workgroup> getYourKitchens() throws NotLoggedInException;
+	public List<Workgroup> getAdminKitchens() throws NotLoggedInException;
 	public Boolean approveKitchen(Long kitchenId, Boolean approve) throws NotLoggedInException;
 	public Boolean setYourLastKitchen(Long i) throws NotLoggedInException;
 

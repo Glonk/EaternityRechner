@@ -11,7 +11,7 @@ import ch.eaternity.shared.Data;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -74,7 +74,7 @@ import ch.eaternity.client.place.HelloPlace;
  */
 public class EaternityRechner implements EntryPoint {
 //	private Place defaultEntryPlace = new EaternityRechnerPlace("Besucher");
-	private Place defaultEntryPlace = new HelloPlace(null);
+	private Place defaultEntryPlace = new HelloPlace("");
 //	private SimplePanel appWidget = new SimplePanel();
 	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
 	

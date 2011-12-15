@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import com.googlecode.objectify.annotation.Serialized;
 
 
-public class Kitchen implements Serializable, Cloneable{
+public class Workgroup implements Serializable, Cloneable{
  
 	private static final long serialVersionUID = 8711036976355728738L;
 
@@ -52,20 +52,20 @@ public class Kitchen implements Serializable, Cloneable{
 	public Boolean hasChanged;
 
 
-	public Kitchen() {
+	public Workgroup() {
 
 	}
 
-	public Kitchen(String symbol) {
+	public Workgroup(String symbol) {
 		this.symbol = symbol;
 	}
 	
-	public Kitchen(String symbol, String location) {
+	public Workgroup(String symbol, String location) {
 		this.symbol = symbol;
 		this.location = location;
 	}
 
-	public Kitchen(Long id, String symbol) {
+	public Workgroup(Long id, String symbol) {
 		this();
 
 		this.symbol = symbol;

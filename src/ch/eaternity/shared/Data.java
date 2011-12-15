@@ -18,7 +18,7 @@ public class Data implements Serializable{
 	public  List<Ingredient> ingredients;
 	public  List<SingleDistance> distances;
 	
-	public  List<Kitchen> kitchens;
+	public  List<Workgroup> kitchens;
 	
 	public Long lastKitchen;
 
@@ -76,8 +76,8 @@ public class Data implements Serializable{
 	}
 	
 	
-	public Kitchen getKitchenByID(long id){
-		for(Kitchen kitchen : kitchens){
+	public Workgroup getKitchenByID(long id){
+		for(Workgroup kitchen : kitchens){
 			if (kitchen.id == id){
 				return kitchen;
 			}

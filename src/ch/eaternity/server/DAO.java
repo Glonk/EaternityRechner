@@ -12,7 +12,7 @@ import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
@@ -42,7 +42,7 @@ public class DAO extends DAOBase
 		ObjectifyService.register(Recipe.class);
 		ObjectifyService.register(UserRecipeWrapper.class);
 		ObjectifyService.register(ImageBlob.class);
-		ObjectifyService.register(Kitchen.class);
+		ObjectifyService.register(Workgroup.class);
 		ObjectifyService.register(Staff.class);
 		ObjectifyService.register(LoginInfo.class);
 		//        ObjectifyService.register(DeviceSpecification.class);
@@ -144,7 +144,7 @@ public class DAO extends DAOBase
 
 
 
-	public Long saveKitchen(Kitchen kitchen){
+	public Long saveKitchen(Workgroup kitchen){
 
 		// here we need more logic
 		// got through the Users, find them in the Storage, add to each the key of this kitchen
@@ -193,21 +193,21 @@ public class DAO extends DAOBase
 		return kitchen.id;
 	}
 
-	public Kitchen getKitchen(Long KitchenID){
-		Kitchen kitchen = ofy().get(Kitchen.class,KitchenID);
+	public Workgroup getKitchen(Long KitchenID){
+		Workgroup kitchen = ofy().get(Workgroup.class,KitchenID);
 		return kitchen;
 	}
 
-	public List<Kitchen> getYourKitchens(User user){
+	public List<Workgroup> getYourKitchens(User user){
 
-		List<Kitchen> yourKitchens = new ArrayList<Kitchen>();
+		List<Workgroup> yourKitchens = new ArrayList<Workgroup>();
 
 		// The Query itself is Iterable
-		Query<Kitchen> yourUserKitchens = ofy().query(Kitchen.class).filter("emailAddressOwner", user.getEmail());
-		QueryResultIterator<Kitchen> iterator = yourUserKitchens.iterator();
+		Query<Workgroup> yourUserKitchens = ofy().query(Workgroup.class).filter("emailAddressOwner", user.getEmail());
+		QueryResultIterator<Workgroup> iterator = yourUserKitchens.iterator();
 
 		while (iterator.hasNext()) {
-			Kitchen kitchen = iterator.next();
+			Workgroup kitchen = iterator.next();
 			yourKitchens.add(kitchen);
 		}
 
@@ -217,7 +217,7 @@ public class DAO extends DAOBase
 			Staff staffer = staffIterator.next();
 			for(Long getThisKitchen:staffer.kitchensIds){
 				try {
-					Kitchen newKitchen = ofy().get(Kitchen.class,getThisKitchen);
+					Workgroup newKitchen = ofy().get(Workgroup.class,getThisKitchen);
 					if(!yourKitchens.contains(newKitchen)){
 						yourKitchens.add(newKitchen);
 					}
@@ -231,16 +231,16 @@ public class DAO extends DAOBase
 
 	}
 
-	public List<Kitchen> adminGetKitchens(User user){
+	public List<Workgroup> adminGetKitchens(User user){
 
-		List<Kitchen> adminKitchens = new ArrayList<Kitchen>();
+		List<Workgroup> adminKitchens = new ArrayList<Workgroup>();
 
 		// The Query itself is Iterable
-		Query<Kitchen> yourUserKitchens = ofy().query(Kitchen.class).filter("emailAddressOwner !=", user.getEmail());
-		QueryResultIterator<Kitchen> iterator = yourUserKitchens.iterator();
+		Query<Workgroup> yourUserKitchens = ofy().query(Workgroup.class).filter("emailAddressOwner !=", user.getEmail());
+		QueryResultIterator<Workgroup> iterator = yourUserKitchens.iterator();
 
 		while (iterator.hasNext()) {
-			Kitchen kitchen = iterator.next();
+			Workgroup kitchen = iterator.next();
 			adminKitchens.add(kitchen);
 		}
 
@@ -248,16 +248,16 @@ public class DAO extends DAOBase
 
 	}
 
-	public List<Kitchen> getOpenKitchen(){
+	public List<Workgroup> getOpenKitchen(){
 
-		List<Kitchen> openKitchens = new ArrayList<Kitchen>();
+		List<Workgroup> openKitchens = new ArrayList<Workgroup>();
 
 		// The Query itself is Iterable
-		Query<Kitchen> yourOpenKitchens = ofy().query(Kitchen.class).filter("approvedOpen", true);
-		QueryResultIterator<Kitchen> iterator = yourOpenKitchens.iterator();
+		Query<Workgroup> yourOpenKitchens = ofy().query(Workgroup.class).filter("approvedOpen", true);
+		QueryResultIterator<Workgroup> iterator = yourOpenKitchens.iterator();
 
 		while (iterator.hasNext()) {
-			Kitchen kitchen = iterator.next();
+			Workgroup kitchen = iterator.next();
 			openKitchens.add(kitchen);
 		}
 
@@ -409,11 +409,11 @@ public class DAO extends DAOBase
 
 		}
 
-		Query<Kitchen> yourKitchen = ofy().query(Kitchen.class).filter("emailAddressOwner", user.getEmail());
-		QueryResultIterator<Kitchen> kitchenIterator = yourKitchen.iterator();
+		Query<Workgroup> yourKitchen = ofy().query(Workgroup.class).filter("emailAddressOwner", user.getEmail());
+		QueryResultIterator<Workgroup> kitchenIterator = yourKitchen.iterator();
 		while (kitchenIterator.hasNext()) {
 
-			Kitchen thisKitchen = kitchenIterator.next();
+			Workgroup thisKitchen = kitchenIterator.next();
 			Query<UserRecipeWrapper> moreKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", thisKitchen.id);
 			QueryResultIterator<UserRecipeWrapper> iteratorMore = moreKitchenRecipes.iterator();
 

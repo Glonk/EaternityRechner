@@ -22,17 +22,24 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+
 import ch.eaternity.shared.UploadedImage;
 
-@SuppressWarnings("serial")
+
 public class UploadServlet extends HttpServlet {
-    private static final Logger log = Logger.getLogger(UploadServlet.class.getName());
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3362545448785237718L;
+
+
+	private static final Logger log = Logger.getLogger(UploadServlet.class.getName());
 
 	
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();    
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
+        throws ServletException, IOException  {
 
         Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
         BlobKey blobKey = blobs.get("image");
@@ -48,11 +55,19 @@ public class UploadServlet extends HttpServlet {
             // TODO: Add a better check for whether the user is logged in or not
         	// Don't even let the user upload or get here
         	User user = userService.getCurrentUser();
+        	if(userService.getCurrentUser() == null){
+//    			throw new IOException("Not logged in.");
+        		// but do i really need a user?
+    		}
+        	//error: there is no user???
         	
         	Entity uploadedImage = new Entity("UploadedImage");
         	uploadedImage.setProperty("blobKey", blobKey);
         	uploadedImage.setProperty(UploadedImage.CREATED_AT, new Date());
-        	uploadedImage.setProperty(UploadedImage.OWNER_ID, user.getUserId());
+        	
+        	if(user != null){
+        		uploadedImage.setProperty(UploadedImage.OWNER_ID, user.getUserId());
+        	}
         	
         	// Highly unlikely we'll ever search on this property
         	uploadedImage.setUnindexedProperty(UploadedImage.SERVING_URL, imageUrl);

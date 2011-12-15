@@ -22,7 +22,7 @@ import java.util.Date;
 
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.SingleDistance;
 
 import com.google.gwt.core.client.GWT;
@@ -95,7 +95,7 @@ public
  // here should be all the distances stored 
 protected  ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
 public  boolean leftKitchen = true;
-public  Kitchen selectedKitchen;
+public  Workgroup selectedKitchen;
 
 private Presenter<T> presenter;
 public void setPresenter(Presenter<T> presenter){

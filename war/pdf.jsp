@@ -21,12 +21,14 @@
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.InputStreamReader" %>
 <%@ page import="java.io.IOException" %>
+<%@ page import="java.util.Date" %>
+
 
 <html>
 <head>
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<title>Eaternity Menu Optimierung</title>
+<title>Menü Klima-Bilanz Zertifikat</title>
 
 
 <%
@@ -122,8 +124,11 @@
 		Double median = 0.0;
 		Integer counter = 0;
 		
-		Calendar rightNow = Calendar.getInstance();
-		Integer date = rightNow.get(Calendar.WEEK_OF_YEAR);
+		//Calendar rightNow = Calendar.getInstance();
+		//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
+		
+		Date date = new Date();
+        long iTimeStamp = (long) (date.getTime() * .00003);
 		
 		if(rezeptePersonal.size() != 0){
 			ArrayList<Double> values = new ArrayList<Double>();
@@ -162,23 +167,29 @@
 
 
 <style type="text/css">
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
+<!-- @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800); -->
 
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url('opensans300.woff') format('woff');
+}
 
 @page {
   size: A4;
-  margin: 40pt 20pt 70pt 50pt;
+  margin: 40pt 20pt 70pt 40pt;
    padding: 0pt 0pt 0pt 0pt;
 	prince-image-resolution: 300dpi;
 
     @bottom-right { 
         content: counter(page) "/" counter(pages);
-		font: 9pt 'Open Sans',  sans-serif; font-weight: 300;
+		font: 9pt 'Open Sans', Verdana, sans-serif; font-weight: 300;
 		 padding-right: 20pt;
 		 padding-top: 5pt;
     }
     @bottom { 
-      font: 9pt 'Open Sans',  sans-serif; font-weight: 300;
+      font: 9pt 'Open Sans', Verdana, sans-serif; font-weight: 300;
       }
     @bottom-left { 
       content: flow(footer,start);
@@ -198,7 +209,7 @@
 	}
 
 body { 
-	font-family: 'Open Sans',  sans-serif; 
+	font-family: 'Open Sans', Verdana, sans-serif; 
 	font-weight: 300;
     font-size: 11pt;
     image-resolution: 70dpi;
@@ -665,7 +676,7 @@ baseUrl = getBaseURL();
 
 <% 
 for(Recipe recipe: rezeptePersonal){
-	long compute = recipe.getId() * date;
+	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34); 
 	%>
 idsToAdd['<%= code %>'] = true<%	}	%>
@@ -742,7 +753,6 @@ function getBaseURL() {
 </div>
 
 
-
 <div id="kopf-logo" class="kopf">
 	<img class="logo" src="logo-eaternity-huge_04-11-2010.png" alt="logo-eaternity-huge_04-11-2010" />
 
@@ -755,7 +765,7 @@ function getBaseURL() {
 
 </div>
 <% if(DoItAll) { %>
-<h1>Das Menu Dokument</h1>
+<h1>Menü Klima-Bilanz Zertifikat</h1>
 
 
 
@@ -765,7 +775,7 @@ function getBaseURL() {
 
 
 <div class="page-break" id="footer-left">
-	<img class="logo-karotte" src="karotte.jpg" alt="karotte"  />
+	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
 	<a href="mailto:info@eaternity.ch" >info@eaternity.ch</a>
 	<a href="www.eaternity.ch">www.eaternity.ch</a>
@@ -797,7 +807,7 @@ if(rezeptePersonal.size() != 0){
 }
 if(doIt){
 %>
-<h1>Das Menu Plus Angebot</h1>
+<h1>Ihre Menüs</h1>
 
 <form name="htmlAdder" method="POST" action=";" class="page-break">
 <table cellspacing="0" cellpadding="0" class="table" >
@@ -820,7 +830,7 @@ if(doIt){
 		
 for(Recipe recipe: rezeptePersonal){
 
-	long compute = recipe.getId() * date;
+	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34);
 
 	//recipe.setCO2Value();
@@ -914,7 +924,7 @@ if(doIt){
 
 for(Recipe recipe: rezeptePersonal){
 
-long compute = recipe.getId() * date;
+long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
@@ -1116,7 +1126,7 @@ if(doIt){
 
 for(Recipe recipe: rezeptePersonal){
 
-long compute = recipe.getId() * date;
+long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
@@ -1228,7 +1238,7 @@ if(doIt){
 
 for(Recipe recipe: rezeptePersonal){
 
-long compute = recipe.getId() * date;
+long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
@@ -1308,8 +1318,6 @@ String code = Converter.toString(compute,34);
 
 
 
-
-
 Boolean doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
@@ -1321,9 +1329,10 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 
 
+
 for(Recipe recipe: rezeptePersonal){
 
-			long compute = recipe.getId() * date;
+			long compute = recipe.getId() * iTimeStamp;
 			String code = Converter.toString(compute,34);
 			
 			String clear = Converter.toString(recipe.getId(),34);
@@ -1423,7 +1432,7 @@ for(Recipe recipe: rezeptePersonal){
 								 	Dieses Menu
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="green.png" alt="gray" height="15"  width="<%= length %>" />
+								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
 <!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
@@ -1433,7 +1442,7 @@ for(Recipe recipe: rezeptePersonal){
 								 	klimafreundliche Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="orange.png" alt="gray" height="15"  width="<%= klimafriendly %>" />
+								 	<img class="bar" src="orange.png" alt="orange" height="15"  width="<%= klimafriendly %>" />
 <!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
@@ -1443,7 +1452,7 @@ for(Recipe recipe: rezeptePersonal){
 								 	Dieses Menu
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="green.png" alt="gray" height="15"  width="<%= length %>" />
+								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
 <!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
@@ -1463,7 +1472,7 @@ for(Recipe recipe: rezeptePersonal){
 								 	Dieses Menu
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="green.png" alt="gray" height="15"  width="<%= length %>" />
+								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
 <!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
@@ -1544,10 +1553,11 @@ for(Recipe recipe: rezeptePersonal){
 						 </td>
 						 
 						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItAll) { %>
-	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>" width="42" height="42" /></a>
+	<a href="<%= BASEURL %>?pid=<%= clear %>"><!-- img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>" width="42" height="42" / --><img src="QR-<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>-CODE" width="42" height="42" /></a>
 							<% } else { %> <span style="color:red;font-size:9pt;">Helfen Sie die Rezepte kontrollieren!</span> <% } %>
 						 </td>
 						</tr>
+						
 						
 					</table>
 				
@@ -1671,7 +1681,7 @@ Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie un
 </div>
 
 <div id="footer-bottom">
-	<img class="logo-karotte" src="karotte.jpg" alt="karotte"  />
+	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
 	<a href="mailto:info@eaternity.ch" >info@eaternity.ch</a>
 	<a href="www.eaternity.ch">www.eaternity.ch</a>

@@ -13,6 +13,8 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.gwt.core.client.GWT;
+
 import ch.eaternity.shared.UploadedImage;
 
 public class UploadedImageDao {
@@ -31,6 +33,7 @@ public class UploadedImageDao {
 			image.setKey(encodedKey);
 			return image;
 		} catch (EntityNotFoundException e) {
+			GWT.log(e.getLocalizedMessage());
 			return null;
 		}
 

@@ -64,23 +64,25 @@ public class MenuPreviewView<T> extends DialogBox{
 
 	private ClientFactory clientFactory;
 	void positionDialog(){
-		int left = (Window.getClientWidth() - getOffsetWidth()) >> 1;
-		//	    int top = (Window.getClientHeight() - getOffsetHeight()) >> 1;
-		int top = 20;
-		setPopupPosition(Math.max(Window.getScrollLeft() + left, 0), Math.max(
-				Window.getScrollTop() + top, 0));
-		int large =  Window.getClientHeight() -100;
-		//		scrollPanel.setHeight(Integer.toString(large) + "px");
-		
-		if(frame != null){
-		    frame.setHeight(Integer.toString(large-40) + "px");
+		if(this.isShowing()){
+			int left = (Window.getClientWidth() - getOffsetWidth()) >> 1;
+			//	    int top = (Window.getClientHeight() - getOffsetHeight()) >> 1;
+			int top = 20;
+			setPopupPosition(Math.max(Window.getScrollLeft() + left, 0), Math.max(
+					Window.getScrollTop() + top, 0));
+			int large =  Window.getClientHeight() -100;
+			//		scrollPanel.setHeight(Integer.toString(large) + "px");
+			
+			if(frame != null){
+			    frame.setHeight(Integer.toString(large-40) + "px");
+			}
 		}
 
 	}
 
 	private void loadContent() {
 		String contentURl;
-		if(name != null){
+		if(name != null && name != ""){
 			contentURl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + name;
 
 

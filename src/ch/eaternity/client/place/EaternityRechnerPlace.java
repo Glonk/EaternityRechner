@@ -19,7 +19,7 @@ public class EaternityRechnerPlace extends Place
 		return placeName;
 	}
 
-	@Prefix("menu") // with "!" -> "!menu" this one gets indexed
+	@Prefix("edit") // with "!" -> "!menu" this one gets indexed
 	public static class Tokenizer implements PlaceTokenizer<EaternityRechnerPlace>
 	{
 

@@ -17,6 +17,8 @@ public class Ingredient implements IsSerializable{
     @Id private Long id;
 
     private String symbol;
+    
+    private String source;
 
     private Integer co2eValue;
     
@@ -124,6 +126,14 @@ public class Ingredient implements IsSerializable{
 
 	public List<Extraction> getExtractions() {
 		return extractions;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getSource() {
+		return source;
 	}
 
 //	public void setConditions(Map<Condition,Double> conditions) {
