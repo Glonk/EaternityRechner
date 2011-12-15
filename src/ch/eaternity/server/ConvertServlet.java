@@ -96,6 +96,7 @@ public class ConvertServlet extends HttpServlet {
 			resp.setContentType("text/plain");
 			resp.getWriter().println("Sorry. Das Programm musste neu geladen werden, starten Sie die Anfrage einfach ein zweites mal. Danke.");
 		}
+		
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
 		try {
@@ -181,6 +182,7 @@ public class ConvertServlet extends HttpServlet {
 		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
 
 		ServletContext context = getServletContext();
+		
 		for (int i = 0; i < pngImagesReport.length; i++)
 		{
 
@@ -212,6 +214,7 @@ public class ConvertServlet extends HttpServlet {
 
 
 		// font test
+		/*
 		InputStream reader2 = context.getResourceAsStream("/opensans300.woff");
 
 		try {
@@ -232,7 +235,7 @@ public class ConvertServlet extends HttpServlet {
 			reader2.close();
 			byteStream.reset();
 		}
-
+*/
 
 
 
@@ -269,29 +272,33 @@ public class ConvertServlet extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, String.format(
 					"Failed to convert %s from %s to %s: %s",
 					assets.get(0).getName(), assets.get(0).getMimeType(),
-					outputType, result.getErrorCode().toString()));
-		}
+					outputType, result.getErrorCode().toString() ));
+		} else {
 
-		int assetsNum = result.getOutputDoc().getAssets().size();
-		if (assetsNum == 0) {
-			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No result was returned.");
-		}
+			int assetsNum = result.getOutputDoc().getAssets().size();
+			
+			if (assetsNum == 0) {
+				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No result was returned.");
+			} else {
 
-		// Conversion succeeded! Send the converted result as an attachment.
-		resp.setContentType(outputType);
-		resp.setHeader(
-				"Content-Disposition",
-				"attachment; filename=" + assets.get(0).getName().split("\\.")[0]);
-		List<Asset> assets = result.getOutputDoc().getAssets();
-		// Print the first/primary asset to servlet output steam.
-		resp.getOutputStream().write(assets.get(0).getData());
-		// Additional assets may be returned, e.g. images in HTML.
-		// Here we simply write them into log, you may want to handle them
-		// in your own way.
-		for (int i = 1; i < assetsNum; i++) {
-			log.info(String.format(
-					"Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
-					assets.get(i).getMimeType(), assets.get(i).getData().length));
+				// Conversion succeeded! Send the converted result as an attachment.
+				resp.setContentType(outputType);
+				resp.setHeader(
+						"Content-Disposition",
+						"attachment; filename=" + assets.get(0).getName().split("\\.")[0]);
+				List<Asset> assets = result.getOutputDoc().getAssets();
+				// Print the first/primary asset to servlet output steam.
+				resp.getOutputStream().write(assets.get(0).getData());
+				// Additional assets may be returned, e.g. images in HTML.
+				// Here we simply write them into log, you may want to handle them
+				// in your own way.
+				for (int i = 1; i < assetsNum; i++) {
+					log.info(String.format(
+							"Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
+							assets.get(i).getMimeType(), assets.get(i).getData().length));
+				}
+				
+			}
 		}
 	}
 

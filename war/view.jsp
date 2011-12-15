@@ -115,6 +115,7 @@
 		//Calendar rightNow = Calendar.getInstance();
 		//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
 		
+		// this should be disfunctional by now
 		Date date = new Date();
         long iTimeStamp = (long) (date.getTime() * .00003);
 		
@@ -155,6 +156,7 @@
 
 
 <style type="text/css">
+<% if(!doPdf){ %>
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
 
 @font-face {
@@ -163,6 +165,7 @@
   font-weight: 300;
   src: local('Open Sans Light'), local('OpenSans-Light'), url('opensans300.woff') format('woff');
 }
+<% } %>
 
 @page {
   size: A4;
