@@ -63,7 +63,7 @@
 		List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
 		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 		
-		if (user != null) {
+		if (user != null && permanentId == null) {
 			rezeptePersonal = dao.getYourRecipe(user);
 			kitchenRecipes = dao.getKitchenRecipes(user);
 			
@@ -84,24 +84,6 @@
 				}
 			}
 			
-					 			%>
-
-			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-			<script src="jquery.docraptor.js" type="text/javascript"></script>
-			
-			<script  type="text/javascript">
-			$(document).ready(function () {
-			$(".whatever").docraptor({
-			document_type: 'pdf',
-			test: true
-			},
-			'sYkJlCnJYRitdIvkAW'
-			);
-			});
-			</script>
-
-	<%
-		
 		} else {
 		 if(tempIds != null){
 			rezeptePersonal = dao.getRecipeByIds(tempIds,true);
@@ -855,7 +837,14 @@ for(Recipe recipe: rezeptePersonal){
 				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
 				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.</p>
 				<p style="display:block;clear:both"><%= recipe.getCookInstruction() %></p>
-				<!-- img src=< recipe.image.getServingUrl()   /-->
+				<%
+				if(recipe.image != null){
+					%>
+					<img src=recipe.image.getServingUrl() />
+					<%
+				}
+				
+				%>
 				
 			</td>
 			</tr>
@@ -1109,7 +1098,7 @@ for(Recipe recipe: rezeptePersonal){
 if(rezeptePersonal.size() != 0){
 
 %>
-
+<!-- this is different now...-->
 <a style="float:right" href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Menu als PDF herunterladen.</a>
 
 <%
