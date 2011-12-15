@@ -19,7 +19,7 @@ public class HelloPlace extends Place
 		return placeName;
 	}
 
-	@Prefix("serv")
+	@Prefix("serve")
 	public static class Tokenizer implements PlaceTokenizer<HelloPlace>
 	{
 

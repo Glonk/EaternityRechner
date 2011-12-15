@@ -42,6 +42,13 @@
 		
 		String tempIds = request.getParameter("ids");
 		String permanentId = request.getParameter("pid");
+		String pdf = request.getParameter("pdf");
+		
+		Boolean doPdf = false;
+		if(pdf != null){
+			doPdf = true;
+		}
+		
 		Boolean DoItAll = true;
 		
 		String thresholdString = request.getParameter("median");

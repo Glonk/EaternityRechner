@@ -42,6 +42,12 @@
 		
 		String tempIds = request.getParameter("ids");
 		String permanentId = request.getParameter("pid");
+		String pdf = request.getParameter("pdf");
+		
+		Boolean doPdf = false;
+		if(pdf != null){
+			doPdf = true;
+		}
 		Boolean DoItAll = true;
 		
 		String thresholdString = request.getParameter("median");
@@ -711,11 +717,13 @@ baseUrl = getBaseURL();
 for(Recipe recipe: rezeptePersonal){
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34); 
+	String clear = Converter.toString(recipe.getId(),34);
+
 	%>
-idsToAdd['<%= code %>'] = true<%	}	%>
+idsToAdd['<%= clear %>'] = true<%	 }	%>
 
 arrayAdd(idsToAdd)
-}
+ }
 function arrayAdd(idsToAdd){
 hrefAdd = "";
 	for (var codeIndex in idsToAdd){
@@ -747,7 +755,7 @@ function addRemoveMenu(code){
 }
 
 function setHref(hrefAdd){
-    document.getElementById('getPdf').href=baseUrl+"view.jsp?ids="+hrefAdd
+    document.getElementById('getPdf').href=baseUrl+"convert?pid="+hrefAdd
 }
 
 function getBaseURL() {
@@ -795,7 +803,7 @@ function getBaseURL() {
 	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
 	<a href="mailto:Eaternity%20Info%20%3Cinfo@eaternity.ch%3E" >info@eaternity.ch</a>
-	<a href="http://www.eaternity.ch">www.eaternity.ch</a>
+	<a TARGET="_blank" href="http://www.eaternity.ch">www.eaternity.ch</a>
 </div>
 
 
@@ -891,7 +899,7 @@ for(Recipe recipe: rezeptePersonal){
 				<%
 				if(recipe.image != null){
 					%>
-					<!-- img class="cover-all" src=<%=recipe.image.getServingUrl()%>=s800 / -->
+					<img class="cover-all" src=<%=recipe.image.getServingUrl()%>=s800 />
 					
 					<%
 				}
@@ -1109,7 +1117,12 @@ for(Recipe recipe: rezeptePersonal){
 						 </td>
 						 
 						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border">
-	<a href="<%= BASEURL %>?pid=<%= clear %>"><img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>" width="42" height="42" /><!--img src="QR-<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>-CODE" width="42" height="42" /--></a>
+	<a href="<%= BASEURL %>?pid=<%= clear %>">
+		<% if(!doPdf){%>
+			<img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>" width="42" height="42" />
+		<% } else { %>
+			<img src="QR-<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>-CODE" width="42" height="42" />
+		<% } %> </a>
 							
 						 </td>
 						</tr>
@@ -1143,7 +1156,7 @@ if(rezeptePersonal.size() != 0){
 
 %>
 <!-- this is different now...-->
-<a style="float:right" href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Menu als PDF herunterladen.</a>
+<a style="float:right" TARGET="_blank" href="http://test.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Menu als PDF herunterladen.</a>
 
 <%
 } else {
@@ -1163,7 +1176,7 @@ Es gibt keine Menus zum Anzeigen. Entschuldigen Sie den Umstand. Uns ist hier ei
 	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
 	<a href="mailto:Eaternity%20Info%20%3Cinfo@eaternity.ch%3E" >info@eaternity.ch</a>
-	<a href="http://www.eaternity.ch">www.eaternity.ch</a>
+	<a TARGET="_blank" href="http://www.eaternity.ch">www.eaternity.ch</a>
 	
 </div>
 

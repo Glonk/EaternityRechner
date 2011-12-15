@@ -53,6 +53,7 @@ public class ConvertServlet extends HttpServlet {
 	throws ServletException, IOException, MalformedURLException { 
 		// TODO get the key, check the user, urlfetch the date, send the pdf
 		String tempIds = request.getParameter("ids");
+		String permId = request.getParameter("pid");
 
 
 		String outputType = "application/pdf";
@@ -70,8 +71,17 @@ public class ConvertServlet extends HttpServlet {
 		List<String> assetMimeTypeList = new ArrayList<String>();
 		List<byte[]> assetDataList = new ArrayList<byte[]>();
 		List<String> assetNameList = new ArrayList<String>();
-
-		URL url = new URL(BASEURL + "pdf.jsp?ids=" + tempIds);
+		
+		URL url = null;
+		String name = "";
+		if(tempIds != null){
+			url = new URL(BASEURL + "pdf.jsp?ids=" + tempIds + "&pdf=1");
+			name=  "Menü_Klimabilanz_Zertifikat.pdf";
+			
+		} else if(permId != null) {
+			url = new URL(BASEURL + "view.jsp?pid=" + permId +"&pdf=1");
+			name=  "Menü_Klimabilanz.pdf";
+		}
 		
 		InputStream stream = null;
 		try {
@@ -90,7 +100,7 @@ public class ConvertServlet extends HttpServlet {
 
 		try {
 			assetMimeTypeList.add(0, "text/html");
-			assetNameList.add(0, "Menü_Klimabilanz_Zertifikat.pdf");
+			assetNameList.add(0,name);
 			Streams.copy(stream, byteStream, true);
 
 			// Added as the data of first asset.
