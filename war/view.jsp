@@ -164,22 +164,22 @@
    padding: 0pt 0pt 0pt 0pt;
 	prince-image-resolution: 300dpi;
 
-    @bottom-right { 
+/*    @bottom-right { 
         content: counter(page) "/" counter(pages);
 		font: 9pt 'Open Sans', Verdana, sans-serif; font-weight: 300;
 		 padding-right: 20pt;
 		 padding-top: 5pt;
-    }
+    }*/
     @bottom { 
       font: 9pt 'Open Sans', Verdana, sans-serif; font-weight: 300;
       }
     @bottom-left { 
-      content: flow(footer,start);
+      content: flow(footer);
      
       }
       
     @top {
-     	content: flow(header,start);
+     	content: flow(header);
     }
 	
 	
@@ -215,7 +215,6 @@ h1 {
 
 h2 { 
   page-break-after: avoid;
-
   text-align: center;
     text-align: left;
     font-size: 11pt;
@@ -236,6 +235,31 @@ h3 {
 /*     display: inline; */
 }
 
+.cover-all {
+/*	margin-bottom:-22em;*/
+	position: relative;
+	margin-left:1px;
+	z-index:0;
+/*	height:48.5em;*/
+/*	margin-top:0.5em;*/
+}
+
+.cover-up {
+	margin-top:5em;
+	background:white;
+/*	border-color: black; */
+/*
+	background-image: url(light-gray.png);
+	background: light-gray.png;*/
+	bottom:20em;	position:absolute;
+	-moz-border-radius-bottomright:6px;
+	-webkit-border-bottom-right-radius:6px;
+	border-bottom-right-radius:6px;
+	-moz-border-radius-topright:6px;
+	-webkit-border-top-right-radius:6px;
+	border-top-right-radius:6px;
+}
+
 .label-vergleich {
 	font-weight: 400;
     font-size: 11pt;
@@ -248,7 +272,7 @@ h3 {
 
 .content {
 /*     page-break-after: always; */
-	margin: 30pt 40pt 30pt 20pt;
+	margin: 30pt 32pt 30pt 12pt;
 }
 
 .page-break {
@@ -263,6 +287,7 @@ h3 {
 
 table {
 	  page-break-inside: avoid;
+
 }
 .table {
  font-weight: 300;
@@ -270,11 +295,16 @@ table {
   width: 35em;
   padding-bottom: 1em;
   margin-bottom: 4em;
+
+background:white;
+opacity: 0.95;
+
 }
 
 .label-table {
 width: 41em;
 margin:0 auto; 
+	bottom:0px;	position:absolute;
 }
 
 .rounded {
@@ -285,6 +315,8 @@ border-color: black;
 -moz-border-radius: 6px;
 border-radius: 6px;
 /* border-spacing: 0; */
+
+		margin-top:15em;
 }
 
 
@@ -295,7 +327,7 @@ border-top-left-radius:6px;
 }
 
 .rounded tr:first-child td:last-child {
--moz-border-radius-bottomtop:6px;
+-moz-border-radius-topright:6px;
 -webkit-border-top-right-radius:6px;
 border-top-right-radius:6px;
 }
@@ -532,7 +564,7 @@ color:black;
   }
 
   .website-content { 
-    width: 840px;
+    width: 704px;
     background: white;
     margin: 1em auto;
     padding: 3em 3em 3em 3em;
@@ -541,7 +573,7 @@ color:black;
   	color: #383838;
   	visibility: visible;
   display: block;
-  	width: 840px;
+  	width: 720px;
   	
     margin: auto;
     padding: 0em 1em 5em 3em;
@@ -550,6 +582,25 @@ color:black;
     font-weight: 400;
     
   }
+
+.label-table {
+width: 41em;
+margin:0 auto; 
+	bottom:0px;	position:relative;
+}
+
+.cover-all {
+
+	margin-left:-67px;
+	margin-right:-77px;
+	width:800px;
+}
+
+.cover-up{
+	position:relative;
+	bottom:0px;
+	margin-top:0em;
+}
   .id {
   visibility: visible;
   }
@@ -613,7 +664,7 @@ color:black;
 .table {
 border-color: #929292;
 border-style: none;
-padding-top: 1em;
+padding-top: 2em;
 border-width: 0pt;
 }
 
@@ -743,8 +794,8 @@ function getBaseURL() {
 <div class="page-break" id="footer-left">
 	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
-	<a href="mailto:info@eaternity.ch" >info@eaternity.ch</a>
-	<a href="www.eaternity.ch">www.eaternity.ch</a>
+	<a href="mailto:Eaternity%20Info%20%3Cinfo@eaternity.ch%3E" >info@eaternity.ch</a>
+	<a href="http://www.eaternity.ch">www.eaternity.ch</a>
 </div>
 
 
@@ -836,23 +887,23 @@ for(Recipe recipe: rezeptePersonal){
 			<td height="140">
 				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
 				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.</p>
-				<p style="display:block;clear:both"><%= recipe.getCookInstruction() %></p>
+				
 				<%
 				if(recipe.image != null){
 					%>
-					<img src=recipe.image.getServingUrl() />
+					<!-- img class="cover-all" src=<%=recipe.image.getServingUrl()%>=s800 / -->
+					
 					<%
 				}
 				
 				%>
-				
 			</td>
 			</tr>
 			
 						<!-- content of table -->
 			<tr>
 			<td>
-				<table cellspacing="0" cellpadding="0" class="table" >
+				<table cellspacing="0" cellpadding="0" class="table cover-up" >
 				<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
 							<tr>
 							<td>
@@ -879,17 +930,18 @@ for(Recipe recipe: rezeptePersonal){
 							      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
 							    </ul> -->
 							</td>
-							<td ><br></td>
+							<td><br>
+									<p style="display:block;clear:both"><%= recipe.getCookInstruction() %></p>
+								</td>
 							</tr>
 
-				<tr>
-				<td></td>
-				<td ><br></td>
-				</tr>
 
 
 				</table>
-
+			</td>
+			</tr>
+			<tr>
+			<td>
 
 
 			
@@ -1069,20 +1121,12 @@ for(Recipe recipe: rezeptePersonal){
 				</td>
 			</tr>
 		</table>
-		<br />
-<br />
-<br />
-<br />
-<br />
-<br />
 	</td>
 </tr>
 
 
 </table>
-
-
-			<%
+<%
 		}	
 	}
 }
@@ -1104,7 +1148,7 @@ if(rezeptePersonal.size() != 0){
 <%
 } else {
 %>
-Es gibt e Menu zum Anzeigen. Entschuldigen Sie den Umstand. Uns ist hier ein Fehler unterlaufen.
+Es gibt keine Menus zum Anzeigen. Entschuldigen Sie den Umstand. Uns ist hier ein Fehler unterlaufen.
 
 <%
 } 
@@ -1118,15 +1162,15 @@ Es gibt e Menu zum Anzeigen. Entschuldigen Sie den Umstand. Uns ist hier ein Feh
 <div id="footer-bottom">
 	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
-	<a href="mailto:info@eaternity.ch" >info@eaternity.ch</a>
-	<a href="www.eaternity.ch">www.eaternity.ch</a>
+	<a href="mailto:Eaternity%20Info%20%3Cinfo@eaternity.ch%3E" >info@eaternity.ch</a>
+	<a href="http://www.eaternity.ch">www.eaternity.ch</a>
 	
 </div>
 
 </div>
 
 <div class="login">
-CO2-Äquivalent ist ...
+* CO₂-Äquivalente geben das Treibhauspotential aller freigekommenen Klimagasen umgerechnet in CO₂ an. Die Eaternity Werte berücksichtigen den gesamten Produktionsweg von der Herstellung einer Zutat bis zum Produktverkauf.
 
 </div>
 
