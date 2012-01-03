@@ -81,7 +81,7 @@ public class RecipeView<T> extends Composite {
 //	@UiField SelectionStyleRow selectionStyleRow;
 	@UiField EvenStyleRow evenStyleRow;
 
-	@UiField FlexTable MenuTable;
+
 	@UiField HTMLPanel SaveRezeptPanel;
 
 	@UiField
@@ -90,15 +90,13 @@ public class RecipeView<T> extends Composite {
 	// add Rezept here
 	@UiField Button saveRecipeButton;
 	@UiField Button reportButton;
-	@UiField
-	public Anchor PrepareButton;
+
 	@UiField
 	public TextBox RezeptName;
 	@UiField HTMLPanel topStatusBar;
 	@UiField
 	public CheckBox makePublic;
-	@UiField
-	public FlexTable SuggestTable;
+
 	@UiField
 	public HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
@@ -110,20 +108,36 @@ public class RecipeView<T> extends Composite {
 //	@UiField HorizontalPanel imageUploaderHP;
 	@UiField
 	public TextArea cookingInstr;
-	@UiField
-	public TextBox amountPersons;
-	@UiField
-	public TextBox rezeptDetails;
-	@UiField VerticalPanel MenuTableWrapper;
+
 	
 //	@UiField HTML titleHTML;
 	@UiField
 	public HTML openHTML;
 	@UiField
 	public HTML savedHTML;
+
+	@UiField HTML codeImage;
+	
 	@UiField
 	public HTML detailText;
-	@UiField HTML codeImage;
+	
+	/* outsorted
+
+
+
+	@UiField
+	public TextBox amountPersons;
+	@UiField
+	public TextBox rezeptDetails;
+	@UiField VerticalPanel MenuTableWrapper;
+	@UiField
+	public FlexTable SuggestTable;
+	@UiField
+	public Anchor PrepareButton;
+	@UiField FlexTable MenuTable;
+	
+		 
+	 */
 	
 	private FlowPanel panelImages = new FlowPanel();
 	private PhotoGallery galleryWidget;
@@ -153,7 +167,7 @@ public class RecipeView<T> extends Composite {
 		this.presenter = presenter;
 		
 	    if(presenter.getTopPanel().leftKitchen){
-	    	PrepareButton.setVisible(false);
+//	    	PrepareButton.setVisible(false);
 	    }
 	    
 		if (!presenter.getLoginInfo().isLoggedIn()) {
@@ -449,6 +463,8 @@ public class RecipeView<T> extends Composite {
 //		}
 //	}
 //	
+	/* outsorted
+	 * 
 	
 
 	@UiHandler("rezeptDetails")
@@ -566,6 +582,8 @@ public class RecipeView<T> extends Composite {
 //		
 //	}
 //	
+ * 
+ */
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
 		final RecipeView test = this;
@@ -620,11 +638,11 @@ public class RecipeView<T> extends Composite {
 
 	
 	private void initTable() {
-		MenuTable.getColumnFormatter().setWidth(0, "10px");
-		MenuTable.getColumnFormatter().setWidth(1, "40px");
-		MenuTable.getColumnFormatter().setWidth(2, "170px");
-		MenuTable.getColumnFormatter().setWidth(4, "80px");
-		MenuTable.setCellPadding(1);
+//		MenuTable.getColumnFormatter().setWidth(0, "10px");
+//		MenuTable.getColumnFormatter().setWidth(1, "40px");
+//		MenuTable.getColumnFormatter().setWidth(2, "170px");
+//		MenuTable.getColumnFormatter().setWidth(4, "80px");
+//		MenuTable.setCellPadding(1);
 		
 		
 
@@ -666,9 +684,9 @@ public class RecipeView<T> extends Composite {
 	public void showRezept(final Recipe recipe) {
 
 			if(recipe.getPersons() != null){
-				amountPersons.setText(recipe.getPersons().toString());
+//				amountPersons.setText(recipe.getPersons().toString());
 			} else {
-				amountPersons.setText("4");
+//				amountPersons.setText("4");
 //				Long persons = Long.parseLong(amountPersons.getText());
 //				recipe.setPersons(persons);
 			}
@@ -689,18 +707,18 @@ public class RecipeView<T> extends Composite {
 					
 					if(RezeptName.getText() != ""){
 						// TODO warn that it wasn't saved in the other case
-						amountPersons.setText(recipe.getPersons().toString());
+//						amountPersons.setText(recipe.getPersons().toString());
 //						Speichere Recipe ab. 
 //						Recipe rezeptSave = new Recipe(RezeptName.getText());
 //						rezeptSave.setOpen(makePublic.getValue());
 //						rezeptSave.addZutaten(recipe.getZutaten());
 //						EaternityRechner.addRezept(rezeptSave);
 						recipe.setSymbol(RezeptName.getText());
-						if(rezeptDetails.getText() != ""){
-							recipe.setSubTitle(rezeptDetails.getText());
-						} else {
-							recipe.setSubTitle("Menü Beschreibung");
-						}
+//						if(rezeptDetails.getText() != ""){
+//							recipe.setSubTitle(rezeptDetails.getText());
+//						} else {
+//							recipe.setSubTitle("Menü Beschreibung");
+//						}
 						recipe.openRequested = !makePublic.getValue();
 						recipe.open = false;
 						recipe.setCookInstruction(cookingInstr.getText()); 
@@ -836,8 +854,8 @@ public class RecipeView<T> extends Composite {
 		}
 		
 	// TODO here i don't want to re-initialize everything over and over again.
-	MenuTable.removeAllRows();;
-	Integer row = MenuTable.getRowCount();
+//	MenuTable.removeAllRows();;
+//	Integer row = MenuTable.getRowCount();
 
 	for(final IngredientSpecification zutat : zutaten){
 //		
@@ -943,15 +961,15 @@ public class RecipeView<T> extends Composite {
 
 	//Name
 	
-
-	if ((row % 2) == 1) {
-		String style = evenStyleRow.evenRow();
-		MenuTable.getRowFormatter().addStyleName(row, style);
-	}
-	MenuTable.setWidget(row, 1, MengeZutat);
-	
-	changeIcons(row, zutat);
-	
+//
+//	if ((row % 2) == 1) {
+//		String style = evenStyleRow.evenRow();
+//		MenuTable.getRowFormatter().addStyleName(row, style);
+//	}
+//	MenuTable.setWidget(row, 1, MengeZutat);
+//	
+//	changeIcons(row, zutat);
+//	
 	// Remove Button
 //	MenuTable.setWidget(row, 6, removeZutat);
 	
@@ -976,11 +994,11 @@ public class RecipeView<T> extends Composite {
 //
 //	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Integer.toString(length/1000)).concat("px'>.</div>"));
 	
-	updateTable(row,zutat);
-//	MenuTable.setText(row,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
-//	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/1000).concat("px'>.</div>")));
-//	updateSuggestion();
-	row = row+1;
+//	updateTable(row,zutat);
+////	MenuTable.setText(row,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
+////	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/1000).concat("px'>.</div>")));
+////	updateSuggestion();
+//	row = row+1;
 	}
 }
 
@@ -1041,7 +1059,7 @@ public class RecipeView<T> extends Composite {
 		
 		icon.setHTML(icon.getHTML()+zutat.getName());
 		
-		MenuTable.setWidget(row, 2,  icon);
+//		MenuTable.setWidget(row, 2,  icon);
 	}
 	
 	void updateSuggestion() {
@@ -1065,18 +1083,18 @@ public class RecipeView<T> extends Composite {
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			// as it is also here!
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
-			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
+//			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
+//			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
 		
-		SuggestTable.setCellSpacing(2);
-		SuggestTable.setText(1,0,"SUMME");
-		SuggestTable.getColumnFormatter().setWidth(0, "215px");
-		SuggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
-		SuggestTable.getColumnFormatter().setWidth(1, "140px");
-		
+//		SuggestTable.setCellSpacing(2);
+//		SuggestTable.setText(1,0,"SUMME");
+//		SuggestTable.getColumnFormatter().setWidth(0, "215px");
+//		SuggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
+//		SuggestTable.getColumnFormatter().setWidth(1, "140px");
+//		
 		
 		// this is right now not relevant, yet gets executed
 //		updtTopSuggestion();
