@@ -1392,6 +1392,9 @@ public class RecipeEditView<T> extends Composite {
 	private void updateTable(int row,IngredientSpecification zutatSpec){
 		saved = false;
 		
+		rezeptViewOrigin.setRecipeSavedMode(saved);
+		rezeptViewOrigin.updateSuggestion();
+		
 //		ancient, should be handled by updateSuggestion()
 //		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 //		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent ");
