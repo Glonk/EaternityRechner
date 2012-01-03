@@ -302,6 +302,8 @@ public class RecipeView<T> extends Composite {
 //	    Url url = urlContext.create(Url.class).setLongUrl(longUrl);
 
 	    // Fire an insert() request with the Url to insert.
+	    
+	    //TODO this should definitely be on the server side!
 	    urlContext.insert(url).fire(new Receiver<Url>() {
 	      @Override
 	      public void onSuccess(Url response) {
