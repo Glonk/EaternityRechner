@@ -196,7 +196,7 @@ public class InfoZutatDialog<T> extends Composite {
 	    	flow.insert(newExtractionBox,0);
 	    	newExtractionBox.setVisible(false);
 			
-	    	// TODO each extraction has its own season... this has flaws .. hack? right now it is anyway a hack
+	    	//TODO each extraction has its own season... this has flaws .. hack? right now it is anyway a hack
 	    	final Anchor moreExtractions = new Anchor("+");
 	    	moreExtractions.setStylePrimaryName("ohhLittlePlus");
 	    	moreExtractions.addClickHandler(new ClickHandler() {
@@ -213,20 +213,21 @@ public class InfoZutatDialog<T> extends Composite {
 					clickerHandler = new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
-							Geocoder geocoder = new Geocoder();
-							geocoder.setBaseCountryCode("ch");
-						    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
-						      public void onFailure(int statusCode) {
-						    	  kmText.setHTML("Adresse nicht auffindbar!");
-						    	  Timer t = new Timer() {
-						    		  public void run() {
-						    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
-						    		  }
-						    	  };
-						    	  t.schedule(1000);
-						      }
+							try {
+								Geocoder geocoder = new Geocoder();
+								geocoder.setBaseCountryCode("ch");
+							    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
+							    public void onFailure(int statusCode) {
+							    	  kmText.setHTML("Adresse nicht auffindbar!");
+							    	  Timer t = new Timer() {
+							    		  public void run() {
+							    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+							    		  }
+							    	  };
+							    	  t.schedule(1000);
+							    }
 
-						      public void onSuccess(JsArray<Placemark> locations) {
+							    public void onSuccess(JsArray<Placemark> locations) {
 						    	  Placemark place = locations.get(0);
 						    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
 						    	  herkuenfte.insertItem(place.getAddress(), 0);
@@ -244,9 +245,13 @@ public class InfoZutatDialog<T> extends Composite {
 						    	  herkuenfte.setSelectedIndex(0);
 						    	  triggerHerkunftChange(zutat, herkuenfte);
 						    	  moreExtractions.setVisible(true);
-						    	  
-						      }
+						        }
 						    });
+							    
+							} finally {
+						    	//TODO no request happens if you are not online
+								// check earlier an deactiate the moreExtractions "plus"
+						    }
 						}
 					};
 					if(handlerNotAdded){
