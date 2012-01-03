@@ -234,7 +234,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 				dragArea.remove(0);
 			}
 			
-			// TODO check if adding, means in deed, deleting it from the old place 
+			// TODO check if adding, means indeed, deleting it from the old place 
 			// (and if anything is still correctly wired... )
 			dragArea.add(rezeptEditView.htmlRezept);
 
@@ -247,10 +247,14 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 //		if(rezeptEditView.getOffsetHeight() > (scrollWorkspace.getVerticalScrollPosition()) && !reset){
 		if(0 == (scrollWorkspace.getVerticalScrollPosition()) && !reset){
 			
-			topSticky.setWidgetSize(panelNorth, 40);
-			rezeptEditView.dragArea.add(dragArea.getWidget(0));
-			scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()-displayHeight);
-			reset = true;
+			try {
+				topSticky.setWidgetSize(panelNorth, 40);
+				rezeptEditView.dragArea.add(dragArea.getWidget(0));
+				scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()-displayHeight);
+				reset = true;
+			} finally {
+				//TODO there needs to be a fix, for when the browser window is to huge to allow scrolling
+			}
 			
 		}
 	} 
@@ -304,9 +308,9 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 				rezeptView.recipe.deviceSpecifications.add(devSpecClone);
 			}
 			String formatted = NumberFormat.getFormat("##").format( recipe.getDeviceCo2Value() );
-			rezeptView.SuggestTable.setText(0,0,"Zubereitung");
-			rezeptView.SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
-			rezeptView.PrepareButton.setText("Zubereitung bearbeiten");
+//			rezeptView.SuggestTable.setText(0,0,"Zubereitung");
+//			rezeptView.SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
+//			rezeptView.PrepareButton.setText("Zubereitung bearbeiten");
 		}
 		
 		rezeptView.RezeptName.setText(recipe.getSymbol());
@@ -316,7 +320,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			rezeptView.recipe.setSubTitle(recipe.getSubTitle());
 		}
 		
-		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
+//		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.recipe.setSymbol(recipe.getSymbol());
 		
 		// here we set the ancestor if available
@@ -326,7 +330,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		
 		rezeptView.RezeptName.setText(recipe.getSymbol());
 		
-		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
+//		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.makePublic.setValue(!recipe.openRequested);
 		
 		//TODO hinzufügen zu welchen Küchen das Rezept gehört.
@@ -351,7 +355,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		}
 		
 		if(recipe.getCookInstruction() != null){
-			rezeptView.cookingInstr.setText(recipe.getCookInstruction());
+//			rezeptView.cookingInstr.setText(recipe.getCookInstruction());
 			rezeptView.recipe.setCookInstruction(recipe.getCookInstruction());
 		}
 		
@@ -363,7 +367,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
     	rezeptView.bildEntfernen.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent event) {
-				rezeptView.menuDecoInfo.remove(rezeptView.showImageRezept);
+//				rezeptView.menuDecoInfo.remove(rezeptView.showImageRezept);
 				rezeptView.uploadWidget.setVisible(true);
 				rezeptView.bildEntfernen.setVisible(false);
 				rezeptView.recipe.image = null;
@@ -371,7 +375,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			}
     	});
     	
-    	rezeptView.menuDecoInfo.add(rezeptView.bildEntfernen);
+//    	rezeptView.menuDecoInfo.add(rezeptView.bildEntfernen);
     	rezeptView.bildEntfernen.setVisible(false);
 		}
     	
@@ -403,7 +407,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 				}
 			});
 	    	rezeptView.showImageRezept.setStyleName("imageSmall");
-	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
+//	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
 	    	if(rezeptView.uploadWidget != null){
 	    		rezeptView.uploadWidget.setVisible(false);
 	    	}
@@ -432,7 +436,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 						
 					}
 					rezeptView.detailText.setVisible(false);
-					rezeptView.cookingInstr.setVisible(true);
+//					rezeptView.cookingInstr.setVisible(true);
 //					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
 					rezeptView.askForLess = false;
@@ -470,7 +474,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 					}
 					rezeptView.detailText.setWidth("730px");
 					rezeptView.detailText.setVisible(true);
-					rezeptView.cookingInstr.setVisible(false);
+//					rezeptView.cookingInstr.setVisible(false);
 //					rezeptView.htmlCooking.setVisible(false);
 					mehrDetails.setText("weniger Details");
 					rezeptView.askForLess = true;
@@ -480,16 +484,16 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	    	
 	    });
 	    
-	    rezeptView.menuDecoInfo.insert(mehrDetails,1);
+//	    rezeptView.menuDecoInfo.insert(mehrDetails,1);
 	   
 	    if(recipe.getPersons() != null){
 	    	 rezeptView.recipe.setPersons(recipe.getPersons());	    	
 	    } else {
 	    	rezeptView.recipe.setPersons(4l);
 	    }
-	    rezeptView.amountPersons.setText(rezeptView.recipe.getPersons().toString());
+//	    rezeptView.amountPersons.setText(rezeptView.recipe.getPersons().toString());
 	    
-	    rezeptView.cookingInstr.setText(recipe.getCookInstruction());
+//	    rezeptView.cookingInstr.setText(recipe.getCookInstruction());
 //	    rezeptView.showRezept(rezeptView.rezept);
 	    rezeptView.showRezept(rezeptView.recipe);
 	    rezeptView.saved = true;

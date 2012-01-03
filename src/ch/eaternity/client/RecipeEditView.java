@@ -373,7 +373,7 @@ public class RecipeEditView<T> extends Composite {
 	void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
 //			htmlCooking.setText(cookingInstr.getText());
-			rezeptViewOrigin.cookingInstr.setText(cookingInstr.getText());
+//			rezeptViewOrigin.cookingInstr.setText(cookingInstr.getText());
 			recipe.setCookInstruction(cookingInstr.getText());
 		}
 	}
@@ -399,7 +399,7 @@ public class RecipeEditView<T> extends Composite {
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
 //			rezeptSubTitleTop.setText(rezeptDetails.getText());
-			rezeptViewOrigin.rezeptDetails.setText(rezeptDetails.getText());
+//			rezeptViewOrigin.rezeptDetails.setText(rezeptDetails.getText());
 			recipe.setSubTitle(rezeptDetails.getText());
 		}
 	}

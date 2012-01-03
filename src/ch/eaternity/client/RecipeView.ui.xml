@@ -234,14 +234,15 @@
  
   </ui:style-->
   
-  <ui:style field='evenStyleRow'
+  <!--ui:style field='evenStyleRow'
     type='ch.eaternity.client.RecipeView.EvenStyleRow'>
 
   .evenRow {
     background: #FEE6C6;
   }
 
-  </ui:style>
+  </ui:style-->
+  
   <g:AbsolutePanel ui:field="dragArea">
 		<g:HTMLPanel ui:field="htmlRezept" >
            	<g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div style="padding-left:100px"></div></g:HTML>
@@ -289,7 +290,7 @@
         				<g:HTML ><div style='padding-left:274px;margin-top:0px;margin-bottom:6px;color:#fff;' >* CO₂-Äquivalent</div></g:HTML>
         				 -->
         				</g:VerticalPanel>
-        				<g:FlowPanel styleName='{style.menuDecoPanel}' ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>
+        				<!-- g:FlowPanel styleName='{style.menuDecoPanel}' ui:field='menuDecoInfo'><g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea></g:FlowPanel>  -->
         				<g:HTMLPanel></g:HTMLPanel >
  					</g:HorizontalPanel>
         			

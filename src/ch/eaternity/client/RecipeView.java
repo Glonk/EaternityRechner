@@ -79,14 +79,11 @@ public class RecipeView<T> extends Composite {
 	
 	@UiField AbsolutePanel dragArea;
 //	@UiField SelectionStyleRow selectionStyleRow;
-	@UiField EvenStyleRow evenStyleRow;
+
 
 
 	@UiField HTMLPanel SaveRezeptPanel;
 
-	@UiField
-	public FlowPanel menuDecoInfo;
-	
 	// add Rezept here
 	@UiField Button saveRecipeButton;
 	@UiField Button reportButton;
@@ -106,8 +103,7 @@ public class RecipeView<T> extends Composite {
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
 //	@UiField HorizontalPanel imageUploaderHP;
-	@UiField
-	public TextArea cookingInstr;
+
 
 	
 //	@UiField HTML titleHTML;
@@ -122,9 +118,16 @@ public class RecipeView<T> extends Composite {
 	public HTML detailText;
 	
 	/* outsorted
+	 * 
+	
+	@UiField EvenStyleRow evenStyleRow;
 
+	@UiField
+	public TextArea cookingInstr;
 
-
+	@UiField
+	public FlowPanel menuDecoInfo;
+	
 	@UiField
 	public TextBox amountPersons;
 	@UiField
@@ -429,22 +432,7 @@ public class RecipeView<T> extends Composite {
 //		}
 //	}
 //	
-	@UiHandler("cookingInstr")
-	void onEditCook(KeyUpEvent event) {
-		if(cookingInstr.getText() != ""){
 
-			// only do this, if this is the recipe that is getting edited
-			
-			// the case this recipe is also open
-			if(isSelected){
-				RecipeEditView rezeptViewEdit = (RecipeEditView) superDisplay.getRezeptEditList().getWidget(0, 1);
-				rezeptViewEdit.cookingInstr.setText(cookingInstr.getText());
-				rezeptViewEdit.recipe.setCookInstruction(cookingInstr.getText());
-			}
-			
-			recipe.setCookInstruction(cookingInstr.getText());
-		}
-	}
 //	
 //	@UiHandler("cookingInstr")
 //	void onMouseOutCook(MouseOutEvent event) {
@@ -466,7 +454,24 @@ public class RecipeView<T> extends Composite {
 	/* outsorted
 	 * 
 	
+	@UiHandler("cookingInstr")
+	void onEditCook(KeyUpEvent event) {
+		if(cookingInstr.getText() != ""){
 
+			// only do this, if this is the recipe that is getting edited
+			
+			// the case this recipe is also open
+			if(isSelected){
+				RecipeEditView rezeptViewEdit = (RecipeEditView) superDisplay.getRezeptEditList().getWidget(0, 1);
+				rezeptViewEdit.cookingInstr.setText(cookingInstr.getText());
+				rezeptViewEdit.recipe.setCookInstruction(cookingInstr.getText());
+			}
+			
+			recipe.setCookInstruction(cookingInstr.getText());
+		}
+	}
+	
+	
 	@UiHandler("rezeptDetails")
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
@@ -649,9 +654,9 @@ public class RecipeView<T> extends Composite {
 		
 		
 	    if(recipe.getCookInstruction() != null){
-	    	cookingInstr.setText(recipe.getCookInstruction());
+//	    	cookingInstr.setText(recipe.getCookInstruction());
 	    } else {
-	    	cookingInstr.setText("Kochanleitung.");
+//	    	cookingInstr.setText("Kochanleitung.");
 	    }
 //	    	htmlCooking.addStyleName("cookingInstr");
 //	    	menuDecoInfo.insert(htmlCooking,0);
@@ -721,7 +726,7 @@ public class RecipeView<T> extends Composite {
 //						}
 						recipe.openRequested = !makePublic.getValue();
 						recipe.open = false;
-						recipe.setCookInstruction(cookingInstr.getText()); 
+//						recipe.setCookInstruction(cookingInstr.getText()); 
 						
 						if(recipe.getId() == null){
 //							String UserId = EaternityRechner.loginInfo.getId();
@@ -808,7 +813,7 @@ public class RecipeView<T> extends Composite {
 //		if(addInfoPanel.getWidgetCount() ==2){
 			addInfoPanel.remove(2);
 //		}
-		menuDecoInfo.setVisible(false);
+//		menuDecoInfo.setVisible(false);
 		
 //		no more edit here
 //		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
