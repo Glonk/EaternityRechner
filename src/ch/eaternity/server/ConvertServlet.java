@@ -123,6 +123,54 @@ public class ConvertServlet extends HttpServlet {
 			byteStream.reset();
 		}
 
+
+	
+		
+		// parse images, and get them from local filespace (if they are there)
+
+		// images can be inside a <img tag or in the css...
+//		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
+		String[] pngImagesReport = {"green.png"};
+		
+		
+		ServletContext context = getServletContext();
+		
+		InputStream imageStream = null;
+		
+		
+		for (int i = 0; i < pngImagesReport.length; i++)
+		{
+
+			URL imageUrl = new URL("http://test.eaternityrechner.appspot.com/report/"+pngImagesReport[i]);
+
+			imageStream = imageUrl.openStream();
+//			imageStream = context.getResourceAsStream("/report/"+pngImagesReport[i]);
+
+			try {
+				// reading over input stream
+				assetMimeTypeList.add("image/png");
+				assetNameList.add(pngImagesReport[i]);
+				
+				Streams.copy(imageStream, byteStream, true);
+
+				// Added as the data of first asset.
+				assetDataList.add(byteStream.toByteArray());
+//
+			} catch (IOException e) {
+				// ...
+				resp.setContentType("text/plain");
+				resp.getWriter().println(e.toString());
+
+			} finally {
+
+				imageStream.close();
+				byteStream.reset();
+			}
+
+
+		}
+			/*
+		
 		// find each appearence of: src="QR-xxx" in the html file
 		// take this code: xxx and fetch the corresponding carts
 		// load those charts into the Asset()
@@ -132,14 +180,18 @@ public class ConvertServlet extends HttpServlet {
 		
 		String[] tokens = element.split("QR-");
 		
-		InputStream imageStream = null;
+	
 		for (String codeRaw : tokens ){
 			int test = codeRaw.indexOf("-CODE");
 			if(test != -1){
 			String code = codeRaw.substring(0, codeRaw.indexOf("-CODE"));
 			URL qrCodeUrl =new URL("http://chart.apis.google.com/chart?cht=qr&chs=84x84&chl="+code+"&chld=M%7C0");
 //			URL qrCodeUrl =new URL("http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="+code);
-				
+			
+			// --> this works
+//			URL qrCodeUrl = new URL("http://test.eaternityrechner.appspot.com/report/green.png");	
+			
+			
 			imageStream = qrCodeUrl.openStream();
 			
 				try {
@@ -171,50 +223,15 @@ public class ConvertServlet extends HttpServlet {
 			}
 		}
 		
-		
+		*/
 
 
-		
-
-		// parse images, and get them from local filespace (if they are there)
-
-		// images can be inside a <img tag or in the css...
-		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
-
-		ServletContext context = getServletContext();
-		
-		for (int i = 0; i < pngImagesReport.length; i++)
-		{
-
-			InputStream reader = context.getResourceAsStream("/report/"+pngImagesReport[i]);
-
-			try {
-				// reading over input stream
-				assetMimeTypeList.add("image/png");
-				assetNameList.add(pngImagesReport[i]);
-
-				Streams.copy(reader, byteStream, true);
-				assetDataList.add(byteStream.toByteArray());
-
-			} catch (IOException e) {
-				// ...
-				resp.setContentType("text/plain");
-				resp.getWriter().println(e.toString());
-
-			} finally {
-
-				reader.close();
-				byteStream.reset();
-			}
-
-
-		}
 
 		// get the rest of the images from external sources
 
-
+/*
 		// font test
-		/*
+	
 		InputStream reader2 = context.getResourceAsStream("/opensans300.woff");
 
 		try {
@@ -270,9 +287,9 @@ public class ConvertServlet extends HttpServlet {
 		if (!result.success()) {
 			// Conversion failed! Print out the error code.
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, String.format(
-					"Failed to convert %s from %s to %s: %s",
+					"Failed to convert %s from %s to %s: %s - %s.%s.%s",
 					assets.get(0).getName(), assets.get(0).getMimeType(),
-					outputType, result.getErrorCode().toString() ));
+					outputType, result.getErrorCode().toString(),Integer.toString(assetMimeTypeList.size()),Integer.toString(assetNameList.size()) ,Integer.toString(assetDataList.size())  ));
 		} else {
 
 			int assetsNum = result.getOutputDoc().getAssets().size();
