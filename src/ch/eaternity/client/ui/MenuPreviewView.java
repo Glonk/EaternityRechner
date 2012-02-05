@@ -114,7 +114,7 @@ public class MenuPreviewView<T> extends DialogBox{
 //				GWT.log(e.getLocalizedMessage());
 //			}
 		} else {
-			contentURl = "http://www.eaternity.ch/newsletter/herbstmarkt-2011";
+			contentURl = "http://www.eaternity.ch/disclaimer-eaternity-rechner";
 		}
 		
 	    frame = new Frame(contentURl);
