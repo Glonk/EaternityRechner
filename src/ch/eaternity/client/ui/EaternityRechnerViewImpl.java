@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.ListIterator;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -80,14 +82,14 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 
 	@UiField FlexTable rezeptList;
 	@UiField FlexTable rezeptEditList;
-	@UiField FlexTable MenuTable;
-	@UiField FlexTable SuggestTable;
-	@UiField HorizontalPanel addInfoPanel;
+//	@UiField FlexTable MenuTable;
+//	@UiField FlexTable SuggestTable;
+//	@UiField HorizontalPanel addInfoPanel;
 	@UiField HTML titleHTML;
 	@UiField DockLayoutPanel topSticky;
 	@UiField HTMLPanel panelNorth;
-	@UiField HTMLPanel htmlRezept;
-	@UiField AbsolutePanel dragArea;
+//	@UiField HTMLPanel htmlRezept;
+	@UiField AbsolutePanel topDragArea;
 
 	@UiField ScrollPanel scrollWorkspace;
 	@UiField Button addRezeptButton;
@@ -121,6 +123,11 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		rezeptList.getColumnFormatter().setWidth(1, "750px");
 		rezeptEditList.getColumnFormatter().setWidth(1, "750px");
 
+	
+	    Element topElem = topSticky.getWidgetContainerElement(panelNorth);
+	    topElem.getStyle().setZIndex(2);
+	    topElem.getStyle().setOverflow(Overflow.VISIBLE);
+		
 		//TODO Reactivate for later use
 		suggestionPanel.setVisible(false);
 	}
@@ -208,11 +215,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	}
 
 
-	// some local variables for the scrolling behavior
-	boolean reset = true;
-	int displayHeight = 120;
-	private MenuPreviewView menuPreview;
-	private MenuPreviewView menuPreviewDialog;
+
 	
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
@@ -220,43 +223,53 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		adjustStickyEdit();
     }
 
+	// some local variables for the scrolling behavior
+	boolean reset = false;
+	int displayHeight = 120;
+	private MenuPreviewView menuPreview;
+	private MenuPreviewView menuPreviewDialog;
+	
+	HTML spaceholder = new HTML();
+	Widget recipeEditObject;
+	Integer saveHeight;
+	
 
 
 	private void adjustStickyEdit() {
-		//		use this to check the scrolling events:
-		//	titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
+//		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
-		if(rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight)){
-			
-			topSticky.setWidgetSize(panelNorth, 40+displayHeight);
-			
-			if(dragArea.getWidgetCount() > 0){
-				dragArea.remove(0);
-			}
-			
-			// TODO check if adding, means indeed, deleting it from the old place 
-			// (and if anything is still correctly wired... )
-			dragArea.add(rezeptEditView.htmlRezept);
-
-			if(reset){
-				scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()+1);
-				reset = false;
-			}
-		}
 		
-//		if(rezeptEditView.getOffsetHeight() > (scrollWorkspace.getVerticalScrollPosition()) && !reset){
-		if(0 == (scrollWorkspace.getVerticalScrollPosition()) && !reset){
+		if(!reset && (rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
 			
-			try {
-				topSticky.setWidgetSize(panelNorth, 40);
-				rezeptEditView.dragArea.add(dragArea.getWidget(0));
-				scrollWorkspace.setScrollPosition(rezeptEditView.getOffsetHeight()-displayHeight);
-				reset = true;
-			} finally {
-				//TODO there needs to be a fix, for when the browser window is to huge to allow scrolling
-			}
+			recipeEditObject = rezeptEditView.dragArea.getWidget(0);
+			saveHeight = rezeptEditView.getOffsetHeight();
 			
+			spaceholder.setHTML("<div style='height: " + Integer.toString(recipeEditObject.getOffsetHeight()) + "px;width:764px'></div>");
+			
+//			rezeptEditView.dragArea.setHeight(Integer.toString(recipeEditObject.getOffsetHeight()));
+
+			rezeptEditView.dragArea.remove(recipeEditObject);
+			rezeptEditView.dragArea.add(spaceholder);
+		
+			
+			topDragArea.add(recipeEditObject);
+			panelNorth.setHeight("142px");
+			
+			reset = true;
+		
+		} 
+			
+		if(reset && (saveHeight >= (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
+			Widget recipeEditObject = topDragArea.getWidget(0);
+//			topDragArea.add(new HTML("<div style='height: " + recipeEditObject.getOffsetHeight() + "px'></div>"));
+			topDragArea.remove(recipeEditObject);
+			rezeptEditView.dragArea.add(recipeEditObject);
+			rezeptEditView.dragArea.remove(spaceholder);
+			panelNorth.setHeight("22px");
+			reset = false;
 		}
+			
+		
 	} 
 
 	
@@ -531,8 +544,8 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			
 			
 			rezeptEditList.removeRow(0);
-			if(dragArea.getWidgetCount() > 0){
-				dragArea.remove(0);
+			if(topDragArea.getWidgetCount() > 0){
+				topDragArea.remove(0);
 			}
 			
 			
@@ -698,18 +711,18 @@ public int AddZutatZumMenu( Ingredient item) {
 	}
 	
 
-	@UiHandler("MenuTable")
-	void onTableClicked(ClickEvent event) {
-		// Select the row that was clicked (-1 to account for header row).
-		if (presenter != null) {
-			FlexTable.Cell cell = MenuTable.getCellForEvent(event);
-
-			if (cell != null) {
-				int row = cell.getRowIndex();
-				rezeptEditView.selectRow(row);
-			}
-		}
-	}
+//	@UiHandler("MenuTable")
+//	void onTableClicked(ClickEvent event) {
+//		// Select the row that was clicked (-1 to account for header row).
+//		if (presenter != null) {
+//			FlexTable.Cell cell = MenuTable.getCellForEvent(event);
+//
+//			if (cell != null) {
+//				int row = cell.getRowIndex();
+//				rezeptEditView.selectRow(row);
+//			}
+//		}
+//	}
 
 	@Override
 	public void setSelectedRezept(int rezeptPositionInList) {
@@ -730,7 +743,7 @@ public int AddZutatZumMenu( Ingredient item) {
 
 	@Override
 	public AbsolutePanel getDragArea() {
-		return dragArea;
+		return topDragArea;
 	}
 
 	@Override

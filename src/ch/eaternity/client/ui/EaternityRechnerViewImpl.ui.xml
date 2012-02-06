@@ -14,8 +14,16 @@
 		padding:4px;
 		width:765px;
 		background: #7CC158; 
-
+		
+		/* height:142px; */
+		height:22px;
+		position: absolute !important;
+		bottom: -120px !important; 
+		z-index:10 !important;
+		
 	}
+	
+	
 	.noOverflow {
 		margin-top:11px;
 		height:120px;
@@ -140,13 +148,16 @@ height: 100px;
 background: #F7A959;
 position:relative;
 }
+
 .relativePosition {
+	
 	/* this is a hack... what would you do? */
 	position:absolute !important;
 	bottom:4px;
 	background: #F7A959; 
 	overflow:hidden;
 	padding-right:1px;
+	
 	}
 
 </ui:style>
@@ -174,7 +185,7 @@ position:relative;
         <g:center>
         <g:DockLayoutPanel ui:field="topSticky" >
         		<g:north  size='40'>
-       			<!-- <g:north size='120'> -->
+       			<!-- <g:north size='120/40'> -->
 	       		<g:HTMLPanel ui:field="panelNorth" styleName='{style.Worksheet}' >
 	       			<!-- Add Rezept Button -->
 	       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Menu"/> 
@@ -190,8 +201,9 @@ position:relative;
 	       			
 	       			<!-- here comes the inserted table as illusion of sticky display -->
 	       			<g:HTMLPanel styleName='{style.noOverflow}'>
-	       			<g:AbsolutePanel ui:field="dragArea" styleName='{style.relativePosition}'>
-		       			<g:HTMLPanel styleName='{style.cloneStyle}' ui:field="htmlRezept" >
+	       			<g:AbsolutePanel ui:field="topDragArea" styleName='{style.relativePosition}'>
+	       			
+		       			<!-- g:HTMLPanel styleName='{style.cloneStyle}' ui:field="htmlRezept" >
 			       			<g:HorizontalPanel  styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
 			           			<g:VerticalPanel>
 					       			<g:VerticalPanel  ui:field='MenuTableWrapper' styleName='{style.MenuTableWrapper}' >
@@ -206,7 +218,7 @@ position:relative;
 		        				<g:HTMLPanel></g:HTMLPanel >
 		 					</g:HorizontalPanel>
 	 					   	<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
-	        			</g:HTMLPanel>
+	        			</g:HTMLPanel -->
 	        		</g:AbsolutePanel>
 	       			</g:HTMLPanel>
 	       		</g:HTMLPanel>
