@@ -146,7 +146,7 @@ width: 100%;
 .toolTipDown{
 	padding: 28px 14px 6px 14px;
 	/* border-bottom: 1.5px outset #fff; */
-	
+	z-index:5;
 	background-image:url('toolTipDown.png');
 	background-repeat:no-repeat;
 	background-position: right top;
@@ -263,6 +263,8 @@ width: 65px;
 	}
 
 .recipe {
+	padding-top:10px;
+	padding-bottom:10px;
 	background: #F7A959;
 	-moz-border-radius: 3px;
 	-webkit-border-radius:3px;

@@ -90,6 +90,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	@UiField HTMLPanel panelNorth;
 //	@UiField HTMLPanel htmlRezept;
 	@UiField AbsolutePanel topDragArea;
+	@UiField HTMLPanel topOverflowArea;
 
 	@UiField ScrollPanel scrollWorkspace;
 	@UiField Button addRezeptButton;
@@ -254,6 +255,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			
 			topDragArea.add(recipeEditObject);
 			panelNorth.setHeight("142px");
+			topOverflowArea.setHeight("120px");
 			
 			reset = true;
 		
@@ -266,6 +268,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			rezeptEditView.dragArea.add(recipeEditObject);
 			rezeptEditView.dragArea.remove(spaceholder);
 			panelNorth.setHeight("22px");
+			topOverflowArea.setHeight("0px");
 			reset = false;
 		}
 			

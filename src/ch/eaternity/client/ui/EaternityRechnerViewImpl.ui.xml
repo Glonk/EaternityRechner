@@ -26,7 +26,7 @@
 	
 	.noOverflow {
 		margin-top:11px;
-		height:120px;
+		height:0px; 
 		bottom:0px;
 		overflow:hidden;
 		position:relative;
@@ -166,7 +166,7 @@ position:relative;
     type='ch.eaternity.client.ui.EaternityRechnerViewImpl.SelectionStyle'>
 
   .selectedRezept {
-    background: #F48F28;
+    background: #F48F28 !important;
   }
 
  
@@ -200,7 +200,7 @@ position:relative;
 		       			</g:HorizontalPanel>
 	       			
 	       			<!-- here comes the inserted table as illusion of sticky display -->
-	       			<g:HTMLPanel styleName='{style.noOverflow}'>
+	       			<g:HTMLPanel ui:field="topOverflowArea" styleName='{style.noOverflow}'>
 	       			<g:AbsolutePanel ui:field="topDragArea" styleName='{style.relativePosition}'>
 	       			
 		       			<!-- g:HTMLPanel styleName='{style.cloneStyle}' ui:field="htmlRezept" >
@@ -231,7 +231,7 @@ position:relative;
        					<g:VerticalPanel>
 	       					<g:FlexTable styleName='{style.WorksheetEditTable}' ui:field='rezeptEditList' cellSpacing='0' cellPadding='0' />
 							<g:FlexTable styleName='{style.WorksheetTable}' ui:field='rezeptList' cellSpacing='0' cellPadding='0'/>
-							<g:HTML><div style="height:400px"></div></g:HTML>
+							<g:HTML><div style="height:200px"></div></g:HTML>
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 					
