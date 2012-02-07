@@ -225,7 +225,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
     }
 
 	// some local variables for the scrolling behavior
-	boolean reset = false;
+	boolean editCoverActivated = false;
 	int displayHeight = 120;
 	private MenuPreviewView menuPreview;
 	private MenuPreviewView menuPreviewDialog;
@@ -240,7 +240,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 //		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
 		
-		if(!reset && (rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
+		if(!editCoverActivated && (rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
 			
 			recipeEditObject = rezeptEditView.dragArea.getWidget(0);
 			saveHeight = rezeptEditView.getOffsetHeight();
@@ -257,11 +257,11 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			panelNorth.setHeight("142px");
 			topOverflowArea.setHeight("120px");
 			
-			reset = true;
+			editCoverActivated = true;
 		
 		} 
 			
-		if(reset && (saveHeight >= (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
+		if(editCoverActivated && (saveHeight >= (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
 			Widget recipeEditObject = topDragArea.getWidget(0);
 //			topDragArea.add(new HTML("<div style='height: " + recipeEditObject.getOffsetHeight() + "px'></div>"));
 			topDragArea.remove(recipeEditObject);
@@ -269,7 +269,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			rezeptEditView.dragArea.remove(spaceholder);
 			panelNorth.setHeight("22px");
 			topOverflowArea.setHeight("0px");
-			reset = false;
+			editCoverActivated = false;
 		}
 			
 		
@@ -537,13 +537,17 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 				rezeptViewOld.isSelected = false;
 			}
 			
+			
+			// color the right recipe, and get the selected row index
 			styleRezept(selectedRezept, false);
 			selectedRezept = cell.getRowIndex();
 			styleRezept(selectedRezept, true);
 			
+			// this is the new recipe
 			rezeptViewWidget = rezeptList.getWidget(selectedRezept, 1);
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
 			rezeptView.isSelected = true;
+			
 			
 			
 			rezeptEditList.removeRow(0);
@@ -552,16 +556,20 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			}
 			
 			
+			
 			// put this recipe into the edit panel...
 			if(rezeptEditList.getRowCount() == 0){
 				rezeptEditList.insertRow(0);
 			}
+		
+			
 			rezeptEditView = new RecipeEditView(rezeptView.recipe, this);
 			rezeptEditView.setPresenter(presenter);
 			
+			
+			editCoverActivated = false;
 			rezeptEditList.setWidget(0, 1, rezeptEditView);
 			rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
-			
 			
 			rezeptEditView.setRezept(rezeptView.recipe);
 			rezeptEditView.showRezept(rezeptEditView.recipe);
