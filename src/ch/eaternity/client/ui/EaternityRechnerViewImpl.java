@@ -649,20 +649,27 @@ public int AddZutatZumMenu( Ingredient item) {
 			//same as below
 			newRezept.addZutaten(zutaten);
 			
-			// both get added
+			// both get added ... no i think only the relevant
 			rezeptView = new RecipeView(newRezept,this);
 			rezeptView.setPresenter(presenter);
 			
+			
+			// wohooo, what did i do here... this needs to be much cleaner this procedure
+			
 			rezeptList.setWidget(selectedRezept, 1, rezeptView);
+			
+			
 			rezeptList.getRowFormatter().setStyleName(0, "recipe");
 			styleRezept(selectedRezept, true);
 			
-			// the edit form
+			// the edit form ... out now:
+			editCoverActivated = false;
 			rezeptEditView = new RecipeEditView(newRezept,this);
 			rezeptEditView.setPresenter(presenter);
 			
 			rezeptEditList.setWidget(0, 1, rezeptEditView);
 			rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
+			
 			
 			
 			// is it necessary to have a worksheet or is rezeptList already containing everything?
@@ -675,13 +682,21 @@ public int AddZutatZumMenu( Ingredient item) {
 			// there is only one recipe getting handled by both views!
 			Recipe recipe = rezeptView.getRezept();
 			recipe.addZutaten(zutaten);
+			
+			// wohooo, what did i do here... this needs to be much cleaner this procedure
+			
+			
 			rezeptView.setRezept(recipe);
-
+			 
 			
 			// also manipulate the edit one...
-			// this better should be mirrored
+			// this better should be mirrored ... out now:
+			editCoverActivated = false;	
 			rezeptEditView = (RecipeEditView) rezeptEditList.getWidget(0,1);
 			rezeptEditView.setRezept(recipe);
+			
+			
+			
 			rezeptView.showRezept(rezeptView.recipe);
 			
 		}

@@ -544,7 +544,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		// create a new recipe
 		Recipe recipe = new Recipe();
 		
-		// TODO I don't want those to be set here... those are the standarts, and should be set elsewhere
+		// TODO I don't want those to be set here... those are the standards, and should be set elsewhere
 		recipe.setSymbol("Ihr Menu");
 		recipe.setSubTitle("Menu Beschreibung");
 		recipe.setCookInstruction("Kochanleitung.");
