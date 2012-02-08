@@ -26,6 +26,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface EaternityRechnerView<T> extends IsWidget
 {
 
+
+
 	void setName(String helloName);
 	void setPresenter(Presenter<T> presenter);
 
@@ -82,4 +84,7 @@ public interface EaternityRechnerView<T> extends IsWidget
 	
 
 	void onResize();
+	void adjustStickyEdit();
+	void setEditCoverActivated(boolean b);
+	void closeRecipeEditView();
 }

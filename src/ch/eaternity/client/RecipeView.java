@@ -593,23 +593,28 @@ public class RecipeView<T> extends Composite {
  */
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
+		
 		final RecipeView test = this;
 		if(saved){
 			int row = getWidgetRow(test , superDisplay.getRezeptList());
+			
 			superDisplay.getRezeptList().remove(test);
 			superDisplay.getRezeptList().removeRow(row);
-			superDisplay.setSelectedRezept(-1);
-			superDisplay.getSuggestionPanel().clear();
-			
-			if(isSelected){
-//				close also the Editview!
-				superDisplay.getRezeptEditList().removeRow(0);
+
+			if(superDisplay.getSelectedRezept() == row){
+				superDisplay.setSelectedRezept(-1);
+				superDisplay.getSuggestionPanel().clear();
 				
-				if(superDisplay.getDragArea().getWidgetCount() > 0){
-					superDisplay.getDragArea().remove(0);
+				if(isSelected){
+					
+	//				close also the Editview! ... or respectively the topview
+					//TODO this fails on the top view...
+					superDisplay.closeRecipeEditView();
+					
 				}
-				
 			}
+			
+
 			
 		} else {
 		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
@@ -620,19 +625,23 @@ public class RecipeView<T> extends Composite {
 			public void onClick(ClickEvent event) {
 				int row = getWidgetRow(test , superDisplay.getRezeptList());
 				
-				if(isSelected){
-//					close also the Editview!
-					superDisplay.getRezeptEditList().removeRow(0);
-					
-					if(superDisplay.getDragArea().getWidgetCount() > 0){
-						superDisplay.getDragArea().remove(0);
-					}
-					
-				}
+				
 				superDisplay.getRezeptList().remove(test);
 				superDisplay.getRezeptList().removeRow(row);
-				superDisplay.setSelectedRezept(-1);
-				superDisplay.getSuggestionPanel().clear();
+				
+				
+				// well this doesn't work, as it is selected already (due to the time difference...)
+				if(superDisplay.getSelectedRezept() == row){
+					superDisplay.setSelectedRezept(-1);
+					superDisplay.getSuggestionPanel().clear();
+				
+					if(isSelected){
+	//					close also the Editview! ... or respectively the topview
+						superDisplay.closeRecipeEditView();
+						
+					}
+				}
+//				
 				dlg.hide();
 			}
 		});

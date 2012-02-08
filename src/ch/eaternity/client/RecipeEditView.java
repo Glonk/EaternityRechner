@@ -462,40 +462,11 @@ public class RecipeEditView<T> extends Composite {
 	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
-		final RecipeEditView test = this;
-//		if(saved){
-			int row = getWidgetRow(test , superDisplay.getRezeptEditList());
-			superDisplay.getRezeptEditList().remove(test);
-			superDisplay.getRezeptEditList().removeRow(row);
-			
-			if(superDisplay.getDragArea().getWidgetCount() > 0){
-				superDisplay.getDragArea().remove(0);
-			}
-			
-			superDisplay.styleRezept(superDisplay.getSelectedRezept(), false);
-			superDisplay.setSelectedRezept(-1);
-			superDisplay.getSuggestionPanel().clear();
-//		} else {
-//		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
-//		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
-//		// TODO recheck user if he really want to do this...
-//		
-//		dlg.executeButton.addClickHandler(new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				int row = getWidgetRow(test , superDisplay.getRezeptEditList());
-//				superDisplay.getRezeptEditList().remove(test);
-//				superDisplay.getRezeptEditList().removeRow(row);
-//				EaternityRechner.styleRezept(EaternityRechner.selectedRezept, false);
-//				EaternityRechner.selectedRezept = -1;
-//				EaternityRechner.suggestionPanel.clear();
-//				dlg.hide();
-//			}
-//		});
-//		dlg.show();
-//		dlg.center();
-//		}
+		// the button is hidden right now when topView is activated
+		
+		superDisplay.closeRecipeEditView();
 	}
-	
+
 
 
 	

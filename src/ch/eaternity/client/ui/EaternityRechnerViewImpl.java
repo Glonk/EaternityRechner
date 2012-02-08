@@ -225,7 +225,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
     }
 
 	// some local variables for the scrolling behavior
-	boolean editCoverActivated = false;
+	public boolean editCoverActivated = false;
 	int displayHeight = 120;
 	private MenuPreviewView menuPreview;
 	private MenuPreviewView menuPreviewDialog;
@@ -234,45 +234,50 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	Widget recipeEditObject;
 	Integer saveHeight;
 	
+	public void setEditCoverActivated(boolean b){
+		editCoverActivated = b;
+	}
 
-
-	private void adjustStickyEdit() {
+	public void adjustStickyEdit() {
 //		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
-		
-		if(!editCoverActivated && (rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
-			
-			recipeEditObject = rezeptEditView.dragArea.getWidget(0);
-			saveHeight = rezeptEditView.getOffsetHeight();
-			
-			spaceholder.setHTML("<div style='height: " + Integer.toString(recipeEditObject.getOffsetHeight()) + "px;width:764px'></div>");
-			
-//			rezeptEditView.dragArea.setHeight(Integer.toString(recipeEditObject.getOffsetHeight()));
+		// all this procedure is only relevant, if the recipe is open
+		// and this is the case, when a recipe is selected!
+		if(selectedRezept != -1){
 
-			rezeptEditView.dragArea.remove(recipeEditObject);
-			rezeptEditView.dragArea.add(spaceholder);
-		
-			
-			topDragArea.add(recipeEditObject);
-			panelNorth.setHeight("142px");
-			topOverflowArea.setHeight("120px");
-			
-			editCoverActivated = true;
-		
-		} 
-			
-		if(editCoverActivated && (saveHeight >= (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
-			Widget recipeEditObject = topDragArea.getWidget(0);
-//			topDragArea.add(new HTML("<div style='height: " + recipeEditObject.getOffsetHeight() + "px'></div>"));
-			topDragArea.remove(recipeEditObject);
-			rezeptEditView.dragArea.add(recipeEditObject);
-			rezeptEditView.dragArea.remove(spaceholder);
-			panelNorth.setHeight("22px");
-			topOverflowArea.setHeight("0px");
-			editCoverActivated = false;
+			if(!editCoverActivated && (rezeptEditView.getOffsetHeight() < (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
+
+				recipeEditObject = rezeptEditView.dragArea.getWidget(0);
+				saveHeight = rezeptEditView.getOffsetHeight();
+
+				spaceholder.setHTML("<div style='height: " + Integer.toString(recipeEditObject.getOffsetHeight()) + "px;width:764px'></div>");
+
+				//			rezeptEditView.dragArea.setHeight(Integer.toString(recipeEditObject.getOffsetHeight()));
+
+				rezeptEditView.dragArea.remove(recipeEditObject);
+				rezeptEditView.dragArea.add(spaceholder);
+
+
+				topDragArea.add(recipeEditObject);
+				panelNorth.setHeight("142px");
+				topOverflowArea.setHeight("120px");
+
+				editCoverActivated = true;
+
+			} 
+
+			if(editCoverActivated && (saveHeight >= (scrollWorkspace.getVerticalScrollPosition()+displayHeight))){
+				Widget recipeEditObject = topDragArea.getWidget(0);
+				//			topDragArea.add(new HTML("<div style='height: " + recipeEditObject.getOffsetHeight() + "px'></div>"));
+				topDragArea.remove(recipeEditObject);
+				rezeptEditView.dragArea.add(recipeEditObject);
+				rezeptEditView.dragArea.remove(spaceholder);
+				panelNorth.setHeight("22px");
+				topOverflowArea.setHeight("0px");
+				editCoverActivated = false;
+			}
+
 		}
-			
-		
 	} 
 
 	
@@ -549,8 +554,9 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			rezeptView.isSelected = true;
 			
 			
-			
+			if(rezeptEditList.getRowCount() > 0){
 			rezeptEditList.removeRow(0);
+			}
 			if(topDragArea.getWidgetCount() > 0){
 				topDragArea.remove(0);
 			}
@@ -790,6 +796,47 @@ public int AddZutatZumMenu( Ingredient item) {
 //			menuPreviewDialog.center();
 			menuPreviewDialog.positionDialog();
 		}
+	}
+
+	@Override
+	public void closeRecipeEditView() {
+
+		//TODO we need to cover the case when the topCoverView is activated!!!
+		if(editCoverActivated){
+			
+			// this is a replicate from the adjustStickyEdit Function!
+			Widget recipeEditObject = topDragArea.getWidget(0);
+			//			topDragArea.add(new HTML("<div style='height: " + recipeEditObject.getOffsetHeight() + "px'></div>"));
+			topDragArea.remove(recipeEditObject);
+			rezeptEditView.dragArea.remove(spaceholder);
+			panelNorth.setHeight("22px");
+			topOverflowArea.setHeight("0px");
+			editCoverActivated = false;
+
+		} else {
+		
+			getRezeptEditList().remove(rezeptEditView);
+			
+	//		if(getRezeptEditList().getRowCount() > 0){
+	//			getRezeptEditList().removeRow(0);
+	//		}
+	//		
+			if(getDragArea().getWidgetCount() > 0){
+				getDragArea().remove(0);
+			}
+		}
+		
+		styleRezept(getSelectedRezept(), false);
+		setSelectedRezept(-1);
+		getSuggestionPanel().clear();
+
+		setTitleHTML("Sie bearbeiten soeben kein Menu.");
+		
+		
+
+//		setEditCoverActivated(false);
+//		adjustStickyEdit();
+		
 	}
 
 
