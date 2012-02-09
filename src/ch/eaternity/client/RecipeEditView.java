@@ -484,7 +484,13 @@ public class RecipeEditView<T> extends Composite {
 	    if(recipe.getCookInstruction() != null){
 	    	cookingInstr.setText(recipe.getCookInstruction());
 	    } else {
-	    	cookingInstr.setText("Kochanleitung.");
+	    	
+			String cookingIntructions = "Kochanleitung.";
+			if(!presenter.getLoginInfo().isLoggedIn()){
+				cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+			}
+			cookingInstr.setText(cookingIntructions);
+			
 //	    	htmlCooking = new HTML("Kochanleitung.");
 	    }
 //	    	htmlCooking.addStyleName("cookingInstr");

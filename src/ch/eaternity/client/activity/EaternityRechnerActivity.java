@@ -547,7 +547,12 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		// TODO I don't want those to be set here... those are the standards, and should be set elsewhere
 		recipe.setSymbol("Ihr Menu");
 		recipe.setSubTitle("Menu Beschreibung");
-		recipe.setCookInstruction("Kochanleitung.");
+		
+		String cookingIntructions = "Kochanleitung.";
+		if(!loginInfo.isLoggedIn()){
+			cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+		}
+		recipe.setCookInstruction(cookingIntructions);
 		
 		recipe.open = false;
 		recipe.openRequested = true;
