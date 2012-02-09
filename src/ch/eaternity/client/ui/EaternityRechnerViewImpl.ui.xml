@@ -13,6 +13,7 @@
 		margin: 10px 15px 0px 4px;
 		padding:4px;
 		width:765px;
+
 		background: #7CC158; 
 		
 		/* height:142px; */
@@ -40,6 +41,7 @@
 		margin-left:4px;
 		padding:0px 4px 4px 4px;
 		background: #7CC158; 
+		width:773px;
 	}
 	
 	.topScores{
