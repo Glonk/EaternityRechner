@@ -443,6 +443,13 @@ html>body .gwt-DialogBox {
 .dialogMiddleCenter{
 	padding:0px;
 	}
+	
+	.gwt-PopupPanelGlass {
+	z-index:3;
+	}
+	.gwt-DialogBox {
+	z-index:4;
+	}
 
 .rating{
 	width:80px;

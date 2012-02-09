@@ -27,7 +27,7 @@ public class ConfirmDialog extends DialogBox{
 		// Use this opportunity to set the dialog's caption.
 		setText(title);
 		setWidget(binder.createAndBindUi(this));
-
+		
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 	}
