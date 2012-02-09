@@ -617,7 +617,12 @@ public class RecipeView<T> extends Composite {
 
 			
 		} else {
-		final ConfirmDialog dlg = new ConfirmDialog("Zusammenstellungen ist noch nicht gespeichert!");
+			
+		String saveText = "Zusammenstellungen ist noch nicht gespeichert!";
+		if(!presenter.getLoginInfo().isLoggedIn()){
+			saveText = "Sie verlieren alle Änderungen!";
+		}
+		final ConfirmDialog dlg = new ConfirmDialog(saveText);
 		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
 		// TODO recheck user if he really want to do this...
 		
