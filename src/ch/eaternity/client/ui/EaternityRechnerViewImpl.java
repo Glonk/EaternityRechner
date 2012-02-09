@@ -55,6 +55,7 @@ import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -341,8 +342,17 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			rezeptView.recipe.setSubTitle(recipe.getSubTitle());
 		}
 		
+		
 //		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
 		rezeptView.recipe.setSymbol(recipe.getSymbol());
+		
+		if(recipe.getCookInstruction() == null){
+			String cookingIntructions = "Kochanleitung.";
+			if(!presenter.getLoginInfo().isLoggedIn()){
+				cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+			}
+			rezeptView.recipe.setCookInstruction(cookingIntructions);
+		}
 		
 		// here we set the ancestor if available
 		if(recipe.getId() != null){

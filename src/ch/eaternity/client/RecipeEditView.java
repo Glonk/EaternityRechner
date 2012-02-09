@@ -159,6 +159,18 @@ public class RecipeEditView<T> extends Composite {
 			menuDecoInfo.add(uploadWidget);
 		}
 //	    
+		
+		if(recipe.getCookInstruction() != null){
+	    	cookingInstr.setText(recipe.getCookInstruction());
+	    } else {
+	    	String cookingIntructions = "Kochanleitung.";
+	    	if(!presenter.getLoginInfo().isLoggedIn()){
+	    		cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+	    	}
+			cookingInstr.setText(cookingIntructions);
+			
+	    }
+		
 //		if(presenter.getLoginInfo().isLoggedIn()) {
 //			// TODO even more....
 ////			SaveRezeptPanel.setVisible(true);
@@ -481,18 +493,17 @@ public class RecipeEditView<T> extends Composite {
 
 		
 		
-	    if(recipe.getCookInstruction() != null){
-	    	cookingInstr.setText(recipe.getCookInstruction());
-	    } else {
-	    	
-			String cookingIntructions = "Kochanleitung.";
-			if(presenter.getLoginInfo() != null && !presenter.getLoginInfo().isLoggedIn()){
-				cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
-			}
-			cookingInstr.setText(cookingIntructions);
-			
-//	    	htmlCooking = new HTML("Kochanleitung.");
-	    }
+//	    if(recipe.getCookInstruction() != null){
+//	    	cookingInstr.setText(recipe.getCookInstruction());
+//	    } else {
+//	    	
+//			String cookingIntructions = "Kochanleitung.";
+//			cookingInstr.setText(cookingIntructions);
+//			
+//	    }
+	    
+	    
+	    
 //	    	htmlCooking.addStyleName("cookingInstr");
 //	    	menuDecoInfo.insert(htmlCooking,0);
 //	    	
