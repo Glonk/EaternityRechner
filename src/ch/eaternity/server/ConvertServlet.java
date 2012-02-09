@@ -44,7 +44,7 @@ public class ConvertServlet extends HttpServlet {
 	/**
 	 * 
 	 */
-	private final List<Asset> assets = new ArrayList<Asset>();
+	private List<Asset> assets = new ArrayList<Asset>();
 	private static final long serialVersionUID = 2708668642046127395L;
 	private static final Logger log = Logger.getLogger(ConvertServlet.class.getName());
 
@@ -127,10 +127,10 @@ public class ConvertServlet extends HttpServlet {
 	
 		
 		// parse images, and get them from local filespace (if they are there)
-
+/*
 		// images can be inside a <img tag or in the css...
-//		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
-		String[] pngImagesReport = {"green.png"};
+		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
+//		String[] pngImagesReport = {"green.png"};
 		
 		
 		ServletContext context = getServletContext();
@@ -169,6 +169,7 @@ public class ConvertServlet extends HttpServlet {
 
 
 		}
+		*/
 			/*
 		
 		// find each appearence of: src="QR-xxx" in the html file
@@ -277,8 +278,9 @@ public class ConvertServlet extends HttpServlet {
 					assetMimeTypeList.get(i), assetDataList.get(i), assetNameList.get(i)));
 		}
 
-
-		Document document = new Document(Collections.unmodifiableList(assets));
+// okay let's try this
+//		Document document = new Document(Collections.unmodifiableList(assets));
+		Document document = new Document(assets);
 		Conversion conversion = new Conversion(document, outputType);
 
 
