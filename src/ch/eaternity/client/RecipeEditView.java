@@ -486,7 +486,7 @@ public class RecipeEditView<T> extends Composite {
 	    } else {
 	    	
 			String cookingIntructions = "Kochanleitung.";
-			if(!presenter.getLoginInfo().isLoggedIn()){
+			if(presenter.getLoginInfo() != null && !presenter.getLoginInfo().isLoggedIn()){
 				cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
 			}
 			cookingInstr.setText(cookingIntructions);

@@ -549,7 +549,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		recipe.setSubTitle("Menu Beschreibung");
 		
 		String cookingIntructions = "Kochanleitung.";
-		if(!loginInfo.isLoggedIn()){
+		if(loginInfo != null && !loginInfo.isLoggedIn()){
 			cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
 		}
 		recipe.setCookInstruction(cookingIntructions);
