@@ -249,6 +249,7 @@ h3 {
 	position: relative;
 	margin-left:1px;
 	z-index:0;
+	max-height:46em; /* this fits with a title of 2 lines*/
 /*	height:48.5em;*/
 /*	margin-top:0.5em;*/
 }
