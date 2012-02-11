@@ -44,7 +44,7 @@ public class ConvertServlet extends HttpServlet {
 	/**
 	 * 
 	 */
-	private List<Asset> assets = new ArrayList<Asset>();
+
 	private static final long serialVersionUID = 2708668642046127395L;
 	private static final Logger log = Logger.getLogger(ConvertServlet.class.getName());
 
@@ -52,15 +52,15 @@ public class ConvertServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse resp)
 	throws ServletException, IOException, MalformedURLException { 
 		// TODO get the key, check the user, urlfetch the date, send the pdf
+
+		
+		/*
+		 * Make sure all images are really send to the server! otherwise a error 500 will appear
+		 */
+		 
 		String tempIds = request.getParameter("ids");
 		String permId = request.getParameter("pid");
-
-
-		String outputType = "application/pdf";
-
-		ConversionService service = ConversionServiceFactory.getConversionService();
-
-		//		
+	
 		String RAWURL = request.getRequestURL().toString();
 		String BASEURL = RAWURL.substring(0, RAWURL.length()-7);
 
@@ -68,12 +68,9 @@ public class ConvertServlet extends HttpServlet {
 		// this is stuped to set the number manually
 		// the resources should be added anyway by parsing the html file, in my opinion
 
-		List<String> assetMimeTypeList = new ArrayList<String>();
-		List<byte[]> assetDataList = new ArrayList<byte[]>();
-		List<String> assetNameList = new ArrayList<String>();
-		
+
+		String name = "Menü_Klimabilanz.pdf";
 		URL url = null;
-		String name = "";
 		if(tempIds != null){
 			url = new URL(BASEURL + "pdf.jsp?ids=" + tempIds + "&pdf=1");
 			name=  "Menü_Klimabilanz_Zertifikat.pdf";
@@ -82,6 +79,17 @@ public class ConvertServlet extends HttpServlet {
 			url = new URL(BASEURL + "view.jsp?pid=" + permId +"&pdf=1");
 			name=  "Menü_Klimabilanz.pdf";
 		}
+		
+		
+		
+
+		String outputType = "application/pdf";
+
+		ConversionService service = ConversionServiceFactory.getConversionService();
+		
+		List<String> assetMimeTypeList = new ArrayList<String>();
+		List<byte[]> assetDataList = new ArrayList<byte[]>();
+		List<String> assetNameList = new ArrayList<String>();
 		
 		InputStream stream = null;
 		try {
@@ -127,7 +135,7 @@ public class ConvertServlet extends HttpServlet {
 	
 		
 		// parse images, and get them from local filespace (if they are there)
-/*
+
 		// images can be inside a <img tag or in the css...
 		String[] pngImagesReport = {"green.png","light-gray.png", "logo-eaternity-huge_04-11-2010.png", "gray.png", "smiley8.png", "orange.png","karotte.png"};
 //		String[] pngImagesReport = {"green.png"};
@@ -169,8 +177,8 @@ public class ConvertServlet extends HttpServlet {
 
 
 		}
-		*/
-			/*
+		
+			
 		
 		// find each appearence of: src="QR-xxx" in the html file
 		// take this code: xxx and fetch the corresponding carts
@@ -186,7 +194,7 @@ public class ConvertServlet extends HttpServlet {
 			int test = codeRaw.indexOf("-CODE");
 			if(test != -1){
 			String code = codeRaw.substring(0, codeRaw.indexOf("-CODE"));
-			URL qrCodeUrl =new URL("http://chart.apis.google.com/chart?cht=qr&chs=84x84&chl="+code+"&chld=M%7C0");
+			URL qrCodeUrl = new URL("http://chart.apis.google.com/chart?cht=qr&chs=84x84&chl="+code+"&chld=M%7C0");
 //			URL qrCodeUrl =new URL("http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="+code);
 			
 			// --> this works
@@ -224,8 +232,55 @@ public class ConvertServlet extends HttpServlet {
 			}
 		}
 		
-		*/
+		
 
+		// find each appearence of: src="COVER-xxx-IMAGE" in the html file
+		// take this code: xxx and fetch the corresponding image
+		// load those charts into the Asset()
+
+		
+		String[] tokensCover = element.split("COVER-");
+		
+	
+		for (String codeRaw : tokensCover ){
+			int test = codeRaw.indexOf("-IMAGE");
+			if(test != -1){
+			String code = codeRaw.substring(0, codeRaw.indexOf("-IMAGE"));
+			
+			
+			URL imageCodeUrl = new URL(code+"=s800"); // "s800" is the image resolution
+		
+			
+			imageStream = imageCodeUrl.openStream();
+			
+				try {
+					
+					
+					//TODO right now this is limited to jpg uploads!!!
+					assetMimeTypeList.add("image/jpg");
+					assetNameList.add("COVER-"+code+"-IMAGE");
+					Streams.copy(imageStream, byteStream, true);
+
+					// Added as the data of first asset.
+					assetDataList.add(byteStream.toByteArray());
+					
+				} catch (MalformedURLException e) {
+					// ...
+					resp.setContentType("text/plain");
+					resp.getWriter().println(e.toString());
+
+				} catch (IOException e) {
+					// ...
+					resp.setContentType("text/plain");
+					resp.getWriter().println(e.toString());
+
+				} finally {
+
+					imageStream.close();
+					byteStream.reset();
+				}
+			}
+		}
 
 
 		// get the rest of the images from external sources
@@ -255,7 +310,7 @@ public class ConvertServlet extends HttpServlet {
 		}
 */
 
-
+ 
 
 		if (assetMimeTypeList.get(0) == null) {
 			throw new IOException("Input type must be selected.");
@@ -272,7 +327,7 @@ public class ConvertServlet extends HttpServlet {
 		int assetsNumber = assetDataList.size();
 		// Add all the assets. Primary inputs are added into first asset.
 		// Additional assets may also be included, e.g. images in HTML.
-		assets.clear();
+		List<Asset> assets = new ArrayList<Asset>();
 		for (int i = 0; i < assetsNumber; i++) {
 			assets.add(new Asset(
 					assetMimeTypeList.get(i), assetDataList.get(i), assetNameList.get(i)));
@@ -305,20 +360,22 @@ public class ConvertServlet extends HttpServlet {
 				resp.setHeader(
 						"Content-Disposition",
 						"attachment; filename=" + assets.get(0).getName().split("\\.")[0]);
-				List<Asset> assets = result.getOutputDoc().getAssets();
+				List<Asset> assetsResult = result.getOutputDoc().getAssets();
 				// Print the first/primary asset to servlet output steam.
-				resp.getOutputStream().write(assets.get(0).getData());
+				resp.getOutputStream().write(assetsResult.get(0).getData());
 				// Additional assets may be returned, e.g. images in HTML.
 				// Here we simply write them into log, you may want to handle them
 				// in your own way.
 				for (int i = 1; i < assetsNum; i++) {
 					log.info(String.format(
-							"Additional asset: name %s, type %s, data length %d", assets.get(i).getName(),
-							assets.get(i).getMimeType(), assets.get(i).getData().length));
+							"Additional asset: name %s, type %s, data length %d", assetsResult.get(i).getName(),
+							assetsResult.get(i).getMimeType(), assetsResult.get(i).getData().length));
 				}
 				
 			}
 		}
+		
+		
 	}
 
 
