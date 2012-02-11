@@ -420,8 +420,8 @@ padding: 1pt 1pt 1pt 0pt;
 page-break-after: avoid;
 color: white;
 background-repeat: repeat-x;
-background-image: url(green.png);
-background: green.png;
+/*background-image: url(green.png);
+background: green.png;*/
 font-size: 10pt;
 font-weight: 700;
 text-align: right;
@@ -434,8 +434,8 @@ width: 100pt;
 page-break-after: avoid;
 color: white;
 background-repeat: repeat-x;
-background-image: url(light-gray.png);
-background: light-gray.png;
+/*background-image: url(light-gray.png);
+background: light-gray.png;*/
 font-size: 10pt;
 font-weight: 700;
 text-align: right;

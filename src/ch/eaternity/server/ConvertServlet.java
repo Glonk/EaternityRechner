@@ -72,7 +72,9 @@ public class ConvertServlet extends HttpServlet {
 		String name = "Menü_Klimabilanz.pdf";
 		URL url = null;
 		if(tempIds != null){
-			url = new URL(BASEURL + "pdf.jsp?ids=" + tempIds + "&pdf=1");
+			
+			url = new URL(BASEURL + "view.jsp?ids=" + tempIds + "&pdf=1");
+//			url = new URL(BASEURL + "pdf.jsp?ids=" + tempIds + "&pdf=1");
 			name=  "Menü_Klimabilanz_Zertifikat.pdf";
 			
 		} else if(permId != null) {
