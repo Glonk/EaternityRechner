@@ -264,6 +264,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				
 				rezeptView.setRecipeSavedMode(true);
 				
+				// there needs to be an automatic link between normal and editview...
+				rezeptView.recipe.setId(id);
+				
 				// TODO make same sense out of this
 				// this is just a test functionality...
 				// but it could be displayed somewhere else...
@@ -458,7 +461,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	}
 	
 	public void addClientDataRezepte(List<Recipe> yourRezepte) {
-		this.clientData.setYourRezepte(yourRezepte);
+		if(clientData != null && !yourRezepte.isEmpty()){
+			this.clientData.setYourRezepte(yourRezepte);
+		}
 	}
 
 

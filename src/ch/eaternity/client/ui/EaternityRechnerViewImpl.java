@@ -67,11 +67,6 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	private static EaternityRechnerViewUiBinder uiBinder =
 		GWT.create(EaternityRechnerViewUiBinder.class);
 
-	//	private static EaternityRechnerViewImplUiBinder uiBinder = GWT.create(EaternityRechnerViewImplUiBinder.class);
-	//
-	//	interface EaternityRechnerViewImplUiBinder extends UiBinder<DockLayoutPanel, EaternityRechnerViewImpl>
-	//	{
-	//	}
 
 	interface SelectionStyle extends CssResource {
 		String selectedRezept();
@@ -83,13 +78,9 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 
 	@UiField FlexTable rezeptList;
 	@UiField FlexTable rezeptEditList;
-//	@UiField FlexTable MenuTable;
-//	@UiField FlexTable SuggestTable;
-//	@UiField HorizontalPanel addInfoPanel;
 	@UiField HTML titleHTML;
 	@UiField DockLayoutPanel topSticky;
 	@UiField HTMLPanel panelNorth;
-//	@UiField HTMLPanel htmlRezept;
 	@UiField AbsolutePanel topDragArea;
 	@UiField HTMLPanel topOverflowArea;
 
@@ -362,7 +353,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		rezeptView.RezeptName.setText(recipe.getSymbol());
 		
 //		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
-		rezeptView.makePublic.setValue(!recipe.openRequested);
+		rezeptView.makeNotPublic.setValue(!recipe.openRequested);
 		
 		//TODO hinzufügen zu welchen Küchen das Rezept gehört.
 		String kitchenString = "";
@@ -399,7 +390,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			@Override
 			public void onClick(ClickEvent event) {
 //				rezeptView.menuDecoInfo.remove(rezeptView.showImageRezept);
-				rezeptView.uploadWidget.setVisible(true);
+//				rezeptView.uploadWidget.setVisible(true);
 				rezeptView.bildEntfernen.setVisible(false);
 				rezeptView.recipe.image = null;
 //TODO				image should also be pulled out of the database to save space
@@ -439,9 +430,9 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			});
 	    	rezeptView.showImageRezept.setStyleName("imageSmall");
 //	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
-	    	if(rezeptView.uploadWidget != null){
-	    		rezeptView.uploadWidget.setVisible(false);
-	    	}
+//	    	if(rezeptView.uploadWidget != null){
+//	    		rezeptView.uploadWidget.setVisible(false);
+//	    	}
 	    	if(presenter.getLoginInfo().isLoggedIn()){
 	    	rezeptView.bildEntfernen.setVisible(true);
 	    	}
@@ -466,7 +457,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 						
 						
 					}
-					rezeptView.detailText.setVisible(false);
+//					rezeptView.detailText.setVisible(false);
 //					rezeptView.cookingInstr.setVisible(true);
 //					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
@@ -477,7 +468,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 					}
 					
 				} else {
-					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+cookingInstructions);
+//					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+cookingInstructions);
 					if(rezeptView.getRezept().image != null){
 
 //						rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
@@ -487,10 +478,10 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 								@Override
 								public void onLoad(LoadEvent event) {
 									if(rezeptView.askForLess2){
-										rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
-
-										//				rezeptView.detailText.setHeight(height)
-										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.recipe.getCookInstruction());
+//										rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
+//
+//										//				rezeptView.detailText.setHeight(height)
+//										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.recipe.getCookInstruction());
 										rezeptView.askForLess2 = false;
 									}
 								}
@@ -503,8 +494,8 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 						
 
 					}
-					rezeptView.detailText.setWidth("730px");
-					rezeptView.detailText.setVisible(true);
+//					rezeptView.detailText.setWidth("730px");
+//					rezeptView.detailText.setVisible(true);
 //					rezeptView.cookingInstr.setVisible(false);
 //					rezeptView.htmlCooking.setVisible(false);
 					mehrDetails.setText("weniger Details");
@@ -528,11 +519,17 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 //	    rezeptView.showRezept(rezeptView.rezept);
 	    rezeptView.showRezept(rezeptView.recipe);
 	    rezeptView.saved = true;
+	    
 	    if(presenter.getLoginInfo().isAdmin() && recipe.getEmailAddressOwner() != null ) {
-	    	rezeptView.savedHTML.setHTML("gespeichert von "+recipe.getEmailAddressOwner());
+	    	rezeptView.savedHTML.setVisible(true);
+	    	rezeptView.savedHTML.setHTML("Autor: "+recipe.getEmailAddressOwner());
 		} else {
-			rezeptView.savedHTML.setHTML("gespeichert");
+//			rezeptView.savedHTML.setHTML("gespeichert");
+			rezeptView.savedHTML.setVisible(false);
 		}
+	    
+	    
+	    
 	    
 	    adjustStickyEdit();
 		
@@ -731,9 +728,9 @@ public int AddZutatZumMenu( Ingredient item) {
 		
 		for( Widget rezeptViewWidget : rezeptList){
 			RecipeView rezeptView = (RecipeView) rezeptViewWidget;
-			rezeptView.updateSaison();
+//			rezeptView.updateSaison();
 			for(IngredientSpecification zutat : rezeptView.recipe.getZutaten()){
-				rezeptView.changeIcons(rezeptView.recipe.getZutaten().indexOf(zutat), zutat);
+//				rezeptView.changeIcons(rezeptView.recipe.getZutaten().indexOf(zutat), zutat);
 			}
 		}
 	}
@@ -753,18 +750,6 @@ public int AddZutatZumMenu( Ingredient item) {
 	}
 	
 
-//	@UiHandler("MenuTable")
-//	void onTableClicked(ClickEvent event) {
-//		// Select the row that was clicked (-1 to account for header row).
-//		if (presenter != null) {
-//			FlexTable.Cell cell = MenuTable.getCellForEvent(event);
-//
-//			if (cell != null) {
-//				int row = cell.getRowIndex();
-//				rezeptEditView.selectRow(row);
-//			}
-//		}
-//	}
 
 	@Override
 	public void setSelectedRezept(int rezeptPositionInList) {

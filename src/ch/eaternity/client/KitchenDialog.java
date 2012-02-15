@@ -890,9 +890,9 @@ public class KitchenDialog<T> extends DialogBox{
 			}
 			rezeptView.updateSuggestion();
 
-			if(rezeptView.addInfoPanel.getWidgetCount() ==2){
-				rezeptView.addInfoPanel.remove(1);
-			}
+//			if(rezeptView.addInfoPanel.getWidgetCount() ==2){
+//				rezeptView.addInfoPanel.remove(1);
+//			}
 		}
 	}
 

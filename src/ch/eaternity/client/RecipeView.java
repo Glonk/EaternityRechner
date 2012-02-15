@@ -78,10 +78,6 @@ public class RecipeView<T> extends Composite {
 	
 	
 	@UiField AbsolutePanel dragArea;
-//	@UiField SelectionStyleRow selectionStyleRow;
-
-
-
 	@UiField HTMLPanel SaveRezeptPanel;
 
 	// add Rezept here
@@ -90,61 +86,38 @@ public class RecipeView<T> extends Composite {
 
 	@UiField
 	public TextBox RezeptName;
-	@UiField HTMLPanel topStatusBar;
+	@UiField
+	public CheckBox makeNotPublic;
+	
 	@UiField
 	public CheckBox makePublic;
 
-	@UiField
-	public HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
 	@UiField HTMLPanel rezeptTitle;
 
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
+	
 //	@UiField HorizontalPanel imageUploaderHP;
 
 
-	
-//	@UiField HTML titleHTML;
 	@UiField
 	public HTML openHTML;
-	@UiField
-	public HTML savedHTML;
+	@UiField public HTML savedHTML;
 
 	@UiField HTML codeImage;
+	@UiField HTML co2ValueLabel;
 	
 	@UiField
-	public HTML detailText;
-	
-	/* outsorted
-	 * 
-	
-	@UiField EvenStyleRow evenStyleRow;
-
-	@UiField
-	public TextArea cookingInstr;
-
-	@UiField
-	public FlowPanel menuDecoInfo;
+	public TextBox rezeptDetails;
 	
 	@UiField
 	public TextBox amountPersons;
-	@UiField
-	public TextBox rezeptDetails;
-	@UiField VerticalPanel MenuTableWrapper;
-	@UiField
-	public FlexTable SuggestTable;
-	@UiField
-	public Anchor PrepareButton;
-	@UiField FlexTable MenuTable;
 	
-		 
-	 */
-	
-	private FlowPanel panelImages = new FlowPanel();
-	private PhotoGallery galleryWidget;
-	public UploadPhoto uploadWidget;
+//	private FlowPanel panelImages = new FlowPanel();
+//	private PhotoGallery galleryWidget;
+//	public UploadPhoto uploadWidget;
 	public HandlerRegistration imagePopUpHandler = null;
 	public static int overlap = 0;
 	
@@ -159,8 +132,10 @@ public class RecipeView<T> extends Composite {
 	public FlexTableRowDropController flexTableRowDropController = null;
 	
 	public boolean saved;
+
+	public boolean isSelected;
 	
-//	private Listener listener;
+	
 	int  selectedRow = 0;
 	int  selectedRezept = -1;
 	public Recipe recipe;
@@ -175,45 +150,28 @@ public class RecipeView<T> extends Composite {
 	    
 		if (!presenter.getLoginInfo().isLoggedIn()) {
 			SaveRezeptPanel.setVisible(false);
-//			saveRecipeButton.setVisible(false);
-//			reportButton.setVisible(true);
-//			reportButton.setEnabled(true);
-			detailText.setHTML("Sie müssen sich anmelden um geänderte Rezepte speichern zu können und Pdf's zu erstellen.");
 		}
 	}
 	
 	private final EaternityRechnerView superDisplay;
-//	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
-	
+
 	
 	public RecipeView(Recipe recipe,EaternityRechnerView superDisplay) {
 		this.superDisplay = superDisplay;
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
-	    
-//	    no more edit here
-//	    tableRowDragController = new FlexTableRowDragController(dragArea);
-//	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
-//	    tableRowDragController.registerDropController(flexTableRowDropController);
-
-	    
-	    
 
 	    setRezept(recipe);
+	    
+	    // this is a new recipe, so nothing to be saved:
 	    setRecipeSavedMode(true);
-	    initTable();
+
 	    
-//	    RezeptName.setVisible(false);
-//	    rezeptDetails.setVisible(false);
-//	    cookingInstr.setVisible(false);
-//	    detailText.setVisible(false);
-	    
+	    // we could still consider changing the image in this interface
 //	    galleryWidget = new PhotoGallery(this);
 ////	    addInfoPanel.insert(galleryWidget,0);
 //	    menuDecoInfo.add(galleryWidget);
 	    
-
-			
 //			no more edit here
 //			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
 //			uploadWidget.setStyleName("notInline");
@@ -223,7 +181,6 @@ public class RecipeView<T> extends Composite {
 //			addInfoPanel.insert(uploadWidget,0);
 //			menuDecoInfo.add(uploadWidget);
 
-		
 	    
 //	    imageUploaderHP.add(panelImages);
 //	    MultiUploader defaultUploader = new MultiUploader();
@@ -233,116 +190,77 @@ public class RecipeView<T> extends Composite {
 //	    defaultUploader.setMaximumFiles(1);
 //	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
 
-//	    
-//		if(EaternityRechner.loginInfo.isLoggedIn()) {
-//			// TODO even more....
-//			SaveRezeptPanel.setVisible(true);
-//			topStatusBar.setVisible(true);
-//		} else   {
-//			SaveRezeptPanel.setVisible(false);
-//			topStatusBar.setVisible(false);
-//		}
-//		
+
 		
 	  }
 
 
 	public void setRecipeSavedMode(boolean isSaved) {
+		
+		// the is saved should only respond if indeed something changed...
 		saved = isSaved;
+		reportButton.setEnabled(isSaved);
+		
+		makePublic.setVisible(true);
+
+		reportButton.setVisible(isSaved);
 		reportButton.setEnabled(isSaved);
 		
 		// the button switches -> faded out until some change happened
 		saveRecipeButton.setEnabled(!isSaved);
-		reportButton.setVisible(isSaved);
-		reportButton.setEnabled(isSaved);
 		
 		if(!isSaved){
-			savedHTML.setHTML("nicht gespeichert");
+//			savedHTML.setHTML("nicht gespeichert");
 			saveRecipeButton.setText("Rezept speichern");
+			
+			if((recipe.openRequested != null && recipe.openRequested) || (recipe.open!=null && recipe.open)){
+				// veröffentlichung angefragt
+				makeNotPublic.setVisible(true);
+				makePublic.setVisible(false);
+			} else {
+				// veröffentlichung nicht gewünscht
+				makeNotPublic.setVisible(false);
+				makePublic.setVisible(true);
+			}
+			
 		} else {
-			savedHTML.setHTML("gespeichert");
+//			savedHTML.setHTML("gespeichert");
 			saveRecipeButton.setText("Rezept ist gespeichert");
+			
+			if((recipe.openRequested != null && recipe.openRequested) || (recipe.open!=null && recipe.open)){
+				// veröffentlichung angefragt
+				makeNotPublic.setVisible(false);
+				makePublic.setVisible(false);
+			} else {
+				// veröffentlichung nicht gewünscht
+
+			}
+			
+			
+			
+			if(recipe.open!=null && recipe.open){
+				openHTML.setVisible(true);
+				openHTML.setHTML("Rezept ist öffentlich zugänglich.");
+			}
+			if((recipe.openRequested != null && recipe.openRequested)){
+				openHTML.setVisible(true);
+				openHTML.setHTML("Veröffentlichung des Rezepts wurde angefragt.");
+			}
+			
 		}
 		
 
 	}
 	
 	
-//	Urlshortener urlshortener = GWT.create(Urlshortener.class); 
-	
-//	private void makeRequest() {
-//		  String shortUrl = "http://goo.gl/h8cEU";
-//		  EaternityRechner.urlshortener.url().get(shortUrl)
-//		      // If the service had any optional parameters, they would go here, e.g.:
-//		      // .setOptionalParameter("optionalParam")
-//		      // .setAnotherOptionalParameter("anotherOptionalParameter")
-//		      .to(new Receiver<Url>() {
-//		        @Override
-//		        public void onSuccess(Url url) {
-//		          String longUrl = url.getLongUrl();
-////		          Window.alert(longUrl);
-//		          
-//		        }
-//		      })
-//		      .fire();
-//		}
-	
 	
 	void shortenAndSave() {
 		final RecipeView rezeptView = this;
-		String clear = Converter.toString(recipe.getId(),34);
-	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
-	    
-	    // Get a new RequestContext which we will execute.
-	    UrlContext urlContext = presenter.getUrlShortener().url();
-
-	    // Create a new Url instance with the longUrl we want to insert.
-	    Url url = urlContext.create(Url.class);
-	    url.setLongUrl(longUrl);
-//	    Url url = urlContext.create(Url.class).setLongUrl(longUrl);
-
-	    // Fire an insert() request with the Url to insert.
-	    
-	    //TODO this should definitely be on the server side!
-	    urlContext.insert(url).fire(new Receiver<Url>() {
-	      @Override
-	      public void onSuccess(Url response) {
-//	        Window.alert("Long URL: " + response.getLongUrl() + "\n" //
-//	            + "Short URL: " + response.getId() + "\n" //
-//	            + "Status: " + response.getStatus());
-	        recipe.ShortUrl = response.getId();
-	        
-//	        no more edit here
-	        presenter.addRezept(recipe,rezeptView);
-	      }
-	     
-	      @Override
-	      public void onFailure(ServerFailure error) {
-	        Window.alert("Error shortening a URL\n" + error.getMessage());
-	      }
-	    });
-	    
+		presenter.addRezept(recipe,rezeptView);
 	    // show the report Button
 	    
 	  }
 	
-//	
-//	public interface Listener {
-//		void onItemSelected(IngredientSpecification item);
-//	}
-//
-//
-//	
-//	interface SelectionStyleRow extends CssResource {
-//		String selectedRow();
-//	}
-	interface EvenStyleRow extends CssResource {
-		String evenRow();
-	}
-//	
-//	public void setListener(Listener listener) {
-//		this.listener = listener;
-//	}
 	
 	@UiHandler("reportButton")
 	void onReportClick(ClickEvent event) {
@@ -355,59 +273,41 @@ public class RecipeView<T> extends Composite {
 
 		String clear = Converter.toString(code,34);
 		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
-//		Window.Location.assign(url);
 		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
-//		getURL(url);
 	}
 
 	
-//	the table is not clickable anymore here
-//	@UiHandler("MenuTable")
-//	void onClick(ClickEvent event) {
-//		// Select the row that was clicked (-1 to account for header row).
-//		Cell cell = MenuTable.getCellForEvent(event);
-//		if (cell != null) {
-//			int row = cell.getRowIndex();
-//			selectRow(row);
-//		}
-//	}
 	
-//	@UiHandler("amountPersons")
-//	void onKeyUp(KeyUpEvent event) {
-//		int keyCode = event.getNativeKeyCode();
-//		if ((Character.isDigit((char) keyCode)) 
-//				|| (keyCode == KeyCodes.KEY_BACKSPACE)
-//				|| (keyCode == KeyCodes.KEY_DELETE) ) {
-//			// TextBox.cancelKey() suppresses the current keyboard event.
-//			Long persons = 1l;
-//			recipe.setPersons(persons);
-//			if(!amountPersons.getText().isEmpty()){
-//				persons = Long.parseLong(amountPersons.getText().trim());
-//				if(persons > 0){
-//					recipe.setPersons(persons);
-//					updateSuggestion();
-//				} else {
-////					amountPersons.setText("1");
-//				}
-//			} else {
-////				amountPersons.setText("1");
-//			}
-//			
-//			
-//		} else {
-//			amountPersons.cancelKey();
-//		}
-//	}
+	
+@UiHandler("amountPersons")
+void onKeyUp(KeyUpEvent event) {
+	int keyCode = event.getNativeKeyCode();
+	if ((Character.isDigit((char) keyCode)) 
+			|| (keyCode == KeyCodes.KEY_BACKSPACE)
+			|| (keyCode == KeyCodes.KEY_DELETE) ) {
+		// TextBox.cancelKey() suppresses the current keyboard event.
+		Long persons = 1l;
+		recipe.setPersons(persons);
+		if(!amountPersons.getText().isEmpty()){
+			persons = Long.parseLong(amountPersons.getText().trim());
+			if(persons > 0){
+				recipe.setPersons(persons);
+				updateSuggestion();
+			} else {
+//					amountPersons.setText("1");
+			}
+		} else {
+//				amountPersons.setText("1");
+		}
+		
+		
+	} else {
+		amountPersons.cancelKey();
+	}
+}
 
 
-//	@UiHandler("rezeptNameTop")
-//	void onMouseOver(MouseOverEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			RezeptName.setVisible(true);
-//			rezeptNameTop.setVisible(false);
-//		}
-//	}
-//	
+
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
@@ -425,54 +325,6 @@ public class RecipeView<T> extends Composite {
 			
 		}
 	}
-//	
-//	@UiHandler("RezeptName")
-//	void onMouseOut(MouseOutEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			RezeptName.setVisible(false);
-//			rezeptNameTop.setVisible(true);
-//		}
-//	}
-//	
-
-//	
-//	@UiHandler("cookingInstr")
-//	void onMouseOutCook(MouseOutEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			cookingInstr.setVisible(false);
-//			htmlCooking.setVisible(true);
-//		}
-//	}
-//	
-//
-//	@UiHandler("rezeptSubTitleTop")
-//	void onMouseOverSub(MouseOverEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			rezeptDetails.setVisible(true);
-//			rezeptSubTitleTop.setVisible(false);
-//		}
-//	}
-//	
-	/* outsorted
-	 * 
-	
-	@UiHandler("cookingInstr")
-	void onEditCook(KeyUpEvent event) {
-		if(cookingInstr.getText() != ""){
-
-			// only do this, if this is the recipe that is getting edited
-			
-			// the case this recipe is also open
-			if(isSelected){
-				RecipeEditView rezeptViewEdit = (RecipeEditView) superDisplay.getRezeptEditList().getWidget(0, 1);
-				rezeptViewEdit.cookingInstr.setText(cookingInstr.getText());
-				rezeptViewEdit.recipe.setCookInstruction(cookingInstr.getText());
-			}
-			
-			recipe.setCookInstruction(cookingInstr.getText());
-		}
-	}
-	
 	
 	@UiHandler("rezeptDetails")
 	void onEditSub(KeyUpEvent event) {
@@ -494,103 +346,7 @@ public class RecipeView<T> extends Composite {
 		}
 	}
 	
-	
-	@UiHandler("amountPersons")
-	void onKeyUp(KeyUpEvent event) {
-		int keyCode = event.getNativeKeyCode();
-		if ((Character.isDigit((char) keyCode)) 
-				|| (keyCode == KeyCodes.KEY_BACKSPACE)
-				|| (keyCode == KeyCodes.KEY_DELETE) ) {
-			// TextBox.cancelKey() suppresses the current keyboard event.
-			Long persons = 1l;
-			recipe.setPersons(persons);
-			
 
-			
-			
-			if(!amountPersons.getText().isEmpty()){
-				persons = Long.parseLong(amountPersons.getText().trim());
-				if(persons > 0){
-					recipe.setPersons(persons);
-					updateSuggestion();
-					// only do this, if this is the recipe that is getting edited
-					
-					// the case this recipe is also open
-					
-					
-					if(isSelected){
-						RecipeEditView rezeptViewEdit = (RecipeEditView) superDisplay.getRezeptEditList().getWidget(0, 1);
-						rezeptViewEdit.amountPersons.setText(Long.toString(persons));
-						rezeptViewEdit.recipe.setPersons(persons);
-						rezeptViewEdit.updateSuggestion();
-					}
-				
-//					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
-				} else {
-//					amountPersons.setText("1");
-				}
-			} else {
-//				amountPersons.setText("1");
-			}
-			
-			
-		} else {
-			amountPersons.cancelKey();
-		}
-	}
-//	
-//	@UiHandler("rezeptDetails")
-//	void onMouseOutSub(MouseOutEvent event) {
-//		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			rezeptDetails.setVisible(false);
-//			rezeptSubTitleTop.setVisible(true);
-//		}
-//	}
-//	
-//	
-	
-//	
-//	@UiHandler("PrepareButton")
-//	void onPrepareClicked(ClickEvent event) {
-//		
-//		 // we changed something -> so it isn't saved anymore
-//		 saved = false;
-//		 
-//	
-//		 
-//		 
-//		 // what is this???
-//		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
-//			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
-//			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-//			 recipe.Zutaten.set(selectedRow , zutatSpec2);
-//		 }
-//		 
-//		 // the selected row in the recipe is not highlighted anymore
-//		 if (selectedRow != -1) {
-//			 styleRow(selectedRow, false);
-//			 Search.selectedRow = -1;
-//		 }
-//		 
-//
-//		// remove window
-//		addInfoPanel.remove(2);
-//		
-//		// cooking instructions etc...
-//		menuDecoInfo.setVisible(false);
-//		
-////		no more edit here
-////		InfoPreparationDialog infoPrepare = new InfoPreparationDialog(MenuTable,recipe,SuggestTable,this);
-////		
-////		addInfoPanel.insert(infoPrepare, 2);
-//		
-//		// is this necessary... it should be only on change...
-//		updateSuggestion();
-//		
-//	}
-//	
- * 
- */
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
 		
@@ -658,441 +414,69 @@ public class RecipeView<T> extends Composite {
 
 
 	
-	private void initTable() {
-//		MenuTable.getColumnFormatter().setWidth(0, "10px");
-//		MenuTable.getColumnFormatter().setWidth(1, "40px");
-//		MenuTable.getColumnFormatter().setWidth(2, "170px");
-//		MenuTable.getColumnFormatter().setWidth(4, "80px");
-//		MenuTable.setCellPadding(1);
-		
-		
-
-		
-		
-	    if(recipe.getCookInstruction() != null){
-//	    	cookingInstr.setText(recipe.getCookInstruction());
-	    } else {
-//	    	cookingInstr.setText("Kochanleitung.");
-	    }
-//	    	htmlCooking.addStyleName("cookingInstr");
-//	    	menuDecoInfo.insert(htmlCooking,0);
-	    	
-	    	
-//	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
-//
-//				@Override
-//				public void onMouseOver(MouseOverEvent event) {
-//					// TODO Auto-generated method stub
-//					if (EaternityRechner.loginInfo.isLoggedIn()) {
-//						cookingInstr.setVisible(true);
-//						htmlCooking.setVisible(false);
-//					}
-//				}
-//			});
-//	    	
-	    
-	}
-	
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
-//		showRezept(recipe);
 	}
 
 	public Recipe getRezept(){
 		return this.recipe;
 	}	
 	
-	public void showRezept(final Recipe recipe) {
+	public void showRezept(final Recipe recipe) { 		
+		// this is now getting called by the EaternityRechnerViewImpl:
 
 			if(recipe.getPersons() != null){
-//				amountPersons.setText(recipe.getPersons().toString());
+				amountPersons.setText(recipe.getPersons().toString());
 			} else {
-//				amountPersons.setText("4");
-//				Long persons = Long.parseLong(amountPersons.getText());
-//				recipe.setPersons(persons);
+				amountPersons.setText("4");
+				Long persons = Long.parseLong(amountPersons.getText());
+				recipe.setPersons(persons);
 			}
 			
-			displayZutatImMenu(recipe.Zutaten);
+		    savedHTML.setVisible(false);
+		    openHTML.setVisible(false);
+		    makePublic.setVisible(false);
+		    
 			updateSuggestion();
-//			zutatImMenu.clear();
+
+			if(recipe.image !=null){
+				codeImage.setHTML("<img src='" + recipe.image.getServingUrl() + "=s80-c' />");
+			} else {
+				codeImage.setHTML("<img src='http://placehold.it/80x80' />");
+			}
 			
-//			int row = AddZutatZumMenu(recipe.getZutaten());
-			// add Speicher Recipe Button
 			if(klicky != null){
 				klicky.removeHandler();
 			}
 			
+			// add Save Recipe Button
 			klicky = saveRecipeButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					//TODO if the recipe is already in your personal data-store, don't create a new one.
 					
 					if(RezeptName.getText() != ""){
 						// TODO warn that it wasn't saved in the other case
-//						amountPersons.setText(recipe.getPersons().toString());
-//						Speichere Recipe ab. 
-//						Recipe rezeptSave = new Recipe(RezeptName.getText());
-//						rezeptSave.setOpen(makePublic.getValue());
-//						rezeptSave.addZutaten(recipe.getZutaten());
-//						EaternityRechner.addRezept(rezeptSave);
+
 						recipe.setSymbol(RezeptName.getText());
-//						if(rezeptDetails.getText() != ""){
-//							recipe.setSubTitle(rezeptDetails.getText());
-//						} else {
-//							recipe.setSubTitle("Menü Beschreibung");
-//						}
-						recipe.openRequested = !makePublic.getValue();
+						recipe.openRequested = !makeNotPublic.getValue();
 						recipe.open = false;
-//						recipe.setCookInstruction(cookingInstr.getText()); 
-						
-						if(recipe.getId() == null){
-//							String UserId = EaternityRechner.loginInfo.getId();
-	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
-							
-							// TODO
-							// there should be a collision check!
-							String randomNumber = Integer.toString(Random.nextInt(99999999));
-							
-							//TODO actually, this should not be done here, but the goo.gl shortener request should be made on the server
-							
-							Long newId = Long.parseLong(randomNumber);
-//							if(newId*100> newId.MAX_VALUE){
-//								newId = Long.parseLong(randomNumber);
-//							}
-//							
-							recipe.setId(newId);
-						}
+
 						shortenAndSave();
-//						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
-//						toString(recipe.getId(),34);
-						
-//						EaternityRechner.addRezept(recipe,rezeptView);
 					}
 				}
 			});
 		
 	}
 
-	
-	
-//	should not be called here anymore...
-//	 void selectRow(int row) {
-//		 
-//		 PrepareButton.setVisible(true);
-//		//TODO uncomment this:
-//		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
-////		Window.alert(Integer.toString(row));
-//		
-//		 saved = false;
-//		 
-//		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
-//			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
-//			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-////			 int index = zutatImMenu.indexOf(zutatSpec);
-////			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
-//			 recipe.Zutaten.set(selectedRow , zutatSpec2);
-//
-//		 }
-//		 
-//		IngredientSpecification zutatSpec = recipe.Zutaten.get(row);
-//
-//		if (zutatSpec == null) {
-//			return;
-//		}
-//		
-//		Long ParentZutatId = zutatSpec.getZutat_id();
-//		Ingredient zutat = Search.clientData.getIngredientByID(ParentZutatId);
-//		
-//		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
-//		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
-////
-////		infoZutat.stylePanel(true);
-//
-//		styleRow(selectedRow, false);
-//		
-////		Search.styleRow(Search.selectedRow,false);
-//		Search.selectedRow = -1;
-//		
-//		styleRow(row, true);
-//
-//		selectedRow = row;
-//
-//		if (listener != null) {
-//			listener.onItemSelected(zutatSpec);
-//		}
-//		
-//		updateSuggestion();
-//	}
-
-	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
-		// TODO Auto-generated method stub
-		
-//		if(addInfoPanel.getWidgetCount() ==2){
-			addInfoPanel.remove(2);
-//		}
-//		menuDecoInfo.setVisible(false);
-		
-//		no more edit here
-//		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
-//		addInfoPanel.insert(infoZutat, 2);
-
-		
-	}
-	
-	
-
-	//TODO do the same for Search BUtton Press
-//	void styleRow(int row, boolean selected) {
-//		if (row != -1) {
-//			String style = selectionStyleRow.selectedRow();
-//
-//			if (selected) {
-//				MenuTable.getRowFormatter().addStyleName(row, style);
-//			} else {
-//				MenuTable.getRowFormatter().removeStyleName(row, style);
-//			}
-//		}
-//	}
-//	
 
 
-	
-	void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
 
-		if(askForLess != null){
-
-			if(showImageHandler != null){
-				showImageHandler.removeHandler();
-				showImageHandler = null;
-			}
-			if(askForLess){
-				if(detailText != null){
-					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
-
-					//				rezeptView.detailText.setHeight(height)
-					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
-				}
-			}
-		}
-		
-	// TODO here i don't want to re-initialize everything over and over again.
-//	MenuTable.removeAllRows();;
-//	Integer row = MenuTable.getRowCount();
-
-	for(final IngredientSpecification zutat : zutaten){
-//		
-//	Button removeZutat = new Button("x");
-//
-//	removeZutat.addClickHandler(new ClickHandler() {
-//		public void onClick(ClickEvent event) {
-//			
-//			// this list is kept in sync with the table...
-//			int removedIndex = recipe.Zutaten.indexOf(zutat);
-//			
-//			// by button press both get deleted
-//			recipe.Zutaten.remove(removedIndex);
-//			MenuTable.removeRow(removedIndex);
-//			
-//			// does this work to prevent the error? which error?
-//			// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
-//			styleRow(removedIndex, false);
-//			
-//			if(selectedRow == removedIndex){
-//				if(addInfoPanel.getWidgetCount() ==2){
-//					addInfoPanel.remove(1);
-//				}
-//			} else {
-//				if(selectedRow > removedIndex){
-//					selectedRow = selectedRow-1;
-//					selectRow(selectedRow);
-//				}
-//			}
-//			
-//			// set the colors in the right order...
-//			String style = evenStyleRow.evenRow();
-//			for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
-//				if ((rowIndex % 2) == 1) {
-//					MenuTable.getRowFormatter().addStyleName(rowIndex, style);
-//				} else {
-//					MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
-//				}
-//			}
-//			
-//			// what is this for?
-//			if(askForLess != null){
-//				
-//					if(showImageHandler != null){
-//						showImageHandler.removeHandler();
-//						showImageHandler = null;
-//					}
-//					if(askForLess){
-//				if(detailText != null){
-//					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40 );
-//
-//					//				rezeptView.detailText.setHeight(height)
-//					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
-//				}
-//					}
-//			}
-//			
-//			// update all values, that change as there is one ingredient less...
-//			updateSuggestion();
-//		}
-//	});
-//	
-	final HTML MengeZutat = new HTML();
-	
-	MengeZutat.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-	MengeZutat.setText(Integer.toString(zutat.getMengeGramm()));
-	MengeZutat.setWidth("36px");
-
-//	
-//	MengeZutat.addKeyUpHandler( new KeyUpHandler() {
-//		public void onKeyUp(KeyUpEvent event) {
-//			int keyCode = event.getNativeKeyCode();
-//			if ((!Character.isDigit((char) keyCode)) && (keyCode != KeyCodes.KEY_TAB)
-//					&& (keyCode != KeyCodes.KEY_BACKSPACE)
-//					&& (keyCode != KeyCodes.KEY_DELETE) && (keyCode != KeyCodes.KEY_ENTER) 
-//					&& (keyCode != KeyCodes.KEY_HOME) && (keyCode != KeyCodes.KEY_END)
-//					&& (keyCode != KeyCodes.KEY_LEFT) && (keyCode != KeyCodes.KEY_UP)
-//					&& (keyCode != KeyCodes.KEY_RIGHT) && (keyCode != KeyCodes.KEY_DOWN)) {
-//				// TextBox.cancelKey() suppresses the current keyboard event.
-//				MengeZutat.cancelKey();
-//			} else {
-//				String MengeZutatWert;
-//				int rowhere = getWidgetRow(MengeZutat,MenuTable);
-//				if(!MengeZutat.getText().equalsIgnoreCase("")){
-//					MengeZutatWert = MengeZutat.getText().trim();
-//					zutat.setMengeGramm(Integer.valueOf(MengeZutatWert));
-//				} else {
-//					MengeZutatWert = "";
-//				}
-//				
-//				updateTable(rowhere,zutat);
-////				int length = (int)  Math.round(Double.valueOf(MengeZutatWert).doubleValue() *0.001);
-////				MenuTable.setText(rowhere,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
-////				MenuTable.setHTML(rowhere, 4, "<div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/1000).concat("px'>.</div>")));
-////				updateSuggestion();
-//			}
-//
-//
-//		}
-//
-//
-//	});
-
-	//Name
-	
-//
-//	if ((row % 2) == 1) {
-//		String style = evenStyleRow.evenRow();
-//		MenuTable.getRowFormatter().addStyleName(row, style);
-//	}
-//	MenuTable.setWidget(row, 1, MengeZutat);
-//	
-//	changeIcons(row, zutat);
-//	
-	// Remove Button
-//	MenuTable.setWidget(row, 6, removeZutat);
-	
-	
-//	// drag Handler
-//    HTML handle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
-//    
-////	  no more edit here   
-////    tableRowDragController.makeDraggable(handle);
-//
-//    
-//    MenuTable.setWidget(row, 0, handle);
-
-	
-
-
-	
-	
-//	int length = (int) Math.round(zutatSpec.getCalculatedCO2Value());
-//	//	Menge CO2 Äquivalent
-//	MenuTable.setText(row,3,Integer.toString(length).concat("g CO₂-Äquivalent"));
-//
-//	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Integer.toString(length/1000)).concat("px'>.</div>"));
-	
-//	updateTable(row,zutat);
-////	MenuTable.setText(row,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
-////	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/1000).concat("px'>.</div>")));
-////	updateSuggestion();
-//	row = row+1;
-	}
-}
-
-	public void changeIcons(Integer row, final IngredientSpecification zutat) {
-		HTML icon = new HTML();
-		Boolean itsOkay = true;
-		
-		
-		if(zutat.getZustand() != null){
-			if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
-				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
-					Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-					// In Tagen
-					//		String test = InfoZutat.zutat.getStartSeason();
-					Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStartSeason());		
-					Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStopSeason() );
-
-					if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-							dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
-						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
-						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (zutat.getProduktion().symbol.equalsIgnoreCase("GH")) {
-						// nothing
-					} else {
-						icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley3'><img src='pixel.png' height=1 width=20 /></div>");
-						itsOkay = false;
-					}
-				}
-			} 
-		}
-		
-		if (itsOkay) {
-			if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
-				icon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-
-				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-				//		icon.setStyleName("base-icons smiley1");			
-			} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){
-				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-				//		icon.setStyleName("base-icons smiley2");			
-			} else {
-				icon.setHTML(" g  "+icon.getHTML());
-			}
-		} else {
-			icon.setHTML(" g  "+icon.getHTML());
-		}
-		
-
-		
-		
-		
-		if(zutat.getProduktion() != null && zutat.getProduktion().symbol.equalsIgnoreCase("bio")){
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
-		}
-		
-		icon.setHTML(icon.getHTML()+zutat.getName());
-		
-//		MenuTable.setWidget(row, 2,  icon);
-	}
-	
 	void updateSuggestion() {
+		// this is important...
 
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
 
-		if(recipe.Zutaten.isEmpty()){
-			if(addInfoPanel.getWidgetCount() ==2){
-				addInfoPanel.remove(1);
-			}
-		}
 		
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
@@ -1104,11 +488,10 @@ public class RecipeView<T> extends Composite {
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			// as it is also here!
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-//			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+"g *");
-//			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
+		co2ValueLabel.setHTML(formatted+" g<sup>&#10031;</sup>");
 		
 //		SuggestTable.setCellSpacing(2);
 //		SuggestTable.setText(1,0,"SUMME");
@@ -1342,10 +725,6 @@ public class RecipeView<T> extends Composite {
 			}
 			final Recipe takeThisOne = selectedMax;
 			
-//			Double MenuLabelWert = new Double(0.0);
-//			for (IngredientSpecification zutatSpec : selectedMax.Zutaten) { 
-//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-//			}
 			selectedMax.setCO2Value();
 			Double MenuLabelWert = selectedMax.getCO2Value();
 			HTML suggestText = new HTML("<div style='cursor: pointer;cursor: hand;height:60px;width:230px;background:#F9C88C;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +" g</b></div>");
@@ -1362,8 +741,6 @@ public class RecipeView<T> extends Composite {
 					suggestText = new HTML("<div style='height:60px;width:230px;background:#F48F28;margin-right:30px;border-radius: 3px;border: solid 2px #F48F28;'><div style='height:40px;width:200px;background:#323533;color:#fff;padding-left:5px;border-bottom-right-radius: 3px;border-top-right-radius: 3px;'><b>" + selectedMax.getSymbol() + "</b><br/>"+ selectedMax.getSubTitle() +"</div>CO2-Äq ca: <b>" + NumberFormat.getFormat("##").format(MenuLabelWert)  +" g</b></div>");
 				}
 			}
-			//HTML suggestText = new HTML(selectedMax.getSymbol() + " hat " + NumberFormat.getFormat("##").format(MenuLabelWert)  +"g *");
-//			suggestText.setHTML();
 			superDisplay.getSuggestionPanel().add(suggestText);
 		}
 	}
@@ -1531,14 +908,6 @@ public class RecipeView<T> extends Composite {
 	}
 
 
-	private void updateTable(int row,IngredientSpecification zutatSpec){
-		setRecipeSavedMode(false);
-//		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-//		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent "); // what is this good for?
-		
-//		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
-		updateSuggestion();
-	}
 	
 	private static int getWidgetRow(Widget widget, FlexTable table) {
 		for (int row = 0; row < table.getRowCount(); row++) {
@@ -1553,17 +922,11 @@ public class RecipeView<T> extends Composite {
 	}
 
 
-	public void updateSaison() {
-		if(addInfoPanel.getWidgetCount() ==2){
-			InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
-			 infoZutat.updateSaison(infoZutat.zutatSpec);
-		 }
-	}
-	
 	
 	// here comes the Image Uploader:
 
-   
+   /*
+    * Do this later (if considered useful...)
  
 	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
 	    public void onFinish(IUploader uploader) {
@@ -1590,34 +953,7 @@ public class RecipeView<T> extends Composite {
 	      panelImages.add(image);
 	    }
 	  };
+*/
 
-
-	public boolean isSelected;
 }
 
-//class ComparatorObject{
-//	public Long key;
-//	public Double value;
-//	public Ingredient ingredient;
-//	public ComparatorObject(){
-//		
-//	}
-//}
-
-//class ComparatorRecipe{
-//	public Long key;
-//	public Double value;
-//	public Recipe recipe;
-//	public ArrayList<ComparatorObject> comparator;
-//	public ComparatorRecipe(){
-//		
-//	}
-//}
-//
-//class ComparatorComparator implements Comparator<ComparatorRecipe> {
-//	  public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {
-//		  Double o1 = z1.recipe.getCO2Value();
-//		  Double o2 = z2.recipe.getCO2Value();
-//			return Double.valueOf(o2).compareTo(Double.valueOf(o1));
-//	  }
-//	}

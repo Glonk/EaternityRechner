@@ -230,62 +230,6 @@ public class RecipeEditView<T> extends Composite {
 	  }
 	
 	
-//	Urlshortener urlshortener = GWT.create(Urlshortener.class); 
-	
-//	private void makeRequest() {
-//		  String shortUrl = "http://goo.gl/h8cEU";
-//		  EaternityRechner.urlshortener.url().get(shortUrl)
-//		      // If the service had any optional parameters, they would go here, e.g.:
-//		      // .setOptionalParameter("optionalParam")
-//		      // .setAnotherOptionalParameter("anotherOptionalParameter")
-//		      .to(new Receiver<Url>() {
-//		        @Override
-//		        public void onSuccess(Url url) {
-//		          String longUrl = url.getLongUrl();
-////		          Window.alert(longUrl);
-//		          
-//		        }
-//		      })
-//		      .fire();
-//		}
-	
-	
-//	void shortenAndSave() {
-//		final RecipeEditView rezeptView = this;
-//		String clear = Converter.toString(recipe.getId(),34);
-//	    String longUrl = GWT.getHostPageBaseURL()+ "view.jsp?pid=" + clear;
-//	    
-//	    // Get a new RequestContext which we will execute.
-//	    UrlContext urlContext = EaternityRechner.urlshortener.url();
-//
-//	    // Create a new Url instance with the longUrl we want to insert.
-//	    Url url = urlContext.create(Url.class);
-//	    url.setLongUrl(longUrl);
-////	    Url url = urlContext.create(Url.class).setLongUrl(longUrl);
-//
-//	    // Fire an insert() request with the Url to insert.
-//	    urlContext.insert(url).fire(new Receiver<Url>() {
-//	      @Override
-//	      public void onSuccess(Url response) {
-////	        Window.alert("Long URL: " + response.getLongUrl() + "\n" //
-////	            + "Short URL: " + response.getId() + "\n" //
-////	            + "Status: " + response.getStatus());
-//	        recipe.ShortUrl = response.getId();
-//	        
-//	        EaternityRechner.addRezept(recipe,rezeptView);
-//	      }
-//	     
-//	      @Override
-//	      public void onFailure(ServerFailure error) {
-//	        Window.alert("Error shortening a URL\n" + error.getMessage());
-//	      }
-//	    });
-//	    
-//	    // show the report Button
-//	    
-//	  }
-//	
-	
 	public interface Listener {
 		void onItemSelected(IngredientSpecification item);
 	}
@@ -303,6 +247,8 @@ public class RecipeEditView<T> extends Composite {
 		this.listener = listener;
 	}
 	
+	
+	// This Button is now on the small view (why?)
 //	@UiHandler("reportButton")
 //	void onReportClick(ClickEvent event) {
 //        Date date = new Date();
@@ -366,64 +312,32 @@ public class RecipeEditView<T> extends Composite {
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
-//			rezeptNameTop.setText(RezeptName.getText());
 			rezeptViewOrigin.RezeptName.setText(RezeptName.getText());
 			recipe.setSymbol(RezeptName.getText());
 			superDisplay.setTitleHTML("Sie bearbeiten soeben: " +RezeptName.getText());
 		}
 	}
 	
-//	@UiHandler("RezeptName")
-//	void onMouseOut(MouseOutEvent event) {
-////		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			RezeptName.setVisible(false);
-//			rezeptNameTop.setVisible(true);
-////		}
-//	}
-	
+
 	@UiHandler("cookingInstr")
 	void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
-//			htmlCooking.setText(cookingInstr.getText());
-//			rezeptViewOrigin.cookingInstr.setText(cookingInstr.getText());
 			recipe.setCookInstruction(cookingInstr.getText());
 		}
 	}
 	
-//	@UiHandler("cookingInstr")
-//	void onMouseOutCook(MouseOutEvent event) {
-////		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			cookingInstr.setVisible(false);
-//			htmlCooking.setVisible(true);
-////		}
-//	}
-//	
 
-//	@UiHandler("rezeptSubTitleTop")
-//	void onMouseOverSub(ClickEvent event) {
-////		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			rezeptDetails.setVisible(true);
-//			rezeptSubTitleTop.setVisible(false);
-////		}
-//	}
+
+
 	
 	@UiHandler("rezeptDetails")
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
-//			rezeptSubTitleTop.setText(rezeptDetails.getText());
-//			rezeptViewOrigin.rezeptDetails.setText(rezeptDetails.getText());
 			recipe.setSubTitle(rezeptDetails.getText());
 		}
 	}
 	
-//	@UiHandler("rezeptDetails")
-//	void onMouseOutSub(MouseOutEvent event) {
-////		if (EaternityRechner.loginInfo.isLoggedIn()) {
-//			rezeptDetails.setVisible(false);
-//			rezeptSubTitleTop.setVisible(true);
-////		}
-//	}
-	
+
 	
 	
 	
@@ -488,45 +402,12 @@ public class RecipeEditView<T> extends Composite {
 		MenuTable.getColumnFormatter().setWidth(2, "170px");
 		MenuTable.getColumnFormatter().setWidth(4, "80px");
 		MenuTable.setCellPadding(1);
-		
-		
-
-		
-		
-//	    if(recipe.getCookInstruction() != null){
-//	    	cookingInstr.setText(recipe.getCookInstruction());
-//	    } else {
-//	    	
-//			String cookingIntructions = "Kochanleitung.";
-//			cookingInstr.setText(cookingIntructions);
-//			
-//	    }
-	    
-	    
-	    
-//	    	htmlCooking.addStyleName("cookingInstr");
-//	    	menuDecoInfo.insert(htmlCooking,0);
-//	    	
-	    	
-//	    	htmlCooking.addMouseOverHandler(new MouseOverHandler() {
-//
-//				@Override
-//				public void onMouseOver(MouseOverEvent event) {
-//					// TODO Auto-generated method stub
-//					if (EaternityRechner.loginInfo.isLoggedIn()) {
-//						cookingInstr.setVisible(true);
-//						htmlCooking.setVisible(false);
-//					}
-//				}
-//			});
-	    	
 	    
 	}
 	
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
 		rezeptViewOrigin = (RecipeView) superDisplay.getRezeptList().getWidget(superDisplay.getSelectedRezept(), 1);
-//		showRezept(recipe);
 	}
 
 	public Recipe getRezept(){
@@ -547,63 +428,12 @@ public class RecipeEditView<T> extends Composite {
 			
 			displayZutatImMenu(recipe.Zutaten);
 			updateSuggestion();
-//			updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 			
 			RezeptName.setText(recipe.getSymbol());
 			rezeptDetails.setText(recipe.getSubTitle());
 			
 			superDisplay.setTitleHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
-//			zutatImMenu.clear();
-			
-//			int row = AddZutatZumMenu(recipe.getZutaten());
-			// add Speicher Recipe Button
-//			if(klicky != null){
-//				klicky.removeHandler();
-//			}
-//			
-//			klicky = RezeptButton.addClickHandler(new ClickHandler() {
-//				public void onClick(ClickEvent event) {
-//					if(RezeptName.getText() != ""){
-//						// TODO warn that it wasn't saved in the other case
-//						amountPersons.setText(recipe.getPersons().toString());
-////						Speichere Recipe ab. 
-////						Recipe rezeptSave = new Recipe(RezeptName.getText());
-////						rezeptSave.setOpen(makePublic.getValue());
-////						rezeptSave.addZutaten(recipe.getZutaten());
-////						EaternityRechner.addRezept(rezeptSave);
-//						recipe.setSymbol(RezeptName.getText());
-//						if(rezeptDetails.getText() != ""){
-//							recipe.setSubTitle(rezeptDetails.getText());
-//						} else {
-//							recipe.setSubTitle("Menü Beschreibung");
-//						}
-//						recipe.openRequested = !makePublic.getValue();
-//						recipe.open = false;
-//						recipe.setCookInstruction(cookingInstr.getText()); 
-//						
-//						if(recipe.getId() == null){
-////							String UserId = EaternityRechner.loginInfo.getId();
-//	//						String recipeId = Integer.toString(Search.clientData.yourRecipes.size());
-//							
-//							// TODO
-//							// there should be a collision check!
-//							String randomNumber = Integer.toString(Random.nextInt(99999999));
-//							
-//							Long newId = Long.parseLong(randomNumber);
-////							if(newId*100> newId.MAX_VALUE){
-////								newId = Long.parseLong(randomNumber);
-////							}
-////							
-//							recipe.setId(newId);
-//						}
-//						shortenAndSave();
-////						Converter.fromString(EaternityRechner.loginInfo.getNickname().,34);
-////						toString(recipe.getId(),34);
-//						
-////						EaternityRechner.addRezept(recipe,rezeptView);
-//					}
-//				}
-//			});
+
 		
 	}
 
@@ -1382,14 +1212,8 @@ public class RecipeEditView<T> extends Composite {
 		
 		rezeptViewOrigin.setRecipeSavedMode(saved);
 		rezeptViewOrigin.updateSuggestion();
-		
-//		ancient, should be handled by updateSuggestion()
-//		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-//		MenuTable.setText(row,4,": ca. "+formatted+" g CO₂-Äquivalent ");
-		
-//		MenuTable.setHTML(row, 8, " <div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/100).concat("px'>.</div>")));
 		updateSuggestion();
-//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
+
 	}
 	
 	private static int getWidgetRow(Widget widget, FlexTable table) {
@@ -1444,29 +1268,3 @@ public class RecipeEditView<T> extends Composite {
 	  };
 }
 
-//class ComparatorObject{
-//	public Long key;
-//	public Double value;
-//	public Ingredient ingredient;
-//	public ComparatorObject(){
-//		
-//	}
-//}
-
-//class ComparatorRecipe{
-//	public Long key;
-//	public Double value;
-//	public Recipe recipe;
-//	public ArrayList<ComparatorObject> comparator;
-//	public ComparatorRecipe(){
-//		
-//	}
-//}
-//
-//class ComparatorComparator implements Comparator<ComparatorRecipe> {
-//	  public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {
-//		  Double o1 = z1.recipe.getCO2Value();
-//		  Double o2 = z2.recipe.getCO2Value();
-//			return Double.valueOf(o2).compareTo(Double.valueOf(o1));
-//	  }
-//	}
