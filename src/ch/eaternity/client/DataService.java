@@ -1,5 +1,7 @@
 package ch.eaternity.client;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
-	public Long addRezept(Recipe recipe) throws NotLoggedInException;
+	public Long addRezept(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException;
 	public List<Recipe> getYourRezepte() throws NotLoggedInException;
 	public List<Recipe> getAdminRezepte() throws NotLoggedInException;

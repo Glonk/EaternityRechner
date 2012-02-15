@@ -1,6 +1,7 @@
 package ch.eaternity.server;
 
-import java.text.NumberFormat;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,24 +13,31 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 
+
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.urlfetch.HTTPHeader;
+import com.google.appengine.api.urlfetch.HTTPMethod;
+import com.google.appengine.api.urlfetch.HTTPRequest;
+import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.DataService;
+import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.ShortUrl;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Staff;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 
+import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.NotFoundException;
 
@@ -106,16 +114,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 	
 
-	public Long addRezept(Recipe recipe) throws NotLoggedInException {
+		
+
+	 
+	public Long addRezept(Recipe recipe) throws NotLoggedInException, IOException {
 //		checkLoggedIn();
 		UserService userService = UserServiceFactory.getUserService();
 		if(userService.getCurrentUser() == null){
 			throw new NotLoggedInException("Not logged in.");
 		}
+		
 		DAO dao = new DAO();
-
 		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
-		userRezept.id = recipe.getId();
+		
 		
 		if(!recipe.kitchenIds.isEmpty()){
 			userRezept.kitchenIds = recipe.kitchenIds;
@@ -133,6 +144,38 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		userRezept.setRezept(recipe);
 		dao.ofy().put(userRezept);
+		userRezept.recipe.setId(userRezept.id);
+		
+		// add the shortener call:
+		
+		// define URL to shorten
+		String clear = Converter.toString(recipe.getId(),34);
+	    String longUrl = getBaseUrl() + "view.jsp?pid=" + clear;
+	    
+		
+		//TODO a try and catch (and async?) here
+		HTTPRequest req = new HTTPRequest(
+				new URL("https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAkdIvs2SM0URQn5656q9NugoU-3Ix2LYg"),
+				HTTPMethod.POST);
+		req.addHeader(
+				new HTTPHeader("Content-Type", "application/json"));
+		req.setPayload(
+				new String("{\"longUrl\": \"" + longUrl + "\"}").getBytes());
+		
+		HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
+		String response = new String(res.getContent());
+//		System.out.println(response);
+
+
+		Gson gson = new Gson();
+		ShortUrl shortURL = gson.fromJson(response, ShortUrl.class);   
+		
+		//assign to the recipe
+		userRezept.recipe.ShortUrl = shortURL.id;
+		
+		// then save the recipe again (now with the shortUrl)
+		dao.ofy().put(userRezept);
+
 
 		return userRezept.id;
 	}
@@ -445,4 +488,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return tags;
 	}
 	
+	public String getBaseUrl(){
+		String hostUrl; 
+		String environment = System.getProperty("com.google.appengine.runtime.environment");
+		if (environment.contentEquals("Production")) {
+		    String applicationId = System.getProperty("com.google.appengine.application.id");
+		    String version = System.getProperty("com.google.appengine.application.version");
+		    hostUrl = "http://"+version+"."+applicationId+".appspot.com/";
+		} else {
+		    hostUrl = "http://localhost:8887/";
+		}
+		return hostUrl;
+	}
+	
+	
 }
+
