@@ -177,6 +177,7 @@ public class Recipe implements Serializable, Cloneable{
 		} else {
 			CO2Value = sum;
 		}
+		
 	}
 
 	public double getDeviceCo2Value() {
