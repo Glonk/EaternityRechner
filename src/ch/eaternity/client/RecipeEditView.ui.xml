@@ -61,11 +61,10 @@
 
 		}
 		.cookingInstr {
-		float:left;
 		margin-left:6px;
-		height:113px;
+		height:114px;
 		width:200px;
-		display:inline;
+		/* display:inline; */
 		margin-top:0px;
 		margin-bottom:0px;
 		resize: none;
@@ -296,13 +295,13 @@
 					</g:VerticalPanel>
 					
 					<!-- extra information (picture/description) -->
-					<g:FlowPanel styleName='{style.menuDecoPanel}'
+					<g:HorizontalPanel styleName='{style.menuDecoPanel}'
 						ui:field='menuDecoInfo'>
 						<!-- image and description here? any particular design choices -->
 						<g:HTML ui:field='codeImage'></g:HTML>
 						<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung
 						</g:TextArea>
-					</g:FlowPanel>
+					</g:HorizontalPanel>
 
 					<g:HTMLPanel></g:HTMLPanel>
 				</g:HorizontalPanel>

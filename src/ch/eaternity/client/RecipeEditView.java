@@ -86,7 +86,7 @@ public class RecipeEditView<T> extends Composite {
 //	@UiField HTMLPanel SaveRezeptPanel;
 //	@UiField HTMLPanel topStatusBar;
 	@UiField
-	public FlowPanel menuDecoInfo;
+	public HorizontalPanel menuDecoInfo;
 //	@UiField Button RezeptButton;
 //	@UiField Button reportButton;
 	@UiField Anchor PrepareButton;
@@ -417,7 +417,14 @@ public class RecipeEditView<T> extends Composite {
 	public void showRezept(final Recipe recipe) {
 		
 		
-
+			if(recipe.image !=null){
+				codeImage.setHTML("<img src='" + recipe.image.getServingUrl() + "=s120-c' />");
+			} else {
+				if (presenter.getLoginInfo().isLoggedIn()) {
+					codeImage.setHTML("<img src='http://placehold.it/120x120' />");
+				}
+			}
+			
 			if(recipe.getPersons() != null){
 				amountPersons.setText(recipe.getPersons().toString());
 			} else {

@@ -150,7 +150,71 @@ public class InfoZutatDialog<T> extends Composite {
 
 	}
 
+
 	
+	private void differentOriginSelected(final ListBox herkuenfte){
+
+
+			int width = herkuenfte.getOffsetWidth();
+			herkuenfte.setVisible(false);
+			
+			newExtractionBox.setWidth(Integer.toString(width)+"px");
+			newExtractionBox.setVisible(true);
+			
+			kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+
+			clickerHandler = new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					try {
+						Geocoder geocoder = new Geocoder();
+						geocoder.setBaseCountryCode("ch");
+					    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
+					    	
+						    public void onFailure(int statusCode) {
+						    	  kmText.setHTML("Adresse nicht auffindbar!");
+						    	  Timer t = new Timer() {
+						    		  public void run() {
+						    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+						    		  }
+						    	  };
+						    	  t.schedule(1000);
+						    }
+	
+						    public void onSuccess(JsArray<Placemark> locations) {
+						    	  Placemark place = locations.get(0);
+						    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
+						    	  herkuenfte.insertItem(place.getAddress(), 0);
+						    	  Extraction element = new Extraction(place.getAddress());
+						    	  // TODO come up with stuff like seasons and so forth..
+						    	  element.startSeason = zutat.stdExtraction.startSeason;
+						    	  element.stopSeason = zutat.stdExtraction.stopSeason;
+						    	  element.stdCondition = zutat.stdExtraction.stdCondition;
+						    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
+						    	  element.stdProduction = zutat.stdExtraction.stdProduction;
+		
+						    	  zutat.getExtractions().add(0, element);
+						    	  newExtractionBox.setVisible(false);
+						    	  herkuenfte.setVisible(true);
+						    	  herkuenfte.setSelectedIndex(0);
+						    	  
+						    	  triggerHerkunftChange(zutat, herkuenfte);
+					        }
+				    });
+					    
+					} finally {
+				    	//TODO no request happens if you are not online
+						// check earlier an deactiate the moreExtractions "plus"
+				    }
+				}
+			};
+			if(handlerNotAdded){
+				kmText.addClickHandler(clickerHandler);
+				handlerNotAdded = false;
+			}
+				
+			
+	}
 	
 	public void setValues( final Ingredient zutat){
 		
@@ -164,13 +228,25 @@ public class InfoZutatDialog<T> extends Composite {
 		if(zutat.getExtractions() != null && zutat.getExtractions().size()>0){
 			
 			final ListBox herkuenfte = new ListBox();
+			herkuenfte.setWidth("170px");
+			
 			
 			for(Extraction extraction : zutat.getExtractions()){
 				herkuenfte.addItem(extraction.symbol);
 			}
+			herkuenfte.addItem("andere...");
+
 			final ChangeHandler onHerkunftChange = new ChangeHandler(){
 				public void onChange(ChangeEvent event){
-					triggerHerkunftChange(zutat, herkuenfte);
+					int count = herkuenfte.getItemCount();
+					int selected = herkuenfte.getSelectedIndex();
+					if(count-1 == selected){
+						// we have selected the "andere" item
+						differentOriginSelected(herkuenfte);
+						
+					} else {
+						triggerHerkunftChange(zutat, herkuenfte);
+					}
 				}
 
 			};
@@ -194,6 +270,7 @@ public class InfoZutatDialog<T> extends Composite {
 	    	}
 	    	flow.add(kmText);
 	    	flow.insert(newExtractionBox,0);
+	    	
 	    	newExtractionBox.setVisible(false);
 			
 	    	//TODO each extraction has its own season... this has flaws .. hack? right now it is anyway a hack
@@ -262,8 +339,8 @@ public class InfoZutatDialog<T> extends Composite {
 			});
 					
 
-
-	    	flow.add(moreExtractions);
+	    	// i want no more plus, but the "andere" field
+//	    	flow.add(moreExtractions);
 			
 			herkuenfte.setSelectedIndex(zutat.getExtractions().indexOf(zutatSpec.getHerkunft()));
 			
@@ -370,10 +447,6 @@ public class InfoZutatDialog<T> extends Composite {
 			}
 		}
 		
-
-		
-
-		
 	}
 	
 
@@ -382,6 +455,19 @@ public class InfoZutatDialog<T> extends Composite {
 		Boolean notChanged = true;
 		// TODO update also choice for moTransportations
 		zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
+		// the case that nothing changed
+		if(TopPanel.currentHerkunft.contentEquals(zutatSpec.getHerkunft().symbol)){
+			
+			zutatSpec.setDistance(0.0);
+	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
+	    	if(formatted.contentEquals("0")){
+	    		kmText.setHTML("ca. " + formatted + "km");
+	    	}else{
+	    		kmText.setHTML("ca. " + formatted + "00km");
+	    	}
+	    	notChanged = false;
+	    	
+		} else {
 		for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
 			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
@@ -455,18 +541,20 @@ public class InfoZutatDialog<T> extends Composite {
 		if(notChanged){
 			kmText.setHTML("Strecke nicht gefunden");
 			zutatSpec.setDistance(0.0);
+			
 			final String to = zutatSpec.getHerkunft().symbol;
 			final String from = TopPanel.currentHerkunft;
+			
 			geocoder.getLocations(to, new LocationCallback() {
 			      public void onFailure(int statusCode) {
-			        Window.alert("Diese Zutat hat einen falsche Herkunft: "+ to);
+			        Window.alert("Herkunft nicht auffindbar: "+ to);
 			      }
 
 			      public void onSuccess(final JsArray<Placemark> locationsTo) {
 
 			    	  geocoder.getLocations(from, new LocationCallback() {
 					      public void onFailure(int statusCode) {
-					        Window.alert("Wir können Ihre Adresse nicht zuordnen: " + from);
+					        Window.alert("Adresse nicht auffindbar: " + from);
 					      }
 
 							      public void onSuccess(JsArray<Placemark> locationsFrom) {
@@ -487,9 +575,13 @@ public class InfoZutatDialog<T> extends Composite {
 			    });
 			
 		}
+		}
 
 		updateZutatCO2();
 	}
+	
+	
+	
 	
 	public void updateSaison(IngredientSpecification zutatSpec) {
 		// if it is Greenhouse, or conserved then it should be kohärent...

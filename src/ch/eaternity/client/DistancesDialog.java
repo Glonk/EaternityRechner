@@ -2,6 +2,7 @@ package ch.eaternity.client;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -73,16 +74,84 @@ public class DistancesDialog<T> extends DialogBox{
 		processAddress(string,true);
 	}
 
+	void processAddress(final String address, final boolean firstTime) {
+		if (address.length() > 1) { 
+			geocoder.setBaseCountryCode("ch");
+			geocoder.getLocations(address, new LocationCallback() {
+				public void onFailure(int statusCode) {
+					presenter.getTopPanel().locationLabel.setText("Wir können diese Adresse nicht finden: ");
+				}
+
+				public void onSuccess(JsArray<Placemark> locations) {
+					Placemark place = locations.get(0);
+					presenter.getTopPanel().locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
+					
+					currentLocation = place.getAddress();
+					setText("Berechne alle Routen von: " + place.getAddress());
+					TopPanel.currentHerkunft = place.getAddress();
+
+					calculateDistances(place.getAddress(),firstTime);
+
+				}
+			});
+		} else {
+			presenter.getTopPanel().locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
+		}
+
+	}
+	
+	private  void calculateDistances(String newHomeLocation, boolean firstTime) {
+		// if we have them already in the datastore, take them...
+		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) presenter.getClientData().getDistances();
+		ArrayList<String> distancesRequested = new ArrayList<String>();
+		
+		boolean notFound;
+		List<Ingredient> zutaten = presenter.getClientData().getIngredients();
+		for( Ingredient zutat : zutaten){
+			for(Extraction herkunft : zutat.getExtractions()){
+
+				notFound = true;
+				
+				for(SingleDistance singleDistance : distances){
+					if(singleDistance.getFrom().contentEquals(newHomeLocation) && 
+							singleDistance.getTo().contentEquals(herkunft.symbol)){
+						notFound = false;
+					}
+				}
+				if(notFound && !distancesRequested.contains(herkunft.symbol) ){
+					// so we don't request them twice...
+					distancesRequested.add(herkunft.symbol);
+					
+					// now, start the actual request!
+					getDistance( newHomeLocation, herkunft.symbol);
+				}
+
+
+			}
+
+		}
+		
+		if(!distancesRequested.isEmpty() && firstTime){
+			// okay, we need to fetch them, so show what you fetch!
+			openDialog();
+		} else {
+			// we got already all the data, so just update everything respectively
+			updateAllZutatenInRecipes();
+		}
+	}
+
 
 	private void openDialog() {
+		// Dialog only opens if distances need to be fetched
 		setWidget(binder.createAndBindUi(this));
+		setAnimationEnabled(true);
+		setGlassEnabled(true);
 		show();
 		scrollPanel.setHeight("400px");
 		center();
 		clientLocationDialog.setText(currentLocation);
-		setText("Versuche Routen zu berechnen");
-		setAnimationEnabled(true);
-		setGlassEnabled(true);
+		setText("Es werden die Routen berechnet.");
+
 	}
 
 
@@ -136,7 +205,7 @@ public class DistancesDialog<T> extends DialogBox{
 				}
 				public void onSuccess(Integer ignore) {
 					presenter.getClientData().getDistances().addAll(allDistances);
-					updateAllZutaten(); 
+					updateAllZutatenInRecipes(); 
 					//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
 				}
 			});
@@ -145,40 +214,10 @@ public class DistancesDialog<T> extends DialogBox{
 		hide();
 	}
 
-	private  void calculateDistances(String string, boolean firstTime) {
-		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) presenter.getClientData().getDistances();
-		ArrayList<String> distancesRequested = new ArrayList<String>();
-		boolean notFound;
-		List<Ingredient> zutaten = presenter.getClientData().getIngredients();
-		for( Ingredient zutat : zutaten){
-			for(Extraction herkunft : zutat.getExtractions()){
-
-				notFound = true;
-				for(SingleDistance singleDistance : distances){
-					if(singleDistance.getFrom().contentEquals(string) && 
-							singleDistance.getTo().contentEquals(herkunft.symbol)){
-						notFound = false;
-					}
-				}
-				if(notFound && !distancesRequested.contains(herkunft.symbol) ){
-
-					distancesRequested.add(herkunft.symbol);
-					getDistance( string, herkunft.symbol);
-				}
 
 
-			}
-
-		}
-		if(!distancesRequested.isEmpty() && firstTime){
-			openDialog();
-		} else {
-			updateAllZutaten();
-		}
-	}
-
-
-	private void updateAllZutaten() {
+	private void updateAllZutatenInRecipes() {
+		
 		for(Widget widget : superDisplay.getRezeptList()){
 			RecipeView rezeptView = ((RecipeView) widget);
 			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
@@ -190,6 +229,8 @@ public class DistancesDialog<T> extends DialogBox{
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 
 						zutatSpec.setDistance(singleDistance.getDistance());
+						
+						// and this must be propagated forward to the recipeEditView
 						rezeptView.getRezept().Zutaten.set(index, zutatSpec);
 
 						break;
@@ -197,14 +238,42 @@ public class DistancesDialog<T> extends DialogBox{
 
 				}
 			}
+			
+			// from this everything should be propagated and updated:
 			rezeptView.updateSuggestion();
 
+			// the infoPanel should be updated by recipeEditView not here
 //			if(rezeptView.addInfoPanel.getWidgetCount() ==2){
 //				rezeptView.addInfoPanel.remove(1);
 //			}
+			
 		}
+		
+		updateOriginOfAllZutaten();
 	}
 
+
+	private void updateOriginOfAllZutaten() {
+		Iterator<Ingredient> ingredientIterator =  presenter.getClientData().getIngredients().iterator();
+		while(ingredientIterator.hasNext()) {
+
+			/*
+			 * Um es richtig zu machen, müsste man mit der geocode abfrage das Land bestimmen.
+			 * Dann entsprechend schauen, ob man zu Zutat dieses Land schon gespeichert hat.
+			 * Diese Informationen dann übernehmen.
+			 * 
+			 * Wenn man zur Zutat noch nichts gespeichert hat, muss man diese Information manuell nachtragen...
+			 * D.h. es braucht eine Benachrichtigung, dass sie noch fehlt...
+			 */
+			
+			Ingredient ingredient = ingredientIterator.next(); 
+			ingredient.stdExtractionSymbol = TopPanel.currentHerkunft;
+			ingredient.stdExtraction.symbol = TopPanel.currentHerkunft;
+			ingredient.getExtractions().add(0,ingredient.stdExtraction); // add to the top of the List... (to complicated :)
+
+		} 
+		
+	}
 
 	private void showTable() {
 
@@ -233,37 +302,6 @@ public class DistancesDialog<T> extends DialogBox{
 		mapsTable.removeAllRows();
 		processAddress(clientLocationDialog.getText(),false);
 	}
-
-
-	void processAddress(final String address, final boolean firstTime) {
-		if (address.length() > 1) { 
-			geocoder.setBaseCountryCode("ch");
-			geocoder.getLocations(address, new LocationCallback() {
-				public void onFailure(int statusCode) {
-					presenter.getTopPanel().locationLabel.setText("Wir können diese Adresse nicht finden: ");
-				}
-
-				public void onSuccess(JsArray<Placemark> locations) {
-					Placemark place = locations.get(0);
-					presenter.getTopPanel().locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
-					currentLocation = place.getAddress();
-					setText("Berechne alle Routen von: " + place.getAddress());
-					TopPanel.currentHerkunft = place.getAddress();
-
-					calculateDistances(place.getAddress(),firstTime);
-
-				}
-			});
-		} else {
-			presenter.getTopPanel().locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
-		}
-
-	}
-
-
-
-
-
 
 
 	void getDistance(final String from, final String to ) {
