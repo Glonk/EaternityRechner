@@ -261,13 +261,15 @@
 				<g:HorizontalPanel styleName='{style.hideOverflow}'
 					ui:field='addInfoPanel'>
 					<g:VerticalPanel>
+					
+					<!-- title of the recipe -->
 						<g:HorizontalPanel styleName='{style.recipeTitle}'>
 							<g:HTMLPanel ui:field="rezeptTitle">
 								<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Ihr Menu
 								</g:TextBox>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
-
+					<!-- sub-title of the recipe -->
 						<g:HTMLPanel styleName='{style.recipeSmallDetail}'>
 							<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Menu
 								Beschreibung</g:TextBox>
@@ -279,6 +281,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 
+					<!-- ingredients list -->
 						<g:VerticalPanel ui:field='MenuTableWrapper'
 							styleName='{style.MenuTableWrapper}'>
 							<g:HTMLPanel>
@@ -289,24 +292,29 @@
 							<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'
 								cellSpacing='0' cellPadding='0' />
 						</g:VerticalPanel>
-
-
+	
 					</g:VerticalPanel>
+					
+					<!-- extra information (picture/description) -->
 					<g:FlowPanel styleName='{style.menuDecoPanel}'
 						ui:field='menuDecoInfo'>
+						<!-- image and description here? any particular design choices -->
+						<g:HTML ui:field='codeImage'></g:HTML>
 						<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung
 						</g:TextArea>
 					</g:FlowPanel>
 
 					<g:HTMLPanel></g:HTMLPanel>
 				</g:HorizontalPanel>
+				
+				<!-- extra information below... right now not used -->
 				<g:HTML ui:field='detailText' styleName='{style.detailText}'></g:HTML>
 				<!-- g:HTML ><div style='padding-left:274px;margin-top:0px;margin-bottom:0px;color:#fff;' 
 					>* CO₂-Äquivalent</div></g:HTML -->
 				<g:Anchor styleName='{style.prepare}' ui:field="PrepareButton"
 						text="Zubereitung hinzufügen" />
 
-				<g:HTML ui:field='codeImage'></g:HTML>
+				
 
 				<!-- g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
 					<g:Button styleName='{style.gwt-Button}' ui:field="RezeptButton"

@@ -472,33 +472,11 @@ void onKeyUp(KeyUpEvent event) {
 
 
 	void updateSuggestion() {
-		// this is important...
-
-		Double MenuLabelWert = 0.0;
-		Double MaxMenuWert = 0.0;
 
 		
-		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
-			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-			if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
-				MaxMenuWert = zutatSpec.getCalculatedCO2Value();
-			}
-			
-		}
-		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
-			// as it is also here!
-			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-		}
-		
-		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
-		co2ValueLabel.setHTML(formatted+" g<sup>&#10031;</sup>");
-		
-//		SuggestTable.setCellSpacing(2);
-//		SuggestTable.setText(1,0,"SUMME");
-//		SuggestTable.getColumnFormatter().setWidth(0, "215px");
-//		SuggestTable.setHTML(1,1,"ca <b>"+formatted+"g</b> *");
-//		SuggestTable.getColumnFormatter().setWidth(1, "140px");
-//		
+		recipe.setCO2Value();
+		String formattedCO2Value = NumberFormat.getFormat("##").format(recipe.getCO2Value());
+		co2ValueLabel.setHTML(formattedCO2Value+" g<sup>&#10031;</sup>");
 		
 		// this is right now not relevant, yet gets executed
 //		updtTopSuggestion();
