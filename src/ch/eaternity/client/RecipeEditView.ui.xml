@@ -165,6 +165,17 @@
 		#fff;
 
 		}
+		
+		.CommentTable {
+
+		float: left;
+		clear: both;
+		text-align: left;
+		border: 1px;
+
+		}
+		
+		
 		.MenuTableWrapper {
 		background:#F9C88C;
 		margin: 15px 15px 0px 10px;
@@ -295,15 +306,20 @@
 					</g:VerticalPanel>
 					
 					<!-- extra information (picture/description) -->
-					<g:HorizontalPanel styleName='{style.menuDecoPanel}'
+					<g:VerticalPanel styleName='{style.menuDecoPanel}'
 						ui:field='menuDecoInfo'>
-						<!-- image and description here? any particular design choices -->
-						<g:HTML ui:field='codeImage'></g:HTML>
-						<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung
-						</g:TextArea>
-					</g:HorizontalPanel>
+						<g:HorizontalPanel >
+							<!-- image and description here? any particular design choices -->
+							<g:HTML ui:field='codeImage'></g:HTML>
+							<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung
+							</g:TextArea>
+						</g:HorizontalPanel>
+						
+						<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}' cellSpacing='2' cellPadding='2' />
+					</g:VerticalPanel>
 
-					<g:HTMLPanel></g:HTMLPanel>
+
+
 				</g:HorizontalPanel>
 				
 				<!-- extra information below... right now not used -->

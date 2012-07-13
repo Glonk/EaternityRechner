@@ -8,6 +8,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 
+
 import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -66,25 +67,28 @@ public interface EaternityRechnerView<T> extends IsWidget
 	Search getSearchPanel();
 	
 	int getSelectedMonth();
-	void showRecipeClone(Recipe recipe);
+	void cloneRecipe(Recipe recipe);
 	void loadYourRechner();
 	HandlerRegistration loadAdmin();
 	void loadLogin();
 	FlexTable getRezeptEditList();
 	FlexTable getRezeptList();
-	void setSelectedRezept(int i);
-	int getSelectedRezept();
+	void setSelectedRecipeNumber(int i);
+	int getSelectedRecipeNumber();
 	HorizontalPanel getSuggestionPanel();
 	ComplexPanel getDragArea();
 	void setTitleHTML(String string);
 	void styleRezept(int selectedRezept, boolean b);
 	void updateSaisonAndMore();
-	int AddZutatZumMenu(Ingredient item);
+	void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView);
 	void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog);
 	
 
 	void onResize();
-	void adjustStickyEdit();
+	void adjustStickyEditLayount();
 	void setEditCoverActivated(boolean b);
 	void closeRecipeEditView();
+	RecipeView createNewRecipeView();
+	RecipeView getSelectedRecipeView();
+	void displayRecipeEditView(RecipeView rezeptView);
 }

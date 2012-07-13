@@ -1,8 +1,8 @@
-package ch.eaternity.client.comparators;
+package ch.eaternity.shared.comparators;
 
 import java.util.Comparator;
 
-import ch.eaternity.client.comparators.ComparatorRecipe;
+import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 public class ComparatorComparator implements Comparator<ComparatorRecipe> {
 	public int compare(ComparatorRecipe z1, ComparatorRecipe z2) {

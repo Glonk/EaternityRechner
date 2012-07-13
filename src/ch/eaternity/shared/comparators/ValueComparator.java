@@ -1,4 +1,4 @@
-package ch.eaternity.client.comparators;
+package ch.eaternity.shared.comparators;
 
 import java.util.Comparator;
 

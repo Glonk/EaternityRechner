@@ -895,7 +895,7 @@ for(Recipe recipe: rezeptePersonal){
 			%>			
 			<table style="font-weight: 300;font-size: 14pt; margin-top:-4em;">
 						<!-- label of table -->
-			<tr>
+			<tr width="660">
 			<td height="140">
 				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
 				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.</p>

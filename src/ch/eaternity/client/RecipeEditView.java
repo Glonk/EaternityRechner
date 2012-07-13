@@ -14,9 +14,6 @@ import java.util.List;
 
 
 
-import ch.eaternity.client.comparators.ComparatorComparator;
-import ch.eaternity.client.comparators.ComparatorObject;
-import ch.eaternity.client.comparators.ComparatorRecipe;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.client.widgets.PhotoGallery;
@@ -25,13 +22,19 @@ import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.RecipeComment;
+import ch.eaternity.shared.comparators.ComparatorComparator;
+import ch.eaternity.shared.comparators.ComparatorObject;
+import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 
 
 
+import com.gargoylesoftware.htmlunit.javascript.host.EventHandler;
 import com.google.api.gwt.services.urlshortener.shared.Urlshortener.UrlContext;
 import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -86,13 +89,14 @@ public class RecipeEditView<T> extends Composite {
 //	@UiField HTMLPanel SaveRezeptPanel;
 //	@UiField HTMLPanel topStatusBar;
 	@UiField
-	public HorizontalPanel menuDecoInfo;
+	public VerticalPanel menuDecoInfo;
 //	@UiField Button RezeptButton;
 //	@UiField Button reportButton;
 	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
 //	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
+	@UiField FlexTable commentTable;
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
 	@UiField
@@ -131,6 +135,9 @@ public class RecipeEditView<T> extends Composite {
 	public FlexTableRowDropController flexTableRowDropController = null;
 	
 	boolean saved;
+	boolean infoDialogIsOpen = false;
+	
+	int numberofComments = 0;
 	
 	private Listener listener;
 	int  selectedRow = 0;
@@ -155,8 +162,12 @@ public class RecipeEditView<T> extends Composite {
 			
 			// Bind it to event so uploadWidget can refresh the gallery
 //			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
-//			addInfoPanel.insert(uploadWidget,0);
-			menuDecoInfo.add(uploadWidget);
+			menuDecoInfo.insert(uploadWidget,0);
+//			menuDecoInfo.add( uploadWidget);
+			
+
+
+
 		}
 //	    
 		
@@ -181,12 +192,140 @@ public class RecipeEditView<T> extends Composite {
 //		}
 //		
 	}
+
+
+	// here we add the visuals for commenting
+	public void addCommentingField() {
+		
+
+		
+		numberofComments = recipe.comments.size();
+		
+		final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
+		addCommentButton.addClickHandler(new ClickHandler() {
+		public void onClick(ClickEvent event) {
+				commentTable.remove(addCommentButton);
+				fillCommentBoxes(null,numberofComments);
+				numberofComments = numberofComments +1;
+				commentTable.setWidget(numberofComments ,1,addCommentButton);
+
+			}
+
+		});
+		
+		for (int i = 0; i < numberofComments; i++) {
+			fillCommentBoxes(recipe.comments.get(i),i);
+		}
+		
+		commentTable.setWidget(numberofComments ,1,addCommentButton);
+	}
+	
+	public void fillCommentBoxes(RecipeComment recipeComment, int thisRow) {
+		
+		
+		final Anchor removeRowButton = new Anchor("x");
+		removeRowButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int thisRow = getWidgetRow(removeRowButton,commentTable);
+				commentTable.removeRow(thisRow);
+			}
+		});
+		
+		TextBox commentBox = new TextBox();
+		if(recipeComment != null){
+			commentBox.setText(recipeComment.symbol);
+		}
+		
+		commentBox.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event)  {
+				updateComments();
+			}
+			
+		});
+		
+	
+		commentBox.setWidth("273px");
+		
+		if(recipeComment != null && recipeComment.amount != 0){
+				setAmountBox(thisRow, recipeComment.amount);
+		} else {
+			final Anchor addCommentAmountButton = new Anchor("+");
+			
+			addCommentAmountButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					int thisRow = getWidgetRow(addCommentAmountButton,commentTable);
+					commentTable.remove(addCommentAmountButton);
+					setAmountBox(thisRow, 0);
+				}
+
+				
+			});
+			
+			commentTable.setWidget(thisRow ,2,addCommentAmountButton);
+		}
+
+		
+		
+		
+		commentTable.setWidget(thisRow,0,removeRowButton);
+		commentTable.setWidget(thisRow,1,commentBox);
+		
+	}
+	
+	public void setAmountBox(int thisRow, int amount) {
+		TextBox commentAmountBox = new TextBox();
+		commentAmountBox.setText(Integer.toString(amount));
+		commentAmountBox.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event)  {
+				int keyCode = event.getNativeKeyCode();
+				if ((Character.isDigit((char) keyCode)) 
+						|| (keyCode == KeyCodes.KEY_BACKSPACE)
+						|| (keyCode == KeyCodes.KEY_DELETE) ) {
+					updateComments();
+				}
+			}
+
+
+			
+		});
+		commentAmountBox.setWidth("20px");
+		commentTable.setWidget(thisRow ,2,commentAmountBox);
+	}
+	
+	private void updateComments() {
+		
+		recipe.comments.clear();
+		for (int i = 0; i < commentTable.getRowCount()-1; i++) {
+			TextBox readBox = (TextBox) commentTable.getWidget(i, 1);
+			if(readBox.getText() != ""){
+				RecipeComment recipeComment = new RecipeComment(readBox.getText());
+				try{
+					TextBox readAmountBox = (TextBox) commentTable.getWidget(i, 2);
+					recipeComment.amount = Integer.parseInt(readAmountBox.getText());
+				} catch (ClassCastException error) {
+					recipeComment.amount = 0;
+				} catch (NumberFormatException error2) {
+					
+				}
+				
+				recipe.comments.add(recipeComment);
+			}
+			
+			
+		}
+		
+		saved = false;
+		
+		
+		
+	}
+	
 	private EaternityRechnerView superDisplay;
 	
 //	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
 	
 	
-	public RecipeEditView(Recipe recipe,EaternityRechnerView superDisplay) {
+	public RecipeEditView(RecipeView rezeptView, Recipe recipe,EaternityRechnerView superDisplay) {
 		this.superDisplay = superDisplay;
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
@@ -200,10 +339,12 @@ public class RecipeEditView<T> extends Composite {
 //	    currentEdit = EaternityRechner.selectedRezept;
 	    
 
-	    setRezept(recipe);
+	    setRezept(recipe, rezeptView);
 	    saved = true;
 	    initTable();
-//	    
+
+
+	    
 //	    RezeptName.setVisible(false);
 //	    rezeptDetails.setVisible(false);
 //	    cookingInstr.setVisible(false);
@@ -351,8 +492,9 @@ public class RecipeEditView<T> extends Composite {
 		 
 		 
 		 // what is this???
-		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
-			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
+		 if(selectedRow != -1 && infoDialogIsOpen){
+			 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
+			 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(1));
 			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
 			 recipe.Zutaten.set(selectedRow , zutatSpec2);
 		 }
@@ -365,14 +507,16 @@ public class RecipeEditView<T> extends Composite {
 		 
 
 		// remove window
-		addInfoPanel.remove(2);
+		addInfoPanel.remove(1);
 		
 		// cooking instructions etc...
 		menuDecoInfo.setVisible(false);
 		
 		InfoPreparationDialog infoPrepare = new InfoPreparationDialog(MenuTable,recipe,SuggestTable,this);
-		
-		addInfoPanel.insert(infoPrepare, 2);
+		VerticalPanel verticalDummy = new VerticalPanel();
+		verticalDummy.add(infoPrepare);
+		addInfoPanel.insert(verticalDummy, 1);
+		infoDialogIsOpen = true;
 		
 		// is this necessary... it should be only on change...
 		updateSuggestion();
@@ -405,9 +549,11 @@ public class RecipeEditView<T> extends Composite {
 	    
 	}
 	
-	public void setRezept(Recipe recipe){
+	public void setRezept(Recipe recipe, RecipeView rezeptView){
 		this.recipe = recipe;
-		rezeptViewOrigin = (RecipeView) superDisplay.getRezeptList().getWidget(superDisplay.getSelectedRezept(), 1);
+		rezeptViewOrigin = rezeptView;
+//		rezeptViewOrigin = superDisplay.getSelectedRecipeView();
+//		rezeptViewOrigin = (RecipeView) superDisplay.getRezeptList().getWidget(superDisplay.getSelectedRecipeNumber(), 1);
 	}
 
 	public Recipe getRezept(){
@@ -440,6 +586,11 @@ public class RecipeEditView<T> extends Composite {
 			rezeptDetails.setText(recipe.getSubTitle());
 			
 			superDisplay.setTitleHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
+			
+			if (presenter.getLoginInfo().isLoggedIn()) {
+				// only show this if the user is logged in:
+				addCommentingField();
+			}
 
 		
 	}
@@ -459,12 +610,16 @@ public class RecipeEditView<T> extends Composite {
 		
 		 saved = false;
 		 
-		 if(selectedRow != -1 && addInfoPanel.getWidgetCount() ==2){
-			 InfoZutatDialog infoDialog = (InfoZutatDialog)(addInfoPanel.getWidget(1));
-			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
+		 if(selectedRow != -1 && infoDialogIsOpen ){
+//			 addInfoPanel.getWidgetCount() ==2
+		 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
+		 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(0));
+			 
+		IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
 //			 int index = zutatImMenu.indexOf(zutatSpec);
 //			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
-			 recipe.Zutaten.set(selectedRow , zutatSpec2);
+		recipe.Zutaten.set(selectedRow , zutatSpec2);
+
 
 		 }
 		 
@@ -501,17 +656,25 @@ public class RecipeEditView<T> extends Composite {
 	}
 
 	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
-		// TODO Auto-generated method stub
-		
+		// if another one was already open
+		if(infoDialogIsOpen){
+			addInfoPanel.remove(1);
+		} else {
+			infoDialogIsOpen = true;
+		}
 //		if(addInfoPanel.getWidgetCount() ==2){
-			addInfoPanel.remove(2);
+//		 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
+//		 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(1));
+//			addInfoPanel.remove(1);
 //			EaternityRechner.addInfoPanel.remove(2);
 //		}
 		menuDecoInfo.setVisible(false);
 		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
 		infoZutat.setPresenter(presenter);
 //		addInfoPanel.add(infoZutat);
-		addInfoPanel.insert(infoZutat, 2);
+		VerticalPanel verticalDialog = new VerticalPanel();
+		verticalDialog.add(infoZutat);
+		addInfoPanel.insert(verticalDialog, 1);
 //		EaternityRechner.addInfoPanel.insert(infoZutat, 2);
 //		addInfoPanel.add(new HTML("test"));
 		
@@ -1037,7 +1200,7 @@ public class RecipeEditView<T> extends Composite {
 	          HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
 	              public void onClick(ClickEvent event) {
 	                  // add receipe to the Worksheet Panel
-	            	  superDisplay.showRecipeClone(takeThisOne);
+	            	  superDisplay.cloneRecipe(takeThisOne);
 	              }
 	          });
 	          

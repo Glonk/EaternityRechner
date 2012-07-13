@@ -21,16 +21,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import ch.eaternity.client.comparators.NameComparator;
-import ch.eaternity.client.comparators.RezeptNameComparator;
-import ch.eaternity.client.comparators.RezeptValueComparator;
-import ch.eaternity.client.comparators.ValueComparator;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.comparators.NameComparator;
+import ch.eaternity.shared.comparators.RezeptNameComparator;
+import ch.eaternity.shared.comparators.RezeptValueComparator;
+import ch.eaternity.shared.comparators.ValueComparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -419,7 +419,7 @@ public class Search<T> extends ResizeComposite {
 			}
 		};
 
-		superDisplay.showRecipeClone(item);
+		superDisplay.cloneRecipe(item);
 		t.schedule(200);
 
 		selectedRow = row;
@@ -448,7 +448,7 @@ public class Search<T> extends ResizeComposite {
 			}
 		};
 
-		superDisplay.showRecipeClone(item);
+		superDisplay.cloneRecipe(item);
 		t.schedule(200);
 
 		selectedRow = row;
@@ -500,7 +500,18 @@ public class Search<T> extends ResizeComposite {
 			}
 		};
 
-		superDisplay.AddZutatZumMenu(item);
+		final RecipeView rezeptView;
+		int selectedRecipe =superDisplay.getSelectedRecipeNumber();
+		if(selectedRecipe != -1){
+			rezeptView = superDisplay.getSelectedRecipeView();
+		} else {
+			rezeptView = superDisplay.createNewRecipeView();
+		}
+		superDisplay.addOneIngredientToMenu(item,rezeptView );
+		rezeptView.showRezept(rezeptView.recipe);
+		superDisplay.displayRecipeEditView(rezeptView);
+		
+		superDisplay.adjustStickyEditLayount();
 
 		t.schedule(200);
 
@@ -1272,67 +1283,3 @@ public class Search<T> extends ResizeComposite {
 	
 }
 
-
-/**
- * Some Comparator classes to match Recipes
- */
-
-// TODO check if there is already another class!
-
-//class NameComparator implements Comparator<Ingredient> {
-//	  public int compare(Ingredient z1, Ingredient z2) {
-//		  String o1 = z1.getSymbol();
-//		  String o2 = z2.getSymbol();
-//	    if(o1 instanceof String && o2 instanceof String) {
-//	      String s1 = (String)o1;
-//	      String s2 = (String)o2;
-//	      s1 = s1.substring(0, 1);
-//	      s2 = s2.substring(0, 1);
-//	      return s1.compareToIgnoreCase(s2);
-//	    }
-//	    return 0;
-//	  }
-//	}
-
-//	class ValueComparator implements Comparator<Ingredient> {
-//	  public int compare(Ingredient z1, Ingredient z2) {
-//		  long o1 = z1.getCo2eValue();
-//		  long o2 = z2.getCo2eValue();
-//		  
-//	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
-//	  }
-//	}
-
-//	class RezeptValueComparator implements Comparator<Recipe> {
-//		public int compare(Recipe r1, Recipe r2) {
-//			Double o1 = getRezeptCO2(r1.getZutaten());
-//			Double o2 = getRezeptCO2(r2.getZutaten());
-//
-//			return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
-//
-//		}
-//
-//		private Double getRezeptCO2(List<IngredientSpecification> Zutaten) {
-//			Double MenuLabelWert = 0.0;
-//			for (IngredientSpecification zutatSpec : Zutaten) { 
-//				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-//
-//			}
-//			return MenuLabelWert;
-//		}
-//	}
-//	
-//	class RezeptNameComparator implements Comparator<Recipe> {
-//		  public int compare(Recipe z1, Recipe z2) {
-//			  String o1 = z1.getSymbol();
-//			  String o2 = z2.getSymbol();
-//		    if(o1 instanceof String && o2 instanceof String) {
-//		      String s1 = (String)o1;
-//		      String s2 = (String)o2;
-//		      s1 = s1.substring(0, 1);
-//		      s2 = s2.substring(0, 1);
-//		      return s1.compareToIgnoreCase(s2);
-//		    }
-//		    return 0;
-//		  }
-//		}

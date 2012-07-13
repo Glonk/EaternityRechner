@@ -563,7 +563,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		recipe.openRequested = true;
 		
 		//display the recipe
-		display.showRecipeClone(recipe);
+		display.cloneRecipe(recipe);
 		
 	}
 

@@ -8,10 +8,14 @@
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
+<%@ page import="ch.eaternity.shared.RecipeComment" %>
+<%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
+
 
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Arrays" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.util.Collections" %>
 
@@ -34,140 +38,140 @@
 <%
 // Hole Rezepte die zum Benutzer gehören
 
-		String BASEURL = request.getRequestURL().toString();
+String BASEURL = request.getRequestURL().toString();
 
 
-	    UserService userService = UserServiceFactory.getUserService();
-	    User user = userService.getCurrentUser();
-		
-		String tempIds = request.getParameter("ids");
-		String permanentId = request.getParameter("pid");
-		String pdf = request.getParameter("pdf");
-		
-		Boolean doPdf = false;
-		if(pdf != null){
-			doPdf = true;
-		}
-		
-		Boolean DoItAll = true;
-		
-		String thresholdString = request.getParameter("median");
-		Integer threshold = 1550;
-		if(thresholdString != null){
-			threshold = Integer.valueOf(thresholdString);
-		} 
+   UserService userService = UserServiceFactory.getUserService();
+   User user = userService.getCurrentUser();
 
-		Double third = (double)threshold / 3;
-		Double half = (double)threshold / 2;
-		Double twoFifth = (double)threshold / 5 * 2;
-		
-		Double climateFriendlyValue = twoFifth;
-		
-		
-		DAO dao = new DAO();
-		
-		List<Recipe> adminRecipes = new ArrayList<Recipe>();
-		List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
-		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-		
-		if (user != null) {
-			rezeptePersonal = dao.getYourRecipe(user);
-			kitchenRecipes = dao.getKitchenRecipes(user);
-			
-			adminRecipes = dao.adminGetRecipe(user);
-			
-			// remove double entries for admin
-			if(rezeptePersonal != null){
-				for(Recipe recipe: rezeptePersonal){
-					int removeIndex = -1;
-					for(Recipe rezept2:adminRecipes){
-						if(rezept2.getId().equals(recipe.getId())){
-							removeIndex = adminRecipes.indexOf(rezept2);
-						}
-					}
-					if(removeIndex != -1){
-						adminRecipes.remove(removeIndex);
-					}
-				}
-			}
-			
-					 			%>
+String tempIds = request.getParameter("ids");
+String permanentId = request.getParameter("pid");
+String pdf = request.getParameter("pdf");
 
-			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-			<script src="jquery.docraptor.js" type="text/javascript"></script>
-			
-			<script  type="text/javascript">
-			$(document).ready(function () {
-			$(".whatever").docraptor({
-			document_type: 'pdf',
-			test: true
-			},
-			'sYkJlCnJYRitdIvkAW'
-			);
-			});
-			</script>
+Boolean doPdf = false;
+if(pdf != null){
+	doPdf = true;
+}
 
-	<%
-		
-		} else {
-		 if(tempIds != null){
-			rezeptePersonal = dao.getRecipeByIds(tempIds,true);
-		 } else {
-			 if(permanentId != null){
-				rezeptePersonal = dao.getRecipeByIds(permanentId,false);
-				DoItAll = false;
-			 } 
-		 }
-		}
-		
-		
+Boolean DoItWithPermanentIds = true;
 
-		
-		DecimalFormat formatter = new DecimalFormat("##");
-		
-		Double MaxValueRezept = 0.0;
-		Double MinValueRezept = 10000000.0;
-		Double average = 0.0;
-		Double median = 0.0;
-		Integer counter = 0;
-		
-		//Calendar rightNow = Calendar.getInstance();
-		//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
-		
-		Date date = new Date();
-        long iTimeStamp = (long) (date.getTime() * .00003);
-		
-		if(rezeptePersonal.size() != 0){
-			ArrayList<Double> values = new ArrayList<Double>();
+String thresholdString = request.getParameter("median");
+Integer threshold = 1440;
+if(thresholdString != null){
+	threshold = Integer.valueOf(thresholdString);
+} 
+
+Double third = (double)threshold / 3;
+Double half = (double)threshold / 2;
+Double twoFifth = (double)threshold / 5 * 2;
+
+Double climateFriendlyValue = twoFifth;
+
+
+DAO dao = new DAO();
+
+List<Recipe> adminRecipes = new ArrayList<Recipe>();
+List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
+List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+
+if (user != null) {
+	rezeptePersonal = dao.getYourRecipe(user);
+	kitchenRecipes = dao.getKitchenRecipes(user);
 	
-			//  go over the Recipes in the Workspace
-			for(Recipe recipe: rezeptePersonal){
-				values.add((double) recipe.getCO2Value());
-				average = average + recipe.getCO2Value();
-				counter++;
-				recipe.setCO2Value();
-				if(recipe.getCO2Value()>MaxValueRezept){
-					MaxValueRezept = recipe.getCO2Value();
-				} 
-				if(recipe.getCO2Value()<MinValueRezept){
-					MinValueRezept = recipe.getCO2Value();
+	adminRecipes = dao.adminGetRecipe(user);
+	
+	// remove double entries for admin
+	if(rezeptePersonal != null){
+		for(Recipe recipe: rezeptePersonal){
+			int removeIndex = -1;
+			for(Recipe rezept2:adminRecipes){
+				if(rezept2.getId().equals(recipe.getId())){
+					removeIndex = adminRecipes.indexOf(rezept2);
 				}
 			}
-			average = average /counter;
-			
-				
-			Collections.sort(values);
-		  
-		    if (values.size() % 2 == 1)
-			median = values.get((values.size()+1)/2-1);
-		    else
-		    {
-			double lower = values.get(values.size()/2-1);
-			double upper = values.get(values.size()/2);
-		 
-			median = (lower + upper) / 2.0;
-		    }	    
+			if(removeIndex != -1){
+				adminRecipes.remove(removeIndex);
+			}
 		}
+	}
+	
+			 			%>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+	<script src="jquery.docraptor.js" type="text/javascript"></script>
+	
+	<script  type="text/javascript">
+	$(document).ready(function () {
+	$(".whatever").docraptor({
+	document_type: 'pdf',
+	test: true
+	},
+	'sYkJlCnJYRitdIvkAW'
+	);
+	});
+	</script>
+
+<%
+
+} else {
+ if(tempIds != null){
+	rezeptePersonal = dao.getRecipeByIds(tempIds,true);
+ } else {
+	 if(permanentId != null){
+		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
+		DoItWithPermanentIds = false;
+	 } 
+ }
+}
+
+
+
+
+DecimalFormat formatter = new DecimalFormat("##");
+
+Double MaxValueRezept = threshold*1.0;
+Double MinValueRezept = 10000000.0;
+Double average = 0.0;
+Double median = 0.0;
+Integer counter = 0;
+
+//Calendar rightNow = Calendar.getInstance();
+//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
+
+Date date = new Date();
+      long iTimeStamp = (long) (date.getTime() * .00003);
+
+if(rezeptePersonal.size() != 0){
+	ArrayList<Double> values = new ArrayList<Double>();
+
+	//  go over the Recipes in the Workspace
+	for(Recipe recipe: rezeptePersonal){
+		values.add((double) recipe.getCO2Value());
+		average = average + recipe.getCO2Value();
+		counter++;
+		recipe.setCO2Value();
+		if(recipe.getCO2Value()>MaxValueRezept){
+			MaxValueRezept = recipe.getCO2Value();
+		} 
+		if(recipe.getCO2Value()<MinValueRezept){
+			MinValueRezept = recipe.getCO2Value();
+		}
+	}
+	average = average /counter;
+	
+		
+	Collections.sort(values);
+  
+    if (values.size() % 2 == 1)
+	median = values.get((values.size()+1)/2-1);
+    else
+    {
+	double lower = values.get(values.size()/2-1);
+	double upper = values.get(values.size()/2);
+ 
+	median = (lower + upper) / 2.0;
+    }	    
+}
 		
 %>
 
@@ -280,6 +284,10 @@ h3 {
     page-break-after: always;
 }
 
+.new-page {
+    page-break-before: always;
+}
+
 #header-right {
 	float:right;
 	margin-bottom: -10px;
@@ -294,7 +302,7 @@ table {
   font-size: 11pt;
   width: 35em;
   padding-bottom: 1em;
-  margin-bottom: 4em;
+  margin-bottom: 2em;
 }
 
 .label-table {
@@ -420,22 +428,22 @@ padding: 1pt 1pt 1pt 0pt;
 page-break-after: avoid;
 color: white;
 background-repeat: repeat-x;
-/*background-image: url(green.png);
-background: green.png;*/
+background-image: url(green.png);
+/*background: green.png;*/
 font-size: 10pt;
 font-weight: 700;
 text-align: right;
 padding: 2pt;
 padding-right: 4pt;
-width: 100pt;
+width:240px;
 }
 
 .gray {
 page-break-after: avoid;
 color: white;
 background-repeat: repeat-x;
-/*background-image: url(light-gray.png);
-background: light-gray.png;*/
+background-image: url(light-gray.png);
+/*background: light-gray.png;*/
 font-size: 10pt;
 font-weight: 700;
 text-align: right;
@@ -453,7 +461,17 @@ padding-left: 0.2em;
 padding-right: 0.2em;
 display: inline-table;
 vertical-align: middle;
+
 /* color:gray; */
+}
+
+.co2percent {
+	text-align: right;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+/*	display: inline-table;*/
+	vertical-align: middle;
+	background:#F7F7F7;
 }
 
 .alternate {
@@ -482,8 +500,10 @@ padding-right: 4pt;
 /* padding-bottom: 1pt; */
 }
 
+
 .tips {
 margin-left: -10pt;
+padding: 1em 0.5em 0.5em 3em;
 }
 
 .tips li {
@@ -499,6 +519,7 @@ margin-left: -10pt;
 .zutat li {
 	list-style-position: outside;
 	list-style-type: none;
+	display: inline;
 }
 
 .zutatRow {
@@ -545,10 +566,20 @@ color:black;
 #ix span:after { content: leader('.') }
 #ix a { content: target-counter(attr(href), page); padding-left: 0.3em }
 
+.nowrap {
+	white-space: nowrap; 
+}
+
+.toc {
+	
+	width:45em;
+}
+
 @media screen {
   html { background: gray; }
   table {
   	font-size: 12pt;
+
   }
   
   body {
@@ -590,7 +621,7 @@ color:black;
   h3 {
   font-size: 12pt;
   margin-bottom: 0em;
-  clear: both;
+/*  clear: both;*/
   }
   
   #header-right {
@@ -633,6 +664,10 @@ color:black;
  	.kopf { 
  	margin-right: -14pt;
  	}
+
+	.green {
+		width:140px;
+	}
 }
 
 .table {
@@ -654,7 +689,7 @@ padding: 0.1em 0em 1em 1.5em;
 }
 
 .table ul{
-padding: 1em 4em 0.5em 3em;
+padding: 1em 0.5em 0.5em 3em;
 }
 
 .left-border{
@@ -669,6 +704,7 @@ padding: 1em 4em 0.5em 3em;
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
 	vertical-align: top;
+	width:660px;
 
 }
 
@@ -690,6 +726,7 @@ idsToAdd['<%= code %>'] = true<%	}	%>
 
 arrayAdd(idsToAdd)
 }
+
 function arrayAdd(idsToAdd){
 hrefAdd = "";
 	for (var codeIndex in idsToAdd){
@@ -764,15 +801,17 @@ function getBaseURL() {
 	<img class="logo" src="logo-eaternity-huge_04-11-2010.png" alt="logo-eaternity-huge_04-11-2010" />
 
 	<ul>
-	<li>Grabenwies 18</li>
-	<li>CH-8057 Zürich</li>
+	<li>Viaduktstrasse 93-95</li>
+	<li>CH-8005 Zürich</li>
 	<li><a href="mailto:info@eaternity.ch" >info@eaternity.ch</a></li>
 	<li><a href="http://www.eaternity.ch">www.eaternity.ch</a></li>
 	</ul>
 
 </div>
-<% if(DoItAll) { %>
-<h1>Menü Klima-Bilanz Zertifikat</h1>
+
+<h1>Menu Optimierung</h1>
+<% if(DoItWithPermanentIds) { %>
+
 
 
 
@@ -781,7 +820,7 @@ function getBaseURL() {
 <% } // just do it simple %>
 
 
-<div class="page-break" id="footer-left">
+<div  id="footer-left">
 	<img class="logo-karotte" src="karotte.png" alt="karotte"  />
 	Eaternity
 	<a href="mailto:info@eaternity.ch" >info@eaternity.ch</a>
@@ -795,605 +834,236 @@ function getBaseURL() {
 
 <div class="content">
 
-<% if(DoItAll) { %>
+<% if(DoItWithPermanentIds) { %>
 
 <!-- Overview -->
 
 <%
 
-
+}
 
 
 boolean doIt = false;
 if(rezeptePersonal.size() != 0){
-//	for(Recipe recipe: rezeptePersonal){
-		//if(recipe.getCO2Value() < third){
 			doIt = true;
-		//}
-//	}
 }
-if(doIt){
-%>
-<h1>Ihre Menüs</h1>
 
-<form name="htmlAdder" method="POST" action=";" class="page-break">
-<table cellspacing="0" cellpadding="0" class="table" >
+if(doIt){
+	
+%>
+
+<form name="htmlAdder" method="POST" action=";">
+	
+<table cellspacing="0" cellpadding="0" class="table toc" >
 
 
 <tr>
 <td></td>
 <td class="gray left-border"></td>
-<td class="gray co2label"><span>g CO<sub>2</sub>*</span></td>
+<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td></td>
 </tr>
 
-<tr>
-<td class="table-header bottom-border">Menu</td>
-<td class="left-border"></td>
-</tr>
 
 	
 <!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
 <%
-		
+
+Collections.sort(rezeptePersonal,new RezeptValueComparator());
+
+Boolean notDoneFirst = true;
+Boolean notDoneSeccond = true;
+Boolean notDoneThird = true;
+Integer counterIterate = 0;
+
+Double adjustedAverageLength = threshold/MaxValueRezept*200;
+Double climateFriendlyValueLength = climateFriendlyValue/MaxValueRezept*200;
+String averageLength = formatter.format(adjustedAverageLength);
+String formattedClimate = formatter.format(climateFriendlyValue);
+String smilies = "";
+
 for(Recipe recipe: rezeptePersonal){
 
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34);
+	String clear = Converter.toString(recipe.getId(),34);
 
-	//recipe.setCO2Value();
-//			if(recipe.getCO2Value() < third){
+	recipe.setCO2Value();
 	
 	String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
 	String formatted = formatter.format( recipe.getCO2Value() );
 	String persons = Long.toString(recipe.getPersons());
+	
+	String moreOrLess = "";
+	String percent ="";
+
+	
+	if(recipe.getCO2Value()>(threshold)){
+		percent = "+" + formatter.format( ((recipe.getCO2Value()-threshold)/(threshold))*100 ) + "%";
+	} else {
+		percent = "-" + formatter.format( ((threshold-recipe.getCO2Value())/(threshold))*100 ) + "%";
+	}
+
+
+	
+
+	
+	if((recipe.getCO2Value() < climateFriendlyValue) && notDoneFirst){
+		notDoneFirst = false;
+		smilies = "<img class='smile' src='smiley8.png' alt='smiley' /><img class='smile' src='smiley8.png' alt='smiley' />";
+		
+		%>
+		
+		<tr>
+		<td class="table-header bottom-border">Grossartig</td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td ></td>
+		</tr>
+		
+		<%
+	}
+	
+	if((recipe.getCO2Value() > climateFriendlyValue) && (recipe.getCO2Value() < threshold) &&  notDoneSeccond){
+		notDoneSeccond = false;
+		counterIterate = rezeptePersonal.indexOf(recipe);
+		smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
+		%>
+		
+		
+		<tr>
+		<td class="menu-name" style="text-align:right;">
+		<!--img class="smile" src="smiley8.png" alt="smiley" />
+		<img class="smile" src="smiley8.png" alt="smiley" /-->
+		Klimafreundliches Menu
+		</td>
+		<td class="left-border"><img class="bar" src="orange.png" alt="gray" height="11" width="<%= climateFriendlyValueLength %>" /></td>
+		<td class="co2value" ><%= formattedClimate %></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+		<tr>
+		<td class="table-header bottom-border"><br />Gut</td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+		
+
+		
+		<%
+	}
+	
+	if((recipe.getCO2Value() > threshold) && notDoneThird){
+		notDoneThird = false;
+		counterIterate = rezeptePersonal.indexOf(recipe);
+		smilies = "";
+		%>
+		
+		<tr>
+		<td class="menu-name" style="text-align:right;">
+		<!--img class="smile" src="smiley8.png" alt="smiley" />
+		<img class="smile" src="smiley8.png" alt="smiley" /-->
+		Herkömmliches Menu
+		</td>
+		<td class="left-border" style="background:#F7F7F7"><img class="bar" src="gray.png" alt="gray" height="11" width="<%= averageLength %>" /></td>
+		<td class="co2value" style="background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;" ><%= threshold %></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+		
+		<tr>
+		<td class="table-header bottom-border"><br />Über Durchschnitt</td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+
+		
+		<%
+	}
+	
 	%>
 	
 	
 	
 	<tr <%
-	int order = rezeptePersonal.indexOf(recipe) % 2; 
+	int order = (rezeptePersonal.indexOf(recipe) - counterIterate ) % 2; 
 	if(order == 1) { %>
 	class="alternate"
 	<% }%> > 
 	<td class="menu-name">
-	<!--img class="smile" src="smiley8.png" alt="smiley" />
-	<img class="smile" src="smiley8.png" alt="smiley" /-->
-	<input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-	<%= recipe.getSymbol() %>
-	<!-- <%= recipe.getSymbol() %>  div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div -->
+	<%= clear %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
+	<%= smilies %><%= recipe.getSymbol() %>
 	</td>
-	<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11" width="<%= length %>" /></td>
+	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 	<td class="co2value" ><%= formatted %></td>
+	<td class="co2percent" ><%= percent %></td>
 	</tr>
 
 
 	<%
-//		}	
+}	
 
-}
+
 
 %>
-
 </table>
 
-
 <ul style="font-size:9pt;color:grey;">
-<li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* pro Person.</li>
-<li>Die Menus haben einen Median von: <%= formatter.format(median) %> g CO<sub>2</sub>* pro Person.</li>
+<li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* (Median: <%= formatter.format(median) %> g CO<sub>2</sub>*) pro Person.</li>
 </ul>
-
+<br />
+<br />
+<br />
+<br />
 </form>
 
 <%
-}
-%>
 
 
 
-<!-- Details follow -->
 
 
-<%
-
-
-doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-		if(recipe.getCO2Value() < climateFriendlyValue){
-			doIt = true;
-		}
-	}
-}
-if(doIt){
-%>
-
-<table cellspacing="0" cellpadding="0" class="table page-break" >
-
-
-<tr>
-<td class="table-header">Grossartig</td>
-<td></td>
-</tr>
-	
-<tr>
-<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
-<td></td>
-</tr>
-
-<tr>
-<td></td>
-<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-</tr>
-	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
-
-
-for(Recipe recipe: rezeptePersonal){
-
-long compute = recipe.getId() * iTimeStamp;
-String code = Converter.toString(compute,34);
-
-			recipe.setCO2Value();
-			if(recipe.getCO2Value() < climateFriendlyValue){
-			
-			
-			String formatted = formatter.format( recipe.getCO2Value() );
-			String persons = Long.toString(recipe.getPersons());
-			
-			
-			%>
-			
-			
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td class="bottom-border">
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3>
-			</td>
-			<td class="left-border"></td>
-			</tr>
-
-			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-			<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
-			</tr>
-			
-			<tr>
-			<td>
-			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
-			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
-			<ul class="zutat">
-			
-			<%	
-			for(IngredientSpecification ingredient: recipe.Zutaten){
-			
-			%>
-			
-			<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>
-			
-			<%
-			}
-			%>
-						
-			</ul>
-			
-			    <!--<ul class="tips">
-			      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
-			      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
-			    </ul> -->
-			</td>
-			<td class="left-border"><br></td>
-			</tr>
-			<%
-		}
-
-%>
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-<%		
-
-}
-
-%>
-
-<!--
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	<tr>
-	<td class="bottom-border">
-	<img class="smile" src="smiley8.png" alt="smiley" />
-	<img class="smile" src="smiley8.png" alt="smiley" />
-	<h3>Randenknöpfli</h3> <div class="amount">323 g CO<sub>2</sub>* total</div>
-	</td>
-	<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
-	</tr>
-	
-	<tr>
-	<td>
-	<ul class="zutat">
-	<li><span class="ix">Zutat</span></li>
-	</ul>
-	
-	    <ul class="tips">
-	      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
-	      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
-	    </ul>
-	</td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	<tr>
-	<td class="suggest">
-		500 g Schinken extra
-	</td>
-	<td class="left-border">
-	<img class="bar" src="red.png" alt="red" width="80" />
-	<div class="amount">+234</div>
-	</td>
-	</tr>
-		
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	<tr>
-	<td class="bottom-border">
-	<img class="smile" src="smiley8.png" alt="smiley" />
-	<img class="smile" src="smiley8.png" alt="smiley" />
-	<h3>Randenknöpfli</h3> <div class="amount">323 g CO<sub>2</sub>* total</div>
-	</td>
-	<td class="left-border"><img class="bar" src="gray.png" alt="gray" width="140" /></td>
-	</tr>
-	
-	<tr>
-	<td>
-	    <ul class="tips">
-	      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
-	      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
-	    </ul>
-	</td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	<tr>
-	<td class="suggest">
-		500 g Schinken weniger
-	</td>
-	<td class="left-border">
-	<img class="bar" src="green.png" alt="green" width="80" />
-	<div class="amount">+234</div>
-	</td>
-	</tr>
-
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	-->
-
-</table>
-<%
-}
-
-
-doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-	if(recipe.getCO2Value() >= climateFriendlyValue && recipe.getCO2Value() < threshold){
-	doIt = true;
-	}
-	}
-}
-if(doIt){
-%>
-
-
-<table cellspacing="0" cellpadding="0" class="table page-break" >
-
-
-<tr>
-<td class="table-header">Gut</td>
-<td></td>
-</tr>
-	
-<tr>
-<td><p>Diese Rezepte sind mit unter <%= formatter.format( threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
-<td></td>
-</tr>
-
-<tr>
-<td></td>
-<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-</tr>
-	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
-
-
-for(Recipe recipe: rezeptePersonal){
-
-long compute = recipe.getId() * iTimeStamp;
-String code = Converter.toString(compute,34);
-
-			recipe.setCO2Value();
-			if(recipe.getCO2Value() >= climateFriendlyValue && recipe.getCO2Value() < threshold){
-
-			String formatted = formatter.format( recipe.getCO2Value() );
-			String persons = Long.toString(recipe.getPersons());
-			%>
-			
-			
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td class="bottom-border">
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3>
-			</td>
-			<td class="left-border"></td>
-			</tr>
-
-			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
-			</tr>
-			
-			<tr>
-			<td>
-			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
-			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
-			<ul class="zutat">
-			
-			<%	
-			for(IngredientSpecification ingredient: recipe.Zutaten){
-			
-			%>
-			
-			<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>
-			
-			<%
-			}
-			%>
-						
-			</ul>
-			
-			    <!--<ul class="tips">
-			      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
-			      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
-			    </ul> -->
-			</td>
-			<td class="left-border"><br></td>
-			</tr>
-			<%
-		}
-%>
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-<%		
-
-}
-
-%>
-
-
-</table>
-
-<%
-}
-
-
-doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-	if(recipe.getCO2Value() >= threshold){
-	doIt = true;
-	}
-	}
-}
-if(doIt){
-%>
-
-<table cellspacing="0" cellpadding="0" class="table page-break" >
-
-
-<tr>
-<td class="table-header">Über dem Durchschnitt</td>
-<td></td>
-</tr>
-	
-<tr>
-<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
-<td></td>
-</tr>
-
-<tr>
-<td></td>
-<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-</tr>
-	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
-
-
-for(Recipe recipe: rezeptePersonal){
-
-long compute = recipe.getId() * iTimeStamp;
-String code = Converter.toString(compute,34);
-
-			recipe.setCO2Value();
-			if(recipe.getCO2Value() >= threshold){
-			
-
-			String formatted = formatter.format( recipe.getCO2Value() );
-			String persons = Long.toString(recipe.getPersons());
-			%>
-			
-			
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td class="bottom-border">
-			<h3><%= recipe.getSymbol() %></h3>
-			</td>
-			<td class="left-border"></td>
-			</tr>
-
-			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
-			</tr>
-			
-			<tr>
-			<td>
-			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
-			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span>
-			<ul class="zutat">
-			
-			<%	
-			for(IngredientSpecification ingredient: recipe.Zutaten){
-			
-			%>
-			
-			<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>
-			
-			<%
-			}
-			%>
-						
-			</ul>
-			
-			    <!--<ul class="tips">
-			      <li>eventuell mit 500g Schinken aufbessern – Anfrage zur besseren Kommunikation.</li>
-			      <li>Vorschlag: Menü Woche 12 (zweite Dezember Woche)</li>
-			    </ul> -->
-			</td>
-			<td class="left-border"><br></td>
-			</tr>
-			<%
-		}
-%>
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-<%		
-
-}
-
-%>
-
-
-</table>
-<% } // just the simple version %><%
-}
-
-
-
-
-
-
-Boolean doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-	if(recipe.getCO2Value() > 0){
-	doIt = true;
-	}
-	}
-}
-if(doIt){
-
-
-
-for(Recipe recipe: rezeptePersonal){
-
-			long compute = recipe.getId() * iTimeStamp;
-			String code = Converter.toString(compute,34);
-			
-			String clear = Converter.toString(recipe.getId(),34);
-
-			recipe.setCO2Value();
-			if(recipe.getCO2Value() > 0){
+			if(average > 0){
 			
 			String total = "200";
 			String klimafriendly = formatter.format(200*2/5);
-			String length = formatter.format(recipe.getCO2Value()/(threshold)*200);
-			String formatted = formatter.format( recipe.getCO2Value() );
+			String length = formatter.format(average/(threshold)*200);
+			String formatted = formatter.format( average );
 			
 			String moreOrLess = "";
 			String percent ="";
 			Integer position = 1;
 			
-			if((climateFriendlyValue-recipe.getCO2Value())<0){
-				percent = formatter.format( (-(climateFriendlyValue-recipe.getCO2Value())/(climateFriendlyValue))*100 );
+			if((climateFriendlyValue-average)<0){
+				percent = formatter.format( (-(climateFriendlyValue-average)/(climateFriendlyValue))*100 );
 				moreOrLess = "mehr";
 				position = 2;
 			} else {
-				percent = formatter.format( ((climateFriendlyValue-recipe.getCO2Value())/(climateFriendlyValue))*100 );
+				percent = formatter.format( ((climateFriendlyValue-average)/(climateFriendlyValue))*100 );
 				moreOrLess = "weniger";
 			}
 			
-			if(recipe.getCO2Value()>(threshold)){
+			if(average>(threshold)){
 				position = 3;
 				length = "200";
-				total = formatter.format((threshold/recipe.getCO2Value())*200);
-				klimafriendly = formatter.format((climateFriendlyValue/recipe.getCO2Value())*200);
-				percent = formatter.format( ((recipe.getCO2Value()-threshold)/(threshold))*100 );
+				total = formatter.format((threshold/average)*200);
+				klimafriendly = formatter.format((climateFriendlyValue/average)*200);
+				percent = formatter.format( ((average-threshold)/(threshold))*100 );
 				
 			}
 			
 			
 			
-			String persons = Long.toString(recipe.getPersons());
-			
 			%>			
-			<table style="font-weight: 300;font-size: 14pt; margin-top:-4em" class="page-break">
+			<table style="font-weight: 300;font-size: 14pt; margin-top:-4em" >
 						<!-- label of table -->
-			<tr>
-			<td height="140">
-				<h3 style="font-size: 20pt; padding-bottom:0em; display:inherit; margin-right:5em;"><%= recipe.getSymbol() %></h3>
-				<br /><br />
-				<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.
-				
-			</td>
-			</tr>
-			
-						<!-- content of table -->
-			<tr>
-			<td>
 
+
+						<tr> <td>
 
 			
 			<table cellspacing="0" cellpadding="0" border="1" class="table rounded label-table">
@@ -1410,9 +1080,9 @@ for(Recipe recipe: rezeptePersonal){
 						 <td style="width:6em;text-align: right;padding:0em 1em 0em 1em;background:white;" ><span class="label-vergleich">Im Vergleich</span></td>
 						 <td class="left-border" style="text-align: left;padding-left:1em;background:white;">
 						 <% if (position<3){ %>
-						 Dieses Menu verursacht <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% <%= moreOrLess %></span> CO<sub>2</sub>* als die vergleichbaren klimafreundlichen Menus.
+						 Diese Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% <%= moreOrLess %></span> CO<sub>2</sub>* als die vergleichbaren klimafreundlichen Menus.
 						 <% }else{ %>
-						 Dieses Menu verursacht <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% mehr </span> CO<sub>2</sub>* als die vergleichbaren  Menus im Durchschnitt.
+						 Diese Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% mehr </span> CO<sub>2</sub>* als die vergleichbaren  Menus im Durchschnitt.
 						 <% } %>
 						 </td>
 						 
@@ -1436,7 +1106,7 @@ for(Recipe recipe: rezeptePersonal){
 							<% if (position==1){ %>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
-								 	Dieses Menu
+								 	Diese Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
 								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
@@ -1456,7 +1126,7 @@ for(Recipe recipe: rezeptePersonal){
 							<% if (position==2){ %>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
-								 	Dieses Menu
+								 	Diese Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
 								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
@@ -1476,7 +1146,7 @@ for(Recipe recipe: rezeptePersonal){
 							<% if (position==3){ %>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
-								 	Dieses Menu
+								 	Diese Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
 								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
@@ -1559,9 +1229,9 @@ for(Recipe recipe: rezeptePersonal){
 							
 						 </td>
 						 
-						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItAll) { %>
-	<a href="<%= BASEURL %>?pid=<%= clear %>"><!-- img src="http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl=<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>" width="42" height="42" / --><img src="QR-<%= recipe.ShortUrl.substring(7, recipe.ShortUrl.length()) %>-CODE" width="42" height="42" /></a>
-							<% } else { %> <span style="color:red;font-size:9pt;">Helfen Sie die Rezepte kontrollieren!</span> <% } %>
+						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItWithPermanentIds) { %>
+	<a href="<%= BASEURL %>?pid="><img src="QR--CODE" width="42" height="42" /></a>
+							<% } else { %> <span style="color:red;font-size:9pt;"></span> <% } %>
 						 </td>
 						</tr>
 						
@@ -1573,93 +1243,439 @@ for(Recipe recipe: rezeptePersonal){
 			</tr>
 		</table>
 		<br />
-<br />
-<br />
-<br />
-<br />
-<br />
 	</td>
 </tr>
 
 
 </table>
 
-<% if(!DoItAll) { %>
-
-<span style="color:gray;">Angegeben wurden folgende Zutaten für <%= persons %> Personen:</span>
-<ul class="zutatRow">
-
-<%	
-for(IngredientSpecification ingredient: recipe.Zutaten){
-
-%>
-
-<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span>, </li>
-
-<%
-}
-%>
-<li>–</li>
-</ul>
-<br /><br />
-Finden Sie einen Fehler, oder haben Sie einen Kommentar, können Sie uns gerne kontaktieren:
-<!--If you already have jquery on the page you don't need to insert this script tag-->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-
-<link href="https://d3j15y3zsn7b4t.cloudfront.net/assets/widget_embed.cssgz?1314943141" media="screen" rel="stylesheet" type="text/css" />
-<!--If you already have fancybox on the page this script tag should be omitted-->
-<script src="https://d3j15y3zsn7b4t.cloudfront.net/assets/widget_embed_libraries.jsgz?1314943142" type="text/javascript"></script>
-
-                        <script>
-                                
-                                // ********************************************************************************
-                                // This needs to be placed in the document body where you want the widget to render
-                                // ********************************************************************************
-                                
-                                new ASSISTLY.Widget({ 
-                                        version: 1, 
-                                        site: 'support.eaternity.ch', 
-                                        port: '80', 
-                                        type: 'email', 
-                                        displayMode: 0,  //0 for popup, 1 for lightbox
-                                        features: {  
-                                        },  
-                                        fields: { 
-                                                ticket: { 
-                                                        // desc: '',
-                                labels_new: '<%= clear %>',
-                                // priority: '',
-                                subject: 'Feedback zum Menu: <%=  recipe.getSymbol() %>'
-                                                }, 
-                                                interaction: { 
-                                                        // email: '',
-                                // name: ''
-                                                }, 
-                                                email: { 
-                                                        //subject: '', 
-                                                        //body: '' 
-                                                }, 
-                                                customer: { 
-                                                        // company: '',
-                                // desc: '',
-                                // first_name: '',
-                                // last_name: '',
-                                // title: ''
-                                                } 
-                                        } 
-                                }).render();  
-                        </script>
-
-
-<% } %>
 
 			<%
 		}	
+
+
+
+
+%>
+
+
+
+<!-- Details follow -->
+
+
+<%
+
+
+doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+		if(recipe.getCO2Value() < climateFriendlyValue){
+			doIt = true;
+		}
 	}
+}
+if(doIt){
+%>
+
+<table cellspacing="0" cellpadding="0" class="table new-page" >
+
+
+<tr>
+<td class="table-header">Grossartig</td>
+<td></td>
+</tr>
+	
+<tr>
+<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="bottom-border"></td>
+<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+</tr>
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+</table>
+	
+<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<%
+
+
+for(Recipe recipe: rezeptePersonal){
+
+long compute = recipe.getId() * iTimeStamp;
+String code = Converter.toString(compute,34);
+
+			recipe.setCO2Value();
+			if(recipe.getCO2Value() < climateFriendlyValue){
+			
+			
+			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
+			
+			
+			%>
+			
+			<table cellspacing="0" cellpadding="0" class="table" >
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td class="bottom-border">
+			<img class="smile" src="smiley8.png" alt="smiley" />
+			<img class="smile" src="smiley8.png" alt="smiley" />
+			<h3><%= recipe.getSymbol() %></h3>
+			</td>
+			<td class="left-border"></td>
+			</tr>
+
+			<tr>
+			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
+			</tr>
+			
+			<tr>
+			<td>
+			
+			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			
+			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+
+			
+				<%	
+				counter = 0;
+				for(IngredientSpecification ingredient: recipe.Zutaten){
+				counter = counter + 1;
+
+				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+				}
+				%>
+			</td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			
+				<%	
+				if(recipe.comments != null){
+				for(RecipeComment comment: recipe.comments){
+
+				%>
+				<tr>
+				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><div class="amount"><%= comment.amount %> g CO<sub>2</sub>* </div><% } %></td>
+				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
+				</tr>
+
+				<%
+					}
+				}
+				%>
+				
+				<tr>
+				<td></td>
+				<td class="left-border"><br></td>
+				</tr>
+				
+
+				</table>
+			<%
+		}
+
+%>
+
+
+<%		
+
+}
+
+%>
+
+
+<%
 }
 
 
+doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+	if(recipe.getCO2Value() >= climateFriendlyValue && recipe.getCO2Value() < threshold){
+	doIt = true;
+	}
+	}
+}
+if(doIt){
+%>
 
+
+<table cellspacing="0" cellpadding="0" class="table new-page" >
+
+
+<tr>
+<td class="table-header">Gut</td>
+<td></td>
+</tr>
+
+<tr>
+<td><p>Diese Rezepte sind mit unter <%= formatter.format( threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="bottom-border"></td>
+<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+</tr>
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+</table>
+
+<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<%
+
+
+for(Recipe recipe: rezeptePersonal){
+
+long compute = recipe.getId() * iTimeStamp;
+String code = Converter.toString(compute,34);
+
+			recipe.setCO2Value();
+			if(recipe.getCO2Value() >= climateFriendlyValue && recipe.getCO2Value() < threshold){
+
+			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
+			%>
+			
+			<table cellspacing="0" cellpadding="0" class="table" >
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td class="bottom-border">
+			<img class="smile" src="smiley8.png" alt="smiley" />
+			<h3><%= recipe.getSymbol() %></h3>
+			</td>
+			<td class="left-border"></td>
+			</tr>
+
+			<tr>
+			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
+			</tr>
+			
+			<tr>
+			<td>
+			
+			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			
+			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+
+			
+				<%	
+				counter = 0;
+				for(IngredientSpecification ingredient: recipe.Zutaten){
+				counter = counter + 1;
+
+				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+				}
+				%>
+			
+			</td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+
+			
+			<%	
+			if(recipe.comments != null){
+			for(RecipeComment comment: recipe.comments){
+			
+			%>
+			<tr>
+			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><div class="amount"><%= comment.amount %> g CO<sub>2</sub>* </div><% } %></td>
+			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
+			</tr>
+
+			<%
+				}
+			}
+			%>
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			
+			</table>
+			
+			<%
+		}
+%>
+
+
+<%		
+
+}
+
+%>
+
+
+
+
+<%
+}
+
+
+doIt = false;
+if(rezeptePersonal.size() != 0){
+	for(Recipe recipe: rezeptePersonal){
+	if(recipe.getCO2Value() >= threshold){
+	doIt = true;
+	}
+	}
+}
+if(doIt){
+%>
+
+<table cellspacing="0" cellpadding="0" class="table new-page" >
+
+
+<tr>
+<td class="table-header">Über dem Durchschnitt</td>
+<td></td>
+</tr>
+
+
+<tr>
+<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="bottom-border"></td>
+<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+</tr>
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+</table>
+	
+<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<%
+
+
+for(Recipe recipe: rezeptePersonal){
+
+long compute = recipe.getId() * iTimeStamp;
+String code = Converter.toString(compute,34);
+
+			recipe.setCO2Value();
+			if(recipe.getCO2Value() >= threshold){
+			
+
+			String formatted = formatter.format( recipe.getCO2Value() );
+			String persons = Long.toString(recipe.getPersons());
+			%>
+			
+			<table cellspacing="0" cellpadding="0" class="table" >
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+			<tr>
+			<td class="bottom-border">
+			<h3><%= recipe.getSymbol() %></h3>
+			</td>
+			<td class="left-border"></td>
+			</tr>
+
+			<tr>
+			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
+			</tr>
+			
+			<tr>
+			<td>
+			
+			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			
+			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+
+			
+				<%	
+				counter = 0;
+				for(IngredientSpecification ingredient: recipe.Zutaten){
+				counter = counter + 1;
+
+				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+				}
+				%>
+
+			</td>
+			<td class="left-border"><br></td>
+			</tr>
+			<tr>
+			<td></td>
+			<td class="left-border"><br></td>
+			</tr>
+			
+						
+				<%	
+				if(recipe.comments != null){
+				for(RecipeComment comment: recipe.comments){
+
+				%>
+				<tr>
+				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><div class="amount"><%= comment.amount %> g CO<sub>2</sub>* </div><% } %></td>
+				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
+				</tr>
+
+				<%
+					}
+				}
+				%>
+				<tr>
+				<td></td>
+				<td class="left-border"><br></td>
+				</tr>
+
+				</table>
+			<%
+		}
+%>
+
+<%		
+
+}
+
+%>
+
+
+<% } // just the simple version %><%
+}
 
 
 
@@ -1696,7 +1712,7 @@ Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie un
 </div>
 
 </div>
-<% if(DoItAll) { %>
+<% if(DoItWithPermanentIds) { %>
 <div class="login">
 	<%
 

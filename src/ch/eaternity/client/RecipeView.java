@@ -14,9 +14,6 @@ import java.util.List;
 
 
 
-import ch.eaternity.client.comparators.ComparatorComparator;
-import ch.eaternity.client.comparators.ComparatorObject;
-import ch.eaternity.client.comparators.ComparatorRecipe;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.client.widgets.PhotoGallery;
@@ -25,6 +22,9 @@ import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.comparators.ComparatorComparator;
+import ch.eaternity.shared.comparators.ComparatorObject;
+import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 
 
@@ -357,8 +357,8 @@ void onKeyUp(KeyUpEvent event) {
 			superDisplay.getRezeptList().remove(test);
 			superDisplay.getRezeptList().removeRow(row);
 
-			if(superDisplay.getSelectedRezept() == row){
-				superDisplay.setSelectedRezept(-1);
+			if(superDisplay.getSelectedRecipeNumber() == row){
+				superDisplay.setSelectedRecipeNumber(-1);
 				superDisplay.getSuggestionPanel().clear();
 				
 				if(isSelected){
@@ -392,8 +392,8 @@ void onKeyUp(KeyUpEvent event) {
 				
 				
 				// well this doesn't work, as it is selected already (due to the time difference...)
-				if(superDisplay.getSelectedRezept() == row){
-					superDisplay.setSelectedRezept(-1);
+				if(superDisplay.getSelectedRecipeNumber() == row){
+					superDisplay.setSelectedRecipeNumber(-1);
 					superDisplay.getSuggestionPanel().clear();
 				
 					if(isSelected){
@@ -436,6 +436,7 @@ void onKeyUp(KeyUpEvent event) {
 		    savedHTML.setVisible(false);
 		    openHTML.setVisible(false);
 		    makePublic.setVisible(false);
+		    
 		    
 			updateSuggestion();
 
@@ -709,7 +710,7 @@ void onKeyUp(KeyUpEvent event) {
 			HandlerRegistration handler = suggestText.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					// add receipe to the Worksheet Panel
-					superDisplay.showRecipeClone(takeThisOne);
+					superDisplay.cloneRecipe(takeThisOne);
 				}
 			});
 			
