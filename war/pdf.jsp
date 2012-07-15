@@ -215,6 +215,13 @@ if(rezeptePersonal.size() != 0){
 
 }
 
+@page big_table { 
+    size: A4 landscape
+}
+
+table.big { page: big_table }
+
+
 	#footer-bottom {
 	display: none;
 	}
@@ -435,7 +442,7 @@ font-weight: 700;
 text-align: right;
 padding: 2pt;
 padding-right: 4pt;
-width:240px;
+width:14em;
 }
 
 .gray {
@@ -472,6 +479,7 @@ vertical-align: middle;
 /*	display: inline-table;*/
 	vertical-align: middle;
 	background:#F7F7F7;
+	white-space: nowrap; 
 }
 
 .alternate {
@@ -487,7 +495,8 @@ margin-top: 0em;
 .menu-name {
 vertical-align:top;
 padding-left: 1em;
-padding-top: 0.5em;
+padding-top: 0.2em;
+padding-bottom: 0.2em;
 /* width: 25em; */
 /* display: inline-table; */
 padding-right: 2em;
@@ -572,6 +581,11 @@ color:black;
 
 .toc {
 	
+	width:43em;
+}
+
+.listTable {
+	
 	width:45em;
 }
 
@@ -581,6 +595,8 @@ color:black;
   	font-size: 12pt;
 
   }
+
+
   
   body {
   	margin-top: 2em;
@@ -933,8 +949,6 @@ for(Recipe recipe: rezeptePersonal){
 		
 		<tr>
 		<td class="menu-name" style="text-align:right;">
-		<!--img class="smile" src="smiley8.png" alt="smiley" />
-		<img class="smile" src="smiley8.png" alt="smiley" /-->
 		Klimafreundliches Menu
 		</td>
 		<td class="left-border"><img class="bar" src="orange.png" alt="gray" height="11" width="<%= climateFriendlyValueLength %>" /></td>
@@ -955,16 +969,14 @@ for(Recipe recipe: rezeptePersonal){
 		<%
 	}
 	
-	if((recipe.getCO2Value() > threshold) && notDoneThird){
+	if(((recipe.getCO2Value() > threshold) && notDoneThird) || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 )){
 		notDoneThird = false;
 		counterIterate = rezeptePersonal.indexOf(recipe);
-		smilies = "";
+
 		%>
 		
 		<tr>
 		<td class="menu-name" style="text-align:right;">
-		<!--img class="smile" src="smiley8.png" alt="smiley" />
-		<img class="smile" src="smiley8.png" alt="smiley" /-->
 		Herkömmliches Menu
 		</td>
 		<td class="left-border" style="background:#F7F7F7"><img class="bar" src="gray.png" alt="gray" height="11" width="<%= averageLength %>" /></td>
@@ -972,6 +984,9 @@ for(Recipe recipe: rezeptePersonal){
 		<td class="co2percent"  ></td>
 		</tr>
 		
+		<% if((rezeptePersonal.indexOf(recipe) != rezeptePersonal.size()-1 )){ 
+			smilies = "";
+			%>
 		
 		<tr>
 		<td class="table-header bottom-border"><br />Über Durchschnitt</td>
@@ -980,9 +995,10 @@ for(Recipe recipe: rezeptePersonal){
 		<td class="co2percent"  ></td>
 		</tr>
 		
-
+		
 		
 		<%
+		}
 	}
 	
 	%>
@@ -1015,10 +1031,6 @@ for(Recipe recipe: rezeptePersonal){
 <ul style="font-size:9pt;color:grey;">
 <li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* (Median: <%= formatter.format(median) %> g CO<sub>2</sub>*) pro Person.</li>
 </ul>
-<br />
-<br />
-<br />
-<br />
 </form>
 
 <%
@@ -1059,7 +1071,7 @@ for(Recipe recipe: rezeptePersonal){
 			
 			
 			%>			
-			<table style="font-weight: 300;font-size: 14pt; margin-top:-4em" >
+			<table style="font-weight: 300;font-size: 14pt; margin-top:2em" >
 						<!-- label of table -->
 
 
@@ -1277,7 +1289,7 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 %>
 
-<table cellspacing="0" cellpadding="0" class="table new-page" >
+<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
 
 
 <tr>
@@ -1321,7 +1333,7 @@ String code = Converter.toString(compute,34);
 			
 			%>
 			
-			<table cellspacing="0" cellpadding="0" class="table" >
+			<table cellspacing="0" cellpadding="0" class="table listTable" >
 			<tr>
 			<td></td>
 			<td class="left-border"><br></td>
@@ -1373,7 +1385,7 @@ String code = Converter.toString(compute,34);
 
 				%>
 				<tr>
-				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><div class="amount"><%= comment.amount %> g CO<sub>2</sub>* </div><% } %></td>
+				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
 				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
 				</tr>
 
@@ -1418,7 +1430,7 @@ if(doIt){
 %>
 
 
-<table cellspacing="0" cellpadding="0" class="table new-page" >
+<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
 
 
 <tr>
@@ -1459,7 +1471,7 @@ String code = Converter.toString(compute,34);
 			String persons = Long.toString(recipe.getPersons());
 			%>
 			
-			<table cellspacing="0" cellpadding="0" class="table" >
+			<table cellspacing="0" cellpadding="0" class="table listTable" >
 			<tr>
 			<td></td>
 			<td class="left-border"><br></td>
@@ -1556,7 +1568,7 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 %>
 
-<table cellspacing="0" cellpadding="0" class="table new-page" >
+<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
 
 
 <tr>
@@ -1599,7 +1611,7 @@ String code = Converter.toString(compute,34);
 			String persons = Long.toString(recipe.getPersons());
 			%>
 			
-			<table cellspacing="0" cellpadding="0" class="table" >
+			<table cellspacing="0" cellpadding="0" class="table listTable" >
 			<tr>
 			<td></td>
 			<td class="left-border"><br></td>
