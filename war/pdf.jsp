@@ -190,7 +190,7 @@ if(rezeptePersonal.size() != 0){
 @page {
   size: A4;
   margin: 40pt 20pt 70pt 40pt;
-   padding: 0pt 0pt 0pt 0pt;
+   padding: 30pt 0pt 0pt 0pt;
 	prince-image-resolution: 300dpi;
 
     @bottom-right { 
@@ -297,7 +297,7 @@ h3 {
 
 #header-right {
 	float:right;
-	margin-bottom: -10px;
+	margin-bottom: 10px;
 	flow: static(header);
 }
 
@@ -364,7 +364,7 @@ font-weight: 400;
 	font-size: 10pt;
 	font-weight: 300;
 	font-size: 13px;
-	margin-top: -24pt;
+	margin-top: -54pt;
 	margin-right: 6pt;
 }
 
@@ -689,7 +689,7 @@ color:black;
 .table {
 border-color: #929292;
 border-style: none;
-padding-top: 1em;
+padding-top: 0em;
 border-width: 0pt;
 }
 
@@ -946,6 +946,12 @@ for(Recipe recipe: rezeptePersonal){
 		smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
 		%>
 		
+		<tr>
+		<td class="table-header"><br /></td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td class="co2percent"  ></td>
+		</tr>
 		
 		<tr>
 		<td class="menu-name" style="text-align:right;">
@@ -957,7 +963,14 @@ for(Recipe recipe: rezeptePersonal){
 		</tr>
 		
 		<tr>
-		<td class="table-header bottom-border"><br />Gut</td>
+		<td class="table-header"><br /></td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+		<tr>
+		<td class="table-header bottom-border">Gut</td>
 		<td class="left-border"></td>
 		<td class="co2value" ></td>
 		<td class="co2percent"  ></td>
@@ -976,6 +989,13 @@ for(Recipe recipe: rezeptePersonal){
 		%>
 		
 		<tr>
+		<td class="table-header"><br /></td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+		<tr>
 		<td class="menu-name" style="text-align:right;">
 		Herkömmliches Menu
 		</td>
@@ -984,12 +1004,20 @@ for(Recipe recipe: rezeptePersonal){
 		<td class="co2percent"  ></td>
 		</tr>
 		
-		<% if((rezeptePersonal.indexOf(recipe) != rezeptePersonal.size()-1 )){ 
+		<tr>
+		<td class="table-header"><br /></td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td class="co2percent"  ></td>
+		</tr>
+		
+		
+		<% if(recipe.getCO2Value() > threshold){ 
 			smilies = "";
 			%>
 		
 		<tr>
-		<td class="table-header bottom-border"><br />Über Durchschnitt</td>
+		<td class="table-header bottom-border">Über Durchschnitt</td>
 		<td class="left-border"></td>
 		<td class="co2value" ></td>
 		<td class="co2percent"  ></td>
@@ -1011,7 +1039,7 @@ for(Recipe recipe: rezeptePersonal){
 	class="alternate"
 	<% }%> > 
 	<td class="menu-name">
-	<%= clear %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
+	<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
 	<%= smilies %><%= recipe.getSymbol() %>
 	</td>
 	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
@@ -1050,13 +1078,20 @@ for(Recipe recipe: rezeptePersonal){
 			String percent ="";
 			Integer position = 1;
 			
+			if(average<=(threshold)){
+				percent = formatter.format( -((average-threshold)/(threshold))*100 );
+				
+		
+			
 			if((climateFriendlyValue-average)<0){
-				percent = formatter.format( (-(climateFriendlyValue-average)/(climateFriendlyValue))*100 );
-				moreOrLess = "mehr";
+			//	percent = formatter.format( (-(climateFriendlyValue-average)/(climateFriendlyValue))*100 );
+				moreOrLess = "weniger";
 				position = 2;
 			} else {
 				percent = formatter.format( ((climateFriendlyValue-average)/(climateFriendlyValue))*100 );
 				moreOrLess = "weniger";
+			}
+			
 			}
 			
 			if(average>(threshold)){
@@ -1065,13 +1100,14 @@ for(Recipe recipe: rezeptePersonal){
 				total = formatter.format((threshold/average)*200);
 				klimafriendly = formatter.format((climateFriendlyValue/average)*200);
 				percent = formatter.format( ((average-threshold)/(threshold))*100 );
+				moreOrLess = "mehr";
 				
 			}
 			
 			
 			
 			%>			
-			<table style="font-weight: 300;font-size: 14pt; margin-top:2em" >
+			<table style="font-weight: 300;font-size: 14pt; margin-top:4em" >
 						<!-- label of table -->
 
 
@@ -1091,10 +1127,10 @@ for(Recipe recipe: rezeptePersonal){
 						 
 						 <td style="width:6em;text-align: right;padding:0em 1em 0em 1em;background:white;" ><span class="label-vergleich">Im Vergleich</span></td>
 						 <td class="left-border" style="text-align: left;padding-left:1em;background:white;">
-						 <% if (position<3){ %>
-						 Diese Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% <%= moreOrLess %></span> CO<sub>2</sub>* als die vergleichbaren klimafreundlichen Menus.
+						 <% if (position<2){ %>
+						 Die Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% weniger</span> CO<sub>2</sub>* als die vergleichbaren klimafreundlichen Menus.
 						 <% }else{ %>
-						 Diese Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% mehr </span> CO<sub>2</sub>* als die vergleichbaren  Menus im Durchschnitt.
+						 Die Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% <%= moreOrLess %></span> CO<sub>2</sub>* als die vergleichbaren Menus im Durchschnitt.
 						 <% } %>
 						 </td>
 						 
@@ -1118,7 +1154,7 @@ for(Recipe recipe: rezeptePersonal){
 							<% if (position==1){ %>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
-								 	Diese Menus
+								 	Die Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
 								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
@@ -1138,7 +1174,7 @@ for(Recipe recipe: rezeptePersonal){
 							<% if (position==2){ %>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
-								 	Diese Menus
+								 	Die Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
 								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
@@ -1158,7 +1194,7 @@ for(Recipe recipe: rezeptePersonal){
 							<% if (position==3){ %>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
-								 	Diese Menus
+								 	Die Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
 								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
@@ -1523,7 +1559,7 @@ String code = Converter.toString(compute,34);
 			
 			%>
 			<tr>
-			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><div class="amount"><%= comment.amount %> g CO<sub>2</sub>* </div><% } %></td>
+			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
 			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
 			</tr>
 
@@ -1661,7 +1697,7 @@ String code = Converter.toString(compute,34);
 
 				%>
 				<tr>
-				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><div class="amount"><%= comment.amount %> g CO<sub>2</sub>* </div><% } %></td>
+				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
 				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
 				</tr>
 
