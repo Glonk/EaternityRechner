@@ -26,6 +26,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.DataService;
+import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
@@ -199,6 +200,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 
+	public List<Recipe> getOpenRecipe() {
+		
+		DAO dao = new DAO();
+		return dao.getOpenRecipe();	
+	}
 
 	public List<Recipe> getYourRezepte() throws NotLoggedInException {
 		checkLoggedIn();
@@ -499,6 +505,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		    hostUrl = "http://localhost:8887/";
 		}
 		return hostUrl;
+	}
+
+	@Override
+	public Long addCommitment(Commitment commitment)
+			throws NotLoggedInException, IOException {
+		DAO dao = new DAO();
+		return dao.saveCommitment(commitment);
 	}
 	
 	

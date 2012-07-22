@@ -8,9 +8,11 @@ import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.activity.EaternityRechnerActivity;
 import ch.eaternity.client.activity.GoodbyeActivity;
 import ch.eaternity.client.activity.HelloActivity;
+import ch.eaternity.client.activity.KlimaZmittagActivity;
 import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.GoodbyePlace;
 import ch.eaternity.client.place.HelloPlace;
+import ch.eaternity.client.place.KlimaZmittagPlace;
 
 public class AppActivityMapper implements ActivityMapper {
 
@@ -43,6 +45,8 @@ public class AppActivityMapper implements ActivityMapper {
 			return new EaternityRechnerActivity((EaternityRechnerPlace) place, clientFactory);
 		else if (place instanceof GoodbyePlace)
 			return new GoodbyeActivity((GoodbyePlace) place, clientFactory);
+		else if (place instanceof KlimaZmittagPlace)
+			return new KlimaZmittagActivity((KlimaZmittagPlace) place, clientFactory);
 
 		return null;
 	}

@@ -596,7 +596,9 @@ color:black;
 
   }
 
-
+.kopf { 
+	margin-top: -14pt;
+}
   
   body {
   	margin-top: 2em;
@@ -982,7 +984,7 @@ for(Recipe recipe: rezeptePersonal){
 		<%
 	}
 	
-	if(((recipe.getCO2Value() > threshold) && notDoneThird) || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 )){
+	if(((recipe.getCO2Value() > threshold)  || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 )) && notDoneThird){
 		notDoneThird = false;
 		counterIterate = rezeptePersonal.indexOf(recipe);
 

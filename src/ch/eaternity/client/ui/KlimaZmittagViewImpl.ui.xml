@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:rechner='urn:import:ch.eaternity.client'>
+
+	<ui:style>
+.center {
+	margin: auto;
+	margin-top:40px;
+	margin-bottom:60px;
+
+	}
+	
+	.colored {
+	background: #efefef;
+	height: 110px;
+
+	}
+ 
+</ui:style>
+
+	<g:ScrollPanel>
+		<g:HTMLPanel width='966px' styleName='{style.center}'
+			ui:field='mainHtmlPanel'><!-- hier ist der ganze content -->
+
+			<g:HTML>
+			
+				<h1>Willkommen zum Klima-Zmittag.</h1>
+				<hr />
+			</g:HTML>
+			
+			
+			<g:HorizontalPanel>
+
+					<g:HTMLPanel width='730px' height='200px'>
+						<g:HTML>
+						
+							<h2>Am 24. September 2012</h2>
+							<hr />
+							<h1>Essen wir gemeinsam klimafreundliche Menüs:</h1>
+						
+						</g:HTML>
+						
+						<g:HorizontalPanel>
+							<g:HTML>Wir: </g:HTML>
+							<g:TextBox ui:field="nameCommiter">Ihre Name</g:TextBox>
+							<g:HTML>sind: </g:HTML>
+							<g:TextBox ui:field="countCommiter">2</g:TextBox>
+							<g:HTML>Personen. </g:HTML>
+							<g:HTML>Und werden diese/s Menü speisen: </g:HTML>
+						</g:HorizontalPanel>
+						
+						
+						
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel width='236px' height='176px'>
+						<g:DecoratorPanel><g:HTML width='226px' height='170px'>Hier kommt die Skala - Es fehlen noch xx% um eine Urkunde zu erhalten</g:HTML></g:DecoratorPanel>
+						<g:Button  ui:field='showCertificate' width='236px'>Urkunde anzeigen</g:Button>
+					</g:HTMLPanel>
+				
+			</g:HorizontalPanel>
+			
+			<g:FlowPanel ui:field='menuSelectionPanel' styleName='{style.colored}'></g:FlowPanel>
+						
+			<g:Anchor ui:field='addDateAnchor' >Mehrere Tage teilnehmen.</g:Anchor>
+			<g:HTML>
+			
+				<a>Wir servieren mehrere Menüs am Tag.</a><br />
+				<hr />
+			
+			</g:HTML>
+						
+			
+			<g:FlowPanel ui:field='menuAvailablePanel'></g:FlowPanel>
+			
+			<g:HTML>
+			
+				<hr />
+			
+			</g:HTML>
+			<g:SimplePanel ui:field="certificate"></g:SimplePanel>
+						
+			
+			<g:TextBox ui:field="emailCommiter">Ihre Emailadresse</g:TextBox>
+			<g:Button  ui:field='commitCertificate' width='436px'>Commitment abgeben. Und die Urkunde herunterladen.</g:Button>
+			
+			<g:HTML>
+				<hr />
+				<a>Eigene Rezeptvorschläge per Email einreichen</a><br />
+			
+			</g:HTML>
+
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+
+</ui:UiBinder>

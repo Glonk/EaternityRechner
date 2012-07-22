@@ -11,6 +11,8 @@ import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.GoodbyeViewImpl;
 import ch.eaternity.client.ui.HelloView;
 import ch.eaternity.client.ui.HelloViewImpl;
+import ch.eaternity.client.ui.KlimaZmittagView;
+import ch.eaternity.client.ui.KlimaZmittagViewImpl;
 import ch.eaternity.client.ui.MenuPreviewView;
 
 public class ClientFactoryImpl implements ClientFactory
@@ -18,6 +20,7 @@ public class ClientFactoryImpl implements ClientFactory
 	private static final EventBus eventBus = new SimpleEventBus();
 	private static final PlaceController placeController = new PlaceController(eventBus);
 	private static final HelloView helloView = new HelloViewImpl();
+	private static final KlimaZmittagView klimaZmittagView = new KlimaZmittagViewImpl();
 	private static final EaternityRechnerView eaternityRechnerView = new EaternityRechnerViewImpl();
 	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
 	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
@@ -62,6 +65,11 @@ public class ClientFactoryImpl implements ClientFactory
 	@Override
 	public DataServiceAsync getDataServiceRPC() {
 		return dataRpcService;
+	}
+
+	@Override
+	public KlimaZmittagView getKlimaZmittagView() {
+		return klimaZmittagView;
 	}
 
 }

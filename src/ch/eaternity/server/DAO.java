@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
@@ -47,6 +48,7 @@ public class DAO extends DAOBase
 		ObjectifyService.register(Workgroup.class);
 		ObjectifyService.register(Staff.class);
 		ObjectifyService.register(LoginInfo.class);
+		ObjectifyService.register(Commitment.class);
 		//        ObjectifyService.register(DeviceSpecification.class);
 		//        ObjectifyService.register(Device.class);
 	}
@@ -435,6 +437,11 @@ public class DAO extends DAOBase
 
 
 		return kitchenRecipes;
+	}
+
+	public Long saveCommitment(Commitment commitment) {
+		ofy().put(commitment);
+		return commitment.id;
 	}
 
 

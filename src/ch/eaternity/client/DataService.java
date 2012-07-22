@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Workgroup;
@@ -24,6 +25,7 @@ public interface DataService extends RemoteService {
 	public Long addRezept(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException;
 	public List<Recipe> getYourRezepte() throws NotLoggedInException;
+	public List<Recipe> getOpenRecipe();
 	public List<Recipe> getAdminRezepte() throws NotLoggedInException;
 	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException;
 
@@ -41,6 +43,8 @@ public interface DataService extends RemoteService {
 
 	// login
 	public LoginInfo login(String requestUri);
+	
+	public Long addCommitment(Commitment commitment) throws NotLoggedInException, IOException;
 	
 	// blob images
 	public String getBlobstoreUploadUrl();
