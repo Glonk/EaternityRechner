@@ -7,7 +7,7 @@ public class DockLayoutPanelUtils extends DockLayoutPanel {
         private DockLayoutPanelUtils() { 
                 super(Unit.PX); 
         } 
-        public static double getWidgetSize(Widget widget) { 
+        public Double getWidgetSize(Widget widget) { 
                 return ((LayoutData) widget.getLayoutData()).size; 
         } 
         public void setWidgetSize(Widget widget, double size) { 
