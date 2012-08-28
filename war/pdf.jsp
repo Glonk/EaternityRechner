@@ -942,7 +942,7 @@ for(Recipe recipe: rezeptePersonal){
 		<%
 	}
 	
-	if((recipe.getCO2Value() > climateFriendlyValue) && (recipe.getCO2Value() < threshold) &&  notDoneSeccond){
+	if(((recipe.getCO2Value() > climateFriendlyValue) && (recipe.getCO2Value() < threshold)) || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 ) &&  notDoneSeccond){
 		notDoneSeccond = false;
 		counterIterate = rezeptePersonal.indexOf(recipe);
 		smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
@@ -971,6 +971,10 @@ for(Recipe recipe: rezeptePersonal){
 		<td class="co2percent"  ></td>
 		</tr>
 		
+		<% if((recipe.getCO2Value() > climateFriendlyValue) && (recipe.getCO2Value() < threshold)){ 
+			smilies = "";
+			%>
+		
 		<tr>
 		<td class="table-header bottom-border">Gut</td>
 		<td class="left-border"></td>
@@ -979,9 +983,8 @@ for(Recipe recipe: rezeptePersonal){
 		</tr>
 		
 		
-
-		
 		<%
+		}
 	}
 	
 	if(((recipe.getCO2Value() > threshold)  || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 )) && notDoneThird){
