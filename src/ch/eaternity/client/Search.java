@@ -501,7 +501,7 @@ public class Search<T> extends ResizeComposite {
 		};
 
 		final RecipeView rezeptView;
-		int selectedRecipe =superDisplay.getSelectedRecipeNumber();
+		int selectedRecipe = superDisplay.getSelectedRecipeNumber();
 		if(selectedRecipe != -1){
 			rezeptView = superDisplay.getSelectedRecipeView();
 		} else {
@@ -511,7 +511,7 @@ public class Search<T> extends ResizeComposite {
 		rezeptView.showRezept(rezeptView.recipe);
 		superDisplay.displayRecipeEditView(rezeptView);
 		
-		superDisplay.adjustStickyEditLayount();
+		superDisplay.adjustStickyEditLayout();
 
 		t.schedule(200);
 

@@ -579,19 +579,24 @@ public class RecipeEditView<T> extends Composite {
 				recipe.setPersons(persons);
 			}
 			
+	
 			displayZutatImMenu(recipe.Zutaten);
+		
 			updateSuggestion();
+	
 			
 			RezeptName.setText(recipe.getSymbol());
 			rezeptDetails.setText(recipe.getSubTitle());
+			
 			
 			superDisplay.setTitleHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
 			
 			if (presenter.getLoginInfo().isLoggedIn()) {
 				// only show this if the user is logged in:
 				addCommentingField();
+				
 			}
-
+		
 		
 	}
 
@@ -929,7 +934,7 @@ public class RecipeEditView<T> extends Composite {
 	void updateSuggestion() {
 
 //		in the list
-			
+
 		rezeptViewOrigin.showRezept(recipe);
 		
 		Double MenuLabelWert = 0.0;
@@ -941,6 +946,7 @@ public class RecipeEditView<T> extends Composite {
 			}
 		}
 		
+
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
@@ -948,6 +954,7 @@ public class RecipeEditView<T> extends Composite {
 			}
 			
 		}
+
 		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
 			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+" g*");
@@ -963,11 +970,12 @@ public class RecipeEditView<T> extends Composite {
 		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
 		
-		
+
 		updtTopSuggestion();
 	
 		
 		heightOfView = this.getOffsetHeight();
+	
 		
 	}
 
@@ -1000,7 +1008,7 @@ public class RecipeEditView<T> extends Composite {
 	      // this is the sum over all those ingredient values
 	      // which equals about the number of different ingredients in the recipe...
 	      
-	      
+	 
 	      // all Recipes
 	      List<Recipe> allRecipes = new ArrayList<Recipe>();
 	      allRecipes.clear();
@@ -1022,6 +1030,7 @@ public class RecipeEditView<T> extends Composite {
 	          allRecipes.addAll(presenter.getClientData().getYourRezepte());
 	      }
 		   
+	  
 	      // zuerst der Filter über die tatsächlichen Zutaten
 	      ArrayList<ComparatorRecipe> scoreMap = new ArrayList<ComparatorRecipe>();
 	      scoreMap.clear();
@@ -1040,39 +1049,48 @@ public class RecipeEditView<T> extends Composite {
 	              MinValueRezept = rezeptView.recipe.getCO2Value();
 	          }
 	      }
-	      
+	   
 	      // go over the recipes in the database ( here our special one is already included...)
-	      for( Recipe compareRecipe : allRecipes){
-	          
-	          // this is just to get the min and max values for the indicator
-	          compareRecipe.setCO2Value();
-	          if(compareRecipe.getCO2Value()>MaxValueRezept){
-	              MaxValueRezept = compareRecipe.getCO2Value();
-	          } 
-	          if(compareRecipe.getCO2Value()<MinValueRezept){
-	              MinValueRezept = compareRecipe.getCO2Value();
-	          }
-	          
-	          ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
-	          comparatorRecipe.key = compareRecipe.getId();
-	          comparatorRecipe.recipe = compareRecipe;
-	          // get the direct comparison score... the bigger the worse...
-	          comparatorRecipe.comparator = getExactScore(comparator,comparator(compareRecipe));
-	          
-	          // error is the max score of both added together, minus twice the disjunct region
-	          
-	          Double error = 0.0;
-	          Double errorNeg = 0.0;
-	          for(ComparatorObject comparatorObject : comparatorRecipe.comparator){
-	              error = error+Math.abs(comparatorObject.value);
-	              if(comparatorObject.value<0){
-	                  errorNeg = errorNeg+Math.abs(comparatorObject.value);
-	              }
-	          }
-	          comparatorRecipe.value = error;
-	          comparatorRecipe.valueNeg = errorNeg;
-	          scoreMap.add(comparatorRecipe);
-	      }
+	      
+		      for( Recipe compareRecipe : allRecipes){
+		          if(compareRecipe != null){
+			          // this is just to get the min and max values for the indicator
+		        	  
+			          compareRecipe.setCO2Value();
+			          if(compareRecipe.getCO2Value()>MaxValueRezept){
+			              MaxValueRezept = compareRecipe.getCO2Value();
+			          } 
+			          if(compareRecipe.getCO2Value()<MinValueRezept){
+			              MinValueRezept = compareRecipe.getCO2Value();
+			          }
+		       
+			          try {
+				          ComparatorRecipe comparatorRecipe = new ComparatorRecipe();
+				          comparatorRecipe.key = compareRecipe.getId();
+				          comparatorRecipe.recipe = compareRecipe;
+				          // get the direct comparison score... the bigger the worse...
+				          comparatorRecipe.comparator = getExactScore(comparator,comparator(compareRecipe));
+			         
+				          // error is the max score of both added together, minus twice the disjunct region
+				          
+				          Double error = 0.0;
+				          Double errorNeg = 0.0;
+				          for(ComparatorObject comparatorObject : comparatorRecipe.comparator){
+				              error = error+Math.abs(comparatorObject.value);
+				              if(comparatorObject.value<0){
+				                  errorNeg = errorNeg+Math.abs(comparatorObject.value);
+				              }
+				          }
+				          comparatorRecipe.value = error;
+				          comparatorRecipe.valueNeg = errorNeg;
+				          scoreMap.add(comparatorRecipe);
+			          
+			    	  } catch (Exception e) {
+		      	    	  Window.alert(compareRecipe.getSymbol() + " id failure: " + compareRecipe.getId().toString());
+		      	      }
+		          }
+		      }
+	  
 	      
 	      // dann der gröbere über die definierten Alternativen der Zutaten
 	      ArrayList<ComparatorRecipe> scoreMap2 = new ArrayList<ComparatorRecipe>();
@@ -1124,6 +1142,7 @@ public class RecipeEditView<T> extends Composite {
 	          displayTops(scoreMapFinal, 0.0, 0.5);
 	          
 	      }
+	   
 	      
 		   ////        if(scoreMapFinal.size()>2){
 		   //            recipe.setCO2Value();
@@ -1146,7 +1165,7 @@ public class RecipeEditView<T> extends Composite {
 	      //        double start = scoreMapFinal.get(scoreMapFinal.size()-1).recipe.getCO2Value();
 	      double start = MinValueRezept;
 		   
-		   
+	    
 	      // update all widgets bars!
 	      for(Widget widget : superDisplay.getRezeptList()){
 	          RecipeView rezeptView = (RecipeView) widget;
@@ -1159,7 +1178,7 @@ public class RecipeEditView<T> extends Composite {
 	          
 	          rezeptView.bottomIndikator.setHTML(indikatorHTMLunten);
 	      }
-		   
+	    
 	      // and the one from the edit!
 	      recipe.setCO2Value();
 	      Long indikatorLeft = new Long(Math.round(580/(stop-start)*(recipe.getCO2Value()-start)));

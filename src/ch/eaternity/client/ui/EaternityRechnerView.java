@@ -85,7 +85,7 @@ public interface EaternityRechnerView<T> extends IsWidget
 	
 
 	void onResize();
-	void adjustStickyEditLayount();
+	void adjustStickyEditLayout();
 	void setEditCoverActivated(boolean b);
 	void closeRecipeEditView();
 	RecipeView createNewRecipeView();

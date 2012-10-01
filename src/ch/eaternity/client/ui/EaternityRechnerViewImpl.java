@@ -213,7 +213,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
 		// here we still have an error, when the recipes differ in size...
-		adjustStickyEditLayount();
+		adjustStickyEditLayout();
     }
 
 	// some local variables for the scrolling behavior
@@ -230,7 +230,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		editCoverActivated = b;
 	}
 
-	public void adjustStickyEditLayount() {
+	public void adjustStickyEditLayout() {
 //		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
 		// all this procedure is only relevant, if the recipe is open
@@ -543,9 +543,10 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 
 		// now show this recipe
 		rezeptView.showRezept(rezeptView.recipe);
+
 		displayRecipeEditView(rezeptView);
-		
-	    adjustStickyEditLayount();
+	    adjustStickyEditLayout();
+	    
 		
 	}
 
@@ -580,11 +581,13 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		if(rezeptEditList.getRowCount() == 0){
 			rezeptEditList.insertRow(0);
 		}
+
 		rezeptEditView = new RecipeEditView( rezeptView, rezeptView.recipe,this);
 		rezeptEditView.setPresenter(presenter);
-		rezeptEditView.showRezept(rezeptEditView.recipe);
+		rezeptEditView.showRezept(rezeptView.recipe);
 		
 		rezeptEditList.setWidget(0, 1, rezeptEditView);
+		
 		rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
 		
 //		rezeptEditView = (RecipeEditView) rezeptEditList.getWidget(0,1);
@@ -650,7 +653,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
 			rezeptView.updtTopSuggestion();
 			
-			adjustStickyEditLayount();
+			adjustStickyEditLayout();
 
 		}
 	}
