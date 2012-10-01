@@ -82,6 +82,7 @@ public class IngredientsDialog extends DialogBox{
 			Document messageDom = XMLParser.parse(messageXml);
 //			Window.alert("Root element " + messageDom.getDocumentElement().getNodeName());
 			NodeList zutatenLst = messageDom.getElementsByTagName("ingredient");
+			Long lastid = null;
 			// Window.alert( Integer.toString(zutatenLst.getLength()) );
 			for (int s = 0; s < zutatenLst.getLength(); s++) {
 
@@ -269,7 +270,7 @@ public class IngredientsDialog extends DialogBox{
 						}
 					
 					
-					
+						
 					
 
 					NodeList herkuenfte = zutatElmnt.getElementsByTagName("Extractions");
@@ -390,11 +391,14 @@ public class IngredientsDialog extends DialogBox{
 
 
 					}
+					lastid = newIngredient.getId();
 				}
+				
 			}
 			// finally persist the whole array ( if not empty)
 			if(!ingredients.isEmpty())
 			{
+				Window.alert(Long.toString(lastid));
 				persistIngredients(ingredients);
 			}
 			

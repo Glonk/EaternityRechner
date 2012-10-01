@@ -1,6 +1,7 @@
 package ch.eaternity.server;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,6 +54,8 @@ public class DAO extends DAOBase
 		//        ObjectifyService.register(Device.class);
 	}
 
+
+	
 	/** Your DAO can have your own useful methods */
 	public Long updateOrCreateIngredient(Ingredient ingredient)
 	{
