@@ -48,6 +48,7 @@ String tempIds = request.getParameter("ids");
 String permanentId = request.getParameter("pid");
 String pdf = request.getParameter("pdf");
 
+
 Boolean doPdf = false;
 if(pdf != null){
 	doPdf = true;
@@ -56,10 +57,17 @@ if(pdf != null){
 Boolean DoItWithPermanentIds = true;
 
 String thresholdString = request.getParameter("median");
+String extraString = request.getParameter("extra");
+Integer extra = 0;
 Integer threshold = 1440;
 if(thresholdString != null){
 	threshold = Integer.valueOf(thresholdString);
 } 
+
+if(extraString != null){
+	extra = Integer.valueOf(extraString);
+}
+
 
 Double third = (double)threshold / 3;
 Double half = (double)threshold / 2;
@@ -157,19 +165,20 @@ if(rezeptePersonal.size() != 0){
 			MinValueRezept = recipe.getCO2Value();
 		}
 	}
-	average = average /counter;
-	
+	average = (average /counter) + extra;
+	MinValueRezept = MinValueRezept + extra;
+	MaxValueRezept = MaxValueRezept + extra;
 		
 	Collections.sort(values);
   
     if (values.size() % 2 == 1)
-	median = values.get((values.size()+1)/2-1);
+	median = values.get((values.size()+1)/2-1) + extra;
     else
     {
-	double lower = values.get(values.size()/2-1);
-	double upper = values.get(values.size()/2);
+	double lower = (values.get(values.size()/2-1))  + extra;
+	double upper = (values.get(values.size()/2))  + extra;
  
-	median = (lower + upper) / 2.0;
+	median = ((lower + upper) / 2.0);
     }	    
 }
 		
@@ -899,6 +908,43 @@ Double climateFriendlyValueLength = climateFriendlyValue/MaxValueRezept*200;
 String averageLength = formatter.format(adjustedAverageLength);
 String formattedClimate = formatter.format(climateFriendlyValue);
 String smilies = "";
+String extraFormat = formatter.format(extra);
+String lengthExtra = formatter.format(extra/MaxValueRezept*200);
+
+
+	String klima = "<tr>"
+	+"<td class='table-header'><br /></td>"
+	+"<td class='left-border'></td>"
+	+"<td class='co2value' ></td>"
+	+"<td class='co2percent'  ></td>"
+	+"</tr>"
++""
+	+"<tr>"
+	+"<td class='menu-name' style='text-align:right;'>"
+	+"Klimafreundliches Menu"
+	+"</td>"
+	+"<td class='left-border'><img class='bar' src='orange.png' alt='gray' height='11' width='" + climateFriendlyValueLength + "' /></td>"
+	+"<td class='co2value' >" + formattedClimate + "</td>"
+	+"<td class='co2percent'  ></td>"
+	+"</tr>";
+	
+	String herko = "<tr>"
+	+"<td class='table-header'><br /></td>"
+	+"<td class='left-border'></td>"
+	+"<td class='co2value' ></td>"
+	+"<td class='co2percent'  ></td>"
+	+"</tr>"
++""
+	+"<tr>"
+	+"<td class='menu-name' style='text-align:right;'>"
+	+"Herkömmliches Menu"
+	+"</td>"
+	+"<td class='left-border' style='background:#F7F7F7'><img class='bar' src='gray.png' alt='gray' height='11' width='" + averageLength + "' /></td>"
+	+"<td class='co2value' style='background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;' >" + threshold + "</td>"
+	+"<td class='co2percent'  ></td>"
+	+"</tr>";
+
+
 
 for(Recipe recipe: rezeptePersonal){
 
@@ -908,28 +954,32 @@ for(Recipe recipe: rezeptePersonal){
 
 	recipe.setCO2Value();
 	
+	Double recipeValue = recipe.getCO2Value() + extra;
+	
 	String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
-	String formatted = formatter.format( recipe.getCO2Value() );
+
+	String formatted = formatter.format( recipeValue);
 	String persons = Long.toString(recipe.getPersons());
 	
 	String moreOrLess = "";
 	String percent ="";
 
 	
-	if(recipe.getCO2Value()>(threshold)){
-		percent = "+" + formatter.format( ((recipe.getCO2Value()-threshold)/(threshold))*100 ) + "%";
+	if((recipeValue+extra)>(threshold)){
+		percent = "+" + formatter.format( ((recipeValue-threshold)/(threshold))*100 ) + "%";
 	} else {
-		percent = "-" + formatter.format( ((threshold-recipe.getCO2Value())/(threshold))*100 ) + "%";
+		percent = "-" + formatter.format( ((threshold-recipeValue)/(threshold))*100 ) + "%";
 	}
 
-
 	
 
 	
-	if((recipe.getCO2Value() < climateFriendlyValue) && notDoneFirst){
-		notDoneFirst = false;
+	if((recipeValue < climateFriendlyValue) && notDoneFirst){
+		
 		smilies = "<img class='smile' src='smiley8.png' alt='smiley' /><img class='smile' src='smiley8.png' alt='smiley' />";
 		
+		if(notDoneFirst){
+		notDoneFirst = false;
 		%>
 		
 		<tr>
@@ -940,40 +990,21 @@ for(Recipe recipe: rezeptePersonal){
 		</tr>
 		
 		<%
-	}
-	
-	if(((recipe.getCO2Value() > climateFriendlyValue) && (recipe.getCO2Value() < threshold)) || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 ) &&  notDoneSeccond){
-		notDoneSeccond = false;
-		counterIterate = rezeptePersonal.indexOf(recipe);
-		smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
-		%>
+		}
 		
-		<tr>
-		<td class="table-header"><br /></td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		
-		<tr>
-		<td class="menu-name" style="text-align:right;">
-		Klimafreundliches Menu
-		</td>
-		<td class="left-border"><img class="bar" src="orange.png" alt="gray" height="11" width="<%= climateFriendlyValueLength %>" /></td>
-		<td class="co2value" ><%= formattedClimate %></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		
-		<tr>
-		<td class="table-header"><br /></td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		
-		<% if((recipe.getCO2Value() > climateFriendlyValue) && (recipe.getCO2Value() < threshold)){ 
-			smilies = "";
+		}
+		if((recipeValue > climateFriendlyValue) && (recipeValue < threshold) &&  notDoneSeccond){ 
+			
+			smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
+			
+		if(notDoneSeccond){
+			notDoneSeccond = false;
+			out.print(klima);
+			klima = "";
+			
 			%>
+		
+
 		
 		<tr>
 		<td class="table-header bottom-border">Gut</td>
@@ -984,42 +1015,23 @@ for(Recipe recipe: rezeptePersonal){
 		
 		
 		<%
-		}
 	}
 	
-	if(((recipe.getCO2Value() > threshold)  || (rezeptePersonal.indexOf(recipe) == rezeptePersonal.size()-1 )) && notDoneThird){
-		notDoneThird = false;
-		counterIterate = rezeptePersonal.indexOf(recipe);
-
-		%>
-		
-		<tr>
-		<td class="table-header"><br /></td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		
-		<tr>
-		<td class="menu-name" style="text-align:right;">
-		Herkömmliches Menu
-		</td>
-		<td class="left-border" style="background:#F7F7F7"><img class="bar" src="gray.png" alt="gray" height="11" width="<%= averageLength %>" /></td>
-		<td class="co2value" style="background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;" ><%= threshold %></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		
-		<tr>
-		<td class="table-header"><br /></td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		
-		
-		<% if(recipe.getCO2Value() > threshold){ 
+		}
+		if((recipeValue > threshold) && notDoneThird){ 
+			
 			smilies = "";
+			
+			if(notDoneThird){
+				notDoneThird = false;
+				out.print(klima);
+				out.print(herko);
+				klima = "";
+				herko = "";
 			%>
+		
+
+		
 		
 		<tr>
 		<td class="table-header bottom-border">Über Durchschnitt</td>
@@ -1031,38 +1043,43 @@ for(Recipe recipe: rezeptePersonal){
 		
 		
 		<%
-		}
 	}
+		
+		}
+
 	
-	%>
-	
-	
-	
-	<tr <%
-	int order = (rezeptePersonal.indexOf(recipe) - counterIterate ) % 2; 
-	if(order == 1) { %>
-	class="alternate"
-	<% }%> > 
-	<td class="menu-name">
-	<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-	<%= smilies %><%= recipe.getSymbol() %>
-	</td>
-	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-	<td class="co2value" ><%= formatted %></td>
-	<td class="co2percent" ><%= percent %></td>
-	</tr>
+		
+		%>
 
 
-	<%
+		<tr <%
+		int order = (rezeptePersonal.indexOf(recipe) - counterIterate ) % 2; 
+		if(order == 1) { %>
+		class="alternate"
+		<% }%> > 
+		<td class="menu-name">
+		<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
+		<%= smilies %><%= recipe.getSymbol() %>
+		</td>
+		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
+		<td class="co2value" ><%= formatted %></td>
+		<td class="co2percent" ><%= percent %></td>
+		</tr>
+
+
+		<%
+
 }	
 
-
+out.print(klima);
+out.print(herko);
 
 %>
 </table>
 
 <ul style="font-size:9pt;color:grey;">
 <li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* (Median: <%= formatter.format(median) %> g CO<sub>2</sub>*) pro Person.</li>
+<% if(extra != 0) {%><li><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /> Bei den Menüs wurde <%=extraFormat %> g CO<sub>2</sub>* für die Zubereitung hinzugerechnet.</li><% }%>
 </ul>
 </form>
 
@@ -1322,7 +1339,7 @@ for(Recipe recipe: rezeptePersonal){
 doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
-		if(recipe.getCO2Value() < climateFriendlyValue){
+		if((recipe.getCO2Value()+extra) < climateFriendlyValue){
 			doIt = true;
 		}
 	}
@@ -1365,10 +1382,11 @@ long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
-			if(recipe.getCO2Value() < climateFriendlyValue){
+			Double recipeValue = recipe.getCO2Value() + extra;
+			if(recipeValue < climateFriendlyValue){
 			
 			
-			String formatted = formatter.format( recipe.getCO2Value() );
+			String formatted = formatter.format( recipeValue );
 			String persons = Long.toString(recipe.getPersons());
 			
 			
@@ -1427,7 +1445,7 @@ String code = Converter.toString(compute,34);
 				%>
 				<tr>
 				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
+				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
 				</tr>
 
 				<%
@@ -1462,7 +1480,7 @@ String code = Converter.toString(compute,34);
 doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
-	if(recipe.getCO2Value() >= climateFriendlyValue && recipe.getCO2Value() < threshold){
+	if((recipe.getCO2Value() + extra) >= climateFriendlyValue && (recipe.getCO2Value() + extra) < threshold){
 	doIt = true;
 	}
 	}
@@ -1506,9 +1524,10 @@ long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
-			if(recipe.getCO2Value() >= climateFriendlyValue && recipe.getCO2Value() < threshold){
+			Double recipeValue = recipe.getCO2Value() + extra;
+			if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
 
-			String formatted = formatter.format( recipe.getCO2Value() );
+			String formatted = formatter.format( recipeValue );
 			String persons = Long.toString(recipe.getPersons());
 			%>
 			
@@ -1565,7 +1584,7 @@ String code = Converter.toString(compute,34);
 			%>
 			<tr>
 			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
+			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
 			</tr>
 
 			<%
@@ -1601,7 +1620,7 @@ String code = Converter.toString(compute,34);
 doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
-	if(recipe.getCO2Value() >= threshold){
+	if((recipe.getCO2Value()+extra) >= threshold){
 	doIt = true;
 	}
 	}
@@ -1645,10 +1664,11 @@ long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
-			if(recipe.getCO2Value() >= threshold){
+			Double recipeValue = recipe.getCO2Value() + extra;
+			if(recipeValue >= threshold){
 			
 
-			String formatted = formatter.format( recipe.getCO2Value() );
+			String formatted = formatter.format(recipeValue );
 			String persons = Long.toString(recipe.getPersons());
 			%>
 			
@@ -1703,7 +1723,7 @@ String code = Converter.toString(compute,34);
 				%>
 				<tr>
 				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipe.getCO2Value()*140 %>" /><% } %></td>
+				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
 				</tr>
 
 				<%
