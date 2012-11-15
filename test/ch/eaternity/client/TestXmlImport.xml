@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?><!-- Diese Grammatik wurde abgelehnt - verwenden Sie stattdessen FMPXMLRESULT. -->
+<FMPDSORESULT xmlns="http://www.filemaker.com/fmpdsoresult"><ERRORCODE>0</ERRORCODE><DATABASE>Eaternity-Test-Datenbank.fmp12</DATABASE><LAYOUT>Zutatdetails</LAYOUT>
+
+<ROW MODID="0" RECORDID="1321">
+<Zutat_Name>Tomatensugo</Zutat_Name>
+<Kategorie>Konserven</Kategorie>
+<CO2eq_Wert>.865</CO2eq_Wert>
+<Identifikations_Nummer>908</Identifikations_Nummer>
+<Herstellungen>konventionell</Herstellungen>
+<Herstellungen_Faktoren>0</Herstellungen_Faktoren>
+<Transportmittel>LKW,Zug,Schiff,Fluss,Flugzeug</Transportmittel>
+<Transportmittel_Faktoren>0.188,0.014,0.011,0.046,1.108</Transportmittel_Faktoren>
+<herkünfte>Schweiz,Spanien,Niederlande</herkünfte>
+<Alternativen></Alternativen><Std_Menge>100</Std_Menge>
+<Std_Herkunft>Schweiz</Std_Herkunft>
+<Konservierungen>KONSERVIERT</Konservierungen>
+<Konservierungen_Faktoren>0</Konservierungen_Faktoren>
+</ROW>
+
+<ROW MODID="0" RECORDID="1320">
+<Zutat_Name>Knoblauchpulver</Zutat_Name>
+<Kategorie>Konserven</Kategorie>
+<CO2eq_Wert>1.71</CO2eq_Wert>
+<Identifikations_Nummer>907</Identifikations_Nummer>
+<Herstellungen>konventionell</Herstellungen>
+<Herstellungen_Faktoren>0</Herstellungen_Faktoren>
+<Transportmittel>LKW,Zug,Schiff,Fluss,Flugzeug</Transportmittel>
+<Transportmittel_Faktoren>0.188,0.014,0.011,0.046,1.105</Transportmittel_Faktoren>
+<herkünfte>Schweiz,Spanien,Niederlande</herkünfte>
+<Alternativen></Alternativen>
+<Std_Menge>100</Std_Menge>
+<Std_Herkunft>Schweiz</Std_Herkunft>
+<Konservierungen>KONSERVIERT</Konservierungen>
+<Konservierungen_Faktoren>0</Konservierungen_Faktoren>
+</ROW>
+
+<ROW MODID="0" RECORDID="1319"><Zutat_Name>Milchpulver</Zutat_Name><Kategorie>Konserven</Kategorie><CO2eq_Wert>12.23</CO2eq_Wert><Identifikations_Nummer>906</Identifikations_Nummer><Herstellungen>konventionell</Herstellungen><Herstellungen_Faktoren>0</Herstellungen_Faktoren><Transportmittel>LKW,Zug,Schiff,Fluss,Flugzeug</Transportmittel><Transportmittel_Faktoren>0.188,0.014,0.011,0.046,1.105</Transportmittel_Faktoren><herkünfte>Schweiz,Spanien,Niederlande</herkünfte><Alternativen></Alternativen><Std_Menge>100</Std_Menge><Std_Herkunft>Schweiz</Std_Herkunft><Konservierungen>KONSERVIERT</Konservierungen><Konservierungen_Faktoren>0</Konservierungen_Faktoren></ROW>
+<ROW MODID="0" RECORDID="1318"><Zutat_Name>Tomaten (getrocknet)</Zutat_Name><Kategorie>Konserven</Kategorie><CO2eq_Wert>3.45</CO2eq_Wert><Identifikations_Nummer>905</Identifikations_Nummer><Herstellungen>konventionell</Herstellungen><Herstellungen_Faktoren>0</Herstellungen_Faktoren><Transportmittel>LKW,Zug,Schiff,Fluss,Flugzeug</Transportmittel><Transportmittel_Faktoren>0.188,0.014,0.011,0.046,1.105</Transportmittel_Faktoren><herkünfte>Schweiz,Spanien,Niederlande</herkünfte><Alternativen></Alternativen><Std_Menge>100</Std_Menge><Std_Herkunft>Schweiz</Std_Herkunft><Konservierungen>KONSERVIERT</Konservierungen><Konservierungen_Faktoren>0</Konservierungen_Faktoren></ROW>
+<ROW MODID="0" RECORDID="1317"><Zutat_Name>Obst-Konserven</Zutat_Name><Kategorie>Konserven</Kategorie><CO2eq_Wert>1.21</CO2eq_Wert><Identifikations_Nummer>904</Identifikations_Nummer><Herstellungen>konventionell</Herstellungen><Herstellungen_Faktoren>0</Herstellungen_Faktoren><Transportmittel>LKW,Zug,Schiff,Fluss,Flugzeug</Transportmittel><Transportmittel_Faktoren>0.188,0.014,0.011,0.046,1.105</Transportmittel_Faktoren><herkünfte>Schweiz,Spanien,Niederlande</herkünfte><Alternativen></Alternativen><Std_Menge>100</Std_Menge><Std_Herkunft>Schweiz</Std_Herkunft><Konservierungen>KONSERVIERT</Konservierungen><Konservierungen_Faktoren>0</Konservierungen_Faktoren></ROW>
+</FMPDSORESULT>
