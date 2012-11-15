@@ -53,7 +53,7 @@ public class Recipe implements Serializable, Cloneable{
 	
 	private Long persons;
 	
-	private Date createDate;
+	private Date createDate; //probably already used?
 	private Long hits;
 	private Long popularity;
 	

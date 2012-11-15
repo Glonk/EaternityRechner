@@ -24,4 +24,9 @@ public class IngredientCondition implements Serializable, Cloneable{
     public IngredientCondition(String symbol) {
 		this.symbol = symbol;
 	}
+    
+    public IngredientCondition(String symbol, Double factor) {
+    	this.symbol = symbol;
+    	this.factor = factor;
+	}
 }
