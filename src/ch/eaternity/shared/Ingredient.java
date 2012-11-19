@@ -55,6 +55,8 @@ public class Ingredient implements IsSerializable{
     List<Extraction> extractions;
 
 	public Boolean hasSeason;
+	
+	public List<String> tags;
 
 
     

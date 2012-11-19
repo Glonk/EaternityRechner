@@ -139,10 +139,24 @@ public class IngredientsDialog extends DialogBox{
 					}
 					//else isValidIng = false;
 					
+					// has Season Dependency
+					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
+					if (tmpNodeVal1 != null) newIngredient.stdAmountGramm = Integer.parseInt( tmpNodeVal1 );
+					else isValidIng = false;
+					
+					// hasSeason
+					NodeList hasSeasonElmntLst = zutatElmnt.getElementsByTagName("hasSeason");
+					Element hasSeasonWertElmnt = (Element) hasSeasonElmntLst.item(0);
+					if(hasSeasonWertElmnt!=null){
+					NodeList hasSeason = hasSeasonWertElmnt.getChildNodes();
+//					Window.alert("CO2eWert : "  + ((Node) CO2eWert.item(0)).getNodeValue());
+					newIngredient.hasSeason = Boolean.valueOf( ((Node) hasSeason.item(0)).getNodeValue() ) ;
+					}
+					
 					// std mengeGramm
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
 					if (tmpNodeVal1 != null) newIngredient.stdAmountGramm = Integer.parseInt( tmpNodeVal1 );
-					else continue;
+					else isValidIng = false;
 					
 					// std herkunft
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Herkunft");
@@ -168,6 +182,20 @@ public class IngredientsDialog extends DialogBox{
 						newIngredient.conditions = newConditions;
 					}
 					else isValidIng = false;
+					
+					// Tags
+					tmpNodeVal1 = getTagContent(zutatElmnt, "Tags");
+			
+					if (tmpNodeVal1 != null) {
+						String prod_ar1[] = tmpNodeVal1.split(",");
+						List<String> tags = new ArrayList<String>(prod_ar1.length);
+						
+						for(int i=0; i<prod_ar1.length;i++) tags.add(prod_ar1[i].trim());
+
+						newIngredient.tags = tags;
+					}
+					else isValidIng = false;
+					
 					
 					//Productions
 					// TODO catch if factors doesn't match symbols
