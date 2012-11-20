@@ -35,7 +35,13 @@ import ch.eaternity.shared.comparators.ValueComparator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -78,6 +84,11 @@ public class Search<T> extends ResizeComposite {
 
 	private Listener listener;
 	private ListenerMeals listenerMeals;
+	
+	static int markedRow = 0;
+	interface MarkingStyle extends CssResource {
+		String markedRow();
+	}
 	
 	// CSS of selected row
 	static int selectedRow = 0;
@@ -142,6 +153,8 @@ public class Search<T> extends ResizeComposite {
 
 	// CSS reference for the alternating row coloring
 	@UiField
+	static MarkingStyle markingStyle;
+	@UiField
 	static SelectionStyle selectionStyle;
 	@UiField
 	static EvenStyleRow evenStyleRow;
@@ -159,11 +172,7 @@ public class Search<T> extends ResizeComposite {
 	static int sortMethod = 1;
 	
 	
-	/**
-	 * Ui-Handlers
-	 * 
-	 * those who handle the interactions
-	 */
+	//---------------- UI HANDLERS ----------------
 	
 	@UiHandler("co2Order")
 	void onCo2Clicked(ClickEvent event) {
@@ -177,17 +186,63 @@ public class Search<T> extends ResizeComposite {
 		sortResults();
 	}
 	
-
+	// Handle search input
+	private int numKeyPressed;
 	@UiHandler("SearchInput")
 	public void onKeyUp(KeyUpEvent event) {
 		// this matches up to 2 words!
-		
+		numKeyPressed++;
 		// only update on text change
-		if( !SearchInput.getText().trim().equals(searchString)){
-			searchString = SearchInput.getText().trim();
-			updateResults(searchString);
+		if (numKeyPressed % 2 == 0)
+		{
+			if( !SearchInput.getText().trim().equals(searchString)){
+				searchString = SearchInput.getText().trim();
+				updateResults(searchString);
+			}
 		}
 	}
+
+	
+	// Handle Enter Key to add new ingredient
+	//ugly workaround for catching double firing of events from suggestbox (http://code.google.com/p/google-web-toolkit/issues/detail?id=3533)
+	private int numEnterKeyPressed;
+	private int numDownKeyPressed;
+	private int numUpKeyPressed;
+	
+	@UiHandler("SearchInput")
+	public void onKeyDown(KeyDownEvent event) {
+		if(KeyCodes.KEY_ENTER == event.getNativeKeyCode())
+		{
+			numEnterKeyPressed++;
+			if (numEnterKeyPressed % 2 == 0)
+			{
+				selectRow(markedRow);
+				SearchInput.setText("");
+				updateResults("");
+			}
+		}
+		if(KeyCodes.KEY_DOWN == event.getNativeKeyCode())
+		{
+			numDownKeyPressed++;
+			if (numDownKeyPressed % 2 == 0)
+				changeMarkedRow(markedRow + 1);
+		}
+		if(KeyCodes.KEY_UP == event.getNativeKeyCode())
+		{
+			numUpKeyPressed++;
+			if (numUpKeyPressed % 2 == 0)
+				changeMarkedRow(markedRow - 1);
+		}
+	}
+	
+	/* ALternative Way: select the textbox behind, doesn't worked
+	SearchInput.getTextBox().addKeyPressHandler(new KeyPressHandler() {      
+		public void onKeyPress(KeyPressEvent event) {
+			if (KeyCodes.KEY_ENTER == event.getCharCode()) //getNativeKeyCode())
+				selectRow(markedRow);
+	    }
+	});
+	*/
 
 	
 	@UiHandler("legendAnchor")
@@ -253,6 +308,7 @@ public class Search<T> extends ResizeComposite {
 	private ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
 	private ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
 	private ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
+	private ArrayList<Ingredient> FoundAlternativeIngredients = new ArrayList<Ingredient>();
 	
 	// re-check this list
 	private ArrayList<Recipe> FoundRezepteHasDesc = new ArrayList<Recipe>();
@@ -521,6 +577,17 @@ public class Search<T> extends ResizeComposite {
 			listener.onItemSelected(item);
 		}
 	}
+	
+	private void changeMarkedRow(int row)
+	{
+		if (row >= 0 && row < FoundIngredient.size())
+		{
+			styleMarkedRow(markedRow, false);
+			styleMarkedRow(row, true);
+			markedRow = row;
+		}
+		
+	}
 
 	static void styleRow(int row, boolean selected) {
 		if (row != -1) {
@@ -543,6 +610,7 @@ public class Search<T> extends ResizeComposite {
 			} else {
 				tableMeals.getRowFormatter().removeStyleName(row, style);
 			}
+			
 		}
 	}
 
@@ -557,6 +625,20 @@ public class Search<T> extends ResizeComposite {
 			}
 		}
 	}
+	
+	private void styleMarkedRow(int row, boolean marked) {
+		String style = markingStyle.markedRow();
+
+		if (marked) {
+			table.getRowFormatter().addStyleName(row, style);
+		} else {
+			table.getRowFormatter().removeStyleName(row, style);
+		}
+	}
+	
+	
+	
+
 
 	
 	
@@ -572,6 +654,7 @@ public class Search<T> extends ResizeComposite {
 		tableMealsYours.removeAllRows();
 
 		FoundIngredient.clear();
+		FoundAlternativeIngredients.clear();
 		FoundRezepte.clear();
 		FoundRezepteYours.clear();
 		
@@ -589,14 +672,14 @@ public class Search<T> extends ResizeComposite {
 		if ((clientData.getIngredients() != null) ){
 
 			// Zutaten
-			
 			// when the search string has a length 
 			if(searchString.trim().length() != 0){
 
 				String[] searches = searchString.split(" ");
 
-				for(String search : searches){
-
+				// consider strings with whitespaces, ssek for each word individually
+				for(String search : searches)
+				{
 					// Zutaten
 					for(Ingredient zutat : clientData.getIngredients()){
 						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
@@ -607,9 +690,6 @@ public class Search<T> extends ResizeComposite {
 								FoundIngredient.add(zutat);
 //								displayIngredient(zutat);
 							}
-
-
-
 						}
 					}
 					// only look for alternatives, if there is only 1 result
@@ -631,7 +711,6 @@ public class Search<T> extends ResizeComposite {
 							}
 							break;
 						}
-
 					}
 				}
 				// Rezepte
@@ -642,13 +721,10 @@ public class Search<T> extends ResizeComposite {
 				if(	clientData.getPublicRezepte() != null){
 					searchRezept(searchString, clientData.getPublicRezepte(), searches,false);
 				}
-
-
 			} 
 			// the search string was empty (so just display everything!)
 			// TODO yet a little slow...
 			else {
-
 				for(Ingredient zutat : clientData.getIngredients()){
 //					if(!FoundIngredient.contains(zutat)){ // not necessary, as we are getting anyway all of them (no alternatives...)
 						FoundIngredient.add(zutat);
@@ -698,8 +774,12 @@ public class Search<T> extends ResizeComposite {
 			displayUnDescendantedRecipes(FoundRezepteHasDesc,FoundRezepte);
 			displayUnDescendantedRecipes(FoundRezepteYoursHasDesc,FoundRezepteYours);
 
-			sortResults();
 			// sort and display results
+			sortResults();
+			
+			// mark top entry
+			changeMarkedRow(0);
+			
 			
 		}	
 	}
@@ -836,9 +916,7 @@ public class Search<T> extends ResizeComposite {
 	 * The sorting functions
 	 */
 
-	private void sortResults() {
-
-
+	private void sortResults(boolean alternatives) {
 		switch(sortMethod){
 		case 1:{
 			//"co2-value"
@@ -913,14 +991,9 @@ public class Search<T> extends ResizeComposite {
 					displayRecipeItem(item,true);
 				}
 			}
-
 			break;
-
-
-
 		}
 		}
-
 	}
 
 
@@ -1122,10 +1195,10 @@ public class Search<T> extends ResizeComposite {
 	public void displayIngredient(final Ingredient ingredient) {
 		int row = table.getRowCount();
 
-		if ((row % 2) == 1) {
+		/*if ((row % 2) == 1) {
 			String style = evenStyleRow.evenRow();
 			table.getRowFormatter().addStyleName(row, style);
-		}
+		}*/
 
 		HTML icon = new HTML();
 

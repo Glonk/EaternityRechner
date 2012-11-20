@@ -86,24 +86,24 @@
   	margin-top: 24px;
   	}
   	
-    	.spacer {
-  		margin: 8px;
-  		padding-left:4px;
+ 	.spacer {
+	margin: 8px;
+	padding-left:4px;
   		 
   	}
-  	  .sortThing {
-  		border-top: 1.5px solid #bbb;
+    .sortThing {
+	border-top: 1.5px solid #bbb;
 
   	}
 
 
-  .table {
-    table-layout: fixed;
-    width: 100%;
-    background: #fff;
-    cursor: pointer;
+.table {
+   table-layout: fixed;
+   width: 100%;
+   background: #fff;
+   cursor: pointer;
 	cursor: hand;
-  }
+}
 
   .table td {
   	/*
@@ -147,44 +147,47 @@
 	background-position: right center;
   	}
 
-	.scroll {
-		background: #fff;
-		margin-top: 1px;
-			border-top:solid #bbb 1px;
-		}
+.scroll {
+	background: #fff;
+	margin-top: 1px;
+	border-top:solid #bbb 1px;
+	}
+	
 .htmlbox {
 	background: #fafafa;
-	}
-
-		
-  </ui:style>
-
-  <ui:style field='selectionStyle'
-    type='ch.eaternity.client.Search.SelectionStyle'>
-
-  .selectedRow {
-    
-  }
-
-  .selectedRow td {
-  	background: #adcce7;
-  	/*
-    border-top: 1px solid #88a4d6;
-    border-bottom: 1px solid #7b97d0;
-    */
-  }
-
+}	
   </ui:style>
   
-    <ui:style field='evenStyleRow'
-    type='ch.eaternity.client.Search.EvenStyleRow'>
-
+  <!-- marking row for potential selection -->
+  <ui:style field='markingStyle' type='ch.eaternity.client.Search.MarkingStyle'>
+	  .markedRow {}
+	  .markedRow td {
+	  	background: #f3d3a3;
+	    background-image:url('add.png');
+		background-repeat:no-repeat;
+		background-position: right center;
+  }
+  </ui:style>
+  
+  <!-- select row, adding to menu -->
+  <ui:style field='selectionStyle' type='ch.eaternity.client.Search.SelectionStyle'>
+	  .selectedRow {}
+	  .selectedRow td {
+	  	background: #adcce7;
+	  	/*
+	    border-top: 1px solid #88a4d6;
+	    border-bottom: 1px solid #7b97d0;
+	    */
+  }
+  </ui:style>
+  
+  
+  <ui:style field='evenStyleRow' type='ch.eaternity.client.Search.EvenStyleRow'>
   .evenRow {
     background: #E8EAEA;
   }
-
-
   </ui:style>
+  
 
   <g:DockLayoutPanel unit='EM'>
   
