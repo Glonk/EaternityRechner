@@ -31,6 +31,7 @@ public class Ingredient implements IsSerializable{
     
     public Integer stdAmountGramm;
     
+    // possibly to be eliminated
     public String stdExtractionSymbol;
 	
     @Serialized

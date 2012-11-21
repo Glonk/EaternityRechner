@@ -657,7 +657,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 
 		}
 	}
-public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView) {
+public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int grams) {
 		
 		// convert zutat to ZutatSpec and call the real method
 		Extraction stdExtraction = null;
@@ -670,7 +670,10 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView) {
 				 new Date(),stdExtraction.stdCondition, stdExtraction.stdProduction, 
 				 stdExtraction.stdMoTransportation);
 		ingredientSpecification.setHerkunft(stdExtraction);
-		ingredientSpecification.setMengeGramm(item.stdAmountGramm);
+		if (grams == 0)
+			ingredientSpecification.setMengeGramm(item.stdAmountGramm);
+		else
+			ingredientSpecification.setMengeGramm(grams);
 		ingredientSpecification.setSeason(stdExtraction.startSeason, stdExtraction.stopSeason);
 		ingredientSpecification.setNormalCO2Value(item.getCo2eValue());
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();

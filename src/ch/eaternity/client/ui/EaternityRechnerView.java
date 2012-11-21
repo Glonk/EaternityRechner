@@ -80,7 +80,7 @@ public interface EaternityRechnerView<T> extends IsWidget
 	void setTitleHTML(String string);
 	void styleRezept(int selectedRezept, boolean b);
 	void updateSaisonAndMore();
-	void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView);
+	void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int grams);
 	void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog);
 	
 

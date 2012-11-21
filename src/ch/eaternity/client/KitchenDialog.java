@@ -117,21 +117,6 @@ public class KitchenDialog<T> extends DialogBox{
 	private Presenter<T> presenter;
 	public void setPresenter(Presenter<T> presenter){
 		this.presenter = presenter;
-	}
-	
-	private EaternityRechnerView superDisplay;
-
-	
-	Integer timeToWaitForGeocode = 1; // in seconds ( to not flood, and be blocked)
-
-	public KitchenDialog(String location, EaternityRechnerView superDisplay) {
-		this.superDisplay = superDisplay;
-//		String kitchenName = kitchens.getItemText(kitchens.getSelectedIndex());
-//		String kitchenName = "neue Küche";
-		processAddress(location,true);
-		
-		// this is only necessary for the first time...
-		currentLocation = location;
 		
 		availableKitchens = presenter.getClientData().kitchens;
 		
@@ -152,6 +137,24 @@ public class KitchenDialog<T> extends DialogBox{
 		
 
 		openDialog();
+		
+	}
+	
+	private EaternityRechnerView superDisplay;
+
+	
+	Integer timeToWaitForGeocode = 1; // in seconds ( to not flood, and be blocked)
+
+	public KitchenDialog(String location, EaternityRechnerView superDisplay) {
+		this.superDisplay = superDisplay;
+//		String kitchenName = kitchens.getItemText(kitchens.getSelectedIndex());
+//		String kitchenName = "neue Küche";
+		processAddress(location,true);
+		
+		// this is only necessary for the first time...
+		currentLocation = location;
+		
+
 	
 	}
 
