@@ -114,14 +114,6 @@ public class IngredientsDialog extends DialogBox{
 					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( Math.round(Float.parseFloat( tmpNodeVal1 )*1000) );
 					else isValidIng = false;
 					
-					/*
-					//id/symbol/CO2 are necessary, before its nod added
-					if (isValidIng) ingredients.add(newIngredient);
-					else 
-					{
-						amInvalidIngs++;
-						continue;
-					}*/
 					
 					// alternatives
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Alternativen");
@@ -139,29 +131,17 @@ public class IngredientsDialog extends DialogBox{
 					}
 					//else isValidIng = false;
 					
-					// has Season Dependency
-					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
-					if (tmpNodeVal1 != null) newIngredient.stdAmountGramm = Integer.parseInt( tmpNodeVal1 );
-					else isValidIng = false;
 					
-					// hasSeason
-					NodeList hasSeasonElmntLst = zutatElmnt.getElementsByTagName("hasSeason");
-					Element hasSeasonWertElmnt = (Element) hasSeasonElmntLst.item(0);
-					if(hasSeasonWertElmnt!=null){
-					NodeList hasSeason = hasSeasonWertElmnt.getChildNodes();
-//					Window.alert("CO2eWert : "  + ((Node) CO2eWert.item(0)).getNodeValue());
-					newIngredient.hasSeason = Boolean.valueOf( ((Node) hasSeason.item(0)).getNodeValue() ) ;
-					}
 					
 					// std mengeGramm
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
 					if (tmpNodeVal1 != null) newIngredient.stdAmountGramm = Integer.parseInt( tmpNodeVal1 );
-					else isValidIng = false;
+					else newIngredient.stdAmountGramm = 100;
 					
 					// std herkunft
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Herkunft");
 					if (tmpNodeVal1 != null) newIngredient.stdExtractionSymbol = tmpNodeVal1;
-					else isValidIng = false;
+					else newIngredient.stdExtractionSymbol = "Schweiz";
 					
 					//Conditions
 					// TODO catch if factors doesn't match symbols
@@ -185,7 +165,6 @@ public class IngredientsDialog extends DialogBox{
 					
 					// Tags
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Tags");
-			
 					if (tmpNodeVal1 != null) {
 						String prod_ar1[] = tmpNodeVal1.split(",");
 						List<String> tags = new ArrayList<String>(prod_ar1.length);
@@ -194,7 +173,6 @@ public class IngredientsDialog extends DialogBox{
 
 						newIngredient.tags = tags;
 					}
-					else isValidIng = false;
 					
 					
 					//Productions
@@ -238,7 +216,30 @@ public class IngredientsDialog extends DialogBox{
 						newIngredient.moTransportations = newTransportations;
 					}
 					else isValidIng = false;
-				
+					
+					// startSeason
+					String startSeason = null, stopSeason = null;
+					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_start");
+					if (tmpNodeVal1 != null) startSeason = tmpNodeVal1;
+					
+					// stopSeason
+					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_stop");
+					if (tmpNodeVal1 != null) stopSeason = tmpNodeVal1;
+					
+					// has Season Dependency
+					tmpNodeVal1 = getTagContent(zutatElmnt, "saisonabhangig");
+					if (tmpNodeVal1 != null) 
+					{
+						int seasondep = Integer.parseInt( tmpNodeVal1 );
+						if(seasondep == 1)
+							// startseason and stopseason needs to be setted for having seasondependency
+							if (startSeason != null && stopSeason != null)
+								newIngredient.hasSeason = true;
+							else isValidIng = false;
+						else newIngredient.hasSeason = false;
+					}
+					else newIngredient.hasSeason = false;
+					
 						
 					// Extractions (Herkunft)
 					// DEFAULT VALUES, remove after final implementation of database format
@@ -248,7 +249,7 @@ public class IngredientsDialog extends DialogBox{
 					List<ProductLabel> labels = new ArrayList<ProductLabel>();
 					labels.add(new ProductLabel("knospe"));
 					
-					tmpNodeVal1 = getTagContent(zutatElmnt, "herkünfte");
+					tmpNodeVal1 = getTagContent(zutatElmnt, "herkunfte");
 					
 					if (tmpNodeVal1 != null) {
 						String trans_ar1[] = tmpNodeVal1.split(",");
@@ -257,17 +258,27 @@ public class IngredientsDialog extends DialogBox{
 						for(int i=0; i<trans_ar1.length;i++) {
 							trans_ar1[i] = trans_ar1[i].trim();
 							Extraction tmpExtr = new Extraction(trans_ar1[i]);
-							tmpExtr.startSeason = "01.01";
-							tmpExtr.stopSeason = "10.11";
+							if (newIngredient.hasSeason)
+							{
+								tmpExtr.startSeason = startSeason;
+								tmpExtr.stopSeason = stopSeason;
+							}
 							tmpExtr.stdCondition = stdCond;
 							tmpExtr.stdProduction = stdProd;
 							tmpExtr.stdMoTransportation = stdTrans;
 							tmpExtr.stdProductLabels = labels;
 							newExtractions.add(tmpExtr);
+							
+							if(newIngredient.stdExtractionSymbol.equalsIgnoreCase(tmpExtr.symbol))
+								newIngredient.stdExtraction = tmpExtr;
 						}
 						newIngredient.setExtractions(newExtractions);
+						
 					}
 					else isValidIng = false;
+					
+				
+					
 					
 					// all elements are properly parsed add ingredient
 					if (isValidIng) ingredients.add(newIngredient);
@@ -314,7 +325,7 @@ public class IngredientsDialog extends DialogBox{
 	private String getTagContent(Element zutatElmnt, String elementName)
 	{
 		NodeList ElmntLst = zutatElmnt.getElementsByTagName(elementName);
-		if (ElmntLst.getLength() != 0)
+		if (ElmntLst.getLength() > 0)
 		{
 			Node Elmnt = ElmntLst.item(0).getFirstChild();
 			if (Elmnt != null)
