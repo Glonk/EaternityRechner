@@ -168,7 +168,7 @@ public class IngredientsDialog extends DialogBox{
 					}
 					else isValidIng = false;
 					
-					// Tags
+					// Tags oder Labels
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Tags");
 					if (tmpNodeVal1 != null) {
 						String prod_ar1[] = tmpNodeVal1.split(",");
@@ -286,22 +286,22 @@ public class IngredientsDialog extends DialogBox{
 					
 					
 					// all elements are properly parsed add ingredient
-					if (isValidIng) ingredients.add(newIngredient);
-					else 
-					{
+					if (isValidIng) {
+						ingredients.add(newIngredient);
 						amInvalidIngs++;
-						continue;
 					}
+					else continue;
+					
 							
 
-					lastid = newIngredient.getId();
+					// lastid = newIngredient.getId();
 				}
 				
 			}
 			// finally persist the whole array ( if not empty)
 			if(!ingredients.isEmpty())
 			{
-				Window.alert(amInvalidIngs + " invalid ingredients in xml.\n" + ingredients.size() + " valid ingrediens added.");
+				Window.alert(amInvalidIngs + " valid ingredients in xml.\n" + ingredients.size() + " valid ingrediens added.");
 				persistIngredients(ingredients);
 			}
 			else
