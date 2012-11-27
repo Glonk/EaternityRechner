@@ -91,6 +91,7 @@ public class IngredientsDialog extends DialogBox{
 			
 			
 			for (int s = 0; s < zutatenLst.getLength(); s++) {
+				isValidIng = true;
 				Node zutat = zutatenLst.item(s);
 				if (zutat.getNodeType() == Node.ELEMENT_NODE) {
 					Element zutatElmnt = (Element) zutat;
@@ -100,7 +101,11 @@ public class IngredientsDialog extends DialogBox{
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Identifikations_Nummer");
 					Ingredient newIngredient = new Ingredient(0L);
 					if (tmpNodeVal1 != null) newIngredient.setId(Long.parseLong( tmpNodeVal1 ));
-					else isValidIng = false;
+					else {
+						isValidIng = false;
+						continue;
+					}
+
 					
 					// symbol
 //					Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
