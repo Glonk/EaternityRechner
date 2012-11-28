@@ -534,11 +534,21 @@ public class Search<T> extends ResizeComposite {
 			}
 		}
 		
-		if (FoundIngredient.size() < row){
+		if (FoundIngredient.size() + FoundAlternativeIngredients.size() < row){
 			return;
 		}
+		
+		Ingredient item;
+		if (row >= 0 && row < FoundIngredient.size())
+		{
+			item = FoundIngredient.get(row);
+		}
+		else if (row >= FoundIngredient.size() && row < FoundIngredient.size() + FoundAlternativeIngredients.size())
+		{
+			item = FoundAlternativeIngredients.get(row - FoundIngredient.size());
+		}
+		else return;
 
-		Ingredient item = FoundIngredient.get(row);
 
 
 		if (item == null) {
@@ -598,7 +608,7 @@ public class Search<T> extends ResizeComposite {
 	
 	private void changeMarkedRow(int row)
 	{
-		if (row >= 0 && row < FoundIngredient.size())
+		if (row >= 0 && row < FoundIngredient.size() + FoundAlternativeIngredients.size())
 		{
 			styleMarkedRow(markedRow, false);
 			styleMarkedRow(row, true);
@@ -699,6 +709,7 @@ public class Search<T> extends ResizeComposite {
 				for(String search : searches)
 				{
 					// Zutaten
+					// TODO this search algorithm is extremely slow, make faster
 					for(Ingredient zutat : clientData.getIngredients()){
 						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
 							//if(,search) < 3){
@@ -718,9 +729,9 @@ public class Search<T> extends ResizeComposite {
 								for(Long alternativen_id : zutat.getAlternatives()){
 									for(Ingredient zutat2 : clientData.getIngredients()){
 										if(zutat2.getId().equals(alternativen_id)){
-											if(!FoundIngredient.contains(zutat2)){
+											if(!FoundAlternativeIngredients.contains(zutat2)){
 												zutat2.noAlternative = false;
-												FoundIngredient.add(zutat2);
+												FoundAlternativeIngredients.add(zutat2);
 //												displayIngredient(zutat2);
 											}
 										}
@@ -940,6 +951,9 @@ public class Search<T> extends ResizeComposite {
 			//"co2-value"
 			Collections.sort(FoundIngredient,new ValueComparator());
 			displayIngredients();
+			
+			Collections.sort(FoundAlternativeIngredients,new ValueComparator());
+			displayIngredients();	
 
 			Collections.sort(FoundRezepte,new RezeptValueComparator());
 			tableMeals.removeAllRows();
@@ -983,6 +997,9 @@ public class Search<T> extends ResizeComposite {
 			
 			Collections.sort(FoundIngredient,new NameComparator());
 			displayIngredients();
+			
+			Collections.sort(FoundAlternativeIngredients,new NameComparator());
+			displayIngredients();
 
 			Collections.sort(FoundRezepte,new RezeptNameComparator());
 			tableMeals.removeAllRows();
@@ -1017,10 +1034,10 @@ public class Search<T> extends ResizeComposite {
 				
 			// display all alternative Ingredients (sorted as well)
 			boolean textlabeladded = false;
-			for (final Ingredient item : FoundIngredient){
+			for (final Ingredient item : FoundAlternativeIngredients){
 				if (!item.noAlternative)
 				{
-					// alternative dividing section
+					/* alternative dividing section
 					if (!textlabeladded)
 					{
 						int row = table.getRowCount();
@@ -1029,7 +1046,7 @@ public class Search<T> extends ResizeComposite {
 						textALternatives.setHTML("alternativen:");
 						table.setWidget(row,0,textALternatives);
 						textlabeladded = true;
-					}
+					}*/
 					
 					displayIngredient(item);
 				}
@@ -1281,12 +1298,12 @@ public class Search<T> extends ResizeComposite {
 			} 
 		}
 
-		//if(ingredient.noAlternative){
+		if(ingredient.noAlternative){
 		icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
-		/*
+		
 		} else {
-			icon.setHTML(icon.getHTML()+"#: " +ingredient.getSymbol());
-		}*/
+			icon.setHTML(icon.getHTML()+"(alt): " +ingredient.getSymbol());
+		}
 
 		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
 
