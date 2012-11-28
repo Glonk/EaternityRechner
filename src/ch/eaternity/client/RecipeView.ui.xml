@@ -326,6 +326,11 @@
 									text="x" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
+						
+						<g:HorizontalPanel>
+							<g:HTML>Datum: (TT/MM/JJ)</g:HTML>
+							<g:TextBox ui:field="recipeDate"></g:TextBox>
+						</g:HorizontalPanel>
 
 					</g:VerticalPanel>
 

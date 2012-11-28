@@ -32,8 +32,10 @@ import ch.eaternity.shared.comparators.ComparatorRecipe;
 import com.google.api.gwt.services.urlshortener.shared.Urlshortener.UrlContext;
 import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -84,13 +86,10 @@ public class RecipeView<T> extends Composite {
 	@UiField Button saveRecipeButton;
 	@UiField Button reportButton;
 
-	@UiField
-	public TextBox RezeptName;
-	@UiField
-	public CheckBox makeNotPublic;
+	@UiField public TextBox RezeptName;
+	@UiField public CheckBox makeNotPublic;
 	
-	@UiField
-	public CheckBox makePublic;
+	@UiField public CheckBox makePublic;
 
 	@UiField Button removeRezeptButton;
 	@UiField HTMLPanel htmlRezept;
@@ -102,18 +101,30 @@ public class RecipeView<T> extends Composite {
 //	@UiField HorizontalPanel imageUploaderHP;
 
 
-	@UiField
-	public HTML openHTML;
+	@UiField public HTML openHTML;
 	@UiField public HTML savedHTML;
 
 	@UiField HTML codeImage;
 	@UiField HTML co2ValueLabel;
 	
-	@UiField
-	public TextBox rezeptDetails;
+	@UiField public TextBox rezeptDetails;
+	@UiField public TextBox amountPersons;
 	
-	@UiField
-	public TextBox amountPersons;
+	@UiField public TextBox recipeDate;
+	/*
+	recipeDate.addFocusListener(new FocusListener() {
+		public void onLostFocus(Widget sender) {
+			String text = recipeDate.getText();
+			Date date = null;
+			try { date = DateTimeFormat.getFormat("dd.MM.JJ").parse(text);	}
+			catch (IllegalArgumentException IAE) {
+				Window.alert("Input is not a propper formated Date.");
+			}
+			if (date != null)
+				this.recipe.setCreateDate(date);
+		}
+		
+	});*/
 	
 //	private FlowPanel panelImages = new FlowPanel();
 //	private PhotoGallery galleryWidget;
@@ -366,14 +377,11 @@ void onKeyUp(KeyUpEvent event) {
 	//				close also the Editview! ... or respectively the topview
 					//TODO this fails on the top view...
 					superDisplay.closeRecipeEditView();
-					
 				}
 			}
-			
-
-			
-		} else {
-			
+		} 
+		else 
+		{
 		String saveText = "Zusammenstellungen ist noch nicht gespeichert!";
 		if(!presenter.getLoginInfo().isLoggedIn()){
 			saveText = "Sie verlieren alle Änderungen!";
@@ -399,16 +407,33 @@ void onKeyUp(KeyUpEvent event) {
 					if(isSelected){
 	//					close also the Editview! ... or respectively the topview
 						superDisplay.closeRecipeEditView();
-						
 					}
 				}
-//				
 				dlg.hide();
 			}
 		});
 		dlg.show();
 		dlg.center();
 		}
+	}
+	
+	@UiHandler("recipeDate")
+	void onBlur(BlurEvent event)  {
+		String text = recipeDate.getText();
+		Date date = null;
+		try { 
+			if ("".equals(text)) {}
+			else {
+				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
+				date = fmt.parseStrict(text);	}
+			}
+		catch (IllegalArgumentException IAE) {
+			Window.alert("'" + text + "' is not a propper formated Date.");
+			recipeDate.setText("");
+			recipeDate.setCursorPos(0);
+		}
+		if (date != null)
+			this.recipe.setCreateDate(date);
 	}
 	
 
