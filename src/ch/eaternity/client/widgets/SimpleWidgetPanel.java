@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.client.widgets;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
