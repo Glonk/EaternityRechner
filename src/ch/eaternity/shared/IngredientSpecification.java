@@ -74,6 +74,8 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private double distance;
 	private int NormalCO2Value;
 	
+	private double cost; 
+	
 	public IngredientSpecification(Long zutat_id, String name,
 		 Date cookingDate,IngredientCondition symbol,Production symbol2, 
 		 MoTransportation symbol3) {
@@ -273,7 +275,16 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public Long getId() {
 		return id;
 	}
+	
+	// returns -1 if price is not set yet
+	public double getCost(){
+		return cost;
+	}
 
+	public void setCost(double cost)
+	{
+		this.cost = cost;
+	}
 
 
 

@@ -88,6 +88,11 @@
 	margin:0px 5px 10px 5px;
 	}
 	
+	.costError {
+		color:red;
+		margin-left:10px;
+	}
+	
 </ui:style>
 
 <ui:style field='passedStyle'

@@ -18,10 +18,12 @@ import ch.eaternity.shared.IngredientSpecification;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -221,11 +223,13 @@ public class InfoZutatDialog<T> extends Composite {
 		
 		hinweisDetails.setText("");
 		
+		//Season
 		if(zutat.hasSeason != null && zutat.hasSeason){
 			specificationTable.setHTML(0, 0, "Saison");
 			updateSaison(zutatSpec);
 		}
 		
+		//Extractions
 		if(zutat.getExtractions() != null && zutat.getExtractions().size()>0){
 			
 			final ListBox herkuenfte = new ListBox();
@@ -448,6 +452,50 @@ public class InfoZutatDialog<T> extends Composite {
 			}
 		}
 		
+		//Cost
+		int row = specificationTable.getRowCount();
+		specificationTable.setHTML(row, 0, "Kosten");
+		HorizontalPanel horPanel = new HorizontalPanel();
+		final TextBox costTextBox = new TextBox();
+		final HTML costError = new HTML();
+		costError.setStyleName("costError");
+		costTextBox.setWidth("60px");
+		specificationTable.setWidget(row,1,horPanel);
+		
+		NumberFormat df = NumberFormat.getFormat("00.##");
+		double cost = zutatSpec.getCost();
+		
+		if(cost != 0.0d)
+			costTextBox.setText(df.format(cost));
+		
+		costTextBox.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event)  {
+				String text = costTextBox.getText();
+				try { 
+					if ("".equals(text)) {}
+					else {
+						//DecimalFormat df = new DecimalFormat();
+						//df.setMaximumFractionDigits(2);
+						//zutatSpec.setCost(df.parse(text).doubleValue());
+						costError.setText("");
+						double cost = Double.parseDouble(text);
+						if (cost > 0.0)
+							zutatSpec.setCost(cost);
+						else
+							costError.setText("Wert ungueltig");
+					}
+				}
+				catch (NumberFormatException nfe) {
+					costError.setText("Wert ungueltig");
+				}
+			}
+		});
+		
+		HTML costLabel = new HTML("CHF");
+		horPanel.add(costTextBox);
+		horPanel.add(costLabel);
+		horPanel.add(costError);
 	}
 	
 
