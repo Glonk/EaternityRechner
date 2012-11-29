@@ -1262,7 +1262,7 @@ public class Search<T> extends ResizeComposite {
 
 		}
 
-		if(ingredient.hasSeason){
+		if(ingredient.hasSeason != null && ingredient.hasSeason){
 //			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
 //			presenter
 			Date date = null;
