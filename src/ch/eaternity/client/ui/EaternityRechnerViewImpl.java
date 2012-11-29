@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -380,6 +381,15 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		if(recipe.getCookInstruction() != null){
 //			rezeptView.cookingInstr.setText(recipe.getCookInstruction());
 			rezeptView.recipe.setCookInstruction(recipe.getCookInstruction());
+		}
+		
+		//Date
+		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
+		Date date = recipe.getCreateDate();
+		if(date != null)
+		{
+			rezeptView.recipe.setCreateDate(date);
+			rezeptView.recipeDate.setText(dtf.format(date));
 		}
 		
 		rezeptView.showImageRezept = new Image();

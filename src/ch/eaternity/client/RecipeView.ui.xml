@@ -189,6 +189,19 @@
 			background: none;
 		}
 		
+		.rezeptDateField {
+			padding-left: 4px;
+			background: #F9C88C;
+			text-align: left;
+			border: 0px;
+		}
+		
+		.recipeDateError
+		{
+			color:red;
+			margin-left: 10px;
+		}
+		
 
 		.SuggestTable {
 			float: left;
@@ -328,8 +341,9 @@
 						</g:HorizontalPanel>
 						
 						<g:HorizontalPanel>
-							<g:HTML>Datum: (TT/MM/JJ)</g:HTML>
-							<g:TextBox ui:field="recipeDate"></g:TextBox>
+							<g:HTML>Datum: </g:HTML>
+							<g:TextBox ui:field="recipeDate" styleName="{style.rezeptDateField}">TT/MM/JJ</g:TextBox>
+							<g:HTML ui:field="recipeDateError" styleName="{style.recipeDateError}"></g:HTML>
 						</g:HorizontalPanel>
 
 					</g:VerticalPanel>

@@ -111,20 +111,7 @@ public class RecipeView<T> extends Composite {
 	@UiField public TextBox amountPersons;
 	
 	@UiField public TextBox recipeDate;
-	/*
-	recipeDate.addFocusListener(new FocusListener() {
-		public void onLostFocus(Widget sender) {
-			String text = recipeDate.getText();
-			Date date = null;
-			try { date = DateTimeFormat.getFormat("dd.MM.JJ").parse(text);	}
-			catch (IllegalArgumentException IAE) {
-				Window.alert("Input is not a propper formated Date.");
-			}
-			if (date != null)
-				this.recipe.setCreateDate(date);
-		}
-		
-	});*/
+	@UiField public HTML recipeDateError;
 	
 //	private FlowPanel panelImages = new FlowPanel();
 //	private PhotoGallery galleryWidget;
@@ -425,12 +412,17 @@ void onKeyUp(KeyUpEvent event) {
 			if ("".equals(text)) {}
 			else {
 				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
-				date = fmt.parseStrict(text);	}
-			}
+				date = fmt.parseStrict(text);	
+				recipeDateError.setHTML("");
+				}
+		}
 		catch (IllegalArgumentException IAE) {
-			Window.alert("'" + text + "' is not a propper formated Date.");
-			recipeDate.setText("");
-			recipeDate.setCursorPos(0);
+			if(!"TT/MM/JJ".equals(text))
+				recipeDateError.setHTML("'" + text + "' is not a propper formated Date.");
+			else
+				recipeDateError.setHTML("");
+			//recipeDate.setText("");
+			//recipeDate.setCursorPos(0);
 		}
 		if (date != null)
 			this.recipe.setCreateDate(date);
