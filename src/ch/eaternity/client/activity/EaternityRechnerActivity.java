@@ -159,7 +159,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				display.getTopPanel().locationButton.setEnabled(true);
 				
 				// is this necessary?:
-				display.getTopPanel().leftKitchen = true;
+				display.getTopPanel().isNotInKitchen = true;
 				display.getTopPanel().location.setVisible(true);
 				// it should not...
 				
@@ -190,7 +190,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 						String kitchenName = lastKitchen.getSymbol();
 						display.getTopPanel().isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
 						display.getTopPanel().location.setVisible(false);
-						display.getTopPanel().leftKitchen = false;
+						display.getTopPanel().isNotInKitchen = false;
 						display.getTopPanel().selectedKitchen = lastKitchen;
 						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
 						display.getSearchPanel().selectKitchenRecipesForSearch(display.getTopPanel().selectedKitchen.id);
@@ -210,7 +210,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
-		if(!getTopPanel().leftKitchen){
+		if(!getTopPanel().isNotInKitchen){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
 			if(!recipe.kitchenIds.contains(getTopPanel().selectedKitchen.id)){
@@ -245,7 +245,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				
 				// only add when it is not in there yet... (update)
 				// and corresponds to the kitchen
-				if(getTopPanel().leftKitchen){
+				if(getTopPanel().isNotInKitchen){
 					if(!getSearchPanel().clientData.getYourRezepte().contains(recipe)){
 						getSearchPanel().clientData.getYourRezepte().add(recipe);
 					}

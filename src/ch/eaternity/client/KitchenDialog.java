@@ -182,9 +182,11 @@ public class KitchenDialog<T> extends DialogBox{
 		kitchenNameTextBox.setText(kitchenName);
 		setText(kitchenName);
 
-		
-		energyMix.setText(selectedKitchen.energyMix.Name);
-		energyMixco2.setText(selectedKitchen.energyMix.Co2PerKWh.toString());
+		if (selectedKitchen.energyMix != null)
+		{
+			energyMix.setText(selectedKitchen.energyMix.Name);
+			energyMixco2.setText(selectedKitchen.energyMix.Co2PerKWh.toString());
+		}
 		
 		
 		addKitchenNamesToList(availableKitchens);
@@ -920,20 +922,11 @@ public class KitchenDialog<T> extends DialogBox{
 	void onOkayClicked(ClickEvent event) {
 		// this button finalizes the decision to enter the kitchen
 		presenter.getTopPanel().location.setVisible(false);
-		presenter.getTopPanel().leftKitchen = false;
+		presenter.getTopPanel().isNotInKitchen = false;
 		presenter.getTopPanel().isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
 		presenter.getTopPanel().selectedKitchen = selectedKitchen;
-		
-		presenter.getSearchPanel().selectKitchenRecipesForSearch(selectedKitchen.id);
-		
-
-		
+	
         saveAndCloseDialog();
-        
-        
-        saveLastKitchen(presenter.getTopPanel().selectedKitchen.id);
-		
-		Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	}
 
 
@@ -985,6 +978,8 @@ public class KitchenDialog<T> extends DialogBox{
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
 					presenter.getTopPanel().selectedKitchen.id = kitchenID;
+					presenter.getSearchPanel().selectKitchenRecipesForSearch(kitchenID);
+					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());
 					saveLastKitchen(kitchenID);
@@ -1222,7 +1217,7 @@ public class KitchenDialog<T> extends DialogBox{
 	  @UiHandler("leaveKitchen")
 	  public void onLeaveKitchenClick(ClickEvent event) {
 		  presenter.getTopPanel().location.setVisible(true);
-		  presenter.getTopPanel().leftKitchen = true;
+		  presenter.getTopPanel().isNotInKitchen = true;
 		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
 		  presenter.getTopPanel().selectedKitchen = null;
 		  

@@ -27,7 +27,8 @@ public class LoginInfo implements Serializable {
 	private boolean admin = false;
 
 	// eaternity-rechner stuff
-	private boolean inKitchen = false;
+	//werden die ueberhaupt gespeichert? weil ev. Google Objekt
+	private boolean usedLastKitchen = false;
 	private Long lastKitchen;
 	private String lastLogin;
 	private String lastLocation;
@@ -84,11 +85,11 @@ public class LoginInfo implements Serializable {
 	}
 
 	public void setInKitchen(Boolean inKitchen) {
-		this.inKitchen = inKitchen;
+		this.usedLastKitchen = inKitchen;
 	}
 
 	public Boolean getInKitchen() {
-		return inKitchen;
+		return usedLastKitchen;
 	}
 
 	public void setLastKitchen(Long lastKitchen) {

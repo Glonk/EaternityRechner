@@ -350,7 +350,8 @@ public class Search<T> extends ResizeComposite {
 		selectedKitchenRecipes.clear();
 		for(Recipe recipe : clientData.KitchenRecipes){
 			for(Long kitchenId : recipe.kitchenIds){
-				if(kitchenId == id){
+				if(kitchenId.equals(id))
+				{
 					selectedKitchenRecipes.add(recipe);
 				}
 			}
@@ -817,7 +818,7 @@ public class Search<T> extends ResizeComposite {
 
 	private List<Recipe> getYourRecipes() {
 		// TODO Auto-generated method stub
-		if(presenter.getTopPanel().leftKitchen){
+		if(presenter.getTopPanel().isNotInKitchen){
 			return clientData.getYourRezepte();
 		} else {
 			// this should only return the selected Kitchen ones
