@@ -65,6 +65,14 @@ public class Data implements Serializable{
 	public List<Recipe> getYourRezepte() {
 		return yourRecipes;
 	}
+	public void setKitchenRescipes(List<Recipe> KitchenRecipes) {
+		this.KitchenRecipes = KitchenRecipes;
+	}
+	public List<Recipe> getKitchenRecipes() {
+		return KitchenRecipes;
+	}
+	
+	
 	
 	public Ingredient getIngredientByID(long id){
 		for(Ingredient zutat : ingredients){
