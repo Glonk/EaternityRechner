@@ -978,7 +978,8 @@ public class KitchenDialog<T> extends DialogBox{
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
 					presenter.getTopPanel().selectedKitchen.id = kitchenID;
-					presenter.getSearchPanel().selectKitchenRecipesForSearch(kitchenID);
+					presenter.getSearchPanel().updateKitchenRecipesForSearch(kitchenID);
+					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
 					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());

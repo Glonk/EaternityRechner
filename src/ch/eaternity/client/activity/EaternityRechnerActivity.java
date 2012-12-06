@@ -193,7 +193,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 						display.getTopPanel().isNotInKitchen = false;
 						display.getTopPanel().selectedKitchen = lastKitchen;
 						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
-						display.getSearchPanel().selectKitchenRecipesForSearch(display.getTopPanel().selectedKitchen.id);
+						display.getSearchPanel().updateKitchenRecipesForSearch(display.getTopPanel().selectedKitchen.id);
 
 					} 
 				} 
@@ -299,7 +299,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				if(getSearchPanel().clientData.KitchenRecipes.contains(recipe)){
 					getSearchPanel().clientData.KitchenRecipes.remove(recipe);
 				}
-				getSearchPanel().selectKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
+				getSearchPanel().updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
 				getSearchPanel().updateResults(Search.SearchInput.getText());
 			}
 		});

@@ -345,8 +345,8 @@ public class Search<T> extends ResizeComposite {
 	}
 
 	// Select the KitchenRecipes
-
-	public void selectKitchenRecipesForSearch(Long id) {
+	// Always call updateResults after for propper loading!
+	public void updateKitchenRecipesForSearch(Long id) {
 		selectedKitchenRecipes.clear();
 		for(Recipe recipe : clientData.KitchenRecipes){
 			for(Long kitchenId : recipe.kitchenIds){
@@ -422,20 +422,6 @@ public class Search<T> extends ResizeComposite {
 			}
 		}
 	}
-
-
-
-	/**
-	 * Sets the listener that will be notified when an item is selected.
-	 */
-	public void setListener(Listener listener) {
-		this.listener = listener;
-	}
-
-	public void setMealListener(ListenerMeals listener) {
-		this.listenerMeals = listener;
-	}
-
 
 	
 	private void initTable() {
