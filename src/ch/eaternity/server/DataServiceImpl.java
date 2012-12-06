@@ -401,6 +401,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		try {
 			LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
 			loginInfo.setLastKitchen(lastKitchen);
+			loginInfo.setUsedLastKitchen(true);
 			dao.ofy().put(loginInfo);
 			tryIt = true;
 		} catch (NotFoundException e) {
@@ -421,20 +422,18 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	    	
 		    try {
 		    	loginInfo = dao.ofy().get(LoginInfo.class, user.getUserId());
-		    } catch (NotFoundException e) {
 		    	
-		    }
-
-	      loginInfo.setId(user.getUserId());
-	      loginInfo.setLoggedIn(true);
-	      loginInfo.setEmailAddress(user.getEmail());
-	      loginInfo.setNickname(user.getNickname());
-	      loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
-	      loginInfo.setAdmin(userService.isUserAdmin());
-	      
-	     
-	      dao.ofy().put(loginInfo);
-	      
+		    } 
+		    catch (NotFoundException e) {}
+		    
+		      loginInfo.setId(user.getUserId());
+		      loginInfo.setLoggedIn(true);
+		      loginInfo.setEmailAddress(user.getEmail());
+		      loginInfo.setNickname(user.getNickname());
+		      loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
+		      loginInfo.setAdmin(userService.isUserAdmin());
+		      dao.ofy().put(loginInfo);
+		      
 	    } else {
 	      loginInfo.setLoggedIn(false);
 	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));

@@ -141,7 +141,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		// load your kitchens
 		// loadYourKitchens();
 		
-		if(presenter.getLoginInfo().getInKitchen()){
+		if(presenter.getLoginInfo().getUsedLastKitchen()){
 			topPanel.location.setVisible(false);
 		} else {
 			topPanel.location.setVisible(true);

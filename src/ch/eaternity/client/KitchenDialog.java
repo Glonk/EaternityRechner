@@ -89,6 +89,7 @@ public class KitchenDialog<T> extends DialogBox{
 	@UiField Button locationButton;
 	@UiField Button addDevice;
 	@UiField Button addPerson;
+	@UiField Button deleteKitchen;
 	@UiField TextBox clientLocationDialog;
 	@UiField TextBox kitchenNameTextBox;
 	@UiField static TextBox energyMix;
@@ -941,6 +942,8 @@ public class KitchenDialog<T> extends DialogBox{
 			@Override
 			public void onSuccess(Boolean okay) {
 				presenter.getClientData().lastKitchen = id;
+				presenter.getLoginInfo().setLastKitchen(id);
+				presenter.getLoginInfo().setUsedLastKitchen(true);
 			}
 		});
 	}
@@ -1342,5 +1345,20 @@ public class KitchenDialog<T> extends DialogBox{
 //			}
 //			throw new RuntimeException("Unable to determine widget row");
 //		}
+	  
+	  @UiHandler("deleteKitchen")
+	  void onDeleteKitchenPress(ClickEvent event) {
+		  // workspace loeschen
+		  
+		  // alle rezepte der Kueche loeschen  
+		  
+		  // Kueche loeschen
+		  
+		  // kitchendialog neu laden
+		  
+		  //
+	  }
+	  
+
 		
 }

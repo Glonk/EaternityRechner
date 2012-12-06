@@ -37,6 +37,13 @@
 		text-align: right;
 		}
 		
+		.buttonDelete {
+			float: right;
+			margin-right:15px;
+			text-align: right;
+			color:red;
+		}
+		
 		
   </ui:style>
 
@@ -118,9 +125,10 @@
     </table>
 		
 		<g:FlexTable ui:field="personTable"></g:FlexTable>
-		<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
-		
-		
+		<g:VerticalPanel>
+			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
+			<g:Button styleName='{style.buttonDelete}' ui:field="deleteKitchen">Küche löschen</g:Button>
+		</g:VerticalPanel>
 		<br /><br />
 		Legen Sie hier den Ort ihrer Küche fest (den Ort, an den alle Zutaten
 		geliefert werden). Es werden alle möglichen Routen berechnet und

@@ -84,11 +84,11 @@ public class LoginInfo implements Serializable {
 		return this.admin;
 	}
 
-	public void setInKitchen(Boolean inKitchen) {
-		this.usedLastKitchen = inKitchen;
+	public void setUsedLastKitchen(Boolean usedLastKitchen) {
+		this.usedLastKitchen = usedLastKitchen;
 	}
 
-	public Boolean getInKitchen() {
+	public Boolean getUsedLastKitchen() {
 		return usedLastKitchen;
 	}
 
