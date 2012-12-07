@@ -22,8 +22,8 @@
   <g:HTMLPanel width='200px' styleName='{style.panel}'>
     <g:Label ui:field='statusLabel' >Dialog</g:Label>
     <div class='{style.buttons}'>
-     <g:Button text='Cancel' ui:field='closeButton' />
-      <g:Button text='Okay' ui:field='executeButton' />
+    	<g:Button text='Ja' ui:field='yesButton' />
+     	<g:Button text='Nein' ui:field='noButton' />
     </div>
   </g:HTMLPanel>
 </ui:UiBinder>

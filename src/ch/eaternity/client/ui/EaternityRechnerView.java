@@ -55,8 +55,11 @@ public interface EaternityRechnerView<T> extends IsWidget
 
 		void addRezept(Recipe recipe, RecipeView rezeptView);
 
-
 		void removeRecipe(Recipe recipe);
+		
+		void removeRecipeFromWorkplace(RecipeView recipeToRemove);
+		
+		void removeAllRecipesFromWorkplace();
 
 		void recipeApproval(Recipe recipe, boolean b);
 

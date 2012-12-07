@@ -18,9 +18,9 @@ public class ConfirmDialog extends DialogBox{
 	interface Binder extends UiBinder<Widget, ConfirmDialog> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField Button closeButton;
-	@UiField Button executeButton;
-	@UiField Label statusLabel;
+	@UiField public Button noButton;
+	@UiField public Button yesButton;
+	@UiField public Label statusLabel;
 
 	public ConfirmDialog(String title) {
 
@@ -49,11 +49,5 @@ public class ConfirmDialog extends DialogBox{
 			}
 		}
 	}
-
-	@UiHandler("closeButton")
-	void onClicked(ClickEvent event) {
-		hide();
-	}
-
 }
 

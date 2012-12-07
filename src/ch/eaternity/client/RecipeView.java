@@ -252,11 +252,18 @@ public class RecipeView<T> extends Composite {
 	
 	
 	
-	void shortenAndSave() {
-		final RecipeView rezeptView = this;
-		presenter.addRezept(recipe,rezeptView);
-	    // show the report Button
-	    
+	public void saveThisRecipe() {
+		//TODO if the recipe is already in your personal data-store, don't create a new one.
+		// TODO warn that it wasn't saved in the other case
+		if(RezeptName.getText() != ""){
+			recipe.setSymbol(RezeptName.getText());
+			recipe.openRequested = !makeNotPublic.getValue();
+			recipe.open = false;
+
+			final RecipeView rezeptView = this;
+			presenter.addRezept(recipe,rezeptView);
+		    // show the report Button
+		}
 	  }
 	
 	
@@ -347,62 +354,10 @@ void onKeyUp(KeyUpEvent event) {
 
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
-		
-		final RecipeView test = this;
-		if(saved){
-			int row = getWidgetRow(test , superDisplay.getRezeptList());
-			
-			superDisplay.getRezeptList().remove(test);
-			superDisplay.getRezeptList().removeRow(row);
-
-			if(superDisplay.getSelectedRecipeNumber() == row){
-				superDisplay.setSelectedRecipeNumber(-1);
-				superDisplay.getSuggestionPanel().clear();
-				
-				if(isSelected){
-					
-	//				close also the Editview! ... or respectively the topview
-					//TODO this fails on the top view...
-					superDisplay.closeRecipeEditView();
-				}
-			}
-		} 
-		else 
-		{
-		String saveText = "Zusammenstellungen ist noch nicht gespeichert!";
-		if(!presenter.getLoginInfo().isLoggedIn()){
-			saveText = "Sie verlieren alle Änderungen!";
-		}
-		final ConfirmDialog dlg = new ConfirmDialog(saveText);
-		dlg.statusLabel.setText("Zusammenstellung trotzdem ausblenden?");
-		// TODO recheck user if he really want to do this...
-		
-		dlg.executeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				int row = getWidgetRow(test , superDisplay.getRezeptList());
-				
-				
-				superDisplay.getRezeptList().remove(test);
-				superDisplay.getRezeptList().removeRow(row);
-				
-				
-				// well this doesn't work, as it is selected already (due to the time difference...)
-				if(superDisplay.getSelectedRecipeNumber() == row){
-					superDisplay.setSelectedRecipeNumber(-1);
-					superDisplay.getSuggestionPanel().clear();
-				
-					if(isSelected){
-	//					close also the Editview! ... or respectively the topview
-						superDisplay.closeRecipeEditView();
-					}
-				}
-				dlg.hide();
-			}
-		});
-		dlg.show();
-		dlg.center();
-		}
+		presenter.removeRecipeFromWorkplace(this);
 	}
+	
+
 	
 	@UiHandler("recipeDate")
 	void onBlur(BlurEvent event)  {
@@ -469,19 +424,8 @@ void onKeyUp(KeyUpEvent event) {
 			
 			// add Save Recipe Button
 			klicky = saveRecipeButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					//TODO if the recipe is already in your personal data-store, don't create a new one.
-					
-					if(RezeptName.getText() != ""){
-						// TODO warn that it wasn't saved in the other case
-
-						recipe.setSymbol(RezeptName.getText());
-						recipe.openRequested = !makeNotPublic.getValue();
-						recipe.open = false;
-
-						shortenAndSave();
-					}
-				}
+				public void onClick(ClickEvent event) 
+					{ saveThisRecipe(); }
 			});
 		
 	}
@@ -905,7 +849,7 @@ void onKeyUp(KeyUpEvent event) {
 
 
 	
-	private static int getWidgetRow(Widget widget, FlexTable table) {
+	public int getWidgetRow(Widget widget, FlexTable table) {
 		for (int row = 0; row < table.getRowCount(); row++) {
 			for (int col = 0; col < table.getCellCount(row); col++) {
 				Widget w = table.getWidget(row, col);

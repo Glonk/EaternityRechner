@@ -3,6 +3,7 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.eaternity.client.ui.EaternityRechnerView;
@@ -962,7 +963,8 @@ public class KitchenDialog<T> extends DialogBox{
         
 		saveDistances();
 		
-		
+		// clear workspace (including prompts for saving) to avoid copying recipies from one kitchen to another)
+		presenter.removeAllRecipesFromWorkplace();
 		
 		
 		// this shoots to many rpc calls... (one should be enough)
@@ -1348,11 +1350,14 @@ public class KitchenDialog<T> extends DialogBox{
 	  
 	  @UiHandler("deleteKitchen")
 	  void onDeleteKitchenPress(ClickEvent event) {
-		  // workspace loeschen
+		  // clear workspace if kitchen to delete matches kitchen which was worked on
+		  //presenter.removeAllRecipesFromWorkplace();
 		  
-		  // alle rezepte der Kueche loeschen  
+		  // alle rezepte der Kueche loeschen
+		  
 		  
 		  // Kueche loeschen
+		  
 		  
 		  // kitchendialog neu laden
 		  

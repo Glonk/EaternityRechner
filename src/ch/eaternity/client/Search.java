@@ -1059,7 +1059,7 @@ public class Search<T> extends ResizeComposite {
 					dlg.statusLabel.setText("Rezept löschen.");
 					
 					//  recheck user if he really want to do this...
-					dlg.executeButton.addClickHandler(new ClickHandler() {
+					dlg.yesButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							presenter.removeRecipe(recipe);
 							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
@@ -1177,7 +1177,7 @@ public class Search<T> extends ResizeComposite {
 						final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses...");
 						dlg.statusLabel.setText("Rezept löschen?");
 						// TODO recheck user if he really want to do this...
-						dlg.executeButton.addClickHandler(new ClickHandler() {
+						dlg.yesButton.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								presenter.removeRecipe(recipe);
 								tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));

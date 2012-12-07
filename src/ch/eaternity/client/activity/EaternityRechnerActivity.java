@@ -2,6 +2,7 @@ package ch.eaternity.client.activity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -31,6 +32,7 @@ import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 import ch.eaternity.client.ClientFactory;
+import ch.eaternity.client.ConfirmDialog;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.EaternityRechner;
 import ch.eaternity.client.IngredientsDialog;
@@ -574,6 +576,71 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	@Override
 	public void removeRecipe(Recipe recipe) {
 		removeRezept(recipe);
+	}
+	
+	@Override
+	public void removeRecipeFromWorkplace(final RecipeView recipeToRemove)
+	{
+		if(recipeToRemove.saved)
+			removeRecipeFromWorkplaceNoPrompt(recipeToRemove);
+		else 
+		{
+			String saveText = recipeToRemove.recipe.getSymbol() + " ist noch nicht gespeichert!";
+			if(!getLoginInfo().isLoggedIn()){
+				saveText = "Sie verlieren alle Änderungen!";
+		}
+		final ConfirmDialog dlg = new ConfirmDialog(saveText);
+		dlg.statusLabel.setText("Speichern?");
+		// TODO recheck user if he really want to do this...
+		
+		dlg.yesButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				recipeToRemove.saveThisRecipe();
+				removeRecipeFromWorkplaceNoPrompt(recipeToRemove);
+				dlg.hide();
+			}
+		});
+		dlg.noButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				removeRecipeFromWorkplaceNoPrompt(recipeToRemove);
+				dlg.hide();
+			}
+		});
+		
+		dlg.show();
+		dlg.center();
+		}
+	}
+	
+
+	private void removeRecipeFromWorkplaceNoPrompt(RecipeView recipeToRemove)
+	{
+		int row = recipeToRemove.getWidgetRow(recipeToRemove , display.getRezeptList());
+		
+		display.getRezeptList().remove(recipeToRemove);
+		display.getRezeptList().removeRow(row);
+
+		if(display.getSelectedRecipeNumber() == row){
+			display.setSelectedRecipeNumber(-1);
+			display.getSuggestionPanel().clear();
+			
+			if(recipeToRemove.isSelected){
+				//close also the Editview! ... or respectively the topview
+				//TODO this fails on the top view...
+				display.closeRecipeEditView();
+			}
+		}
+	}
+	
+	@Override
+	public void removeAllRecipesFromWorkplace()
+	{
+		  Iterator<Widget> it = display.getRezeptList().iterator();
+		  while (it.hasNext())
+		  {
+			 RecipeView recipeToRemove = (RecipeView) it.next();
+			 removeRecipeFromWorkplace(recipeToRemove);
+		  }
 	}
 
 	@Override
