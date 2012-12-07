@@ -812,7 +812,13 @@ public class RecipeEditView<T> extends Composite {
 				int rowhere = getWidgetRow(MengeZutat,MenuTable);
 				if(!MengeZutat.getText().equalsIgnoreCase("")){
 					MengeZutatWert = MengeZutat.getText().trim();
-					zutat.setMengeGramm(Integer.valueOf(MengeZutatWert));
+					try {
+						zutat.setMengeGramm(Double.valueOf(MengeZutatWert).intValue());
+					}
+					catch (NumberFormatException nfe) {
+						MengeZutat.setText("");
+					}
+							
 				} else {
 					MengeZutatWert = "";
 				}
