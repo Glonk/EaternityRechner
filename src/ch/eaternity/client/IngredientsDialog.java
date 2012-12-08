@@ -152,7 +152,7 @@ public class IngredientsDialog extends DialogBox{
 					// TODO catch if factors doesn't match symbols
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Konservierungen");
 					tmpNodeVal2 = getTagContent(zutatElmnt, "Konservierungen_Faktoren");	
-					if (tmpNodeVal1 != null) {
+					if (tmpNodeVal1 != null && tmpNodeVal2 != null) {
 						String cond_ar1[] = tmpNodeVal1.split(",");
 						String cond_ar2[] = tmpNodeVal2.split(",");
 						ArrayList<IngredientCondition> newConditions = new ArrayList<IngredientCondition>(cond_ar1.length);
@@ -166,7 +166,10 @@ public class IngredientsDialog extends DialogBox{
 						}
 						newIngredient.conditions = newConditions;
 					}
-					else isValidIng = false;
+					else {
+						isValidIng = false;
+						Window.alert("Problem with:"+ newIngredient.getSymbol());
+					}
 					
 					// Tags oder Labels
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Tags");
