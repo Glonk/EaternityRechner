@@ -882,30 +882,11 @@ if(doIt){
 %>
 
 
-<!-- Summary -->
-
-The main result was, we drue the assumtion. It came close to. The following potential was deiscovered
-
-<!-- Situation -->
-
-<!-- Results -->
-
- <!-- Calendar -->
-
- <!-- Total Impact -->
-
- <!-- Potential -->
-
- <!-- By Date -->
-
-  <!-- per sheet -->
-
-<!-- Categories -->
 
 Define categories here:
 
 Liste:
-(("<strong>Vegetable Products</strong>"),("meat", "animal-based")),
+(("<strong>Vegetable Products</strong>"),("vegetable")),
 Rice products
 Spices & herbs
 Sweets
@@ -915,7 +896,8 @@ Preprocessed vegetable products
 Bread and Grain Products -> grain + bread + pasta
 Nuts und seeds
 
-<strong><strong>Animal Products</strong></strong>
+
+(("<strong>Animal Products</strong>"),("meat", "animal-based")),
 Non-ruminants
 Ruminants
 Fish and seafood
@@ -934,11 +916,65 @@ Drinks (fruit based)
 Drinks (milk based)
 
 
+<!-- Summary -->
+
+The main result was, we drue the assumtion. It came close to. The following potential was deiscovered
+
+<!-- Situation -->
+
+<!-- Results -->
+
+ <!-- Calendar -->
+
+Date1: AllCategory,co2value
+Date2: AllCategory,co2value
+Date3: AllCategory,co2value
+Date4: AllCategory,co2value
+Date5: AllCategory,co2value
+
+ <!-- Total Impact -->
+
+Alldates: 	Category1, co2value
+ 			Category2, co2value
+			Category3, co2value
+			Category4, co2value
+ 			Category5, co2value
+
+ <!-- Potential -->
+
+ <!-- By Date -->
+
+Date1: Category1, co2value
+Date1: Category2, co2value
+...
+  <!-- per sheet -->
+  Date1: Ingredientspec1, Ingredientspec2
+
+Date2: Category1, co2value
+Date3: Category2, co2value
+
+  <!-- per sheet -->
+  Date2: Ingredientspec1, Ingredientspec2
+
+
+<!-- Categories -->
+Category1: Ingredient1, Ingredient2
+
+Category2: Ingredient1, Ingredient2
+
+
+
+
+
 ValuesByDate = List<Date>(List<CategoryString,co2value>)
 IngredientsByCategory = List<Ingredients>
+
+
+
+
 	
-	
-First:
+
+
 
 
 
