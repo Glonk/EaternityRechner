@@ -918,7 +918,7 @@ Drinks (milk based)
 
 <!-- Summary -->
 
-The main result was, we drue the assumtion. It came close to. The following potential was deiscovered
+The main result was, we due the assumtion. It came close to. The following potential was deiscovered
 
 <!-- Situation -->
 
@@ -966,57 +966,65 @@ Category2: Ingredient1, Ingredient2
 
 
 
-ValuesByDate = List<Date>(List<CategoryString,co2value>)
-IngredientsByCategory = List<Ingredients>
-
-
-
-
-	
-
-
-
 
 
 <%
 
+final class CategoryValue {
+	public String categoryName;
+	public String co2value;
+	
+	public CategoryValue(){
+	}
+	
+	public CategoryValue(String name,String value) {
+		this.categoryName = name;
+		this.co2value = value;
+	}
+}
+
+final class CategoryValuesByDates {
+	List<CategoryValue> category;
+	List<Date> date;
+	
+	public CategoryValuesByDates(){
+	}
+	
+	public CategoryValuesByDates(List<CategoryValue> category, List<Date> date){
+		this.category = category;
+		this.date = date;
+	}
+	
+}
+
+List<CategoryValuesByDates> valuesByDate_Calender = new ArrayList<CategoryValuesByDates>();
+
+CategoryValuesByDates categoriesByDates = new CategoryValuesByDates();
+
+List<CategoryValues> firstDay = new ArrayList<CategoryValues>();
+firstDay.add(new CategoryValue("Test2","300 g"));
+List<CategoryValues> firstDate = new ArrayList<Date>();
+firstDate.add(new Date());
+
+categoriesByDate.add(firstDay, firstDate);
+
+List<CategoryValues> seccondDay = new ArrayList<CategoryValues>();
+seccondDay.add(new CategoryValue("Test2","300 g"));
+List<CategoryValues> seccondDate = new ArrayList<Date>();
+seccondDate.add(new Date());
+
+categoriesByDate.add(seccondDay, seccondDate);
+
+valuesByDate_Calender.add(categoriesByDate);
 
 
 List<Ingredient> ingredients = new ArrayList<Ingredient>();
 ingredients = dao.getAllIngredients()
 
-for(Ingredients ingredient: ingredients){
-	ingredient.tags
-}
+ingredientsByCategory = ingredients;
 
 
-// add
-List<Ingredients> getIngredientsByTagAdded(List<Ingredients> ingredients, List<Tag> tags) {
-	List<Ingredients> filteredList = new ArrayList<Ingredients>();
-	
-	for(Tag tag: tags) {
-		filteredList.append(getIngredientsByTag(ingredients, tag));
-	}
-	
-}
 
-// subtract
-
-List<Ingredients> getIngredientsByTagSubtract(List<Ingredients> ingredients, List<Tag> tags) {
-	List<Ingredients> filteredList = new ArrayList<Ingredients>();
-	
-	for(Tag tag: tags) {
-		filteredList.removeAll(getIngredientsByTag(ingredients, tag));
-	}
-	
-}
-
-filteredList.removeDuplicates();
-
-
-// filter
-List<Ingredients> getIngredientsByTag(List<Ingredients>, Tag tag){
-	
 }
 
 %>
