@@ -63,32 +63,38 @@ import com.google.gwt.user.client.ui.Widget;
 public class InfoZutatDialog<T> extends Composite {
 	interface Binder extends UiBinder<Widget, InfoZutatDialog> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
+	
+	// Variables
+	IngredientSpecification zutatSpec;
+	Ingredient stdIngredient;
+	RecipeEditView rezeptviewParent;
+	private Recipe recipe;
+	
+	static double distance = 0;
+	
+	private int selectedRow;
+	private FlexTable menuTable;
+	private InlineHTML kmText = new InlineHTML();
+	private FlexTable suggestTable;
+	FlowPanel flowTransport = null;
+	
+	private final static Geocoder geocoder = new Geocoder();
+	final TextBox newExtractionBox = new TextBox();
+	ClickHandler clickerHandler = null;
+	Boolean handlerNotAdded = true;
+	
+	
+	// UI Fields
 	@UiField HTML zutatName;
 	@UiField PassedStyle passedStyle;
 	@UiField Label hinweisPanel;
 	@UiField Label hinweisDetails;
 	@UiField Label closeLabel;
 	
-	static double distance = 0;
-
-	private final static Geocoder geocoder = new Geocoder();
-	final TextBox newExtractionBox = new TextBox();
-	ClickHandler clickerHandler = null;
-	Boolean handlerNotAdded = true;
-	
 	@UiField SelectionStyle selectionStyle;
-	IngredientSpecification zutatSpec;
-	Ingredient stdIngredient;
-	RecipeEditView rezeptviewParent;
-	private int selectedRow;
-	private FlexTable menuTable;
-	@UiField
-	FlexTable specificationTable;
-	private Recipe recipe;
-	private FlexTable suggestTable;
-	FlowPanel flowTransport = null;
-	
-	private InlineHTML kmText = new InlineHTML();
+	@UiField FlexTable specificationTable;
+
+
 	
 	private Presenter<T> presenter;
 	private Ingredient zutat;
@@ -150,6 +156,16 @@ public class InfoZutatDialog<T> extends Composite {
 		this.menuTable = menuTable;
 		this.suggestTable = suggestTable;
 		this.zutat = zutat;
+		
+		//add custom extraction if not in list
+		boolean extractionExists = false;
+    	for (Extraction extr : zutat.getExtractions())
+    	{
+    		if (zutatSpec.getHerkunft().symbol == extr.symbol)
+    			extractionExists = true;
+    	}
+    	if (!extractionExists)
+    		this.zutat.getExtractions().add(0,zutatSpec.getHerkunft());
 
 	}
 
@@ -235,7 +251,6 @@ public class InfoZutatDialog<T> extends Composite {
 			final ListBox herkuenfte = new ListBox();
 			herkuenfte.setWidth("170px");
 			
-			
 			for(Extraction extraction : zutat.getExtractions()){
 				herkuenfte.addItem(extraction.symbol);
 			}
@@ -311,9 +326,10 @@ public class InfoZutatDialog<T> extends Composite {
 
 							    public void onSuccess(JsArray<Placemark> locations) {
 						    	  Placemark place = locations.get(0);
-						    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
-						    	  herkuenfte.insertItem(place.getAddress(), 0);
-						    	  Extraction element = new Extraction(place.getAddress());
+						    	  String adress = place.getAddress();
+						    	  GWT.log("Sie befinden sich in: " +adress +"  ");
+						    	  herkuenfte.insertItem(adress, 0);
+						    	  Extraction element = new Extraction(adress);
 						    	  // TODO come up with stuff like seasons and so forth..
 						    	  element.startSeason = zutat.stdExtraction.startSeason;
 						    	  element.stopSeason = zutat.stdExtraction.stopSeason;
@@ -322,6 +338,7 @@ public class InfoZutatDialog<T> extends Composite {
 						    	  element.stdProduction = zutat.stdExtraction.stdProduction;
 
 						    	  zutat.getExtractions().add(0, element);
+						    	  zutatSpec.setHerkunft(element);
 						    	  newExtractionBox.setVisible(false);
 						    	  herkuenfte.setVisible(true);
 						    	  herkuenfte.setSelectedIndex(0);
@@ -347,8 +364,18 @@ public class InfoZutatDialog<T> extends Composite {
 	    	// i want no more plus, but the "andere" field
 //	    	flow.add(moreExtractions);
 			
-			herkuenfte.setSelectedIndex(zutat.getExtractions().indexOf(zutatSpec.getHerkunft()));
-			
+	    	// select the current extraction in the list
+	    	// compare extraction places (names)
+	    	int index = -1;
+	    	for (Extraction extr : zutat.getExtractions())
+	    	{
+	    		if (zutatSpec.getHerkunft().symbol == extr.symbol)
+	    			index = zutat.getExtractions().indexOf(extr);
+	    	}
+	    	if (index != -1)
+	    		herkuenfte.setSelectedIndex(index);
+	    	// TODO what happens if index is not found?
+	    		
 		}
 		
 

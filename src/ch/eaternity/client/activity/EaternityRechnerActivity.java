@@ -301,7 +301,8 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				if(getSearchPanel().clientData.KitchenRecipes.contains(recipe)){
 					getSearchPanel().clientData.KitchenRecipes.remove(recipe);
 				}
-				getSearchPanel().updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
+				if(getTopPanel().selectedKitchen != null)
+					getSearchPanel().updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
 				getSearchPanel().updateResults(Search.SearchInput.getText());
 			}
 		});
@@ -639,6 +640,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		  while (it.hasNext())
 		  {
 			 RecipeView recipeToRemove = (RecipeView) it.next();
+			 recipeToRemove.isSelected = true;
 			 removeRecipeFromWorkplace(recipeToRemove);
 		  }
 	}
