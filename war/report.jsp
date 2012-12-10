@@ -10,6 +10,7 @@
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
+<%@ page import="ch.eaternity.shared.Categories" %>
 
 
 <%@ page import="java.util.List" %>
@@ -970,47 +971,21 @@ Category2: Ingredient1, Ingredient2
 
 <%
 
-final class CategoryValue {
-	public String categoryName;
-	public String co2value;
-	
-	public CategoryValue(){
-	}
-	
-	public CategoryValue(String name,String value) {
-		this.categoryName = name;
-		this.co2value = value;
-	}
-}
 
-final class CategoryValuesByDates {
-	List<CategoryValue> category;
-	List<Date> date;
-	
-	public CategoryValuesByDates(){
-	}
-	
-	public CategoryValuesByDates(List<CategoryValue> category, List<Date> date){
-		this.category = category;
-		this.date = date;
-	}
-	
-}
+List<Categories.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<Categories.CategoryValuesByDates>();
 
-List<CategoryValuesByDates> valuesByDate_Calender = new ArrayList<CategoryValuesByDates>();
+Categories.CategoryValuesByDates categoriesByDates = new Categories.CategoryValuesByDates();
 
-CategoryValuesByDates categoriesByDates = new CategoryValuesByDates();
-
-List<CategoryValues> firstDay = new ArrayList<CategoryValues>();
-firstDay.add(new CategoryValue("Test2","300 g"));
-List<CategoryValues> firstDate = new ArrayList<Date>();
+List<CCategories.ategoryValues> firstDay = new ArrayList<Categories.CategoryValues>();
+firstDay.add(new Categories.CategoryValue("Test2",100L));
+List<Categories.CategoryValues> firstDate = new ArrayList<Date>();
 firstDate.add(new Date());
 
 categoriesByDate.add(firstDay, firstDate);
 
-List<CategoryValues> seccondDay = new ArrayList<CategoryValues>();
-seccondDay.add(new CategoryValue("Test2","300 g"));
-List<CategoryValues> seccondDate = new ArrayList<Date>();
+List<Categories.CategoryValues> seccondDay = new ArrayList<Categories.CategoryValues>();
+seccondDay.add(new Categories.CategoryValue("Test2",200L));
+List<Categories.CategoryValues> seccondDate = new ArrayList<Date>();
 seccondDate.add(new Date());
 
 categoriesByDate.add(seccondDay, seccondDate);
