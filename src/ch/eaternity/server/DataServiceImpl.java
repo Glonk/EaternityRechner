@@ -134,10 +134,15 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 		// TODO : this is not a propper approval process!!!
 		userRezept.requestedOpen = recipe.openRequested;
-		if(userService.getCurrentUser().getEmail() != null){
-			recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
-		} else {
-			recipe.setEmailAddressOwner(userService.getCurrentUser().getNickname());
+		
+		// If recipe belongs to a kitchen, dont assign it a user mail
+		if (recipe.kitchenIds.size() == 0)
+		{
+			if(userService.getCurrentUser().getEmail() != null){
+				recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
+			} else {
+				recipe.setEmailAddressOwner(userService.getCurrentUser().getNickname());
+			}
 		}
 		recipe.open = false;
 		userRezept.approvedOpen = recipe.open;
