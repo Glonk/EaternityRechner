@@ -78,16 +78,18 @@ public class IngredientsDialog extends DialogBox{
 	private void processFile(String messageXml) {
 		try {
 			ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+			ArrayList<Ingredient> invalid_ingredients = new ArrayList<Ingredient>();
+			
 			// parse the XML document into a DOM
 			Document messageDom = XMLParser.parse(messageXml);
 //			Window.alert("Root element " + messageDom.getDocumentElement().getNodeName());
 			NodeList zutatenLst = messageDom.getElementsByTagName("ROW");
-			 Window.alert( Integer.toString(zutatenLst.getLength()) + " Ingredients found." );
+			//Window.alert( Integer.toString(zutatenLst.getLength()) + " Ingredients found." );
 			 
 			Long lastid = null;
 			String tmpNodeVal1, tmpNodeVal2;
 			boolean isValidIng = true;
-			int amInvalidIngs = 0;
+			int amValidIngs = 0;
 			
 			
 			for (int s = 0; s < zutatenLst.getLength(); s++) {
@@ -157,13 +159,18 @@ public class IngredientsDialog extends DialogBox{
 						String cond_ar2[] = tmpNodeVal2.split(",");
 						ArrayList<IngredientCondition> newConditions = new ArrayList<IngredientCondition>(cond_ar1.length);
 						
-						for(int i=0; i<cond_ar1.length;i++) {
-							cond_ar1[i] = cond_ar1[i].trim();
-							cond_ar2[i] = cond_ar2[i].trim();
-							IngredientCondition tmpCond = new IngredientCondition(cond_ar1[i]);
-							tmpCond.factor = Double.parseDouble(cond_ar2[i]);
-							newConditions.add(tmpCond);
+						if (cond_ar1.length == cond_ar2.length)
+						{
+							for(int i=0; i<cond_ar1.length;i++) {
+								cond_ar1[i] = cond_ar1[i].trim();
+								cond_ar2[i] = cond_ar2[i].trim();
+								IngredientCondition tmpCond = new IngredientCondition(cond_ar1[i]);
+								tmpCond.factor = Double.parseDouble(cond_ar2[i]);
+								newConditions.add(tmpCond);
+							}
 						}
+						else
+							isValidIng = false;
 						newIngredient.conditions = newConditions;
 					}
 					else {
@@ -188,18 +195,23 @@ public class IngredientsDialog extends DialogBox{
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Herstellungen");
 					tmpNodeVal2 = getTagContent(zutatElmnt, "Herstellungen_Faktoren");
 					
-					if (tmpNodeVal1 != null) {
+					if (tmpNodeVal1 != null && tmpNodeVal2 != null) {
 						String prod_ar1[] = tmpNodeVal1.split(",");
 						String prod_ar2[] = tmpNodeVal2.split(",");
 						ArrayList<Production> newProductions = new ArrayList<Production>(prod_ar1.length);
 						
-						for(int i=0; i<prod_ar1.length;i++) {
-							prod_ar1[i] = prod_ar1[i].trim();
-							prod_ar2[i] = prod_ar2[i].trim();
-							Production tmpProd = new Production(prod_ar1[i]);
-							tmpProd.factor = Double.parseDouble(prod_ar2[i]);
-							newProductions.add(tmpProd);
+						if (prod_ar1.length == prod_ar2.length)
+						{
+							for(int i=0; i<prod_ar1.length;i++) {
+								prod_ar1[i] = prod_ar1[i].trim();
+								prod_ar2[i] = prod_ar2[i].trim();
+								Production tmpProd = new Production(prod_ar1[i]);
+								tmpProd.factor = Double.parseDouble(prod_ar2[i]);
+								newProductions.add(tmpProd);
+							}
 						}
+						else
+							isValidIng = false;
 						newIngredient.productions = newProductions;
 					}
 					else isValidIng = false;
@@ -214,13 +226,18 @@ public class IngredientsDialog extends DialogBox{
 						String trans_ar2[] = tmpNodeVal2.split(",");
 						ArrayList<MoTransportation> newTransportations = new ArrayList<MoTransportation>(trans_ar1.length);
 						
-						for(int i=0; i<trans_ar1.length;i++) {
-							trans_ar1[i] = trans_ar1[i].trim();
-							trans_ar2[i] = trans_ar2[i].trim();
-							MoTransportation tmpTrans = new MoTransportation(trans_ar1[i]);
-							tmpTrans.factor = Double.parseDouble(trans_ar2[i]);
-							newTransportations.add(tmpTrans);
+						if (trans_ar1.length == trans_ar2.length)
+						{
+							for(int i=0; i<trans_ar1.length;i++) {
+								trans_ar1[i] = trans_ar1[i].trim();
+								trans_ar2[i] = trans_ar2[i].trim();
+								MoTransportation tmpTrans = new MoTransportation(trans_ar1[i]);
+								tmpTrans.factor = Double.parseDouble(trans_ar2[i]);
+								newTransportations.add(tmpTrans);
+							}
 						}
+						else
+							isValidIng = false;
 						newIngredient.moTransportations = newTransportations;
 					}
 					else isValidIng = false;
@@ -284,27 +301,31 @@ public class IngredientsDialog extends DialogBox{
 						
 					}
 					else isValidIng = false;
-					
-				
-					
-					
+
 					// all elements are properly parsed add ingredient
 					if (isValidIng) {
 						ingredients.add(newIngredient);
-						amInvalidIngs++;
+						amValidIngs++;
 					}
-					else continue;
-					
-							
-
-					// lastid = newIngredient.getId();
+					else 
+						invalid_ingredients.add(newIngredient);
 				}
 				
 			}
 			// finally persist the whole array ( if not empty)
 			if(!ingredients.isEmpty())
 			{
-				Window.alert(amInvalidIngs + " valid ingredients in xml.\n" + ingredients.size() + " valid ingrediens added.");
+				String invalid_ingredients_names = "";
+				for (Ingredient ing : invalid_ingredients)
+				{
+					invalid_ingredients_names = invalid_ingredients_names + ing.getSymbol() + "\n";
+				}
+				Window.alert(
+					amValidIngs + " valid ingredients in xml.\n" + 
+					ingredients.size() + " valid ingrediens added.\n" + 
+					"Follwing Ingredients are invalid:\n" + 
+					invalid_ingredients_names
+				);
 				persistIngredients(ingredients);
 			}
 			else
