@@ -6,6 +6,7 @@
 
 <%@ page import="ch.eaternity.server.DAO" %>
 <%@ page import="ch.eaternity.shared.Recipe" %>
+<%@ page import="ch.eaternity.shared.Ingredient" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
@@ -879,7 +880,6 @@ if(rezeptePersonal.size() != 0){
 if(doIt){
 	
 	
-
 %>
 
 
@@ -917,6 +917,55 @@ Drinks (fruit based)
 Drinks (milk based)
 
 
+
+
+
+
+
+
+<%
+
+
+
+
+
+
+
+
+
+Categories categories = new Categories();
+
+List<Categories.CategoryValue> firstDay = new ArrayList<Categories.CategoryValue>();
+firstDay.add(categories.new CategoryValue("Test2",100L));
+List<Date> firstDate = new ArrayList<Date>();
+firstDate.add(new Date());
+
+Categories.CategoryValuesByDates categoriesByDates1 = categories.new CategoryValuesByDates(firstDay, firstDate);
+
+
+List<Categories.CategoryValue> seccondDay = new ArrayList<Categories.CategoryValue>();
+seccondDay.add(categories.new  CategoryValue("Test2",200L));
+List<Date> seccondDate = new ArrayList<Date>();
+seccondDate.add(new Date());
+
+Categories.CategoryValuesByDates categoriesByDates2 = categories.new CategoryValuesByDates(seccondDay, seccondDate);
+
+List<Categories.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<Categories.CategoryValuesByDates>();
+valuesByDate_Calender.add(categoriesByDates1);
+valuesByDate_Calender.add(categoriesByDates2);
+
+
+List<Ingredient> ingredients = dao.getAllIngredients();
+List<Ingredient> ingredientsByCategory = ingredients;
+
+
+
+
+
+%>
+
+
+
 <!-- Summary -->
 
 The main result was, we due the assumtion. It came close to. The following potential was deiscovered
@@ -927,6 +976,8 @@ The main result was, we due the assumtion. It came close to. The following poten
 
  <!-- Calendar -->
 
+
+
 Date1: AllCategory,co2value
 Date2: AllCategory,co2value
 Date3: AllCategory,co2value
@@ -935,6 +986,56 @@ Date5: AllCategory,co2value
 
  <!-- Total Impact -->
 
+
+
+<table cellspacing="0" cellpadding="0" class="table toc" >
+
+<tr>
+<td></td>
+<td class="gray left-border"></td>
+<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border">Total CO2 Impact by Category</td>
+<td class="left-border"></td>
+<td class="co2value" ></td>
+<td ></td>
+</tr>
+
+<%
+
+Integer counterIterate = 0;
+for(Categories.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+	
+	for(Categories.CategoryValue categoryValue : categoriesByDates.category){
+
+
+%>
+
+<tr <%
+int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+if(order == 1) { %>
+class="alternate"
+<% }%> > 
+<td class="menu-name">
+<%= categoryValue.categoryName %>
+</td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+</tr>
+
+
+<%
+
+	}
+}
+
+%>
+
+</table>
+
 Alldates: 	Category1, co2value
  			Category2, co2value
 			Category3, co2value
@@ -942,7 +1043,7 @@ Alldates: 	Category1, co2value
  			Category5, co2value
 
  <!-- Potential -->
-
+ By choosing less off this, you get more of this.
  <!-- By Date -->
 
 Date1: Category1, co2value
@@ -969,40 +1070,16 @@ Category2: Ingredient1, Ingredient2
 
 
 
-<%
-
-
-List<Categories.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<Categories.CategoryValuesByDates>();
-
-Categories.CategoryValuesByDates categoriesByDates = new Categories.CategoryValuesByDates();
-
-List<CCategories.ategoryValues> firstDay = new ArrayList<Categories.CategoryValues>();
-firstDay.add(new Categories.CategoryValue("Test2",100L));
-List<Categories.CategoryValues> firstDate = new ArrayList<Date>();
-firstDate.add(new Date());
-
-categoriesByDate.add(firstDay, firstDate);
-
-List<Categories.CategoryValues> seccondDay = new ArrayList<Categories.CategoryValues>();
-seccondDay.add(new Categories.CategoryValue("Test2",200L));
-List<Categories.CategoryValues> seccondDate = new ArrayList<Date>();
-seccondDate.add(new Date());
-
-categoriesByDate.add(seccondDay, seccondDate);
-
-valuesByDate_Calender.add(categoriesByDate);
-
-
-List<Ingredient> ingredients = new ArrayList<Ingredient>();
-ingredients = dao.getAllIngredients()
-
-ingredientsByCategory = ingredients;
 
 
 
-}
 
-%>
+
+
+
+
+
+
 
 
 <!-- Here comes the old Stuff -->
@@ -1277,7 +1354,7 @@ Collections.sort(rezeptePersonal,new RezeptValueComparator());
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
 Boolean notDoneThird = true;
-Integer counterIterate = 0;
+counterIterate = 0;
 
 Double adjustedAverageLength = threshold/MaxValueRezept*200;
 Double climateFriendlyValueLength = climateFriendlyValue/MaxValueRezept*200;
@@ -1881,10 +1958,6 @@ String code = Converter.toString(compute,34);
 
 <% } // just the simple version %><%
 }
-
-
-
-
 
 
 if(rezeptePersonal.size() != 0){

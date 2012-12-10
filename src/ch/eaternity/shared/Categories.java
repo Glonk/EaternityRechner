@@ -21,8 +21,8 @@ public class Categories {
 	}
 	
 	public class CategoryValuesByDates {
-		List<CategoryValue> category;
-		List<Date> date;
+		public List<CategoryValue> category;
+		public List<Date> date;
 		
 		public CategoryValuesByDates(){
 		}
