@@ -5,6 +5,8 @@ import java.util.Date;
 
 
 public class Categories {
+	
+	// Map<String,Long> CategoryValue;
 	public class CategoryValue {
 		public String categoryName;
 		public Long co2value;

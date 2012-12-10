@@ -2,41 +2,41 @@ package ch.eaternity.client;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Categories;
 
 
 public class Test {
 // Input: List<recipe>
+	Constructor ( List<Recipe> recipes )
 	
-	Map<String,Ingredient> getIngsByCategory(List<IngredientSpecification> ingredients, String category)
-	{
-		
-	}
-}
+	Map<String,List<IngredientSpecification>> getIngsByCategory(List<IngredientSpecification> ingredients, String category){}
 
-getIngsByCategory(String category, List<IngredientSpecification> ingredients)
-getIngsByDate()
-
-List<IngredientSpecification> getIngsFromRecipes(List<Recipe> recipes) {}
-
-Long calculateTotalC02Value(List<IngredientSpecification> ingredients) {}
-
-
-getIngredientsByFormula() {}
-
-Ingredient getIngFromId(int id)
-
-//Example For Loops in report.jsp
-for (Date date : dates)
-{	
-	for ()
-}
+	Map<Date,List<IngredientSpecification>> getIngsByDate(List<IngredientSpecification> ingredients, List<Date> dates) {}
+	
+	Date getAllDates(List<IngredientSpecification> ingredients) {}
+	
+	List<IngredientSpecification> getIngsFromRecipes(List<Recipe> recipes) {}
+	
+	Long calculateTotalC02Value(List<IngredientSpecification> ingredients) {}
+	
+	List<IngredientSpecification> getIngredientsByFormula(List<IngredientSpecification> ingredients, String formula) {}
+	
+	Ingredient getIngFromId(int id) {}
+	
+	List<Categories.CategoryValuesByDates> getCategoryValuesByDates() {}
+	
+	Map<String,List<IngredientSpecification>> getIngredientsPerCategory() {}
+	
+	
 
 
 // -------------------------------------
+/*
 Liste:
 (("<strong>Vegetable Products</strong>"),("meat", "animal-based")),
 Rice products
@@ -66,8 +66,7 @@ Drinks (alkohol based)
 Drinks (fruit based)
 Drinks (milk based)
 
-Liste:
-	Dates
+*/
 
 List<Ingredient> ingredients = new ArrayList<Ingredient>();
 ingredients = dao.getAllIngredients()
@@ -104,4 +103,5 @@ filteredList.removeDuplicates();
 // filter
 List<Ingredients> getIngredientsByTag(List<Ingredients>, Tag tag){
 	
+}
 }
