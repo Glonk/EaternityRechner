@@ -136,7 +136,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		userRezept.requestedOpen = recipe.openRequested;
 		
 		// If recipe belongs to a kitchen, dont assign it a user mail
-		if (recipe.kitchenIds.size() == 0)
+		if (recipe.kitchenIds != null && recipe.kitchenIds.size() == 0)
 		{
 			if(userService.getCurrentUser().getEmail() != null){
 				recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );

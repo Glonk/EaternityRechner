@@ -676,6 +676,8 @@ public class Search<T> extends ResizeComposite {
 		FoundRezepteHasDesc.clear();
 		FoundRezepteYoursHasDesc.clear();
 
+		if (searchString.equals(""))
+			changeMarkedRow(0);
 		
 		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
 			// then we have at least one recipe...
@@ -762,7 +764,7 @@ public class Search<T> extends ResizeComposite {
 								}
 	//							displayRecipeItemCheck(recipe,true);
 							}
-						}
+						}	
 					}
 				} else {
 					yourMealsPanel.setVisible(false);
@@ -793,10 +795,14 @@ public class Search<T> extends ResizeComposite {
 			// sort and display results
 			sortResults();
 			
-			// mark top entry
-			changeMarkedRow(0);
-			
-			
+			// mark last position, cutt if needed
+			int listsize = FoundIngredient.size() + FoundAlternativeIngredients.size();
+			if (markedRow <= 0)
+				changeMarkedRow(0);
+			else if(markedRow >= listsize)
+				changeMarkedRow(listsize-1);
+			else
+				changeMarkedRow(markedRow);
 		}	
 	}
 
