@@ -392,7 +392,7 @@ public class InfoZutatDialog<T> extends Composite {
 				
 				// hack to take the first one...
 				if(zutatSpec.getTransportmittel() == null){
-					MoTransportation transportmittel = new MoTransportation(moTransportations.symbol);
+					MoTransportation transportmittel = new MoTransportation(moTransportations.symbol,moTransportations.factor);
 					zutatSpec.setTransportmittel(transportmittel);
 				}
 				

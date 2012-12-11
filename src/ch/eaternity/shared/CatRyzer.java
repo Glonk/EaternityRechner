@@ -51,7 +51,7 @@ public class CatRyzer {
 	// -------------- Class Variables --------------
 	DAO dao = new DAO();
 	private List<Recipe> recipes 					= new ArrayList<Recipe>();
-	private List<IngredientSpecification> ing_specs = new ArrayList<IngredientSpecification>();
+	private List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
 	private List<Ingredient> ingredients 			= new ArrayList<Ingredient>();
 	private List<CatMapping> mappings 				= new ArrayList<CatMapping>();
 	private boolean initializedMapping = false;
@@ -60,6 +60,7 @@ public class CatRyzer {
 	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
 	private List<CategoryValuesByDates> categoryValuesByDates = new ArrayList<CategoryValuesByDates>();
 	
+	// -------------- Functions --------------
 	// Constructors
 	public CatRyzer() {
 		ingredients = dao.getAllIngredients();
@@ -68,10 +69,15 @@ public class CatRyzer {
 	public CatRyzer(List<Recipe> recipes)
 	{
 		this.recipes = recipes;
+		writeDatesToIngSpec();
+		//get all ingredients from all recipes, write into single list
+		for (Recipe recipe : recipes){
+			ingSpecs.addAll((Collection<IngredientSpecification>)recipe.getZutaten());
+		}
 		recipesLoaded = true;
 	}
 	
-	// -------------- Functions --------------
+	
 	
 	// -------------- Public --------------
 	public void setMapping(List<String> str_mappings) throws IllegalArgumentException
@@ -103,9 +109,22 @@ public class CatRyzer {
 	public void categoryze() throws IllegalStateException{
 		if (initializedMapping && recipesLoaded)
 		{
+			// ---- first populate the categoryValue List ------
 			// The Multimap could probably substitute categoryValues in the future ...
 			Multimap<String,Long> catMultiMap = HashMultimap.create();
 			
+			// iterate over all ingredientSpec, add them to the Map
+			for (IngredientSpecification ingSpec : ingSpecs){
+				List<String> tags = getIngFromIngSpecId(ingSpec.getId()).tags;
+				for (String tag : tags) {
+					for (CatMapping mapping : mappings) {
+						if (mapping.hastags.contains(tag)) {
+							catMultiMap.put(mapping.category, ingSpec.getId());
+						}
+					}
+				}
+				
+			}
 			
 			// filling own object
 			for(String category : catMultiMap.keySet())
@@ -114,7 +133,7 @@ public class CatRyzer {
 				categoryValues.add(new CategoryValue(category, getCo2ValueByIds(ingSpecIds)));
 			}
 			
-			
+			// ---- second populate the CategoryValuesByDates List ------
 			
 		}
 		else
@@ -139,8 +158,9 @@ public class CatRyzer {
 		return co2value;
 	}
 	
+	//returns null if not found
 	private Ingredient getIngFromIngSpecId(Long id) {
-		for (IngredientSpecification ingSpec : ing_specs) {
+		for (IngredientSpecification ingSpec : ingSpecs) {
 			if (ingSpec.getId().equals(id)) {
 				for(Ingredient zutat : ingredients){
 					if (zutat.getId() == ingSpec.getId()){
@@ -152,9 +172,13 @@ public class CatRyzer {
 		return null;
 	}
 	
-	private void writeDatesToIngSpec()
-	{
-		
+	private void writeDatesToIngSpec(){
+		for (Recipe recipe : recipes){
+			for (IngredientSpecification ingSpec : recipe.getZutaten())
+			{
+				ingSpec.setCookingDate(recipe.getCreateDate());
+			}
+		}
 	}
 	
 

@@ -270,7 +270,7 @@ public class IngredientsDialog extends DialogBox{
 					// DEFAULT VALUES, remove after final implementation of database format
 					IngredientCondition stdCond = new IngredientCondition("frisch");
 					Production stdProd = new Production("konventionell");
-					MoTransportation stdTrans = new MoTransportation("LKW");
+					MoTransportation stdTrans = new MoTransportation("LKW", 0.188);
 					List<ProductLabel> labels = new ArrayList<ProductLabel>();
 					labels.add(new ProductLabel("knospe"));
 					
