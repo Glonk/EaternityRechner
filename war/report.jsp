@@ -11,7 +11,7 @@
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
-<%@ page import="ch.eaternity.shared.Categories" %>
+<%@ page import="ch.eaternity.shared.CatRyzer" %>
 
 
 <%@ page import="java.util.List" %>
@@ -38,7 +38,7 @@
 
 
 <%
-// Hole Rezepte die zum Benutzer gehören
+	// Hole Rezepte die zum Benutzer gehören
 
 String BASEURL = request.getRequestURL().toString();
 
@@ -93,19 +93,18 @@ if (user != null) {
 	// remove double entries for admin
 	if(rezeptePersonal != null){
 		for(Recipe recipe: rezeptePersonal){
-			int removeIndex = -1;
-			for(Recipe rezept2:adminRecipes){
-				if(rezept2.getId().equals(recipe.getId())){
-					removeIndex = adminRecipes.indexOf(rezept2);
-				}
-			}
-			if(removeIndex != -1){
-				adminRecipes.remove(removeIndex);
-			}
+	int removeIndex = -1;
+	for(Recipe rezept2:adminRecipes){
+		if(rezept2.getId().equals(recipe.getId())){
+	removeIndex = adminRecipes.indexOf(rezept2);
 		}
 	}
-	
-			 			%>
+	if(removeIndex != -1){
+		adminRecipes.remove(removeIndex);
+	}
+		}
+	}
+%>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
 	<script src="jquery.docraptor.js" type="text/javascript"></script>
@@ -122,8 +121,7 @@ if (user != null) {
 	</script>
 
 <%
-
-} else {
+	} else {
  if(tempIds != null){
 	rezeptePersonal = dao.getRecipeByIds(tempIds,true);
  } else {
@@ -164,10 +162,10 @@ if(rezeptePersonal.size() != 0){
 		counter++;
 		recipe.setCO2Value();
 		if(recipe.getCO2Value()>MaxValueRezept){
-			MaxValueRezept = recipe.getCO2Value();
+	MaxValueRezept = recipe.getCO2Value();
 		} 
 		if(recipe.getCO2Value()<MinValueRezept){
-			MinValueRezept = recipe.getCO2Value();
+	MinValueRezept = recipe.getCO2Value();
 		}
 	}
 	average = (average /counter) + extra;
@@ -186,7 +184,6 @@ if(rezeptePersonal.size() != 0){
 	median = ((lower + upper) / 2.0);
     }	    
 }
-		
 %>
 
 
@@ -747,12 +744,10 @@ idsToAdd = new Array();
 baseUrl = getBaseURL();
 
 
-<% 
-for(Recipe recipe: rezeptePersonal){
+<%for(Recipe recipe: rezeptePersonal){
 	long compute = recipe.getId() * iTimeStamp;
-	String code = Converter.toString(compute,34); 
-	%>
-idsToAdd['<%= code %>'] = true<%	}	%>
+	String code = Converter.toString(compute,34);%>
+idsToAdd['<%=code%>'] = true<%}%>
 
 arrayAdd(idsToAdd)
 }
@@ -840,14 +835,18 @@ function getBaseURL() {
 </div>
 
 <h1>CO2 Food-Sourcing Report</h1>
-<% if(DoItWithPermanentIds) { %>
+<%
+	if(DoItWithPermanentIds) {
+%>
 
 
 
 
 <a href="http://prod.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Dokument für die markierten Menus als PDF herunterladen.</a>
 
-<% } // just do it simple %>
+<%
+	} // just do it simple
+%>
 
 
 <div  id="footer-left">
@@ -864,22 +863,21 @@ function getBaseURL() {
 
 <div class="content">
 
-<% if(DoItWithPermanentIds) { %>
+<%
+	if(DoItWithPermanentIds) {
+%>
 
 
 <%
-
-}
+	}
 
 
 boolean doIt = false;
 if(rezeptePersonal.size() != 0){
-			doIt = true;
+	doIt = true;
 }
 
 if(doIt){
-	
-	
 %>
 
 
@@ -924,44 +922,30 @@ Drinks (milk based)
 
 
 <%
+	CatRyzer categories = new CatRyzer();
 
-
-
-
-
-
-
-
-
-Categories categories = new Categories();
-
-List<Categories.CategoryValue> firstDay = new ArrayList<Categories.CategoryValue>();
+List<CatRyzer.CategoryValue> firstDay = new ArrayList<CatRyzer.CategoryValue>();
 firstDay.add(categories.new CategoryValue("Test2",100L));
 List<Date> firstDate = new ArrayList<Date>();
 firstDate.add(new Date());
 
-Categories.CategoryValuesByDates categoriesByDates1 = categories.new CategoryValuesByDates(firstDay, firstDate);
+CatRyzer.CategoryValuesByDates categoriesByDates1 = categories.new CategoryValuesByDates(firstDay, firstDate);
 
 
-List<Categories.CategoryValue> seccondDay = new ArrayList<Categories.CategoryValue>();
+List<CatRyzer.CategoryValue> seccondDay = new ArrayList<CatRyzer.CategoryValue>();
 seccondDay.add(categories.new  CategoryValue("Test2",200L));
 List<Date> seccondDate = new ArrayList<Date>();
 seccondDate.add(new Date());
 
-Categories.CategoryValuesByDates categoriesByDates2 = categories.new CategoryValuesByDates(seccondDay, seccondDate);
+CatRyzer.CategoryValuesByDates categoriesByDates2 = categories.new CategoryValuesByDates(seccondDay, seccondDate);
 
-List<Categories.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<Categories.CategoryValuesByDates>();
+List<CatRyzer.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<CatRyzer.CategoryValuesByDates>();
 valuesByDate_Calender.add(categoriesByDates1);
 valuesByDate_Calender.add(categoriesByDates2);
 
 
 List<Ingredient> ingredients = dao.getAllIngredients();
 List<Ingredient> ingredientsByCategory = ingredients;
-
-
-
-
-
 %>
 
 
@@ -1005,13 +989,10 @@ Date5: AllCategory,co2value
 </tr>
 
 <%
-
-Integer counterIterate = 0;
-for(Categories.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+	Integer counterIterate = 0;
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
 	
-	for(Categories.CategoryValue categoryValue : categoriesByDates.category){
-
-
+	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
 %>
 
 <tr <%

@@ -10,10 +10,10 @@ import com.google.gwt.thirdparty.guava.common.collect.Multimap;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.Categories;
+import ch.eaternity.shared.CatRyzer;
 import ch.eaternity.shared.Workgroup;
 
-
+/*s
 public class Test {
 // Input: List<recipe>
 	Constructor ( List<Recipe> recipes )
@@ -150,6 +150,7 @@ public class Test {
 /*
 Liste:
 (("<strong>Vegetable Products</strong>"),("meat", "animal-based")),
+"<strong>Vegetable Products</strong>, meat, animal-based"
 Rice products
 Spices & herbs
 Sweets

@@ -231,6 +231,7 @@ public class InfoZutatDialog<T> extends Composite {
 				kmText.addClickHandler(clickerHandler);
 				handlerNotAdded = false;
 			}
+			newExtractionBox.setFocus(true);
 				
 			
 	}
