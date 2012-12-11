@@ -17,7 +17,7 @@ public class CatRyzer {
 	private class CatMapping {
 		public String category;
 		public List<String> hastags;
-		public List<String> hasnottags;
+		public List<String> hasnotthistags;
 		
 		public CatMapping() {}
 	}
@@ -96,7 +96,7 @@ public class CatRyzer {
 			for (int i = 1; i < map_ar.length;i++)
 			{
 				if (map_ar[i].charAt(0) == '-')
-					newmap.hasnottags.add(map_ar[i].substring(1));
+					newmap.hasnotthistags.add(map_ar[i].substring(1));
 				else
 					newmap.hastags.add(map_ar[i]);
 			}
@@ -114,11 +114,12 @@ public class CatRyzer {
 			Multimap<String,Long> catMultiMap = HashMultimap.create();
 			
 			// iterate over all ingredientSpec, add them to the Map
+			boolean dontAdd = false;
 			for (IngredientSpecification ingSpec : ingSpecs){
 				List<String> tags = getIngFromIngSpecId(ingSpec.getId()).tags;
 				for (String tag : tags) {
 					for (CatMapping mapping : mappings) {
-						if (mapping.hastags.contains(tag)) {
+						if (mapping.hastags.contains(tag) && doesntContainThisTags(mapping.hasnotthistags, tags)) {
 							catMultiMap.put(mapping.category, ingSpec.getId());
 						}
 					}
@@ -179,6 +180,17 @@ public class CatRyzer {
 				ingSpec.setCookingDate(recipe.getCreateDate());
 			}
 		}
+	}
+	
+	// if just on tag of hasnotthistags is contained in tags, don't add the ingredient
+	// tags - the object which should not contaion hasnotthistags
+	private boolean doesntContainThisTags(List<String> tags, List<String> hasnotthistags){
+		boolean doesntContainTags = true; 
+		for (String hasnotthistag : hasnotthistags) {
+			if (tags.contains(hasnotthistag))
+				doesntContainTags = false;
+		}
+		return doesntContainTags;
 	}
 	
 
