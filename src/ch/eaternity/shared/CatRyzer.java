@@ -46,13 +46,13 @@ public class CatRyzer {
 	
 	public class CategoryValue {
 		public String categoryName;
-		public Long co2value;
+		public Double co2value;
 		
 		public CategoryValue(){}
 		
-		public CategoryValue(String name, Long value) {
+		public CategoryValue(String name, Double co2value) {
 			this.categoryName = name;
-			this.co2value = value;
+			this.co2value = co2value;
 		}
 	}
 	
@@ -60,7 +60,7 @@ public class CatRyzer {
 		public List<CategoryValue> category;
 		//mulltiple dates are possible, usually just one
 		public List<Date> date = new ArrayList<Date>();
-		public Long co2value;
+		public Double co2value;
 		
 		public CategoryValuesByDates(){}
 		
@@ -142,8 +142,9 @@ public class CatRyzer {
 		{
 			// ---- first populate the categoryValue List ------
 			// The Multimap could probably substitute categoryValues in the future ...
+			// ... when it wouldn't be so darn f*ing complicated to debug ; )
 			// String : Category, Long: id of Ingredient
-			Multimap<String,Long> catMultiMap = HashMultimap.create();
+			Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
 			
 			// iterate over all ingredientSpec, add them to the Map
 			for (IngredientSpecification ingSpec : ingSpecs){
@@ -151,20 +152,20 @@ public class CatRyzer {
 				for (String tag : tags) {
 					for (CatMapping mapping : mappings) {
 						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
-							catMultiMap.put(mapping.category, getIngredient(ingSpec).getId());
+							catMultiMap.put(mapping.category, ingSpec);
 						}
 					}
 				}
 			}
 			
 			// ---- second populate the CategoryValuesByDates List ------
-			Map<Date,Multimap<String,Long>> MapOfcatMultiMap = new HashMap<Date,Multimap<String,Long>>();
+			Map<Date,Multimap<String,IngredientSpecification>> MapOfcatMultiMap = new HashMap<Date,Multimap<String,IngredientSpecification>>();
 			
 			for (IngredientSpecification ingSpec : ingSpecs){
 				Date date = ingSpec.getCookingDate();
 				
 				// check if inner Multimap already exist, if not, create one
-				Multimap<String,Long> catMM;
+				Multimap<String,IngredientSpecification> catMM;
 				if (!MapOfcatMultiMap.containsKey(date))
 					catMM = HashMultimap.create();
 				else
@@ -175,7 +176,7 @@ public class CatRyzer {
 				for (String tag : tags) {
 					for (CatMapping mapping : mappings) {
 						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
-							catMM.put(mapping.category, getIngredient(ingSpec).getId());
+							catMM.put(mapping.category, ingSpec);
 						}
 					}
 				}
@@ -185,30 +186,31 @@ public class CatRyzer {
 			// filling own objects
 			for(String category : catMultiMap.keySet())
 			{
-				Collection<Long> ingredientIds = catMultiMap.get(category);
-				categoryValues.add(new CategoryValue(category, getCo2Value(ingredientIds)));
+				Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
+				categoryValues.add(new CategoryValue(category, getCo2Value(ingredientsSpecification)));
 			}
 			for(Date date : MapOfcatMultiMap.keySet())
 			{
 				List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
 				
-				Multimap<String,Long> catMM = MapOfcatMultiMap.get(date);
+				Multimap<String,IngredientSpecification> catMM = MapOfcatMultiMap.get(date);
 				for(String category : catMM.keySet())
 				{
-					Collection<Long> ingredientIds = catMultiMap.get(category);
-					categoryValues.add(new CategoryValue(category, getCo2Value(ingredientIds)));
+					Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
+					categoryValues.add(new CategoryValue(category, getCo2Value(ingredientsSpecification)));
 				}
 				
 				CategoryValuesByDates categoryValuesByDates = new CategoryValuesByDates();
 				categoryValuesByDates.date.add(date);
 				categoryValuesByDates.category = categoryValues;
-				categoryValuesByDates.co2value = 0L;
+				categoryValuesByDates.co2value = 0.0;
 				for (CategoryValue catval : categoryValues){
 					categoryValuesByDates.co2value = categoryValuesByDates.co2value + catval.co2value;
 				}
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
-			int i = 1;
+			
+			// int i = 1;
 			
 		}
 		else
@@ -227,10 +229,22 @@ public class CatRyzer {
 	
 	
 	// ids refer to an IngredientSPecification Object
+	// this was getting the co2values of our standart ingredient, not the one from the recipe...
+	/*
 	private Long getCo2Value(Collection<Long> ids) {
 		Long co2value = 0L;
 		for (Long id : ids) {
 			co2value = co2value + getIngredient(id).getCo2eValue();
+		}
+		return co2value;
+	}
+	*/
+	/// error end
+	
+	private Double getCo2Value(Collection<IngredientSpecification> ingredientsSpecifications) {
+		Double co2value = 0.0;
+		for (IngredientSpecification ingredientsSpecification : ingredientsSpecifications) {
+			co2value = co2value + ingredientsSpecification.getCalculatedCO2Value();
 		}
 		return co2value;
 	}

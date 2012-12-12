@@ -12,7 +12,7 @@ public class RezeptDateComparator implements Comparator<Recipe> {
 		Date o1 = r1.cookingDate;
 		Date o2 = r2.cookingDate;
 		if(o1 != null && o2 != null){
-		return o1.compareTo(o2);
+		return o2.compareTo(o1);
 		} else {
 			return 0;
 		}

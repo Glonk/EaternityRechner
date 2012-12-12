@@ -94,7 +94,7 @@ List<Recipe> allKitchensRecipes = new ArrayList<Recipe>();
 List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
 DecimalFormat formatter = new DecimalFormat("##");
-SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yy");
+SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 
 
 if (user != null) {
@@ -216,43 +216,43 @@ CatRyzer catryzer = new CatRyzer(allKitchensRecipes);
 
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
-categoryFormulas.add(catryzer.new CatFormula("all","all",true));
+categoryFormulas.add(catryzer.new CatFormula("all","vegetable, animal-based",true));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
 
 categoryFormulas.add(catryzer.new CatFormula("Rice products","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Sweets","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
+categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat, -animal-based"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes, fruits"));
 categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
 categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
-categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts, seeds"));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
 
-categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","animal-based",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","meat",true));
 
-categoryFormulas.add(catryzer.new CatFormula("Ruminants","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
+categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
+categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood"));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
 
-categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","rippened"));
+categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","cheese"));
 
-categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil, fats, -vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats, -vegetable"));
 categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
 categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
 categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
 
 
-categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","drinks",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
 
-categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","drinks, alcohol"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks, fruit"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks, diary"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","beverage, alcohol"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","beverage, fruit"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","beverage, diary"));
 
 
 
@@ -961,7 +961,7 @@ if(rezeptePersonal.size() != 0){
 	doIt = true;
 }
 
-if(doIt){
+if(true){
 %>
 
 
@@ -1061,25 +1061,6 @@ for(Recipe recipe: allKitchensRecipes){
 
 /*
 
-List<CatRyzer.CategoryValue> firstDay = new ArrayList<CatRyzer.CategoryValue>();
-firstDay.add(categories.new CategoryValue("Test2",100L));
-List<Date> firstDate = new ArrayList<Date>();
-firstDate.add(new Date());
-
-CatRyzer.CategoryValuesByDates categoriesByDates1 = categories.new CategoryValuesByDates(firstDay, firstDate);
-
-
-List<CatRyzer.CategoryValue> seccondDay = new ArrayList<CatRyzer.CategoryValue>();
-seccondDay.add(categories.new  CategoryValue("Test2",200L));
-List<Date> seccondDate = new ArrayList<Date>();
-seccondDate.add(new Date());
-
-CatRyzer.CategoryValuesByDates categoriesByDates2 = categories.new CategoryValuesByDates(seccondDay, seccondDate);
-
-List<CatRyzer.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<CatRyzer.CategoryValuesByDates>();
-valuesByDate_Calender.add(categoriesByDates1);
-valuesByDate_Calender.add(categoriesByDates2);
-
 
 List<Ingredient> ingredients = dao.getAllIngredients();
 List<Ingredient> ingredientsByCategory = ingredients;
@@ -1120,7 +1101,45 @@ The main result was, we due the assumtpion. It came close to. The following pote
 counterIterate = 0;
 
 
+// calculate average, median, min, max
+
+
+ArrayList<Double> values = new ArrayList<Double>();
+
+//  go over the Recipes in the Workspace
 for(CatRyzer.CategoryValuesByDates categoryValue : valuesByDate_Category){
+	values.add((double) categoryValue.co2value);
+	average = average + categoryValue.co2value;
+	counter++;
+
+	if(categoryValue.co2value>MaxValueRezept){
+MaxValueRezept = categoryValue.co2value;
+	} 
+	if(categoryValue.co2value<MinValueRezept){
+MinValueRezept = categoryValue.co2value;
+	}
+}
+average = (average /counter) + extra;
+MinValueRezept = MinValueRezept + extra;
+MaxValueRezept = MaxValueRezept + extra;
+	
+Collections.sort(values);
+ 
+if (values.size() % 2 == 1)
+median = values.get((values.size()+1)/2-1) + extra;
+else
+{
+double lower = (values.get(values.size()/2-1))  + extra;
+double upper = (values.get(values.size()/2))  + extra;
+
+median = ((lower + upper) / 2.0);
+}	    
+
+
+
+
+for(CatRyzer.CategoryValuesByDates categoryValue : valuesByDate_Category){
+		String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
 	
 %>
 
@@ -1130,9 +1149,9 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= dateFormatter.format(categoryValue.date) %>
+<%= dateFormatter.format(categoryValue.date.get(0)) %> 
 </td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
 </tr>
 
@@ -1184,8 +1203,40 @@ Date5: AllCategory,co2value
 <%
 int counterIterate = 0;
 
-if(false){	
+ArrayList<Double> values = new ArrayList<Double>();
+
+//  go over the Recipes in the Workspace
 for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
+	values.add((double) categoryValue.co2value);
+	average = average + categoryValue.co2value;
+	counter++;
+
+	if(categoryValue.co2value>MaxValueRezept){
+MaxValueRezept = categoryValue.co2value;
+	} 
+	if(categoryValue.co2value<MinValueRezept){
+MinValueRezept = categoryValue.co2value;
+	}
+}
+average = (average /counter) + extra;
+MinValueRezept = MinValueRezept + extra;
+MaxValueRezept = MaxValueRezept + extra;
+	
+Collections.sort(values);
+ 
+if (values.size() % 2 == 1)
+median = values.get((values.size()+1)/2-1) + extra;
+else
+{
+double lower = (values.get(values.size()/2-1))  + extra;
+double upper = (values.get(values.size()/2))  + extra;
+
+median = ((lower + upper) / 2.0);
+}	    
+
+
+for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
+	String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
 %>
 
 <tr <%
@@ -1196,14 +1247,14 @@ class="alternate"
 <td class="menu-name">
 <%= categoryValue.categoryName %>
 </td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
 </tr>
 
 
 <%
 
-	}}
+	}
 
 /*
 Output:
@@ -1224,9 +1275,9 @@ Alldates: 	Category1, co2value
 
  <!-- Potential -->
 
-
+<br /><br />
  By choosing less off this, you get more of this.
-
+<br /><br />
 
  <!-- By Date -->
 
@@ -1251,12 +1302,52 @@ Alldates: 	Category1, co2value
 </tr>
 
 <%
+
+
+
+values = new ArrayList<Double>();
+
+//  go over the Recipes in the Workspace
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
+	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+	values.add((double) categoryValue.co2value);
+	average = average + categoryValue.co2value;
+	counter++;
+
+	if(categoryValue.co2value>MaxValueRezept){
+MaxValueRezept = categoryValue.co2value;
+	} 
+	if(categoryValue.co2value<MinValueRezept){
+MinValueRezept = categoryValue.co2value;
+	}
+}
+}
+average = (average /counter) + extra;
+MinValueRezept = MinValueRezept + extra;
+MaxValueRezept = MaxValueRezept + extra;
+	
+Collections.sort(values);
+ 
+if (values.size() % 2 == 1)
+median = values.get((values.size()+1)/2-1) + extra;
+else
+{
+double lower = (values.get(values.size()/2-1))  + extra;
+double upper = (values.get(values.size()/2))  + extra;
+
+median = ((lower + upper) / 2.0);
+}	    
+
+
+
+
 counterIterate = 0;
 for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
-
-Date thisDate = categoriesByDates.date.get(0);
+	
+	Date thisDate = categoriesByDates.date.get(0);
 
 	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+		String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
 %>
 
 <tr <%
@@ -1267,17 +1358,14 @@ class="alternate"
 <td class="menu-name">
 <%= categoryValue.categoryName %>
 </td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
 </tr>
 
 
 <%
-
-	}
-	
-	
-	%>
+	}	
+%>
 	
 	
 	
@@ -1292,12 +1380,7 @@ class="alternate"
 
 
 	<tr>
-	<td class="table-header">Lieferschein Übersicht</td>
-	<td></td>
-	</tr>
-
-	<tr>
-	<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+	<td class="table-header">Lieferschein Übersicht für diesen Tag</td>
 	<td></td>
 	</tr>
 
@@ -1347,9 +1430,9 @@ class="alternate"
 
 				<tr>
 				<td class="bottom-border">
-				<img class="smile" src="smiley8.png" alt="smiley" />
-				<img class="smile" src="smiley8.png" alt="smiley" />
-				<h3><%= recipe.getSymbol() %></h3>
+				<!-- <img class="smile" src="smiley8.png" alt="smiley" />
+				<img class="smile" src="smiley8.png" alt="smiley" /> -->
+				<h3>Tag: <%= datumString %></h3>
 				</td>
 				<td class="left-border"></td>
 				</tr>
@@ -1362,9 +1445,9 @@ class="alternate"
 				<tr>
 				<td>
 
-				<span class="subTitle"><%= recipe.getSubTitle() %></span>
+				<span class="subTitle">Lieferschein: <%= recipe.getSymbol() %></span>
 
-				<span style="color:gray;">Zutaten für den Tag<%= datumString %>:</span><br />
+				<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
 
 
 					<%	
@@ -1372,7 +1455,7 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>,<%= ingredient.getZustand() %>,<%= ingredient.getProduktion() %>,<%= ingredient.getTransportmittel() %>)</span><%
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>,<%= ingredient.getZustand().symbol %>,<%= ingredient.getProduktion().symbol %>,<%= ingredient.getTransportmittel().symbol %>)</span><%
 					}
 					%>
 				</td>
