@@ -97,7 +97,7 @@ DecimalFormat formatter = new DecimalFormat("##");
 SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 
 
-if (user != null) {
+if (user != null && false) {
 	rezeptePersonal = dao.getYourRecipe(user);
 	allKitchensRecipes = dao.getKitchenRecipes(user);
 	
@@ -175,11 +175,11 @@ Date date = new Date();
 
 // calculate average, median, min, max
 
-if(rezeptePersonal.size() != 0){
+if(allKitchensRecipes.size() != 0){
 	ArrayList<Double> values = new ArrayList<Double>();
 
 	//  go over the Recipes in the Workspace
-	for(Recipe recipe: rezeptePersonal){
+	for(Recipe recipe: allKitchensRecipes){
 		values.add((double) recipe.getCO2Value());
 		average = average + recipe.getCO2Value();
 		counter++;
