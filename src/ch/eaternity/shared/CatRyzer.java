@@ -106,26 +106,26 @@ public class CatRyzer {
 	 * @param str_mappings (Category, Tag1, Tag2, -Tag3, ...)
 	 * @throws IllegalArgumentException
 	 */
-	public void setMapping(List<String> str_mappings) throws IllegalArgumentException
+	public void setCatFormulas(List<CatFormula> formulas) throws IllegalArgumentException
 	{
-		for (String str_mapping : str_mappings)
+		for (CatFormula formula : formulas)
 		{
-			String map_ar[] = str_mapping.split(",");
-			if (map_ar.length <= 1)
+			String tag_ar[] = formula.formula.split(",");
+			if (tag_ar.length <= 1)
 				throw new IllegalArgumentException();
 			
 			// clear old mapping
 			mappings.clear();
 			
 			CatMapping newmap = new CatMapping();
-			newmap.category = map_ar[1].trim();
-			for (int i = 1; i < map_ar.length;i++)
+			newmap.category = formula.category;
+			for (int i = 0; i < tag_ar.length;i++)
 			{
-				map_ar[i].trim();
-				if (map_ar[i].charAt(0) == '-')
-					newmap.hasnotthistags.add(map_ar[i].substring(1));
+				tag_ar[i].trim();
+				if (tag_ar[i].charAt(0) == '-')
+					newmap.hasnotthistags.add(tag_ar[i].substring(1));
 				else
-					newmap.hastags.add(map_ar[i]);
+					newmap.hastags.add(tag_ar[i]);
 			}
 			mappings.add(newmap);
 		}

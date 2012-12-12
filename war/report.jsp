@@ -135,8 +135,12 @@ if (user != null) {
 		DoItWithPermanentIds = false;
 	 } 
 	 if(kitchenId != null){
+<<<<<<< HEAD
 		Long kitchenLongId = Long.parseLong(kitchenId);
 		allKitchensRecipes = dao.getKitchenRecipes(kitchenLongId);
+=======
+		allKitchensRecipes = dao.getKitchenRecipes(kitchenId,false);
+>>>>>>> update
 		DoItWithPermanentIds = false;
 	 }
  }
@@ -1059,7 +1063,7 @@ mappings.add("fresh vegetables,vegetable,-preprocessed products");
 */
 
 
-catryzer.setCategoryFormula(categoryFormulas);
+catryzer.setCatFormula(categoryFormulas);
 catryzer.categoryze();
 
 
