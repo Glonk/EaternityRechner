@@ -942,189 +942,6 @@ if(doIt){
 
 
 
-Define categories here:
-
-Liste:
-(("<strong>Vegetable Products</strong>"),("vegetable")),
-Rice products
-Spices & herbs
-Sweets
-Vegetable oils and fat
-Vegetables and fruits
-Preprocessed vegetable products
-Bread and Grain Products -> grain + bread + pasta
-Nuts und seeds
-
-
-(("<strong>Animal Products</strong>"),("meat", "animal-based")),
-Non-ruminants
-Ruminants
-Fish and seafood
-
-Animal based fats -> oil and fats + animal-based
-Ripened cheese
-Fresh cheese and diary products
-
-Eggs and egg based products
-Canned and finished products ->
-Sauces
-
-<strong>Drinks</strong>
-Drinks (alkohol based)
-Drinks (fruit based)
-Drinks (milk based)
-
-
-
-
-
-
-
-
-<%
-	CatRyzer categories = new CatRyzer();
-
-List<CatRyzer.CategoryValue> firstDay = new ArrayList<CatRyzer.CategoryValue>();
-firstDay.add(categories.new CategoryValue("Test2",100L));
-List<Date> firstDate = new ArrayList<Date>();
-firstDate.add(new Date());
-
-CatRyzer.CategoryValuesByDates categoriesByDates1 = categories.new CategoryValuesByDates(firstDay, firstDate);
-
-
-List<CatRyzer.CategoryValue> seccondDay = new ArrayList<CatRyzer.CategoryValue>();
-seccondDay.add(categories.new  CategoryValue("Test2",200L));
-List<Date> seccondDate = new ArrayList<Date>();
-seccondDate.add(new Date());
-
-CatRyzer.CategoryValuesByDates categoriesByDates2 = categories.new CategoryValuesByDates(seccondDay, seccondDate);
-
-List<CatRyzer.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<CatRyzer.CategoryValuesByDates>();
-valuesByDate_Calender.add(categoriesByDates1);
-valuesByDate_Calender.add(categoriesByDates2);
-
-
-List<Ingredient> ingredients = dao.getAllIngredients();
-List<Ingredient> ingredientsByCategory = ingredients;
-%>
-
-
-
-<!-- Summary -->
-
-The main result was, we due the assumtion. It came close to. The following potential was deiscovered
-
-<!-- Situation -->
-
-<!-- Results -->
-
- <!-- Calendar -->
-
-
-
-Date1: AllCategory,co2value
-Date2: AllCategory,co2value
-Date3: AllCategory,co2value
-Date4: AllCategory,co2value
-Date5: AllCategory,co2value
-
- <!-- Total Impact -->
-
-
-
-<table cellspacing="0" cellpadding="0" class="table toc" >
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="table-header bottom-border">Total CO2 Impact by Category</td>
-<td class="left-border"></td>
-<td class="co2value" ></td>
-<td ></td>
-</tr>
-
-<%
-	Integer counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
-	
-	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-%>
-
-<tr <%
-int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
-if(order == 1) { %>
-class="alternate"
-<% }%> > 
-<td class="menu-name">
-<%= categoryValue.categoryName %>
-</td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
-<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
-</tr>
-
-
-<%
-
-	}
-}
-
-%>
-
-</table>
-
-Alldates: 	Category1, co2value
- 			Category2, co2value
-			Category3, co2value
-			Category4, co2value
- 			Category5, co2value
-
- <!-- Potential -->
- By choosing less off this, you get more of this.
- <!-- By Date -->
-
-Date1: Category1, co2value
-Date1: Category2, co2value
-...
-  <!-- per sheet -->
-  Date1: Ingredientspec1, Ingredientspec2
-
-Date2: Category1, co2value
-Date3: Category2, co2value
-
-  <!-- per sheet -->
-  Date2: Ingredientspec1, Ingredientspec2
-
-
-<!-- Categories -->
-Category1: Ingredient1, Ingredient2
-
-Category2: Ingredient1, Ingredient2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Here comes the old Stuff -->
-
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
 
@@ -1153,7 +970,7 @@ Collections.sort(rezeptePersonal,new RezeptDateComparator());
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
 Boolean notDoneThird = true;
-counterIterate = 0;
+int counterIterate = 0;
 
 Double adjustedAverageLength = threshold/MaxValueRezept*200;
 Double climateFriendlyValueLength = climateFriendlyValue/MaxValueRezept*200;
@@ -1209,6 +1026,338 @@ for(Recipe recipe: rezeptePersonal){
 </table>
 
 
+
+
+<%
+
+// Define categories here:
+// CatFormula(String category, String formula, boolean isHeading)
+
+CatRyzer categories = new CatRyzer();
+
+List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
+
+
+categoryFormulas.add(categories.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
+
+categoryFormulas.add(categories.new CatFormula("Rice products","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Spices & herbs","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Sweets","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Vegetable oils and fat","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Vegetables and fruits","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Preprocessed vegetable products","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Bread and Grain Products","grain u bread u pasta"));
+categoryFormulas.add(categories.new CatFormula("Nuts und seeds","vegetable"));
+
+categoryFormulas.add(categories.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
+
+categoryFormulas.add(categories.new CatFormula("<strong>Meat Products</strong>","animal-based",true));
+
+categoryFormulas.add(categories.new CatFormula("Ruminants","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Non-ruminants","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Fish and seafood","vegetable"));
+
+categoryFormulas.add(categories.new CatFormula("<strong>Diary Products</strong>","diary",true));
+
+categoryFormulas.add(categories.new CatFormula("Ripened cheese","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Fresh cheese and diary products","vegetable"));
+
+categoryFormulas.add(categories.new CatFormula("Animal based fats","(oil u fats) n animal-based"));
+categoryFormulas.add(categories.new CatFormula("Eggs and egg based products","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Canned and finished products","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Sauces","vegetable"));
+
+
+categoryFormulas.add(categories.new CatFormula("<strong>Drinks</strong>","drinks",true));
+
+categoryFormulas.add(categories.new CatFormula("Drinks (alkohol based)","drinks n alcohol"));
+categoryFormulas.add(categories.new CatFormula("Drinks (fruit based)","drinks n fruit"));
+categoryFormulas.add(categories.new CatFormula("Drinks (milk based)","drinks n diary"));
+
+//"Categoryname,-tag1,tag2,tag3,-tag4"
+
+
+
+	
+
+%>
+
+
+
+
+
+
+
+
+
+
+<%
+
+
+
+List<CatRyzer.CategoryValue> firstDay = new ArrayList<CatRyzer.CategoryValue>();
+firstDay.add(categories.new CategoryValue("Test2",100L));
+List<Date> firstDate = new ArrayList<Date>();
+firstDate.add(new Date());
+
+CatRyzer.CategoryValuesByDates categoriesByDates1 = categories.new CategoryValuesByDates(firstDay, firstDate);
+
+
+List<CatRyzer.CategoryValue> seccondDay = new ArrayList<CatRyzer.CategoryValue>();
+seccondDay.add(categories.new  CategoryValue("Test2",200L));
+List<Date> seccondDate = new ArrayList<Date>();
+seccondDate.add(new Date());
+
+CatRyzer.CategoryValuesByDates categoriesByDates2 = categories.new CategoryValuesByDates(seccondDay, seccondDate);
+
+List<CatRyzer.CategoryValuesByDates> valuesByDate_Calender = new ArrayList<CatRyzer.CategoryValuesByDates>();
+valuesByDate_Calender.add(categoriesByDates1);
+valuesByDate_Calender.add(categoriesByDates2);
+
+
+List<Ingredient> ingredients = dao.getAllIngredients();
+List<Ingredient> ingredientsByCategory = ingredients;
+%>
+
+
+
+<!-- Summary -->
+
+The main result was, we due the assumtion. It came close to. The following potential was deiscovered
+
+<!-- Situation -->
+
+<!-- Results -->
+
+ <!-- Calendar -->
+
+<table cellspacing="0" cellpadding="0" class="table toc" >
+
+<tr>
+<td></td>
+<td class="gray left-border"></td>
+<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border">Total CO2 Impact by Date</td>
+<td class="left-border"></td>
+<td class="co2value" ></td>
+<td ></td>
+</tr>
+
+<%
+counterIterate = 0;
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+
+	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+%>
+
+<tr <%
+int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+if(order == 1) { %>
+class="alternate"
+<% }%> > 
+<td class="menu-name">
+<%= categoryValue.categoryName %>
+</td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+</tr>
+
+
+<%
+
+	}
+}
+
+/*
+Output:
+
+Date1: AllCategory,co2value
+Date2: AllCategory,co2value
+Date3: AllCategory,co2value
+Date4: AllCategory,co2value
+Date5: AllCategory,co2value
+*/
+
+
+
+%>
+
+</table>
+
+
+
+
+
+ <!-- Total Impact -->
+
+
+
+<table cellspacing="0" cellpadding="0" class="table toc" >
+
+<tr>
+<td></td>
+<td class="gray left-border"></td>
+<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border">Total CO2 Impact by Category</td>
+<td class="left-border"></td>
+<td class="co2value" ></td>
+<td ></td>
+</tr>
+
+<%
+counterIterate = 0;
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+	
+	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+%>
+
+<tr <%
+int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+if(order == 1) { %>
+class="alternate"
+<% }%> > 
+<td class="menu-name">
+<%= categoryValue.categoryName %>
+</td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+</tr>
+
+
+<%
+
+	}
+}
+
+/*
+Output:
+
+Alldates: 	Category1, co2value
+ 			Category2, co2value
+			Category3, co2value
+			Category4, co2value
+ 			Category5, co2value
+*/
+
+
+%>
+
+</table>
+
+
+
+ <!-- Potential -->
+ By choosing less off this, you get more of this.
+ <!-- By Date -->
+
+
+
+
+
+<table cellspacing="0" cellpadding="0" class="table toc" >
+
+<tr>
+<td></td>
+<td class="gray left-border"></td>
+<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border">Total CO2 Impact by Category</td>
+<td class="left-border"></td>
+<td class="co2value" ></td>
+<td ></td>
+</tr>
+
+<%
+counterIterate = 0;
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+
+	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+%>
+
+<tr <%
+int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+if(order == 1) { %>
+class="alternate"
+<% }%> > 
+<td class="menu-name">
+<%= categoryValue.categoryName %>
+</td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
+<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+</tr>
+
+
+<%
+
+	}
+}
+
+/*
+Output:
+
+Alldates: 	Category1, co2value
+ 			Category2, co2value
+			Category3, co2value
+			Category4, co2value
+ 			Category5, co2value
+*/
+
+
+%>
+
+</table>
+
+
+
+
+Date1: Category1, co2value
+Date1: Category2, co2value
+...
+  <!-- per sheet -->
+  Date1: Ingredientspec1, Ingredientspec2
+
+Date2: Category1, co2value
+Date3: Category2, co2value
+
+  <!-- per sheet -->
+  Date2: Ingredientspec1, Ingredientspec2
+
+
+<!-- Categories -->
+Category1: Ingredient1, Ingredient2
+
+Category2: Ingredient1, Ingredient2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Here comes the old Stuff -->
 
 
 <!-- Details follow -->

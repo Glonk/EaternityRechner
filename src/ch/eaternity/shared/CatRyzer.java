@@ -22,6 +22,26 @@ public class CatRyzer {
 		public CatMapping() {}
 	}
 	
+	public class CatFormula {
+		public String category;
+		public String formula;
+		public boolean isHeading;
+		
+		public CatFormula() {}
+		
+		public CatFormula(String category, String formula, boolean isHeading) {
+			this.category = category;
+			this.formula = formula;
+			this.isHeading = isHeading;
+		}
+		
+		public CatFormula(String category, String formula) {
+			this.category = category;
+			this.formula = formula;
+			this.isHeading = false;
+		}
+	}
+	
 	public class CategoryValue {
 		public String categoryName;
 		public Long co2value;
