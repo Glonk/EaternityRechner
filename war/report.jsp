@@ -1545,8 +1545,8 @@ Category2: Ingredient1, Ingredient2
 // get ingredients per category example
 for(String category : catryzer.catMultiMap.keySet())
 {
-    Collection<IngredientSpecification> ingredientsSpecification = catryzer.catMultiMap.get(category);
-                //print whatever you like: name, c02 value
+	
+	Collection<IngredientSpecification> ingredientsSpecification = catryzer.catMultiMap.get(category);
 	Set<String> ingredientsNames = catryzer.getIngredientsNames(ingredientsSpecification);
 
 %>
@@ -1571,8 +1571,6 @@ for(String category : catryzer.catMultiMap.keySet())
 <td>
 
 
-<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
-
 
 <%	
 counter = 0;
@@ -1582,6 +1580,7 @@ counter = counter + 1;
 %><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient %></span><%
 }
 %>
+
 </td>
 <td class="left-border"><br></td>
 </tr>
