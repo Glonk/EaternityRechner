@@ -1276,43 +1276,6 @@ Alldates: 	Category1, co2value
 <%
 
 
-
-values = new ArrayList<Double>();
-
-//  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
-	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-	values.add((double) categoryValue.co2value);
-	average = average + categoryValue.co2value;
-	counter++;
-
-	if(categoryValue.co2value>MaxValueRezept){
-MaxValueRezept = categoryValue.co2value;
-	} 
-	if(categoryValue.co2value<MinValueRezept){
-MinValueRezept = categoryValue.co2value;
-	}
-}
-}
-average = (average /counter) + extra;
-MinValueRezept = MinValueRezept + extra;
-MaxValueRezept = MaxValueRezept + extra;
-	
-Collections.sort(values);
- 
-if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1) + extra;
-else
-{
-double lower = (values.get(values.size()/2-1))  + extra;
-double upper = (values.get(values.size()/2))  + extra;
-
-median = ((lower + upper) / 2.0);
-}	    
-
-
-
-
 counterIterate = 0;
 for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 	
@@ -1336,6 +1299,42 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 </tr>
 
 <%
+
+
+
+values = new ArrayList<Double>();
+
+//  go over the Recipes in the Workspace
+
+for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+	values.add((double) categoryValue.co2value);
+	average = average + categoryValue.co2value;
+	counter++;
+
+	if(categoryValue.co2value>MaxValueRezept){
+MaxValueRezept = categoryValue.co2value;
+	} 
+	if(categoryValue.co2value<MinValueRezept){
+MinValueRezept = categoryValue.co2value;
+	}
+}
+
+average = (average /counter) + extra;
+MinValueRezept = MinValueRezept + extra;
+MaxValueRezept = MaxValueRezept + extra;
+	
+Collections.sort(values);
+ 
+if (values.size() % 2 == 1)
+median = values.get((values.size()+1)/2-1) + extra;
+else
+{
+double lower = (values.get(values.size()/2-1))  + extra;
+double upper = (values.get(values.size()/2))  + extra;
+
+median = ((lower + upper) / 2.0);
+}	    
+
 
 
 
@@ -1395,7 +1394,7 @@ class="alternate"
 	// valuesByDate_Calender
 
 	for(Recipe recipe: allKitchensRecipes){
-		
+
 		if(thisDate.compareTo(recipe.cookingDate) == 0 ){
 
 			long compute = recipe.getId() * iTimeStamp;
@@ -1403,7 +1402,7 @@ class="alternate"
 
 				recipe.setCO2Value();
 				Double recipeValue = recipe.getCO2Value() + extra;
-				if(recipeValue < climateFriendlyValue){
+
 
 
 				String formatted = formatter.format( recipeValue );
@@ -1485,7 +1484,7 @@ class="alternate"
 					</table>
 				<%
 			}
-		}
+		
 
 	%>
 
