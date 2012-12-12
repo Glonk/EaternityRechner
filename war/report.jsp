@@ -1010,7 +1010,15 @@ CatRyzer catryzer = new CatRyzer(kitchenRecipes);
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
 
+<<<<<<< HEAD
 //categoryFormulas.add(catryzer.new CatFormula("all","",true));
+=======
+<<<<<<< HEAD
+//categoryFormulas.add(catryzer.new CatFormula("all","",true));
+=======
+categoryFormulas.add(catryzer.new CatFormula("all","all",true));
+>>>>>>> corrected example categories
+>>>>>>> corrected example categories
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
 
@@ -1020,7 +1028,7 @@ categoryFormulas.add(catryzer.new CatFormula("Sweets","vegetable"));
 categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","vegetable"));
 categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","vegetable"));
 categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain u bread u pasta"));
+categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
 categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","vegetable"));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
@@ -1044,9 +1052,9 @@ categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","drinks",true));
 
-categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","drinks n alcohol"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks n fruit"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks n diary"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","drinks, alcohol"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks, fruit"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks, diary"));
 
 
 /*
