@@ -80,7 +80,7 @@ public class CatRyzer {
 	private boolean recipesLoaded = false;
 
 	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
-	private List<CategoryValuesByDates> categoryValuesByDates = new ArrayList<CategoryValuesByDates>();
+	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
 	
 	// -------------- Functions --------------
 	// Constructors
@@ -192,10 +192,23 @@ public class CatRyzer {
 			{
 				List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
 				
-				//CategoryValuesByDates 
-				//categoryValuesByDates.add(e)
+				Multimap<String,Long> catMM = MapOfcatMultiMap.get(date);
+				for(String category : catMM.keySet())
+				{
+					Collection<Long> ingredientIds = catMultiMap.get(category);
+					categoryValues.add(new CategoryValue(category, getCo2Value(ingredientIds)));
+				}
+				
+				CategoryValuesByDates categoryValuesByDates = new CategoryValuesByDates();
+				categoryValuesByDates.date.add(date);
+				categoryValuesByDates.category = categoryValues;
+				categoryValuesByDates.co2value = 0L;
+				for (CategoryValue catval : categoryValues){
+					categoryValuesByDates.co2value = categoryValuesByDates.co2value + catval.co2value;
+				}
+				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
-			
+			int i = 1;
 			
 		}
 		else
@@ -203,7 +216,7 @@ public class CatRyzer {
 	}
 	
 	public List<CategoryValuesByDates> getCatValsByDates() {
-		return this.categoryValuesByDates;
+		return this.categoryValuesByDatesList;
 	}
 	
 	public List<CategoryValue> getCatVals() {

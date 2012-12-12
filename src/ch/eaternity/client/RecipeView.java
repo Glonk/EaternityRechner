@@ -380,7 +380,7 @@ void onKeyUp(KeyUpEvent event) {
 			//recipeDate.setCursorPos(0);
 		}
 		if (date != null)
-			this.recipe.setCreateDate(date);
+			this.recipe.cookingDate = date;
 	}
 	
 

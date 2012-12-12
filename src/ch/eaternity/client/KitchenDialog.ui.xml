@@ -69,6 +69,7 @@
 	
 		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
 		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
+		<g:Label ui:field='kitchenId' ></g:Label>
 		<br /><br />
 		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
 		<g:TextBox ui:field="energyMix">Name des Angebots</g:TextBox> verursacht  

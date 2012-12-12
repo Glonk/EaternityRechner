@@ -57,6 +57,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -93,6 +94,7 @@ public class KitchenDialog<T> extends DialogBox{
 	@UiField Button deleteKitchen;
 	@UiField TextBox clientLocationDialog;
 	@UiField TextBox kitchenNameTextBox;
+	@UiField Label kitchenId;
 	@UiField static TextBox energyMix;
 	@UiField static TextBox energyMixco2;
 	@UiField static ListBox kitchens;
@@ -183,6 +185,9 @@ public class KitchenDialog<T> extends DialogBox{
 		
 		kitchenNameTextBox.setText(kitchenName);
 		setText(kitchenName);
+		
+		if (selectedKitchen.id != null)
+				kitchenId.setText("Id: " + selectedKitchen.id);
 
 		if (selectedKitchen.energyMix != null)
 		{

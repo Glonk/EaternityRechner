@@ -992,7 +992,7 @@ for(Recipe recipe: allKitchensRecipes){
 
 // Test new CatRyzer
 String nameOfKitchen = "EHL";
-Long id = 29L;
+Long id = 1L;
 
 List<Ingredient> ingredients = new ArrayList<Ingredient>();
 ingredients = dao.getAllIngredients();
