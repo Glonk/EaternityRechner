@@ -1332,33 +1332,9 @@ Category2: Ingredient1, Ingredient2
 
 </table>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Here comes the old Stuff -->
 
-
 <!-- Details follow -->
-
-
 
 
 <table cellspacing="0" cellpadding="0" class="table new-page listTable" >
@@ -1505,7 +1481,10 @@ if(rezeptePersonal.size() != 0){
 
 <%
 } else {
+	// no recipes found 
+	
 %>
+
 Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie uns.
 
 <%
