@@ -16,8 +16,8 @@ public class CatRyzer {
 	// -------------- Inner Classes --------------
 	private class CatMapping {
 		public String category;
-		public List<String> hastags;
-		public List<String> hasnotthistags;
+		public List<String> hastags = new ArrayList<String>();
+		public List<String> hasnotthistags  = new ArrayList<String>();
 		
 		public CatMapping() {}
 	}
@@ -37,7 +37,7 @@ public class CatRyzer {
 	public class CategoryValuesByDates {
 		public List<CategoryValue> category;
 		//mulltiple dates are possible, usually just one
-		public List<Date> date;
+		public List<Date> date = new ArrayList<Date>();
 		public Long co2value;
 		
 		public CategoryValuesByDates(){}
@@ -51,7 +51,7 @@ public class CatRyzer {
 	// -------------- Class Variables --------------
 	DAO dao = new DAO();
 	private List<Recipe> recipes 					= new ArrayList<Recipe>();
-	private List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
+	private List<IngredientSpecification> ingSpecs  = new ArrayList<IngredientSpecification>();
 	private List<Ingredient> ingredients 			= new ArrayList<Ingredient>();
 	private List<CatMapping> mappings 				= new ArrayList<CatMapping>();
 	private boolean initializedMapping = false;
@@ -68,6 +68,7 @@ public class CatRyzer {
 	
 	public CatRyzer(List<Recipe> recipes)
 	{
+		this();
 		this.recipes = recipes;
 		writeDatesToIngSpec();
 		//get all ingredients from all recipes, write into single list
@@ -80,6 +81,11 @@ public class CatRyzer {
 	
 	
 	// -------------- Public --------------
+	/***
+	 * Sets the current mapping of categories to tags
+	 * @param str_mappings (Category, Tag1, Tag2, -Tag3, ...)
+	 * @throws IllegalArgumentException
+	 */
 	public void setMapping(List<String> str_mappings) throws IllegalArgumentException
 	{
 		for (String str_mapping : str_mappings)
@@ -92,9 +98,10 @@ public class CatRyzer {
 			mappings.clear();
 			
 			CatMapping newmap = new CatMapping();
-			newmap.category = map_ar[1];
+			newmap.category = map_ar[1].trim();
 			for (int i = 1; i < map_ar.length;i++)
 			{
+				map_ar[i].trim();
 				if (map_ar[i].charAt(0) == '-')
 					newmap.hasnotthistags.add(map_ar[i].substring(1));
 				else
@@ -111,16 +118,16 @@ public class CatRyzer {
 		{
 			// ---- first populate the categoryValue List ------
 			// The Multimap could probably substitute categoryValues in the future ...
+			// String : Category, Long: id of Ingredient
 			Multimap<String,Long> catMultiMap = HashMultimap.create();
 			
 			// iterate over all ingredientSpec, add them to the Map
-			boolean dontAdd = false;
 			for (IngredientSpecification ingSpec : ingSpecs){
-				List<String> tags = getIngFromIngSpecId(ingSpec.getId()).tags;
+				List<String> tags = getIngredient(ingSpec).tags;
 				for (String tag : tags) {
 					for (CatMapping mapping : mappings) {
-						if (mapping.hastags.contains(tag) && doesntContainThisTags(mapping.hasnotthistags, tags)) {
-							catMultiMap.put(mapping.category, ingSpec.getId());
+						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
+							catMultiMap.put(mapping.category, getIngredient(ingSpec).getId());
 						}
 					}
 				}
@@ -130,11 +137,17 @@ public class CatRyzer {
 			// filling own object
 			for(String category : catMultiMap.keySet())
 			{
-				Collection<Long> ingSpecIds = catMultiMap.get(category);
-				categoryValues.add(new CategoryValue(category, getCo2ValueByIds(ingSpecIds)));
+				Collection<Long> ingredientIds = catMultiMap.get(category);
+				categoryValues.add(new CategoryValue(category, getCo2Value(ingredientIds)));
 			}
 			
 			// ---- second populate the CategoryValuesByDates List ------
+			List<Multimap<String,Long>> multiMapDateList = new ArrayList<Multimap<String,Long>>();
+			
+			
+			
+			//getAllDates()
+			
 			
 		}
 		else
@@ -150,24 +163,27 @@ public class CatRyzer {
 	}
 	
 	// -------------- Private --------------
+	
+	
 	// ids refer to an IngredientSPecification Object
-	private Long getCo2ValueByIds(Collection<Long> ids) {
+	private Long getCo2Value(Collection<Long> ids) {
 		Long co2value = 0L;
 		for (Long id : ids) {
-			co2value = co2value + getIngFromIngSpecId(id).getCo2eValue();
+			co2value = co2value + getIngredient(id).getCo2eValue();
 		}
 		return co2value;
 	}
 	
 	//returns null if not found
-	private Ingredient getIngFromIngSpecId(Long id) {
-		for (IngredientSpecification ingSpec : ingSpecs) {
-			if (ingSpec.getId().equals(id)) {
-				for(Ingredient zutat : ingredients){
-					if (zutat.getId() == ingSpec.getId()){
-						return zutat;
-					}
-				}
+	private Ingredient getIngredient(IngredientSpecification ingspec) {
+		return getIngredient(ingspec.getZutat_id());
+	}
+	
+	//returns null if not found
+	private Ingredient getIngredient(Long id){
+		for(Ingredient zutat : ingredients){
+			if (zutat.getId().equals(id)){
+				return zutat;
 			}
 		}
 		return null;

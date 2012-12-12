@@ -82,11 +82,12 @@ DAO dao = new DAO();
 
 List<Recipe> adminRecipes = new ArrayList<Recipe>();
 List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
+List<Recipe> allKitchensRecipes = new ArrayList<Recipe>();
 List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
 if (user != null) {
 	rezeptePersonal = dao.getYourRecipe(user);
-	kitchenRecipes = dao.getKitchenRecipes(user);
+	allKitchensRecipes = dao.getKitchenRecipes(user);
 	
 	adminRecipes = dao.adminGetRecipe(user);
 	
@@ -102,8 +103,67 @@ if (user != null) {
 	if(removeIndex != -1){
 		adminRecipes.remove(removeIndex);
 	}
+	}
+}
+	
+	// Test new CatRyzer
+	String nameOfKitchen = "EHL";
+	Long id = 29L;
+	
+	List<Ingredient> ingredients = new ArrayList<Ingredient>();
+	ingredients = dao.getAllIngredients();
+	
+	for(Recipe recipe : allKitchensRecipes){
+		for(Long kitchenId : recipe.kitchenIds){
+			if(kitchenId.equals(id))
+				kitchenRecipes.add(recipe);
 		}
 	}
+	
+	//Liste:
+	//(("<strong>Vegetable Products</strong>"),("vegetable")),
+	//Rice products
+	//Spices & herbs
+	//Sweets
+	//Vegetable oils and fat
+	//Vegetables and fruits
+	//Preprocessed vegetable products
+	//Bread and Grain Products -> grain + bread + pasta
+	//Nuts und seeds
+	
+	
+	//(("<strong>Animal Products</strong>"),("meat", "animal-based")),
+	//Non-ruminants
+	//Ruminants
+	//Fish and seafood
+	
+	//Animal based fats -> oil and fats + animal-based
+	//Ripened cheese
+	//Fresh cheese and diary products
+	
+	//Eggs and egg based products
+	//Canned and finished products ->
+	//Sauces
+	
+	//<strong>Drinks</strong>
+	//Drinks (alkohol based)
+	//Drinks (fruit based)
+	//Drinks (milk based)
+
+	
+	List<String> mappings = new ArrayList<String>();
+	mappings.add("<strong>Animal Products</strong>,fish,seafood,diary");
+	mappings.add("diary,diary");
+	mappings.add("fish,fish");
+	mappings.add("<strong>Vegetable Products</strong>,rice products,spices & herbs,nuts & seeds");
+	mappings.add("rice products, rice products");
+	mappings.add("fresh vegetables,vegetable,-preprocessed products");
+	
+	
+	CatRyzer catryzer = new CatRyzer(kitchenRecipes);
+	catryzer.setMapping(mappings);
+	catryzer.categoryze();
+	
 %>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>

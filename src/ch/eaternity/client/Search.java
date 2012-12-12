@@ -219,6 +219,7 @@ public class Search<T> extends ResizeComposite {
 				selectRow(markedRow);
 				SearchInput.setText("");
 				updateResults("");
+				markedRow = 0;
 			}
 		}
 		if(KeyCodes.KEY_DOWN == event.getNativeKeyCode())
@@ -587,6 +588,7 @@ public class Search<T> extends ResizeComposite {
 		t.schedule(200);
 
 		selectedRow = row;
+		markedRow = 0;
 
 		if (listener != null) {
 			listener.onItemSelected(item);
