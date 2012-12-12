@@ -19,6 +19,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Collections" %>
 
 
@@ -86,6 +87,10 @@ List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
 List<Recipe> allKitchensRecipes = new ArrayList<Recipe>();
 List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
+DecimalFormat formatter = new DecimalFormat("##");
+SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yy");
+
+
 if (user != null) {
 	rezeptePersonal = dao.getYourRecipe(user);
 	allKitchensRecipes = dao.getKitchenRecipes(user);
@@ -147,7 +152,7 @@ if (user != null) {
 
 // some precalculation of values
 
-DecimalFormat formatter = new DecimalFormat("##");
+
 
 Double MaxValueRezept = threshold*1.0;
 Double MinValueRezept = 10000000.0;
@@ -1071,8 +1076,8 @@ List<CatRyzer.CategoryValue> valuesByCategory  = catryzer.getCatVals();
 List<CatRyzer.CategoryValuesByDates>  valuesByDate_Category = catryzer.getCatValsByDates();
 
 
-CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByDate_Category.get(0);
-
+// CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByDate_Category.get(0);
+CatRyzer.CategoryValuesByDates  valuesByDate_Calender = null;
 
 
 	
@@ -1150,7 +1155,7 @@ The main result was, we due the assumtpion. It came close to. The following pote
 <%
 counterIterate = 0;
 
-
+if(valuesByDate_Calender != null){
 for(CatRyzer.CategoryValue categoryValue : valuesByDate_Calender.category){
 	
 %>
@@ -1169,7 +1174,7 @@ class="alternate"
 
 
 <%
-
+}
 }
 
 /*
@@ -1361,7 +1366,9 @@ class="alternate"
 
 				String formatted = formatter.format( recipeValue );
 				String persons = Long.toString(recipe.getPersons());
-				String datumString = Date.toString(recipe.cookingDate);
+				
+				
+				String datumString = dateFormatter.format(recipe.cookingDate);
 
 
 				%>
@@ -1399,7 +1406,7 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.herkunft.symbol %>,<%= ingredient.zustand %>,<%= ingredient.produktion %>,<%= ingredient.transportmittel %>)</span><%
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>,<%= ingredient.getZustand() %>,<%= ingredient.getProduktion() %>,<%= ingredient.getTransportmittel() %>)</span><%
 					}
 					%>
 				</td>
@@ -1475,7 +1482,7 @@ Category2: Ingredient1, Ingredient2
 
 %>
 
-
+</table>
 
 <% } // just the simple version %><%
 
