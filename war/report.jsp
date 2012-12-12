@@ -135,7 +135,8 @@ if (user != null) {
 		DoItWithPermanentIds = false;
 	 } 
 	 if(kitchenId != null){
-		allKitchensRecipes = dao.getKichtenRecipes(kitchenId,false);
+		Long kitchenLongId = Long.parseLong(kitchenId);
+		allKitchensRecipes = dao.getKitchenRecipes(kitchenLongId);
 		DoItWithPermanentIds = false;
 	 }
  }
@@ -990,8 +991,8 @@ List<Ingredient> ingredients = new ArrayList<Ingredient>();
 ingredients = dao.getAllIngredients();
 
 for(Recipe recipe : allKitchensRecipes){
-	for(Long kitchenId : recipe.kitchenIds){
-		if(kitchenId.equals(id))
+	for(Long kitchenCheckId : recipe.kitchenIds){
+		if(kitchenCheckId.equals(id))
 			kitchenRecipes.add(recipe);
 	}
 }
@@ -1007,43 +1008,43 @@ CatRyzer catryzer = new CatRyzer(kitchenRecipes);
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
 
-categoryFormulas.add(categories.new CatFormula("all",null,true));
+categoryFormulas.add(catryzer.new CatFormula("all",null,true));
 
-categoryFormulas.add(categories.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
 
-categoryFormulas.add(categories.new CatFormula("Rice products","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Spices & herbs","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Sweets","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Vegetable oils and fat","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Vegetables and fruits","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Preprocessed vegetable products","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Bread and Grain Products","grain u bread u pasta"));
-categoryFormulas.add(categories.new CatFormula("Nuts und seeds","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Rice products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Sweets","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain u bread u pasta"));
+categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","vegetable"));
 
-categoryFormulas.add(categories.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
 
-categoryFormulas.add(categories.new CatFormula("<strong>Meat Products</strong>","animal-based",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","animal-based",true));
 
-categoryFormulas.add(categories.new CatFormula("Ruminants","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Non-ruminants","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Fish and seafood","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Ruminants","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","vegetable"));
 
-categoryFormulas.add(categories.new CatFormula("<strong>Diary Products</strong>","diary",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
 
-categoryFormulas.add(categories.new CatFormula("Ripened cheese","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Fresh cheese and diary products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","vegetable"));
 
-categoryFormulas.add(categories.new CatFormula("Animal based fats","oil, fats, -vegetable"));
-categoryFormulas.add(categories.new CatFormula("Eggs and egg based products","eggs"));
-categoryFormulas.add(categories.new CatFormula("Canned and finished products","processed"));
-categoryFormulas.add(categories.new CatFormula("Sauces","sauces"));
+categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil, fats, -vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
+categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
+categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
 
 
-categoryFormulas.add(categories.new CatFormula("<strong>Drinks</strong>","drinks",true));
+categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","drinks",true));
 
-categoryFormulas.add(categories.new CatFormula("Drinks (alkohol based)","drinks n alcohol"));
-categoryFormulas.add(categories.new CatFormula("Drinks (fruit based)","drinks n fruit"));
-categoryFormulas.add(categories.new CatFormula("Drinks (milk based)","drinks n diary"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","drinks n alcohol"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks n fruit"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks n diary"));
 
 
 /*
@@ -1087,7 +1088,7 @@ CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByCategory(1);
 
 <%
 
-
+/*
 
 List<CatRyzer.CategoryValue> firstDay = new ArrayList<CatRyzer.CategoryValue>();
 firstDay.add(categories.new CategoryValue("Test2",100L));
@@ -1112,13 +1113,15 @@ valuesByDate_Calender.add(categoriesByDates2);
 List<Ingredient> ingredients = dao.getAllIngredients();
 List<Ingredient> ingredientsByCategory = ingredients;
 
+*/
+
 %>
 
 
 
 <!-- Summary -->
-
-The main result was, we due the assumtion. It came close to. The following potential was deiscovered
+<br/><br/><br/>
+The main result was, we due the assumtpion. It came close to. The following potential was discovered <br/><br/><br/><br/>
 
 <!-- Situation -->
 
@@ -1144,9 +1147,10 @@ The main result was, we due the assumtion. It came close to. The following poten
 
 <%
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
 
-	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+
+for(CatRyzer.CategoryValue categoryValue : valuesByDate_Calender){
+	
 %>
 
 <tr <%
@@ -1164,7 +1168,6 @@ class="alternate"
 
 <%
 
-	}
 }
 
 /*
@@ -1251,6 +1254,8 @@ Alldates: 	Category1, co2value
 
  <!-- Potential -->
  By choosing less off this, you get more of this.
+
+
  <!-- By Date -->
 
 
@@ -1267,7 +1272,7 @@ Alldates: 	Category1, co2value
 </tr>
 
 <tr>
-<td class="table-header bottom-border">Total CO2 Impact by Category</td>
+<td class="table-header bottom-border">Total CO2 Impact by Category and Date</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
@@ -1275,7 +1280,7 @@ Alldates: 	Category1, co2value
 
 <%
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 
 	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
 %>
@@ -1301,21 +1306,6 @@ class="alternate"
 /*
 Output:
 
-Alldates: 	Category1, co2value
- 			Category2, co2value
-			Category3, co2value
-			Category4, co2value
- 			Category5, co2value
-*/
-
-
-%>
-
-</table>
-
-
-
-
 Date1: Category1, co2value
 Date1: Category2, co2value
 ...
@@ -1333,6 +1323,17 @@ Date3: Category2, co2value
 Category1: Ingredient1, Ingredient2
 
 Category2: Ingredient1, Ingredient2
+
+
+*/
+
+
+%>
+
+</table>
+
+
+
 
 
 
@@ -1358,21 +1359,7 @@ Category2: Ingredient1, Ingredient2
 <!-- Details follow -->
 
 
-<%
 
-
-doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-		if((recipe.getCO2Value()+extra) < climateFriendlyValue){
-			doIt = true;
-		}
-	}
-}
-if(doIt){
-	
-// get dates with this object: valuesByDate_Calender
-%>
 
 <table cellspacing="0" cellpadding="0" class="table new-page listTable" >
 
@@ -1402,6 +1389,7 @@ if(doIt){
 <!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
 <%
 
+// valuesByDate_Calender
 
 for(Recipe recipe: rezeptePersonal){
 
@@ -1499,279 +1487,6 @@ String code = Converter.toString(compute,34);
 
 %>
 
-
-<%
-}
-
-
-doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-	if((recipe.getCO2Value() + extra) >= climateFriendlyValue && (recipe.getCO2Value() + extra) < threshold){
-	doIt = true;
-	}
-	}
-}
-if(doIt){
-%>
-
-
-<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
-
-
-<tr>
-<td class="table-header">Gut</td>
-<td></td>
-</tr>
-
-<tr>
-<td><p>Diese Rezepte sind mit unter <%= formatter.format( threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="bottom-border"></td>
-<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-</tr>
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-</table>
-
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
-
-
-for(Recipe recipe: rezeptePersonal){
-
-long compute = recipe.getId() * iTimeStamp;
-String code = Converter.toString(compute,34);
-
-			recipe.setCO2Value();
-			Double recipeValue = recipe.getCO2Value() + extra;
-			if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
-
-			String formatted = formatter.format( recipeValue );
-			String persons = Long.toString(recipe.getPersons());
-			%>
-			
-			<table cellspacing="0" cellpadding="0" class="table listTable" >
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td class="bottom-border">
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3>
-			</td>
-			<td class="left-border"></td>
-			</tr>
-
-			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
-			</tr>
-			
-			<tr>
-			<td>
-			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
-			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
-
-			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
-				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
-				}
-				%>
-			
-			</td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-
-			
-			<%	
-			if(recipe.comments != null){
-			for(RecipeComment comment: recipe.comments){
-			
-			%>
-			<tr>
-			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
-			</tr>
-
-			<%
-				}
-			}
-			%>
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			
-			</table>
-			
-			<%
-		}
-%>
-
-
-<%		
-
-}
-
-%>
-
-
-
-
-<%
-}
-
-
-doIt = false;
-if(rezeptePersonal.size() != 0){
-	for(Recipe recipe: rezeptePersonal){
-	if((recipe.getCO2Value()+extra) >= threshold){
-	doIt = true;
-	}
-	}
-}
-if(doIt){
-%>
-
-<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
-
-
-<tr>
-<td class="table-header">Über dem Durchschnitt</td>
-<td></td>
-</tr>
-
-
-<tr>
-<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="bottom-border"></td>
-<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-</tr>
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-</table>
-	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
-
-
-for(Recipe recipe: rezeptePersonal){
-
-long compute = recipe.getId() * iTimeStamp;
-String code = Converter.toString(compute,34);
-
-			recipe.setCO2Value();
-			Double recipeValue = recipe.getCO2Value() + extra;
-			if(recipeValue >= threshold){
-			
-
-			String formatted = formatter.format(recipeValue );
-			String persons = Long.toString(recipe.getPersons());
-			%>
-			
-			<table cellspacing="0" cellpadding="0" class="table listTable" >
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td class="bottom-border">
-			<h3><%= recipe.getSymbol() %></h3>
-			</td>
-			<td class="left-border"></td>
-			</tr>
-
-			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
-			</tr>
-			
-			<tr>
-			<td>
-			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
-			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
-
-			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
-				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
-				}
-				%>
-
-			</td>
-			<td class="left-border"><br></td>
-			</tr>
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-						
-				<%	
-				if(recipe.comments != null){
-				for(RecipeComment comment: recipe.comments){
-
-				%>
-				<tr>
-				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
-				</tr>
-
-				<%
-					}
-				}
-				%>
-				<tr>
-				<td></td>
-				<td class="left-border"><br></td>
-				</tr>
-
-				</table>
-			<%
-		}
-%>
-
-<%		
-
-}
-
-%>
 
 
 <% } // just the simple version %><%
