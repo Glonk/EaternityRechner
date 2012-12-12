@@ -188,6 +188,8 @@ public class KitchenDialog<T> extends DialogBox{
 		
 		if (selectedKitchen.id != null)
 				kitchenId.setText("Id: " + selectedKitchen.id);
+		 else
+			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
 
 		if (selectedKitchen.energyMix != null)
 		{
@@ -1247,7 +1249,9 @@ public class KitchenDialog<T> extends DialogBox{
 			setText(this.kitchenName);
 		  kitchenNameTextBox.setText(this.kitchenName);
 		  if (selectedKitchen.id != null)
-				kitchenId.setText("Id: " + selectedKitchen.id);
+			  kitchenId.setText("Id: " + selectedKitchen.id);
+		  else
+			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
 		
 		  devicesHere = selectedKitchen.devices;
 		  devidesCellTable.setRowCount(devicesHere.size(), true);
