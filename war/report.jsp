@@ -48,6 +48,7 @@ User user = userService.getCurrentUser();
 
 String tempIds = request.getParameter("ids");
 String permanentId = request.getParameter("pid");
+String kitchenId = request.getParameter("kid");
 String pdf = request.getParameter("pdf");
 
 
@@ -106,63 +107,7 @@ if (user != null) {
 	}
 }
 	
-	// Test new CatRyzer
-	String nameOfKitchen = "EHL";
-	Long id = 29L;
-	
-	List<Ingredient> ingredients = new ArrayList<Ingredient>();
-	ingredients = dao.getAllIngredients();
-	
-	for(Recipe recipe : allKitchensRecipes){
-		for(Long kitchenId : recipe.kitchenIds){
-			if(kitchenId.equals(id))
-				kitchenRecipes.add(recipe);
-		}
-	}
-	
-	//Liste:
-	//(("<strong>Vegetable Products</strong>"),("vegetable")),
-	//Rice products
-	//Spices & herbs
-	//Sweets
-	//Vegetable oils and fat
-	//Vegetables and fruits
-	//Preprocessed vegetable products
-	//Bread and Grain Products -> grain + bread + pasta
-	//Nuts und seeds
-	
-	
-	//(("<strong>Animal Products</strong>"),("meat", "animal-based")),
-	//Non-ruminants
-	//Ruminants
-	//Fish and seafood
-	
-	//Animal based fats -> oil and fats + animal-based
-	//Ripened cheese
-	//Fresh cheese and diary products
-	
-	//Eggs and egg based products
-	//Canned and finished products ->
-	//Sauces
-	
-	//<strong>Drinks</strong>
-	//Drinks (alkohol based)
-	//Drinks (fruit based)
-	//Drinks (milk based)
 
-	
-	List<String> mappings = new ArrayList<String>();
-	mappings.add("<strong>Animal Products</strong>,fish,seafood,diary");
-	mappings.add("diary,diary");
-	mappings.add("fish,fish");
-	mappings.add("<strong>Vegetable Products</strong>,rice products,spices & herbs,nuts & seeds");
-	mappings.add("rice products, rice products");
-	mappings.add("fresh vegetables,vegetable,-preprocessed products");
-	
-	
-	CatRyzer catryzer = new CatRyzer(kitchenRecipes);
-	catryzer.setMapping(mappings);
-	catryzer.categoryze();
 	
 %>
 
@@ -189,6 +134,10 @@ if (user != null) {
 		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
 		DoItWithPermanentIds = false;
 	 } 
+	 if(kid != null){
+		allKitchensRecipes = dao.getKichtenRecipes(kitchenId,false);
+		DoItWithPermanentIds = false;
+	 }
  }
 }
 
@@ -965,7 +914,7 @@ if(doIt){
 
 <%
 
-Collections.sort(rezeptePersonal,new RezeptDateComparator());
+Collections.sort(allKitchensRecipes,new RezeptDateComparator());
 
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
@@ -981,7 +930,7 @@ String extraFormat = formatter.format(extra);
 String lengthExtra = formatter.format(extra/MaxValueRezept*200);
 
 
-for(Recipe recipe: rezeptePersonal){
+for(Recipe recipe: allKitchensRecipes){
 
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34);
@@ -1030,13 +979,35 @@ for(Recipe recipe: rezeptePersonal){
 
 <%
 
+// Aurelian solution hier
+
+
+// Test new CatRyzer
+String nameOfKitchen = "EHL";
+Long id = 29L;
+
+List<Ingredient> ingredients = new ArrayList<Ingredient>();
+ingredients = dao.getAllIngredients();
+
+for(Recipe recipe : allKitchensRecipes){
+	for(Long kitchenId : recipe.kitchenIds){
+		if(kitchenId.equals(id))
+			kitchenRecipes.add(recipe);
+	}
+}
+
+CatRyzer catryzer = new CatRyzer(kitchenRecipes);
+
+
+
+
 // Define categories here:
 // CatFormula(String category, String formula, boolean isHeading)
 
-CatRyzer categories = new CatRyzer();
-
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
+
+categoryFormulas.add(categories.new CatFormula("all",null,true));
 
 categoryFormulas.add(categories.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
 
@@ -1062,10 +1033,10 @@ categoryFormulas.add(categories.new CatFormula("<strong>Diary Products</strong>"
 categoryFormulas.add(categories.new CatFormula("Ripened cheese","vegetable"));
 categoryFormulas.add(categories.new CatFormula("Fresh cheese and diary products","vegetable"));
 
-categoryFormulas.add(categories.new CatFormula("Animal based fats","(oil u fats) n animal-based"));
-categoryFormulas.add(categories.new CatFormula("Eggs and egg based products","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Canned and finished products","vegetable"));
-categoryFormulas.add(categories.new CatFormula("Sauces","vegetable"));
+categoryFormulas.add(categories.new CatFormula("Animal based fats","oil, fats, -vegetable"));
+categoryFormulas.add(categories.new CatFormula("Eggs and egg based products","eggs"));
+categoryFormulas.add(categories.new CatFormula("Canned and finished products","processed"));
+categoryFormulas.add(categories.new CatFormula("Sauces","sauces"));
 
 
 categoryFormulas.add(categories.new CatFormula("<strong>Drinks</strong>","drinks",true));
@@ -1074,7 +1045,30 @@ categoryFormulas.add(categories.new CatFormula("Drinks (alkohol based)","drinks 
 categoryFormulas.add(categories.new CatFormula("Drinks (fruit based)","drinks n fruit"));
 categoryFormulas.add(categories.new CatFormula("Drinks (milk based)","drinks n diary"));
 
-//"Categoryname,-tag1,tag2,tag3,-tag4"
+
+/*
+List<String> mappings = new ArrayList<String>();
+mappings.add("<strong>Animal Products</strong>,fish,seafood,diary");
+mappings.add("diary,diary");
+mappings.add("fish,fish");
+mappings.add("<strong>Vegetable Products</strong>,rice products,spices & herbs,nuts & seeds");
+mappings.add("rice products, rice products");
+mappings.add("fresh vegetables,vegetable,-preprocessed products");
+
+*/
+
+
+catryzer.setCategoryFormula(categoryFormulas);
+catryzer.categoryze();
+
+
+
+
+List<CatRyzer.CategoryValuesByDates>  valuesByCategory = catryzer.getCatValsByDates();
+
+List<CatRyzer.CategoryValuesByDates>  valuesByDate_Category = categoryzer.getCatVals();
+
+CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByCategory(1);
 
 
 
@@ -1117,6 +1111,7 @@ valuesByDate_Calender.add(categoriesByDates2);
 
 List<Ingredient> ingredients = dao.getAllIngredients();
 List<Ingredient> ingredientsByCategory = ingredients;
+
 %>
 
 
@@ -1214,7 +1209,7 @@ Date5: AllCategory,co2value
 
 <%
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Calender){
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByCategory){
 	
 	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
 %>
@@ -1375,6 +1370,8 @@ if(rezeptePersonal.size() != 0){
 	}
 }
 if(doIt){
+	
+// get dates with this object: valuesByDate_Calender
 %>
 
 <table cellspacing="0" cellpadding="0" class="table new-page listTable" >
