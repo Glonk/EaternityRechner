@@ -157,31 +157,44 @@ public class CatRyzer {
 				}
 			}
 			
-			// filling own object
+			// ---- second populate the CategoryValuesByDates List ------
+			Map<Date,Multimap<String,Long>> MapOfcatMultiMap = new HashMap<Date,Multimap<String,Long>>();
+			
+			for (IngredientSpecification ingSpec : ingSpecs){
+				Date date = ingSpec.getCookingDate();
+				
+				// check if inner Multimap already exist, if not, create one
+				Multimap<String,Long> catMM;
+				if (!MapOfcatMultiMap.containsKey(date))
+					catMM = HashMultimap.create();
+				else
+					catMM = MapOfcatMultiMap.get(date);
+				
+				// fill inner Multimap
+				List<String> tags = getIngredient(ingSpec).tags;
+				for (String tag : tags) {
+					for (CatMapping mapping : mappings) {
+						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
+							catMM.put(mapping.category, getIngredient(ingSpec).getId());
+						}
+					}
+				}
+				MapOfcatMultiMap.put(date, catMM);
+			}
+			
+			// filling own objects
 			for(String category : catMultiMap.keySet())
 			{
 				Collection<Long> ingredientIds = catMultiMap.get(category);
 				categoryValues.add(new CategoryValue(category, getCo2Value(ingredientIds)));
 			}
-			
-			// ---- second populate the CategoryValuesByDates List ------
-			Map<Date,Multimap<String,Long>> multiMapDateList = new HashMap<Date,Multimap<String,Long>>();
-			
-			for (IngredientSpecification ingSpec : ingSpecs){
-				Date date = ingSpec.getCookingDate();
+			for(Date date : MapOfcatMultiMap.keySet())
+			{
+				List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
 				
-				
-				List<String> tags = getIngredient(ingSpec).tags;
-				for (String tag : tags) {
-					for (CatMapping mapping : mappings) {
-						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
-							catMultiMap.put(mapping.category, getIngredient(ingSpec).getId());
-						}
-					}
-				}
+				//CategoryValuesByDates 
+				//categoryValuesByDates.add(e)
 			}
-			
-			//getAllDates()
 			
 			
 		}
