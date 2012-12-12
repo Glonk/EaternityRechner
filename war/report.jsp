@@ -1283,6 +1283,8 @@ Alldates: 	Category1, co2value
 counterIterate = 0;
 for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 
+Date thisDate = categoriesByDates.date.get(0);
+
 	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
 %>
 
@@ -1302,6 +1304,147 @@ class="alternate"
 <%
 
 	}
+	
+	
+	%>
+	
+	
+	
+	</table>
+
+	<!-- Here comes the old Stuff -->
+
+	<!-- Details follow -->
+
+
+	<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
+
+
+	<tr>
+	<td class="table-header">Lieferschein Übersicht</td>
+	<td></td>
+	</tr>
+
+	<tr>
+	<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+	<td></td>
+	</tr>
+
+	<tr>
+	<td class="bottom-border"></td>
+	<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+	</tr>
+
+	<tr>
+	<td></td>
+	<td class="left-border"><br></td>
+	</tr>
+
+	</table>
+
+	<!--  <%= Integer.toString(allKitchensRecipes.size()) %>  -->
+	<%
+
+	// valuesByDate_Calender
+
+	for(Recipe recipe: allKitchensRecipes){
+		
+		if(thisDate.compareTo(recipe.cookingDate) == 0 ){
+
+	long compute = recipe.getId() * iTimeStamp;
+	String code = Converter.toString(compute,34);
+
+				recipe.setCO2Value();
+				Double recipeValue = recipe.getCO2Value() + extra;
+				if(recipeValue < climateFriendlyValue){
+
+
+				String formatted = formatter.format( recipeValue );
+				String persons = Long.toString(recipe.getPersons());
+
+
+				%>
+
+				<table cellspacing="0" cellpadding="0" class="table listTable" >
+				<tr>
+				<td></td>
+				<td class="left-border"><br></td>
+				</tr>
+
+				<tr>
+				<td class="bottom-border">
+				<img class="smile" src="smiley8.png" alt="smiley" />
+				<img class="smile" src="smiley8.png" alt="smiley" />
+				<h3><%= recipe.getSymbol() %></h3>
+				</td>
+				<td class="left-border"></td>
+				</tr>
+
+				<tr>
+				<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+				<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
+				</tr>
+
+				<tr>
+				<td>
+
+				<span class="subTitle"><%= recipe.getSubTitle() %></span>
+
+				<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+
+
+					<%	
+					counter = 0;
+					for(IngredientSpecification ingredient: recipe.Zutaten){
+					counter = counter + 1;
+
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+					}
+					%>
+				</td>
+				<td class="left-border"><br></td>
+				</tr>
+
+				<tr>
+				<td></td>
+				<td class="left-border"><br></td>
+				</tr>
+
+
+					<%	
+					if(recipe.comments != null){
+					for(RecipeComment comment: recipe.comments){
+
+					%>
+					<tr>
+					<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
+					<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+					</tr>
+
+					<%
+						}
+					}
+					%>
+
+					<tr>
+					<td></td>
+					<td class="left-border"><br></td>
+					</tr>
+
+
+					</table>
+				<%
+			}
+		}
+
+	%>
+
+
+	<%		
+
+	}
+
+	
 }
 
 /*
@@ -1328,139 +1471,6 @@ Category2: Ingredient1, Ingredient2
 
 */
 
-
-%>
-
-</table>
-
-<!-- Here comes the old Stuff -->
-
-<!-- Details follow -->
-
-
-<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
-
-
-<tr>
-<td class="table-header">Lieferschein Übersicht</td>
-<td></td>
-</tr>
-	
-<tr>
-<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="bottom-border"></td>
-<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-</tr>
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-</table>
-	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
-<%
-
-// valuesByDate_Calender
-
-for(Recipe recipe: rezeptePersonal){
-
-long compute = recipe.getId() * iTimeStamp;
-String code = Converter.toString(compute,34);
-
-			recipe.setCO2Value();
-			Double recipeValue = recipe.getCO2Value() + extra;
-			if(recipeValue < climateFriendlyValue){
-			
-			
-			String formatted = formatter.format( recipeValue );
-			String persons = Long.toString(recipe.getPersons());
-			
-			
-			%>
-			
-			<table cellspacing="0" cellpadding="0" class="table listTable" >
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td class="bottom-border">
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3>
-			</td>
-			<td class="left-border"></td>
-			</tr>
-
-			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-			<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
-			</tr>
-			
-			<tr>
-			<td>
-			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
-			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
-
-			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
-				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
-				}
-				%>
-			</td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			<tr>
-			<td></td>
-			<td class="left-border"><br></td>
-			</tr>
-			
-			
-				<%	
-				if(recipe.comments != null){
-				for(RecipeComment comment: recipe.comments){
-
-				%>
-				<tr>
-				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
-				</tr>
-
-				<%
-					}
-				}
-				%>
-				
-				<tr>
-				<td></td>
-				<td class="left-border"><br></td>
-				</tr>
-				
-
-				</table>
-			<%
-		}
-
-%>
-
-
-<%		
-
-}
 
 %>
 
