@@ -259,6 +259,7 @@ categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","beverage, di
 catryzer.setCatFormulas(categoryFormulas);
 catryzer.categoryze();
 
+List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
 
 List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
 
@@ -1094,7 +1095,7 @@ counterIterate = 0;
 ArrayList<Double> values = new ArrayList<Double>();
 
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValuesByDates categoryValue : valuesByDate_Category){
+for(CatRyzer.DateValue categoryValue : valuesByDate){
 	values.add((double) categoryValue.co2value);
 	average = average + categoryValue.co2value;
 	counter++;
@@ -1125,18 +1126,18 @@ median = ((lower + upper) / 2.0);
 
 
 
-for(CatRyzer.CategoryValuesByDates categoryValue : valuesByDate_Category){
+for(CatRyzer.DateValue categoryValue : valuesByDate){
 		String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
 	
 %>
 
 <tr <%
-int order = (valuesByDate_Category.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= dateFormatter.format(categoryValue.date.get(0)) %> 
+<%= dateFormatter.format(categoryValue.date) %> 
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
@@ -1527,78 +1528,9 @@ Category2: Ingredient1, Ingredient2
 
 
 
-<br /><br /><br />
-Übersicht über die Kategorien
-<br /><br /><br />
-
-<table cellspacing="0" cellpadding="0" class="table listTable" >
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-<tr>
-<td class="bottom-border">
-<!-- <img class="smile" src="smiley8.png" alt="smiley" />
-<img class="smile" src="smiley8.png" alt="smiley" /> -->
-<h3>Kategorie: <%= recipe.getSymbol() %></h3>
-</td>
-<td class="left-border"></td>
-</tr>
-
-<tr>
-<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
-</tr>
-
-<tr>
-<td>
-
-<span class="subTitle">Tag: <%= datumString %></span>
-
-<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
 
 
-<%	
-counter = 0;
-for(IngredientSpecification ingredient: recipe.Zutaten){
-counter = counter + 1;
 
-%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>,<%= ingredient.getZustand().symbol %>,<%= ingredient.getProduktion().symbol %>,<%= ingredient.getTransportmittel().symbol %>)</span><%
-}
-%>
-</td>
-<td class="left-border"><br></td>
-</tr>
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-
-<%	
-if(recipe.comments != null){
-for(RecipeComment comment: recipe.comments){
-
-%>
-<tr>
-<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
-</tr>
-
-<%
-	}
-}
-%>
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-
-</table>
 
 
 
