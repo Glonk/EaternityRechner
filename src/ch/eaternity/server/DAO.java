@@ -383,6 +383,65 @@ public class DAO extends DAOBase
 
 	}
 
+	public List<Recipe> getKitchenRecipes(Long kitchenId) {
+		//TODO why does this gets called twice on startup?
+
+		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+
+		Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", user.getEmail());
+		QueryResultIterator<Staff> staffIterator = kitchenStaff.iterator();
+		while (staffIterator.hasNext()) {
+
+			Staff staffer = staffIterator.next();
+			//TODO some staffer still has a wrong kitchen id...
+			for (Long kitchenId:staffer.kitchensIds){
+
+				//	        		Kitchen kitchen = ofy().get(Kitchen.class,kitchenId);
+				//TODO this is obviously wrong, when we have more kitchens, per recipe ... is this the answer?: does it work?
+				//  http://code.google.com/p/objectify-appengine/wiki/IntroductionToObjectify#Multi-Value_Relationship
+				Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
+				QueryResultIterator<UserRecipeWrapper> iterator = yourKitchenRecipes.iterator();
+
+				while (iterator.hasNext()) {
+					UserRecipeWrapper userRezept = iterator.next();
+					Recipe recipe = userRezept.getRezept();
+					recipe.setId( userRezept.id);
+					if(!kitchenRecipes.contains(recipe)){
+						kitchenRecipes.add(recipe);
+					}
+				}
+
+
+			}
+
+		}
+
+		Query<Workgroup> yourKitchen = ofy().query(Workgroup.class).filter("emailAddressOwner", user.getEmail());
+		QueryResultIterator<Workgroup> kitchenIterator = yourKitchen.iterator();
+		while (kitchenIterator.hasNext()) {
+
+			Workgroup thisKitchen = kitchenIterator.next();
+			Query<UserRecipeWrapper> moreKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", thisKitchen.id);
+			QueryResultIterator<UserRecipeWrapper> iteratorMore = moreKitchenRecipes.iterator();
+
+			while (iteratorMore.hasNext()) {
+				UserRecipeWrapper userRezept = iteratorMore.next();
+				Recipe recipe = userRezept.getRezept();
+				recipe.setId( userRezept.id);
+				if(!kitchenRecipes.contains(recipe)){
+					kitchenRecipes.add(recipe);
+				}
+			}
+		}	
+
+
+		// The Query itself is Iterable
+		//TODO add also the recipes, of the kitchens, of which you are the owner
+
+
+		return kitchenRecipes;
+	}
+	
 	public List<Recipe> getKitchenRecipes(User user) {
 		//TODO why does this gets called twice on startup?
 

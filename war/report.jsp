@@ -134,7 +134,7 @@ if (user != null) {
 		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
 		DoItWithPermanentIds = false;
 	 } 
-	 if(kid != null){
+	 if(kitchenId != null){
 		allKitchensRecipes = dao.getKichtenRecipes(kitchenId,false);
 		DoItWithPermanentIds = false;
 	 }
