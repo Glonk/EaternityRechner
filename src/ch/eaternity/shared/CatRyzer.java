@@ -44,6 +44,18 @@ public class CatRyzer {
 		}
 	}
 	
+	public class DateValue {
+		public Date date;
+		public Double co2value;
+		
+		public DateValue() {}
+		
+		public DateValue(Date date, Double co2value) {
+			this.date = date;
+			this.co2value = co2value;
+		}
+	}
+	
 	public class CategoryValue {
 		public String categoryName;
 		public Double co2value;
@@ -79,6 +91,7 @@ public class CatRyzer {
 	private boolean initializedMapping = false;
 	private boolean recipesLoaded = false;
 
+	private List<DateValue> dateValues 				= new ArrayList<DateValue>();
 	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
 	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
 	
@@ -140,6 +153,15 @@ public class CatRyzer {
 	public void categoryze() throws IllegalStateException{
 		if (initializedMapping && recipesLoaded)
 		{
+			// ---- first populate the dateValue List ------
+			Multimap<Date,IngredientSpecification> dateMultiMap = HashMultimap.create();
+			
+			// iterate over all ingredientSpec, add them to the Map
+			for (IngredientSpecification ingSpec : ingSpecs){
+				Date date = ingSpec.getCookingDate();
+				dateMultiMap.put(date, ingSpec);
+			}
+						
 			// ---- first populate the categoryValue List ------
 			// The Multimap could probably substitute categoryValues in the future ...
 			// ... when it wouldn't be so darn f*ing complicated to debug ; )
@@ -184,6 +206,11 @@ public class CatRyzer {
 			}
 			
 			// filling own objects
+			for (Date date : dateMultiMap.keySet()) {
+				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
+				dateValues.add(new DateValue(date, getCo2Value(ingredientsSpecification)));
+			}
+			
 			for(String category : catMultiMap.keySet())
 			{
 				Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
@@ -223,6 +250,10 @@ public class CatRyzer {
 	
 	public List<CategoryValue> getCatVals() {
 		return this.categoryValues;	
+	}
+	
+	public List<DateValue> getDateValues() {
+		return this.dateValues;
 	}
 	
 	// -------------- Private --------------
