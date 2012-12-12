@@ -254,7 +254,7 @@ public class CatRyzer {
 		for (Recipe recipe : recipes){
 			for (IngredientSpecification ingSpec : recipe.getZutaten())
 			{
-				ingSpec.setCookingDate(recipe.getCreateDate());
+				ingSpec.setCookingDate(recipe.cookingDate);
 			}
 		}
 	}
