@@ -1372,7 +1372,7 @@ class="alternate"
 
 
 	<tr>
-	<td class="table-header">Lieferschein Übersicht für diesen Tag</td>
+	<td class="table-header">Lieferschein Übersicht für den: <%= dateFormatter.format(thisDate) %></td>
 	<td></td>
 	</tr>
 
@@ -1424,7 +1424,7 @@ class="alternate"
 				<td class="bottom-border">
 				<!-- <img class="smile" src="smiley8.png" alt="smiley" />
 				<img class="smile" src="smiley8.png" alt="smiley" /> -->
-				<h3>Tag: <%= datumString %></h3>
+				<h3>Lieferschein: <%= recipe.getSymbol() %></h3>
 				</td>
 				<td class="left-border"></td>
 				</tr>
@@ -1437,7 +1437,7 @@ class="alternate"
 				<tr>
 				<td>
 
-				<span class="subTitle">Lieferschein: <%= recipe.getSymbol() %></span>
+				<span class="subTitle">Tag: <%= datumString %></span>
 
 				<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
 
@@ -1447,7 +1447,7 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>,<%= ingredient.getZustand().symbol %>,<%= ingredient.getProduktion().symbol %>,<%= ingredient.getTransportmittel().symbol %>)</span><%
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>  | <%= ingredient.getZustand().symbol %> | <%= ingredient.getProduktion().symbol %> | <%= ingredient.getTransportmittel().symbol %>)</span><%
 					}
 					%>
 				</td>
@@ -1524,6 +1524,83 @@ Category2: Ingredient1, Ingredient2
 %>
 
 </table>
+
+
+
+<br /><br /><br />
+Übersicht über die Kategorien
+<br /><br /><br />
+
+<table cellspacing="0" cellpadding="0" class="table listTable" >
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+<tr>
+<td class="bottom-border">
+<!-- <img class="smile" src="smiley8.png" alt="smiley" />
+<img class="smile" src="smiley8.png" alt="smiley" /> -->
+<h3>Kategorie: <%= recipe.getSymbol() %></h3>
+</td>
+<td class="left-border"></td>
+</tr>
+
+<tr>
+<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
+</tr>
+
+<tr>
+<td>
+
+<span class="subTitle">Tag: <%= datumString %></span>
+
+<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
+
+
+<%	
+counter = 0;
+for(IngredientSpecification ingredient: recipe.Zutaten){
+counter = counter + 1;
+
+%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>,<%= ingredient.getZustand().symbol %>,<%= ingredient.getProduktion().symbol %>,<%= ingredient.getTransportmittel().symbol %>)</span><%
+}
+%>
+</td>
+<td class="left-border"><br></td>
+</tr>
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+
+<%	
+if(recipe.comments != null){
+for(RecipeComment comment: recipe.comments){
+
+%>
+<tr>
+<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
+<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+</tr>
+
+<%
+	}
+}
+%>
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+
+</table>
+
+
 
 
 
