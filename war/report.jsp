@@ -1351,8 +1351,8 @@ class="alternate"
 		
 		if(thisDate.compareTo(recipe.cookingDate) == 0 ){
 
-	long compute = recipe.getId() * iTimeStamp;
-	String code = Converter.toString(compute,34);
+			long compute = recipe.getId() * iTimeStamp;
+			String code = Converter.toString(compute,34);
 
 				recipe.setCO2Value();
 				Double recipeValue = recipe.getCO2Value() + extra;
@@ -1361,6 +1361,7 @@ class="alternate"
 
 				String formatted = formatter.format( recipeValue );
 				String persons = Long.toString(recipe.getPersons());
+				String datumString = Date.toString(recipe.cookingDate);
 
 
 				%>
@@ -1390,7 +1391,7 @@ class="alternate"
 
 				<span class="subTitle"><%= recipe.getSubTitle() %></span>
 
-				<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+				<span style="color:gray;">Zutaten für den Tag<%= datumString %>:</span><br />
 
 
 					<%	
@@ -1398,7 +1399,7 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.herkunft.symbol %>,<%= ingredient.zustand %>,<%= ingredient.produktion %>,<%= ingredient.transportmittel %>)</span><%
 					}
 					%>
 				</td>
