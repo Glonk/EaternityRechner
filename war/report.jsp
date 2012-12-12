@@ -1010,7 +1010,7 @@ CatRyzer catryzer = new CatRyzer(kitchenRecipes);
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
 
-categoryFormulas.add(catryzer.new CatFormula("all",null,true));
+//categoryFormulas.add(catryzer.new CatFormula("all","",true));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
 

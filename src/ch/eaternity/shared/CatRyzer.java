@@ -2,8 +2,10 @@ package ch.eaternity.shared;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Date;
+import java.util.Map;
 
 import ch.eaternity.server.DAO;
 
@@ -108,14 +110,16 @@ public class CatRyzer {
 	 */
 	public void setCatFormulas(List<CatFormula> formulas) throws IllegalArgumentException
 	{
+		// clear old mapping
+		mappings.clear();
+					
 		for (CatFormula formula : formulas)
 		{
 			String tag_ar[] = formula.formula.split(",");
-			if (tag_ar.length <= 1)
-				throw new IllegalArgumentException();
+			//if (tag_ar.length <= 1)
+			//	throw new IllegalArgumentException();
 			
-			// clear old mapping
-			mappings.clear();
+			
 			
 			CatMapping newmap = new CatMapping();
 			newmap.category = formula.category;
@@ -151,7 +155,6 @@ public class CatRyzer {
 						}
 					}
 				}
-				
 			}
 			
 			// filling own object
@@ -162,9 +165,21 @@ public class CatRyzer {
 			}
 			
 			// ---- second populate the CategoryValuesByDates List ------
-			List<Multimap<String,Long>> multiMapDateList = new ArrayList<Multimap<String,Long>>();
+			Map<Date,Multimap<String,Long>> multiMapDateList = new HashMap<Date,Multimap<String,Long>>();
 			
-			
+			for (IngredientSpecification ingSpec : ingSpecs){
+				Date date = ingSpec.getCookingDate();
+				
+				
+				List<String> tags = getIngredient(ingSpec).tags;
+				for (String tag : tags) {
+					for (CatMapping mapping : mappings) {
+						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
+							catMultiMap.put(mapping.category, getIngredient(ingSpec).getId());
+						}
+					}
+				}
+			}
 			
 			//getAllDates()
 			
