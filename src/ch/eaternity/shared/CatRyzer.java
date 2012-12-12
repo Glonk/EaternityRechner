@@ -3,9 +3,11 @@ package ch.eaternity.shared;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import ch.eaternity.server.DAO;
 
@@ -95,6 +97,8 @@ public class CatRyzer {
 	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
 	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
 	
+	public Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
+	
 	// -------------- Functions --------------
 	// Constructors
 	public CatRyzer() {
@@ -166,7 +170,7 @@ public class CatRyzer {
 			// The Multimap could probably substitute categoryValues in the future ...
 			// ... when it wouldn't be so darn f*ing complicated to debug ; )
 			// String : Category, Long: id of Ingredient
-			Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
+			// Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
 			
 			// iterate over all ingredientSpec, add them to the Map
 			for (IngredientSpecification ingSpec : ingSpecs){
@@ -278,6 +282,15 @@ public class CatRyzer {
 			co2value = co2value + ingredientsSpecification.getCalculatedCO2Value();
 		}
 		return co2value;
+	}
+	
+	public Set<String> getIngredientsNames(Collection<IngredientSpecification> ingSpecs){
+		Set<String> names = new HashSet<String>();
+		for (IngredientSpecification ingSpec : ingSpecs){
+			names.add(ingSpec.getName());
+		}
+		
+		return names;
 	}
 	
 	//returns null if not found

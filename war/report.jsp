@@ -1279,6 +1279,8 @@ Alldates: 	Category1, co2value
 
 counterIterate = 0;
 for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
+
+// if date == 0, show something for no date
 	
 	Date thisDate = categoriesByDates.date.get(0);
 
@@ -1528,6 +1530,82 @@ Category2: Ingredient1, Ingredient2
 
 
 
+
+<br /><br /><br />
+Übersicht über die Kategorien
+<br /><br /><br />
+
+
+<%
+
+
+
+// get ingredients per category example
+for(String category : catryzer.catMultiMap.keySet())
+{
+    Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
+                //print whatever you like: name, c02 value
+	Set<String> ingredientsNames = getIngredientsNames(ingredientsSpecification);
+
+%>
+
+
+<table cellspacing="0" cellpadding="0" class="table listTable" >
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+<tr>
+<td class="bottom-border">
+<!-- <img class="smile" src="smiley8.png" alt="smiley" />
+<img class="smile" src="smiley8.png" alt="smiley" /> -->
+<h3>Kategorie: <%= category %></h3>
+</td>
+<td class="left-border"></td>
+</tr>
+
+<tr>
+<td>
+
+
+<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
+
+
+<%	
+counter = 0;
+for(String ingredient: ingredientsNames){
+counter = counter + 1;
+
+%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient %>,</span><%
+}
+%>
+</td>
+<td class="left-border"><br></td>
+</tr>
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+
+
+
+<tr>
+<td></td>
+<td class="left-border"><br></td>
+</tr>
+
+
+</table>
+
+
+<%
+
+}
+
+%>
 
 
 
