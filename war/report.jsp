@@ -1076,9 +1076,6 @@ List<CatRyzer.CategoryValue> valuesByCategory  = catryzer.getCatVals();
 List<CatRyzer.CategoryValuesByDates>  valuesByDate_Category = catryzer.getCatValsByDates();
 
 
-// CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByDate_Category.get(0);
-CatRyzer.CategoryValuesByDates  valuesByDate_Calender = null;
-
 
 	
 
@@ -1155,18 +1152,18 @@ The main result was, we due the assumtpion. It came close to. The following pote
 <%
 counterIterate = 0;
 
-if(valuesByDate_Calender != null){
-for(CatRyzer.CategoryValue categoryValue : valuesByDate_Calender.category){
+
+for(CatRyzer.CategoryValuesByDates categoryValue : valuesByDate_Category){
 	
 %>
 
 <tr <%
-int order = (valuesByDate_Calender.category.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (valuesByDate_Category.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= categoryValue.categoryName %>
+<%= dateFormatter.format(categoryValue.date) %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= categoryValue.co2value %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
@@ -1218,7 +1215,7 @@ Date5: AllCategory,co2value
 </tr>
 
 <%
-counterIterate = 0;
+int counterIterate = 0;
 
 	
 	for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
@@ -1259,6 +1256,8 @@ Alldates: 	Category1, co2value
 
 
  <!-- Potential -->
+
+
  By choosing less off this, you get more of this.
 
 
