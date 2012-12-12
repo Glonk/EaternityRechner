@@ -220,7 +220,7 @@ public class CatRyzer {
 	}
 	
 	public List<CategoryValue> getCatVals() {
-		return this.categoryValues;
+		return this.categoryValues;	
 	}
 	
 	// -------------- Private --------------

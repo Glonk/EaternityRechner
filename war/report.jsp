@@ -38,6 +38,12 @@
 <title>Klima-Bilanz Report</title>
 
 
+
+
+
+
+
+
 <%
 	// Hole Rezepte die zum Benutzer gehören
 
@@ -201,6 +207,67 @@ if(rezeptePersonal.size() != 0){
 	median = ((lower + upper) / 2.0);
     }	    
 }
+%>
+
+<%
+// Define categories here:
+// CatFormula(String category, String formula, boolean isHeading)
+CatRyzer catryzer = new CatRyzer(allKitchensRecipes);
+
+List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
+
+categoryFormulas.add(catryzer.new CatFormula("all","all",true));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Rice products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Sweets","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
+categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","vegetable"));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","animal-based",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Ruminants","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","vegetable"));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","vegetable"));
+
+categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil, fats, -vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
+categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
+categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
+
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","drinks",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","drinks, alcohol"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks, fruit"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks, diary"));
+
+
+
+catryzer.setCatFormulas(categoryFormulas);
+catryzer.categoryze();
+
+
+List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
+
+List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates();
+
+
+
+	
+
 %>
 
 
@@ -985,70 +1052,6 @@ for(Recipe recipe: allKitchensRecipes){
 
 
 
-<%
-// Define categories here:
-// CatFormula(String category, String formula, boolean isHeading)
-
-List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
-
-categoryFormulas.add(catryzer.new CatFormula("all","all",true));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Rice products","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Sweets","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
-categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","vegetable"));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","animal-based",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Ruminants","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","vegetable"));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","vegetable"));
-
-categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil, fats, -vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
-categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
-categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
-
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","drinks",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","drinks, alcohol"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks, fruit"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks, diary"));
-
-
-CatRyzer catryzer = new CatRyzer(allKitchensRecipes);
-catryzer.setCatFormulas(categoryFormulas);
-catryzer.categoryze();
-
-
-List<CatRyzer.CategoryValue> valuesByCategory  = catryzer.getCatVals();
-
-List<CatRyzer.CategoryValuesByDates>  valuesByDate_Category = catryzer.getCatValsByDates();
-
-
-
-	
-
-%>
-
-
-
-
-
 
 
 
@@ -1181,8 +1184,8 @@ Date5: AllCategory,co2value
 <%
 int counterIterate = 0;
 
-	
-	for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
+if(false){	
+for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
 %>
 
 <tr <%
@@ -1200,7 +1203,7 @@ class="alternate"
 
 <%
 
-	}
+	}}
 
 /*
 Output:
@@ -1447,7 +1450,9 @@ Category2: Ingredient1, Ingredient2
 
 </table>
 
-<% } // just the simple version %><%
+<% 
+
+// just the simple version 
 
 
 
