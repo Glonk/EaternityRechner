@@ -17,6 +17,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
@@ -1543,9 +1545,9 @@ Category2: Ingredient1, Ingredient2
 // get ingredients per category example
 for(String category : catryzer.catMultiMap.keySet())
 {
-    Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
+    Collection<IngredientSpecification> ingredientsSpecification = catryzer.catMultiMap.get(category);
                 //print whatever you like: name, c02 value
-	Set<String> ingredientsNames = getIngredientsNames(ingredientsSpecification);
+	Set<String> ingredientsNames = catryzer.getIngredientsNames(ingredientsSpecification);
 
 %>
 
@@ -1577,7 +1579,7 @@ counter = 0;
 for(String ingredient: ingredientsNames){
 counter = counter + 1;
 
-%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient %>,</span><%
+%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient %></span><%
 }
 %>
 </td>
