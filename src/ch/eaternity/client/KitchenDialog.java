@@ -1246,6 +1246,8 @@ public class KitchenDialog<T> extends DialogBox{
 		this.kitchenName = selectedKitchen.getSymbol();
 			setText(this.kitchenName);
 		  kitchenNameTextBox.setText(this.kitchenName);
+		  if (selectedKitchen.id != null)
+				kitchenId.setText("Id: " + selectedKitchen.id);
 		
 		  devicesHere = selectedKitchen.devices;
 		  devidesCellTable.setRowCount(devicesHere.size(), true);
