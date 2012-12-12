@@ -135,12 +135,10 @@ if (user != null) {
 		DoItWithPermanentIds = false;
 	 } 
 	 if(kitchenId != null){
-<<<<<<< HEAD
+		 
 		Long kitchenLongId = Long.parseLong(kitchenId);
 		allKitchensRecipes = dao.getKitchenRecipes(kitchenLongId);
-=======
-		allKitchensRecipes = dao.getKitchenRecipes(kitchenId,false);
->>>>>>> update
+
 		DoItWithPermanentIds = false;
 	 }
  }
@@ -1063,17 +1061,16 @@ mappings.add("fresh vegetables,vegetable,-preprocessed products");
 */
 
 
-catryzer.setCatFormula(categoryFormulas);
+catryzer.setCatFormulas(categoryFormulas);
 catryzer.categoryze();
 
 
+List<CatRyzer.CategoryValue> valuesByCategory  = catryzer.getCatVals();
+
+List<CatRyzer.CategoryValuesByDates>  valuesByDate_Category = catryzer.getCatValsByDates();
 
 
-List<CatRyzer.CategoryValuesByDates>  valuesByCategory = catryzer.getCatValsByDates();
-
-List<CatRyzer.CategoryValuesByDates>  valuesByDate_Category = categoryzer.getCatVals();
-
-CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByCategory(1);
+CatRyzer.CategoryValuesByDates  valuesByDate_Calender = valuesByDate_Category.get(0);
 
 
 
@@ -1153,12 +1150,12 @@ The main result was, we due the assumtpion. It came close to. The following pote
 counterIterate = 0;
 
 
-for(CatRyzer.CategoryValue categoryValue : valuesByDate_Calender){
+for(CatRyzer.CategoryValue categoryValue : valuesByDate_Calender.category){
 	
 %>
 
 <tr <%
-int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (valuesByDate_Calender.category.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -1216,13 +1213,13 @@ Date5: AllCategory,co2value
 
 <%
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByCategory){
+
 	
-	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+	for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
 %>
 
 <tr <%
-int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -1237,7 +1234,6 @@ class="alternate"
 <%
 
 	}
-}
 
 /*
 Output:
@@ -1494,7 +1490,7 @@ String code = Converter.toString(compute,34);
 
 
 <% } // just the simple version %><%
-}
+
 
 
 if(rezeptePersonal.size() != 0){
