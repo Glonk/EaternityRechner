@@ -986,35 +986,10 @@ for(Recipe recipe: allKitchensRecipes){
 
 
 <%
-
-// Aurelian solution hier
-
-
-// Test new CatRyzer
-String nameOfKitchen = "EHL";
-Long id = 1L;
-
-List<Ingredient> ingredients = new ArrayList<Ingredient>();
-ingredients = dao.getAllIngredients();
-
-for(Recipe recipe : allKitchensRecipes){
-	for(Long kitchenCheckId : recipe.kitchenIds){
-		if(kitchenCheckId.equals(id))
-			kitchenRecipes.add(recipe);
-	}
-}
-
-CatRyzer catryzer = new CatRyzer(kitchenRecipes);
-
-
-
-
 // Define categories here:
 // CatFormula(String category, String formula, boolean isHeading)
 
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
-
-
 
 categoryFormulas.add(catryzer.new CatFormula("all","all",true));
 
@@ -1055,18 +1030,7 @@ categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","drinks, fru
 categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","drinks, diary"));
 
 
-/*
-List<String> mappings = new ArrayList<String>();
-mappings.add("<strong>Animal Products</strong>,fish,seafood,diary");
-mappings.add("diary,diary");
-mappings.add("fish,fish");
-mappings.add("<strong>Vegetable Products</strong>,rice products,spices & herbs,nuts & seeds");
-mappings.add("rice products, rice products");
-mappings.add("fresh vegetables,vegetable,-preprocessed products");
-
-*/
-
-
+CatRyzer catryzer = new CatRyzer(allKitchensRecipes);
 catryzer.setCatFormulas(categoryFormulas);
 catryzer.categoryze();
 
