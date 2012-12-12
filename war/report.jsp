@@ -948,19 +948,6 @@ function getBaseURL() {
 <div class="content">
 
 <%
-	if(DoItWithPermanentIds) {
-%>
-
-
-<%
-	}
-
-
-boolean doIt = false;
-if(rezeptePersonal.size() != 0){
-	doIt = true;
-}
-
 if(true){
 %>
 
@@ -1285,21 +1272,6 @@ Alldates: 	Category1, co2value
 
 
 
-<table cellspacing="0" cellpadding="0" class="table toc" >
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="table-header bottom-border">Total CO2 Impact by Category and Date</td>
-<td class="left-border"></td>
-<td class="co2value" ></td>
-<td ></td>
-</tr>
 
 <%
 
@@ -1345,6 +1317,27 @@ counterIterate = 0;
 for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 	
 	Date thisDate = categoriesByDates.date.get(0);
+
+%>
+<table cellspacing="0" cellpadding="0" class="table toc" >
+
+<tr>
+<td></td>
+<td class="gray left-border"></td>
+<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border"><%= dateFormatter.format(thisDate) %>  -  CO2 Impact by Category.</td>
+<td class="left-border"></td>
+<td class="co2value" ></td>
+<td ></td>
+</tr>
+
+<%
+
+
 
 	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
 		String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
@@ -1533,33 +1526,7 @@ Category2: Ingredient1, Ingredient2
 
 </table>
 
-<% 
 
-// just the simple version 
-
-
-
-if(rezeptePersonal.size() != 0){
-
-%>
-
-<!--
-<h2>Alle Zutaten</h2>
-
-<ul id=ix></ul>
--->
-
-<%
-} else {
-	// no recipes found 
-	
-%>
-
-Es gibt keine Rezepte zum Anzeigen. Melden Sie sich an, oder kontaktieren Sie uns.
-
-<%
-} 
-%>
 
 </div>
 
