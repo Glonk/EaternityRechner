@@ -143,6 +143,7 @@ if (user != null && false) {
  if(tempIds != null){
 	rezeptePersonal = dao.getRecipeByIds(tempIds,true);
  } else {
+	 rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
 	 if(permanentId != null){
 		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
 		DoItWithPermanentIds = false;
@@ -152,9 +153,9 @@ if (user != null && false) {
 		Long kitchenLongId = Long.parseLong(kitchenId);
 		
 		kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
-		if (kitchenRecipes == null)
+		if (kitchenRecipes.size() == 0)
 		{
-			rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes.");
+			rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes or kitchen doesn't exist.");
 			everythingFine = false;
 		}
 		

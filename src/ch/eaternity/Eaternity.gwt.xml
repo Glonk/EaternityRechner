@@ -31,11 +31,11 @@
   	
   <set-property name="gwt.logging.logLevel" value="SEVERE"/> # To change the default logLevel
 <set-property name="gwt.logging.enabled" value="TRUE"/> # To disable logging
-<set-property name="gwt.logging.consoleHandler" value="DISABLED"/>  # To disable a default Handler
+<set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  # To disable a default Handler
 <set-property name="gwt.logging.developmentModeHandler" value="ENABLED" />
 <set-property name="gwt.logging.popupHandler" value="DISABLED" />
-<set-property name="gwt.logging.systemHandler" value="DISABLED" />
-<set-property name="gwt.logging.firebugHandler" value="DISABLED" />
+<set-property name="gwt.logging.systemHandler" value="ENABLED" />
+<set-property name="gwt.logging.firebugHandler" value="ENABLED" />
 <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED" />
 
 
