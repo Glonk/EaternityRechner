@@ -387,6 +387,9 @@ public class DAO extends DAOBase
 
 		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
+		Calendar cal = Calendar.getInstance();
+		cal.set(2009, 11, 9); //year is as expected, month is zero based, date is as expected
+		Date dt = cal.getTime();
 		
 		Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
 		QueryResultIterator<UserRecipeWrapper> iterator = yourKitchenRecipes.iterator();
@@ -394,6 +397,9 @@ public class DAO extends DAOBase
 		while (iterator.hasNext()) {
 			UserRecipeWrapper userRezept = iterator.next();
 			Recipe recipe = userRezept.getRezept();
+			if(recipe.cookingDate == null){
+				recipe.cookingDate = dt;
+			}
 			recipe.setId( userRezept.id);
 			if(!kitchenRecipes.contains(recipe)){
 				kitchenRecipes.add(recipe);

@@ -27,6 +27,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.1.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
-	<classpathentry kind="con" path="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/urlshortener-v1r5lv1.12.0-beta"/>
+	<classpathentry kind="con" path="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/urlshortener-v1r6lv1.12.0-beta"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
