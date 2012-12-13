@@ -40,12 +40,6 @@
 <title>Klima-Bilanz Report</title>
 
 
-
-
-
-
-
-
 <%
 	// Hole Rezepte die zum Benutzer gehören
 
@@ -218,11 +212,9 @@ CatRyzer catryzer = new CatRyzer(allKitchensRecipes);
 
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
-categoryFormulas.add(catryzer.new CatFormula("all","vegetable, animal-based",true));
-
 categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
 
-categoryFormulas.add(catryzer.new CatFormula("Rice products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
 categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
 categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
 categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat, -animal-based"));
@@ -242,7 +234,7 @@ categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood")
 categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
 
 categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","rippened"));
-categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","cheese"));
+categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","cheese,-rippened"));
 
 categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats, -vegetable"));
 categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
@@ -1139,7 +1131,11 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
+<% if(categoryValue.date != null){ %>
 <%= dateFormatter.format(categoryValue.date) %> 
+<% } else { %>
+	NO DATE SPECIFIED
+<% } %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
@@ -1286,6 +1282,7 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 	
 	Date thisDate = categoriesByDates.date.get(0);
 
+
 %>
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -1413,8 +1410,10 @@ class="alternate"
 				String formatted = formatter.format( recipeValue );
 				String persons = Long.toString(recipe.getPersons());
 				
-				
-				String datumString = dateFormatter.format(recipe.cookingDate);
+				String datumString = "NO DATE SPECIFIED";
+				if(recipe.cookingDate != null){
+					datumString = dateFormatter.format(recipe.cookingDate);
+				}
 
 
 				%>
