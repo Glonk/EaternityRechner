@@ -406,7 +406,8 @@ public class DAO extends DAOBase
 			if(recipe.cookingDate == null){
 				recipe.cookingDate = dt;
 			}
-			recipe.setId( userRezept.id);
+			recipe.setId(userRezept.getId());
+			
 			if(!kitchenRecipes.contains(recipe)){
 				kitchenRecipes.add(recipe);
 			}
