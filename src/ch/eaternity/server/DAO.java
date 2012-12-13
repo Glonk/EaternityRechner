@@ -387,6 +387,7 @@ public class DAO extends DAOBase
 
 		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
+		// hack in a date, if there is none...
 		Calendar cal = Calendar.getInstance();
 		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
 		Date dt = cal.getTime();
