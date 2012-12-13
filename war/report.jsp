@@ -71,7 +71,7 @@ Boolean DoItWithPermanentIds = true;
 String thresholdString = request.getParameter("median");
 String extraString = request.getParameter("extra");
 Integer extra = 0;
-Integer threshold = 1440;
+
 if(thresholdString != null){
 	threshold = Integer.valueOf(thresholdString);
 } 
@@ -80,7 +80,7 @@ if(extraString != null){
 	extra = Integer.valueOf(extraString);
 }
 
-
+Integer threshold = 1440;
 Double third = (double)threshold / 3;
 Double half = (double)threshold / 2;
 Double twoFifth = (double)threshold / 5 * 2;
@@ -90,92 +90,53 @@ Double climateFriendlyValue = twoFifth;
 
 DAO dao = new DAO();
 
-List<Recipe> adminRecipes = new ArrayList<Recipe>();
-List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
-List<Recipe> allKitchensRecipes = new ArrayList<Recipe>();
+
 List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+
 
 DecimalFormat formatter = new DecimalFormat("##");
 SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
+Long kitchenLongId = 0L;
 
-
-if (user != null && false) {
-	rezeptePersonal = dao.getYourRecipe(user);
-	allKitchensRecipes = dao.getKitchenRecipes(user);
-	
-	adminRecipes = dao.adminGetRecipe(user);
-	
-	// remove double entries for admin
-	if(rezeptePersonal != null){
-		for(Recipe recipe: rezeptePersonal){
-	int removeIndex = -1;
-	for(Recipe rezept2:adminRecipes){
-		if(rezept2.getId().equals(recipe.getId())){
-	removeIndex = adminRecipes.indexOf(rezept2);
-		}
-	}
-	if(removeIndex != -1){
-		adminRecipes.remove(removeIndex);
-	}
-	}
-}
-	
-
-	
-%>
-
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-	<script src="jquery.docraptor.js" type="text/javascript"></script>
-	
-	<script  type="text/javascript">
-	$(document).ready(function () {
-	$(".whatever").docraptor({
-	document_type: 'pdf',
-	test: true
-	},
-	'sYkJlCnJYRitdIvkAW'
-	);
-	});
-	</script>
-
-<%
-	} else {
- if(tempIds != null){
-	rezeptePersonal = dao.getRecipeByIds(tempIds,true);
- } else {
+if(tempIds != null){
+	kitchenRecipes = dao.getRecipeByIds(tempIds,true);
+} else {
 	 rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
 	 if(permanentId != null){
-		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
-		DoItWithPermanentIds = false;
-	 } 
-	 if(kitchenId != null){
-		 
-		Long kitchenLongId = Long.parseLong(kitchenId);
+		kitchenRecipes = dao.getRecipeByIds(permanentId,false);
 		
-		kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
-		if (kitchenRecipes.size() == 0)
-		{
-			rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes or kitchen doesn't exist.");
-			everythingFine = false;
-		}
-		
-		for (Recipe recipe : kitchenRecipes){
-			if (recipe.cookingDate == null) {
-				kitchenRecipes.remove(recipe);
-				rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol());
-			}
-		}
-			
 		DoItWithPermanentIds = false;
-	 }
-	 else
-	 {
-		 rootLogger.log(Level.SEVERE, "No Kitchen Id passed. Pass it with ?kid=234234 ");
-	 	 everythingFine = false;
-	 }
+	 } else {
+		 if(kitchenId != null){
+	 
+			kitchenLongId = Long.parseLong(kitchenId);
+	
+			kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
+
+		
+			DoItWithPermanentIds = false;
+		 }
+		 else
+		 {
+			 rootLogger.log(Level.SEVERE, "No Kitchen Id or permanend Id passed. Pass it with ?kid=234234 ");
+		 	 everythingFine = false;
+		 }
+	}
  }
+
+
+if (kitchenRecipes.size() == 0)
+{
+	rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes or kitchen doesn't exist.");
+	everythingFine = false;
 }
 
+for (Recipe recipe : kitchenRecipes){
+	if (recipe.cookingDate == null) {
+		kitchenRecipes.remove(recipe);
+		rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol());
+	}
+}
 
 // some precalculation of values
 
@@ -785,7 +746,7 @@ idsToAdd = new Array();
 baseUrl = getBaseURL();
 
 
-<%for(Recipe recipe: rezeptePersonal){
+<%for(Recipe recipe: kitchenRecipes){
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34);%>
 idsToAdd['<%=code%>'] = true<%}%>
@@ -860,7 +821,12 @@ if (!everythingFine){
 		Wrong Inputs. See Log for Details.
 	<%
 }
-else {
+else { %>
+	
+	
+	
+	
+	<%
 
 	
 // Define categories here:
@@ -992,7 +958,7 @@ if(true){
 
 
 	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<!--  <%= Integer.toString(kitchenRecipes.size()) %>  -->
 
 <%
 
@@ -1035,7 +1001,7 @@ for(Recipe recipe: kitchenRecipes){
 		
 
 		<tr <%
-		int order = (rezeptePersonal.indexOf(recipe) - counterIterate ) % 2; 
+		int order = (kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
 		if(order == 1) { %>
 		class="alternate"
 		<% }%> > 
@@ -1675,7 +1641,12 @@ counter = counter + 1;
 	%>
 
 </div>
-<% } }// just the simple version %>
+<% } %>
+
+
+<%
+}// if everthing is fine
+%>
 
 </body>
 
