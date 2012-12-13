@@ -333,14 +333,14 @@ public class DAO extends DAOBase
 				computeId = code;
 			}
 
-			if(computeId != 0){
+			if(computeId != 0L){
 				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
 				if(userRezept != null){
 					Recipe recipe = userRezept.getRezept();
 					if(recipe.cookingDate == null){
 						recipe.cookingDate = dt;
 					}
-					recipe.setId( userRezept.id);
+					recipe.setId(userRezept.id);
 					yourRecipes.add(recipe);
 				}
 			}

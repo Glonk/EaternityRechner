@@ -68,25 +68,9 @@ if(pdf != null){
 
 Boolean DoItWithPermanentIds = true;
 
-String thresholdString = request.getParameter("median");
-String extraString = request.getParameter("extra");
-Integer extra = 0;
+%>
 
-//if(thresholdString != null){
-//	threshold = Integer.valueOf(thresholdString);
-//} 
-
-if(extraString != null){
-	extra = Integer.valueOf(extraString);
-}
-
-Integer threshold = 1440;
-Double third = (double)threshold / 3;
-Double half = (double)threshold / 2;
-Double twoFifth = (double)threshold / 5 * 2;
-
-Double climateFriendlyValue = twoFifth;
-
+<%
 
 DAO dao = new DAO();
 
@@ -139,7 +123,7 @@ for (Recipe recipe : kitchenRecipes){
 
 
 
-Double MaxValueRezept = threshold*1.0;
+Double MaxValueRezept = 0.0;
 Double MinValueRezept = 10000000.0;
 Double average = 0.0;
 Double median = 0.0;
@@ -151,9 +135,11 @@ Integer counter = 0;
 Date date = new Date();
       long iTimeStamp = (long) (date.getTime() * .00003);
 
+%>
+
+<%
 
 // calculate average, median, min, max
-
 if(kitchenRecipes.size() != 0){
 	ArrayList<Double> values = new ArrayList<Double>();
 
@@ -170,17 +156,17 @@ if(kitchenRecipes.size() != 0){
 	MinValueRezept = recipe.getCO2Value();
 		}
 	}
-	average = (average /counter) + extra;
-	MinValueRezept = MinValueRezept + extra;
-	MaxValueRezept = MaxValueRezept + extra;
+	average = (average /counter)  ;
+	MinValueRezept = MinValueRezept  ;
+	MaxValueRezept = MaxValueRezept  ;
 		
 	Collections.sort(values);
   
     if (values.size() % 2 == 1)
-		median = values.get((values.size()+1)/2-1) + extra;
+		median = values.get((values.size()+1)/2-1)  ;
     else {
-		double lower = (values.get(values.size()/2-1))  + extra;
-		double upper = (values.get(values.size()/2))  + extra;
+		double lower = (values.get(values.size()/2-1))   ;
+		double upper = (values.get(values.size()/2))   ;
 	 
 		median = ((lower + upper) / 2.0);
     }	    
@@ -966,13 +952,10 @@ Boolean notDoneSeccond = true;
 Boolean notDoneThird = true;
 int counterIterate = 0;
 
-Double adjustedAverageLength = threshold/MaxValueRezept*200;
-Double climateFriendlyValueLength = climateFriendlyValue/MaxValueRezept*200;
-String averageLength = formatter.format(adjustedAverageLength);
-String formattedClimate = formatter.format(climateFriendlyValue);
+
+
 String smilies = "";
-String extraFormat = formatter.format(extra);
-String lengthExtra = formatter.format(extra/MaxValueRezept*200);
+
 
 
 for(Recipe recipe: kitchenRecipes){
@@ -983,7 +966,7 @@ for(Recipe recipe: kitchenRecipes){
 
 	recipe.setCO2Value();
 	
-	Double recipeValue = recipe.getCO2Value() + extra;
+	Double recipeValue = recipe.getCO2Value()  ;
 	
 	String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
 
@@ -1006,7 +989,7 @@ for(Recipe recipe: kitchenRecipes){
 		<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
 		<%= smilies %><%= recipe.getSymbol() %>
 		</td>
-		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
+		<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 		<td class="co2value" ><%= formatted %></td>
 		</tr>
 
@@ -1068,18 +1051,18 @@ MaxValueRezept = categoryValue.co2value;
 MinValueRezept = categoryValue.co2value;
 	}
 }
-average = (average /counter) + extra;
-MinValueRezept = MinValueRezept + extra;
-MaxValueRezept = MaxValueRezept + extra;
+average = (average /counter)  ;
+MinValueRezept = MinValueRezept  ;
+MaxValueRezept = MaxValueRezept  ;
 	
 Collections.sort(values);
  
 if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1) + extra;
+median = values.get((values.size()+1)/2-1)  ;
 else
 {
-double lower = (values.get(values.size()/2-1))  + extra;
-double upper = (values.get(values.size()/2))  + extra;
+double lower = (values.get(values.size()/2-1))   ;
+double upper = (values.get(values.size()/2))   ;
 
 median = ((lower + upper) / 2.0);
 }	    
@@ -1174,18 +1157,18 @@ MaxValueRezept = categoryValue.co2value;
 MinValueRezept = categoryValue.co2value;
 	}
 }
-average = (average /counter) + extra;
-MinValueRezept = MinValueRezept + extra;
-MaxValueRezept = MaxValueRezept + extra;
+average = (average /counter)  ;
+MinValueRezept = MinValueRezept  ;
+MaxValueRezept = MaxValueRezept  ;
 	
 Collections.sort(values);
  
 if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1) + extra;
+median = values.get((values.size()+1)/2-1)  ;
 else
 {
-double lower = (values.get(values.size()/2-1))  + extra;
-double upper = (values.get(values.size()/2))  + extra;
+double lower = (values.get(values.size()/2-1))   ;
+double upper = (values.get(values.size()/2))   ;
 
 median = ((lower + upper) / 2.0);
 }	    
@@ -1298,18 +1281,18 @@ MinValueRezept = categoryValue.co2value;
 	}
 }
 
-average = (average /counter) + extra;
-MinValueRezept = MinValueRezept + extra;
-MaxValueRezept = MaxValueRezept + extra;
+average = (average /counter)  ;
+MinValueRezept = MinValueRezept  ;
+MaxValueRezept = MaxValueRezept  ;
 	
 Collections.sort(values);
  
 if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1) + extra;
+median = values.get((values.size()+1)/2-1)  ;
 else
 {
-double lower = (values.get(values.size()/2-1))  + extra;
-double upper = (values.get(values.size()/2))  + extra;
+double lower = (values.get(values.size()/2-1))   ;
+double upper = (values.get(values.size()/2))   ;
 
 median = ((lower + upper) / 2.0);
 }	    
@@ -1389,7 +1372,7 @@ class="alternate"
 			String code = Converter.toString(compute,34);
 
 				recipe.setCO2Value();
-				Double recipeValue = recipe.getCO2Value() + extra;
+				Double recipeValue = recipe.getCO2Value()  ;
 
 
 

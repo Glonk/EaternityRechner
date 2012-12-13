@@ -47,6 +47,7 @@ String BASEURL = request.getRequestURL().toString();
 String tempIds = request.getParameter("ids");
 String permanentId = request.getParameter("pid");
 String pdf = request.getParameter("pdf");
+String kitchenId = request.getParameter("kid");
 
 
 Boolean doPdf = false;
@@ -129,6 +130,11 @@ if (user != null) {
 		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
 		DoItWithPermanentIds = false;
 	 } 
+	 if(kitchenId != null){
+			Long kitchenLongId = Long.parseLong(kitchenId);
+			rezeptePersonal = dao.getKitchenRecipes(kitchenLongId);
+		DoItWithPermanentIds = false;
+	 }
  }
 }
 
@@ -1204,8 +1210,10 @@ String lengthExtra = formatter.format(extra/MaxValueRezept*200);
 for(Recipe recipe: rezeptePersonal){
 
 	long compute = recipe.getId() * iTimeStamp;
+
 	String code = Converter.toString(compute,34);
 	String clear = Converter.toString(recipe.getId(),34);
+	
 
 	recipe.setCO2Value();
 	
@@ -1314,7 +1322,7 @@ for(Recipe recipe: rezeptePersonal){
 		<% }%> > 
 		<td class="menu-name">
 		<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-		<%= smilies %><%= recipe.getSymbol() %>
+		<%= smilies %><%= code %> <%= recipe.getSymbol() %>
 		</td>
 		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 		<td class="co2value" ><%= formatted %></td>
