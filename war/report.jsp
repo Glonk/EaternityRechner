@@ -23,6 +23,8 @@
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="java.util.logging.Logger" %>
+<%@ page import="java.util.logging.Level" %>
 
 
 <%@ page import="java.net.MalformedURLException" %>
@@ -42,10 +44,13 @@
 
 
 <%
-	// Hole Rezepte die zum Benutzer gehören
 
+Logger rootLogger = Logger.getLogger("");
+
+boolean everythingFine = true;
+
+// Hole Rezepte die zum Benutzer gehören
 String BASEURL = request.getRequestURL().toString();
-
 
 UserService userService = UserServiceFactory.getUserService();
 User user = userService.getCurrentUser();
@@ -145,9 +150,27 @@ if (user != null && false) {
 	 if(kitchenId != null){
 		 
 		Long kitchenLongId = Long.parseLong(kitchenId);
-		allKitchensRecipes = dao.getKitchenRecipes(kitchenLongId);
-
+		
+		kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
+		if (kitchenRecipes == null)
+		{
+			rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes.");
+			everythingFine = false;
+		}
+		
+		for (Recipe recipe : kitchenRecipes){
+			if (recipe.cookingDate == null) {
+				kitchenRecipes.remove(recipe);
+				rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol());
+			}
+		}
+			
 		DoItWithPermanentIds = false;
+	 }
+	 else
+	 {
+		 rootLogger.log(Level.SEVERE, "No Kitchen Id passed. Pass it with ?kid=234234 ");
+	 	 everythingFine = false;
 	 }
  }
 }
@@ -172,11 +195,11 @@ Date date = new Date();
 
 // calculate average, median, min, max
 
-if(allKitchensRecipes.size() != 0){
+if(kitchenRecipes.size() != 0){
 	ArrayList<Double> values = new ArrayList<Double>();
 
 	//  go over the Recipes in the Workspace
-	for(Recipe recipe: allKitchensRecipes){
+	for(Recipe recipe: kitchenRecipes){
 		values.add((double) recipe.getCO2Value());
 		average = average + recipe.getCO2Value();
 		counter++;
@@ -195,78 +218,15 @@ if(allKitchensRecipes.size() != 0){
 	Collections.sort(values);
   
     if (values.size() % 2 == 1)
-	median = values.get((values.size()+1)/2-1) + extra;
-    else
-    {
-	double lower = (values.get(values.size()/2-1))  + extra;
-	double upper = (values.get(values.size()/2))  + extra;
- 
-	median = ((lower + upper) / 2.0);
+		median = values.get((values.size()+1)/2-1) + extra;
+    else {
+		double lower = (values.get(values.size()/2-1))  + extra;
+		double upper = (values.get(values.size()/2))  + extra;
+	 
+		median = ((lower + upper) / 2.0);
     }	    
 }
 %>
-
-<%
-// Define categories here:
-// CatFormula(String category, String formula, boolean isHeading)
-CatRyzer catryzer = new CatRyzer(allKitchensRecipes);
-
-List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
-categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
-categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat, -animal-based"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes, fruits"));
-categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
-categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts, seeds"));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","meat",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
-categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
-categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood"));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","rippened"));
-categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","cheese,-rippened"));
-
-categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats, -vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
-categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
-categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
-
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","beverage, alcohol"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","beverage, fruit"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","beverage, diary"));
-
-
-
-catryzer.setCatFormulas(categoryFormulas);
-catryzer.categoryze();
-
-List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
-
-List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
-
-List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates();
-
-
-
-	
-
-%>
-
-
 
 <style type="text/css">
 <!-- @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800); -->
@@ -892,6 +852,69 @@ function getBaseURL() {
 </head>
 
 <body onLoad="initThis()">
+<% 
+// Avoid displaying anything if someting is wrong.
+if (!everythingFine){
+	%>
+		Wrong Inputs. See Log for Details.
+	<%
+}
+else {
+
+	
+// Define categories here:
+// CatFormula(String category, String formula, boolean isHeading)
+CatRyzer catryzer = new CatRyzer(kitchenRecipes);
+
+List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
+categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
+categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat, -animal-based"));
+categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes, fruits"));
+categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
+categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts, seeds"));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","meat",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
+categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
+categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood"));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","rippened"));
+categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","cheese,-rippened"));
+
+categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats, -vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
+categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
+categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
+
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
+
+categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","beverage, alcohol"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","beverage, fruit"));
+categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","beverage, diary"));
+
+
+
+catryzer.setCatFormulas(categoryFormulas);
+catryzer.categoryze();
+
+List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
+
+List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
+
+List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates();
+%>
 
 
 
@@ -972,7 +995,7 @@ if(true){
 
 <%
 
-Collections.sort(allKitchensRecipes,new RezeptDateComparator());
+Collections.sort(kitchenRecipes,new RezeptDateComparator());
 
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
@@ -988,7 +1011,7 @@ String extraFormat = formatter.format(extra);
 String lengthExtra = formatter.format(extra/MaxValueRezept*200);
 
 
-for(Recipe recipe: allKitchensRecipes){
+for(Recipe recipe: kitchenRecipes){
 
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34);
@@ -1031,27 +1054,6 @@ for(Recipe recipe: allKitchensRecipes){
 
 %>
 </table>
-
-
-
-
-
-
-
-
-
-<%
-
-/*
-
-
-List<Ingredient> ingredients = dao.getAllIngredients();
-List<Ingredient> ingredientsByCategory = ingredients;
-
-*/
-
-%>
-
 
 
 <!-- Summary -->
@@ -1410,12 +1412,12 @@ class="alternate"
 
 	</table>
 
-	<!--  <%= Integer.toString(allKitchensRecipes.size()) %>  -->
+	<!--  <%= Integer.toString(kitchenRecipes.size()) %>  -->
 	<%
 
 	// valuesByDate_Calender
 
-	for(Recipe recipe: allKitchensRecipes){
+	for(Recipe recipe: kitchenRecipes){
 
 		if(thisDate.compareTo(recipe.cookingDate) == 0 ){
 
@@ -1672,7 +1674,7 @@ counter = counter + 1;
 	%>
 
 </div>
-<% } // just the simple version %>
+<% } }// just the simple version %>
 
 </body>
 

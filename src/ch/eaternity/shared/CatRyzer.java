@@ -9,11 +9,20 @@ import java.util.List;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import ch.eaternity.server.DAO;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gwt.logging.client.HasWidgetsLogHandler;
+import com.google.gwt.logging.client.LoggingPopup;
+import com.google.gwt.user.client.ui.PopupPanel;
+
 
 
 public class CatRyzer {
@@ -158,6 +167,10 @@ public class CatRyzer {
 	public void categoryze() throws IllegalStateException{
 		if (initializedMapping && recipesLoaded)
 		{
+			//Initialize the Logger
+			Logger rootLogger = Logger.getLogger("");
+			
+			
 			// ---- first populate the dateValue List ------
 			Multimap<Date,IngredientSpecification> dateMultiMap = HashMultimap.create();
 			
@@ -175,11 +188,16 @@ public class CatRyzer {
 			
 			// iterate over all ingredientSpec, add them to the Map
 			for (IngredientSpecification ingSpec : ingSpecs){
-				List<String> tags = getIngredient(ingSpec).tags;
-				for (String tag : tags) {
-					for (CatMapping mapping : mappings) {
-						if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
-							catMultiMap.put(mapping.category, ingSpec);
+				if (getIngredient(ingSpec) == null) {
+					rootLogger.log(Level.SEVERE, "Ingredient can not be found. Id of IngredientSpecification: " + ingSpec.getId() + " Id of Ingredient: " + ingSpec.getZutat_id());
+				}
+				else {
+					List<String> tags = getIngredient(ingSpec).tags;
+					for (String tag : tags) {
+						for (CatMapping mapping : mappings) {
+							if (mapping.hastags.contains(tag) && doesntContainThisTags(tags, mapping.hasnotthistags)) {
+								catMultiMap.put(mapping.category, ingSpec);
+							}
 						}
 					}
 				}
