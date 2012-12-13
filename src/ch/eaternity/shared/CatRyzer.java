@@ -1,6 +1,7 @@
 package ch.eaternity.shared;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -309,10 +310,15 @@ public class CatRyzer {
 	}
 	
 	private void writeDatesToIngSpec(){
+		//Calendar cal = Calendar.getInstance();
+		//cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
 		for (Recipe recipe : recipes){
 			for (IngredientSpecification ingSpec : recipe.getZutaten())
 			{
-				ingSpec.setCookingDate(recipe.cookingDate);
+				if (recipe.cookingDate != null)
+					ingSpec.setCookingDate(recipe.cookingDate);
+			//	else
+			//		ingSpec.setCookingDate(cal.getTime());
 			}
 		}
 	}
