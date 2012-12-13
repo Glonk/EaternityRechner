@@ -388,7 +388,7 @@ public class DAO extends DAOBase
 		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
 		Calendar cal = Calendar.getInstance();
-		cal.set(2009, 11, 9); //year is as expected, month is zero based, date is as expected
+		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
 		Date dt = cal.getTime();
 		
 		Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
