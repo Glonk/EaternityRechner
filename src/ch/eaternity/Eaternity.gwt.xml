@@ -49,6 +49,7 @@
        that there will be no class names that will conflict with /M.+/ -->
   <set-configuration-property name="CssResource.obfuscationPrefix" value="M" />
   
+  <set-property name="compiler.stackMode" value="emulated" />
 
 
   <!-- Specify the paths for translatable code                    -->
