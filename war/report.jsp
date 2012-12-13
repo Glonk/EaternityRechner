@@ -72,9 +72,9 @@ String thresholdString = request.getParameter("median");
 String extraString = request.getParameter("extra");
 Integer extra = 0;
 
-if(thresholdString != null){
-	threshold = Integer.valueOf(thresholdString);
-} 
+//if(thresholdString != null){
+//	threshold = Integer.valueOf(thresholdString);
+//} 
 
 if(extraString != null){
 	extra = Integer.valueOf(extraString);
@@ -100,29 +100,26 @@ Long kitchenLongId = 0L;
 
 if(tempIds != null){
 	kitchenRecipes = dao.getRecipeByIds(tempIds,true);
-} else {
-	 rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
-	 if(permanentId != null){
-		kitchenRecipes = dao.getRecipeByIds(permanentId,false);
+} 
+else {
+	rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
+	if(permanentId != null){
+	 	kitchenRecipes = dao.getRecipeByIds(permanentId,false);
 		
 		DoItWithPermanentIds = false;
-	 } else {
-		 if(kitchenId != null){
-	 
+	} 
+	else {
+		if(kitchenId != null){
 			kitchenLongId = Long.parseLong(kitchenId);
-	
 			kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
-
-		
 			DoItWithPermanentIds = false;
-		 }
-		 else
-		 {
+		}
+		else {
 			 rootLogger.log(Level.SEVERE, "No Kitchen Id or permanend Id passed. Pass it with ?kid=234234 ");
 		 	 everythingFine = false;
-		 }
+		}
 	}
- }
+}
 
 
 if (kitchenRecipes.size() == 0)

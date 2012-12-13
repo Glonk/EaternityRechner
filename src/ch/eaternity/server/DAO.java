@@ -311,7 +311,9 @@ public class DAO extends DAOBase
 		Date date = new Date();
 		int iTimeStamp = (int) (date.getTime() * .00003);
 
-
+		Calendar cal = Calendar.getInstance();
+		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
+		Date dt = cal.getTime();
 
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 
@@ -335,6 +337,9 @@ public class DAO extends DAOBase
 				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
 				if(userRezept != null){
 					Recipe recipe = userRezept.getRezept();
+					if(recipe.cookingDate == null){
+						recipe.cookingDate = dt;
+					}
 					recipe.setId( userRezept.id);
 					yourRecipes.add(recipe);
 				}
