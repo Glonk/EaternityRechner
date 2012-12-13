@@ -33,6 +33,7 @@
 <%@ page import="java.util.Date" %>
 
 
+
 <html>
 <head>
 
@@ -1131,11 +1132,14 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<% if(categoryValue.date != null){ %>
-<%= dateFormatter.format(categoryValue.date) %> 
-<% } else { %>
-	NO DATE SPECIFIED
-<% } %>
+	<%
+	String datumString = "NO DATE SPECIFIED";
+	try {
+		datumString = dateFormatter.format(categoryValue.date);
+	} catch (Exception e) {
+		            out.println("The Error is: " + e);
+	}
+	%><%= datumString %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
@@ -1294,7 +1298,14 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 </tr>
 
 <tr>
-<td class="table-header bottom-border"><%= dateFormatter.format(thisDate) %>  -  CO2 Impact by Category.</td>
+<td class="table-header bottom-border">	<%
+	String datumString = "NO DATE SPECIFIED";
+	try {
+		datumString = dateFormatter.format(thisDate);
+	} catch (Exception e) {
+		  out.println("The Error is: " + e);
+	}
+	%><%= datumString %>  -  CO2 Impact by Category.</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
@@ -1374,7 +1385,16 @@ class="alternate"
 
 
 	<tr>
-	<td class="table-header">Lieferschein Übersicht für den: <%= dateFormatter.format(thisDate) %></td>
+	<td class="table-header">Lieferschein Übersicht für den: 
+		<%
+		datumString = "NO DATE SPECIFIED";
+		try {
+			datumString = dateFormatter.format(thisDate);
+		} catch (Exception e) {
+			  out.println("The Error is: " + e);
+		}
+		%><%= datumString %>
+		</td>
 	<td></td>
 	</tr>
 
@@ -1410,9 +1430,11 @@ class="alternate"
 				String formatted = formatter.format( recipeValue );
 				String persons = Long.toString(recipe.getPersons());
 				
-				String datumString = "NO DATE SPECIFIED";
-				if(recipe.cookingDate != null){
+				datumString = "NO DATE SPECIFIED";
+				try {
 					datumString = dateFormatter.format(recipe.cookingDate);
+				} catch (Exception e) {
+					  out.println("The Error is: " + e);
 				}
 
 
