@@ -609,7 +609,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	@UiHandler("rezeptList")
 	void onRezeptClicked(ClickEvent event) {
 		Cell cell = rezeptList.getCellForEvent(event);
-		if (cell != null) {
+		if (cell != null && selectedRezept != cell.getRowIndex()) {
 			
 			Widget rezeptViewWidget;
 			

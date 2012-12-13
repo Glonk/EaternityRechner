@@ -259,6 +259,9 @@ public class RecipeView<T> extends Composite {
 			recipe.setSymbol(RezeptName.getText());
 			recipe.openRequested = !makeNotPublic.getValue();
 			recipe.open = false;
+			Date date = getDate();
+			if (date != null)
+				this.recipe.cookingDate = date; 
 
 			final RecipeView rezeptView = this;
 			presenter.addRezept(recipe,rezeptView);
@@ -361,6 +364,13 @@ void onKeyUp(KeyUpEvent event) {
 	
 	@UiHandler("recipeDate")
 	void onBlur(BlurEvent event)  {
+		Date date = getDate();
+		if (date != null)
+			this.recipe.cookingDate = date;
+		 	setRecipeSavedMode(false);
+	}
+	
+	private Date getDate() {
 		String text = recipeDate.getText();
 		Date date = null;
 		try { 
@@ -379,8 +389,7 @@ void onKeyUp(KeyUpEvent event) {
 			//recipeDate.setText("");
 			//recipeDate.setCursorPos(0);
 		}
-		if (date != null)
-			this.recipe.cookingDate = date;
+		return date;
 	}
 	
 

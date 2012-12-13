@@ -945,7 +945,7 @@ if(true){
 
 <%
 
-Collections.sort(kitchenRecipes,new RezeptDateComparator());
+//Collections.sort(kitchenRecipes,new RezeptDateComparator());
 
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
