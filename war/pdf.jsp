@@ -17,6 +17,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Collections" %>
 
 
@@ -1205,7 +1206,7 @@ String lengthExtra = formatter.format(extra/MaxValueRezept*200);
 	+"<td class='co2percent'  ></td>"
 	+"</tr>";
 
-
+SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 
 for(Recipe recipe: rezeptePersonal){
 
@@ -1213,6 +1214,10 @@ for(Recipe recipe: rezeptePersonal){
 
 	String code = Converter.toString(compute,34);
 	String clear = Converter.toString(recipe.getId(),34);
+	String dateString = "";
+	if(recipe.cookingDate != null){
+		dateString = dateFormatter.format(recipe.cookingDate);
+	}
 	
 
 	recipe.setCO2Value();
@@ -1322,7 +1327,7 @@ for(Recipe recipe: rezeptePersonal){
 		<% }%> > 
 		<td class="menu-name">
 		<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-		<%= smilies %><%= code %> <%= recipe.getSymbol() %>
+		<%= smilies %><%= recipe.getSymbol() %> - <%= dateString %>
 		</td>
 		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 		<td class="co2value" ><%= formatted %></td>
