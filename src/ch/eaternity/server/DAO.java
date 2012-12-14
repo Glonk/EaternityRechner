@@ -414,7 +414,7 @@ public class DAO extends DAOBase
 			}
 		}
 
-		
+		markDescendant(kitchenRecipes);
 		// check if descendant is also in the own list
 		Iterator<Recipe> iterator2 = kitchenRecipes.iterator();
 		while(iterator2.hasNext()){
@@ -432,6 +432,26 @@ public class DAO extends DAOBase
 
 		return kitchenRecipes;
 	}
+	
+	public void markDescendant(List<Recipe> recipesList) {
+		for( Recipe checkRecipe: recipesList){
+			if(checkRecipe.getDirectAncestorID() != null){
+				// has ancestor...
+				for( Recipe markRecipe: recipesList){
+					
+					if(markRecipe.getId().equals(checkRecipe.getDirectAncestorID())){
+						// found descendants and mark him
+						markRecipe.addDirectDescandentID(checkRecipe.getId());
+//						checkRecipe.ancestorAlreadyMarked = true;
+//						break;
+					}
+					
+				}
+							
+			}
+		}
+	}
+	
 	
 	public List<Recipe> getKitchenRecipes(User user) {
 		//TODO why does this gets called twice on startup?
