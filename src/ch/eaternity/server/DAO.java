@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.eaternity.shared.Commitment;
@@ -413,6 +414,21 @@ public class DAO extends DAOBase
 			}
 		}
 
+		
+		// check if descendant is also in the own list
+		Iterator<Recipe> iterator2 = kitchenRecipes.iterator();
+		while(iterator2.hasNext()){
+			Recipe recipeHasDesc = iterator2.next();
+			for( Recipe recipeIsPossibleDesc :kitchenRecipes){
+				// is the descendant in the own list
+				if(recipeHasDesc.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
+					// remove recipeHasDesc
+					iterator2.remove();
+					break;
+//					possibleRecipes.remove(recipeHasDesc);
+				}
+			}
+		}
 
 		return kitchenRecipes;
 	}
