@@ -203,7 +203,15 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public double getDistance() {
 		return distance;
 	}
-
+	
+	/*
+	 *  TODO this is a hack, hardcoded value. remove after all objects are updated
+	 */
+	public void update() {
+		if(transportmittel.factor == null && transportmittel.symbol.equals("LKW")) {
+			transportmittel.factor = 0.188D;
+		}
+	}
 
 	//TODO calculate the CO2 value
 	public double getCalculatedCO2Value() {

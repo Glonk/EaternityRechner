@@ -306,6 +306,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			zutat.setSeason(zutatNew.getStartSeason(), zutatNew.getStopSeason());
 			zutat.setZutat_id(zutatNew.getZutat_id());
 			zutat.setNormalCO2Value(zutatNew.getNormalCO2Value());
+			zutat.update();
 			zutatenNew.add(zutat);
 		}
 		
