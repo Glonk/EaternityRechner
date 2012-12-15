@@ -1,0 +1,253 @@
+package ch.eaternity.server;
+
+import com.google.appengine.api.datastore.Blob;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+
+import ch.eaternity.server.DAO;
+import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Converter;
+import ch.eaternity.shared.RecipeComment;
+import ch.eaternity.shared.comparators.RezeptDateComparator;
+import ch.eaternity.shared.CatRyzer;
+
+
+import java.util.List;
+import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.Collection;
+import java.util.Arrays;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.Date;
+
+
+public class StaticPageService {
+
+	
+	public StaticPageService() {
+	}
+	
+	public StaticPageService(String BASEURL,String tempIds,String permanentId,String kitchenId,String pdf) {
+	
+		this.BASEURL = BASEURL;
+		this.tempIds = tempIds;
+		this.permanentId = permanentId;
+		this.kitchenId = kitchenId;
+		this.pdf = pdf;
+		
+		initialize();
+
+	}
+	private void initialize() {
+
+		if(tempIds != null){
+			kitchenRecipes = dao.getRecipeByIds(tempIds,true);
+		} 
+		else {
+			rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
+			if(permanentId != null){
+				kitchenRecipes = dao.getRecipeByIds(permanentId,false);
+
+				doItWithPermanentIds = false;
+			} 
+			else {
+				if(kitchenId != null){
+					kitchenLongId = Long.parseLong(kitchenId);
+					kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
+					doItWithPermanentIds = false;
+				}
+				else {
+					rootLogger.log(Level.SEVERE, "No Kitchen Id or permanend Id passed. Pass it with ?kid=234234 ");
+					everythingFine = false;
+				}
+			}
+		}
+		
+		if (kitchenRecipes.size() == 0)
+		{
+			rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes or kitchen doesn't exist.");
+			everythingFine = false;
+		}
+
+		for (Recipe recipe : kitchenRecipes){
+			if (recipe.cookingDate == null) {
+				kitchenRecipes.remove(recipe);
+				rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol());
+			}
+		}
+
+		
+
+
+		//  go over the Recipes in the Workspace
+		for(Recipe recipe: kitchenRecipes){
+			recipe.setCO2Value();
+			Double value = recipe.getCO2Value();
+			getMinMax(value);
+		}
+		setMedianAverage();
+		
+		
+		
+		
+		// Define categories here:
+		// CatFormula(String category, String formula, boolean isHeading)
+		catryzer = new CatRyzer(kitchenRecipes);
+
+		List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
+
+//		categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
+
+		categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
+		categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
+		categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
+		categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat,-animal-based,-animal based"));
+		categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes,fruits,mushrooms"));
+		categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","preprocessed"));
+		categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain"));
+		categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts,seeds"));
+
+
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based,animal based",true));
+
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","meat",true));
+
+		categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
+		categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
+		categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood"));
+
+		// categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
+
+		categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","ripened"));
+		categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","diary,-ripened"));
+
+		categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats,-vegetable"));
+		categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
+		categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","finished product"));
+		categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
+
+
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
+
+		categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","alcohol"));
+		categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","fruitjuice"));
+		categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","milk"));
+
+
+
+		catryzer.setCatFormulas(categoryFormulas);
+		catryzer.categoryze();
+
+		valuesByDate = catryzer.getDateValues();
+
+		valuesByCategory = catryzer.getCatVals();
+
+		valuesByDate_Category = catryzer.getCatValsByDates();
+
+		
+	}
+
+	private void setMedianAverage() {
+		average = (average /counter);
+		MinValueRezept = MinValueRezept;
+		MaxValueRezept = MaxValueRezept;
+
+		Collections.sort(values);
+
+		if (values.size() % 2 == 1)
+			median = values.get((values.size()+1)/2-1)  ;
+		else {
+			double lower = (values.get(values.size()/2-1))   ;
+			double upper = (values.get(values.size()/2))   ;
+
+			median = ((lower + upper) / 2.0);
+		}
+	}
+
+	private void getMinMax(Double value) {
+		values.add((double) value);
+		average = average + value;
+		counter++;
+		if(value>MaxValueRezept){
+			MaxValueRezept = value;
+		} 
+		if(value<MinValueRezept){
+			MinValueRezept = value;
+		}
+	}
+	// -------------- Class Variables --------------
+	public String BASEURL;
+	public String tempIds;
+	public String permanentId;
+	public String kitchenId;
+	public String pdf;
+	
+	public CatRyzer catryzer;
+	
+	Logger rootLogger = Logger.getLogger("");
+	public boolean everythingFine = true;
+
+	// Hole Rezepte die zum Benutzer gehören
+	
+
+	public  UserService userService = UserServiceFactory.getUserService();
+	public  User user = userService.getCurrentUser();
+	DAO dao = new DAO();
+	
+	public List<CatRyzer.DateValue> valuesByDate;
+	public List<CatRyzer.CategoryValue> valuesByCategory;
+	public List<CatRyzer.CategoryValuesByDates> valuesByDate_Category;
+
+
+	public Boolean doItWithPermanentIds = true;
+
+	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+
+
+	public DecimalFormat formatter = new DecimalFormat("##");
+	public SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
+	Long kitchenLongId = 0L;
+
+
+
+
+	// some precalculation of values
+
+
+
+	public Double MaxValueRezept = 0.0;
+	public Double MinValueRezept = 10000000.0;
+	Double average = 0.0;
+	Double median = 0.0;
+	Integer counter = 0;
+
+	//Calendar rightNow = Calendar.getInstance();
+	//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
+
+	Date date = new Date();
+	long iTimeStamp = (long) (date.getTime() * .00003);
+
+
+	// calculate average, median, min, max
+
+	ArrayList<Double> values = new ArrayList<Double>();
+	
+
+
+
+}

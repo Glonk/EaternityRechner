@@ -1,38 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.google.appengine.api.users.User" %>
-<%@ page import="com.google.appengine.api.users.UserService" %>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 
-<%@ page import="ch.eaternity.server.DAO" %>
+
+<%@ page import="ch.eaternity.server.StaticPageService" %>
+
 <%@ page import="ch.eaternity.shared.Recipe" %>
-<%@ page import="ch.eaternity.shared.Ingredient" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
-<%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.comparators.RezeptDateComparator" %>
+<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
+
+<%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 
-
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Calendar" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Date" %>
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.Collection" %>
-<%@ page import="java.util.Arrays" %>
-<%@ page import="java.text.DecimalFormat" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Collections" %>
-<%@ page import="java.util.logging.Logger" %>
-<%@ page import="java.util.logging.Level" %>
 
-
-<%@ page import="java.net.MalformedURLException" %>
-<%@ page import="java.net.URL" %>
-<%@ page import="java.io.BufferedReader" %>
-<%@ page import="java.io.InputStreamReader" %>
-<%@ page import="java.io.IOException" %>
-<%@ page import="java.util.Date" %>
 
 
 
@@ -44,133 +26,20 @@
 
 
 <%
+// get request parameters
 
-Logger rootLogger = Logger.getLogger("");
-
-boolean everythingFine = true;
-
-// Hole Rezepte die zum Benutzer gehören
 String BASEURL = request.getRequestURL().toString();
-
-UserService userService = UserServiceFactory.getUserService();
-User user = userService.getCurrentUser();
-
 String tempIds = request.getParameter("ids");
 String permanentId = request.getParameter("pid");
 String kitchenId = request.getParameter("kid");
 String pdf = request.getParameter("pdf");
 
+StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf);
 
-Boolean doPdf = false;
-if(pdf != null){
-	doPdf = true;
-}
-
-Boolean DoItWithPermanentIds = true;
-
-%>
-
-<%
-
-DAO dao = new DAO();
+int counter = 0;
+int counterIterate = 0;
 
 
-List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-
-
-DecimalFormat formatter = new DecimalFormat("##");
-SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
-Long kitchenLongId = 0L;
-
-if(tempIds != null){
-	kitchenRecipes = dao.getRecipeByIds(tempIds,true);
-} 
-else {
-	rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
-	if(permanentId != null){
-	 	kitchenRecipes = dao.getRecipeByIds(permanentId,false);
-		
-		DoItWithPermanentIds = false;
-	} 
-	else {
-		if(kitchenId != null){
-			kitchenLongId = Long.parseLong(kitchenId);
-			kitchenRecipes = dao.getKitchenRecipes(kitchenLongId);
-			DoItWithPermanentIds = false;
-		}
-		else {
-			 rootLogger.log(Level.SEVERE, "No Kitchen Id or permanend Id passed. Pass it with ?kid=234234 ");
-		 	 everythingFine = false;
-		}
-	}
-}
-
-
-if (kitchenRecipes.size() == 0)
-{
-	rootLogger.log(Level.SEVERE, "Kitchen with id=" + kitchenLongId + "doesn't contains any recipes or kitchen doesn't exist.");
-	everythingFine = false;
-}
-
-for (Recipe recipe : kitchenRecipes){
-	if (recipe.cookingDate == null) {
-		kitchenRecipes.remove(recipe);
-		rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol());
-	}
-}
-
-// some precalculation of values
-
-
-
-Double MaxValueRezept = 0.0;
-Double MinValueRezept = 10000000.0;
-Double average = 0.0;
-Double median = 0.0;
-Integer counter = 0;
-
-//Calendar rightNow = Calendar.getInstance();
-//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
-
-Date date = new Date();
-      long iTimeStamp = (long) (date.getTime() * .00003);
-
-%>
-
-<%
-
-// calculate average, median, min, max
-if(kitchenRecipes.size() != 0){
-	ArrayList<Double> values = new ArrayList<Double>();
-
-	//  go over the Recipes in the Workspace
-	for(Recipe recipe: kitchenRecipes){
-		values.add((double) recipe.getCO2Value());
-		average = average + recipe.getCO2Value();
-		counter++;
-		recipe.setCO2Value();
-		if(recipe.getCO2Value()>MaxValueRezept){
-	MaxValueRezept = recipe.getCO2Value();
-		} 
-		if(recipe.getCO2Value()<MinValueRezept){
-	MinValueRezept = recipe.getCO2Value();
-		}
-	}
-	average = (average /counter)  ;
-	MinValueRezept = MinValueRezept  ;
-	MaxValueRezept = MaxValueRezept  ;
-		
-	Collections.sort(values);
-  
-    if (values.size() % 2 == 1)
-		median = values.get((values.size()+1)/2-1)  ;
-    else {
-		double lower = (values.get(values.size()/2-1))   ;
-		double upper = (values.get(values.size()/2))   ;
-	 
-		median = ((lower + upper) / 2.0);
-    }	    
-}
 %>
 
 <style type="text/css">
@@ -722,150 +591,18 @@ padding: 1em 0.5em 0.5em 3em;
 
 </style>
 
-<script type="text/javascript">
-
-function initThis(){
-idsToAdd = new Array(); 
-baseUrl = getBaseURL();
-
-
-<%for(Recipe recipe: kitchenRecipes){
-	long compute = recipe.getId() * iTimeStamp;
-	String code = Converter.toString(compute,34);%>
-idsToAdd['<%=code%>'] = true<%}%>
-
-arrayAdd(idsToAdd)
-}
-
-function arrayAdd(idsToAdd){
-hrefAdd = "";
-	for (var codeIndex in idsToAdd){
-/* 		alert(idsToAdd[codeIndex]) */
-
-		if(idsToAdd[codeIndex]){
-		 hrefAdd = hrefAdd + codeIndex + ",";
-		}
-
-	}
-	hrefAdd = hrefAdd.slice(0,hrefAdd.length-1); 
-	setHref(hrefAdd)
-}
-
-
-
-function addRemoveMenu(code){
-	if(document.htmlAdder.elements[code].checked == true){
-
-		idsToAdd[code] = true;
-		
-	} else {
-		idsToAdd[code] = false;
-	}
-	
-
-	arrayAdd(idsToAdd);
-
-}
-
-function setHref(hrefAdd){
-    document.getElementById('getPdf').href=baseUrl+"view.jsp?ids="+hrefAdd
-}
-
-function getBaseURL() {
-    var url = location.href;  // entire url including querystring - also: window.location.href;
-    var baseURL = url.substring(0, url.indexOf('/', 14));
-
-
-    if (baseURL.indexOf('http://localhost') != -1) {
-        // Base Url for localhost
-        var url = location.href;  // window.location.href;
-        var pathname = location.pathname;  // window.location.pathname;
-        var index1 = url.indexOf(pathname);
-        var index2 = url.indexOf("/", index1 + 1);
-        var baseLocalUrl = url.substr(0, index2);
-
-        return baseLocalUrl + "/";
-    }
-    else {
-        // Root Url for domain name
-        return baseURL + "/";
-    }
-
-}
-</script>
-
 </head>
 
-<body onLoad="initThis()">
+<body>
 <% 
 // Avoid displaying anything if someting is wrong.
-if (!everythingFine){
+if (!variables.everythingFine){
 	%>
 		Wrong Inputs. See Log for Details.
 	<%
 }
 else { %>
 	
-	
-	
-	
-	<%
-
-	
-// Define categories here:
-// CatFormula(String category, String formula, boolean isHeading)
-CatRyzer catryzer = new CatRyzer(kitchenRecipes);
-
-List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
-categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
-categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat, -animal-based"));
-categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes, fruits"));
-categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain, bread, pasta"));
-categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts, seeds"));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based",true));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","meat",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
-categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
-categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood"));
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","rippened"));
-categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","cheese,-rippened"));
-
-categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats, -vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
-categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","processed"));
-categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
-
-
-categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
-
-categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","beverage, alcohol"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","beverage, fruit"));
-categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","beverage, diary"));
-
-
-
-catryzer.setCatFormulas(categoryFormulas);
-catryzer.categoryze();
-
-List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
-
-List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
-
-List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates();
-%>
-
 
 
 <div class="website-content">
@@ -888,18 +625,6 @@ List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatVals
 </div>
 
 <h1>CO2 Food-Sourcing Report</h1>
-<%
-	if(DoItWithPermanentIds) {
-%>
-
-
-
-
-<a href="http://prod.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Dokument für die markierten Menus als PDF herunterladen.</a>
-
-<%
-	} // just do it simple
-%>
 
 
 <div  id="footer-left">
@@ -915,11 +640,6 @@ List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatVals
 
 
 <div class="content">
-
-<%
-if(true){
-%>
-
 
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
@@ -940,37 +660,20 @@ if(true){
 </tr>
 
 
-	
-<!--  <%= Integer.toString(kitchenRecipes.size()) %>  -->
-
 <%
 
-//Collections.sort(kitchenRecipes,new RezeptDateComparator());
 
-Boolean notDoneFirst = true;
-Boolean notDoneSeccond = true;
-Boolean notDoneThird = true;
-int counterIterate = 0;
+for(Recipe recipe: variables.kitchenRecipes){
 
-
-
-String smilies = "";
-
-
-
-for(Recipe recipe: kitchenRecipes){
-
-	long compute = recipe.getId() * iTimeStamp;
-	String code = Converter.toString(compute,34);
 	String clear = Converter.toString(recipe.getId(),34);
 
 	recipe.setCO2Value();
 	
 	Double recipeValue = recipe.getCO2Value()  ;
 	
-	String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
+	String length = variables.formatter.format(recipeValue/variables.MaxValueRezept*200);
 
-	String formatted = formatter.format( recipeValue);
+	String formatted = variables.formatter.format(recipeValue);
 	String persons = Long.toString(recipe.getPersons());
 	
 	String moreOrLess = "";
@@ -981,13 +684,13 @@ for(Recipe recipe: kitchenRecipes){
 		
 
 		<tr <%
-		int order = (kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
+		int order = (variables.kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
 		if(order == 1) { %>
 		class="alternate"
 		<% }%> > 
 		<td class="menu-name">
-		<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-		<%= smilies %><%= recipe.getSymbol() %>
+		<input type="checkbox" name="<%= clear %>" checked="checked" class="hiddenOnPage">
+		<%= recipe.getSymbol() %>
 		</td>
 		<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 		<td class="co2value" ><%= formatted %></td>
@@ -998,14 +701,17 @@ for(Recipe recipe: kitchenRecipes){
 
 }	
 
-
 %>
+
+
 </table>
 
 
 <!-- Summary -->
 <br/><br/><br/>
-The main result was, we due the assumtpion. It came close to. The following potential was discovered <br/><br/><br/><br/>
+
+
+<br/><br/><br/><br/>
 
 <!-- Situation -->
 
@@ -1033,50 +739,28 @@ The main result was, we due the assumtpion. It came close to. The following pote
 counterIterate = 0;
 
 
-// calculate average, median, min, max
-
-
-ArrayList<Double> values = new ArrayList<Double>();
 
 //  go over the Recipes in the Workspace
-for(CatRyzer.DateValue categoryValue : valuesByDate){
-	values.add((double) categoryValue.co2value);
-	average = average + categoryValue.co2value;
-	counter++;
+for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
 
-	if(categoryValue.co2value>MaxValueRezept){
-MaxValueRezept = categoryValue.co2value;
+	if(categoryValue.co2value>variables.MaxValueRezept){
+		variables.MaxValueRezept = categoryValue.co2value;
 	} 
-	if(categoryValue.co2value<MinValueRezept){
-MinValueRezept = categoryValue.co2value;
+	if(categoryValue.co2value<variables.MinValueRezept){
+		variables.MinValueRezept = categoryValue.co2value;
 	}
 }
-average = (average /counter)  ;
-MinValueRezept = MinValueRezept  ;
-MaxValueRezept = MaxValueRezept  ;
-	
-Collections.sort(values);
- 
-if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1)  ;
-else
-{
-double lower = (values.get(values.size()/2-1))   ;
-double upper = (values.get(values.size()/2))   ;
-
-median = ((lower + upper) / 2.0);
-}	    
 
 
 
 
-for(CatRyzer.DateValue categoryValue : valuesByDate){
-		String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
+for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
+		String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
 	
 %>
 
 <tr <%
-int order = (valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (variables.valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -1084,19 +768,18 @@ class="alternate"
 	<%
 	String datumString = "NO DATE SPECIFIED";
 	try {
-		datumString = dateFormatter.format(categoryValue.date);
+		datumString = variables.dateFormatter.format(categoryValue.date);
 	} catch (Exception e) {
 		            out.println("The Error is: " + e);
 	}
 	%><%= datumString %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value) %></td>
 </tr>
 
 
 <%
-}
 }
 
 /*
@@ -1140,46 +823,26 @@ Date5: AllCategory,co2value
 </tr>
 
 <%
-int counterIterate = 0;
-
-ArrayList<Double> values = new ArrayList<Double>();
+counterIterate = 0;
 
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
-	values.add((double) categoryValue.co2value);
-	average = average + categoryValue.co2value;
-	counter++;
+for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 
-	if(categoryValue.co2value>MaxValueRezept){
-MaxValueRezept = categoryValue.co2value;
+	if(categoryValue.co2value>variables.MaxValueRezept){
+		variables.MaxValueRezept = categoryValue.co2value;
 	} 
-	if(categoryValue.co2value<MinValueRezept){
-MinValueRezept = categoryValue.co2value;
+	if(categoryValue.co2value<variables.MinValueRezept){
+		variables.MinValueRezept = categoryValue.co2value;
 	}
 }
-average = (average /counter)  ;
-MinValueRezept = MinValueRezept  ;
-MaxValueRezept = MaxValueRezept  ;
-	
-Collections.sort(values);
- 
-if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1)  ;
-else
-{
-double lower = (values.get(values.size()/2-1))   ;
-double upper = (values.get(values.size()/2))   ;
-
-median = ((lower + upper) / 2.0);
-}	    
 
 
-for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
-	String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
+for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
+	String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
 %>
 
 <tr <%
-int order = (valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -1187,7 +850,7 @@ class="alternate"
 <%= categoryValue.categoryName %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value) %></td>
 </tr>
 
 
@@ -1215,7 +878,7 @@ Alldates: 	Category1, co2value
  <!-- Potential -->
 
 <br /><br />
- By choosing less off this, you get more of this.
+
 <br /><br />
 
  <!-- By Date -->
@@ -1229,7 +892,7 @@ Alldates: 	Category1, co2value
 
 
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
+for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Category){
 
 // if date == 0, show something for no date
 	
@@ -1250,7 +913,7 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 <td class="table-header bottom-border">	<%
 	String datumString = "NO DATE SPECIFIED";
 	try {
-		datumString = dateFormatter.format(thisDate);
+		datumString = variables.dateFormatter.format(thisDate);
 	} catch (Exception e) {
 		  out.println("The Error is: " + e);
 	}
@@ -1262,46 +925,22 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 
 <%
 
-
-
-values = new ArrayList<Double>();
-
 //  go over the Recipes in the Workspace
 
 for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-	values.add((double) categoryValue.co2value);
-	average = average + categoryValue.co2value;
-	counter++;
 
-	if(categoryValue.co2value>MaxValueRezept){
-MaxValueRezept = categoryValue.co2value;
+
+	if(categoryValue.co2value>variables.MaxValueRezept){
+		variables.MaxValueRezept = categoryValue.co2value;
 	} 
-	if(categoryValue.co2value<MinValueRezept){
-MinValueRezept = categoryValue.co2value;
+	if(categoryValue.co2value<variables.MinValueRezept){
+		variables.MinValueRezept = categoryValue.co2value;
 	}
 }
 
-average = (average /counter)  ;
-MinValueRezept = MinValueRezept  ;
-MaxValueRezept = MaxValueRezept  ;
-	
-Collections.sort(values);
- 
-if (values.size() % 2 == 1)
-median = values.get((values.size()+1)/2-1)  ;
-else
-{
-double lower = (values.get(values.size()/2-1))   ;
-double upper = (values.get(values.size()/2))   ;
-
-median = ((lower + upper) / 2.0);
-}	    
-
-
-
 
 	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-		String length = formatter.format(categoryValue.co2value/MaxValueRezept*200);
+		String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
 %>
 
 <tr <%
@@ -1313,7 +952,7 @@ class="alternate"
 <%= categoryValue.categoryName %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= formatter.format(categoryValue.co2value) %></td>
+<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value) %></td>
 </tr>
 
 
@@ -1338,7 +977,7 @@ class="alternate"
 		<%
 		datumString = "NO DATE SPECIFIED";
 		try {
-			datumString = dateFormatter.format(thisDate);
+			datumString = variables.dateFormatter.format(thisDate);
 		} catch (Exception e) {
 			  out.println("The Error is: " + e);
 		}
@@ -1359,29 +998,26 @@ class="alternate"
 
 	</table>
 
-	<!--  <%= Integer.toString(kitchenRecipes.size()) %>  -->
+
 	<%
 
 	// valuesByDate_Calender
 
-	for(Recipe recipe: kitchenRecipes){
+	for(Recipe recipe: variables.kitchenRecipes){
 
-		if(thisDate.compareTo(recipe.cookingDate) == 0 ){
-
-			long compute = recipe.getId() * iTimeStamp;
-			String code = Converter.toString(compute,34);
+		if(thisDate.equals(recipe.cookingDate)){
 
 				recipe.setCO2Value();
 				Double recipeValue = recipe.getCO2Value()  ;
 
 
 
-				String formatted = formatter.format( recipeValue );
+				String formatted = variables.formatter.format( recipeValue );
 				String persons = Long.toString(recipe.getPersons());
 				
 				datumString = "NO DATE SPECIFIED";
 				try {
-					datumString = dateFormatter.format(recipe.cookingDate);
+					datumString = variables.dateFormatter.format(recipe.cookingDate);
 				} catch (Exception e) {
 					  out.println("The Error is: " + e);
 				}
@@ -1422,9 +1058,16 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> (<%= ingredient.getHerkunft().symbol %>  | <%= ingredient.getZustand().symbol %> | <%= ingredient.getProduktion().symbol %> | <%= ingredient.getTransportmittel().symbol %>)</span><%
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> 
+						
+						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+						
+						</span><%
 					}
 					%>
+					
+					
+					
 				</td>
 				<td class="left-border"><br></td>
 				</tr>
@@ -1513,11 +1156,11 @@ Category2: Ingredient1, Ingredient2
 
 
 // get ingredients per category example
-for(String category : catryzer.catMultiMap.keySet())
+for(String category : variables.catryzer.catMultiMap.keySet())
 {
 	
-	Collection<IngredientSpecification> ingredientsSpecification = catryzer.catMultiMap.get(category);
-	Set<String> ingredientsNames = catryzer.getIngredientsNames(ingredientsSpecification);
+	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(category);
+	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames(ingredientsSpecification);
 
 %>
 
@@ -1596,19 +1239,19 @@ counter = counter + 1;
 </div>
 
 </div>
-<% if(DoItWithPermanentIds) { %>
+<% if(variables.doItWithPermanentIds) { %>
 <div class="login">
 	<%
 
-	    if (user != null) {
+	    if (variables.user != null) {
 	%>
-	Diese Angaben sind für den Benutzer <%= user.getNickname() %>. <a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">Abmelden</a>?
+	Diese Angaben sind für den Benutzer <%= variables.user.getNickname() %>. <a href="<%= variables.userService.createLogoutURL(request.getRequestURI()) %>">Abmelden</a>?
 	<%
 	    } else {
-	    	if (tempIds == null){
+	    	if (variables.tempIds == null){
 	%>
 	Sie sind nicht angemeldet.
-	<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Anmelden</a>?
+	<a href="<%= variables.userService.createLoginURL(request.getRequestURI()) %>">Anmelden</a>?
 	<%	
 			} else {
 			
@@ -1621,12 +1264,16 @@ counter = counter + 1;
 	%>
 
 </div>
-<% } %>
 
+
+<%
+}// 
+%>
 
 <%
 }// if everthing is fine
 %>
+
 
 </body>
 

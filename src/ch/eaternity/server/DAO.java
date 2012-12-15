@@ -315,6 +315,7 @@ public class DAO extends DAOBase
 		Calendar cal = Calendar.getInstance();
 		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
 		Date dt = cal.getTime();
+		
 
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 
