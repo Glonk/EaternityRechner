@@ -301,6 +301,11 @@ public class IngredientsDialog extends DialogBox{
 						
 					}
 					else isValidIng = false;
+					
+					// symbol english
+					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name_Englisch");
+					if (tmpNodeVal1 != null) newIngredient.setSymbol_en( tmpNodeVal1.trim() );
+					//else isValidIng = false;
 
 					// all elements are properly parsed add ingredient
 					if (isValidIng) {

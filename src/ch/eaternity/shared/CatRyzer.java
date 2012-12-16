@@ -309,6 +309,24 @@ public class CatRyzer {
 		return names;
 	}
 	
+	public Set<String> getIngredientsNames_en(Collection<IngredientSpecification> ingSpecs){
+		Set<String> names = new HashSet<String>();
+		for (IngredientSpecification ingSpec : ingSpecs){
+				names.add(getIngredientName_en(ingSpec));
+		}	
+		return names;
+	}
+	
+	public String getIngredientName_en(IngredientSpecification ingSpec){
+		Ingredient ing = getIngredient(ingSpec);
+		if (ing == null)
+			return ingSpec.getName();
+		else if (ing.getSymbol_en() == null)
+			return ingSpec.getName() + "(no eng)";
+		else
+			return ing.getSymbol_en();
+	}
+	
 	//returns null if not found
 	private Ingredient getIngredient(IngredientSpecification ingspec) {
 		return getIngredient(ingspec.getZutat_id());

@@ -18,6 +18,8 @@ public class Ingredient implements IsSerializable{
 
     private String symbol;
     
+    private String symbol_en;
+    
     private String source;
 
     private Integer co2eValue;
@@ -105,6 +107,14 @@ public class Ingredient implements IsSerializable{
 
 	public String getSymbol() {
 		return symbol;
+	}
+	
+	public void setSymbol_en(String symbol_en) {
+		this.symbol_en = symbol_en;
+	}
+
+	public String getSymbol_en() {
+		return symbol_en;
 	}
 
 	public void setCo2eValue(Integer co2eValue) {

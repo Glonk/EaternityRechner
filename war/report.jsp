@@ -1058,7 +1058,7 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> 
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= variables.catryzer.getIngredientName_en(ingredient) %> 
 						
 						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 						
@@ -1160,7 +1160,7 @@ for(String category : variables.catryzer.catMultiMap.keySet())
 {
 	
 	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(category);
-	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames(ingredientsSpecification);
+	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames_en(ingredientsSpecification);
 
 %>
 
