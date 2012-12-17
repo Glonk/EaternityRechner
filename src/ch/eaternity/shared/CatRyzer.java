@@ -268,8 +268,7 @@ public class CatRyzer {
 				ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
 			}
 			
-			for (IngredientSpecification ingSpec : ingSpecs) {
-				String name = getIngredientName_en(ingSpec);
+			for (String name : ingMultiMap.keySet()) {
 				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
 				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getAmount(ingCollection)));
 			}
