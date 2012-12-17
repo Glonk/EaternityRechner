@@ -386,10 +386,10 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		
 		//Date
 		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
-		Date date = recipe.getCreateDate();
+		Date date = recipe.cookingDate;
 		if(date != null)
 		{
-			rezeptView.recipe.setCreateDate(date);
+			rezeptView.recipe.cookingDate = date;
 			rezeptView.recipeDate.setText(dtf.format(date));
 		}
 		
