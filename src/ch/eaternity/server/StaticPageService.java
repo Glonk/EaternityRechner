@@ -160,28 +160,28 @@ public class StaticPageService {
 
 		categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","rice,spices&herbs,sweets,oil and fat,-animal-based,-animal based,legumes,fruits,mushrooms,preprocessed,grain,nuts,seeds",true));
 
-		categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
-		categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
-		categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
-		categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat,-animal-based,-animal based"));
-		categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes,fruits,mushrooms"));
-		categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","preprocessed,-animal-based,-animal based"));
-		categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain"));
-		categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts,seeds"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Rice products","rice"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Spices & herbs","spices&herbs"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Sweets","sweets"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetable oils and fat","oil and fat,-animal-based,-animal based"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetables and fruits","legumes,fruits,mushrooms"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Preprocessed vegetable products","preprocessed,-animal-based,-animal based"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Bread and Grain Products","grain"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Nuts und seeds","nuts,seeds"));
 
 
 		categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","ruminant,non-ruminant,fish,seafood,diary,oil and fats,-vegetable,eggs,finished product,sauces",true));
 
-		categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","ruminant,non-ruminant,fish,seafood",true));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;<strong>Meat Products</strong>","ruminant,non-ruminant,fish,seafood",true));
 
-		categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
-		categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
-		categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish,seafood"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Ruminants","ruminant"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Non-ruminants","non-ruminant"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Fish and seafood","fish,seafood"));
 
-		categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary,oil and fats,-vegetable,eggs,finished product,sauces",true));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;<strong>Diary Products</strong>","diary",true));
 
-		categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","ripened"));
-		categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","diary,-ripened"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Ripened cheese","ripened"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Fresh cheese and diary products","diary,-ripened"));
 
 		categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats,-vegetable"));
 		categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
@@ -191,10 +191,10 @@ public class StaticPageService {
 
 		categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
 
-		categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","alcohol"));
-		categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","fruitjuice"));
-		categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","milk"));
-		categoryFormulas.add(catryzer.new CatFormula("Drinks (others)","beverage,-alcohol,-fruitjuice,-milk"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (alkohol based)","alcohol"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (fruit based)","fruitjuice"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (milk based)","milk"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (others)","beverage,-alcohol,-fruitjuice,-milk"));
 
 
 		catryzer.setCatFormulas(categoryFormulas);
