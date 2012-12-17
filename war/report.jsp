@@ -1032,7 +1032,7 @@ class="alternate"
 				</tr>
 
 				<tr>
-				<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+				<td><div class="amount"><%= formatted %> kg CO<sub>2</sub>* total</div></td>
 				<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
 				</tr>
 

@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
@@ -55,7 +56,7 @@ public class DAO extends DAOBase
 		//        ObjectifyService.register(Device.class);
 	}
 
-
+	private static final Logger log = Logger.getLogger(DAO.class.getName());
 	
 	/** Your DAO can have your own useful methods */
 	public Long updateOrCreateIngredient(Ingredient ingredient)
@@ -396,7 +397,7 @@ public class DAO extends DAOBase
 
 		// hack in a date, if there is none...
 		Calendar cal = Calendar.getInstance();
-		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
+		cal.set(2010, 0, 1); //year is as expected, month is zero based, date is as expected
 		Date dt = cal.getTime();
 		
 		Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
@@ -407,12 +408,21 @@ public class DAO extends DAOBase
 			Recipe recipe = userRezept.getRezept();
 			if(recipe.cookingDate == null){
 				recipe.cookingDate = dt;
+				log.warning("no date set for recipe" + userRezept.getId().toString());
+				if(recipe.getCreateDate() == null){
+					
+					log.warning("also no createdate set for recipe" + userRezept.getId().toString());
+				} else {
+					recipe.cookingDate = recipe.getCreateDate();
+				}
+			} else {
+				log.info("date was set: " + recipe.cookingDate.toGMTString());
 			}
 			recipe.setId(userRezept.getId());
 			
-			if(!kitchenRecipes.contains(recipe)){
+			// if(!kitchenRecipes.contains(recipe)){
 				kitchenRecipes.add(recipe);
-			}
+			// }
 		}
 
 		markDescendant(kitchenRecipes);

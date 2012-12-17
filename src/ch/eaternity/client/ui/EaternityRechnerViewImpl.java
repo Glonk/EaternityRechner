@@ -662,7 +662,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			
 			suggestionPanel.clear();
 			suggestionPanel.add(new HTML("Es gibt hier noch keinen Vergleich"));
-			rezeptView.updtTopSuggestion();
+			// rezeptView.updtTopSuggestion();
 			
 			adjustStickyEditLayout();
 

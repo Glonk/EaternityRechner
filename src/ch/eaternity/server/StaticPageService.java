@@ -109,7 +109,7 @@ public class StaticPageService {
 			kitchenRecipes = dao.getRecipeByIds(tempIds,true);
 		} 
 		else {
-			rootLogger.log(Level.SEVERE, "Loading Data: Test if Logger works.");
+			// rootLogger.log(Level.INFO, "Loading Data: Test if Logger works.");
 			if(permanentId != null){
 				kitchenRecipes = dao.getRecipeByIds(permanentId,false);
 
@@ -140,7 +140,7 @@ public class StaticPageService {
 				rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol());
 			}
 		}
-
+		Collections.sort(kitchenRecipes,new RezeptDateComparator());
 
 		//  go over the Recipes in the Workspace
 		for(Recipe recipe: kitchenRecipes){

@@ -977,7 +977,7 @@ public class RecipeEditView<T> extends Composite {
 		
 		
 
-		updtTopSuggestion();
+		// updtTopSuggestion();
 	
 		
 		heightOfView = this.getOffsetHeight();

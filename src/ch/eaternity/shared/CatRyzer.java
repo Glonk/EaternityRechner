@@ -343,7 +343,7 @@ public class CatRyzer {
 	
 	private void writeDatesToIngSpec(){
 		Calendar cal = Calendar.getInstance();
-		cal.set(2000, 0, 1); //year is as expected, month is zero based, date is as expected
+		cal.set(2001, 0, 1); //year is as expected, month is zero based, date is as expected
 		for (Recipe recipe : recipes){
 			for (IngredientSpecification ingSpec : recipe.getZutaten())
 			{
