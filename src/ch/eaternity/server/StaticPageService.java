@@ -171,7 +171,7 @@ public class StaticPageService {
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetable oils and fat","oil and fats,-animal-based,-animal based"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetables and fruits","legumes,fruits,mushrooms"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Preprocessed vegetable products","preprocessed,-animal-based,-animal based"));
-		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Bread and Grain Products","grain"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Bread and Grain Products","grains"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Nuts und seeds","nuts,seeds"));
 
 
