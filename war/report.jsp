@@ -624,7 +624,7 @@ else { %>
 
 </div>
 
-<h1>CO2 Food-Sourcing Report</h1>
+
 
 
 <div  id="footer-left">
@@ -641,6 +641,7 @@ else { %>
 
 <div class="content">
 
+<h1>CO2 Food-Sourcing Report</h1>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -648,7 +649,7 @@ else { %>
 <tr>
 <td></td>
 <td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
 <td></td>
 </tr>
 
@@ -673,7 +674,7 @@ for(Recipe recipe: variables.kitchenRecipes){
 	
 	String length = variables.formatter.format(recipeValue/variables.MaxValueRezept*200);
 
-	String formatted = variables.formatter.format(recipeValue);
+	String formatted = variables.formatter.format(recipeValue/1000);
 	String persons = Long.toString(recipe.getPersons());
 	
 	String moreOrLess = "";
@@ -724,7 +725,7 @@ for(Recipe recipe: variables.kitchenRecipes){
 <tr>
 <td></td>
 <td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
 <td></td>
 </tr>
 
@@ -775,7 +776,7 @@ class="alternate"
 	%><%= datumString %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value) %></td>
+<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
 </tr>
 
 
@@ -811,7 +812,7 @@ Date5: AllCategory,co2value
 <tr>
 <td></td>
 <td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
 <td></td>
 </tr>
 
@@ -850,7 +851,7 @@ class="alternate"
 <%= categoryValue.categoryName %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value) %></td>
+<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
 </tr>
 
 
@@ -905,7 +906,7 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Ca
 <tr>
 <td></td>
 <td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
 <td></td>
 </tr>
 
@@ -952,7 +953,7 @@ class="alternate"
 <%= categoryValue.categoryName %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value) %></td>
+<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
 </tr>
 
 
@@ -1002,7 +1003,7 @@ class="alternate"
 
 
 
-				String formatted = variables.formatter.format( recipeValue );
+				String formatted = variables.formatter.format( recipeValue/1000 );
 				String persons = Long.toString(recipe.getPersons());
 				
 				datumString = "NO DATE SPECIFIED";

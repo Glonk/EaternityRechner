@@ -49,12 +49,12 @@ public class StaticPageService {
 	
 	public CatRyzer catryzer;
 	
-	Logger rootLogger = Logger.getLogger("");
+	Logger rootLogger;
 	public boolean everythingFine = true;
 
-	public  UserService userService = UserServiceFactory.getUserService();
-	public  User user = userService.getCurrentUser();
-	DAO dao = new DAO();
+	public  UserService userService;
+	public  User user;
+	DAO dao;
 	
 	public List<CatRyzer.DateValue> valuesByDate;
 	public List<CatRyzer.CategoryValue> valuesByCategory;
@@ -85,17 +85,26 @@ public class StaticPageService {
 	
 	public StaticPageService(String BASEURL,String tempIds,String permanentId,String kitchenId,String pdf) {
 	
+		rootLogger = Logger.getLogger("");
+		
 		this.BASEURL = BASEURL;
 		this.tempIds = tempIds;
 		this.permanentId = permanentId;
 		this.kitchenId = kitchenId;
 		this.pdf = pdf;
 		
+		userService = UserServiceFactory.getUserService();
+		user = userService.getCurrentUser();
+		
+		
 		initialize();
 
 	}
 	private void initialize() {
 
+		
+		dao = new DAO();
+		
 		if(tempIds != null){
 			kitchenRecipes = dao.getRecipeByIds(tempIds,true);
 		} 
@@ -180,11 +189,12 @@ public class StaticPageService {
 		categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
 
 
-		categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","alcohol,fruitjuice,milk",true));
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
 
 		categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","alcohol"));
 		categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","fruitjuice"));
 		categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","milk"));
+		categoryFormulas.add(catryzer.new CatFormula("Drinks (others)","beverage,-alcohol,-fruitjuice,-milk"));
 
 
 		catryzer.setCatFormulas(categoryFormulas);
