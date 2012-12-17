@@ -653,7 +653,7 @@ else { %>
 </tr>
 
 <tr>
-<td class="table-header bottom-border">Lieferschein Übersicht</td>
+<td class="table-header bottom-border">Delivery Receipts Overview</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
@@ -959,21 +959,13 @@ class="alternate"
 <%
 	}	
 %>
-	
-	
-	
+
 	</table>
 
-	<!-- Here comes the old Stuff -->
-
-	<!-- Details follow -->
-
-
+	
 	<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
-
-
 	<tr>
-	<td class="table-header">Lieferschein Übersicht für den: 
+	<td class="table-header">Delivery Receipts Overview for  
 		<%
 		datumString = "NO DATE SPECIFIED";
 		try {
@@ -988,15 +980,13 @@ class="alternate"
 
 	<tr>
 	<td class="bottom-border"></td>
-	<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
-	</tr>
-
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
+	<td class="left-border"></td>
 	</tr>
 
 	</table>
+	
+
+
 
 
 	<%
@@ -1035,7 +1025,7 @@ class="alternate"
 				<td class="bottom-border">
 				<!-- <img class="smile" src="smiley8.png" alt="smiley" />
 				<img class="smile" src="smiley8.png" alt="smiley" /> -->
-				<h3>Lieferschein: <%= recipe.getSymbol() %></h3>
+				<h3>Delivery Receipt: <%= recipe.getSymbol() %></h3>
 				</td>
 				<td class="left-border"></td>
 				</tr>
@@ -1048,7 +1038,7 @@ class="alternate"
 				<tr>
 				<td>
 
-				<span class="subTitle">Tag: <%= datumString %></span>
+				<span class="subTitle">Date: <%= datumString %></span>
 
 				<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
 
@@ -1147,7 +1137,7 @@ Category2: Ingredient1, Ingredient2
 
 
 <br /><br /><br />
-Übersicht über die Kategorien
+Overview Categories
 <br /><br /><br />
 
 
@@ -1175,7 +1165,7 @@ for(String category : variables.catryzer.catMultiMap.keySet())
 <td class="bottom-border">
 <!-- <img class="smile" src="smiley8.png" alt="smiley" />
 <img class="smile" src="smiley8.png" alt="smiley" /> -->
-<h3>Kategorie: <%= category %></h3>
+<h3>Category: <%= category %></h3>
 </td>
 <td class="left-border"></td>
 </tr>

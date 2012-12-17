@@ -217,20 +217,19 @@ public class CatRyzer {
 				dateValues.add(new DateValue(date, getCo2Value(ingredientsSpecification)));
 			}
 			
-			for(String category : catMultiMap.keySet())
-			{
-				Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
-				categoryValues.add(new CategoryValue(category, getCo2Value(ingredientsSpecification)));
+			for (CatMapping mapping : mappings) {
+				categoryValues.add(new CategoryValue(mapping.category, getCo2Value(catMultiMap.get(mapping.category))));
 			}
+			
+			
 			for(Date date : MapOfcatMultiMap.keySet())
 			{
 				List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
 				
 				Multimap<String,IngredientSpecification> catMM = MapOfcatMultiMap.get(date);
-				for(String category : catMM.keySet())
-				{
-					Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(category);
-					categoryValues.add(new CategoryValue(category, getCo2Value(ingredientsSpecification)));
+				
+				for (CatMapping mapping : mappings) {
+					categoryValues.add(new CategoryValue(mapping.category, getCo2Value(catMM.get(mapping.category))));
 				}
 				
 				CategoryValuesByDates categoryValuesByDates = new CategoryValuesByDates();

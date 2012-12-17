@@ -18,6 +18,7 @@ import ch.eaternity.shared.CatRyzer;
 import java.util.List;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Arrays;
@@ -38,6 +39,46 @@ import java.util.Date;
 
 public class StaticPageService {
 
+	// -------------- Class Variables --------------
+	public String BASEURL;
+	public String tempIds;
+	public String permanentId;
+	public String kitchenId;
+	public String pdf;
+	public Boolean doItWithPermanentIds = true;
+	
+	public CatRyzer catryzer;
+	
+	Logger rootLogger = Logger.getLogger("");
+	public boolean everythingFine = true;
+
+	public  UserService userService = UserServiceFactory.getUserService();
+	public  User user = userService.getCurrentUser();
+	DAO dao = new DAO();
+	
+	public List<CatRyzer.DateValue> valuesByDate;
+	public List<CatRyzer.CategoryValue> valuesByCategory;
+	public List<CatRyzer.CategoryValuesByDates> valuesByDate_Category;
+
+	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+	Long kitchenLongId = 0L;
+
+	public DecimalFormat formatter = new DecimalFormat("##");
+	public SimpleDateFormat dateFormatter = new SimpleDateFormat("d. MMMM yyyy",Locale.ENGLISH);
+
+	// some precalculation of values
+	public Double MaxValueRezept = 0.0;
+	public Double MinValueRezept = 10000000.0;
+	Double average = 0.0;
+	Double median = 0.0;
+	Integer counter = 0;
+
+	Date date = new Date();
+	long iTimeStamp = (long) (date.getTime() * .00003);
+
+	// calculate average, median, min, max
+	private ArrayList<Double> values = new ArrayList<Double>();
+	
 	
 	public StaticPageService() {
 	}
@@ -91,8 +132,6 @@ public class StaticPageService {
 			}
 		}
 
-		
-
 
 		//  go over the Recipes in the Workspace
 		for(Recipe recipe: kitchenRecipes){
@@ -100,9 +139,8 @@ public class StaticPageService {
 			Double value = recipe.getCO2Value();
 			getMinMax(value);
 		}
-		setMedianAverage();
-		
-		
+		if (values.size() > 0)
+			setMedianAverage();
 		
 		
 		// Define categories here:
@@ -111,27 +149,27 @@ public class StaticPageService {
 
 		List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
-//		categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","vegetable",true));
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","rice,spices&herbs,sweets,oil and fat,-animal-based,-animal based,legumes,fruits,mushrooms,preprocessed,grain,nuts,seeds",true));
 
 		categoryFormulas.add(catryzer.new CatFormula("Rice products","rice"));
 		categoryFormulas.add(catryzer.new CatFormula("Spices & herbs","spices&herbs"));
 		categoryFormulas.add(catryzer.new CatFormula("Sweets","sweets"));
 		categoryFormulas.add(catryzer.new CatFormula("Vegetable oils and fat","oil and fat,-animal-based,-animal based"));
 		categoryFormulas.add(catryzer.new CatFormula("Vegetables and fruits","legumes,fruits,mushrooms"));
-		categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","preprocessed"));
+		categoryFormulas.add(catryzer.new CatFormula("Preprocessed vegetable products","preprocessed,-animal-based,-animal based"));
 		categoryFormulas.add(catryzer.new CatFormula("Bread and Grain Products","grain"));
 		categoryFormulas.add(catryzer.new CatFormula("Nuts und seeds","nuts,seeds"));
 
 
-		categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","animal-based,animal based",true));
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","ruminant,non-ruminant,fish,seafood,diary,oil and fats,-vegetable,eggs,finished product,sauces",true));
 
-		categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","meat",true));
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Meat Products</strong>","ruminant,non-ruminant,fish,seafood",true));
 
 		categoryFormulas.add(catryzer.new CatFormula("Ruminants","ruminant"));
 		categoryFormulas.add(catryzer.new CatFormula("Non-ruminants","non-ruminant"));
-		categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish, seafood"));
+		categoryFormulas.add(catryzer.new CatFormula("Fish and seafood","fish,seafood"));
 
-		// categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary",true));
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Diary Products</strong>","diary,oil and fats,-vegetable,eggs,finished product,sauces",true));
 
 		categoryFormulas.add(catryzer.new CatFormula("Ripened cheese","ripened"));
 		categoryFormulas.add(catryzer.new CatFormula("Fresh cheese and diary products","diary,-ripened"));
@@ -142,12 +180,11 @@ public class StaticPageService {
 		categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
 
 
-		categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
+		categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","alcohol,fruitjuice,milk",true));
 
 		categoryFormulas.add(catryzer.new CatFormula("Drinks (alkohol based)","alcohol"));
 		categoryFormulas.add(catryzer.new CatFormula("Drinks (fruit based)","fruitjuice"));
 		categoryFormulas.add(catryzer.new CatFormula("Drinks (milk based)","milk"));
-
 
 
 		catryzer.setCatFormulas(categoryFormulas);
@@ -172,8 +209,13 @@ public class StaticPageService {
 		if (values.size() % 2 == 1)
 			median = values.get((values.size()+1)/2-1)  ;
 		else {
-			double lower = (values.get(values.size()/2-1))   ;
-			double upper = (values.get(values.size()/2))   ;
+			double lower;
+			if (values.size() >= 1)
+				lower = values.get(values.size()/2-1);
+			else
+				lower = values.get(values.size()/2);
+			
+			double upper = (values.get(values.size()/2));				
 
 			median = ((lower + upper) / 2.0);
 		}
@@ -190,64 +232,4 @@ public class StaticPageService {
 			MinValueRezept = value;
 		}
 	}
-	// -------------- Class Variables --------------
-	public String BASEURL;
-	public String tempIds;
-	public String permanentId;
-	public String kitchenId;
-	public String pdf;
-	
-	public CatRyzer catryzer;
-	
-	Logger rootLogger = Logger.getLogger("");
-	public boolean everythingFine = true;
-
-	// Hole Rezepte die zum Benutzer gehören
-	
-
-	public  UserService userService = UserServiceFactory.getUserService();
-	public  User user = userService.getCurrentUser();
-	DAO dao = new DAO();
-	
-	public List<CatRyzer.DateValue> valuesByDate;
-	public List<CatRyzer.CategoryValue> valuesByCategory;
-	public List<CatRyzer.CategoryValuesByDates> valuesByDate_Category;
-
-
-	public Boolean doItWithPermanentIds = true;
-
-	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-
-
-	public DecimalFormat formatter = new DecimalFormat("##");
-	public SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
-	Long kitchenLongId = 0L;
-
-
-
-
-	// some precalculation of values
-
-
-
-	public Double MaxValueRezept = 0.0;
-	public Double MinValueRezept = 10000000.0;
-	Double average = 0.0;
-	Double median = 0.0;
-	Integer counter = 0;
-
-	//Calendar rightNow = Calendar.getInstance();
-	//Integer iTimeStamp = rightNow.get(Calendar.WEEK_OF_YEAR);
-
-	Date date = new Date();
-	long iTimeStamp = (long) (date.getTime() * .00003);
-
-
-	// calculate average, median, min, max
-
-	ArrayList<Double> values = new ArrayList<Double>();
-	
-
-
-
 }
