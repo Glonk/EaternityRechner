@@ -17,6 +17,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import ch.eaternity.server.DAO;
+import ch.eaternity.shared.comparators.CategoryValuesComparator;
 import ch.eaternity.shared.comparators.RezeptDateComparator;
 
 import com.google.common.collect.HashMultimap;
@@ -221,6 +222,8 @@ public class CatRyzer {
 				MapOfcatMultiMap.put(date, catMM);
 			}
 			
+			
+
 			// sort the set
 			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
 			
@@ -234,6 +237,8 @@ public class CatRyzer {
 			for (CatMapping mapping : mappings) {
 				categoryValues.add(new CategoryValue(mapping.category, getCo2Value(catMultiMap.get(mapping.category))));
 			}
+			
+
 			
 			// sort the set
 			List<Date> dateOfKeys2 = asSortedList(MapOfcatMultiMap.keySet());
