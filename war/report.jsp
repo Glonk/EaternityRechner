@@ -740,7 +740,8 @@ for(Recipe recipe: variables.kitchenRecipes){
 counterIterate = 0;
 
 
-
+variables.MaxValueRezept = 0.0;
+variables.MinValueRezept = 10000000.0;
 //  go over the Recipes in the Workspace
 for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
 
@@ -825,7 +826,8 @@ Date5: AllCategory,co2value
 
 <%
 counterIterate = 0;
-
+variables.MaxValueRezept = 0.0;
+variables.MinValueRezept = 10000000.0;
 //  go over the Recipes in the Workspace
 for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 
@@ -927,6 +929,8 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Ca
 <%
 
 //  go over the Recipes in the Workspace
+variables.MaxValueRezept = 0.0;
+variables.MinValueRezept = 10000000.0;
 
 for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
 
@@ -992,6 +996,9 @@ class="alternate"
 
 	<%
 
+
+
+
 	// valuesByDate_Calender
 
 	for(Recipe recipe: variables.kitchenRecipes){
@@ -1033,7 +1040,7 @@ class="alternate"
 
 				<tr>
 				<td><div class="amount"><%= formatted %> kg CO<sub>2</sub>* total</div></td>
-				<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
+				<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="200" /></td>
 				</tr>
 
 				<tr>
@@ -1147,10 +1154,10 @@ Overview Categories
 
 
 // get ingredients per category example
-for(String category : variables.catryzer.catMultiMap.keySet())
+for(CatRyzer.CatMapping mapping : variables.catryzer.mappings)
 {
 	
-	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(category);
+	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(mapping.category);
 	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames_en(ingredientsSpecification);
 
 %>
@@ -1166,7 +1173,7 @@ for(String category : variables.catryzer.catMultiMap.keySet())
 <td class="bottom-border">
 <!-- <img class="smile" src="smiley8.png" alt="smiley" />
 <img class="smile" src="smiley8.png" alt="smiley" /> -->
-<h3>Category: <%= category %></h3>
+<h3>Category: <%= mapping.category %></h3>
 </td>
 <td class="left-border"></td>
 </tr>

@@ -3,6 +3,7 @@ package ch.eaternity.shared;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import ch.eaternity.server.DAO;
+import ch.eaternity.shared.comparators.RezeptDateComparator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -28,7 +30,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 public class CatRyzer {
 	
 	// -------------- Inner Classes --------------
-	private class CatMapping {
+	public class CatMapping {
 		public String category;
 		public List<String> hastags = new ArrayList<String>();
 		public List<String> hasnotthistags  = new ArrayList<String>();
@@ -100,7 +102,7 @@ public class CatRyzer {
 	private List<Recipe> recipes 					= new ArrayList<Recipe>();
 	private List<IngredientSpecification> ingSpecs  = new ArrayList<IngredientSpecification>();
 	private List<Ingredient> ingredients 			= new ArrayList<Ingredient>();
-	private List<CatMapping> mappings 				= new ArrayList<CatMapping>();
+
 	private boolean initializedMapping = false;
 	private boolean recipesLoaded = false;
 	
@@ -110,6 +112,7 @@ public class CatRyzer {
 	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
 	
 	public Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
+	public List<CatMapping> mappings 				= new ArrayList<CatMapping>();
 	
 	// -------------- Functions --------------
 	// Constructors
@@ -211,8 +214,12 @@ public class CatRyzer {
 				MapOfcatMultiMap.put(date, catMM);
 			}
 			
+			// sort the set
+			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
+			
+			
 			// filling own objects
-			for (Date date : dateMultiMap.keySet()) {
+			for (Date date : dateOfKeys) {
 				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
 				dateValues.add(new DateValue(date, getCo2Value(ingredientsSpecification)));
 			}
@@ -221,8 +228,10 @@ public class CatRyzer {
 				categoryValues.add(new CategoryValue(mapping.category, getCo2Value(catMultiMap.get(mapping.category))));
 			}
 			
+			// sort the set
+			List<Date> dateOfKeys2 = asSortedList(MapOfcatMultiMap.keySet());
 			
-			for(Date date : MapOfcatMultiMap.keySet())
+			for(Date date : dateOfKeys2)
 			{
 				List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
 				
@@ -243,6 +252,8 @@ public class CatRyzer {
 			}
 			
 			// int i = 1;
+			
+		
 			
 		}
 		else
@@ -276,6 +287,13 @@ public class CatRyzer {
 	}
 	*/
 	/// error end
+	
+	public static
+	<T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+	  List<T> list = new ArrayList<T>(c);
+	  Collections.sort(list);
+	  return list;
+	}
 	
 	private void fillCatMultiMap(Multimap<String,IngredientSpecification> catMM, IngredientSpecification ingSpec)
 	{

@@ -67,8 +67,7 @@ public class StaticPageService {
 	public SimpleDateFormat dateFormatter = new SimpleDateFormat("d. MMMM yyyy",Locale.ENGLISH);
 
 	// some precalculation of values
-	public Double MaxValueRezept = 0.0;
-	public Double MinValueRezept = 10000000.0;
+
 	Double average = 0.0;
 	Double median = 0.0;
 	Integer counter = 0;
@@ -142,11 +141,17 @@ public class StaticPageService {
 		}
 		Collections.sort(kitchenRecipes,new RezeptDateComparator());
 
+		Calendar c = Calendar.getInstance();
 		//  go over the Recipes in the Workspace
 		for(Recipe recipe: kitchenRecipes){
 			recipe.setCO2Value();
 			Double value = recipe.getCO2Value();
 			getMinMax(value);
+			
+			// TODO -> remove this baaaaad hack. Dates where saved wrongly with EHL
+			c.setTime(recipe.cookingDate);
+			c.add(Calendar.DATE, 1);  // number of days to add
+			recipe.cookingDate = c.getTime();
 		}
 		if (values.size() > 0)
 			setMedianAverage();
@@ -163,7 +168,7 @@ public class StaticPageService {
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Rice products","rice"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Spices & herbs","spices&herbs"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Sweets","sweets"));
-		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetable oils and fat","oil and fat,-animal-based,-animal based"));
+		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetable oils and fat","oil and fats,-animal-based,-animal based"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetables and fruits","legumes,fruits,mushrooms"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Preprocessed vegetable products","preprocessed,-animal-based,-animal based"));
 		categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Bread and Grain Products","grain"));
@@ -211,8 +216,6 @@ public class StaticPageService {
 
 	private void setMedianAverage() {
 		average = (average /counter);
-		MinValueRezept = MinValueRezept;
-		MaxValueRezept = MaxValueRezept;
 
 		Collections.sort(values);
 
@@ -231,7 +234,10 @@ public class StaticPageService {
 		}
 	}
 
+	public Double MaxValueRezept = 0.0;
+	public Double MinValueRezept = 10000000.0;
 	private void getMinMax(Double value) {
+		
 		values.add((double) value);
 		average = average + value;
 		counter++;
