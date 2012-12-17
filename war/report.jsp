@@ -841,7 +841,8 @@ for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 
 for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 	String length = variables.formatter.format(ingredientValue.co2value/variables.MaxValueRezept*200);
-	if (counterIterate > 10){
+	
+	if (variables.valuesByIngredient.indexOf(ingredientValue) > 10){
 		break;
 	} 
 %>
