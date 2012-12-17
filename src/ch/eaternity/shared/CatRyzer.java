@@ -265,11 +265,11 @@ public class CatRyzer {
 			
 			// fill Ingredients Mulimap for worst Ingredient beast top 10 
 			for (IngredientSpecification ingSpec : ingSpecs) {
-				ingMultiMap.put(ingSpec.getName(), ingSpec);
+				ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
 			}
 			
 			for (IngredientSpecification ingSpec : ingSpecs) {
-				String name = ingSpec.getName();
+				String name = getIngredientName_en(ingSpec);
 				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
 				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getAmount(ingCollection)));
 			}

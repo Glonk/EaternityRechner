@@ -1151,8 +1151,10 @@ Category2: Ingredient1, Ingredient2
 <tr>
 <td></td>
 <td class="gray left-border"></td>
+<td></td>
 <td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
 <td></td>
+<td class="gray co2label">kg</td>
 </tr>
 
 <tr>
@@ -1160,10 +1162,24 @@ Category2: Ingredient1, Ingredient2
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
+<td></td>
 </tr>
 
 <%
 counterIterate = 0;
+
+variables.MaxValueRezept = 0.0;
+variables.MinValueRezept = 10000000.0;
+//  go over the Recipes in the Workspace
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+
+	if(ingredientValue.co2value>variables.MaxValueRezept){
+		variables.MaxValueRezept = ingredientValue.co2value;
+	} 
+	if(ingredientValue.co2value<variables.MinValueRezept){
+		variables.MinValueRezept = ingredientValue.co2value;
+	}
+}
 
 
 for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
@@ -1179,8 +1195,8 @@ class="alternate"
 <%= ingredientValue.categoryName %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td><%= ingredientValue.amountGram/1000 %></td>
 <td class="co2value" ><%= variables.formatter.format(ingredientValue.co2value/1000) %></td>
+<td><%= ingredientValue.amountGram/1000 %></td>
 </tr>
 
 
