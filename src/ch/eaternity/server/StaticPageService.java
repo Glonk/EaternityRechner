@@ -59,6 +59,7 @@ public class StaticPageService {
 	public List<CatRyzer.DateValue> valuesByDate;
 	public List<CatRyzer.CategoryValue> valuesByCategory;
 	public List<CatRyzer.CategoryValuesByDates> valuesByDate_Category;
+	public List<CatRyzer.CategoryValue> valuesByIngredient;
 
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	Long kitchenLongId = 0L;
@@ -210,6 +211,8 @@ public class StaticPageService {
 		valuesByCategory = catryzer.getCatVals();
 
 		valuesByDate_Category = catryzer.getCatValsByDates();
+		
+		valuesByIngredient = catryzer.getIngVals();
 
 		
 	}

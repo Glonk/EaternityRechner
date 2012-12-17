@@ -73,12 +73,17 @@ public class CatRyzer {
 	public class CategoryValue {
 		public String categoryName;
 		public Double co2value;
+		public Double amountGram;
 		
 		public CategoryValue(){}
 		
 		public CategoryValue(String name, Double co2value) {
 			this.categoryName = name;
 			this.co2value = co2value;
+		}
+		public CategoryValue(String name, Double co2value, Double amountGram) {
+			this(name,co2value);
+			this.amountGram = amountGram;
 		}
 	}
 	
@@ -110,7 +115,9 @@ public class CatRyzer {
 	private List<DateValue> dateValues 				= new ArrayList<DateValue>();
 	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
 	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
+	private List<CategoryValue> ingredientValues 	= new ArrayList<CategoryValue>();
 	
+	public Multimap<String,IngredientSpecification> ingMultiMap = HashMultimap.create();
 	public Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
 	public List<CatMapping> mappings 				= new ArrayList<CatMapping>();
 	
@@ -251,8 +258,16 @@ public class CatRyzer {
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
 			
-			// int i = 1;
+			// fill Ingredients Mulimap for worst Ingredient beast top 10 
+			for (IngredientSpecification ingSpec : ingSpecs) {
+				ingMultiMap.put(ingSpec.getName(), ingSpec);
+			}
 			
+			for (IngredientSpecification ingSpec : ingSpecs) {
+				String name = ingSpec.getName();
+				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
+				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getAmount(ingCollection)));
+			}
 		
 			
 		}
@@ -272,6 +287,9 @@ public class CatRyzer {
 		return this.dateValues;
 	}
 	
+	public List<CategoryValue> getIngVals() {
+		return this.ingredientValues;	
+	}
 	// -------------- Private --------------
 	
 	
@@ -316,6 +334,16 @@ public class CatRyzer {
 		}
 		return co2value;
 	}
+	
+	private Double getAmount(Collection<IngredientSpecification> ingredientsSpecifications) {
+		Double amount = 0.0;
+		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
+			amount = amount + ingredientSpecification.getMengeGramm();
+		}
+		return amount;
+	}
+	
+	
 	
 	public Set<String> getIngredientsNames(Collection<IngredientSpecification> ingSpecs){
 		Set<String> names = new HashSet<String>();
