@@ -273,6 +273,9 @@ public class CatRyzer {
 				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
 				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getAmount(ingCollection)));
 			}
+			
+			// sort CategoryValue by co2-value
+			Collections.sort(ingredientValues,new CategoryValuesComparator());
 		
 			
 		}

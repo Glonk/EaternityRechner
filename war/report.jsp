@@ -802,6 +802,72 @@ Date5: AllCategory,co2value
 
 
 
+<br /><br /><br />
+
+<table cellspacing="0" cellpadding="0" class="table toc" >
+
+<tr>
+<td></td>
+<td class="gray left-border"></td>
+<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="table-header bottom-border">Top 10 CO2-intensive Ingredients</td>
+<td class="left-border"></td>
+<td class="co2value" ></td>
+<td ></td>
+</tr>
+
+
+
+<%
+counterIterate = 0;
+
+variables.MaxValueRezept = 0.0;
+variables.MinValueRezept = 10000000.0;
+//  go over the Recipes in the Workspace
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+
+	if(ingredientValue.co2value>variables.MaxValueRezept){
+		variables.MaxValueRezept = ingredientValue.co2value;
+	} 
+	if(ingredientValue.co2value<variables.MinValueRezept){
+		variables.MinValueRezept = ingredientValue.co2value;
+	}
+}
+
+
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+	String length = variables.formatter.format(ingredientValue.co2value/variables.MaxValueRezept*200);
+	if (counterIterate > 10){
+		break;
+	} 
+%>
+
+<tr <%
+int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
+if(order == 1) { %>
+class="alternate"
+<% }%> > 
+<td class="menu-name">
+<%= ingredientValue.categoryName %> (<%= ingredientValue.amountGram/1000 %> kg)
+</td>
+<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
+<td class="co2value" ><%= variables.formatter.format(ingredientValue.co2value/1000) %></td>
+
+</tr>
+
+
+<%
+	}
+%>
+
+</table>
+
+
+
 
 
  <!-- Total Impact -->
@@ -1143,68 +1209,6 @@ Category2: Ingredient1, Ingredient2
 
 
 
-
-<br /><br /><br />
-
-<table cellspacing="0" cellpadding="0" class="table toc" >
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td></td>
-<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
-<td></td>
-<td class="gray co2label">kg</td>
-</tr>
-
-<tr>
-<td class="table-header bottom-border">Worst 10 Ingredients</td>
-<td class="left-border"></td>
-<td class="co2value" ></td>
-<td ></td>
-<td></td>
-</tr>
-
-<%
-counterIterate = 0;
-
-variables.MaxValueRezept = 0.0;
-variables.MinValueRezept = 10000000.0;
-//  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
-
-	if(ingredientValue.co2value>variables.MaxValueRezept){
-		variables.MaxValueRezept = ingredientValue.co2value;
-	} 
-	if(ingredientValue.co2value<variables.MinValueRezept){
-		variables.MinValueRezept = ingredientValue.co2value;
-	}
-}
-
-
-for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
-	String length = variables.formatter.format(ingredientValue.co2value/variables.MaxValueRezept*200);
-%>
-
-<tr <%
-int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
-if(order == 1) { %>
-class="alternate"
-<% }%> > 
-<td class="menu-name">
-<%= ingredientValue.categoryName %>
-</td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(ingredientValue.co2value/1000) %></td>
-<td><%= ingredientValue.amountGram/1000 %></td>
-</tr>
-
-
-<%
-	}
-%>
-
-</table>
 
 
 <br /><br /><br />

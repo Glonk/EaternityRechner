@@ -13,7 +13,7 @@ public class CategoryValuesComparator implements Comparator<CategoryValue> {
 		Double o1 = r1.co2value;
 		Double o2 = r2.co2value;
 
-		return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
+		return Double.valueOf(o2).compareTo(Double.valueOf(o1));
 
 	}
 }
