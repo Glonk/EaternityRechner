@@ -814,7 +814,7 @@ Date5: AllCategory,co2value
 </tr>
 
 <tr>
-<td class="table-header bottom-border">Top 10 CO2-intensive Ingredients</td>
+<td class="table-header bottom-border">Top 20 CO<sub>2</sub>-intensive Ingredients</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
@@ -842,7 +842,7 @@ for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 	String length = variables.formatter.format(ingredientValue.co2value/variables.MaxValueRezept*200);
 	
-	if (variables.valuesByIngredient.indexOf(ingredientValue) == 10){
+	if (variables.valuesByIngredient.indexOf(ingredientValue) == 20){
 		break;
 	} 
 %>
@@ -853,7 +853,7 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= ingredientValue.categoryName %> (<%= ingredientValue.amountGram/1000 %> kg)
+<%= ingredientValue.categoryName %> <!-- (<%= ingredientValue.amountGram/1000 %> kg) -->
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= variables.formatter.format(ingredientValue.co2value/1000) %></td>
