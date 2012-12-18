@@ -24,6 +24,9 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -179,52 +182,14 @@ public class InfoZutatDialog<T> extends Composite {
 			
 			newExtractionBox.setWidth(Integer.toString(width)+"px");
 			newExtractionBox.setVisible(true);
+			newExtractionBox.setText("");
 			
 			kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
 
 			clickerHandler = new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					try {
-						Geocoder geocoder = new Geocoder();
-						geocoder.setBaseCountryCode("ch");
-					    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
-					    	
-						    public void onFailure(int statusCode) {
-						    	  kmText.setHTML("Adresse nicht auffindbar!");
-						    	  Timer t = new Timer() {
-						    		  public void run() {
-						    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
-						    		  }
-						    	  };
-						    	  t.schedule(1000);
-						    }
-	
-						    public void onSuccess(JsArray<Placemark> locations) {
-						    	  Placemark place = locations.get(0);
-						    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
-						    	  herkuenfte.insertItem(place.getAddress(), 0);
-						    	  Extraction element = new Extraction(place.getAddress());
-						    	  // TODO come up with stuff like seasons and so forth..
-						    	  element.startSeason = zutat.stdExtraction.startSeason;
-						    	  element.stopSeason = zutat.stdExtraction.stopSeason;
-						    	  element.stdCondition = zutat.stdExtraction.stdCondition;
-						    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
-						    	  element.stdProduction = zutat.stdExtraction.stdProduction;
-		
-						    	  zutat.getExtractions().add(0, element);
-						    	  newExtractionBox.setVisible(false);
-						    	  herkuenfte.setVisible(true);
-						    	  herkuenfte.setSelectedIndex(0);
-						    	  
-						    	  triggerHerkunftChange(zutat, herkuenfte);
-					        }
-				    });
-					    
-					} finally {
-				    	//TODO no request happens if you are not online
-						// check earlier an deactiate the moreExtractions "plus"
-				    }
+					calculateExtractionDistance(herkuenfte);
 				}
 			};
 			if(handlerNotAdded){
@@ -232,8 +197,61 @@ public class InfoZutatDialog<T> extends Composite {
 				handlerNotAdded = false;
 			}
 			newExtractionBox.setFocus(true);
-				
+			newExtractionBox.addKeyDownHandler(new KeyDownHandler() {
+				//int numEnterKeyPressed = 0;
+				public void onKeyDown(KeyDownEvent event) {
+					if(KeyCodes.KEY_ENTER == event.getNativeKeyCode())
+					{
+						//numEnterKeyPressed++;
+						//if (numEnterKeyPressed % 2 == 0)
+							calculateExtractionDistance(herkuenfte);
+					}
+				}
+			});
 			
+	}
+			
+	private void calculateExtractionDistance(final ListBox herkuenfte) {
+		try {
+			Geocoder geocoder = new Geocoder();
+			geocoder.setBaseCountryCode("ch");
+		    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
+		    	
+			    public void onFailure(int statusCode) {
+			    	  kmText.setHTML("Adresse nicht auffindbar!");
+			    	  Timer t = new Timer() {
+			    		  public void run() {
+			    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+			    		  }
+			    	  };
+			    	  t.schedule(1000);
+			    }
+
+			    public void onSuccess(JsArray<Placemark> locations) {
+			    	  Placemark place = locations.get(0);
+			    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
+			    	  herkuenfte.insertItem(place.getAddress(), 0);
+			    	  Extraction element = new Extraction(place.getAddress());
+			    	  // TODO come up with stuff like seasons and so forth..
+			    	  element.startSeason = zutat.stdExtraction.startSeason;
+			    	  element.stopSeason = zutat.stdExtraction.stopSeason;
+			    	  element.stdCondition = zutat.stdExtraction.stdCondition;
+			    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
+			    	  element.stdProduction = zutat.stdExtraction.stdProduction;
+
+			    	  zutat.getExtractions().add(0, element);
+			    	  newExtractionBox.setVisible(false);
+			    	  herkuenfte.setVisible(true);
+			    	  herkuenfte.setSelectedIndex(0);
+			    	  
+			    	  triggerHerkunftChange(zutat, herkuenfte);
+		        }
+	    });
+		    
+		} finally {
+	    	//TODO no request happens if you are not online
+			// check earlier an deactiate the moreExtractions "plus"
+	    }
 	}
 	
 	public void setValues( final Ingredient zutat){
