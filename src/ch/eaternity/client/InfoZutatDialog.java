@@ -84,7 +84,9 @@ public class InfoZutatDialog<T> extends Composite {
 	private final static Geocoder geocoder = new Geocoder();
 	final TextBox newExtractionBox = new TextBox();
 	ClickHandler clickerHandler = null;
-	Boolean handlerNotAdded = true;
+	KeyDownHandler keyDownHandler = null;
+	Boolean handlersNotAdded = true;
+	
 	
 	
 	// UI Fields
@@ -175,83 +177,105 @@ public class InfoZutatDialog<T> extends Composite {
 
 	
 	private void differentOriginSelected(final ListBox herkuenfte){
-
-
-			int width = herkuenfte.getOffsetWidth();
-			herkuenfte.setVisible(false);
-			
-			newExtractionBox.setWidth(Integer.toString(width)+"px");
-			newExtractionBox.setVisible(true);
-			newExtractionBox.setText("");
-			
-			kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
-
-			clickerHandler = new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
+		int width = herkuenfte.getOffsetWidth();
+		herkuenfte.setVisible(false);
+		
+		newExtractionBox.setWidth(Integer.toString(width)+"px");
+		newExtractionBox.setVisible(true);
+		newExtractionBox.setText("");
+		
+		kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+		
+		clickerHandler = new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				calculateExtractionDistance(herkuenfte);
+			}
+		};
+		
+		keyDownHandler = new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if(KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
 					calculateExtractionDistance(herkuenfte);
 				}
-			};
-			if(handlerNotAdded){
-				kmText.addClickHandler(clickerHandler);
-				handlerNotAdded = false;
-			}
-			newExtractionBox.setFocus(true);
-			newExtractionBox.addKeyDownHandler(new KeyDownHandler() {
-				//int numEnterKeyPressed = 0;
-				public void onKeyDown(KeyDownEvent event) {
-					if(KeyCodes.KEY_ENTER == event.getNativeKeyCode())
-					{
-						//numEnterKeyPressed++;
-						//if (numEnterKeyPressed % 2 == 0)
-							calculateExtractionDistance(herkuenfte);
-					}
+				if(KeyCodes.KEY_TAB == event.getNativeKeyCode()) {
+					
 				}
-			});
-			
+			}
+		};
+		
+		if(handlersNotAdded){
+			kmText.addClickHandler(clickerHandler);
+			newExtractionBox.addKeyDownHandler(keyDownHandler);
+			handlersNotAdded = false;
+		}
+		newExtractionBox.setFocus(true);
 	}
 			
 	private void calculateExtractionDistance(final ListBox herkuenfte) {
-		try {
-			Geocoder geocoder = new Geocoder();
-			geocoder.setBaseCountryCode("ch");
-		    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
-		    	
-			    public void onFailure(int statusCode) {
-			    	  kmText.setHTML("Adresse nicht auffindbar!");
-			    	  Timer t = new Timer() {
-			    		  public void run() {
-			    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
-			    		  }
-			    	  };
-			    	  t.schedule(1000);
-			    }
-
-			    public void onSuccess(JsArray<Placemark> locations) {
-			    	  Placemark place = locations.get(0);
-			    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
-			    	  herkuenfte.insertItem(place.getAddress(), 0);
-			    	  Extraction element = new Extraction(place.getAddress());
-			    	  // TODO come up with stuff like seasons and so forth..
-			    	  element.startSeason = zutat.stdExtraction.startSeason;
-			    	  element.stopSeason = zutat.stdExtraction.stopSeason;
-			    	  element.stdCondition = zutat.stdExtraction.stdCondition;
-			    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
-			    	  element.stdProduction = zutat.stdExtraction.stdProduction;
-
-			    	  zutat.getExtractions().add(0, element);
-			    	  newExtractionBox.setVisible(false);
-			    	  herkuenfte.setVisible(true);
-			    	  herkuenfte.setSelectedIndex(0);
-			    	  
-			    	  triggerHerkunftChange(zutat, herkuenfte);
-		        }
-	    });
-		    
-		} finally {
-	    	//TODO no request happens if you are not online
-			// check earlier an deactiate the moreExtractions "plus"
-	    }
+		// Don't add if already exists
+	  	boolean found = false;
+	  	for (int i = 0; i<herkuenfte.getItemCount(); i++) {
+	  		if (herkuenfte.getValue(i).equals(newExtractionBox.getText())) {
+	  			found = true;
+	  			newExtractionBox.setVisible(false);
+	  			herkuenfte.setSelectedIndex(i);
+	  			herkuenfte.setVisible(true);
+	  			herkuenfte.setFocus(true);
+	  			triggerHerkunftChange(zutat, herkuenfte);
+	  		}
+		}	
+	  	
+	  	if (found == false) {	
+			try {
+				Geocoder geocoder = new Geocoder();
+				geocoder.setBaseCountryCode("ch");
+			    geocoder.getLocations(newExtractionBox.getText(), new LocationCallback() {
+			    	
+				    public void onFailure(int statusCode) {
+				    	  kmText.setHTML("Adresse nicht auffindbar!");
+				    	  Timer t = new Timer() {
+				    		  public void run() {
+				    			  kmText.setHTML("<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>");
+				    		  }
+				    	  };
+				    	  t.schedule(1000);
+				    }
+	
+				    public void onSuccess(JsArray<Placemark> locations) {
+				    	  Placemark place = locations.get(0);
+				    	  GWT.log("Sie befinden sich in: " +place.getAddress() +"  ");
+				    	  // Don't add if already exists
+				    	  boolean found = false;
+				    	  for (int i = 0; i<herkuenfte.getItemCount(); i++) {
+				    		  if (herkuenfte.getValue(i).equals(place.getAddress()))
+				    			  found = true;
+				    	  }
+				    	  if (found == false)
+				    		  herkuenfte.insertItem(place.getAddress(), 0);
+				    	  Extraction element = new Extraction(place.getAddress());
+				    	  // TODO come up with stuff like seasons and so forth..
+				    	  element.startSeason = zutat.stdExtraction.startSeason;
+				    	  element.stopSeason = zutat.stdExtraction.stopSeason;
+				    	  element.stdCondition = zutat.stdExtraction.stdCondition;
+				    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
+				    	  element.stdProduction = zutat.stdExtraction.stdProduction;
+				    	  
+				    	  //don't add new extraction if already in the list
+				    	  if (!zutat.getExtractions().contains(element))
+				    		  zutat.getExtractions().add(0, element);
+				    	  newExtractionBox.setVisible(false);
+				    	  herkuenfte.setVisible(true);
+				    	  herkuenfte.setSelectedIndex(0);
+				    	  herkuenfte.setFocus(true);
+				    	  triggerHerkunftChange(zutat, herkuenfte);
+			        }
+			    });
+			}
+			finally {
+			}
+		}			
 	}
 	
 	public void setValues( final Ingredient zutat){
@@ -263,6 +287,51 @@ public class InfoZutatDialog<T> extends Composite {
 			specificationTable.setHTML(0, 0, "Saison");
 			updateSaison(zutatSpec);
 		}
+		
+		//Cost
+		int row2 = specificationTable.getRowCount();
+		specificationTable.setHTML(row2, 0, "Kosten");
+		HorizontalPanel horPanel = new HorizontalPanel();
+		final TextBox costTextBox = new TextBox();
+		final HTML costError = new HTML();
+		costError.setStyleName("costError");
+		costTextBox.setWidth("60px");
+		specificationTable.setWidget(row2,1,horPanel);
+		
+		NumberFormat df = NumberFormat.getFormat("00.##");
+		double cost = zutatSpec.getCost();
+		
+		if(cost != 0.0d)
+			costTextBox.setText(df.format(cost));
+		
+		costTextBox.addBlurHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event)  {
+				String text = costTextBox.getText();
+				try { 
+					if ("".equals(text)) {}
+					else {
+						//DecimalFormat df = new DecimalFormat();
+						//df.setMaximumFractionDigits(2);
+						//zutatSpec.setCost(df.parse(text).doubleValue());
+						costError.setText("");
+						double cost = Double.parseDouble(text);
+						if (cost > 0.0)
+							zutatSpec.setCost(cost);
+						else
+							costError.setText("Wert ungueltig");
+					}
+				}
+				catch (NumberFormatException nfe) {
+					costError.setText("Wert ungueltig");
+				}
+			}
+		});
+		
+		HTML costLabel = new HTML("CHF");
+		horPanel.add(costTextBox);
+		horPanel.add(costLabel);
+		horPanel.add(costError);
 		
 		//Extractions
 		if(zutat.getExtractions() != null && zutat.getExtractions().size()>0){
@@ -312,6 +381,7 @@ public class InfoZutatDialog<T> extends Composite {
 	    	
 	    	newExtractionBox.setVisible(false);
 			
+	    	// ------------------ This part of the code not really in use?? -------------
 	    	//TODO each extraction has its own season... this has flaws .. hack? right now it is anyway a hack
 	    	final Anchor moreExtractions = new Anchor("+");
 	    	moreExtractions.setStylePrimaryName("ohhLittlePlus");
@@ -372,9 +442,9 @@ public class InfoZutatDialog<T> extends Composite {
 						    }
 						}
 					};
-					if(handlerNotAdded){
+					if(handlersNotAdded){
 						kmText.addClickHandler(clickerHandler);
-						handlerNotAdded = false;
+						handlersNotAdded = false;
 					}
 				}
 			});
@@ -496,52 +566,7 @@ public class InfoZutatDialog<T> extends Composite {
 
 				flow.add(conditionBox);
 			}
-		}
-		
-		//Cost
-		int row = specificationTable.getRowCount();
-		specificationTable.setHTML(row, 0, "Kosten");
-		HorizontalPanel horPanel = new HorizontalPanel();
-		final TextBox costTextBox = new TextBox();
-		final HTML costError = new HTML();
-		costError.setStyleName("costError");
-		costTextBox.setWidth("60px");
-		specificationTable.setWidget(row,1,horPanel);
-		
-		NumberFormat df = NumberFormat.getFormat("00.##");
-		double cost = zutatSpec.getCost();
-		
-		if(cost != 0.0d)
-			costTextBox.setText(df.format(cost));
-		
-		costTextBox.addBlurHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event)  {
-				String text = costTextBox.getText();
-				try { 
-					if ("".equals(text)) {}
-					else {
-						//DecimalFormat df = new DecimalFormat();
-						//df.setMaximumFractionDigits(2);
-						//zutatSpec.setCost(df.parse(text).doubleValue());
-						costError.setText("");
-						double cost = Double.parseDouble(text);
-						if (cost > 0.0)
-							zutatSpec.setCost(cost);
-						else
-							costError.setText("Wert ungueltig");
-					}
-				}
-				catch (NumberFormatException nfe) {
-					costError.setText("Wert ungueltig");
-				}
-			}
-		});
-		
-		HTML costLabel = new HTML("CHF");
-		horPanel.add(costTextBox);
-		horPanel.add(costLabel);
-		horPanel.add(costError);
+		}	
 	}
 	
 

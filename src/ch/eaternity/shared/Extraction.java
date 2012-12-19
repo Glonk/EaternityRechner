@@ -41,7 +41,24 @@ public class Extraction implements Serializable,Cloneable{
     public Extraction(String symbol) {
 		this.symbol = symbol;
 	}
-
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Extraction other = (Extraction) obj;
+        if ((this.symbol == null) ? (other.symbol != null) : !this.symbol.equals(other.symbol)) {
+            return false;
+        }
+        //if (this.age != other.age) {
+        //    return false;
+        //}
+        return true;
+    }
 
 	
 }

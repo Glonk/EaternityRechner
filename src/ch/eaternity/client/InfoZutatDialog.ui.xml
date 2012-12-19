@@ -123,56 +123,42 @@
 			text-align:center;
 			font-weight:bold;
 			color:white;
-
 		}
-  
- 
   </ui:style>
   
   
             
              		
-					<g:HTMLPanel styleName="{style.wholePanel}">
-					<g:Label ui:field="closeLabel"  styleName='{style.close}'>x</g:Label>
-					<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Die Angaben sind kohärent.</g:Label>
-					
-						<g:HTML ui:field="zutatName" styleName='{style.zutatName}'>
-						Zutat Name
- 						</g:HTML>
- 							
- 						<!-- 
-						<ul class="rating onestar">
-							<li class="one">
-								<a href="#" title="1 Star">1</a>
-							</li>
-							<li class="two">
-								<a href="#" title="2 Stars">2</a>
-							</li>
-							<li class="three">
-								<a href="#" title="3 Stars">3</a>
-							</li>
-							<li class="four">
-								<a href="#" title="4 Stars">4</a>
-							</li>
-							<li class="five">
-								<a href="#" title="5 Stars">5</a>
-							</li>
-						</ul>
-						 -->
-					
+<g:HTMLPanel styleName="{style.wholePanel}">
+	<g:Label ui:field="closeLabel"  styleName='{style.close}'>x</g:Label>
+	<g:Label ui:field="hinweisPanel"  styleName='{style.hinweis}'>Die Angaben sind kohärent.</g:Label>
+		<g:HTML ui:field="zutatName" styleName='{style.zutatName}'>Zutat Name</g:HTML>
 				
+			<!-- 
+		<ul class="rating onestar">
+			<li class="one">
+				<a href="#" title="1 Star">1</a>
+			</li>
+			<li class="two">
+				<a href="#" title="2 Stars">2</a>
+			</li>
+			<li class="three">
+				<a href="#" title="3 Stars">3</a>
+			</li>
+			<li class="four">
+				<a href="#" title="4 Stars">4</a>
+			</li>
+			<li class="five">
+				<a href="#" title="5 Stars">5</a>
+			</li>
+		</ul>
+		 -->
+							
 	<g:VerticalPanel styleName="{style.border}">
-
 		<g:FlexTable  styleName="{style.tableSpecs}" ui:field="specificationTable"></g:FlexTable>
-			<g:Label ui:field="hinweisDetails"  styleName='{style.hinweisDetails}'></g:Label>
-				
-		
+		<g:Label ui:field="hinweisDetails"  styleName='{style.hinweisDetails}'></g:Label>
 	</g:VerticalPanel>
-
-
-
-
-					</g:HTMLPanel>
+</g:HTMLPanel>
       		
 
 </ui:UiBinder>
