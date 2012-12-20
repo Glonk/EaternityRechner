@@ -125,49 +125,51 @@ public class Search<T> extends ResizeComposite {
 	// Search Panel (Box and Button)
 	@UiField DockLayoutPanel SearchBox;
 	@UiField HTML SearchLabel;
-	@UiField
-	public
-	static HTML yourRecipesText;
-	@UiField
-	public
-	static SuggestBox SearchInput;
+	@UiField public static HTML yourRecipesText;
+	@UiField public static SuggestBox SearchInput;
 	
 	
 	// Display Results in:
 	@UiField DockLayoutPanel displayResultsPanel;
-	static
-	@UiField HTMLPanel yourMealsPanel;
+	@UiField static HTMLPanel yourMealsPanel;
 	@UiField SplitLayoutPanel mealsSplitPanels;
 	@UiField SplitLayoutPanel subMealsSplitPanels;
 	@UiField HTMLPanel scrollAbleHtml;
 
 	
 	// Search results Tables
-	@UiField
-	static FlexTable table;
-	@UiField
-	static FlexTable tableMeals;
-	@UiField
-	static FlexTable tableMealsYours;
-
+	@UiField static FlexTable table;
+	@UiField static FlexTable tableMeals;
+	@UiField static FlexTable tableMealsYours;
 
 	// CSS reference for the alternating row coloring
-	@UiField
-	static MarkingStyle markingStyle;
-	@UiField
-	static SelectionStyle selectionStyle;
-	@UiField
-	static EvenStyleRow evenStyleRow;
+	@UiField static MarkingStyle markingStyle;
+	@UiField static SelectionStyle selectionStyle;
+	@UiField static EvenStyleRow evenStyleRow;
 	
 	
 	// sorting of the tables:
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
 	
-	/**
-	 * User sorting handlers
-	 */
+	// ---------------------- Class Variables
+
+	// here is the database of all data pushed to....
+	public Data clientData = new Data();
 	
+	public  List<Recipe> selectedKitchenRecipes = new ArrayList<Recipe>();
+	
+	private ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
+	private ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
+	private ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
+	private ArrayList<Ingredient> FoundAlternativeIngredients = new ArrayList<Ingredient>();
+	
+	// re-check this list
+	private ArrayList<Recipe> FoundRezepteHasDesc = new ArrayList<Recipe>();
+	private ArrayList<Recipe> FoundRezepteYoursHasDesc = new ArrayList<Recipe>();
+
+	public String searchString = "";
+		
 	// choose this sorting method
 	static int sortMethod = 1;
 	
@@ -294,28 +296,7 @@ public class Search<T> extends ResizeComposite {
 		}
 	}
 
-
-	
-	
-	/**
-	 * Important Variables
-	 */
-
-	// here is the database of all data pushed to....
-	public Data clientData = new Data();
-	
-	public  List<Recipe> selectedKitchenRecipes = new ArrayList<Recipe>();
-	
-	private ArrayList<Recipe> FoundRezepte = new ArrayList<Recipe>();
-	private ArrayList<Recipe> FoundRezepteYours = new ArrayList<Recipe>();
-	private ArrayList<Ingredient> FoundIngredient = new ArrayList<Ingredient>();
-	private ArrayList<Ingredient> FoundAlternativeIngredients = new ArrayList<Ingredient>();
-	
-	// re-check this list
-	private ArrayList<Recipe> FoundRezepteHasDesc = new ArrayList<Recipe>();
-	private ArrayList<Recipe> FoundRezepteYoursHasDesc = new ArrayList<Recipe>();
-
-	public String searchString = "";
+	// --------------------------- public Methods ----------------------------------
 
 	private Presenter<T> presenter;
 	public void setPresenter(Presenter<T> presenter){
@@ -358,7 +339,450 @@ public class Search<T> extends ResizeComposite {
 			}
 		}
 	}
+
 	
+	// what is this thing for?
+	public void setVDraggerHeight (String height)
+	{
+		//	  SplitLayoutPanel p = (SplitLayoutPanel) this.getWidget ();
+		SplitLayoutPanel p = 	subMealsSplitPanels;
+		int widgetCount = p.getWidgetCount ();
+		for (int i = 0; i < widgetCount; i++) {
+			Widget w = p.getWidget (i);
+			if (w.getStyleName ().equals ("gwt-SplitLayoutPanel-VDragger")) {
+				w.setHeight (height);
+			}
+		}
+	}
+	
+	/**
+	 * The search algorithm
+	 */
+	
+	// TODO this is getting called twice all the time...
+	
+	public void updateResults(String searchString) {
+		table.removeAllRows();
+		tableMeals.removeAllRows();
+		tableMealsYours.removeAllRows();
+
+		FoundIngredient.clear();
+		FoundAlternativeIngredients.clear();
+		FoundRezepte.clear();
+		FoundRezepteYours.clear();
+		
+		FoundRezepteHasDesc.clear();
+		FoundRezepteYoursHasDesc.clear();
+
+		if (searchString.equals(""))
+			changeMarkedRow(0);
+		
+		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
+			// then we have at least one recipe...
+			yourMealsPanel.setVisible(true);
+		} else {
+			yourMealsPanel.setVisible(false);
+		}
+
+		if ((clientData.getIngredients() != null) ){
+
+			// Zutaten
+			// when the search string has a length 
+			if(searchString.trim().length() != 0){
+
+				String[] searches = searchString.split(" ");
+
+				// consider strings with whitespaces, ssek for each word individually
+				for(String search : searches)
+				{
+					// Zutaten
+					// TODO this search algorithm is extremely slow, make faster
+					for(Ingredient zutat : clientData.getIngredients()){
+						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
+							//if(,search) < 3){
+							//Window.alert(zutat.getSymbol().substring(0, search.trim().length()));
+							if(!FoundIngredient.contains(zutat)){
+								zutat.noAlternative = true;
+								FoundIngredient.add(zutat);
+//								displayIngredient(zutat);
+							}
+						}
+					}
+					// only look for alternatives, if there is only 1 result
+					// TODO mark the alternatives as Special!
+					if(FoundIngredient.size() == 1){
+						for(Ingredient zutat :FoundIngredient){
+							if(zutat.getAlternatives() != null){
+								for(Long alternativen_id : zutat.getAlternatives()){
+									for(Ingredient zutat2 : clientData.getIngredients()){
+										if(zutat2.getId().equals(alternativen_id)){
+											if(!FoundAlternativeIngredients.contains(zutat2)){
+												zutat2.noAlternative = false;
+												FoundAlternativeIngredients.add(zutat2);
+//												displayIngredient(zutat2);
+											}
+										}
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+				// Rezepte
+				if(	getYourRecipes() != null){
+					searchRezept(searchString, getYourRecipes(), searches,true);
+				}
+
+				if(	clientData.getPublicRezepte() != null){
+					searchRezept(searchString, clientData.getPublicRezepte(), searches,false);
+				}
+			} 
+			// the search string was empty (so just display everything!)
+			// TODO yet a little slow...
+			else {
+				for(Ingredient zutat : clientData.getIngredients()){
+//					if(!FoundIngredient.contains(zutat)){ // not necessary, as we are getting anyway all of them (no alternatives...)
+						FoundIngredient.add(zutat);
+						zutat.noAlternative = true;
+//					}
+				}
+
+				if(	getYourRecipes() != null && getYourRecipes().size() != 0){
+					yourMealsPanel.setVisible(true);
+					for(Recipe recipe : getYourRecipes()){
+						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
+							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
+								
+								if(recipe.getDirectDescandentID() != null){
+									FoundRezepteYoursHasDesc.add(recipe);
+								} else {
+									FoundRezepteYours.add(recipe);
+								}
+	//							displayRecipeItemCheck(recipe,true);
+							}
+						}	
+					}
+				} else {
+					yourMealsPanel.setVisible(false);
+				}
+
+				if(	clientData.getPublicRezepte() != null){
+					for(Recipe recipe : clientData.getPublicRezepte()){
+						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
+							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
+								if(recipe.getDirectDescandentID() != null){
+									FoundRezepteHasDesc.add(recipe);
+								} else {
+									FoundRezepte.add(recipe);
+								}
+	//							displayRecipeItemCheck(recipe,false);
+							}
+						}
+					}
+				}
+
+			}
+			// all found items are now displayed
+			
+			// mark descendant also!!!!!
+			
+			// display recipes if there is no descendant of them in the list
+			selectUnDescendantedRecipes(FoundRezepteHasDesc,FoundRezepte);
+			selectUnDescendantedRecipes(FoundRezepteYoursHasDesc,FoundRezepteYours);
+
+			// sort and display results
+			sortResults();
+			
+			// mark last position, cutt if needed
+			int listsize = FoundIngredient.size() + FoundAlternativeIngredients.size();
+			if (markedRow <= 0)
+				changeMarkedRow(0);
+			else if(markedRow >= listsize)
+				changeMarkedRow(listsize-1);
+			else
+				changeMarkedRow(markedRow);
+		}	
+	}
+
+
+
+	
+	
+
+
+	/**
+	 * the displaying functions for recipes
+	 */
+	
+	public void displayRecipeItem(final Recipe recipe, boolean yours) {
+		if(yours){
+			final int row = tableMealsYours.getRowCount();
+
+
+			Button removeRezeptButton = new Button(" x ");
+			removeRezeptButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					final ConfirmDialog dlg = new ConfirmDialog("Hiermit werden Sie das...");
+					dlg.statusLabel.setText("Rezept löschen.");
+					
+					//  recheck user if he really want to do this...
+					dlg.yesButton.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							presenter.removeRecipe(recipe);
+							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
+							dlg.hide();
+							dlg.clear();
+						}
+					});
+					dlg.show();
+					dlg.center();
+
+
+				}
+			});
+			// remove button is 1
+			tableMealsYours.setWidget(row, 1, removeRezeptButton);
+
+
+			HTML item = new HTML();
+
+			if(recipe.eaternitySelected != null && recipe.eaternitySelected){
+				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+				item.setStyleName("base-icons carrot");	
+			}
+			if(recipe.regsas != null && recipe.regsas){
+				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+			if(recipe.bio != null && recipe.bio){
+				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+
+			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
+			// Text and CO2 is 0
+			tableMealsYours.setWidget(row,0,item);
+
+			recipe.setCO2Value();
+			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
+			item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g*</div>");
+
+
+
+			if(presenter.getLoginInfo().isAdmin()){
+				// This is ugly, but that's the way it is...
+				if(!recipe.isOpen()){
+					//					if(recipe.openRequested){
+					// this should be a link to make it open
+					Anchor openThis = new Anchor("o");
+					openThis.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							presenter.recipeApproval(recipe,true);
+						}
+					});
+					tableMealsYours.setWidget(row, 2,openThis);
+//					item.setHTML(openThis+" "+item.getHTML());
+					//					}
+				} else {
+					// this should be a link to make it close
+					Anchor closeThis = new Anchor("c");
+					closeThis.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							presenter.recipeApproval(recipe,false);
+						}
+					});
+					tableMealsYours.setWidget(row, 2,closeThis);
+//					item.setHTML(closeThis+" "+item.getHTML());
+				}
+			} else {
+
+//				 how to show, that this recipe is public??
+				
+//				if(recipe.isOpen()){
+//					tableMealsYours.setText(row, 2,"o");
+//				} else if(recipe.openRequested){
+//					tableMealsYours.setText(row, 2,"c");
+//				}
+				
+				//TODO better show in the menu itself
+
+			}
+			
+			//TODO should this not be called after the sort?
+			if ((row % 2) == 1) {
+				String style = evenStyleRow.evenRow();
+				tableMealsYours.getRowFormatter().addStyleName(row, style);
+			}
+
+		}else{
+			final int row = tableMeals.getRowCount();
+			HTML item = new HTML();
+
+			if(recipe.eaternitySelected != null && recipe.eaternitySelected){
+				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+				item.setStyleName("base-icons carrot");	
+			}
+			if(recipe.regsas != null && recipe.regsas){
+				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+			if(recipe.bio != null && recipe.bio){
+				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+
+			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
+
+			// Text and CO2 is 0
+			tableMeals.setWidget(row,0,item);
+
+			recipe.setCO2Value();
+			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
+			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ " g*</div>");
+
+			if(presenter.getLoginInfo() != null && presenter.getLoginInfo().isAdmin()){
+				
+				Anchor removeRezeptButton = new Anchor(" x ");
+				removeRezeptButton.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses...");
+						dlg.statusLabel.setText("Rezept löschen?");
+						// TODO recheck user if he really want to do this...
+						dlg.yesButton.addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								presenter.removeRecipe(recipe);
+								tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));
+								dlg.hide();
+								dlg.clear();
+							}
+						});
+						dlg.show();
+						dlg.center();
+					}
+				});
+				
+				// remove button is 1
+				tableMeals.setWidget(row, 1, removeRezeptButton);
+//				item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g* ("+removeRezeptButton+")</div>");
+
+				if(!recipe.isOpen()){
+					if(recipe.openRequested){
+						// TODO this should be a link to make it open
+						Anchor openThis = new Anchor("o");
+						openThis.addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								presenter.recipeApproval(recipe,true);
+//								 initTable();
+								// why does the layout suck after this button press?????
+							}
+						});
+						tableMeals.setWidget(row, 2,openThis);
+//						item.setHTML(openThis+" "+item.getHTML());
+					}
+				} else {
+					// TODO this should be a link to make it close
+					Anchor closeThis = new Anchor("c");
+					closeThis.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							presenter.recipeApproval(recipe,false);
+//							 initTable();
+						}
+					});
+					tableMeals.setWidget(row, 2,closeThis);
+//					item.setHTML(closeThis+" "+item.getHTML());
+				}
+			}
+
+			//TODO should this not be called after the sort?
+			if ((row % 2) == 1) {
+				String style = evenStyleRow.evenRow();
+				tableMeals.getRowFormatter().addStyleName(row, style);
+			}
+		}
+
+
+	}
+
+
+	/**
+	 * the displaying functions for ingredients
+	 */
+	public void displayIngredient(final Ingredient ingredient) {
+		int row = table.getRowCount();
+
+		/*if ((row % 2) == 1) {
+			String style = evenStyleRow.evenRow();
+			table.getRowFormatter().addStyleName(row, style);
+		}*/
+
+		HTML icon = new HTML();
+
+		//		icon.addMouseListener(
+		//			    new TooltipListener(
+		//			      "add", 15000 /* timeout in milliseconds*/,"bla",400,10));
+
+		// these value (400,1200) are based on the 0.2 and 0.5 quantile of all ingredients
+		if(ingredient.getCo2eValue() < 400){
+//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+			icon.setStyleName("base-icons");
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+		} else	if(ingredient.getCo2eValue() < 1200){
+//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
+			icon.setStyleName("base-icons");	
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+
+		}
+
+		if(ingredient.hasSeason != null && ingredient.hasSeason){
+//			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
+//			presenter
+			Date date = null;
+			if (presenter != null) {
+				date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
+			}
+			
+			// In Tagen
+			//		String test = InfoZutat.zutat.getStartSeason();
+			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.startSeason);		
+			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.stopSeason );
+
+			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
+					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			} 
+		}
+
+		if(ingredient.noAlternative){
+		icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
+		
+		} else {
+			icon.setHTML(icon.getHTML()+"(alt): " +ingredient.getSymbol());
+		}
+
+		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
+
+		table.setWidget(row,0,icon);
+
+
+	}
+
+
+
+	public void setFoundRezepte(ArrayList<Recipe> foundRezepte) {
+		FoundRezepte = foundRezepte;
+	}
+
+	public ArrayList<Recipe> getFoundRezepte() {
+		return FoundRezepte;
+	}
+
+	public void setFoundIngredient(ArrayList<Ingredient> foundIngredient) {
+		FoundIngredient = foundIngredient;
+	}
+
+	public ArrayList<Ingredient> getFoundIngredient() {
+		return FoundIngredient;
+	}
+	
+	// ----------------------------- private Methods -------------------------------------------
 	
 	@SuppressWarnings("deprecation")
 	private void initToolTips() {
@@ -408,23 +832,6 @@ public class Search<T> extends ResizeComposite {
 						"Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
 
 	}
-
-	
-	// what is this thing for?
-	public void setVDraggerHeight (String height)
-	{
-		//	  SplitLayoutPanel p = (SplitLayoutPanel) this.getWidget ();
-		SplitLayoutPanel p = 	subMealsSplitPanels;
-		int widgetCount = p.getWidgetCount ();
-		for (int i = 0; i < widgetCount; i++) {
-			Widget w = p.getWidget (i);
-			if (w.getStyleName ().equals ("gwt-SplitLayoutPanel-VDragger")) {
-				w.setHeight (height);
-			}
-		}
-	}
-
-	
 	private void initTable() {
 		// this is just basic design stuff
 		table.getColumnFormatter().setWidth(0, "120px");
@@ -653,163 +1060,6 @@ public class Search<T> extends ResizeComposite {
 		}
 	}
 	
-	
-	
-
-
-	
-	
-	/**
-	 * The search algorithm
-	 */
-	
-	// TODO this is getting called twice all the time...
-	
-	public void updateResults(String searchString) {
-		table.removeAllRows();
-		tableMeals.removeAllRows();
-		tableMealsYours.removeAllRows();
-
-		FoundIngredient.clear();
-		FoundAlternativeIngredients.clear();
-		FoundRezepte.clear();
-		FoundRezepteYours.clear();
-		
-		FoundRezepteHasDesc.clear();
-		FoundRezepteYoursHasDesc.clear();
-
-		if (searchString.equals(""))
-			changeMarkedRow(0);
-		
-		if(	getYourRecipes() != null && getYourRecipes().size() != 0){
-			// then we have at least one recipe...
-			yourMealsPanel.setVisible(true);
-		} else {
-			yourMealsPanel.setVisible(false);
-		}
-
-		if ((clientData.getIngredients() != null) ){
-
-			// Zutaten
-			// when the search string has a length 
-			if(searchString.trim().length() != 0){
-
-				String[] searches = searchString.split(" ");
-
-				// consider strings with whitespaces, ssek for each word individually
-				for(String search : searches)
-				{
-					// Zutaten
-					// TODO this search algorithm is extremely slow, make faster
-					for(Ingredient zutat : clientData.getIngredients()){
-						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
-							//if(,search) < 3){
-							//Window.alert(zutat.getSymbol().substring(0, search.trim().length()));
-							if(!FoundIngredient.contains(zutat)){
-								zutat.noAlternative = true;
-								FoundIngredient.add(zutat);
-//								displayIngredient(zutat);
-							}
-						}
-					}
-					// only look for alternatives, if there is only 1 result
-					// TODO mark the alternatives as Special!
-					if(FoundIngredient.size() == 1){
-						for(Ingredient zutat :FoundIngredient){
-							if(zutat.getAlternatives() != null){
-								for(Long alternativen_id : zutat.getAlternatives()){
-									for(Ingredient zutat2 : clientData.getIngredients()){
-										if(zutat2.getId().equals(alternativen_id)){
-											if(!FoundAlternativeIngredients.contains(zutat2)){
-												zutat2.noAlternative = false;
-												FoundAlternativeIngredients.add(zutat2);
-//												displayIngredient(zutat2);
-											}
-										}
-									}
-								}
-							}
-							break;
-						}
-					}
-				}
-				// Rezepte
-				if(	getYourRecipes() != null){
-					searchRezept(searchString, getYourRecipes(), searches,true);
-				}
-
-				if(	clientData.getPublicRezepte() != null){
-					searchRezept(searchString, clientData.getPublicRezepte(), searches,false);
-				}
-			} 
-			// the search string was empty (so just display everything!)
-			// TODO yet a little slow...
-			else {
-				for(Ingredient zutat : clientData.getIngredients()){
-//					if(!FoundIngredient.contains(zutat)){ // not necessary, as we are getting anyway all of them (no alternatives...)
-						FoundIngredient.add(zutat);
-						zutat.noAlternative = true;
-//						displayIngredient(zutat);
-//					}
-				}
-
-				if(	getYourRecipes() != null && getYourRecipes().size() != 0){
-					yourMealsPanel.setVisible(true);
-					for(Recipe recipe : getYourRecipes()){
-						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
-								
-								if(recipe.getDirectDescandentID() != null){
-									FoundRezepteYoursHasDesc.add(recipe);
-								} else {
-									FoundRezepteYours.add(recipe);
-								}
-	//							displayRecipeItemCheck(recipe,true);
-							}
-						}	
-					}
-				} else {
-					yourMealsPanel.setVisible(false);
-				}
-
-				if(	clientData.getPublicRezepte() != null){
-					for(Recipe recipe : clientData.getPublicRezepte()){
-						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
-								if(recipe.getDirectDescandentID() != null){
-									FoundRezepteHasDesc.add(recipe);
-								} else {
-									FoundRezepte.add(recipe);
-								}
-	//							displayRecipeItemCheck(recipe,false);
-							}
-						}
-					}
-				}
-
-			}
-			// all found items are now displayed
-			
-			// display recipes if there is no descendant of them in the list
-			displayUnDescendantedRecipes(FoundRezepteHasDesc,FoundRezepte);
-			displayUnDescendantedRecipes(FoundRezepteYoursHasDesc,FoundRezepteYours);
-
-			// sort and display results
-			sortResults();
-			
-			// mark last position, cutt if needed
-			int listsize = FoundIngredient.size() + FoundAlternativeIngredients.size();
-			if (markedRow <= 0)
-				changeMarkedRow(0);
-			else if(markedRow >= listsize)
-				changeMarkedRow(listsize-1);
-			else
-				changeMarkedRow(markedRow);
-		}	
-	}
-
-
-
 	private List<Recipe> getYourRecipes() {
 		// TODO Auto-generated method stub
 		if(presenter.getTopPanel().isNotInKitchen){
@@ -892,7 +1142,7 @@ public class Search<T> extends ResizeComposite {
 	/**
 	 * The filtering function
 	 */
-	private static void displayUnDescendantedRecipes(List<Recipe> possibleRecipes, List<Recipe> alreadyFound) {
+	private static void selectUnDescendantedRecipes(List<Recipe> possibleRecipes, List<Recipe> alreadyFound) {
 		
 		// check if descendant is also in the own list
 		Iterator<Recipe> iterator = possibleRecipes.iterator();
@@ -904,7 +1154,6 @@ public class Search<T> extends ResizeComposite {
 					// remove recipeHasDesc
 					iterator.remove();
 					break;
-//					possibleRecipes.remove(recipeHasDesc);
 				}
 			}
 		}
@@ -918,7 +1167,6 @@ public class Search<T> extends ResizeComposite {
 				// is the descendant in the own list
 				if(recipeHasDescAgain.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
 					// remove recipeHasDesc
-//					possibleRecipes.remove(recipeHasDescAgain);
 					iteratorAgain.remove();
 					break;
 				}
@@ -1049,275 +1297,6 @@ public class Search<T> extends ResizeComposite {
 		}
 	}
 	
-
-
-	/**
-	 * the displaying functions for recipes
-	 */
-	
-	public void displayRecipeItem(final Recipe recipe, boolean yours) {
-		if(yours){
-			final int row = tableMealsYours.getRowCount();
-
-
-			Button removeRezeptButton = new Button(" x ");
-			removeRezeptButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					final ConfirmDialog dlg = new ConfirmDialog("Hiermit werden Sie das...");
-					dlg.statusLabel.setText("Rezept löschen.");
-					
-					//  recheck user if he really want to do this...
-					dlg.yesButton.addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							presenter.removeRecipe(recipe);
-							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
-							dlg.hide();
-							dlg.clear();
-						}
-					});
-					dlg.show();
-					dlg.center();
-
-
-				}
-			});
-			// remove button is 1
-			tableMealsYours.setWidget(row, 1, removeRezeptButton);
-
-
-			HTML item = new HTML();
-
-			if(recipe.eaternitySelected != null && recipe.eaternitySelected){
-				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-				item.setStyleName("base-icons carrot");	
-			}
-			if(recipe.regsas != null && recipe.regsas){
-				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-			}
-			if(recipe.bio != null && recipe.bio){
-				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
-			}
-
-			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
-			// Text and CO2 is 0
-			tableMealsYours.setWidget(row,0,item);
-
-			recipe.setCO2Value();
-			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
-			item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g*</div>");
-
-
-
-			if(presenter.getLoginInfo().isAdmin()){
-				// This is ugly, but that's the way it is...
-				if(!recipe.isOpen()){
-					//					if(recipe.openRequested){
-					// this should be a link to make it open
-					Anchor openThis = new Anchor("o");
-					openThis.addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							presenter.recipeApproval(recipe,true);
-						}
-					});
-					tableMealsYours.setWidget(row, 2,openThis);
-//					item.setHTML(openThis+" "+item.getHTML());
-					//					}
-				} else {
-					// this should be a link to make it close
-					Anchor closeThis = new Anchor("c");
-					closeThis.addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							presenter.recipeApproval(recipe,false);
-						}
-					});
-					tableMealsYours.setWidget(row, 2,closeThis);
-//					item.setHTML(closeThis+" "+item.getHTML());
-				}
-			} else {
-
-//				 how to show, that this recipe is public??
-				
-//				if(recipe.isOpen()){
-//					tableMealsYours.setText(row, 2,"o");
-//				} else if(recipe.openRequested){
-//					tableMealsYours.setText(row, 2,"c");
-//				}
-				
-				//TODO better show in the menu itself
-
-			}
-			
-			//TODO should this not be called after the sort?
-			if ((row % 2) == 1) {
-				String style = evenStyleRow.evenRow();
-				tableMealsYours.getRowFormatter().addStyleName(row, style);
-			}
-
-		}else{
-			final int row = tableMeals.getRowCount();
-			HTML item = new HTML();
-
-			if(recipe.eaternitySelected != null && recipe.eaternitySelected){
-				item.setHTML(item.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-				item.setStyleName("base-icons carrot");	
-			}
-			if(recipe.regsas != null && recipe.regsas){
-				item.setHTML(item.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-			}
-			if(recipe.bio != null && recipe.bio){
-				item.setHTML(item.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
-			}
-
-			item.setHTML(item.getHTML()+"<div class='ingText'>"+recipe.getSymbol()+"</div>");
-
-			// Text and CO2 is 0
-			tableMeals.setWidget(row,0,item);
-
-			recipe.setCO2Value();
-			String formatted = NumberFormat.getFormat("##").format(recipe.getCO2Value());
-			item.setHTML(item.getHTML()+"<div class='putRight'>ca "+formatted+ " g*</div>");
-
-			if(presenter.getLoginInfo() != null && presenter.getLoginInfo().isAdmin()){
-				
-				Anchor removeRezeptButton = new Anchor(" x ");
-				removeRezeptButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						final ConfirmDialog dlg = new ConfirmDialog("Sie wollen dieses...");
-						dlg.statusLabel.setText("Rezept löschen?");
-						// TODO recheck user if he really want to do this...
-						dlg.yesButton.addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								presenter.removeRecipe(recipe);
-								tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));
-								dlg.hide();
-								dlg.clear();
-							}
-						});
-						dlg.show();
-						dlg.center();
-					}
-				});
-				
-				// remove button is 1
-				tableMeals.setWidget(row, 1, removeRezeptButton);
-//				item.setHTML(item.getHTML()+"<div class='putRight2'>ca "+formatted+ " g* ("+removeRezeptButton+")</div>");
-
-				if(!recipe.isOpen()){
-					if(recipe.openRequested){
-						// TODO this should be a link to make it open
-						Anchor openThis = new Anchor("o");
-						openThis.addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								presenter.recipeApproval(recipe,true);
-//								 initTable();
-								// why does the layout suck after this button press?????
-							}
-						});
-						tableMeals.setWidget(row, 2,openThis);
-//						item.setHTML(openThis+" "+item.getHTML());
-					}
-				} else {
-					// TODO this should be a link to make it close
-					Anchor closeThis = new Anchor("c");
-					closeThis.addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							presenter.recipeApproval(recipe,false);
-//							 initTable();
-						}
-					});
-					tableMeals.setWidget(row, 2,closeThis);
-//					item.setHTML(closeThis+" "+item.getHTML());
-				}
-			}
-
-			//TODO should this not be called after the sort?
-			if ((row % 2) == 1) {
-				String style = evenStyleRow.evenRow();
-				tableMeals.getRowFormatter().addStyleName(row, style);
-			}
-		}
-
-
-	}
-
-
-	/**
-	 * the displaying functions for ingredients
-	 */
-	
-	
-	
-	public void displayIngredient(final Ingredient ingredient) {
-		int row = table.getRowCount();
-
-		/*if ((row % 2) == 1) {
-			String style = evenStyleRow.evenRow();
-			table.getRowFormatter().addStyleName(row, style);
-		}*/
-
-		HTML icon = new HTML();
-
-		//		icon.addMouseListener(
-		//			    new TooltipListener(
-		//			      "add", 15000 /* timeout in milliseconds*/,"bla",400,10));
-
-		// these value (400,1200) are based on the 0.2 and 0.5 quantile of all ingredients
-		if(ingredient.getCo2eValue() < 400){
-//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons");
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
-		} else	if(ingredient.getCo2eValue() < 1200){
-//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons");	
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-
-		}
-
-		if(ingredient.hasSeason != null && ingredient.hasSeason){
-//			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
-//			presenter
-			Date date = null;
-			if (presenter != null) {
-				date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-			}
-			
-			// In Tagen
-			//		String test = InfoZutat.zutat.getStartSeason();
-			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.startSeason);		
-			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.stopSeason );
-
-			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-			} 
-		}
-
-		if(ingredient.noAlternative){
-		icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
-		
-		} else {
-			icon.setHTML(icon.getHTML()+"(alt): " +ingredient.getSymbol());
-		}
-
-		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
-
-		table.setWidget(row,0,icon);
-
-
-	}
-
-
-
-	public void setFoundRezepte(ArrayList<Recipe> foundRezepte) {
-		FoundRezepte = foundRezepte;
-	}
-
-	public ArrayList<Recipe> getFoundRezepte() {
-		return FoundRezepte;
-	}
-
-	
 	/**
 	 * This function may proof to be useful for a more fuzzy matching!
 	 * This is used for a matching in the recipes names
@@ -1400,13 +1379,6 @@ public class Search<T> extends ResizeComposite {
 		return p[n];
 	}
 
-	public void setFoundIngredient(ArrayList<Ingredient> foundIngredient) {
-		FoundIngredient = foundIngredient;
-	}
-
-	public ArrayList<Ingredient> getFoundIngredient() {
-		return FoundIngredient;
-	}
 	
 	
 }
