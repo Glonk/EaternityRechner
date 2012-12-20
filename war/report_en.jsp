@@ -14,6 +14,8 @@
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.Collection" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
 
 
 
@@ -34,7 +36,53 @@ String permanentId = request.getParameter("pid");
 String kitchenId = request.getParameter("kid");
 String pdf = request.getParameter("pdf");
 
-StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf);
+
+// ------------------------ Define Categories Here ------------------------
+
+CatRyzer catryzer = new CatRyzer();
+List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
+
+//CatFormula(String category, String formula, boolean isHeading)
+categoryFormulas.add(catryzer.new CatFormula("<strong>Vegetable Products</strong>","rice,spices&herbs,sweets,oil and fat,-animal-based,-animal based,legumes,fruits,mushrooms,preprocessed,grain,nuts,seeds",true));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Rice products","rice"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Spices & herbs","spices&herbs"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Sweets","sweets"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetable oils and fat","oil and fats,-animal-based,-animal based"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Vegetables and fruits","legumes,fruits,mushrooms"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Preprocessed vegetable products","preprocessed,-animal-based,-animal based"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Bread and Grain Products","grains"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Nuts und seeds","nuts,seeds"));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Animal Products</strong>","ruminant,non-ruminant,fish,seafood,diary,oil and fats,-vegetable,eggs,finished product,sauces",true));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;<strong>Meat Products</strong>","ruminant,non-ruminant,fish,seafood",true));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Ruminants","ruminant"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Non-ruminants","non-ruminant"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Fish and seafood","fish,seafood"));
+
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;<strong>Diary Products</strong>","diary",true));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Ripened cheese","ripened"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Fresh cheese and diary products","diary,-ripened"));
+categoryFormulas.add(catryzer.new CatFormula("Animal based fats","oil and fats,-vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("Eggs and egg based products","eggs"));
+categoryFormulas.add(catryzer.new CatFormula("Canned and finished products","finished product"));
+categoryFormulas.add(catryzer.new CatFormula("Sauces","sauces"));
+
+categoryFormulas.add(catryzer.new CatFormula("<strong>Drinks</strong>","beverage",true));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (alkohol based)","alcohol"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (fruit based)","fruitjuice"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (milk based)","milk"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (others)","beverage,-alcohol,-fruitjuice,-milk"));
+
+StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf,categoryFormulas);
+
+catryzer = new CatRyzer(variables.kitchenRecipes,"en");
+catryzer.setCatFormulas(categoryFormulas);
+catryzer.categoryze();
+
+List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
+List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
+List<CatRyzer.CategoryValue> valuesByIngredient = catryzer.getIngVals();
+List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates(); 
 
 int counter = 0;
 int counterIterate = 0;
@@ -743,7 +791,7 @@ counterIterate = 0;
 variables.MaxValueRezept = 0.0;
 variables.MinValueRezept = 10000000.0;
 //  go over the Recipes in the Workspace
-for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
+for(CatRyzer.DateValue categoryValue : valuesByDate){
 
 	if(categoryValue.co2value>variables.MaxValueRezept){
 		variables.MaxValueRezept = categoryValue.co2value;
@@ -756,13 +804,13 @@ for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
 
 
 
-for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
+for(CatRyzer.DateValue categoryValue : valuesByDate){
 		String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
 	
 %>
 
 <tr <%
-int order = (variables.valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -828,7 +876,7 @@ counterIterate = 0;
 variables.MaxValueRezept = 0.0;
 variables.MinValueRezept = 10000000.0;
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+for(CatRyzer.CategoryValue ingredientValue : valuesByIngredient){
 
 	if(ingredientValue.co2value>variables.MaxValueRezept){
 		variables.MaxValueRezept = ingredientValue.co2value;
@@ -839,16 +887,16 @@ for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 }
 
 
-for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+for(CatRyzer.CategoryValue ingredientValue : valuesByIngredient){
 	String length = variables.formatter.format(ingredientValue.co2value/variables.MaxValueRezept*200);
 	
-	if (variables.valuesByIngredient.indexOf(ingredientValue) == 20){
+	if (valuesByIngredient.indexOf(ingredientValue) == 20){
 		break;
 	} 
 %>
 
 <tr <%
-int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
+int order = (valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -896,7 +944,7 @@ counterIterate = 0;
 variables.MaxValueRezept = 0.0;
 variables.MinValueRezept = 10000000.0;
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
+for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
 
 	if(categoryValue.co2value>variables.MaxValueRezept){
 		variables.MaxValueRezept = categoryValue.co2value;
@@ -907,12 +955,12 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 }
 
 
-for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
+for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
 	String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
 %>
 
 <tr <%
-int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -962,7 +1010,7 @@ Alldates: 	Category1, co2value
 
 
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Category){
+for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 
 // if date == 0, show something for no date
 	

@@ -111,16 +111,19 @@ public class CatRyzer {
 
 	private boolean initializedMapping = false;
 	private boolean recipesLoaded = false;
-	
 
 	private List<DateValue> dateValues 				= new ArrayList<DateValue>();
 	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
 	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
 	private List<CategoryValue> ingredientValues 	= new ArrayList<CategoryValue>();
 	
+	private String language;
+	
 	public Multimap<String,IngredientSpecification> ingMultiMap = HashMultimap.create();
 	public Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
 	public List<CatMapping> mappings 				= new ArrayList<CatMapping>();
+	
+	
 	
 	// -------------- Functions --------------
 	// Constructors
@@ -130,10 +133,14 @@ public class CatRyzer {
 		ingredients = dao.getAllIngredients();
 	}
 	
-	public CatRyzer(List<Recipe> recipes)
+	/***
+	 * @param language "en" or "de
+	 */
+	public CatRyzer(List<Recipe> recipes, String language)
 	{
 		this();
 		this.recipes = recipes;
+		this.language = language;
 		writeDatesToIngSpec();
 		//get all ingredients from all recipes, write into single list
 		for (Recipe recipe : recipes){
@@ -265,7 +272,10 @@ public class CatRyzer {
 			
 			// fill Ingredients Mulimap for worst Ingredient beast top 10 
 			for (IngredientSpecification ingSpec : ingSpecs) {
-				ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
+				if (language.equals("en"))
+					ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
+				else if (language.equals("de"))
+					ingMultiMap.put(ingSpec.getName(), ingSpec);
 			}
 			
 			for (String name : ingMultiMap.keySet()) {
@@ -352,7 +362,7 @@ public class CatRyzer {
 	
 	
 	
-	public Set<String> getIngredientsNames(Collection<IngredientSpecification> ingSpecs){
+	public Set<String> getIngredientsNames_de(Collection<IngredientSpecification> ingSpecs){
 		Set<String> names = new HashSet<String>();
 		for (IngredientSpecification ingSpec : ingSpecs){
 			names.add(ingSpec.getName());
