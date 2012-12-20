@@ -90,6 +90,11 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		
 	}
 	
+	// TODO clone copy constructor for copying object, remove standart constructor...)
+	public IngredientSpecification(IngredientSpecification toCopy) {
+		
+	}
+	
 
 	
 	public IngredientSpecification(){

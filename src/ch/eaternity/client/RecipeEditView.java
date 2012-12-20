@@ -616,16 +616,14 @@ public class RecipeEditView<T> extends Composite {
 		 saved = false;
 		 
 		 if(selectedRow != -1 && infoDialogIsOpen ){
-//			 addInfoPanel.getWidgetCount() ==2
-		 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
-		 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(0));
-			 
-		IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-//			 int index = zutatImMenu.indexOf(zutatSpec);
-//			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
-		recipe.Zutaten.set(selectedRow , zutatSpec2);
-
-
+	//		addInfoPanel.getWidgetCount() ==2
+			 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
+			 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(0));
+				 
+			IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
+	//			 int index = zutatImMenu.indexOf(zutatSpec);
+	//			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
+			recipe.Zutaten.set(selectedRow , zutatSpec2);
 		 }
 		 
 		IngredientSpecification zutatSpec = recipe.Zutaten.get(row);
@@ -937,6 +935,8 @@ public class RecipeEditView<T> extends Composite {
 	}
 	
 	RecipeView rezeptViewOrigin;
+	
+	
 	void updateSuggestion() {
 
 //		in the list
@@ -975,7 +975,12 @@ public class RecipeEditView<T> extends Composite {
 		SuggestTable.setHTML(1,1,"ca <b>"+formatted+" g</b>* CO₂-Äq.");
 		SuggestTable.getColumnFormatter().setWidth(1, "140px");
 		
-		
+		if(recipe.getSymbol() == null){
+	          recipe.setSymbol("Ihr Menu");
+	    }
+	    if(recipe.getSubTitle() == null){
+	        recipe.setSubTitle("Menu Beschreibung");
+	    }
 
 		// updtTopSuggestion();
 	
@@ -1021,12 +1026,6 @@ public class RecipeEditView<T> extends Composite {
 	      // display context information...
 	      Recipe compare = recipe;
 	      compare.setSelected(true);
-	      if(recipe.getSymbol() == null){
-	          compare.setSymbol("Ihr Menu");
-	      }
-	      if(recipe.getSubTitle() == null){
-	          compare.setSubTitle("Menu Beschreibung");
-	      }
 	      
 	      // add your specific recipe to the others in the database
 	      allRecipes.add(compare);

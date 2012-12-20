@@ -106,6 +106,7 @@ public class InfoZutatDialog<T> extends Composite {
 	public void setPresenter(Presenter<T> presenter){
 		this.presenter = presenter;
 		setValues( zutat);
+		
 	}
 	
 	interface SelectionStyle extends CssResource {
@@ -210,7 +211,6 @@ public class InfoZutatDialog<T> extends Composite {
 			newExtractionBox.addKeyDownHandler(keyDownHandler);
 			handlersNotAdded = false;
 		}
-		newExtractionBox.setFocus(true);
 	}
 			
 	private void calculateExtractionDistance(final ListBox herkuenfte) {
@@ -316,7 +316,7 @@ public class InfoZutatDialog<T> extends Composite {
 						//zutatSpec.setCost(df.parse(text).doubleValue());
 						costError.setText("");
 						double cost = Double.parseDouble(text);
-						if (cost > 0.0)
+						if (cost >= 0.0)
 							zutatSpec.setCost(cost);
 						else
 							costError.setText("Wert ungueltig");
@@ -328,7 +328,7 @@ public class InfoZutatDialog<T> extends Composite {
 			}
 		});
 		
-		HTML costLabel = new HTML("CHF");
+		HTML costLabel = new HTML(" CHF");
 		horPanel.add(costTextBox);
 		horPanel.add(costLabel);
 		horPanel.add(costError);
@@ -567,6 +567,9 @@ public class InfoZutatDialog<T> extends Composite {
 				flow.add(conditionBox);
 			}
 		}	
+		// set the focus corectly
+		costTextBox.setFocus(true);
+		costTextBox.selectAll();
 	}
 	
 

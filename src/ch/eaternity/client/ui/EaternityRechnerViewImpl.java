@@ -297,6 +297,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		for(IngredientSpecification zutatNew : recipe.getZutaten()){
 			
 			// TODO check that nothing is missing
+			// we could use deep copying. actually, why do we copy at all?
 			final IngredientSpecification zutat = new IngredientSpecification(zutatNew.getId(), zutatNew.getName(),
 					zutatNew.getCookingDate(),zutatNew.getZustand(),zutatNew.getProduktion(), 
 					zutatNew.getTransportmittel());
@@ -306,6 +307,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			zutat.setSeason(zutatNew.getStartSeason(), zutatNew.getStopSeason());
 			zutat.setZutat_id(zutatNew.getZutat_id());
 			zutat.setNormalCO2Value(zutatNew.getNormalCO2Value());
+			zutat.setCost(zutatNew.getCost());
 			zutat.update();
 			zutatenNew.add(zutat);
 		}
