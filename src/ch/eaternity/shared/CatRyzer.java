@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.FileHandler;
@@ -117,7 +118,7 @@ public class CatRyzer {
 	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
 	private List<CategoryValue> ingredientValues 	= new ArrayList<CategoryValue>();
 	
-	private String language;
+	private Locale locale;
 	
 	public Multimap<String,IngredientSpecification> ingMultiMap = HashMultimap.create();
 	public Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
@@ -133,14 +134,11 @@ public class CatRyzer {
 		ingredients = dao.getAllIngredients();
 	}
 	
-	/***
-	 * @param language "en" or "de
-	 */
-	public CatRyzer(List<Recipe> recipes, String language)
+	public CatRyzer(List<Recipe> recipes, Locale locale)
 	{
 		this();
 		this.recipes = recipes;
-		this.language = language;
+		this.locale = locale;
 		writeDatesToIngSpec();
 		//get all ingredients from all recipes, write into single list
 		for (Recipe recipe : recipes){
@@ -272,9 +270,9 @@ public class CatRyzer {
 			
 			// fill Ingredients Mulimap for worst Ingredient beast top 10 
 			for (IngredientSpecification ingSpec : ingSpecs) {
-				if (language.equals("en"))
+				if (locale.equals(Locale.ENGLISH))
 					ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
-				else if (language.equals("de"))
+				else if (locale.equals(Locale.GERMAN))
 					ingMultiMap.put(ingSpec.getName(), ingSpec);
 			}
 			

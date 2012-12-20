@@ -12,10 +12,12 @@
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 
 <%@ page import="java.util.Date" %>
+<%@ page import="java.util.Locale" %>
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+
 
 
 
@@ -25,6 +27,7 @@
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <title>Klima-Bilanz Report</title>
+<link rel="stylesheet" type="text/css" href="report.css">
 
 
 <%
@@ -73,16 +76,7 @@ categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (fruit based)",
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (milk based)","milk"));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Drinks (others)","beverage,-alcohol,-fruitjuice,-milk"));
 
-StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf,categoryFormulas);
-
-catryzer = new CatRyzer(variables.kitchenRecipes,"en");
-catryzer.setCatFormulas(categoryFormulas);
-catryzer.categoryze();
-
-List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
-List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
-List<CatRyzer.CategoryValue> valuesByIngredient = catryzer.getIngVals();
-List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates(); 
+StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf,categoryFormulas,Locale.ENGLISH);
 
 int counter = 0;
 int counterIterate = 0;
@@ -130,513 +124,6 @@ int counterIterate = 0;
     size: A4 landscape
 }
 
-table.big { page: big_table }
-
-
-	#footer-bottom {
-	display: none;
-	}
-
-body { 
-	font-family: 'Open Sans', Verdana, sans-serif; 
-	font-weight: 300;
-    font-size: 11pt;
-    image-resolution: 70dpi;
-     }
-
-.hiddenOnPage {
-display: none;
-}
-
-h1 { 
-	font-size: 32pt;
-	font-weight: 300;
-/*   page-break-before: always; */
-  page-break-after: avoid;
-  text-align: left;
-/*   clear: both;  */
-/*   float: left; */
-  width: 20em;
-  margin-top: 1em;
-}
-
-h2 { 
-  page-break-after: avoid;
-
-  text-align: center;
-    text-align: left;
-    font-size: 11pt;
-    font-weight: 400;
-}
-      
-h3 { 
-  page-break-after: avoid;
-	font-weight: 400;
-    font-size: 11pt;
-    padding: 0px;
-    margin: 0px;
-    word-wrap: normal;
-    clear: none;
-    display:compact;
-    float:left;
-    margin-bottom: -0em;
-/*     display: inline; */
-}
-
-.label-vergleich {
-	font-weight: 400;
-    font-size: 11pt;
-    padding: 0px;
-    margin: 0px;
-    word-wrap: normal;
-    float:left;
-
-}
-
-.content {
-/*     page-break-after: always; */
-	margin: 30pt 40pt 30pt 20pt;
-}
-
-.page-break {
-    page-break-after: always;
-}
-
-.new-page {
-    page-break-before: always;
-}
-
-#header-right {
-	float:right;
-	margin-bottom: 10px;
-	flow: static(header);
-}
-
-table {
-	  page-break-inside: avoid;
-}
-.table {
- font-weight: 300;
-  font-size: 11pt;
-  width: 35em;
-  padding-bottom: 1em;
-  margin-bottom: 2em;
-}
-
-.label-table {
-width: 41em;
-margin:0 auto; 
-}
-
-.rounded {
-/* padding:10px; */
-border-style: solid;
-border-width: 1px;
-border-color: black; 
--moz-border-radius: 6px;
-border-radius: 6px;
-/* border-spacing: 0; */
-}
-
-
-.rounded tr:first-child td:first-child {
--moz-border-radius-topleft:6px;
--webkit-border-top-left-radius:6px;
-border-top-left-radius:6px;
-}
-
-.rounded tr:first-child td:last-child {
--moz-border-radius-bottomtop:6px;
--webkit-border-top-right-radius:6px;
-border-top-right-radius:6px;
-}
-
-.rounded tr:last-child td:first-child {
--moz-border-radius-bottomleft:6px;
--webkit-border-bottom-left-radius:6px;
-border-bottom-left-radius:6px;
-}
-
-.rounded tr:last-child td:last-child {
--moz-border-radius-bottomright:6px;
--webkit-border-bottom-right-radius:6px;
-border-bottom-right-radius:6px;
-}
-
-.howAreYou {
-padding-right: 2.5em;
-font-size: 9pt;
-font-weight: 400;
-}
-
-.kopf { 
-	float: right;
-	text-align: right;
-	font-size: 10pt;
-	font-weight: 300;
-	font-size: 13px;
-	margin-top: -54pt;
-	margin-right: 6pt;
-}
-
-.kopf ul {
-	margin-right: 24pt; 
-	margin-top: 0pt;
-	}
-.logo {
-	width:153pt;
-	height:68pt;
-}
-
-.logo-klein {
-margin-top: 50pt;
-	height:46pt;
-}
-
-
-
-#footer-left {
-/* 	display: none; */
-float:left;
-flow: static(footer);
-	font-size: 9pt;
-	font-weight: 300;
-}
-
-#footer-bottom {
-/* 	display: none; */
-float:left;
-	font-size: 9pt;
-	font-weight: 300;
-}
-
-.logo-karotte {
-	margin-right: 0pt;
-	margin-bottom: 0pt;
-	height:14pt;
-}
-
-.subTitle {
-margin-top: -1em;
-margin-left: 1em;
-padding-right: 8em;
-display: block;
-margin-bottom: 0.5em;
-}
-
-.smile{
-height: 18pt;
-margin-bottom: -4pt;
-margin-left: -4pt;
-margin-top: -2pt;
-margin-right: 4px;
-    display: inline;
-    float:left;
-}
-
-.bar {
-padding: 1pt 1pt 1pt 0pt;
-}
-
-.table-space {
-	width: 10pt;
-}
-
-.green {
-page-break-after: avoid;
-color: white;
-background-repeat: repeat-x;
-background-image: url(green.png);
-/*background: green.png;*/
-font-size: 10pt;
-font-weight: 700;
-text-align: right;
-padding: 2pt;
-padding-right: 4pt;
-width:14em;
-}
-
-.gray {
-page-break-after: avoid;
-color: white;
-background-repeat: repeat-x;
-background-image: url(light-gray.png);
-/*background: light-gray.png;*/
-font-size: 10pt;
-font-weight: 700;
-text-align: right;
-padding: 2pt;
-padding-right: 4pt;
-/* width: 100pt; */
-}
-.co2label {
-display: inline-table;
-}
-
-.co2value {
-text-align: right;
-padding-left: 0.2em;
-padding-right: 0.2em;
-display: inline-table;
-vertical-align: middle;
-
-/* color:gray; */
-}
-
-.co2percent {
-	text-align: right;
-	padding-left: 0.2em;
-	padding-right: 0.2em;
-/*	display: inline-table;*/
-	vertical-align: middle;
-	background:#F7F7F7;
-	white-space: nowrap; 
-}
-
-.alternate {
-background-color: #FBF9F8;
-}
-
-.amount {
-float: right;
-padding-right: 4pt;
-margin-top: 0em;
-}
-
-.menu-name {
-vertical-align:top;
-padding-left: 1em;
-padding-top: 0.2em;
-padding-bottom: 0.2em;
-/* width: 25em; */
-/* display: inline-table; */
-padding-right: 2em;
-
-}
-
-.suggest {
-text-align: right;
-padding-right: 4pt;
-/* padding-bottom: 1pt; */
-}
-
-
-.tips {
-margin-left: -10pt;
-padding: 1em 0.5em 0.5em 3em;
-}
-
-.tips li {
-	list-style-position: outside;
-	list-style-type: disc;
-}
-
-.zutat {
-margin-top: -10pt;
-margin-left: -10pt;
-}
-
-.zutat li {
-	list-style-position: outside;
-	list-style-type: none;
-	display: inline;
-}
-
-.zutatRow {
-width: 40em;
-margin-left: 5pt;
-}
-
-.zutatRow li {
-	list-style-type: circle;
-	display: inline;
-}
-
-a { padding-left: 5pt; color: #0e5396; text-decoration: none }
-
-a:hover {text-decoration:underline }
-
-.login {
-visibility: hidden;
-display: none;
-}
-
-.id {
-visibility: hidden;
-	font-weight: 400;
-    font-size: 12pt;
-    padding: 0px;
-    margin: 0px;
-    word-wrap: normal;
-    display: inline;
-}
- 
-#toc, #ix {
-visibility: hidden;
-}
- 
-#toc, #ix, li { list-style-type: none; margin: 0; padding: 0 }
-
-#toc a {
-color:black;
-}
-
-#toc a:after { content: leader('.') target-counter(attr(href), page) }
-
-#ix span:after { content: leader('.') }
-#ix a { content: target-counter(attr(href), page); padding-left: 0.3em }
-
-.nowrap {
-	white-space: nowrap; 
-}
-
-.toc {
-	
-	width:43em;
-}
-
-.listTable {
-	
-	width:45em;
-}
-
-@media screen {
-  html { background: gray; }
-  table {
-  	font-size: 12pt;
-
-  }
-
-.kopf { 
-	margin-top: -14pt;
-}
-  
-  body {
-  	margin-top: 2em;
-  	font-size: 12pt;
-  }
-
-  .website-content { 
-    width: 840px;
-    background: white;
-    margin: 1em auto;
-    padding: 3em 3em 3em 3em;
-  }
-  .login {
-  	color: #383838;
-  	visibility: visible;
-  display: block;
-  	width: 840px;
-  	
-    margin: auto;
-    padding: 0em 1em 5em 3em;
-    text-align: right;
-    font-size: 9pt;
-    font-weight: 400;
-    
-  }
-  .id {
-  visibility: visible;
-  }
-
-  h1 {
-  margin-top: 1em;
-/*   display:none; */
-  }
-  
-  h2 {
-  font-size: 12pt;
-  }
-  h3 {
-  font-size: 12pt;
-  margin-bottom: 0em;
-/*  clear: both;*/
-  }
-  
-  #header-right {
-  	display: none;
-  	}
-  	
-  	#footer-left {
-  	display: none;
-  	}
-  	
-  	#footer-bottom {
-	display:block;
-	}
-	.amount {
-		margin-top: 0em;
-	}
-	
-	#toc, #ix {
-		visibility: visible;
-		margin-bottom: 2em;
-
-	}
-	
-	.table {
-  		width: 45em;
-	}
-	
-	.howAreYou {
-	padding-right: 2.5em;
-	font-weight: 600;
-	}
-	.subTitle {
-	margin-top: -1.5em;
-	}
-	
-	.hiddenOnPage {
-		display:inherit;
-	}
- 
- 	.kopf { 
- 	margin-right: -14pt;
- 	}
-
-	.green {
-		width:140px;
-	}
-}
-
-.table {
-border-color: #929292;
-border-style: none;
-padding-top: 0em;
-border-width: 0pt;
-}
-
-.table-header {
-page-break-after: avoid;
-	font-size: 12pt;
-	font-weight: 600;
-text-align: left;
-}
-
-.table p {
-padding: 0.1em 0em 1em 1.5em;
-}
-
-.table ul{
-padding: 1em 0.5em 0.5em 3em;
-}
-
-.left-border{
-	border-left-color: #929292;
-	border-left-style: solid;
-	border-left-width: 1px;
-	vertical-align: center;
-}
-
-.bottom-border{
-	border-bottom-color: #929292;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	vertical-align: top;
-	width:660px;
-
-}
-
 </style>
 
 </head>
@@ -646,8 +133,10 @@ padding: 1em 0.5em 0.5em 3em;
 // Avoid displaying anything if someting is wrong.
 if (!variables.everythingFine){
 	%>
-		Wrong Inputs. See Log for Details.
+		Wrong Inputs. See Log for Details.<br /><br />
+		<%= variables.errorMessage %>
 	<%
+	
 }
 else { %>
 	
@@ -691,8 +180,9 @@ else { %>
 
 <h1>CO2 Food-Sourcing Report</h1>
 
-<table cellspacing="0" cellpadding="0" class="table toc" >
+<% // -------------------------------- Delivery Receipts Overview --------------------------- %>
 
+<table cellspacing="0" cellpadding="0" class="table toc" >
 
 <tr>
 <td></td>
@@ -708,65 +198,41 @@ else { %>
 <td ></td>
 </tr>
 
-
 <%
-
-
 for(Recipe recipe: variables.kitchenRecipes){
 
-	String clear = Converter.toString(recipe.getId(),34);
-
 	recipe.setCO2Value();
-	
 	Double recipeValue = recipe.getCO2Value()  ;
 	
-	String length = variables.formatter.format(recipeValue/variables.MaxValueRezept*200);
-
-	String formatted = variables.formatter.format(recipeValue/1000);
-	String persons = Long.toString(recipe.getPersons());
-	
-	String moreOrLess = "";
-	String percent ="";
-
-		
-		%>
-		
-
-		<tr <%
-		int order = (variables.kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
-		if(order == 1) { %>
-		class="alternate"
-		<% }%> > 
-		<td class="menu-name">
-		<input type="checkbox" name="<%= clear %>" checked="checked" class="hiddenOnPage">
-		<%= recipe.getSymbol() %>
-		</td>
-		<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-		<td class="co2value" ><%= formatted %></td>
-		</tr>
+	String clear = Converter.toString(recipe.getId(),34);
+	String length = variables.getNormalisedLength(recipeValue);
+	String recipeValueFormatted = variables.formatter.format(recipeValue/1000);
+	%>
+			
+	<tr <%
+	int order = (variables.kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
+	if(order == 1) { %>
+	class="alternate"
+	<% }%> > 
+	<td class="menu-name">
+	<input type="checkbox" name="<%= clear %>" checked="checked" class="hiddenOnPage">
+	<%= recipe.getSymbol() %>
+	</td>
+	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
+	<td class="co2value" ><%= recipeValueFormatted %></td>
+	</tr>
 
 
-		<%
-
-}	
-
+<% 
+} 
 %>
 
 
 </table>
 
-
-<!-- Summary -->
-<br/><br/><br/>
-
-
 <br/><br/><br/><br/>
 
-<!-- Situation -->
-
-<!-- Results -->
-
- <!-- Calendar -->
+<% // -------------------------------- Total CO2 Impact by Date --------------------------- %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -786,31 +252,24 @@ for(Recipe recipe: variables.kitchenRecipes){
 
 <%
 counterIterate = 0;
+variables.maxValTemp = 0.0;
+variables.minValTemp = 10000000.0;
 
+Collection<Double> values = new ArrayList<Double>();
 
-variables.MaxValueRezept = 0.0;
-variables.MinValueRezept = 10000000.0;
-//  go over the Recipes in the Workspace
-for(CatRyzer.DateValue categoryValue : valuesByDate){
-
-	if(categoryValue.co2value>variables.MaxValueRezept){
-		variables.MaxValueRezept = categoryValue.co2value;
-	} 
-	if(categoryValue.co2value<variables.MinValueRezept){
-		variables.MinValueRezept = categoryValue.co2value;
-	}
+for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
+	values.add(categoryValue.co2value);
 }
+variables.setMinMax(values);
 
 
-
-
-for(CatRyzer.DateValue categoryValue : valuesByDate){
-		String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
+for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
+		String length = variables.getNormalisedLength(categoryValue.co2value);
 	
 %>
 
 <tr <%
-int order = (valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (variables.valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -831,19 +290,6 @@ class="alternate"
 
 <%
 }
-
-/*
-Output:
-
-Date1: AllCategory,co2value
-Date2: AllCategory,co2value
-Date3: AllCategory,co2value
-Date4: AllCategory,co2value
-Date5: AllCategory,co2value
-*/
-
-
-
 %>
 
 </table>
@@ -851,6 +297,9 @@ Date5: AllCategory,co2value
 
 
 <br /><br /><br />
+
+
+<% // -------------------------------- Top 20 intensive Ingredients --------------------------- %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -872,31 +321,28 @@ Date5: AllCategory,co2value
 
 <%
 counterIterate = 0;
+variables.maxValTemp = 0.0;
+variables.minValTemp = 10000000.0; 
 
-variables.MaxValueRezept = 0.0;
-variables.MinValueRezept = 10000000.0;
+values.clear();
+
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue ingredientValue : valuesByIngredient){
-
-	if(ingredientValue.co2value>variables.MaxValueRezept){
-		variables.MaxValueRezept = ingredientValue.co2value;
-	} 
-	if(ingredientValue.co2value<variables.MinValueRezept){
-		variables.MinValueRezept = ingredientValue.co2value;
-	}
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+	values.add(ingredientValue.co2value);
 }
+variables.setMinMax(values);
 
 
-for(CatRyzer.CategoryValue ingredientValue : valuesByIngredient){
-	String length = variables.formatter.format(ingredientValue.co2value/variables.MaxValueRezept*200);
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+	String length = variables.getNormalisedLength(ingredientValue.co2value);
 	
-	if (valuesByIngredient.indexOf(ingredientValue) == 20){
+	if (variables.valuesByIngredient.indexOf(ingredientValue) == 20){
 		break;
 	} 
 %>
 
 <tr <%
-int order = (valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
+int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
@@ -908,20 +354,13 @@ class="alternate"
 
 </tr>
 
-
 <%
-	}
+}
 %>
-
 </table>
 
 
-
-
-
- <!-- Total Impact -->
-
-
+<% // -------------------------------- Total CO2 Impact by Category --------------------------- %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -941,76 +380,47 @@ class="alternate"
 
 <%
 counterIterate = 0;
-variables.MaxValueRezept = 0.0;
-variables.MinValueRezept = 10000000.0;
+variables.maxValTemp = 0.0;
+variables.minValTemp = 10000000.0; 
+
+values.clear();
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
-
-	if(categoryValue.co2value>variables.MaxValueRezept){
-		variables.MaxValueRezept = categoryValue.co2value;
-	} 
-	if(categoryValue.co2value<variables.MinValueRezept){
-		variables.MinValueRezept = categoryValue.co2value;
-	}
+for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
+	values.add(categoryValue.co2value);
 }
+variables.setMinMax(values);
 
 
-for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
-	String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
+for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
+	String length = variables.getNormalisedLength(categoryValue.co2value);
 %>
 
-<tr <%
-int order = (valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
-if(order == 1) { %>
-class="alternate"
-<% }%> > 
-<td class="menu-name">
-<%= categoryValue.categoryName %>
-</td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
-</tr>
-
+	<tr <%
+	int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
+	if(order == 1) { %>
+	class="alternate"
+	<% }%> > 
+	<td class="menu-name">
+	<%= categoryValue.categoryName %>
+	</td>
+	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
+	<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
+	</tr>
 
 <%
-
-	}
-
-/*
-Output:
-
-Alldates: 	Category1, co2value
- 			Category2, co2value
-			Category3, co2value
-			Category4, co2value
- 			Category5, co2value
-*/
-
-
+}
 %>
 
 </table>
 
 
+<br /><br /><br /><br />
 
- <!-- Potential -->
-
-<br /><br />
-
-<br /><br />
-
- <!-- By Date -->
-
-
-
-
-
+<% // -------------------------------- Total CO2 Impact by Date - Category --------------------------- %>
 
 <%
-
-
 counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
+for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Category){
 
 // if date == 0, show something for no date
 	
@@ -1035,7 +445,7 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 	} catch (Exception e) {
 		  out.println("The Error is: " + e);
 	}
-	%><%= datumString %>  -  CO2 Impact by Category.</td>
+	%><%= datumString %>  -  CO2 Impact by Category</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
@@ -1043,24 +453,21 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : valuesByDate_Category){
 
 <%
 
+counterIterate = 0;
+variables.maxValTemp = 0.0;
+variables.minValTemp = 10000000.0; 
+
+values.clear();
 //  go over the Recipes in the Workspace
-variables.MaxValueRezept = 0.0;
-variables.MinValueRezept = 10000000.0;
+for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+	values.add(categoryValue.co2value);
+}
+variables.setMinMax(values);
+
+// -------------------------------- Total CO2 Impact by Category (per one Date) --------------------------- 
 
 for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-
-
-	if(categoryValue.co2value>variables.MaxValueRezept){
-		variables.MaxValueRezept = categoryValue.co2value;
-	} 
-	if(categoryValue.co2value<variables.MinValueRezept){
-		variables.MinValueRezept = categoryValue.co2value;
-	}
-}
-
-
-	for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-		String length = variables.formatter.format(categoryValue.co2value/variables.MaxValueRezept*200);
+	String length = variables.getNormalisedLength(categoryValue.co2value);
 %>
 
 <tr <%
@@ -1077,42 +484,34 @@ class="alternate"
 
 
 <%
-	}	
+}	
 %>
+</table>
 
-	</table>
+<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
+<tr>
+<td class="table-header">Delivery Receipts Overview for  
+	<%
+	datumString = "NO DATE SPECIFIED";
+	try {
+		datumString = variables.dateFormatter.format(thisDate);
+	} catch (Exception e) {
+		  out.println("The Error is: " + e);
+	}
+	%><%= datumString %>
+	</td>
+<td></td>
+</tr>
 
+<tr>
+<td class="bottom-border"></td>
+<td class="left-border"></td>
+</tr>
+
+</table>
 	
-	<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
-	<tr>
-	<td class="table-header">Delivery Receipts Overview for  
-		<%
-		datumString = "NO DATE SPECIFIED";
-		try {
-			datumString = variables.dateFormatter.format(thisDate);
-		} catch (Exception e) {
-			  out.println("The Error is: " + e);
-		}
-		%><%= datumString %>
-		</td>
-	<td></td>
-	</tr>
-
-	<tr>
-	<td class="bottom-border"></td>
-	<td class="left-border"></td>
-	</tr>
-
-	</table>
-	
-
-
-
 
 	<%
-
-
-
 
 	// valuesByDate_Calender
 
@@ -1123,10 +522,7 @@ class="alternate"
 				recipe.setCO2Value();
 				Double recipeValue = recipe.getCO2Value()  ;
 
-
-
 				String formatted = variables.formatter.format( recipeValue/1000 );
-				String persons = Long.toString(recipe.getPersons());
 				
 				datumString = "NO DATE SPECIFIED";
 				try {
@@ -1214,125 +610,73 @@ class="alternate"
 
 					</table>
 				<%
-			}
-		
-
-	%>
-
-
-	<%		
-
+			}		
 	}
-
-	
 }
-
-/*
-Output:
-
-Date1: Category1, co2value
-Date1: Category2, co2value
-...
-  <!-- per sheet -->
-  Date1: Ingredientspec1, Ingredientspec2
-
-Date2: Category1, co2value
-Date3: Category2, co2value
-
-  <!-- per sheet -->
-  Date2: Ingredientspec1, Ingredientspec2
-
-
-<!-- Categories -->
-Category1: Ingredient1, Ingredient2
-
-Category2: Ingredient1, Ingredient2
-
-
-*/
-
-
 %>
 
 </table>
 
 
 
-
+<% // -------------------------------- Overview Categories --------------------------- %>
 
 <br /><br /><br />
-Overview Categories
+<h2>Overview Categories</h2>
 <br /><br /><br />
-
 
 <%
-
-
-
-// get ingredients per category example
+// get ingredients per category
 for(CatRyzer.CatMapping mapping : variables.catryzer.mappings)
 {
 	
 	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(mapping.category);
 	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames_en(ingredientsSpecification);
-
 %>
-
 
 <table cellspacing="0" cellpadding="0" class="table listTable" >
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-<tr>
-<td class="bottom-border">
-<!-- <img class="smile" src="smiley8.png" alt="smiley" />
-<img class="smile" src="smiley8.png" alt="smiley" /> -->
-<h3>Category: <%= mapping.category %></h3>
-</td>
-<td class="left-border"></td>
-</tr>
-
-<tr>
-<td>
-
-
-
-<%	
-counter = 0;
-for(String ingredient: ingredientsNames){
-counter = counter + 1;
-
-%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient %></span><%
-}
-%>
-
-</td>
-<td class="left-border"><br></td>
-</tr>
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-
-
-
-<tr>
-<td></td>
-<td class="left-border"><br></td>
-</tr>
-
-
+	<tr>
+		<td></td>
+		<td class="left-border"><br></td>
+	</tr>
+	
+	<tr>
+		<td class="bottom-border">
+		<!-- <img class="smile" src="smiley8.png" alt="smiley" />
+		<img class="smile" src="smiley8.png" alt="smiley" /> -->
+		<h3>Category: <%= mapping.category %></h3>
+		</td>
+		<td class="left-border"></td>
+	</tr>
+	
+	<tr>
+		<td>
+		<%	
+		counter = 0;
+		for(String ingredient: ingredientsNames){
+		counter = counter + 1;
+		
+		%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient %></span><%
+		}
+		%>
+		
+		</td>
+		<td class="left-border"><br></td>
+	</tr>
+	
+	<tr>
+		<td></td>
+		<td class="left-border"><br></td>
+	</tr>
+	
+	<tr>
+		<td></td>
+		<td class="left-border"><br></td>
+	</tr>
 </table>
 
-
 <%
-
 }
-
 %>
 
 
