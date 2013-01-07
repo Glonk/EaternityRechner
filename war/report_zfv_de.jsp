@@ -63,18 +63,17 @@ categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Wiederkäu
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Nichtwiederkäuer","non-ruminant"));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Fisch und Meeresfrüchte","fish,seafood"));
 
-categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;<strong>Milchprodukte</strong>","diary",true));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;<strong>Milchprodukte</strong>","diary,oil and fats,-vegetable",true));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;gereifter Käse","ripened"));
-categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Frischkäse und übrige Milchprodukte","diary,-ripened"));
-categoryFormulas.add(catryzer.new CatFormula("Tierische Fette","oil and fats,-vegetable"));
-categoryFormulas.add(catryzer.new CatFormula("Eier und Eibasierte Produkte","eggs"));
-categoryFormulas.add(catryzer.new CatFormula("Dosen und verarbeitete Produkte","finished product"));
-categoryFormulas.add(catryzer.new CatFormula("Saucen","sauces"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Frischkäse und übrige Milchprodukte","diary,-ripened,milk"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;&nbsp;&nbsp;Tierische Fette","oil and fats,-vegetable"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Eier und Eibasierte Produkte","eggs"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Dosen und verarbeitete Produkte","finished product"));
+categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Saucen","sauces"));
 
 categoryFormulas.add(catryzer.new CatFormula("<strong>Getränke</strong>","beverage",true));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (auf Alkoholbasis)","alcohol"));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (auf Fruchtbasis)","fruitjuice"));
-categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (auf Milchbasis)","milk"));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (weitere)","beverage,-alcohol,-fruitjuice,-milk"));
 
 StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf,categoryFormulas,Locale.GERMAN);
@@ -82,7 +81,7 @@ StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,
 int counter = 0;
 int counterIterate = 0;
 Collection<Double> values = new ArrayList<Double>();
-DecimalFormat co2_formatter = new DecimalFormat("##");
+DecimalFormat co2_formatter = new DecimalFormat("##.#");
 
 
 %>
@@ -180,184 +179,9 @@ else { %>
 
 <div class="content">
 
-<h1>CO2 Nahrungsbeschaffungsreport?</h1>
+<h1>CO2-Analyse einiger Menus</h1>
 
-<% // -------------------------------- Delivery Receipts Overview --------------------------- %>
-
-<table cellspacing="0" cellpadding="0" class="table toc" >
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="table-header bottom-border">Lieferscheine Übersicht</td>
-<td class="left-border"></td>
-<td class="co2value" ></td>
-<td ></td>
-</tr>
-
-<%
-for(Recipe recipe: variables.kitchenRecipes){
-
-	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value()  ;
-	
-	String clear = Converter.toString(recipe.getId(),34);
-	String length = variables.getNormalisedLength(recipeValue);
-	String recipeValueFormatted = co2_formatter.format(recipeValue/1000);
-	%>
-			
-	<tr <%
-	int order = (variables.kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
-	if(order == 1) { %>
-	class="alternate"
-	<% }%> > 
-	<td class="menu-name">
-	<input type="checkbox" name="<%= clear %>" checked="checked" class="hiddenOnPage">
-	<%= recipe.getSymbol() %>
-	</td>
-	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-	<td class="co2value" ><%= recipeValueFormatted %></td>
-	</tr>
-
-
-<% 
-} 
-%>
-
-
-</table>
-
-<br/><br/><br/><br/>
-
-<% // -------------------------------- Total CO2 Impact by Date --------------------------- %>
-
-<table cellspacing="0" cellpadding="0" class="table toc" >
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="table-header bottom-border">Gesamte CO2-Emissionen nach Datum</td>
-<td class="left-border"></td>
-<td class="co2value" ></td>
-<td ></td>
-</tr>
-
-<%
-counterIterate = 0;
-variables.maxValTemp = 0.0;
-variables.minValTemp = 10000000.0;
-
-for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
-	values.add(categoryValue.co2value);
-}
-variables.setMinMax(values);
-
-
-for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
-		String length = variables.getNormalisedLength(categoryValue.co2value);
-	
-%>
-
-<tr <%
-int order = (variables.valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
-if(order == 1) { %>
-class="alternate"
-<% }%> > 
-<td class="menu-name">
-	<%
-	String datumString = "NO DATE SPECIFIED";
-	try {
-		datumString = variables.dateFormatter.format(categoryValue.date);
-	} catch (Exception e) {
-		            out.println("The Error is: " + e);
-	}
-	%><%= datumString %>
-</td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
-</tr>
-
-
-<%
-}
-%>
-
-</table>
-
-
-
-<br /><br /><br />
-
-
-<% // -------------------------------- Top 20 intensive Ingredients --------------------------- %>
-
-<table cellspacing="0" cellpadding="0" class="table toc" >
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">kg CO<sub>2</sub>*</span></td>
-<td></td>
-</tr>
-
-<tr>
-<td class="table-header bottom-border">Top 20 CO<sub>2</sub>-intensive Zutaten</td>
-<td class="left-border"></td>
-<td class="co2value" ></td>
-<td ></td>
-</tr>
-
-
-
-<%
-counterIterate = 0;
-variables.maxValTemp = 0.0;
-variables.minValTemp = 10000000.0; 
-
-values.clear();
-
-for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
-	values.add(ingredientValue.co2value);
-}
-variables.setMinMax(values);
-
-
-for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
-	String length = variables.getNormalisedLength(ingredientValue.co2value);
-	
-	if (variables.valuesByIngredient.indexOf(ingredientValue) == 20){
-		break;
-	} 
-%>
-
-<tr <%
-int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
-if(order == 1) { %>
-class="alternate"
-<% }%> > 
-<td class="menu-name">
-<%= ingredientValue.categoryName %> <!-- (<%= ingredientValue.amountGram/1000 %> kg) -->
-</td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value/1000) %></td>
-
-</tr>
-
-<%
-}
-%>
-</table>
-
+ZFV: Offerte BAG
 
 <% // -------------------------------- Total CO2 Impact by Category --------------------------- %>
 
@@ -415,18 +239,9 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 
 <br /><br /><br /><br />
 
-<% // -------------------------------- Total CO2 Impact by Date - Category --------------------------- %>
 
-<%
-counterIterate = 0;
-for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Category){
+<% // -------------------------------- Top 20 intensive Ingredients --------------------------- %>
 
-// if date == 0, show something for no date
-	
-	Date thisDate = categoriesByDates.date.get(0);
-
-
-%>
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
 <tr>
@@ -437,185 +252,55 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Ca
 </tr>
 
 <tr>
-<td class="table-header bottom-border">	<%
-	String datumString = "NO DATE SPECIFIED";
-	try {
-		datumString = variables.dateFormatter.format(thisDate);
-	} catch (Exception e) {
-		  out.println("The Error is: " + e);
-	}
-	%><%= datumString %>  -  Gesamte CO2-Emissionen nach Kategorie</td>
+<td class="table-header bottom-border">Top 15 CO<sub>2</sub>-intensive Zutaten</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
 </tr>
 
-<%
 
+
+<%
 counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0; 
 
 values.clear();
-//  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-	values.add(categoryValue.co2value);
+
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+	values.add(ingredientValue.co2value);
 }
 variables.setMinMax(values);
 
-// -------------------------------- Total CO2 Impact by Category (per one Date) --------------------------- 
 
-for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
-	String length = variables.getNormalisedLength(categoryValue.co2value);
+for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
+	String length = variables.getNormalisedLength(ingredientValue.co2value);
+	
+	if (variables.valuesByIngredient.indexOf(ingredientValue) == 15){
+		break;
+	} 
 %>
 
 <tr <%
-int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
+int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= categoryValue.categoryName %>
+<%= ingredientValue.categoryName %> <!-- (<%= ingredientValue.amountGram/1000 %> kg) -->
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
-</tr>
+<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value/1000) %></td>
 
+</tr>
 
 <%
-}	
-%>
-</table>
-
-<!-- ------------ Delivery Receipt Overview -------------- -->
-<table cellspacing="0" cellpadding="0" class="table new-page listTable" >
-<tr>
-<td class="table-header">Lieferscheine Übersicht für den   
-	<%
-	datumString = "NO DATE SPECIFIED";
-	try {
-		datumString = variables.dateFormatter.format(thisDate);
-	} catch (Exception e) {
-		  out.println("The Error is: " + e);
-	}
-	%><%= datumString %>
-	</td>
-<td></td>
-</tr>
-
-<tr>
-<td class="bottom-border"></td>
-<td class="left-border"></td>
-</tr>
-
-</table>
-	
-
-	<%
-
-	// valuesByDate_Calender
-
-	for(Recipe recipe: variables.kitchenRecipes){
-
-		if(thisDate.equals(recipe.cookingDate)){
-
-				recipe.setCO2Value();
-				Double recipeValue = recipe.getCO2Value()  ;
-
-				String formatted = co2_formatter.format( recipeValue/1000 );
-				
-				datumString = "NO DATE SPECIFIED";
-				try {
-					datumString = variables.dateFormatter.format(recipe.cookingDate);
-				} catch (Exception e) {
-					  out.println("The Error is: " + e);
-				}
-
-
-				%>
-
-				<table cellspacing="0" cellpadding="0" class="table listTable" >
-				<tr>
-				<td></td>
-				<td class="left-border"><br></td>
-				</tr>
-
-				<tr>
-				<td class="bottom-border">
-				<!-- <img class="smile" src="smiley8.png" alt="smiley" />
-				<img class="smile" src="smiley8.png" alt="smiley" /> -->
-				<h3>Lieferschein: <%= recipe.getSymbol() %></h3>
-				</td>
-				<td class="left-border"></td>
-				</tr>
-
-				<tr>
-				<td><div class="amount"><%= formatted %> kg CO<sub>2</sub>* total</div></td>
-				<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="200" /></td>
-				</tr>
-
-				<tr>
-				<td>
-
-				<span class="subTitle">Datum: <%= datumString %></span>
-
-				<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
-
-
-					<%	
-					counter = 0;
-					for(IngredientSpecification ingredient: recipe.Zutaten){
-					counter = counter + 1;
-
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> 
-						
-						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
-						
-						</span><%
-					}
-					%>
-					
-					
-					
-				</td>
-				<td class="left-border"><br></td>
-				</tr>
-
-				<tr>
-				<td></td>
-				<td class="left-border"><br></td>
-				</tr>
-
-
-					<%	
-					if(recipe.comments != null){
-					for(RecipeComment comment: recipe.comments){
-
-					%>
-					<tr>
-					<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-					<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
-					</tr>
-
-					<%
-						}
-					}
-					%>
-
-					<tr>
-					<td></td>
-					<td class="left-border"><br></td>
-					</tr>
-
-
-					</table>
-				<%
-			}		
-	}
 }
 %>
-
 </table>
+
+
+
 
 
 

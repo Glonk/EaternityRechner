@@ -48,7 +48,6 @@ public class StaticPageService {
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	public Long kitchenLongId = 0L;
 
-	public DecimalFormat formatter = new DecimalFormat("##");
 	public SimpleDateFormat dateFormatter;
 
 	public List<CatRyzer.DateValue> valuesByDate;
@@ -165,6 +164,7 @@ public class StaticPageService {
 	}
 	
 	public String getNormalisedLength(Double val) {
+		DecimalFormat formatter = new DecimalFormat("##");
 		return formatter.format(val/maxValTemp*200);
 	}
 

@@ -17,6 +17,7 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.text.DecimalFormat" %>
 
 
 
@@ -80,6 +81,8 @@ StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,
 
 int counter = 0;
 int counterIterate = 0;
+Collection<Double> values = new ArrayList<Double>();
+DecimalFormat co2_formatter = new DecimalFormat("##");
 
 
 %>
@@ -206,7 +209,7 @@ for(Recipe recipe: variables.kitchenRecipes){
 	
 	String clear = Converter.toString(recipe.getId(),34);
 	String length = variables.getNormalisedLength(recipeValue);
-	String recipeValueFormatted = variables.formatter.format(recipeValue/1000);
+	String recipeValueFormatted = co2_formatter.format(recipeValue/1000);
 	%>
 			
 	<tr <%
@@ -255,8 +258,6 @@ counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0;
 
-Collection<Double> values = new ArrayList<Double>();
-
 for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
 	values.add(categoryValue.co2value);
 }
@@ -284,7 +285,7 @@ class="alternate"
 	%><%= datumString %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
+<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
 </tr>
 
 
@@ -350,7 +351,7 @@ class="alternate"
 <%= ingredientValue.categoryName %> <!-- (<%= ingredientValue.amountGram/1000 %> kg) -->
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(ingredientValue.co2value/1000) %></td>
+<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value/1000) %></td>
 
 </tr>
 
@@ -404,7 +405,7 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 	<%= categoryValue.categoryName %>
 	</td>
 	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-	<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
+	<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
 	</tr>
 
 <%
@@ -479,7 +480,7 @@ class="alternate"
 <%= categoryValue.categoryName %>
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= variables.formatter.format(categoryValue.co2value/1000) %></td>
+<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
 </tr>
 
 
@@ -522,7 +523,7 @@ class="alternate"
 				recipe.setCO2Value();
 				Double recipeValue = recipe.getCO2Value()  ;
 
-				String formatted = variables.formatter.format( recipeValue/1000 );
+				String formatted = co2_formatter.format( recipeValue/1000 );
 				
 				datumString = "NO DATE SPECIFIED";
 				try {
