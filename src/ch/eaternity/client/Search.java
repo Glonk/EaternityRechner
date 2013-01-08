@@ -180,12 +180,14 @@ public class Search<T> extends ResizeComposite {
 	void onCo2Clicked(ClickEvent event) {
 		sortMethod = 1;
 		sortResults();
+		displayResults();
 	}
 
 	@UiHandler("alphOrder")
 	void onAlphClicked(ClickEvent event) {
 		sortMethod = 5;
 		sortResults();
+		displayResults();
 	}
 	
 	// Handle search input
@@ -451,17 +453,7 @@ public class Search<T> extends ResizeComposite {
 				if(	getYourRecipes() != null && getYourRecipes().size() != 0){
 					yourMealsPanel.setVisible(true);
 					for(Recipe recipe : getYourRecipes()){
-						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
-								
-								if(recipe.getDirectDescandentID() != null){
-									FoundRezepteYoursHasDesc.add(recipe);
-								} else {
-									FoundRezepteYours.add(recipe);
-								}
-	//							displayRecipeItemCheck(recipe,true);
-							}
-						}	
+							FoundRezepteYours.add(recipe);
 					}
 				} else {
 					yourMealsPanel.setVisible(false);
@@ -469,16 +461,7 @@ public class Search<T> extends ResizeComposite {
 
 				if(	clientData.getPublicRezepte() != null){
 					for(Recipe recipe : clientData.getPublicRezepte()){
-						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
-								if(recipe.getDirectDescandentID() != null){
-									FoundRezepteHasDesc.add(recipe);
-								} else {
-									FoundRezepte.add(recipe);
-								}
-	//							displayRecipeItemCheck(recipe,false);
-							}
-						}
+						FoundRezepte.add(recipe);
 					}
 				}
 
@@ -488,11 +471,15 @@ public class Search<T> extends ResizeComposite {
 			// mark descendant also!!!!!
 			
 			// display recipes if there is no descendant of them in the list
-			selectUnDescendantedRecipes(FoundRezepteHasDesc,FoundRezepte);
-			selectUnDescendantedRecipes(FoundRezepteYoursHasDesc,FoundRezepteYours);
+			
+			selectUnDescendantedRecipes(FoundRezepte);
+			
+			selectUnDescendantedRecipes(FoundRezepteYours);
+ 
 
 			// sort and display results
 			sortResults();
+			displayResults();
 			
 			// mark last position, cutt if needed
 			int listsize = FoundIngredient.size() + FoundAlternativeIngredients.size();
@@ -1061,7 +1048,6 @@ public class Search<T> extends ResizeComposite {
 	}
 	
 	private List<Recipe> getYourRecipes() {
-		// TODO Auto-generated method stub
 		if(presenter.getTopPanel().isNotInKitchen){
 			return clientData.getYourRezepte();
 		} else {
@@ -1071,30 +1057,15 @@ public class Search<T> extends ResizeComposite {
 		
 	}
 
-	private void searchRezept(String searchString,
-			List<Recipe> allRezepte, String[] searches, boolean yours) {
+	private void searchRezept(String searchString, List<Recipe> allRezepte, String[] searches, boolean yours) {
 		if(allRezepte != null){
 			for(Recipe recipe : allRezepte){
 				if(recipe != null){
 					if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
-						if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-							if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
-								// Recipe zu Rezeptsuche
-								if(yours){
-									if(recipe.getDirectDescandentID() != null){
-										FoundRezepteYoursHasDesc.add(recipe);
-									} else {
-										FoundRezepteYours.add(recipe);
-									}
-								} else {
-									if(recipe.getDirectDescandentID() != null){
-										FoundRezepteHasDesc.add(recipe);
-									} else {
-										FoundRezepte.add(recipe);
-									}
-								}
-	//							displayRecipeItem(recipe,yours);
-							}
+						if(yours){
+							FoundRezepteYours.add(recipe);
+						} else {
+							FoundRezepte.add(recipe);
 						}
 					}
 
@@ -1111,27 +1082,13 @@ public class Search<T> extends ResizeComposite {
 									}
 								}
 								if(i == searches.length){
-									if(!FoundRezepte.contains(recipe) && !FoundRezepteYours.contains(recipe)){
-										if(!FoundRezepteHasDesc.contains(recipe) && !FoundRezepteYoursHasDesc.contains(recipe)){
-											if(yours){
-												if(recipe.getDirectDescandentID() != null){
-													FoundRezepteYoursHasDesc.add(recipe);
-												} else {
-													FoundRezepteYours.add(recipe);
-												}
-											} else {
-												if(recipe.getDirectDescandentID() != null){
-													FoundRezepteHasDesc.add(recipe);
-												} else {
-													FoundRezepte.add(recipe);
-												}
-											}
-	//										displayRecipeItem(recipe,yours);
-										}
+									if(yours){
+										FoundRezepteYours.add(recipe);
+									} else {
+										FoundRezepte.add(recipe);
 									}
 								}
 							}
-
 						}
 					}
 				}
@@ -1142,41 +1099,19 @@ public class Search<T> extends ResizeComposite {
 	/**
 	 * The filtering function
 	 */
-	private static void selectUnDescendantedRecipes(List<Recipe> possibleRecipes, List<Recipe> alreadyFound) {
+	private static void selectUnDescendantedRecipes(List<Recipe> recipes) {
 		
-		// check if descendant is also in the own list
-		Iterator<Recipe> iterator = possibleRecipes.iterator();
-		while(iterator.hasNext()){
-			Recipe recipeHasDesc = iterator.next();
-			for( Recipe recipeIsPossibleDesc :possibleRecipes){
+		// check if descendant is in the own list
+		Iterator<Recipe> iter = recipes.iterator();
+		while(iter.hasNext()){
+			Recipe recipeHasDesc = iter.next();
+			for( Recipe recipeIsPossibleDesc : recipes){
 				// is the descendant in the own list
 				if(recipeHasDesc.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
-					// remove recipeHasDesc
-					iterator.remove();
+					iter.remove();
 					break;
 				}
 			}
-		}
-	
-		
-		// check if descendant is also in the public list
-		Iterator<Recipe> iteratorAgain = possibleRecipes.iterator();
-		while(iteratorAgain.hasNext()){
-			Recipe recipeHasDescAgain = iteratorAgain.next();
-			for( Recipe recipeIsPossibleDesc :alreadyFound){
-				// is the descendant in the own list
-				if(recipeHasDescAgain.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
-					// remove recipeHasDesc
-					iteratorAgain.remove();
-					break;
-				}
-			}
-		}
-		
-		
-		//if not display itself
-		for(Recipe addRecipe : possibleRecipes){
-			alreadyFound.add(addRecipe);
 		}
 
 		// (also mark ancestors as old... by displaying the descendant)
@@ -1186,6 +1121,8 @@ public class Search<T> extends ResizeComposite {
 	
 	/**
 	 * The sorting functions
+	 * 
+	 * Call displayResults if for showing effects
 	 */
 
 	private void sortResults() {
@@ -1193,27 +1130,9 @@ public class Search<T> extends ResizeComposite {
 		case 1:{
 			//"co2-value"
 			Collections.sort(FoundIngredient,new ValueComparator());
-			displayIngredients();
-			
 			Collections.sort(FoundAlternativeIngredients,new ValueComparator());
-			displayIngredients();	
-
 			Collections.sort(FoundRezepte,new RezeptValueComparator());
-			tableMeals.removeAllRows();
-			if(FoundRezepte != null){
-				for (final Recipe item : FoundRezepte){
-					displayRecipeItem(item,false);
-				}
-			}
-
 			Collections.sort(FoundRezepteYours,new RezeptValueComparator());
-			tableMealsYours.removeAllRows();
-			if(FoundRezepteYours != null){
-				for (final Recipe item : FoundRezepteYours){
-					displayRecipeItem(item,true);
-				}
-			}
-
 			break;
 		}
 		case 2:{
@@ -1239,30 +1158,30 @@ public class Search<T> extends ResizeComposite {
 			//			    chain.addComparator(new NumberComparator()
 			
 			Collections.sort(FoundIngredient,new NameComparator());
-			displayIngredients();
-			
 			Collections.sort(FoundAlternativeIngredients,new NameComparator());
-			displayIngredients();
-
 			Collections.sort(FoundRezepte,new RezeptNameComparator());
-			tableMeals.removeAllRows();
-			if(FoundRezepte != null){
-				for (final Recipe item : FoundRezepte){
-					displayRecipeItem(item,false);
-				}
-			}
-
 			Collections.sort(FoundRezepteYours,new RezeptNameComparator());
-			tableMealsYours.removeAllRows();
-			if(FoundRezepteYours != null){
-				for (final Recipe item : FoundRezepteYours){
-					displayRecipeItem(item,true);
-				}
-			}
-			break;
 		}
 		}
 	}
+	
+	private void displayResults() {
+		displayIngredients();	
+		
+		tableMeals.removeAllRows();
+		if(FoundRezepte != null){
+			for (final Recipe item : FoundRezepte){
+				displayRecipeItem(item,false);
+			}
+		}
+		tableMealsYours.removeAllRows();
+		if(FoundRezepteYours != null){
+			for (final Recipe item : FoundRezepteYours){
+				displayRecipeItem(item,true);
+			}
+		}
+	}
+	
 	
 	private void displayIngredients()
 	{

@@ -244,9 +244,11 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 					}
 
 				}
+				// equals() for recipe is not defined!!!
 				
 				// only add when it is not in there yet... (update)
 				// and corresponds to the kitchen
+				/*
 				if(getTopPanel().isNotInKitchen){
 					if(!getSearchPanel().clientData.getYourRezepte().contains(recipe)){
 						getSearchPanel().clientData.getYourRezepte().add(recipe);
@@ -258,9 +260,15 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 					if(!getSearchPanel().selectedKitchenRecipes.contains(recipe)){
 						getSearchPanel().selectedKitchenRecipes.add(recipe);
 					}
+				}*/
+				
+				if(getTopPanel().isNotInKitchen){
+					getSearchPanel().clientData.getYourRezepte().add(recipe);
+				} else {
+					getSearchPanel().clientData.KitchenRecipes.add(recipe);
+					getSearchPanel().selectedKitchenRecipes.add(recipe);
 				}
 				
-//				Search.updateResults(" ");
 				String searchString = Search.SearchInput.getText().trim();
 				getSearchPanel().updateResults(searchString);
 				

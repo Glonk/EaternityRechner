@@ -208,24 +208,31 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public List<Recipe> getOpenRecipe() {
 		
 		DAO dao = new DAO();
-		return dao.getOpenRecipe();	
+		List<Recipe> openRecipes = new ArrayList<Recipe>();
+		openRecipes = dao.getOpenRecipe();
+		markDescendant(openRecipes);
+		return openRecipes;	
 	}
 
 	public List<Recipe> getYourRezepte() throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		return dao.getYourRecipe(getUser());	
+		List<Recipe> yourRecipes = new ArrayList<Recipe>();
+		yourRecipes = dao.getYourRecipe(getUser());
+		markDescendant(yourRecipes);
+		return yourRecipes;	
 	}
 	
 	public List<Recipe> getAdminRezepte() throws NotLoggedInException{
 		UserService userService = UserServiceFactory.getUserService();
 		List<Recipe> adminRecipes = new ArrayList<Recipe>();
 		if(userService.getCurrentUser() != null){
-		if(userService.isUserAdmin()){
-			DAO dao = new DAO();
-			adminRecipes = dao.adminGetRecipe(userService.getCurrentUser());
+			if(userService.isUserAdmin()){
+				DAO dao = new DAO();
+				adminRecipes = dao.adminGetRecipe(userService.getCurrentUser());
+			}
 		}
-		}
+		markDescendant(adminRecipes);
 		return adminRecipes;
 		
 	}
@@ -337,19 +344,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	public void markDescendant(List<Recipe> recipesList) {
 		for( Recipe checkRecipe: recipesList){
+			// has ancestor...
 			if(checkRecipe.getDirectAncestorID() != null){
-				// has ancestor...
 				for( Recipe markRecipe: recipesList){
-					
 					if(markRecipe.getId().equals(checkRecipe.getDirectAncestorID())){
 						// found descendants and mark him
 						markRecipe.addDirectDescandentID(checkRecipe.getId());
-//						checkRecipe.ancestorAlreadyMarked = true;
-//						break;
 					}
-					
-				}
-							
+				}			
 			}
 		}
 	}
