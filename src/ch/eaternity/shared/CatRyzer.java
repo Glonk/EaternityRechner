@@ -60,13 +60,51 @@ public class CatRyzer {
 		}
 	}
 	
+	public class Co2Value {
+		public double prodQuota;
+		public double transQuota;
+		public double condQuota;
+		public double noFactorsQuota;
+		public double totalValue;
+		
+		public Co2Value() {
+			this.prodQuota = 0.0;
+			this.transQuota = 0.0;
+			this.condQuota = 0.0;
+			this.noFactorsQuota = 0.0;
+			this.totalValue = 0.0;
+		}
+		
+		public Co2Value(double totalValue) {
+			this.totalValue = totalValue;
+		}
+		
+		public Co2Value(double prodQuota, double transQuota, double condQuota, double noFactorsQuota, double totalValue) {
+			this.prodQuota = prodQuota;
+			this.transQuota = transQuota;
+			this.condQuota = condQuota;
+			this.noFactorsQuota = noFactorsQuota;
+			this.totalValue = totalValue;
+		}
+		
+		public Co2Value add(Co2Value other) {
+			Co2Value sum = new Co2Value();
+			sum.prodQuota = this.prodQuota + other.prodQuota;
+			sum.transQuota = this.transQuota + other.transQuota;
+			sum.condQuota = this.condQuota + other.condQuota;
+			sum.noFactorsQuota = this.noFactorsQuota + other.noFactorsQuota;
+			sum.totalValue = this.totalValue + other.totalValue;
+			return sum;
+		}
+	}
+	
 	public class DateValue {
 		public Date date;
-		public Double co2value;
+		public Co2Value co2value;
 		
 		public DateValue() {}
 		
-		public DateValue(Date date, Double co2value) {
+		public DateValue(Date date, Co2Value co2value) {
 			this.date = date;
 			this.co2value = co2value;
 		}
@@ -74,31 +112,37 @@ public class CatRyzer {
 	
 	public class CategoryValue {
 		public String categoryName;
-		public Double co2value;
-		public Double amountGram;
+		public Co2Value co2value;
+		public Double weight;
+		public Double cost;
 		
 		public CategoryValue(){}
 		
-		public CategoryValue(String name, Double co2value) {
+		public CategoryValue(String name, Co2Value co2value) {
 			this.categoryName = name;
 			this.co2value = co2value;
 		}
-		public CategoryValue(String name, Double co2value, Double amountGram) {
+		public CategoryValue(String name, Co2Value co2value, Double amountGram) {
 			this(name,co2value);
-			this.amountGram = amountGram;
+			this.weight = amountGram;
+		}
+		public CategoryValue(String name, Co2Value co2value, Double amountGram, Double cost) {
+			this(name,co2value);
+			this.weight = amountGram;
+			this.cost = cost;
 		}
 	}
 	
 	public class CategoryValuesByDates {
-		public List<CategoryValue> category;
+		public List<CategoryValue> categories;
 		//mulltiple dates are possible, usually just one
 		public List<Date> date = new ArrayList<Date>();
-		public Double co2value;
+		public Co2Value co2value;
 		
 		public CategoryValuesByDates(){}
 		
-		public CategoryValuesByDates(List<CategoryValue> category, List<Date> date){
-			this.category = category;
+		public CategoryValuesByDates(List<CategoryValue> categories, List<Date> date){
+			this.categories = categories;
 			this.date = date;
 		}
 	}
@@ -189,18 +233,16 @@ public class CatRyzer {
 			// ---- first populate the dateValue List ------
 			Multimap<Date,IngredientSpecification> dateMultiMap = HashMultimap.create();
 			
-			// iterate over all ingredientSpec, add them to the Map
 			for (IngredientSpecification ingSpec : ingSpecs){
 				Date date = ingSpec.getCookingDate();
 				dateMultiMap.put(date, ingSpec);
 			}
 						
-			// ---- first populate the categoryValue List ------
+			// ---- second populate the categoryValue List ------
 			// The Multimap could probably substitute categoryValues in the future ...
 			// ... when it wouldn't be so darn f*ing complicated to debug ; )
 			// String : Category, Long: id of Ingredient
 			
-			// iterate over all ingredientSpec, add them to the Map
 			for (IngredientSpecification ingSpec : ingSpecs){
 				if (getIngredient(ingSpec) == null) {
 					rootLogger.log(Level.SEVERE, "Ingredient can not be found. Id of IngredientSpecification: " + ingSpec.getId() + " Id of Ingredient: " + ingSpec.getZutat_id());
@@ -210,7 +252,7 @@ public class CatRyzer {
 				}
 			}
 			
-			// ---- second populate the CategoryValuesByDates List ------
+			// ---- third populate the CategoryValuesByDates List ------
 			Map<Date,Multimap<String,IngredientSpecification>> MapOfcatMultiMap = new HashMap<Date,Multimap<String,IngredientSpecification>>();
 			
 			for (IngredientSpecification ingSpec : ingSpecs){
@@ -227,25 +269,23 @@ public class CatRyzer {
 				MapOfcatMultiMap.put(date, catMM);
 			}
 			
-			
+			// -------------------- Converting MAPS to LISTS -------------------------
 
-			// sort the set
+			// sort the Date Set
 			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
-			
-			
-			// filling own objects
 			for (Date date : dateOfKeys) {
 				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
 				dateValues.add(new DateValue(date, getCo2Value(ingredientsSpecification)));
 			}
 			
 			for (CatMapping mapping : mappings) {
-				categoryValues.add(new CategoryValue(mapping.category, getCo2Value(catMultiMap.get(mapping.category))));
+				Collection<IngredientSpecification> ingSpecs = catMultiMap.get(mapping.category);
+				categoryValues.add(new CategoryValue(mapping.category, getCo2Value(ingSpecs), getWeight(ingSpecs), getCost(ingSpecs)));
 			}
 			
 
 			
-			// sort the set
+			// sort the date set
 			List<Date> dateOfKeys2 = asSortedList(MapOfcatMultiMap.keySet());
 			
 			for(Date date : dateOfKeys2)
@@ -260,10 +300,10 @@ public class CatRyzer {
 				
 				CategoryValuesByDates categoryValuesByDates = new CategoryValuesByDates();
 				categoryValuesByDates.date.add(date);
-				categoryValuesByDates.category = categoryValues;
-				categoryValuesByDates.co2value = 0.0;
+				categoryValuesByDates.categories = categoryValues;
+				categoryValuesByDates.co2value = new Co2Value();
 				for (CategoryValue catval : categoryValues){
-					categoryValuesByDates.co2value = categoryValuesByDates.co2value + catval.co2value;
+					categoryValuesByDates.co2value = categoryValuesByDates.co2value.add(catval.co2value);
 				}
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
@@ -278,7 +318,7 @@ public class CatRyzer {
 			
 			for (String name : ingMultiMap.keySet()) {
 				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
-				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getAmount(ingCollection)));
+				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getWeight(ingCollection)));
 			}
 			
 			// sort CategoryValue by co2-value
@@ -305,6 +345,23 @@ public class CatRyzer {
 	public List<CategoryValue> getIngVals() {
 		return this.ingredientValues;	
 	}
+
+	// return total co2 amount in grams
+	public Co2Value getTotalCo2() {
+		return getCo2Value(ingSpecs);
+	}
+	
+	// return total weight in grams
+	public Double getTotalWeight() {
+		return getWeight(ingSpecs);
+	}
+	
+	//returns total cost in currency which was inputed
+	public Double getTotalCost() {
+		return getCost(ingSpecs);
+	}
+	
+	
 	// -------------- Private --------------
 	
 	
@@ -342,15 +399,19 @@ public class CatRyzer {
 		}
 	}
 	
-	private Double getCo2Value(Collection<IngredientSpecification> ingredientsSpecifications) {
-		Double co2value = 0.0;
-		for (IngredientSpecification ingredientsSpecification : ingredientsSpecifications) {
-			co2value = co2value + ingredientsSpecification.getCalculatedCO2Value();
+	private Co2Value getCo2Value(Collection<IngredientSpecification> ingsSpecs) {
+		Co2Value co2value = new Co2Value(0.0,0.0,0.0,0.0,0.0);
+		for (IngredientSpecification ingSpec : ingsSpecs) {
+			co2value.condQuota = co2value.condQuota + ingSpec.getConditionQuota();
+			co2value.transQuota = co2value.transQuota + ingSpec.getTransportationQuota();
+			co2value.prodQuota = co2value.prodQuota + ingSpec.getProductionQuota();
+			co2value.noFactorsQuota = co2value.noFactorsQuota + ingSpec.calculateCo2ValueNoFactors();
+			co2value.totalValue = co2value.totalValue + ingSpec.getCalculatedCO2Value();
 		}
 		return co2value;
 	}
 	
-	private Double getAmount(Collection<IngredientSpecification> ingredientsSpecifications) {
+	private Double getWeight(Collection<IngredientSpecification> ingredientsSpecifications) {
 		Double amount = 0.0;
 		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
 			amount = amount + ingredientSpecification.getMengeGramm();
@@ -358,6 +419,13 @@ public class CatRyzer {
 		return amount;
 	}
 	
+	private Double getCost(Collection<IngredientSpecification> ingredientsSpecifications) {
+		Double cost = 0.0;
+		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
+			cost = cost + ingredientSpecification.getCost();
+		}
+		return cost;
+	}
 	
 	
 	public Set<String> getIngredientsNames_de(Collection<IngredientSpecification> ingSpecs){

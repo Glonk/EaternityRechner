@@ -72,7 +72,10 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	
 	// illustrations
 	private double distance;
-	private int NormalCO2Value;
+	private int co2ValuePerKG;
+	
+	// no factors included
+	private double co2ValueNoFactors;
 	
 	private double cost; 
 	
@@ -217,40 +220,61 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 			transportmittel.factor = 0.188D;
 		}
 	}
+	
 
-	//TODO calculate the CO2 value
+	public double calculateCo2ValueNoFactors() {
+		co2ValueNoFactors = co2ValuePerKG*mengeGramm/1000;
+		return co2ValueNoFactors;
+	}
+
+
 	public double getCalculatedCO2Value() {
-		double wert = NormalCO2Value*mengeGramm/1000;
+		// just in case its not setted yet
+		calculateCo2ValueNoFactors();
 		
-		if(transportmittel != null && transportmittel.factor != null){
-		if(distance != 0){
-		wert += transportmittel.factor*distance/1000000*mengeGramm;
-		}
-		} 
-		
-		if(produktion != null && produktion.factor != null){
-			wert += produktion.factor*mengeGramm;
-		}
-		
+		// sum up all parts
+		return co2ValueNoFactors + getConditionQuota() + getTransportationQuota() + getProductionQuota();
+	}
+	
+	public double getConditionQuota() {
+		calculateCo2ValueNoFactors();
 		if(zustand != null && zustand.factor != null){
-			wert += zustand.factor*mengeGramm;
+			return zustand.factor*mengeGramm;
 		}
-		
-
-
-		return wert;
-		
+		else
+			return 0.0;
+	}
+	
+	public double getTransportationQuota() {
+		calculateCo2ValueNoFactors();
+		if(transportmittel != null && transportmittel.factor != null){
+			if(distance != 0)
+				return transportmittel.factor*distance/1000000*mengeGramm;
+			else
+				return 0.0;
+		} 
+		else
+			return 0.0;
+	}
+	
+	public double getProductionQuota() {
+		calculateCo2ValueNoFactors();
+		if(produktion != null && produktion.factor != null){
+			return produktion.factor*mengeGramm;
+		}
+		else
+			return 0.0;
 	}
 
 
 	public void setNormalCO2Value(int normalCO2Value) {
-		NormalCO2Value = normalCO2Value;
+		co2ValuePerKG = normalCO2Value;
 	}
 
 
 
 	public int getNormalCO2Value() {
-		return NormalCO2Value;
+		return co2ValuePerKG;
 	}
 
 
@@ -298,23 +322,6 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	{
 		this.cost = cost;
 	}
-
-
-
-
-
-//	public void setId(String id) {
-//		this.id = id;
-//	}
-//
-//
-//
-//	public String getId() {
-//		return id;
-//	}
-
-
-
 }
 
 

@@ -287,7 +287,7 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= ingredientValue.categoryName %> <!-- (<%= ingredientValue.amountGram/1000 %> kg) -->
+<%= ingredientValue.categoryName %> <!-- (<%=ingredientValue.weight/1000%> kg) -->
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value/1000) %></td>

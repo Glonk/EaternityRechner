@@ -61,7 +61,6 @@ public class StaticPageService {
 	public Double maxValTemp = 0.0;
 	public Double minValTemp = 10000000000000.0;
 	
-	
 	public StaticPageService() {
 		rootLogger = Logger.getLogger("");
 		dao = new DAO();

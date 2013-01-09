@@ -348,7 +348,7 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= ingredientValue.categoryName %> <!-- (<%= ingredientValue.amountGram/1000 %> kg) -->
+<%= ingredientValue.categoryName %> <!-- (<%=ingredientValue.weight/1000%> kg) -->
 </td>
 <td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
 <td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value/1000) %></td>
@@ -453,27 +453,25 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Ca
 </tr>
 
 <%
-
-counterIterate = 0;
+	counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0; 
 
 values.clear();
 //  go over the Recipes in the Workspace
-for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+for(CatRyzer.CategoryValue categoryValue : categoriesByDates.categories){
 	values.add(categoryValue.co2value);
 }
 variables.setMinMax(values);
 
 // -------------------------------- Total CO2 Impact by Category (per one Date) --------------------------- 
 
-for(CatRyzer.CategoryValue categoryValue : categoriesByDates.category){
+for(CatRyzer.CategoryValue categoryValue : categoriesByDates.categories){
 	String length = variables.getNormalisedLength(categoryValue.co2value);
 %>
 
-<tr <%
-int order = (categoriesByDates.category.indexOf(categoryValue) - counterIterate ) % 2; 
-if(order == 1) { %>
+<tr <%int order = (categoriesByDates.categories.indexOf(categoryValue) - counterIterate ) % 2; 
+if(order == 1) {%>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
