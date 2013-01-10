@@ -11,11 +11,11 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.NotLoggedInException;
 import ch.eaternity.client.place.KlimaZmittagPlace;
 import ch.eaternity.client.ui.KlimaZmittagView;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Data;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 
 public class KlimaZmittagActivity extends AbstractActivity implements

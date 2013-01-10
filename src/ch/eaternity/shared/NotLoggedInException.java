@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.shared;
 
 import java.io.Serializable;
 

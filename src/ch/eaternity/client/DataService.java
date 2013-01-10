@@ -8,6 +8,7 @@ import java.util.List;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
