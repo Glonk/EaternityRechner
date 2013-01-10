@@ -933,7 +933,7 @@ public class KitchenDialog<T> extends DialogBox{
 	void onOkayClicked(ClickEvent event) {
 		// this button finalizes the decision to enter the kitchen
 		presenter.getTopPanel().location.setVisible(false);
-		presenter.getTopPanel().isNotInKitchen = false;
+		presenter.getDAO().isNotInKitchen = false;
 		presenter.getTopPanel().isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
 		presenter.getTopPanel().selectedKitchen = selectedKitchen;
 	
@@ -992,7 +992,7 @@ public class KitchenDialog<T> extends DialogBox{
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
 					presenter.getTopPanel().selectedKitchen.id = kitchenID;
-					presenter.getSearchPanel().updateKitchenRecipesForSearch(kitchenID);
+					presenter.getDAO().updateKitchenRecipesForSearch(kitchenID);
 					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
 					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);
@@ -1232,7 +1232,7 @@ public class KitchenDialog<T> extends DialogBox{
 	  @UiHandler("leaveKitchen")
 	  public void onLeaveKitchenClick(ClickEvent event) {
 		  presenter.getTopPanel().location.setVisible(true);
-		  presenter.getTopPanel().isNotInKitchen = true;
+		  presenter.getDAO().isNotInKitchen = true;
 		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
 		  presenter.getTopPanel().selectedKitchen = null;
 		  

@@ -24,5 +24,6 @@ public interface ClientFactory {
     DataServiceAsync getDataServiceRPC();
 	MenuPreviewView getMenuPreviewView();
 	KlimaZmittagView getKlimaZmittagView();
+	DataController getDataController();
 
 }

@@ -1,5 +1,6 @@
 package ch.eaternity.client.ui;
 
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.ui.widgets.RecipeView;
 import ch.eaternity.client.ui.widgets.Search;
 import ch.eaternity.client.ui.widgets.TopPanel;
@@ -34,7 +35,9 @@ public interface EaternityRechnerView<T> extends IsWidget
 
 	public interface Presenter<T>
 	{
-//		void onAddButtonClicked();
+		DataController getDAO();
+
+		//		void onAddButtonClicked();
 //		void onDeleteButtonClicked();
 //		void onItemClicked(T clickedItem);
 //		void onItemSelected(T selectedItem);

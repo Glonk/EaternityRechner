@@ -94,7 +94,7 @@ public
   
  // here should be all the distances stored 
 protected  ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
-public  boolean isNotInKitchen = true;
+
 public  Workgroup selectedKitchen;
 
 private Presenter<T> presenter;

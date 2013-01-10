@@ -32,6 +32,7 @@ import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 import ch.eaternity.client.ClientFactory;
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.EaternityRechner;
 import ch.eaternity.client.events.LoadedDataEvent;
@@ -71,8 +72,10 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	private final EaternityRechnerPlace place;
 
 	private PlaceController placeController;
+	private DataController dao;
 	private HandlerRegistration adminHandler;
 	private MenuPreviewView menuPreview;
+	
 	
 	
 	// Used to obtain views, eventBus, placeController
@@ -83,6 +86,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		this.eventBus = factory.getEventBus();
 		this.display = factory.getEaternityRechnerView();
 		this.placeController = factory.getPlaceController();
+		this.dao = factory.getDataController();
 		this.place = place;
 		
 		this.menuPreview = factory.getMenuPreviewView();
@@ -154,7 +158,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				// the data objects holds all the data
 				// the search interface gets all the data (recipes and ingredients)
 				clientData = data;
-				getSearchPanel().clientData = clientData;
+				dao.clientData = clientData;
 //				Search.clientData = data;
 				
 				eventBus.fireEvent(new LoadedDataEvent());
@@ -165,7 +169,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				display.getTopPanel().locationButton.setEnabled(true);
 				
 				// is this necessary?:
-				display.getTopPanel().isNotInKitchen = true;
+				dao.isNotInKitchen = true;
 				display.getTopPanel().location.setVisible(true);
 				// it should not...
 				
@@ -196,10 +200,10 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 						String kitchenName = lastKitchen.getSymbol();
 						display.getTopPanel().isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
 						display.getTopPanel().location.setVisible(false);
-						display.getTopPanel().isNotInKitchen = false;
+						dao.isNotInKitchen = false;
 						display.getTopPanel().selectedKitchen = lastKitchen;
 						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
-						display.getSearchPanel().updateKitchenRecipesForSearch(display.getTopPanel().selectedKitchen.id);
+						dao.updateKitchenRecipesForSearch(display.getTopPanel().selectedKitchen.id);
 
 					} 
 				} 
@@ -217,7 +221,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
-		if(!getTopPanel().isNotInKitchen){
+		if(!dao.isNotInKitchen){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
 			if(!recipe.kitchenIds.contains(getTopPanel().selectedKitchen.id)){
@@ -237,12 +241,12 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				// when this is your first one... so show the panel... should be automatic
 //				Search.yourMealsPanel.setVisible(true);
 				if(recipe.getDirectAncestorID() != null){
-					for(Recipe recipeDesc : getSearchPanel().clientData.getYourRezepte()){
+					for(Recipe recipeDesc : dao.clientData.getYourRezepte()){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
 					}
-					for(Recipe recipeDesc : getSearchPanel().clientData.KitchenRecipes){
+					for(Recipe recipeDesc : dao.clientData.KitchenRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
@@ -255,23 +259,23 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				// and corresponds to the kitchen
 				/*
 				if(getTopPanel().isNotInKitchen){
-					if(!getSearchPanel().clientData.getYourRezepte().contains(recipe)){
-						getSearchPanel().clientData.getYourRezepte().add(recipe);
+					if(!dao.clientData.getYourRezepte().contains(recipe)){
+						dao.clientData.getYourRezepte().add(recipe);
 					}
 				} else {
-					if(!getSearchPanel().clientData.KitchenRecipes.contains(recipe)){
-						getSearchPanel().clientData.KitchenRecipes.add(recipe);
+					if(!dao.clientData.KitchenRecipes.contains(recipe)){
+						dao.clientData.KitchenRecipes.add(recipe);
 					}
 					if(!getSearchPanel().selectedKitchenRecipes.contains(recipe)){
 						getSearchPanel().selectedKitchenRecipes.add(recipe);
 					}
 				}*/
 				
-				if(getTopPanel().isNotInKitchen){
-					getSearchPanel().clientData.getYourRezepte().add(recipe);
+				if(dao.isNotInKitchen){
+					dao.clientData.getYourRezepte().add(recipe);
 				} else {
-					getSearchPanel().clientData.KitchenRecipes.add(recipe);
-					getSearchPanel().selectedKitchenRecipes.add(recipe);
+					dao.clientData.KitchenRecipes.add(recipe);
+					dao.selectedKitchenRecipes.add(recipe);
 				}
 				
 				String searchString = Search.SearchInput.getText().trim();
@@ -305,17 +309,17 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 				
-				if(getSearchPanel().clientData.getYourRezepte().contains(recipe)){
-					getSearchPanel().clientData.getYourRezepte().remove(recipe);
+				if(dao.clientData.getYourRezepte().contains(recipe)){
+					dao.clientData.getYourRezepte().remove(recipe);
 				}
 				if(recipe.isOpen()){
-					getSearchPanel().clientData.getPublicRezepte().remove(recipe);
+					dao.clientData.getPublicRezepte().remove(recipe);
 				}
-				if(getSearchPanel().clientData.KitchenRecipes.contains(recipe)){
-					getSearchPanel().clientData.KitchenRecipes.remove(recipe);
+				if(dao.clientData.KitchenRecipes.contains(recipe)){
+					dao.clientData.KitchenRecipes.remove(recipe);
 				}
 				if(getTopPanel().selectedKitchen != null)
-					getSearchPanel().updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
+					dao.updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
 				getSearchPanel().updateResults(Search.SearchInput.getText());
 			}
 		});
@@ -329,9 +333,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 // here happens some graphics clinch... or somewhere else...
-				getSearchPanel().clientData.getPublicRezepte().remove(recipe);
+				dao.clientData.getPublicRezepte().remove(recipe);
 				recipe.open = approve;
-				getSearchPanel().clientData.getPublicRezepte().add(recipe);
+				dao.clientData.getPublicRezepte().add(recipe);
 				
 				//TODO in the display of the recipes show, that is now public
 				
@@ -385,12 +389,12 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(List<Recipe> rezepte) {
 				// this shouldn't be necessary, as we are working with pointers:
-				clientData = getSearchPanel().clientData;
+				clientData = dao.clientData;
 				// add all recipes to the public ones, this is an arbitrary choice...
 				// TODO display this fact somewhere, to see which recipes are yours, and which are not.
 				clientData.setPublicRezepte(rezepte);
 				// this shouldn't be necessary, as we are working with pointers: 
-				getSearchPanel().clientData = clientData;
+				dao.clientData = clientData;
 				getSearchPanel().updateResults(" ");
 			}
 		});
@@ -403,7 +407,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			
 			public void onSuccess(List<Workgroup> result) {
 				// this shouldn't be necessary
-				clientData = getSearchPanel().clientData;
+				clientData = dao.clientData;
 				
 				if(result.size() != 0){ // there must be somthing!
 					clientData.kitchens.addAll(result);
@@ -643,6 +647,15 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	@Override
 	public Data getClientData() {
 		return clientData;
+	}
+
+
+
+	@Override
+	public DataController getDAO() {
+		
+		// TODO Auto-generated method stub
+		return dao;
 	}
 	
 }

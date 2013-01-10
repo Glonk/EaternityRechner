@@ -150,7 +150,7 @@ public class RecipeEditView<T> extends Composite {
 		this.presenter = presenter;
 		
 	    // this grap becomes visible even when not logged in...
-	    if(presenter.getTopPanel().isNotInKitchen){
+	    if(presenter.getDAO().isNotInKitchen){
 	    	PrepareButton.setVisible(false);
 	    }
 	    

@@ -23,8 +23,10 @@ public class ClientFactoryImpl implements ClientFactory
 	private static final KlimaZmittagView klimaZmittagView = new KlimaZmittagViewImpl();
 	private static final EaternityRechnerView eaternityRechnerView = new EaternityRechnerViewImpl();
 	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
-	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
 	private static final MenuPreviewView menuPreviewView = new MenuPreviewView();
+	private static final DataController dao = new DataController();
+	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
+	
 
 	@Override
 	public EventBus getEventBus()
@@ -70,6 +72,11 @@ public class ClientFactoryImpl implements ClientFactory
 	@Override
 	public KlimaZmittagView getKlimaZmittagView() {
 		return klimaZmittagView;
+	}
+
+	@Override
+	public DataController getDataController() {
+		return dao;
 	}
 
 }

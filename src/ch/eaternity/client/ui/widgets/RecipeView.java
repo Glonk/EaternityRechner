@@ -140,7 +140,7 @@ public class RecipeView<T> extends Composite {
 	public void setPresenter(Presenter<T> presenter){
 		this.presenter = presenter;
 		
-	    if(presenter.getTopPanel().isNotInKitchen){
+	    if(presenter.getDAO().isNotInKitchen){
 //	    	PrepareButton.setVisible(false);
 	    }
 	    
