@@ -883,10 +883,9 @@ public class RecipeEditView<T> extends Composite {
 			if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
 				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
 					Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-					// In Tagen
-					//		String test = InfoZutat.zutat.getStartSeason();
-					Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStartSeason());		
-					Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutat.getStopSeason() );
+
+					Date dateStart =  zutat.getStartSeason();		
+					Date dateStop =  zutat.getStopSeason();
 
 					if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 							dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){

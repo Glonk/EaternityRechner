@@ -712,8 +712,8 @@ public class InfoZutatDialog<T> extends Composite {
 		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
 		// In Tagen
 //		String test = InfoZutat.zutat.getStartSeason();
-		Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( zutatSpec.getStartSeason() );		
-		Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( zutatSpec.getStopSeason() );
+		Date dateStart = zutatSpec.getStartSeason();		
+		Date dateStop =  zutatSpec.getStopSeason();
 		
 		if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 				dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
