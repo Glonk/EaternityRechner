@@ -97,7 +97,7 @@
 </ui:style>
 
 <ui:style field='passedStyle'
-    type='ch.eaternity.client.InfoZutatDialog.PassedStyle'>
+    type='ch.eaternity.client.ui.widgets.InfoZutatDialog.PassedStyle'>
 	
 		.hinweisPassed{
 			float:right;
@@ -113,7 +113,7 @@
   </ui:style>
   
    <ui:style field='selectionStyle'
-    type='ch.eaternity.client.InfoZutatDialog.SelectionStyle'>
+    type='ch.eaternity.client.ui.widgets.InfoZutatDialog.SelectionStyle'>
 	
 	.selectedBlob {
 			width:80px;

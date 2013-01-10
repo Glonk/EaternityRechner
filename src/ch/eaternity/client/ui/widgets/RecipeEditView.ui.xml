@@ -226,7 +226,7 @@
 </ui:style>
 
 	<ui:style field='selectionStyleRow'
-		type='ch.eaternity.client.RecipeEditView.SelectionStyleRow'>
+		type='ch.eaternity.client.ui.widgets.RecipeEditView.SelectionStyleRow'>
 
 		.selectedRow td{
 		background: #fff;
@@ -236,7 +236,7 @@
   </ui:style>
 
 	<ui:style field='evenStyleRow'
-		type='ch.eaternity.client.RecipeEditView.EvenStyleRow'>
+		type='ch.eaternity.client.ui.widgets.RecipeEditView.EvenStyleRow'>
 
 		.evenRow {
 		background: #FEE6C6;
