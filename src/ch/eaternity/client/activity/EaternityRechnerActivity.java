@@ -47,7 +47,7 @@ import ch.eaternity.client.place.HelloPlace;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.HelloView;
 import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.widgets.ImageOverlay;
+import ch.eaternity.client.ui.widgets.ImageOverlay;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;

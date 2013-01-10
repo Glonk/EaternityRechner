@@ -16,8 +16,8 @@ import java.util.List;
 
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.client.widgets.PhotoGallery;
-import ch.eaternity.client.widgets.UploadPhoto;
+import ch.eaternity.client.ui.widgets.PhotoGallery;
+import ch.eaternity.client.ui.widgets.UploadPhoto;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;

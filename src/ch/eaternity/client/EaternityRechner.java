@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 
-import ch.eaternity.client.widgets.ImageOverlay;
-import ch.eaternity.client.widgets.SimpleWidgetPanel;
+import ch.eaternity.client.ui.widgets.ImageOverlay;
+import ch.eaternity.client.ui.widgets.SimpleWidgetPanel;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Extraction;

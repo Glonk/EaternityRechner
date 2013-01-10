@@ -1,4 +1,4 @@
-package ch.eaternity.client.widgets;
+package ch.eaternity.client.ui.widgets;
 
 
 import com.google.gwt.core.client.GWT;

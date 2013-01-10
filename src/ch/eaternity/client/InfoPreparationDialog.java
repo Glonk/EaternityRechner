@@ -7,7 +7,7 @@ import java.util.List;
 
 
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.client.widgets.ImageOverlay;
+import ch.eaternity.client.ui.widgets.ImageOverlay;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.IngredientCondition;
