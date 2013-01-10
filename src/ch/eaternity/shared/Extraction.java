@@ -8,7 +8,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;
 
@@ -24,8 +23,8 @@ public class Extraction implements Serializable,Cloneable{
     
 	public String symbol;
 
-	public Date startSeason;
-	public Date stopSeason;
+	public String startSeason;
+	public String stopSeason;
 
 	
 	public IngredientCondition stdCondition;
@@ -60,11 +59,6 @@ public class Extraction implements Serializable,Cloneable{
         //}
         return true;
     }
-    
-    public void setSeason(String strStart,String strStop) {
-		this.startSeason = DateTimeFormat.getFormat("dd.MM").parse( strStart );		
-		this.stopSeason = DateTimeFormat.getFormat("dd.MM").parse( strStop );
-	}
 
 	
 }

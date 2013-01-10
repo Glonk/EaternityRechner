@@ -728,8 +728,8 @@ public class Search<T> extends ResizeComposite {
 			
 			// In Tagen
 			//		String test = InfoZutat.zutat.getStartSeason();
-			Date dateStart =  ingredient.stdExtraction.startSeason;		
-			Date dateStop =  ingredient.stdExtraction.stopSeason;
+			Date dateStart = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.startSeason);		
+			Date dateStop = DateTimeFormat.getFormat("dd.MM").parse( ingredient.stdExtraction.stopSeason );
 
 			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
 					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){

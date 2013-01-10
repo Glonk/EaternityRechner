@@ -285,7 +285,8 @@ public class IngredientsDialog extends DialogBox{
 							Extraction tmpExtr = new Extraction(trans_ar1[i]);
 							if (newIngredient.hasSeason)
 							{
-								tmpExtr.setSeason(startSeason,stopSeason);
+								tmpExtr.startSeason = startSeason;
+								tmpExtr.stopSeason = stopSeason;
 							}
 							tmpExtr.stdCondition = stdCond;
 							tmpExtr.stdProduction = stdProd;
