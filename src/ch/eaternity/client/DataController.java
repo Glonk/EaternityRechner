@@ -32,7 +32,7 @@ public class DataController {
 	private ArrayList<Recipe> foundRezepteHasDesc = new ArrayList<Recipe>();
 	private ArrayList<Recipe> foundRezepteYoursHasDesc = new ArrayList<Recipe>();
 	
-	//TODO presenter.getTopPanel(). still to refactor !!!
+	// this was in TopPanel before
 	public  boolean isNotInKitchen = true;
 
 	private int sortMethod;
@@ -293,7 +293,7 @@ public class DataController {
 		}
 
 		// (also mark ancestors as old... by displaying the descendant)
-		//TODO ( also display the old versions, but only in RecipeView)
+		//TODO ( also display the old versions, but only in RecipeEditView) so one can check beck the history of a recipe
 
 	}
 	

@@ -15,32 +15,22 @@
  */
 package ch.eaternity.client.ui.widgets;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.shared.Data;
+
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.comparators.NameComparator;
-import ch.eaternity.shared.comparators.RezeptNameComparator;
-import ch.eaternity.shared.comparators.RezeptValueComparator;
-import ch.eaternity.shared.comparators.ValueComparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
+
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -624,7 +614,8 @@ public class Search<T> extends ResizeComposite {
 	}
 
 
-
+// this should all be DataController now
+	
 //	public void setFoundRezepte(ArrayList<Recipe> foundRezepte) {
 //		FoundRezepte = foundRezepte;
 //	}
@@ -691,6 +682,7 @@ public class Search<T> extends ResizeComposite {
 						"Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
 
 	}
+	
 	private void initTable() {
 		// this is just basic design stuff
 		table.getColumnFormatter().setWidth(0, "120px");
@@ -957,7 +949,7 @@ public class Search<T> extends ResizeComposite {
 		
 				
 			// display all alternative Ingredients (sorted as well)
-			boolean textlabeladded = false;
+			// boolean textlabeladded = false;
 			for (final Ingredient item : presenter.getDAO().foundAlternativeIngredients){
 				if (!item.noAlternative)
 				{
