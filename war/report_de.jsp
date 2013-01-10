@@ -81,10 +81,14 @@ StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,
 
 int counter = 0;
 int counterIterate = 0;
-Collection<CatRyzer.Co2Value> values = new ArrayList<CatRyzer.Co2Value>();
+Collection<Double> values = new ArrayList<Double>();
+
 DecimalFormat co2_formatter = new DecimalFormat("##.#");
 DecimalFormat cost_formatter = new DecimalFormat("##");
 DecimalFormat weight_formatter = new DecimalFormat("##.#");
+
+int co2BarLength = 180;
+int barOffset = 45;
 
 
 %>
@@ -247,16 +251,20 @@ for(Recipe recipe: variables.kitchenRecipes){
 	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().totalValue/1000) %></td>
 </tr>
 <tr>
-	<td>Production C02 [kg CO2]:</td>
-	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().prodQuota/1000) %></td>
+	<td style="color:blue;">Without Factors [kg CO2]:</td>
+	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().noFactorsQuota/1000) %></td>
 </tr>
 <tr>
-	<td>Transportation C02 [kg CO2]:</td>
+	<td style="color:green;">Transportation C02 [kg CO2]:</td>
 	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().transQuota/1000) %></td>
 </tr>
 <tr>
-	<td>Condition C02 [kg CO2]:</td>
+	<td style="color:yellow;">Condition C02 [kg CO2]:</td>
 	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().condQuota/1000) %></td>
+</tr>
+<tr>
+	<td style="color:red;">Production C02 [kg CO2]:</td>
+	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().prodQuota/1000) %></td>
 </tr>
 <tr>
 	<td>Total Weight [kg]:</td>
@@ -265,6 +273,10 @@ for(Recipe recipe: variables.kitchenRecipes){
 <tr>
 	<td>Total Cost [CHF]:</td>
 	<td><%= cost_formatter.format(variables.catryzer.getTotalCost()) %></td>
+</tr>
+<tr>
+	<td>Season Quotient [percent]:</td>
+	<td><%= cost_formatter.format(variables.catryzer.getSeasonQuotient()*100) %></td>
 </tr>
 
 </table>
@@ -293,14 +305,12 @@ counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0;
 
+
 for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
-	values.add(categoryValue.co2value);
+	values.add(categoryValue.co2value.totalValue);
 }
-variables.setMinMax(values);
-
 
 for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
-		String length = variables.getNormalisedLength(categoryValue.co2value);
 	
 %>
 
@@ -319,8 +329,8 @@ class="alternate"
 	}
 	%><%= datumString %>
 </td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
+<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
+<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
 </tr>
 
 
@@ -363,14 +373,11 @@ variables.minValTemp = 10000000.0;
 values.clear();
 
 for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
-	values.add(ingredientValue.co2value);
+	values.add(ingredientValue.co2value.totalValue);
 }
-variables.setMinMax(values);
 
 
 for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
-	String length = variables.getNormalisedLength(ingredientValue.co2value);
-	
 	if (variables.valuesByIngredient.indexOf(ingredientValue) == 20){
 		break;
 	} 
@@ -384,8 +391,8 @@ class="alternate"
 <td class="menu-name">
 <%= ingredientValue.categoryName %> <!-- (<%=ingredientValue.weight/1000%> kg) -->
 </td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value/1000) %></td>
+<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, ingredientValue.co2value, co2BarLength) %></td>
+<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value.totalValue/1000) %></td>
 
 </tr>
 
@@ -423,13 +430,13 @@ variables.minValTemp = 10000000.0;
 values.clear();
 //  go over the Recipes in the Workspace
 for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
-	values.add(categoryValue.co2value);
+	values.add(categoryValue.co2value.totalValue);
 }
 variables.setMinMax(values);
 
 
 for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
-	String length = variables.getNormalisedLength(categoryValue.co2value);
+
 %>
 
 	<tr <%
@@ -440,8 +447,8 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 	<td class="menu-name">
 	<%= categoryValue.categoryName %>
 	</td>
-	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-	<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
+	<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
+	<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
 	<td class="co2value"><%= weight_formatter.format(categoryValue.weight/1000) %></td>
 	<td class="co2value"><%= cost_formatter.format(categoryValue.cost) %></td>
 	</tr>
@@ -498,14 +505,14 @@ variables.minValTemp = 10000000.0;
 values.clear();
 //  go over the Recipes in the Workspace
 for(CatRyzer.CategoryValue categoryValue : categoriesByDates.categories){
-	values.add(categoryValue.co2value);
+	values.add(categoryValue.co2value.totalValue);
 }
 variables.setMinMax(values);
 
 // -------------------------------- Total CO2 Impact by Category (per one Date) --------------------------- 
 
 for(CatRyzer.CategoryValue categoryValue : categoriesByDates.categories){
-	String length = variables.getNormalisedLength(categoryValue.co2value);
+
 %>
 
 <tr <%int order = (categoriesByDates.categories.indexOf(categoryValue) - counterIterate ) % 2; 
@@ -515,8 +522,8 @@ class="alternate"
 <td class="menu-name">
 <%= categoryValue.categoryName %>
 </td>
-<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value/1000) %></td>
+<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
+<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
 </tr>
 
 

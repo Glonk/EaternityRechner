@@ -96,6 +96,7 @@ public class CatRyzer {
 			sum.totalValue = this.totalValue + other.totalValue;
 			return sum;
 		}
+
 	}
 	
 	public class DateValue {
@@ -359,6 +360,24 @@ public class CatRyzer {
 	//returns total cost in currency which was inputed
 	public Double getTotalCost() {
 		return getCost(ingSpecs);
+	}
+	
+	// how many of the vegetables and fruits are seasonal, fresh from switzerland
+	// lies between zero and one
+	public double getSeasonQuotient() {
+		Integer numFruitsAndVegetables = ingSpecs.size();
+		Integer numAreSeasonal = 0;
+		
+
+		for(IngredientSpecification ingSpec: ingSpecs) {
+			if (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes")) {	
+				if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
+					if (ingSpec.getCookingDate().after(ingSpec.getStartSeason()) && ingSpec.getCookingDate().before(ingSpec.getStopSeason()))
+						numAreSeasonal++;
+				}
+			}
+		}
+		return numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
 	}
 	
 	

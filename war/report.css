@@ -207,6 +207,11 @@ margin-right: 4px;
 padding: 1pt 1pt 1pt 0pt;
 }
 
+.co2bar {
+	height: 0.688em;
+	
+}
+
 .table-space {
 	width: 10pt;
 }

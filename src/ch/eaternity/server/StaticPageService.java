@@ -7,6 +7,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import ch.eaternity.server.DAO;
 import ch.eaternity.shared.Recipe;
 
+import ch.eaternity.shared.CatRyzer.Co2Value;
 import ch.eaternity.shared.comparators.RezeptDateComparator;
 import ch.eaternity.shared.CatRyzer;
 
@@ -151,6 +152,21 @@ public class StaticPageService {
 		valuesByDate_Category = catryzer.getCatValsByDates(); 
 	}
 	
+	public String getCo2ValueBar(Collection<Double> allValues, Co2Value value, int totalLength) {
+		String html = "";
+		
+		if (value.noFactorsQuota > 0.0) 
+			html = html + "<div class=\"co2bar\" style=\"background-color:blue; float:left; width: " + totalLength/getMax(allValues)*value.noFactorsQuota + "px;\">&nbsp;</div>";
+		if (value.transQuota > 0.0) 
+			html = html + "<div class=\"co2bar\" style=\"background-color:green; float:left; width: " + totalLength/getMax(allValues)*value.transQuota + "px;\">&nbsp;</div>";
+		if (value.condQuota > 0.0) 
+			html = html + "<div class=\"co2bar\" style=\"background-color:yellow; float:left; width: " + totalLength/getMax(allValues)*value.condQuota + "px;\">&nbsp;</div>";
+		if (value.prodQuota > 0.0) 
+			html = html + "<div class=\"co2bar\" style=\"background-color:red; float:left; width: " + totalLength/getMax(allValues)*value.prodQuota + "px;\">&nbsp;</div>";
+		html = html + "<div style=\"clear:both;\"";
+		return html;
+	}
+	
 	public void setMinMax(Collection<Double> values) {
 		for (Double value : values) {
 			if(value>maxValTemp){
@@ -160,6 +176,16 @@ public class StaticPageService {
 				minValTemp = value;
 			}
 		}
+	}
+	
+	// just for testing
+	private double getMax(Collection<Double> values) {
+		double max = 0.0;
+		for (Double value : values) {
+			if(value>max)
+				max = value;
+		}
+		return max;
 	}
 	
 	public String getNormalisedLength(Double val) {
