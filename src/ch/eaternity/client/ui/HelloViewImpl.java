@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import ch.eaternity.client.KitchenDialog;
 import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.GoodbyePlace;
+import ch.eaternity.client.ui.widgets.KitchenDialog;
 
 public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 {

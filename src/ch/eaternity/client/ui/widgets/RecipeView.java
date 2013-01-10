@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.client.ui.widgets;
 
 import gwtupload.client.IUploader;
 import gwtupload.client.PreloadedImage;
@@ -16,8 +16,6 @@ import java.util.List;
 
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.client.ui.widgets.PhotoGallery;
-import ch.eaternity.client.ui.widgets.UploadPhoto;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;

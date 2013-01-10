@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.client.ui.widgets;
 
 /*
  * Copyright 2009 Fred Sauer

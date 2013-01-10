@@ -24,8 +24,6 @@ import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.RecipeEditView;
-import ch.eaternity.client.RecipeView;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;

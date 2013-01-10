@@ -1,8 +1,8 @@
 package ch.eaternity.client.ui;
 
-import ch.eaternity.client.RecipeView;
-import ch.eaternity.client.Search;
-import ch.eaternity.client.TopPanel;
+import ch.eaternity.client.ui.widgets.RecipeView;
+import ch.eaternity.client.ui.widgets.Search;
+import ch.eaternity.client.ui.widgets.TopPanel;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;

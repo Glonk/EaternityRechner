@@ -1,10 +1,12 @@
-package ch.eaternity.client;
+package ch.eaternity.client.ui.widgets;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.DataServiceAsync;
 //import ch.eaternity.server.Ingredient;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;

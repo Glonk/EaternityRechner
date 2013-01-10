@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.client.ui.widgets;
 
 
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Extraction;

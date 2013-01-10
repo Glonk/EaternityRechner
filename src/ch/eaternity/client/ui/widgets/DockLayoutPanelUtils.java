@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.client.ui.widgets;
 
 import com.google.gwt.dom.client.Style.Unit; 
 import com.google.gwt.user.client.ui.DockLayoutPanel; 

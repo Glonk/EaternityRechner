@@ -1,11 +1,10 @@
-package ch.eaternity.client;
+package ch.eaternity.client.ui.widgets;
 
 import java.util.Date;
 import java.util.List;
 
 
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.client.ui.widgets.ImageOverlay;
 import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
