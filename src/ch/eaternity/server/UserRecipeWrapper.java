@@ -26,6 +26,7 @@ public class UserRecipeWrapper{
 	@Indexed
 	public List<Long> kitchenIds;
 	
+	// for fast access requests
 	public Boolean approvedOpen;
 	public Boolean requestedOpen;
 	

@@ -71,7 +71,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 //	private ArrayList<Long> Labels = new ArrayList<Long>();
 	
 	// illustrations
-	private double distance;
+	private double distance; // in km
 	private int co2ValuePerKG;
 	
 	// no factors included

@@ -126,11 +126,13 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		suggestionPanel.setVisible(false);
 	}
 	
+	
 	public void loadLogin() {
 		// Assemble login panel.
 		topPanel.signInLink.setHref(presenter.getLoginInfo().getLoginUrl());
 	}
 	
+	//REFACTOR: Activity
 	public void loadYourRechner() {
 		topPanel.signOutLink.setHref(presenter.getLoginInfo().getLogoutUrl());
 		topPanel.signInLink.setVisible(false);
@@ -279,6 +281,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		presenter.addNewRecipe();		
 	}
 	
+	//REFACTOR: Recipe included
 	public void cloneRecipe(Recipe recipe) {
 		// This is basically right now a clone procedure!
 		// which is okay, if you don't own that recipe already...
@@ -563,6 +566,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		
 	}
 
+	//REFACTOR: correct, kommuniziert mit seinen Views
 	public RecipeView createNewRecipeView() {
 		// unstyle the old recipe
 		styleRezept(selectedRezept, false);
@@ -670,6 +674,8 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 
 		}
 	}
+	
+	//REFACTOR: direkt zum DataStore, Event
 public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int grams) {
 		
 		// convert zutat to ZutatSpec and call the real method
@@ -741,6 +747,7 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 	
 	}
 	
+//REFACTOR: Event MonthChanged
 	public void updateSaisonAndMore() {
 
 		rezeptEditView.updateSaison();
@@ -815,6 +822,8 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 		}
 	}
 
+	
+	//REFACTOR: correct
 	@Override
 	public void closeRecipeEditView() {
 

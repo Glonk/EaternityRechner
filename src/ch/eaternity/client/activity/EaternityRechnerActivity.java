@@ -96,6 +96,8 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 
 		display.setName(place.getPlaceName());
 		display.setPresenter(this);
+		
+		//REFACTOR: into display 
 		display.getSearchPanel().setSuperDisplay(display);
 		display.getTopPanel().setSuperDisplay(display);
 		
@@ -158,6 +160,8 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				eventBus.fireEvent(new LoadedDataEvent());
 
 				// the top panel grabs all the existing distances also from the search interface
+				
+				//REFACTOR: eine Stufe tiefer (display)
 				display.getTopPanel().locationButton.setEnabled(true);
 				
 				// is this necessary?:
@@ -209,6 +213,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		});
 	}
 	
+	//REFACTOR: in DataController und View (EVENT)
 public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
@@ -292,7 +297,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 		});
 	}
-	
+//REFACTOR: same as add
 	void removeRezept(final Recipe recipe) {
 		dataRpcService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
@@ -316,6 +321,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		});
 	}
 	
+	//REFACTOR: datacontroller
 	void rezeptApproval(final Recipe recipe, final Boolean approve) {
 		dataRpcService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
@@ -363,7 +369,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	      });
 	}
 	
-	
+	//REFACTOR: Entscheid Serverseitig ob Admin, je nachdem Adminrezepte mitschicken...
 	private HandlerRegistration loadAdmin() {
 		
 
@@ -413,11 +419,6 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		return adminHandler;
 	}
-
-	
-
-
-	static RecipeEditView rezeptEditView;
 	
 	
 
@@ -434,25 +435,6 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 //				displayRezepte(rezepte);
 			}
 		});
-	}
-	
-
-	private void displayRezepte(List<Recipe> rezepte) {
-		for (Recipe recipe : rezepte) {
-			if(recipe != null){ //why can it be 0?
-//				TODO wtf is this?
-				getSearchPanel().displayRecipeItem(recipe,false);
-			}
-		}
-	}
-	
-	private void displayZutaten(List<Ingredient> zutaten) {
-		for (Ingredient zutat : zutaten) {
-			if(zutat != null){ //why can it be 0?
-				getSearchPanel().displayIngredient(zutat);
-			}
-		}
-		
 	}
 	
 	public LoginInfo getLoginInfo(){
