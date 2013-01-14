@@ -211,6 +211,7 @@ public class InfoZutatDialog<T> extends Composite {
 			newExtractionBox.addKeyDownHandler(keyDownHandler);
 			handlersNotAdded = false;
 		}
+		newExtractionBox.setFocus(true);
 	}
 			
 	private void calculateExtractionDistance(final ListBox herkuenfte) {
