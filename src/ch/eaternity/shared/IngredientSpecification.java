@@ -74,7 +74,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	
 	// illustrations
 	private double distance; // in km
-	private int co2ValuePerKG;
+	private int NormalCO2Value;// in (Kg Co2)/Kg
 	
 	// no factors included
 	private double co2ValueNoFactors;
@@ -233,7 +233,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	
 
 	public double calculateCo2ValueNoFactors() {
-		co2ValueNoFactors = co2ValuePerKG*mengeGramm/1000;
+		co2ValueNoFactors = NormalCO2Value*mengeGramm/1000;
 		return co2ValueNoFactors;
 	}
 
@@ -247,7 +247,6 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 	
 	public double getConditionQuota() {
-		calculateCo2ValueNoFactors();
 		if(zustand != null && zustand.factor != null){
 			return zustand.factor*mengeGramm;
 		}
@@ -256,7 +255,6 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 	
 	public double getTransportationQuota() {
-		calculateCo2ValueNoFactors();
 		if(transportmittel != null && transportmittel.factor != null){
 			if(distance != 0)
 				return transportmittel.factor*distance/1000000*mengeGramm;
@@ -268,7 +266,6 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 	
 	public double getProductionQuota() {
-		calculateCo2ValueNoFactors();
 		if(produktion != null && produktion.factor != null){
 			return produktion.factor*mengeGramm;
 		}
@@ -278,13 +275,13 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 
 	public void setNormalCO2Value(int normalCO2Value) {
-		co2ValuePerKG = normalCO2Value;
+		NormalCO2Value = normalCO2Value;
 	}
 
 
 
 	public int getNormalCO2Value() {
-		return co2ValuePerKG;
+		return NormalCO2Value;
 	}
 
 

@@ -365,7 +365,7 @@ public class CatRyzer {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
 		for(IngredientSpecification ingSpec: ingSpecs) {
 			// fruits and veggies?
-			if (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes")) {	
+			if (getIngredient(ingSpec).tags != null && (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes"))) {	
 				// have season setted?
 				if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
 					SeasonDate dateStart = new SeasonDate();
