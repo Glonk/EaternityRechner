@@ -1,31 +1,26 @@
 package ch.eaternity.shared;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import ch.eaternity.server.DAO;
 import ch.eaternity.shared.comparators.CategoryValuesComparator;
-import ch.eaternity.shared.comparators.RezeptDateComparator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.gwt.logging.client.HasWidgetsLogHandler;
-import com.google.gwt.logging.client.LoggingPopup;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 
 
@@ -367,13 +362,24 @@ public class CatRyzer {
 	public double getSeasonQuotient() {
 		Integer numFruitsAndVegetables = ingSpecs.size();
 		Integer numAreSeasonal = 0;
-		
-
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
 		for(IngredientSpecification ingSpec: ingSpecs) {
+			// fruits and veggies?
 			if (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes")) {	
+				// have season setted?
 				if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
-					if (ingSpec.getCookingDate().after(ingSpec.getStartSeason()) && ingSpec.getCookingDate().before(ingSpec.getStopSeason()))
+					SeasonDate dateStart = new SeasonDate();
+					dateStart.setDate(ingSpec.getStartSeason());
+					SeasonDate dateStop = new SeasonDate();
+					dateStop.setDate(ingSpec.getStopSeason());
+					SeasonDate dateCook = new SeasonDate();
+					dateCook.setDate(ingSpec.getCookingDate());
+				// have season?
+				if (dateCook.after(dateStart) && dateCook.before(dateStop)) {
+					// are fresh from switzerland
+					if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch"))
 						numAreSeasonal++;
+					}
 				}
 			}
 		}
@@ -382,20 +388,7 @@ public class CatRyzer {
 	
 	
 	// -------------- Private --------------
-	
-	
-	// ids refer to an IngredientSPecification Object
-	// this was getting the co2values of our standart ingredient, not the one from the recipe...
-	/*
-	private Long getCo2Value(Collection<Long> ids) {
-		Long co2value = 0L;
-		for (Long id : ids) {
-			co2value = co2value + getIngredient(id).getCo2eValue();
-		}
-		return co2value;
-	}
-	*/
-	/// error end
+
 	
 	public static
 	<T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {

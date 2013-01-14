@@ -369,13 +369,7 @@ public class InfoZutatDialog<T> extends Composite {
 			specificationTable.setWidget(row,1,flow);
 			flow.add(herkuenfte);
 			
-			
-	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
-	    	if(formatted.contentEquals("0")){
-	    		kmText.setHTML("ca. " + formatted + "km");
-	    	}else{
-	    		kmText.setHTML("ca. " + formatted + "00km");
-	    	}
+			kmText.setHTML("ca. " + zutatSpec.getKmDistanceRounded() + "km");
 	    	flow.add(kmText);
 	    	flow.insert(newExtractionBox,0);
 	    	
@@ -582,12 +576,7 @@ public class InfoZutatDialog<T> extends Composite {
 		if(TopPanel.currentHerkunft.contentEquals(zutatSpec.getHerkunft().symbol)){
 			
 			zutatSpec.setDistance(0.0);
-	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
-	    	if(formatted.contentEquals("0")){
-	    		kmText.setHTML("ca. " + formatted + "km");
-	    	}else{
-	    		kmText.setHTML("ca. " + formatted + "00km");
-	    	}
+			kmText.setHTML("ca. " + zutatSpec.getKmDistanceRounded() + "km");
 	    	notChanged = false;
 	    	
 		} else {
@@ -650,12 +639,7 @@ public class InfoZutatDialog<T> extends Composite {
 					}
 				}
 
-		    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
-		    	if(formatted.contentEquals("0")){
-		    		kmText.setHTML("ca. " + formatted + "km");
-		    	}else{
-		    		kmText.setHTML("ca. " + formatted + "00km");
-		    	}
+				kmText.setHTML("ca. " + zutatSpec.getKmDistanceRounded() + "km");
 		    	break;
 			}
 
@@ -686,12 +670,7 @@ public class InfoZutatDialog<T> extends Composite {
 							    		double distance = locationsFrom.get(0).getPoint().distanceFrom(place.getPoint());
 							    		zutatSpec.setDistance(distance);
 
-								    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
-								    	if(formatted.contentEquals("0")){
-								    		kmText.setHTML("ca. " + formatted + "km");
-								    	}else{
-								    		kmText.setHTML("ca. " + formatted + "00km");
-								    	}
+							    		kmText.setHTML("ca. " + zutatSpec.getKmDistanceRounded() + "km");
 							      }
 							    });
 			      }

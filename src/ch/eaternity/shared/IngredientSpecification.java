@@ -2,6 +2,7 @@
 package ch.eaternity.shared;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
+
 
 import com.googlecode.objectify.annotation.Serialized;
 
@@ -210,6 +212,14 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 	public double getDistance() {
 		return distance;
+	}
+	
+	public int getKmDistanceRounded() {
+		int d = (int)(distance/10000);
+		if (d%10 >= 5)
+			d = d + 10;
+		int dist = ((int)(d/10))*100;
+		return dist;
 	}
 	
 	/*

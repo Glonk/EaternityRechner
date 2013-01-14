@@ -86,6 +86,7 @@ Collection<Double> values = new ArrayList<Double>();
 DecimalFormat co2_formatter = new DecimalFormat("##.#");
 DecimalFormat cost_formatter = new DecimalFormat("##");
 DecimalFormat weight_formatter = new DecimalFormat("##.#");
+DecimalFormat distance_formatter = new DecimalFormat("##");
 
 int co2BarLength = 180;
 int barOffset = 45;
@@ -614,7 +615,7 @@ class="alternate"
 
 					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> 
 						
-						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded()%>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 						
 						</span><%
 					}
