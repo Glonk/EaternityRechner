@@ -5,12 +5,24 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import ch.eaternity.client.events.KitchenChangedEvent;
+import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.place.EaternityRechnerPlace;
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.MenuPreviewView;
+import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
@@ -24,83 +36,82 @@ public class DataController {
 	// ---------------------- Class Variables ----------------------
 
 	// here is the database of all data pushed to....
+	private ClientFactory clientFactory;
+	private final DataServiceAsync dataRpcService;
+	private final EventBus eventBus;
+
+	
 	public ClientData clientData = new ClientData();
 
-	public  boolean isInKitchen;
-	public int currentKitchen;
+	public static LoginInfo loginInfo = null;
+	public boolean isInKitchen;
+	public Workgroup currentKitchen;
+	public int selectedMonth;
 
 	// ---------------------- public Methods ----------------------
 	
-	public DataController() {
-		
+	
+	public DataController(ClientFactory factory) {
+		this.clientFactory = factory;
+		this.dataRpcService = factory.getDataServiceRPC();
+		this.eventBus = factory.getEventBus();
 	}
 
 	public void loadData() {
-		dataRpcService.getData(new AsyncCallback<Data>() {
+		dataRpcService.getData(new AsyncCallback<ClientData>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(ClientData data) {
 				// the data objects holds all the data
-				// the search interface gets all the data (recipes and ingredients)
 				clientData = data;
-				dao.clientData = clientData;
-//				Search.clientData = data;
 				
 				eventBus.fireEvent(new LoadedDataEvent());
-
-				// the top panel grabs all the existing distances also from the search interface
-				
-				//REFACTOR: eine Stufe tiefer (display)
-				display.getTopPanel().locationButton.setEnabled(true);
-				
-				// is this necessary?:
-				dao.isInKitchen = false;
-				display.getTopPanel().location.setVisible(true);
-				// it should not...
-				
-				// who may change the kitchen
-				if(data.kitchens.size() == 0 && (loginInfo == null || !loginInfo.isAdmin() )){
-					// there is no kitchen available and you are a normal user (or not logged in)
-					display.getTopPanel().isCustomer.setVisible(false);
-				} else {
-					// otherwise may edit the kitchen stuff
-					display.getTopPanel().editKitchen.setVisible(true);
-				}
+				eventBus.fireEvent(new KitchenChangedEvent(-1L));
 
 				
-				// here is save the last kitchen thing
-				if(data.kitchens.size() > 0){
-
-					Long lastKitchenId = clientData.lastKitchen;
-					if(lastKitchenId == null) { lastKitchenId = 0L; }
-					
-					Workgroup lastKitchen = null;
-					for(Workgroup kitchIt : data.kitchens){
-						if(kitchIt.id == lastKitchenId){
-							lastKitchen = kitchIt;
-						}
+				// Manage Loading kitchen
+				boolean kitchenLoaded = true;
+				if (loginInfo.getUsedLastKitchen() == true && loginInfo.getLastKitchen() != null)
+				{
+					// load currentKitchen via ID
+					for(Workgroup kitchen : clientData.kitchens){
+						if(kitchen.id == loginInfo.getLastKitchen())
+							currentKitchen = kitchen;
 					}
-					
-					if(lastKitchenId != null && lastKitchen != null){
-						String kitchenName = lastKitchen.getSymbol();
-						display.getTopPanel().isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
-						display.getTopPanel().location.setVisible(false);
-						dao.isInKitchen = true;
-						display.getTopPanel().selectedKitchen = lastKitchen;
-						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
-						dao.changeKitchenRecipes(display.getTopPanel().selectedKitchen.id);
-
-					} 
-				} 
+					if (currentKitchen == null)
+						kitchenLoaded = false;
+				}
+				else
+					kitchenLoaded = false;
 				
-				display.getSearchPanel().SearchInput.setText("");
-				display.getSearchPanel().updateResults(" ");
+				if (kitchenLoaded)
+					eventBus.fireEvent(new KitchenChangedEvent(currentKitchen.id));
+				else
+					eventBus.fireEvent(new KitchenChangedEvent(-1L));
+				
+				
+				//TODO place this somewhere else
+				MenuPreviewView menuPreview = clientFactory.getMenuPreviewView();
+				clientFactory.getEaternityRechnerView().setMenuPreviewDialog(menuPreview);
 				menuPreview.hide();
-
 			}
 			
 		});
+	}
+	
+	
+	public void changeKitchen(Workgroup kitchen) {
+		if (kitchen == null) {
+			isInKitchen = false;
+			currentKitchen = null;
+			eventBus.fireEvent(new KitchenChangedEvent(-1L));
+		}
+		else {
+			isInKitchen = true;
+			currentKitchen = kitchen;
+			eventBus.fireEvent(new KitchenChangedEvent(kitchen.id));
+		}
 		
 	}
 	
@@ -305,5 +316,12 @@ public class DataController {
 		// our last action in the above loop was to switch d and p, so p now 
 		// actually has the most recent cost counts
 		return p[n];
+	}
+	
+	private static void handleError(Throwable error) {
+		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
+		if (error instanceof NotLoggedInException) {
+			Window.Location.replace(loginInfo.getLogoutUrl());
+		}
 	}
 }

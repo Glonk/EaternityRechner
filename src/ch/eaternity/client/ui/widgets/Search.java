@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import ch.eaternity.client.events.KitchenChangedEvent;
+import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 
@@ -314,6 +316,21 @@ public class Search<T> extends ResizeComposite {
 		setVDraggerHeight("0px");
 
 		initToolTips();
+		
+		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE, new KitchenChangedEventHandler() {
+			@Override
+			public void onKitchenChanged(KitchenChangedEvent event) {
+				if (event.id.equals(-1)) {
+					yourRecipesText.setHTML(" in eigenen Rezepten");
+					updateResults(SearchInput.getText());
+				}
+				else {
+					yourRecipesText.setHTML(" in " + presenter.getDAO().currentKitchen.getSymbol() + " Rezepten");
+					updateResults(SearchInput.getText());
+				}
+					
+			}
+			});
 
 	}
 
@@ -338,6 +355,8 @@ public class Search<T> extends ResizeComposite {
 	
 	// TODO this is getting called twice all the time...
 	public void updateResults(String searchString) {
+		SearchInput.setText(searchString);
+		
 		foundIngredients.clear();
 		foundAlternativeIngredients.clear();
 		foundPublicRecipes.clear();

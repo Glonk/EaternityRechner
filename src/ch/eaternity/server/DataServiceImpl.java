@@ -24,7 +24,9 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+
 import ch.eaternity.client.DataService;
+import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Data;
@@ -237,11 +239,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 	}
 
-	public Data getData() throws NotLoggedInException {
+	public ClientData getData() throws NotLoggedInException {
 		// reference:
 		// http://code.google.com/p/googleappengine/source/browse/trunk/java/demos/gwtguestbook/src/com/google/gwt/sample/gwtguestbook/server/GuestServiceImpl.java
 		PersistenceManager pm = getPersistenceManager();
-		Data data = new Data();
+		ClientData data = new ClientData();
 
 		try {
 //			

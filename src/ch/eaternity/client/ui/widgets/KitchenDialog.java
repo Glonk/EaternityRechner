@@ -8,6 +8,7 @@ import java.util.List;
 
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Device;
@@ -931,12 +932,7 @@ public class KitchenDialog<T> extends DialogBox{
 
 	@UiHandler("executeButton")
 	void onOkayClicked(ClickEvent event) {
-		// this button finalizes the decision to enter the kitchen
-		presenter.getTopPanel().location.setVisible(false);
-		presenter.getDAO().isInKitchen = true;
-		presenter.getTopPanel().isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
-		presenter.getTopPanel().selectedKitchen = selectedKitchen;
-	
+		presenter.getDAO().changeKitchen(selectedKitchen);
         saveAndCloseDialog();
 	}
 
@@ -992,7 +988,7 @@ public class KitchenDialog<T> extends DialogBox{
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
 					presenter.getTopPanel().selectedKitchen.id = kitchenID;
-					presenter.getDAO().updateKitchenRecipesForSearch(kitchenID);
+					presenter.getDAO().changeKitchenRecipes(kitchenID);
 					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
 					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);

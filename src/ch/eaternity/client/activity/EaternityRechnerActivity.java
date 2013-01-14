@@ -62,9 +62,9 @@ import ch.eaternity.shared.SingleDistance;
 public class EaternityRechnerActivity extends AbstractActivity implements
 		EaternityRechnerView.Presenter {
 	
-	
-	protected Data clientData;
 	public static LoginInfo loginInfo = null;
+	
+	private final ClientFactory clientFactory;
 
 	private final DataServiceAsync dataRpcService;
 	private final EventBus eventBus;
@@ -82,6 +82,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	// Alternatively, could be injected via GIN
 	public EaternityRechnerActivity(EaternityRechnerPlace place, ClientFactory factory) {
 		
+		this.clientFactory = factory;
 		this.dataRpcService = factory.getDataServiceRPC();
 		this.eventBus = factory.getEventBus();
 		this.display = factory.getEaternityRechnerView();
@@ -277,7 +278,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 					dao.clientData.userRecipes.add(recipe);
 				} else {
 					dao.clientData.kitchenRecipes.add(recipe);
-					dao.currentKitchenRecipes.add(recipe);
+					dao.clientData.currentKitchenRecipes.add(recipe);
 				}
 				
 				String searchString = Search.SearchInput.getText().trim();
@@ -311,17 +312,17 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 				
-				if(dao.clientData.getUserRecipes().contains(recipe)){
-					dao.clientData.getUserRecipes().remove(recipe);
+				if(dao.clientData.userRecipes.contains(recipe)){
+					dao.clientData.userRecipes.remove(recipe);
 				}
 				if(recipe.isOpen()){
-					dao.clientData.getPublicRecipes().remove(recipe);
+					dao.clientData.publicRecipes.remove(recipe);
 				}
 				if(dao.clientData.kitchenRecipes.contains(recipe)){
 					dao.clientData.kitchenRecipes.remove(recipe);
 				}
 				if(getTopPanel().selectedKitchen != null)
-					dao.updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
+					dao.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
 				getSearchPanel().updateResults(Search.SearchInput.getText());
 			}
 		});
@@ -335,9 +336,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 // here happens some graphics clinch... or somewhere else...
-				dao.clientData.getPublicRecipes().remove(recipe);
+				dao.clientData.publicRecipes.remove(recipe);
 				recipe.open = approve;
-				dao.clientData.getPublicRecipes().add(recipe);
+				dao.clientData.publicRecipes.add(recipe);
 				
 				//TODO in the display of the recipes show, that is now public
 				
@@ -391,12 +392,10 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(List<Recipe> rezepte) {
 				// this shouldn't be necessary, as we are working with pointers:
-				clientData = dao.clientData;
 				// add all recipes to the public ones, this is an arbitrary choice...
 				// TODO display this fact somewhere, to see which recipes are yours, and which are not.
-				clientData.setPublicRecipes(rezepte);
+				dao.clientData.publicRecipes = rezepte;
 				// this shouldn't be necessary, as we are working with pointers: 
-				dao.clientData = clientData;
 				getSearchPanel().updateResults(" ");
 			}
 		});
@@ -408,11 +407,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			
 			public void onSuccess(List<Workgroup> result) {
-				// this shouldn't be necessary
-				clientData = dao.clientData;
 				
 				if(result.size() != 0){ // there must be somthing!
-					clientData.kitchens.addAll(result);
+					dao.clientData.kitchens.addAll(result);
 				}
 				// this shouldn't be necessary, as we are working with pointers:
 //				Search.setClientData(data);
@@ -455,57 +452,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		return adminHandler;
 	}
 
-	public void setClientData(Data clientData) {
-		this.clientData = clientData;
-	}
-	
-	public void addClientDataRezepte(List<Recipe> yourRezepte) {
-		if(clientData != null && !yourRezepte.isEmpty()){
-			this.clientData.setUserRecipes(yourRezepte);
-		}
-	}
 
-
-
-
-
-
-
-//	public void onAddButtonClicked() {
-////		eventBus.fireEvent(new AddContactEvent());
-//	}
-//
-//	public void onDeleteButtonClicked() {
-////		deleteSelectedContacts();
-//	}
-
-//	public void onItemClicked(ContactDetails contactDetails) {
-//		eventBus.fireEvent(new EditContactEvent(contactDetails.getId()));
-//	}
-
-//	public void onItemSelected(ContactDetails contactDetails) {
-//		if (selectionModel.isSelected(contactDetails)) {
-//			selectionModel.removeSelection(contactDetails);
-//		}
-//		else {
-//			selectionModel.addSelection(contactDetails);
-//		}
-//	}
-	
 	
 
-
-	/**
-	 * Invoked by the ActivityManager to start a new Activity
-	 */
-	
-//	@Override
-//	public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
-//		EaternityRechnerView eaternityRechnerView = clientFactory.getEaternityRechnerView();
-////		eaternityRechnerView.setName(name);
-//		eaternityRechnerView.setPresenter(this);
-//		containerWidget.setWidget(eaternityRechnerView.asWidget());
-//	}
 
 	/**
 	 * Ask user before stopping this activity
@@ -658,6 +607,11 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// TODO Auto-generated method stub
 		return dao;
+	}
+	
+	@Override 
+	public EventBus getEventBus() {
+		return this.eventBus;
 	}
 	
 }

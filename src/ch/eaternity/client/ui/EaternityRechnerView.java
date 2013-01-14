@@ -11,6 +11,7 @@ import ch.eaternity.shared.Recipe;
 
 
 import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.ComplexPanel;
@@ -67,6 +68,8 @@ public interface EaternityRechnerView<T> extends IsWidget
 		void recipeApproval(Recipe recipe, boolean b);
 
 		Data getClientData();
+
+		EventBus getEventBus();
 	}
 	
 	TopPanel getTopPanel();

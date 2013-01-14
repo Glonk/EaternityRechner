@@ -1,4 +1,4 @@
-package ch.eaternity.client;
+package ch.eaternity.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Workgroup;
 
 public class ClientData implements Serializable{
 	

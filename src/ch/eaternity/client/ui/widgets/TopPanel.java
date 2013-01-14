@@ -20,10 +20,14 @@ package ch.eaternity.client.ui.widgets;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ch.eaternity.client.events.KitchenChangedEvent;
+import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.client.events.LoginChangedEvent;
+import ch.eaternity.client.events.LoginChangedEventHandler;
 
 import com.google.gwt.core.client.GWT;
 
@@ -56,33 +60,18 @@ public class TopPanel<T> extends Composite {
   private static final Binder binder = GWT.create(Binder.class);
   public static String currentHerkunft = "Zürich, Schweiz";
 
-  @UiField
-public Button locationButton;
-  @UiField
-public Anchor signOutLink;
-  @UiField
-public Anchor signInLink;
-  @UiField
-public Anchor ingredientLink;
-  @UiField
-public
- Anchor editKitchen;
-  @UiField
-public InlineLabel loginLabel;
-  @UiField
-public
- ListBox Monate;
-  @UiField
-public HTMLPanel location;
+  @UiField public Button locationButton;
+  @UiField public Anchor signOutLink;
+  @UiField public Anchor signInLink;
+  @UiField public Anchor ingredientLink;
+  @UiField public Anchor editKitchen;
+  @UiField public InlineLabel loginLabel;
+  @UiField public ListBox Monate;
+  @UiField public HTMLPanel location;
   @UiField Label locationLabel;
-  @UiField
- TextBox clientLocation;
-  @UiField
-public
- HTMLPanel isCustomer;
-  @UiField
-public
- InlineLabel isCustomerLabel;
+  @UiField TextBox clientLocation;
+  @UiField public HTMLPanel isCustomer;
+  @UiField public InlineLabel isCustomerLabel;
   
   @UiField HTML pinHTML;
   @UiField HTML calHTML;
@@ -131,6 +120,48 @@ public void setSuperDisplay(EaternityRechnerView superDisplay){
 	
 	Date date = new Date();
 	Monate.setSelectedIndex(date.getMonth());
+	
+	// ---------------- Listen to the EventBus ----------------
+	presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE, new KitchenChangedEventHandler() {
+		@Override
+		public void onKitchenChanged(KitchenChangedEvent event) {
+			if (event.id == -1) { // not in kitchen
+				locationButton.setEnabled(true);
+				location.setVisible(true);
+				isCustomer.setVisible(false);
+				editKitchen.setVisible(false);
+			}
+			else {
+				locationButton.setEnabled(false);
+				location.setVisible(false);
+				editKitchen.setVisible(true);
+				isCustomer.setVisible(true);
+				isCustomerLabel.setText(" Sie befinden sich in der Küche: " + presenter.getDAO().currentKitchen.getSymbol() + " ");
+			}
+			
+		}
+	});
+	
+	presenter.getEventBus().addHandler(LoginChangedEvent.TYPE, new LoginChangedEventHandler() {
+		@Override
+		public void onEvent(LoginChangedEvent event) {
+			if (presenter.getDAO().loginInfo.isLoggedIn()) {
+				signOutLink.setHref(presenter.getDAO().loginInfo.getLogoutUrl());
+				signInLink.setVisible(false);
+				signOutLink.setVisible(true);
+				
+				loginLabel.setText("Willkommen "+ presenter.getDAO().loginInfo.getNickname() +".");
+			}
+			else {
+				// TODO sign out without reload of rechner...
+				signInLink.setVisible(true);
+				signOutLink.setVisible(false);
+				
+				loginLabel.setVisible(false);
+			}
+		}
+	});
+			
 	
 	
 	calHTML.addMouseListener(
