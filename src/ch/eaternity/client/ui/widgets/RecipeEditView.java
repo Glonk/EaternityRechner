@@ -150,7 +150,7 @@ public class RecipeEditView<T> extends Composite {
 		this.presenter = presenter;
 		
 	    // this grap becomes visible even when not logged in...
-	    if(presenter.getDAO().isNotInKitchen){
+	    if(!presenter.getDAO().isInKitchen){
 	    	PrepareButton.setVisible(false);
 	    }
 	    
@@ -1027,9 +1027,9 @@ public class RecipeEditView<T> extends Composite {
 	      // add your specific recipe to the others in the database
 	      allRecipes.add(compare);
 	      // and all the others also
-	      allRecipes.addAll( presenter.getClientData().getPublicRezepte());
-	      if(presenter.getClientData().getYourRezepte() != null){
-	          allRecipes.addAll(presenter.getClientData().getYourRezepte());
+	      allRecipes.addAll( presenter.getClientData().getPublicRecipes());
+	      if(presenter.getClientData().getUserRecipes() != null){
+	          allRecipes.addAll(presenter.getClientData().getUserRecipes());
 	      }
 		   
 	  

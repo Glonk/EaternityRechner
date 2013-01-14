@@ -110,7 +110,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		display.setMenuPreviewDialog(menuPreview);
 
 		// now load the data
-		loadData();
+		dao.loadData();
 		initializeUrlshortener();
 
 		// load login
@@ -146,6 +146,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		});
 	}
 
+	/*
 	private void loadData() {
 		// here all the Data is loaded.
 		// is it necessary to have a seccond request for the admin, I don't think so. Yet it is still implemented
@@ -169,7 +170,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				display.getTopPanel().locationButton.setEnabled(true);
 				
 				// is this necessary?:
-				dao.isNotInKitchen = true;
+				dao.isInKitchen = false;
 				display.getTopPanel().location.setVisible(true);
 				// it should not...
 				
@@ -200,10 +201,10 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 						String kitchenName = lastKitchen.getSymbol();
 						display.getTopPanel().isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
 						display.getTopPanel().location.setVisible(false);
-						dao.isNotInKitchen = false;
+						dao.isInKitchen = true;
 						display.getTopPanel().selectedKitchen = lastKitchen;
 						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
-						dao.updateKitchenRecipesForSearch(display.getTopPanel().selectedKitchen.id);
+						dao.changeKitchenRecipes(display.getTopPanel().selectedKitchen.id);
 
 					} 
 				} 
@@ -216,12 +217,13 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 			
 		});
 	}
+	*/
 	
 	//REFACTOR: in DataController und View (EVENT)
 public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
-		if(!dao.isNotInKitchen){
+		if(dao.isInKitchen){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
 			if(!recipe.kitchenIds.contains(getTopPanel().selectedKitchen.id)){
@@ -241,12 +243,12 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				// when this is your first one... so show the panel... should be automatic
 //				Search.yourMealsPanel.setVisible(true);
 				if(recipe.getDirectAncestorID() != null){
-					for(Recipe recipeDesc : dao.clientData.getYourRezepte()){
+					for(Recipe recipeDesc : dao.clientData.userRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
 					}
-					for(Recipe recipeDesc : dao.clientData.KitchenRecipes){
+					for(Recipe recipeDesc : dao.clientData.kitchenRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
@@ -271,11 +273,11 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 					}
 				}*/
 				
-				if(dao.isNotInKitchen){
-					dao.clientData.getYourRezepte().add(recipe);
+				if(!dao.isInKitchen){
+					dao.clientData.userRecipes.add(recipe);
 				} else {
-					dao.clientData.KitchenRecipes.add(recipe);
-					dao.selectedKitchenRecipes.add(recipe);
+					dao.clientData.kitchenRecipes.add(recipe);
+					dao.currentKitchenRecipes.add(recipe);
 				}
 				
 				String searchString = Search.SearchInput.getText().trim();
@@ -309,14 +311,14 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 				
-				if(dao.clientData.getYourRezepte().contains(recipe)){
-					dao.clientData.getYourRezepte().remove(recipe);
+				if(dao.clientData.getUserRecipes().contains(recipe)){
+					dao.clientData.getUserRecipes().remove(recipe);
 				}
 				if(recipe.isOpen()){
-					dao.clientData.getPublicRezepte().remove(recipe);
+					dao.clientData.getPublicRecipes().remove(recipe);
 				}
-				if(dao.clientData.KitchenRecipes.contains(recipe)){
-					dao.clientData.KitchenRecipes.remove(recipe);
+				if(dao.clientData.kitchenRecipes.contains(recipe)){
+					dao.clientData.kitchenRecipes.remove(recipe);
 				}
 				if(getTopPanel().selectedKitchen != null)
 					dao.updateKitchenRecipesForSearch(getTopPanel().selectedKitchen.id);
@@ -333,9 +335,9 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 // here happens some graphics clinch... or somewhere else...
-				dao.clientData.getPublicRezepte().remove(recipe);
+				dao.clientData.getPublicRecipes().remove(recipe);
 				recipe.open = approve;
-				dao.clientData.getPublicRezepte().add(recipe);
+				dao.clientData.getPublicRecipes().add(recipe);
 				
 				//TODO in the display of the recipes show, that is now public
 				
@@ -392,7 +394,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				clientData = dao.clientData;
 				// add all recipes to the public ones, this is an arbitrary choice...
 				// TODO display this fact somewhere, to see which recipes are yours, and which are not.
-				clientData.setPublicRezepte(rezepte);
+				clientData.setPublicRecipes(rezepte);
 				// this shouldn't be necessary, as we are working with pointers: 
 				dao.clientData = clientData;
 				getSearchPanel().updateResults(" ");
@@ -459,7 +461,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	
 	public void addClientDataRezepte(List<Recipe> yourRezepte) {
 		if(clientData != null && !yourRezepte.isEmpty()){
-			this.clientData.setYourRezepte(yourRezepte);
+			this.clientData.setUserRecipes(yourRezepte);
 		}
 	}
 

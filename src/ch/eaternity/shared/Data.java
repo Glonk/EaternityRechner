@@ -8,13 +8,11 @@ import java.util.TreeSet;
 
 
 public class Data implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -8325524250818128692L;
-	public  List<Recipe> PublicRezepte = new ArrayList<Recipe>();
-	public  List<Recipe> yourRecipes = new ArrayList<Recipe>();
-	public  List<Recipe> KitchenRecipes = new ArrayList<Recipe>();
+	public  List<Recipe> publicRecipes = new ArrayList<Recipe>();
+	public  List<Recipe> userRecipes = new ArrayList<Recipe>();
+	public  List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	public  List<Ingredient> ingredients;
 	public  List<SingleDistance> distances;
 	
@@ -35,15 +33,15 @@ public class Data implements Serializable{
 				}
 			}
 		}
-		if(this.PublicRezepte != null){
-			for(Recipe recipe : this.PublicRezepte){
+		if(this.publicRecipes != null){
+			for(Recipe recipe : this.publicRecipes){
 				if(recipe != null){
 					oracleIndex.add(recipe.getSymbol());
 				}
 			}
 		}
-		if(this.yourRecipes != null){
-			for(Recipe recipe  : this.yourRecipes){
+		if(this.userRecipes != null){
+			for(Recipe recipe  : this.userRecipes){
 				if(recipe != null){
 					oracleIndex.add(recipe.getSymbol());
 				}
@@ -53,23 +51,23 @@ public class Data implements Serializable{
 		return oracleIndex;
 	}
 	
-	public void setPublicRezepte(List<Recipe> publicRezepte) {
-		PublicRezepte = publicRezepte;
+	public void setPublicRecipes(List<Recipe> publicRezepte) {
+		publicRecipes = publicRezepte;
 	}
-	public List<Recipe> getPublicRezepte() {
-		return PublicRezepte;
+	public List<Recipe> getPublicRecipes() {
+		return publicRecipes;
 	}
-	public void setYourRezepte(List<Recipe> yourRezepte) {
-		yourRecipes = yourRezepte;
+	public void setUserRecipes(List<Recipe> yourRezepte) {
+		userRecipes = yourRezepte;
 	}
-	public List<Recipe> getYourRezepte() {
-		return yourRecipes;
+	public List<Recipe> getUserRecipes() {
+		return userRecipes;
 	}
 	public void setKitchenRescipes(List<Recipe> KitchenRecipes) {
-		this.KitchenRecipes = KitchenRecipes;
+		this.kitchenRecipes = KitchenRecipes;
 	}
 	public List<Recipe> getKitchenRecipes() {
-		return KitchenRecipes;
+		return kitchenRecipes;
 	}
 	
 	

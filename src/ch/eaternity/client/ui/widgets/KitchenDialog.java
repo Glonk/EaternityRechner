@@ -933,7 +933,7 @@ public class KitchenDialog<T> extends DialogBox{
 	void onOkayClicked(ClickEvent event) {
 		// this button finalizes the decision to enter the kitchen
 		presenter.getTopPanel().location.setVisible(false);
-		presenter.getDAO().isNotInKitchen = false;
+		presenter.getDAO().isInKitchen = true;
 		presenter.getTopPanel().isCustomerLabel.setText(" Sie befinden sich in der Küche: "+kitchenName+" ");
 		presenter.getTopPanel().selectedKitchen = selectedKitchen;
 	
@@ -1232,7 +1232,7 @@ public class KitchenDialog<T> extends DialogBox{
 	  @UiHandler("leaveKitchen")
 	  public void onLeaveKitchenClick(ClickEvent event) {
 		  presenter.getTopPanel().location.setVisible(true);
-		  presenter.getDAO().isNotInKitchen = true;
+		  presenter.getDAO().isInKitchen = false;
 		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
 		  presenter.getTopPanel().selectedKitchen = null;
 		  

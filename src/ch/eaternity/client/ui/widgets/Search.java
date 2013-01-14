@@ -15,13 +15,20 @@
  */
 package ch.eaternity.client.ui.widgets;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.comparators.NameComparator;
+import ch.eaternity.shared.comparators.RezeptNameComparator;
+import ch.eaternity.shared.comparators.RezeptValueComparator;
+import ch.eaternity.shared.comparators.ValueComparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -91,6 +98,18 @@ public class Search<T> extends ResizeComposite {
 	interface EvenStyleRow extends CssResource {
 		String evenRow();
 	}
+	
+	// ---------------------- Class Variables ----------------------
+
+	public List<Ingredient> foundIngredients = new ArrayList<Ingredient>();
+	public List<Ingredient> foundAlternativeIngredients = new ArrayList<Ingredient>();
+	public List<Recipe> foundPublicRecipes = new ArrayList<Recipe>();
+	public List<Recipe> foundUserRecipes = new ArrayList<Recipe>();
+	
+	public String searchString = "";
+		
+	// choose this sorting method
+	static int sortMethod = 1;
 
 
 	/**
@@ -141,14 +160,7 @@ public class Search<T> extends ResizeComposite {
 	// sorting of the tables:
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
-	
-	// ---------------------- Class Variables
 
-	int numOfIngredientsFound;
-	public String searchString = "";
-		
-	// choose this sorting method
-	static int sortMethod = 1;
 	
 	
 	//---------------- UI HANDLERS ----------------
@@ -156,14 +168,14 @@ public class Search<T> extends ResizeComposite {
 	@UiHandler("co2Order")
 	void onCo2Clicked(ClickEvent event) {
 		sortMethod = 1;
-		presenter.getDAO().sortResults(sortMethod);
+		sortResults(sortMethod);
 		displayResults();
 	}
 
 	@UiHandler("alphOrder")
 	void onAlphClicked(ClickEvent event) {
 		sortMethod = 5;
-		presenter.getDAO().sortResults(sortMethod);
+		sortResults(sortMethod);
 		displayResults();
 	}
 	
@@ -325,17 +337,29 @@ public class Search<T> extends ResizeComposite {
 	 */
 	
 	// TODO this is getting called twice all the time...
-	
 	public void updateResults(String searchString) {
-		table.removeAllRows();
-		tableMeals.removeAllRows();
-		tableMealsYours.removeAllRows();
-
-
-
-		numOfIngredientsFound = presenter.getDAO().searchProcedure(searchString);
+		foundIngredients.clear();
+		foundAlternativeIngredients.clear();
+		foundPublicRecipes.clear();
+		foundUserRecipes.clear();
 		
+		// Get data from Data Controller
+		presenter.getDAO().searchIngredients(searchString, foundIngredients, foundAlternativeIngredients);
+		foundPublicRecipes = presenter.getDAO().searchPublicRecipes(searchString);
+		if (presenter.getDAO().isInKitchen)
+			foundUserRecipes = presenter.getDAO().searchKitchenRecipes(searchString);
+		else 
+			foundUserRecipes = presenter.getDAO().searchUserRecipes(searchString);
+
+		
+		// Display Results
+		//TODO: Special Display for alternatives, now still done in displayIngredient
+		foundIngredients.addAll(foundAlternativeIngredients);
+
 		displayResults();
+		
+		// Correct mark adjustements
+		int numOfIngredientsFound = foundIngredients.size();
 		if (markedRow <= 0)
 			changeMarkedRow(0);
 		else if(markedRow >= numOfIngredientsFound)
@@ -346,25 +370,170 @@ public class Search<T> extends ResizeComposite {
 		if (searchString.equals(""))
 			changeMarkedRow(0);
 		
-		if(	presenter.getDAO().clientData.yourRecipes != null && presenter.getDAO().clientData.yourRecipes.size() != 0){
-			// then we have at least one recipe...
+		// Show your Recipes panel
+		if (foundUserRecipes.size() > 0){
 			yourMealsPanel.setVisible(true);
 		} else {
 			yourMealsPanel.setVisible(false);
 		}
 		
 	}
+	
+	/**
+	 * The sorting functions
+	 * 
+	 * Call displayResults for showing effect
+	 */
+
+	public void sortResults(int sortMethod) {
+		this.sortMethod = sortMethod;
+		
+		switch(sortMethod){
+		case 1:{
+			//"co2-value"
+			Collections.sort(foundIngredients,new ValueComparator());
+			Collections.sort(foundAlternativeIngredients,new ValueComparator());
+			Collections.sort(foundPublicRecipes,new RezeptValueComparator());
+			Collections.sort(foundUserRecipes,new RezeptValueComparator());
+			break;
+		}
+		case 2:{
+			// "popularity"
+
+		}
+		case 3:{
+			//"saisonal"
+
+		}
+		case 4:{
+			//"kategorisch"
+			// vegetarisch
+			// vegan
+			// etc.
+		}
+		case 5:{
+			//"alphabetisch"
+			
+			// could there be a better method to do this? like that:
+			//			   ComparatorChain chain = new ComparatorChain();
+			//			    chain.addComparator(new NameComparator());
+			//			    chain.addComparator(new NumberComparator()
+			
+			Collections.sort(foundIngredients,new NameComparator());
+			Collections.sort(foundAlternativeIngredients,new NameComparator());
+			Collections.sort(foundPublicRecipes,new RezeptNameComparator());
+			Collections.sort(foundUserRecipes,new RezeptNameComparator());
+		}
+		}
+	}
+	
 
 	
+	// ----------------------------- private Methods -------------------------------------------
+	
+	private void displayResults() {
+		displayIngredients();
+		
+		tableMeals.removeAllRows();
+		if(foundPublicRecipes != null){
+			for (final Recipe item : foundPublicRecipes){
+				displayRecipeItem(item,false);
+			}
+		}
+		tableMealsYours.removeAllRows();
+		if(foundUserRecipes != null){
+			for (final Recipe item : foundUserRecipes){
+				displayRecipeItem(item,true);
+			}
+		}
+	}
 	
 	
+	private void displayIngredients()
+	{
+		table.removeAllRows();
+		if(foundIngredients != null){
+			// display all noALternative Ingredients
+			for (final Ingredient item : foundIngredients){
+				if (item.noAlternative)
+					displayIngredient(item);
+			}
+		
+				
+			// display all alternative Ingredients (sorted as well)
+			// boolean textlabeladded = false;
+			for (final Ingredient item : foundAlternativeIngredients){
+				if (!item.noAlternative)
+				{
+					/* alternative dividing section
+					if (!textlabeladded)
+					{
+						int row = table.getRowCount();
+						HTML textALternatives = new HTML();
+						//textALternatives.setHTML("<div style='color:red; margin:auto; width:70px;'> Alternativen: </div>");
+						textALternatives.setHTML("alternativen:");
+						table.setWidget(row,0,textALternatives);
+						textlabeladded = true;
+					}*/
+					displayIngredient(item);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * the displaying functions for ingredients
+	 */
+	private void displayIngredient(final Ingredient ingredient) {
+		int row = table.getRowCount();
 
 
+		HTML icon = new HTML();
+
+		if(ingredient.getCo2eValue() < 400){
+			icon.setStyleName("base-icons");
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+		} else	if(ingredient.getCo2eValue() < 1200){
+			icon.setStyleName("base-icons");	
+			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+
+		}
+
+		if(ingredient.hasSeason != null && ingredient.hasSeason){
+			Date date = null;
+			if (presenter != null) {
+				date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
+			}
+			
+			Date dateStart =  ingredient.stdExtraction.startSeason;		
+			Date dateStop =  ingredient.stdExtraction.stopSeason;
+
+			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
+					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+			} 
+		}
+
+		if(ingredient.noAlternative){
+		icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
+		
+		} else {
+			icon.setHTML(icon.getHTML()+"(alt): " +ingredient.getSymbol());
+		}
+
+		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
+
+		table.setWidget(row,0,icon);
+	}
+	
+	private void displayUserRecipeItem() {}
+	private void displayPublicRecipeItem() {}
+	
 	/**
 	 * the displaying functions for recipes
 	 */
-	
-	public void displayRecipeItem(final Recipe recipe, boolean yours) {
+	private void displayRecipeItem(final Recipe recipe, boolean yours) {
 		if(yours){
 			final int row = tableMealsYours.getRowCount();
 
@@ -429,9 +598,8 @@ public class Search<T> extends ResizeComposite {
 						}
 					});
 					tableMealsYours.setWidget(row, 2,openThis);
-//					item.setHTML(openThis+" "+item.getHTML());
-					//					}
-				} else {
+				} 
+				else {
 					// this should be a link to make it close
 					Anchor closeThis = new Anchor("c");
 					closeThis.addClickHandler(new ClickHandler() {
@@ -440,21 +608,9 @@ public class Search<T> extends ResizeComposite {
 						}
 					});
 					tableMealsYours.setWidget(row, 2,closeThis);
-//					item.setHTML(closeThis+" "+item.getHTML());
+
 				}
-			} else {
-
-//				 how to show, that this recipe is public??
-				
-//				if(recipe.isOpen()){
-//					tableMealsYours.setText(row, 2,"o");
-//				} else if(recipe.openRequested){
-//					tableMealsYours.setText(row, 2,"c");
-//				}
-				
-				//TODO better show in the menu itself
-
-			}
+			} 
 			
 			//TODO should this not be called after the sort?
 			if ((row % 2) == 1) {
@@ -462,7 +618,8 @@ public class Search<T> extends ResizeComposite {
 				tableMealsYours.getRowFormatter().addStyleName(row, style);
 			}
 
-		}else{
+		}
+		else{
 			final int row = tableMeals.getRowCount();
 			HTML item = new HTML();
 
@@ -548,91 +705,7 @@ public class Search<T> extends ResizeComposite {
 
 
 	}
-
-
-	/**
-	 * the displaying functions for ingredients
-	 */
-	public void displayIngredient(final Ingredient ingredient) {
-		int row = table.getRowCount();
-
-		/*if ((row % 2) == 1) {
-			String style = evenStyleRow.evenRow();
-			table.getRowFormatter().addStyleName(row, style);
-		}*/
-
-		HTML icon = new HTML();
-
-		//		icon.addMouseListener(
-		//			    new TooltipListener(
-		//			      "add", 15000 /* timeout in milliseconds*/,"bla",400,10));
-
-		// these value (400,1200) are based on the 0.2 and 0.5 quantile of all ingredients
-		if(ingredient.getCo2eValue() < 400){
-//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons");
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
-		} else	if(ingredient.getCo2eValue() < 1200){
-//			icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-			icon.setStyleName("base-icons");	
-			icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-
-		}
-
-		if(ingredient.hasSeason != null && ingredient.hasSeason){
-//			Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(TopPanel.Monate.getSelectedIndex()+1));
-//			presenter
-			Date date = null;
-			if (presenter != null) {
-				date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-			}
-			
-			// In Tagen
-			//		String test = InfoZutat.zutat.getStartSeason();
-			Date dateStart =  ingredient.stdExtraction.startSeason;		
-			Date dateStop =  ingredient.stdExtraction.stopSeason;
-
-			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-			} 
-		}
-
-		if(ingredient.noAlternative){
-		icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
-		
-		} else {
-			icon.setHTML(icon.getHTML()+"(alt): " +ingredient.getSymbol());
-		}
-
-		icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
-
-		table.setWidget(row,0,icon);
-
-
-	}
-
-
-// this should all be DataController now
 	
-//	public void setFoundRezepte(ArrayList<Recipe> foundRezepte) {
-//		FoundRezepte = foundRezepte;
-//	}
-//
-//	public ArrayList<Recipe> getFoundRezepte() {
-//		return FoundRezepte;
-//	}
-//
-//	public void setFoundIngredient(ArrayList<Ingredient> foundIngredient) {
-//		FoundIngredient = foundIngredient;
-//	}
-//
-//	public ArrayList<Ingredient> getFoundIngredient() {
-//		return FoundIngredient;
-//	}
-	
-	// ----------------------------- private Methods -------------------------------------------
 	
 	@SuppressWarnings("deprecation")
 	private void initToolTips() {
@@ -705,10 +778,10 @@ public class Search<T> extends ResizeComposite {
 	private void selectRowMeals(final int row) {
 
 		// some code here should be in the dataobject!
-		if (presenter.getDAO().foundRezepte.size() < row){
+		if (foundPublicRecipes.size() < row){
 			return;
 		}
-		Recipe item = presenter.getDAO().foundRezepte.get(row);
+		Recipe item = foundPublicRecipes.get(row);
 		if (item == null) {
 			return;
 		}
@@ -734,10 +807,10 @@ public class Search<T> extends ResizeComposite {
 
 	private void selectRowMealsYours(final int row) {
 
-		if (presenter.getDAO().foundRezepteYours.size() < row){
+		if (foundUserRecipes.size() < row){
 			return;
 		}
-		Recipe item = presenter.getDAO().foundRezepteYours.get(row);
+		Recipe item = foundUserRecipes.get(row);
 		if (item == null) {
 			return;
 		}
@@ -762,7 +835,8 @@ public class Search<T> extends ResizeComposite {
 	}
 
 	private void selectRow(final int row) {
-
+		Ingredient item;
+		
 		// get the grams from the input
 		// if 2 valid numbers exist, take the first valid one
 		int grams = 0;
@@ -781,19 +855,20 @@ public class Search<T> extends ResizeComposite {
 			}
 		}
 		
-		if (numOfIngredientsFound < row){
+		if (foundIngredients.size() < row){
 			return;
 		}
 		
-		Ingredient item;
-		if (row >= 0 && row < presenter.getDAO().foundIngredient.size())
+		if (row >= 0 && row < foundIngredients.size())
 		{
-			item = presenter.getDAO().foundIngredient.get(row);
+			item = foundIngredients.get(row);
 		}
+		/*
 		else if (row >= presenter.getDAO().foundIngredient.size() && row < numOfIngredientsFound)
 		{
 			item = presenter.getDAO().foundAlternativeIngredients.get(row - presenter.getDAO().foundIngredient.size());
 		}
+		*/
 		else return;
 
 
@@ -856,7 +931,7 @@ public class Search<T> extends ResizeComposite {
 	
 	private void changeMarkedRow(int row)
 	{
-		if (row >= 0 && row < numOfIngredientsFound)
+		if (row >= 0 && row < foundIngredients.size())
 		{
 			styleMarkedRow(markedRow, false);
 			styleMarkedRow(row, true);
@@ -912,63 +987,8 @@ public class Search<T> extends ResizeComposite {
 		}
 	}
 	
-
-
-	
-
 	
 	
-	private void displayResults() {
-		
-		displayIngredients();	
-		
-		tableMeals.removeAllRows();
-		if(presenter.getDAO().foundRezepte != null){
-			for (final Recipe item : presenter.getDAO().foundRezepte){
-				displayRecipeItem(item,false);
-			}
-		}
-		tableMealsYours.removeAllRows();
-		if(presenter.getDAO().foundRezepteYours != null){
-			for (final Recipe item : presenter.getDAO().foundRezepteYours){
-				displayRecipeItem(item,true);
-			}
-		}
-	}
-	
-	
-	private void displayIngredients()
-	{
-		table.removeAllRows();
-		if(presenter.getDAO().foundIngredient != null){
-			// display all noALternative Ingredients
-			for (final Ingredient item : presenter.getDAO().foundIngredient){
-				if (item.noAlternative)
-					displayIngredient(item);
-			}
-		
-				
-			// display all alternative Ingredients (sorted as well)
-			// boolean textlabeladded = false;
-			for (final Ingredient item : presenter.getDAO().foundAlternativeIngredients){
-				if (!item.noAlternative)
-				{
-					/* alternative dividing section
-					if (!textlabeladded)
-					{
-						int row = table.getRowCount();
-						HTML textALternatives = new HTML();
-						//textALternatives.setHTML("<div style='color:red; margin:auto; width:70px;'> Alternativen: </div>");
-						textALternatives.setHTML("alternativen:");
-						table.setWidget(row,0,textALternatives);
-						textlabeladded = true;
-					}*/
-					
-					displayIngredient(item);
-				}
-			}
-		}
-	}
 	
 	
 	

@@ -5,10 +5,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Util;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.comparators.NameComparator;
 import ch.eaternity.shared.comparators.RezeptNameComparator;
 import ch.eaternity.shared.comparators.RezeptValueComparator;
@@ -16,286 +21,205 @@ import ch.eaternity.shared.comparators.ValueComparator;
 
 public class DataController {
 	
-	// ---------------------- Class Variables
+	// ---------------------- Class Variables ----------------------
 
 	// here is the database of all data pushed to....
-	public Data clientData = new Data();
-	
-	public  List<Recipe> selectedKitchenRecipes = new ArrayList<Recipe>();
-	
-	public ArrayList<Recipe> foundRezepte = new ArrayList<Recipe>();
-	public ArrayList<Recipe> foundRezepteYours = new ArrayList<Recipe>();
-	public ArrayList<Ingredient> foundIngredient = new ArrayList<Ingredient>();
-	public ArrayList<Ingredient> foundAlternativeIngredients = new ArrayList<Ingredient>();
-	
-	// re-check this list
-	private ArrayList<Recipe> foundRezepteHasDesc = new ArrayList<Recipe>();
-	private ArrayList<Recipe> foundRezepteYoursHasDesc = new ArrayList<Recipe>();
-	
-	// this was in TopPanel before
-	public  boolean isNotInKitchen = true;
+	public ClientData clientData = new ClientData();
 
-	private int sortMethod;
-	
+	public  boolean isInKitchen;
+	public int currentKitchen;
 
+	// ---------------------- public Methods ----------------------
 	
-	private List<Recipe> getYourRecipes() {
-		if(isNotInKitchen){
-			return clientData.getYourRezepte();
-		} else {
-			// this should only return the selected Kitchen ones
-			return selectedKitchenRecipes;
-		}
+	public DataController() {
+		
+	}
+
+	public void loadData() {
+		dataRpcService.getData(new AsyncCallback<Data>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(ClientData data) {
+				// the data objects holds all the data
+				// the search interface gets all the data (recipes and ingredients)
+				clientData = data;
+				dao.clientData = clientData;
+//				Search.clientData = data;
+				
+				eventBus.fireEvent(new LoadedDataEvent());
+
+				// the top panel grabs all the existing distances also from the search interface
+				
+				//REFACTOR: eine Stufe tiefer (display)
+				display.getTopPanel().locationButton.setEnabled(true);
+				
+				// is this necessary?:
+				dao.isInKitchen = false;
+				display.getTopPanel().location.setVisible(true);
+				// it should not...
+				
+				// who may change the kitchen
+				if(data.kitchens.size() == 0 && (loginInfo == null || !loginInfo.isAdmin() )){
+					// there is no kitchen available and you are a normal user (or not logged in)
+					display.getTopPanel().isCustomer.setVisible(false);
+				} else {
+					// otherwise may edit the kitchen stuff
+					display.getTopPanel().editKitchen.setVisible(true);
+				}
+
+				
+				// here is save the last kitchen thing
+				if(data.kitchens.size() > 0){
+
+					Long lastKitchenId = clientData.lastKitchen;
+					if(lastKitchenId == null) { lastKitchenId = 0L; }
+					
+					Workgroup lastKitchen = null;
+					for(Workgroup kitchIt : data.kitchens){
+						if(kitchIt.id == lastKitchenId){
+							lastKitchen = kitchIt;
+						}
+					}
+					
+					if(lastKitchenId != null && lastKitchen != null){
+						String kitchenName = lastKitchen.getSymbol();
+						display.getTopPanel().isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
+						display.getTopPanel().location.setVisible(false);
+						dao.isInKitchen = true;
+						display.getTopPanel().selectedKitchen = lastKitchen;
+						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
+						dao.changeKitchenRecipes(display.getTopPanel().selectedKitchen.id);
+
+					} 
+				} 
+				
+				display.getSearchPanel().SearchInput.setText("");
+				display.getSearchPanel().updateResults(" ");
+				menuPreview.hide();
+
+			}
+			
+		});
 		
 	}
 	
-	//search Procedure
-	public int searchProcedure(String searchString) {
-		int listsize = 0;
+	/*
+	 * 
+	 */
+	public void searchIngredients(String searchString, List<Ingredient> ingredients, List<Ingredient> alternatives) {
+		ingredients.clear();
+		alternatives.clear();
 		
-		if ((clientData.getIngredients() != null) ){
+		if(searchString.trim().length() != 0){
 
-			
-			foundIngredient.clear();
-			foundAlternativeIngredients.clear();
-			foundRezepte.clear();
-			foundRezepteYours.clear();
-			
-			
-			foundRezepteHasDesc.clear();
-			foundRezepteYoursHasDesc.clear();
-			// Zutaten
-			// when the search string has a length 
-			if(searchString.trim().length() != 0){
+			String[] searches = searchString.split(" ");
 
-				String[] searches = searchString.split(" ");
-
-				// consider strings with whitespaces, ssek for each word individually
-				for(String search : searches)
-				{
-					// Zutaten
-					// TODO this search algorithm is extremely slow, make faster
-					for(Ingredient zutat : clientData.getIngredients()){
-						if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
-							//if(,search) < 3){
-							//Window.alert(zutat.getSymbol().substring(0, search.trim().length()));
-							if(!foundIngredient.contains(zutat)){
-								zutat.noAlternative = true;
-								foundIngredient.add(zutat);
-//								displayIngredient(zutat);
-							}
+			// consider strings with whitespaces, seek for each word individually
+			for(String search : searches)
+			{
+				// TODO this search algorithm is extremely slow, make faster
+				for(Ingredient zutat : clientData.ingredients){
+					if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
+						if(!ingredients.contains(zutat)){
+							zutat.noAlternative = true;
+							ingredients.add(zutat);
 						}
 					}
-					// only look for alternatives, if there is only 1 result
-					// TODO mark the alternatives as Special!
-					if(foundIngredient.size() == 1){
-						for(Ingredient zutat :foundIngredient){
-							if(zutat.getAlternatives() != null){
-								for(Long alternativen_id : zutat.getAlternatives()){
-									for(Ingredient zutat2 : clientData.getIngredients()){
-										if(zutat2.getId().equals(alternativen_id)){
-											if(!foundAlternativeIngredients.contains(zutat2)){
-												zutat2.noAlternative = false;
-												foundAlternativeIngredients.add(zutat2);
-//												displayIngredient(zutat2);
-											}
+				}
+				// only look for alternatives, if there is only 1 result
+				if(ingredients.size() == 1){
+					for(Ingredient zutat : ingredients){
+						if(zutat.getAlternatives() != null){
+							for(Long alternativen_id : zutat.getAlternatives()){
+								for(Ingredient zutat2 : clientData.ingredients){
+									if(zutat2.getId().equals(alternativen_id)){
+										if(!alternatives.contains(zutat2)){
+											zutat2.noAlternative = false;
+											alternatives.add(zutat2);
 										}
 									}
 								}
 							}
-							break;
 						}
+						break;
 					}
 				}
-				// Rezepte
-				if(	getYourRecipes() != null){
-					searchRezept(searchString, getYourRecipes(), searches,true);
-				}
-
-				if(	clientData.getPublicRezepte() != null){
-					searchRezept(searchString, clientData.getPublicRezepte(), searches,false);
-				}
-			} 
-			// the search string was empty (so just display everything!)
-			// TODO yet a little slow...
-			else {
-				for(Ingredient zutat : clientData.getIngredients()){
-//					if(!foundIngredient.contains(zutat)){ // not necessary, as we are getting anyway all of them (no alternatives...)
-						foundIngredient.add(zutat);
-						zutat.noAlternative = true;
-//					}
-				}
-
-				if(	getYourRecipes() != null && getYourRecipes().size() != 0){
-					
-					for(Recipe recipe : getYourRecipes()){
-							foundRezepteYours.add(recipe);
-					}
-				} 
-//				else {
-//					yourMealsPanel.setVisible(false);
-//				}
-
-				if(	clientData.getPublicRezepte() != null){
-					for(Recipe recipe : clientData.getPublicRezepte()){
-						foundRezepte.add(recipe);
-					}
-				}
-
 			}
-			// all found items are now displayed
-			
-			// mark descendant also!!!!!
-			
-			// display recipes if there is no descendant of them in the list
-			
-			selectUnDescendantedRecipes(foundRezepte);
-			
-			selectUnDescendantedRecipes(foundRezepteYours);
-
-
-			// sort and display results
-			sortResults(sortMethod);
-			
-			
-			// mark last position, cutt if needed
-			listsize = foundIngredient.size() + foundAlternativeIngredients.size();
-			
-	
-		}	
-
-		
-		return listsize;
+		}
+		else {
+			for(Ingredient zutat : clientData.ingredients){
+				ingredients.add(zutat);
+				zutat.noAlternative = true;
+			}
+		}
 	}
-
-
-	private void searchRezept(String searchString, List<Recipe> allRezepte, String[] searches, boolean yours) {
-		if(allRezepte != null){
-			for(Recipe recipe : allRezepte){
-				if(recipe != null){
-					if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
-						if(yours){
-							foundRezepteYours.add(recipe);
-						} else {
-							foundRezepte.add(recipe);
-						}
-					}
-
-					List<IngredientSpecification> zutatenRezept = recipe.getZutaten();
-					if(zutatenRezept != null){
-						int i = 0;
-						for(IngredientSpecification ZutatImRezept : zutatenRezept ){
-							if(ZutatImRezept != null){
-
-								for(String search2 : searches){
-									if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
-										//if (getLevenshteinDistance(ZutatImRezept.getName(),search2) < 2){
-										i++;
-									}
-								}
-								if(i == searches.length){
-									if(yours){
-										foundRezepteYours.add(recipe);
-									} else {
-										foundRezepte.add(recipe);
-									}
+	
+	private List<Recipe> searchRecipe(String searchString, List<Recipe> recipes) {
+		List<Recipe> result = new ArrayList<Recipe>();
+		String[] searches = searchString.split(" ");
+		
+		if(searchString.trim().length() != 0){
+			for(Recipe recipe : recipes){
+				// search by Name
+				if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
+					result.add(recipe);
+				}
+	
+				// search by matching Ingredient names included in the recipes
+				List<IngredientSpecification> recipeIngredients = recipe.getZutaten();
+				if(recipeIngredients != null){
+					int i = 0;
+					for(IngredientSpecification ZutatImRezept : recipeIngredients ){
+						if(ZutatImRezept != null){
+							for(String search2 : searches){
+								if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
+									i++;
 								}
 							}
+							if(i == searches.length)
+								result.add(recipe);
 						}
 					}
 				}
 			}
 		}
+		else {
+			return recipes;
+		}
+		return result;
 	}
+	
+	public List<Recipe> searchUserRecipes(String searchString) {
+		return searchRecipe(searchString, clientData.userRecipesNoDescs);
+	}
+	
+	public List<Recipe> searchKitchenRecipes(String searchString) {
+		return searchRecipe(searchString, clientData.currentKitchenRecipesNoDescs);
+	}
+	
+	public List<Recipe> searchPublicRecipes(String searchString) {
+		return searchRecipe(searchString, clientData.publicRecipesNoDescs);
+	}
+	
+	
 	
 	
 	// Select the KitchenRecipes
 	// Always call updateResults after for propper loading!
-	public void updateKitchenRecipesForSearch(Long id) {
-		selectedKitchenRecipes.clear();
-		for(Recipe recipe : clientData.KitchenRecipes){
+	public void changeKitchenRecipes(Long id) {
+		clientData.currentKitchenRecipes.clear();
+		for(Recipe recipe : clientData.kitchenRecipes){
 			for(Long kitchenId : recipe.kitchenIds){
 				if(kitchenId.equals(id))
 				{
-					selectedKitchenRecipes.add(recipe);
+					clientData.currentKitchenRecipes.add(recipe);
 				}
 			}
 		}
 	}
-
-
-	/**
-	 * The sorting functions
-	 * 
-	 * Call displayResults if for showing effects
-	 */
-
-	public void sortResults(int sortMethod) {
-		this.sortMethod = sortMethod;
-		
-		switch(sortMethod){
-		case 1:{
-			//"co2-value"
-			Collections.sort(foundIngredient,new ValueComparator());
-			Collections.sort(foundAlternativeIngredients,new ValueComparator());
-			Collections.sort(foundRezepte,new RezeptValueComparator());
-			Collections.sort(foundRezepteYours,new RezeptValueComparator());
-			break;
-		}
-		case 2:{
-			// "popularity"
-
-		}
-		case 3:{
-			//"saisonal"
-
-		}
-		case 4:{
-			//"kategorisch"
-			// vegetarisch
-			// vegan
-			// etc.
-		}
-		case 5:{
-			//"alphabetisch"
-			
-			// could there be a better method to do this? like that:
-			//			   ComparatorChain chain = new ComparatorChain();
-			//			    chain.addComparator(new NameComparator());
-			//			    chain.addComparator(new NumberComparator()
-			
-			Collections.sort(foundIngredient,new NameComparator());
-			Collections.sort(foundAlternativeIngredients,new NameComparator());
-			Collections.sort(foundRezepte,new RezeptNameComparator());
-			Collections.sort(foundRezepteYours,new RezeptNameComparator());
-		}
-		}
-	}
 	
 	
-	
-	/**
-	 * The filtering function
-	 */
-	private static void selectUnDescendantedRecipes(List<Recipe> recipes) {
-		
-		// check if descendant is in the own list
-		Iterator<Recipe> iter = recipes.iterator();
-		while(iter.hasNext()){
-			Recipe recipeHasDesc = iter.next();
-			for( Recipe recipeIsPossibleDesc : recipes){
-				// is the descendant in the own list
-				if(recipeHasDesc.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
-					iter.remove();
-					break;
-				}
-			}
-		}
-
-		// (also mark ancestors as old... by displaying the descendant)
-		//TODO ( also display the old versions, but only in RecipeEditView) so one can check beck the history of a recipe
-
-	}
 	
 	
 	
@@ -382,5 +306,4 @@ public class DataController {
 		// actually has the most recent cost counts
 		return p[n];
 	}
-
 }

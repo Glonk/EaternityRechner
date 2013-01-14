@@ -265,11 +265,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		if (getUser() != null) {
 			List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
-			data.setYourRezepte(rezeptePersonal); // personal
+			data.setUserRecipes(rezeptePersonal); // personal
 			
 			// here we add the persons recipes belonging to a kitchen
 			// this should be getting all recipes the person belongs to
-			data.KitchenRecipes = dao.getKitchenRecipes(getUser()); // kitchen
+			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); // kitchen
 		}
 		
 		
@@ -278,8 +278,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			rezepte = dao.getOpenRecipe();
 		}
 		// remove double entries
-		if(data.yourRecipes != null){
-			for(Recipe recipe: data.yourRecipes){
+		if(data.userRecipes != null){
+			for(Recipe recipe: data.userRecipes){
 				int removeIndex = -1;
 				for(Recipe rezept2:rezepte){
 					if(rezept2.getId().equals(recipe.getId())){
@@ -291,12 +291,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				}
 			}
 		}
-		data.setPublicRezepte(rezepte); // public
+		data.setPublicRecipes(rezepte); // public
 		
 		// mark descendants of the recipes
-		markDescendant(data.yourRecipes);
-		markDescendant(data.KitchenRecipes);
-		markDescendant(data.PublicRezepte);
+		markDescendant(data.userRecipes);
+		markDescendant(data.kitchenRecipes);
+		markDescendant(data.publicRecipes);
 		
 
 		// add all ingredients
