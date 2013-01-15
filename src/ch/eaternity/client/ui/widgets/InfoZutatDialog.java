@@ -11,6 +11,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.IngredientSpecification;
 
@@ -255,8 +256,6 @@ public class InfoZutatDialog<T> extends Composite {
 				    		  herkuenfte.insertItem(place.getAddress(), 0);
 				    	  Extraction element = new Extraction(place.getAddress());
 				    	  // TODO come up with stuff like seasons and so forth..
-				    	  element.startSeason = zutat.stdExtraction.startSeason;
-				    	  element.stopSeason = zutat.stdExtraction.stopSeason;
 				    	  element.stdCondition = zutat.stdExtraction.stdCondition;
 				    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
 				    	  element.stdProduction = zutat.stdExtraction.stdProduction;
@@ -419,8 +418,6 @@ public class InfoZutatDialog<T> extends Composite {
 						    	  herkuenfte.insertItem(adress, 0);
 						    	  Extraction element = new Extraction(adress);
 						    	  // TODO come up with stuff like seasons and so forth..
-						    	  element.startSeason = zutat.stdExtraction.startSeason;
-						    	  element.stopSeason = zutat.stdExtraction.stopSeason;
 						    	  element.stdCondition = zutat.stdExtraction.stdCondition;
 						    	  element.stdMoTransportation = zutat.stdExtraction.stdMoTransportation;
 						    	  element.stdProduction = zutat.stdExtraction.stdProduction;
@@ -590,7 +587,7 @@ public class InfoZutatDialog<T> extends Composite {
 	    	notChanged = false;
 	    	
 		} else {
-		for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
+		for(SingleDistance singleDistance : presenter.getDAO().cdata.distances){
 			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 				
@@ -708,16 +705,12 @@ public class InfoZutatDialog<T> extends Composite {
 	public void updateSaison(IngredientSpecification zutatSpec) {
 		// if it is Greenhouse, or conserved then it should be kohärent...
 		
-		Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-		// In Tagen
-//		String test = InfoZutat.zutat.getStartSeason();
-		Date dateStart = zutatSpec.getStartSeason();		
-		Date dateStop =  zutatSpec.getStopSeason();
+		// This is a hack, takes the first day of the month
+		SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
+		SeasonDate dateStart = zutatSpec.getStartSeason();		
+		SeasonDate dateStop =  zutatSpec.getStopSeason();
 		
-		if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-				dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
-			
-			
+		if( date.after(dateStart) && date.before(dateStop) ){
 			specificationTable.setHTML(0, 1, "Diese Zutat hat Saison");
 			
 			styleHinweis(false);

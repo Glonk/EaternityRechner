@@ -13,6 +13,7 @@ import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.comparators.NameComparator;
 import ch.eaternity.shared.comparators.RezeptNameComparator;
 import ch.eaternity.shared.comparators.RezeptValueComparator;
@@ -516,16 +517,11 @@ public class Search<T> extends ResizeComposite {
 		}
 
 		if(ingredient.hasSeason != null && ingredient.hasSeason){
-			Date date = null;
-			if (presenter != null) {
-				date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-			}
+			SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
+			SeasonDate dateStart = ingredient.startSeason;		
+			SeasonDate dateStop =  ingredient.stopSeason;
 			
-			Date dateStart =  ingredient.stdExtraction.startSeason;		
-			Date dateStop =  ingredient.stdExtraction.stopSeason;
-
-			if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-					dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+			if( date.after(dateStart) && date.before(dateStop) ){
 				icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
 			} 
 		}

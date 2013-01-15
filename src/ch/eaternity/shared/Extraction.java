@@ -23,10 +23,6 @@ public class Extraction implements Serializable,Cloneable{
 	@Id Long id;
     
 	public String symbol;
-
-	public Date startSeason;
-	public Date stopSeason;
-
 	
 	public Condition stdCondition;
 	public Production stdProduction;
@@ -35,15 +31,10 @@ public class Extraction implements Serializable,Cloneable{
 	@Embedded
 	public List<ProductLabel> stdProductLabels;
 	
-    private Extraction() {
-		
-	}
+    private Extraction() {}
     
     public Extraction(Extraction toClone) {
     	symbol = new String(toClone.symbol);
-    	startSeason = (Date) toClone.startSeason.clone();
-    	stopSeason = (Date) toClone.stopSeason.clone();
-    	
     }
 	
     public Extraction(String symbol) {
@@ -62,16 +53,6 @@ public class Extraction implements Serializable,Cloneable{
         if ((this.symbol == null) ? (other.symbol != null) : !this.symbol.equals(other.symbol)) {
             return false;
         }
-        //if (this.age != other.age) {
-        //    return false;
-        //}
         return true;
     }
-    
-    public void setSeason(String strStart,String strStop) {
-		this.startSeason = DateTimeFormat.getFormat("dd.MM").parse( strStart );		
-		this.stopSeason = DateTimeFormat.getFormat("dd.MM").parse( strStop );
-	}
-
-	
 }

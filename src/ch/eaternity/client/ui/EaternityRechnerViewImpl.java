@@ -250,278 +250,11 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		
 		final RecipeView rezeptView = createNewRecipeView();
 	
+		// call copy constructor
+		rezeptView.recipe = new Recipe(recipe);
 		
-		// clone zutaten in new list
-		ArrayList<IngredientSpecification> zutatenNew = new ArrayList<IngredientSpecification>();
-		zutatenNew.clear();
-		
-		for(IngredientSpecification zutatNew : recipe.getZutaten()){
-			
-			// TODO check that nothing is missing
-			// we could use deep copying. actually, why do we copy at all?
-			final IngredientSpecification zutat = new IngredientSpecification(zutatNew.getId(), zutatNew.getName(),
-					zutatNew.getCookingDate(),zutatNew.getZustand(),zutatNew.getProduktion(), 
-					zutatNew.getTransportmittel());
-			zutat.setDistance(zutatNew.getDistance());
-			zutat.setHerkunft(zutatNew.getHerkunft());
-			zutat.setMengeGramm(zutatNew.getMengeGramm());
-			zutat.setSeason(zutatNew.getStartSeason(), zutatNew.getStopSeason());
-			zutat.setZutat_id(zutatNew.getZutat_id());
-			zutat.setNormalCO2Value(zutatNew.getNormalCO2Value());
-			zutat.setCost(zutatNew.getCost());
-			zutat.update();
-			zutatenNew.add(zutat);
-		}
-		
-		addIngredientsToMenu(zutatenNew,rezeptView);
-		
-	
-		
-//		final RecipeView rezeptView = (RecipeView) rezeptList.getWidget(selectedRezept,1);
-		
-		if(!recipe.deviceSpecifications.isEmpty()){
-		// add the devices...
-			rezeptView.recipe.deviceSpecifications = new ArrayList<DeviceSpecification>(recipe.deviceSpecifications.size());
-			for(DeviceSpecification devSpec:recipe.deviceSpecifications){
-				DeviceSpecification devSpecClone = new DeviceSpecification(devSpec.deviceName,devSpec.deviceSpec, devSpec.kWConsumption, devSpec.duration);
-				rezeptView.recipe.deviceSpecifications.add(devSpecClone);
-			}
-			String formatted = NumberFormat.getFormat("##").format( recipe.getDeviceCo2Value() );
-//			rezeptView.SuggestTable.setText(0,0,"Zubereitung");
-//			rezeptView.SuggestTable.setHTML(0,1,"ca <b>"+formatted+"g</b> *");
-//			rezeptView.PrepareButton.setText("Zubereitung bearbeiten");
-		}
-		
-		rezeptView.RezeptName.setText(recipe.getSymbol());
-		if(recipe.getSubTitle() == null){
-			rezeptView.recipe.setSubTitle("Menu Beschriftung");
-		} else {
-			rezeptView.recipe.setSubTitle(recipe.getSubTitle());
-		}
-		
-		
-//		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
-		rezeptView.recipe.setSymbol(recipe.getSymbol());
-		
-		if(recipe.getCookInstruction() == null){
-			String cookingIntructions = "Kochanleitung.";
-			if(!presenter.getLoginInfo().isLoggedIn()){
-				cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
-			}
-			rezeptView.recipe.setCookInstruction(cookingIntructions);
-		}
-		
-		// here we set the ancestor if available
-		if(recipe.getId() != null){
-			rezeptView.recipe.setDirectAncestorID(recipe.getId());
-		}
-		
-		rezeptView.RezeptName.setText(recipe.getSymbol());
-		
-//		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
-		rezeptView.makeNotPublic.setValue(!recipe.openRequested);
-		
-		//TODO hinzufügen zu welchen Küchen das Rezept gehört.
-		String kitchenString = "";
-		Boolean gotOne = false;
-		for(Long kitchenId : recipe.kitchenIds){
-			Workgroup kitchen = presenter.getClientData().getKitchenByID(kitchenId);
-			if(kitchen != null){
-				kitchenString = kitchenString + " [" + kitchen.getSymbol() +"]";
-				gotOne = true;
-			}	
-		}
-		if(gotOne){
-			kitchenString = " Ist den Küchen zugeordnet: " + kitchenString;
-		}
-		
-		rezeptView.openHTML.setHTML("Nicht veröffentlicht."+kitchenString);
-		if(recipe.isOpen()){
-			rezeptView.openHTML.setHTML("Veröffentlicht."+kitchenString);
-		} else if(recipe.openRequested){
-			rezeptView.openHTML.setHTML("Veröffentlichung angefragt."+kitchenString);
-		}
-		
-		if(recipe.getCookInstruction() != null){
-//			rezeptView.cookingInstr.setText(recipe.getCookInstruction());
-			rezeptView.recipe.setCookInstruction(recipe.getCookInstruction());
-		}
-		
-		//Date
-		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
-		Date date = recipe.cookingDate;
-		if(date != null)
-		{
-			rezeptView.recipe.cookingDate = date;
-			rezeptView.recipeDate.setText(dtf.format(date));
-		}
-		
-		rezeptView.showImageRezept = new Image();
-		
-		if(presenter.getLoginInfo().isLoggedIn()){
-    	rezeptView.bildEntfernen = new Anchor("Bild entfernen");
-    	rezeptView.bildEntfernen.addStyleName("platzrechts");
-    	rezeptView.bildEntfernen.addClickHandler(new ClickHandler(){
-			@Override
-			public void onClick(ClickEvent event) {
-//				rezeptView.menuDecoInfo.remove(rezeptView.showImageRezept);
-//				rezeptView.uploadWidget.setVisible(true);
-				rezeptView.bildEntfernen.setVisible(false);
-				rezeptView.recipe.image = null;
-//TODO				image should also be pulled out of the database to save space
-			}
-    	});
-    	
-//    	rezeptView.menuDecoInfo.add(rezeptView.bildEntfernen);
-    	rezeptView.bildEntfernen.setVisible(false);
-		}
-    	
-	    if(recipe.image != null){
-	    	rezeptView.getRezept().image = recipe.image;
-	    	rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s150-c");
-	    	
-	    	// TODO check if the following is legacy code...
-//	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
-//	    	rezeptView.imageUploaderHP.add(showImage);
-	    	
-	    	rezeptView.imagePopUpHandler = rezeptView.showImageRezept.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					ImageOverlay imageOverlay = new ImageOverlay(rezeptView.getRezept().image);
-					imageOverlay.setLoginInfo(presenter.getLoginInfo());
-//					imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
-					
-					final PopupPanel imagePopup = new PopupPanel(true);
-					imagePopup.setAnimationEnabled(true);
-					imagePopup.setWidget(imageOverlay);
-//					imagePopup.setGlassEnabled(true);
-					imagePopup.setAutoHideEnabled(true);
-
-					// TODO what is this???
-					imagePopup.center();
-					imagePopup.setPopupPosition(10, 10);
-				}
-			});
-	    	rezeptView.showImageRezept.setStyleName("imageSmall");
-//	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
-//	    	if(rezeptView.uploadWidget != null){
-//	    		rezeptView.uploadWidget.setVisible(false);
-//	    	}
-	    	if(presenter.getLoginInfo().isLoggedIn()){
-	    	rezeptView.bildEntfernen.setVisible(true);
-	    	}
-	    }
-	    
-	    final Anchor mehrDetails = new Anchor("mehr Details");
-	    mehrDetails.setStyleName("floatRight");
-	    rezeptView.askForLess = false;
-	    rezeptView.askForLess2 = true;
-	    final String cookingInstructions = recipe.getCookInstruction();
-	    
-	    mehrDetails.addClickHandler(new ClickHandler(){
-
-			@Override
-			public void onClick(ClickEvent event) {
-				if(rezeptView.askForLess){
-					if(rezeptView.getRezept().image != null){
-						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s150-c");
-						rezeptView.showImageRezept.setWidth("150px");
-						
-						rezeptView.showImageRezept.setStyleName("imageSmall");
-						
-						
-					}
-//					rezeptView.detailText.setVisible(false);
-//					rezeptView.cookingInstr.setVisible(true);
-//					rezeptView.htmlCooking.setVisible(true);
-					mehrDetails.setText("mehr Details");
-					rezeptView.askForLess = false;
-					if(rezeptView.showImageHandler != null){
-						rezeptView.showImageHandler.removeHandler();
-						rezeptView.showImageHandler = null;
-					}
-					
-				} else {
-//					rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+cookingInstructions);
-					if(rezeptView.getRezept().image != null){
-
-//						rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
-//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+recipe.getCookInstruction());
-						if(rezeptView.showImageHandler == null){
-							rezeptView.showImageHandler = rezeptView.showImageRezept.addLoadHandler(new LoadHandler(){
-								@Override
-								public void onLoad(LoadEvent event) {
-									if(rezeptView.askForLess2){
-//										rezeptView.overlap = Math.max(1,rezeptView.showImageRezept.getHeight() -  rezeptView.addInfoPanel.getOffsetHeight() +40);
-//
-//										//				rezeptView.detailText.setHeight(height)
-//										rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.recipe.getCookInstruction());
-										rezeptView.askForLess2 = false;
-									}
-								}
-							});
-						}
-						rezeptView.showImageRezept.setUrl(rezeptView.getRezept().image.getServingUrl()+"=s800");
-						rezeptView.showImageRezept.setWidth("340px");
-						rezeptView.showImageRezept.setStyleName("imageBig");
-//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(rezeptView.overlap)+" />"+rezeptView.rezept.getCookInstruction());
-						
-
-					}
-//					rezeptView.detailText.setWidth("730px");
-//					rezeptView.detailText.setVisible(true);
-//					rezeptView.cookingInstr.setVisible(false);
-//					rezeptView.htmlCooking.setVisible(false);
-					mehrDetails.setText("weniger Details");
-					rezeptView.askForLess = true;
-
-				}
-			}
-	    	
-	    });
-	    
-//	    rezeptView.menuDecoInfo.insert(mehrDetails,1);
-	   
-	    if(recipe.getPersons() != null){
-	    	 rezeptView.recipe.setPersons(recipe.getPersons());	    	
-	    } else {
-	    	rezeptView.recipe.setPersons(4l);
-	    }
-	    
-	    if(recipe.comments.size() > 0){
-	    	rezeptView.recipe.comments.clear();
-			for (int i = 0; i < recipe.comments.size(); i++) {
-				rezeptView.recipe.comments.add(recipe.comments.get(i));
-			}
-	    }
-	    
-//	    rezeptView.amountPersons.setText(rezeptView.recipe.getPersons().toString());
-	    
-//	    rezeptView.cookingInstr.setText(recipe.getCookInstruction());
-//	    rezeptView.showRezept(rezeptView.rezept);
-//	    rezeptView.showRezept(rezeptView.recipe);
-
-		
-	    rezeptView.saved = true;
-	    
-	    if(presenter.getLoginInfo().isAdmin() && recipe.getEmailAddressOwner() != null ) {
-	    	rezeptView.savedHTML.setVisible(true);
-	    	rezeptView.savedHTML.setHTML("Autor: "+recipe.getEmailAddressOwner());
-		} else {
-//			rezeptView.savedHTML.setHTML("gespeichert");
-			rezeptView.savedHTML.setVisible(false);
-		}
-	    
-
-
-		// now show this recipe
-		rezeptView.showRezept(rezeptView.recipe);
-
 		displayRecipeEditView(rezeptView);
 	    adjustStickyEditLayout();
-	    
-		
 	}
 
 	//REFACTOR: correct, kommuniziert mit seinen Views
@@ -564,10 +297,6 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		rezeptEditList.setWidget(0, 1, rezeptEditView);
 		
 		rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
-		
-//		rezeptEditView = (RecipeEditView) rezeptEditList.getWidget(0,1);
-//		rezeptEditView.setRezept(rezeptView.recipe);
-	
 	}
 	
 	
@@ -648,10 +377,10 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 				 stdExtraction.stdMoTransportation);
 		ingredientSpecification.setHerkunft(stdExtraction);
 		if (grams == 0)
-			ingredientSpecification.setMengeGramm(item.stdAmountGramm);
+			ingredientSpecification.setMengeGramm(item.stdWeight);
 		else
 			ingredientSpecification.setMengeGramm(grams);
-		ingredientSpecification.setSeason(stdExtraction.startSeason, stdExtraction.stopSeason);
+		ingredientSpecification.setSeason(item.startSeason, item.stopSeason);
 		ingredientSpecification.setNormalCO2Value(item.getCo2eValue());
 		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
 		
@@ -668,7 +397,7 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 		ListIterator<IngredientSpecification> iterator = zutaten.listIterator();
 		while(iterator.hasNext()){
 			IngredientSpecification zutatSpec = iterator.next();
-			for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
+			for(SingleDistance singleDistance : presenter.getDAO().cdata.distances){
 				if(singleDistance.getFrom().contentEquals(getTopPanel().currentHerkunft) && 
 						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 					

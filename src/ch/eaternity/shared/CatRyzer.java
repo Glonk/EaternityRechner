@@ -1,5 +1,6 @@
 package ch.eaternity.shared;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -363,22 +364,31 @@ public class CatRyzer {
 	}
 	
 	// how many of the vegetables and fruits are seasonal, fresh from switzerland
-	// lies between zero and one
-	public double getSeasonQuotient() {
-		Integer numFruitsAndVegetables = ingSpecs.size();
-		Integer numAreSeasonal = 0;
-		
-
-		for(IngredientSpecification ingSpec: ingSpecs) {
-			if (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes")) {	
-				if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
-					if (ingSpec.getCookingDate().after(ingSpec.getStartSeason()) && ingSpec.getCookingDate().before(ingSpec.getStopSeason()))
-						numAreSeasonal++;
+		// lies between zero and one
+		public double getSeasonQuotient() {
+			Integer numFruitsAndVegetables = ingSpecs.size();
+			Integer numAreSeasonal = 0;
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+			for(IngredientSpecification ingSpec: ingSpecs) {
+				// fruits and veggies?
+				if (getIngredient(ingSpec).tags != null && (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes"))) {	
+					// have season setted?
+					if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
+						SeasonDate dateStart = ingSpec.getStartSeason();
+						SeasonDate dateStop = ingSpec.getStopSeason();
+						SeasonDate dateCook = new SeasonDate();
+						dateCook.setDate(ingSpec.getCookingDate());
+					// have season?
+					if (dateCook.after(dateStart) && dateCook.before(dateStop)) {
+						// are fresh from switzerland
+						if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch"))
+							numAreSeasonal++;
+						}
+					}
 				}
 			}
+			return numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
 		}
-		return numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
-	}
 	
 	
 	// -------------- Private --------------

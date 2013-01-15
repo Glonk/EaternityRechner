@@ -4,6 +4,7 @@ package ch.eaternity.shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 import javax.jdo.annotations.Extension;
@@ -39,6 +40,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
     
 	@Persistent
 	private String name;
+    private String name_en;
 	
 	@Persistent
 	private String recipeKey;
@@ -58,13 +60,15 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private MoTransportation transportation;
 	private double distance; // in km
 	private Long label;
-	private Date startSeason;
-	private Date stopSeason;
+	private Boolean hasSeason;
+	private SeasonDate startSeason;
+	private SeasonDate stopSeason;
 	
 	private int NormalCO2Value; // in (Kg Co2)/Kg
 	// no factors included
 	private double co2ValueNoFactors;
 	private double cost; 
+	public List<String> tags;
 	
 	public IngredientSpecification(Long zutat_id, String name, Date cookingDate,Condition symbol,Production symbol2, 
 		 MoTransportation symbol3) {
@@ -91,8 +95,8 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		transportation = new MoTransportation(toClone.transportation);
 		distance = toClone.distance;
 		label = new Long(toClone.label);
-		startSeason = (Date)toClone.startSeason.clone();
-		stopSeason = (Date)toClone.stopSeason.clone();
+		startSeason = new SeasonDate(toClone.startSeason);
+		stopSeason = new SeasonDate(toClone.startSeason);
 		NormalCO2Value = toClone.NormalCO2Value;
 		co2ValueNoFactors = toClone.co2ValueNoFactors;
 		cost = toClone.cost;
@@ -150,20 +154,22 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		return label;
 	}
 	public void setSeason(String strStart,String strStop) {
-		this.startSeason = DateTimeFormat.getFormat("dd.MM").parse( strStart );		
-		this.stopSeason = DateTimeFormat.getFormat("dd.MM").parse( strStop );
+		this.startSeason = new SeasonDate();
+		this.startSeason.setDate(strStart);
+		this.stopSeason = new SeasonDate();
+		this.stopSeason.setDate(strStop);
 	}
 	
-	public void setSeason(Date startSeason, Date stopSeason) {
+	public void setSeason(SeasonDate startSeason, SeasonDate stopSeason) {
 		this.startSeason = startSeason;
 		this.stopSeason = stopSeason;
 	}
 
-	public Date getStartSeason() {
+	public SeasonDate getStartSeason() {
 		return startSeason;
 	}
 
-	public Date getStopSeason() {
+	public SeasonDate getStopSeason() {
 		return stopSeason;
 	}
 

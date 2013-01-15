@@ -21,6 +21,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.RecipeComment;
+import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.comparators.ComparatorComparator;
 import ch.eaternity.shared.comparators.ComparatorObject;
 import ch.eaternity.shared.comparators.ComparatorRecipe;
@@ -150,7 +151,7 @@ public class RecipeEditView<T> extends Composite {
 		this.presenter = presenter;
 		
 	    // this grap becomes visible even when not logged in...
-	    if(!presenter.getDAO().isInKitchen){
+	    if(presenter.getDAO().cdata.currentKitchen == null){
 	    	PrepareButton.setVisible(false);
 	    }
 	    
@@ -880,13 +881,11 @@ public class RecipeEditView<T> extends Composite {
 		if(zutat.getZustand() != null){
 			if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
 				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
-					Date date = DateTimeFormat.getFormat("MM").parse(Integer.toString(presenter.getSelectedMonth()));
-
-					Date dateStart =  zutat.getStartSeason();		
-					Date dateStop =  zutat.getStopSeason();
-
-					if(		dateStart.before(dateStop)  && date.after(dateStart) && date.before(dateStop) ||
-							dateStart.after(dateStop) && !( date.before(dateStart) && date.after(dateStop)  ) ){
+					SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
+					SeasonDate dateStart = zutat.getStartSeason();		
+					SeasonDate dateStop =  zutat.getStopSeason();
+					
+					if( date.after(dateStart) && date.before(dateStop) ){
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
 					} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
@@ -1027,9 +1026,9 @@ public class RecipeEditView<T> extends Composite {
 	      // add your specific recipe to the others in the database
 	      allRecipes.add(compare);
 	      // and all the others also
-	      allRecipes.addAll( presenter.getClientData().getPublicRecipes());
-	      if(presenter.getClientData().getUserRecipes() != null){
-	          allRecipes.addAll(presenter.getClientData().getUserRecipes());
+	      allRecipes.addAll( presenter.getDAO().cdata.publicRecipes);
+	      if(presenter.getDAO().cdata.userRecipes != null){
+	          allRecipes.addAll(presenter.getDAO().cdata.userRecipes);
 	      }
 		   
 	  
@@ -1369,7 +1368,7 @@ public class RecipeEditView<T> extends Composite {
 	      for(IngredientSpecification zutatSpec : recipe.ingredients){
 	          Ingredient zutat = presenter.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 		   //            amount of Persons needs to be assigned always!
-	          Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
+	          Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdWeight)/recipe.getPersons();
 	          Double alreadyAmount = 0.0;
 	          int index = -1;
 		   //            check if the indgredient is already in there...

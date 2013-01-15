@@ -14,6 +14,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Production;
+import ch.eaternity.shared.SeasonDate;
 
 
 import com.google.gwt.core.client.GWT;
@@ -144,8 +145,8 @@ public class IngredientsDialog extends DialogBox{
 					
 					// std mengeGramm
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
-					if (tmpNodeVal1 != null) newIngredient.stdAmountGramm = Integer.parseInt( tmpNodeVal1 );
-					else newIngredient.stdAmountGramm = 100;
+					if (tmpNodeVal1 != null) newIngredient.stdWeight = Integer.parseInt( tmpNodeVal1 );
+					else newIngredient.stdWeight = 100;
 					
 					// std herkunft
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Herkunft");
@@ -248,10 +249,14 @@ public class IngredientsDialog extends DialogBox{
 					String startSeason = null, stopSeason = null;
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_start");
 					if (tmpNodeVal1 != null) startSeason = tmpNodeVal1;
+					newIngredient.startSeason = new SeasonDate();
+					newIngredient.startSeason.setDate(startSeason);
 					
 					// stopSeason
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_stop");
 					if (tmpNodeVal1 != null) stopSeason = tmpNodeVal1;
+					newIngredient.stopSeason = new SeasonDate();
+					newIngredient.stopSeason.setDate(stopSeason);
 					
 					// has Season Dependency
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saisonabhangig");
@@ -285,10 +290,6 @@ public class IngredientsDialog extends DialogBox{
 						for(int i=0; i<trans_ar1.length;i++) {
 							trans_ar1[i] = trans_ar1[i].trim();
 							Extraction tmpExtr = new Extraction(trans_ar1[i]);
-							if (newIngredient.hasSeason)
-							{
-								tmpExtr.setSeason(startSeason,stopSeason);
-							}
 							tmpExtr.stdCondition = stdCond;
 							tmpExtr.stdProduction = stdProd;
 							tmpExtr.stdMoTransportation = stdTrans;
