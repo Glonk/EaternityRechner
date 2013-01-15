@@ -125,49 +125,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		//TODO Reactivate for later use
 		suggestionPanel.setVisible(false);
 	}
-	
-	
-	public void loadLogin() {
-		// Assemble login panel.
-		topPanel.signInLink.setHref(presenter.getLoginInfo().getLoginUrl());
-	}
-	
-	//REFACTOR: Activity
-	public void loadYourRechner() {
-		topPanel.signOutLink.setHref(presenter.getLoginInfo().getLogoutUrl());
-		topPanel.signInLink.setVisible(false);
-		topPanel.signOutLink.setVisible(true);
-		
-		topPanel.loginLabel.setText("Willkommen "+ presenter.getLoginInfo().getNickname() +".");
-		
-		// load your kitchens
-		// loadYourKitchens();
-		
-		if(presenter.getLoginInfo().getUsedLastKitchen()){
-			topPanel.location.setVisible(false);
-		} else {
-			topPanel.location.setVisible(true);
-		}
-		
-		//load your personal recipes
-		presenter.loadYourRezepte();
-	}
 
-	
-	public HandlerRegistration loadAdmin() {
-		
-		// um neue Zutaten hinzuzufügen (allein eine Funktion für den Admin)
-		ingredientHandler = getTopPanel().ingredientLink.addClickHandler(new ClickHandler(){
-			public void onClick(ClickEvent event) {
-				IngredientsDialog dlg = new IngredientsDialog();
-				dlg.show();
-				dlg.center();
-			}
-		});
-		getTopPanel().ingredientLink.setVisible(true);
-		
-		return ingredientHandler;
-	}
 	
 	@Override
 	public void setName(String name)
@@ -832,36 +790,24 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 			
 			// this is a replicate from the adjustStickyEdit Function!
 			Widget recipeEditObject = topDragArea.getWidget(0);
-			//			topDragArea.add(new HTML("<div style='height: " + recipeEditObject.getOffsetHeight() + "px'></div>"));
 			topDragArea.remove(recipeEditObject);
 			rezeptEditView.dragArea.remove(spaceholder);
 			panelNorth.setHeight("22px");
 			topOverflowArea.setHeight("0px");
 			editCoverActivated = false;
 
-		} else {
-		
+		} 
+		else {
 			getRezeptEditList().remove(rezeptEditView);
-			
-	//		if(getRezeptEditList().getRowCount() > 0){
-	//			getRezeptEditList().removeRow(0);
-	//		}
-	//		
 			if(getDragArea().getWidgetCount() > 0){
 				getDragArea().remove(0);
 			}
 		}
-		
 		styleRezept(getSelectedRecipeNumber(), false);
 		setSelectedRecipeNumber(-1);
 		getSuggestionPanel().clear();
 
 		setTitleHTML("Sie bearbeiten soeben kein Menu.");
-		
-		
-
-//		setEditCoverActivated(false);
-//		adjustStickyEdit();
 		
 	}
 
@@ -869,7 +815,6 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 	public RecipeView<?> getSelectedRecipeView() {
 		RecipeView<?> recipeView = (RecipeView<?>) rezeptList.getWidget(selectedRezept,1);
 		return recipeView;
-
 	}
 
 

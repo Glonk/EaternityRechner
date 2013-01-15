@@ -20,9 +20,18 @@ public class ClientData implements Serializable{
 	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
 	public List<Recipe> currentKitchenRecipesNoDescs = new ArrayList<Recipe>();
 	
+	public List<Recipe> workspaceRecipes = new ArrayList<Recipe>();
+	
+	public Recipe editRecipe;
+	
 	public List<Ingredient> ingredients;
 	public List<SingleDistance> distances;
 	public List<Workgroup> kitchens;
+
+	public LoginInfo loginInfo;
+	public Workgroup currentKitchen; 
+	public int selectedMonth;
+	
 	
 	public ClientData() {
 		

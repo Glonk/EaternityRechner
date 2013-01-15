@@ -949,7 +949,7 @@ public class KitchenDialog<T> extends DialogBox{
 			public void onSuccess(Boolean okay) {
 				presenter.getClientData().lastKitchen = id;
 				presenter.getLoginInfo().setLastKitchen(id);
-				presenter.getLoginInfo().setUsedLastKitchen(true);
+				presenter.getLoginInfo().setIsInKitchen(true);
 			}
 		});
 	}

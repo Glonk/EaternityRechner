@@ -15,7 +15,7 @@ public class LoginInfo implements Serializable {
 	@Id private String id;
 	
 	// standard values
-	private boolean loggedIn = false;
+	private boolean loggedIn;
 	
 	@Transient
 	private String loginUrl;
@@ -24,17 +24,21 @@ public class LoginInfo implements Serializable {
 	
 	private String emailAddress;
 	private String nickname;
-	private boolean admin = false;
+	private boolean admin;
 
 	// eaternity-rechner stuff
 	//werden die ueberhaupt gespeichert? weil ev. Google Objekt
-	private boolean usedLastKitchen = false;
-	private Long lastKitchen;
-	private String lastLogin;
-	private String lastLocation;
+	private boolean isInKitchen;
+	private Long currentKitchen;
+	// private String lastLogin;
+	// private String lastLocation;
 	
 
-	public LoginInfo() {}
+	public LoginInfo() {
+		admin = false;
+		isInKitchen = false;
+		loggedIn = false;
+	}
 	
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -84,20 +88,20 @@ public class LoginInfo implements Serializable {
 		return this.admin;
 	}
 
-	public void setUsedLastKitchen(Boolean usedLastKitchen) {
-		this.usedLastKitchen = usedLastKitchen;
+	public void setIsInKitchen(Boolean isInKitchen) {
+		this.isInKitchen = isInKitchen;
 	}
 
-	public Boolean getUsedLastKitchen() {
-		return usedLastKitchen;
+	public Boolean getIsInKitchen() {
+		return isInKitchen;
 	}
 
 	public void setLastKitchen(Long lastKitchen) {
-		this.lastKitchen = lastKitchen;
+		this.currentKitchen = lastKitchen;
 	}
 
 	public Long getLastKitchen() {
-		return lastKitchen;
+		return currentKitchen;
 	}
 
 

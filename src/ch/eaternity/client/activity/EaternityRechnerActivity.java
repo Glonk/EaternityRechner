@@ -1,10 +1,21 @@
 package ch.eaternity.client.activity;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+
+import ch.eaternity.client.ClientFactory;
+import ch.eaternity.client.DataController;
+import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.place.EaternityRechnerPlace;
+import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.MenuPreviewView;
+import ch.eaternity.client.ui.widgets.ConfirmDialog;
+import ch.eaternity.client.ui.widgets.RecipeView;
+import ch.eaternity.client.ui.widgets.Search;
+import ch.eaternity.client.ui.widgets.TopPanel;
+import ch.eaternity.shared.ClientData;
+import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.NotLoggedInException;
+import ch.eaternity.shared.Recipe;
 
 import com.google.api.gwt.client.impl.ClientGoogleApiRequestTransport;
 import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
@@ -13,51 +24,17 @@ import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
-
-import ch.eaternity.client.ClientFactory;
-import ch.eaternity.client.DataController;
-import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.EaternityRechner;
-import ch.eaternity.client.events.LoadedDataEvent;
-import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.place.HelloPlace;
-import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.HelloView;
-import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.ui.widgets.ConfirmDialog;
-import ch.eaternity.client.ui.widgets.ImageOverlay;
-import ch.eaternity.client.ui.widgets.IngredientsDialog;
-import ch.eaternity.client.ui.widgets.RecipeEditView;
-import ch.eaternity.client.ui.widgets.RecipeView;
-import ch.eaternity.client.ui.widgets.Search;
-import ch.eaternity.client.ui.widgets.TopPanel;
-import ch.eaternity.shared.Data;
-import ch.eaternity.shared.DeviceSpecification;
-import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.NotLoggedInException;
-import ch.eaternity.shared.Workgroup;
-import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
 
 public class EaternityRechnerActivity extends AbstractActivity implements
 		EaternityRechnerView.Presenter {
@@ -91,6 +68,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		this.place = place;
 		
 		this.menuPreview = factory.getMenuPreviewView();
+
 		
 	}
 
@@ -112,119 +90,16 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 
 		// now load the data
 		dao.loadData();
-		initializeUrlshortener();
-
-		// load login
-		loadLoginData();
 		
-	}
-	
-	public void loadLoginData() {
-		//	  
-		// Check login status using login service.
-		
-		dataRpcService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-
-			public void onSuccess(LoginInfo result) {
-				loginInfo = result;
-				if(loginInfo.isLoggedIn()) {
-					display.loadYourRechner();
-					if(loginInfo.isAdmin()) {
-						adminHandler = loadAdmin();
-					} 
-				} else   {
-					display.loadLogin();
-					// are you even an admin?
-					if(adminHandler != null){
-						adminHandler.removeHandler();
-//						ingredientHandler.removeHandler();
-					}
-				}
-			}
-		});
+		initializeUrlshortener();	
 	}
 
-	/*
-	private void loadData() {
-		// here all the Data is loaded.
-		// is it necessary to have a seccond request for the admin, I don't think so. Yet it is still implemented
-		
-		dataRpcService.getData(new AsyncCallback<Data>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			public void onSuccess(Data data) {
-				// the data objects holds all the data
-				// the search interface gets all the data (recipes and ingredients)
-				clientData = data;
-				dao.clientData = clientData;
-//				Search.clientData = data;
-				
-				eventBus.fireEvent(new LoadedDataEvent());
-
-				// the top panel grabs all the existing distances also from the search interface
-				
-				//REFACTOR: eine Stufe tiefer (display)
-				display.getTopPanel().locationButton.setEnabled(true);
-				
-				// is this necessary?:
-				dao.isInKitchen = false;
-				display.getTopPanel().location.setVisible(true);
-				// it should not...
-				
-				// who may change the kitchen
-				if(data.kitchens.size() == 0 && (loginInfo == null || !loginInfo.isAdmin() )){
-					// there is no kitchen available and you are a normal user (or not logged in)
-					display.getTopPanel().isCustomer.setVisible(false);
-				} else {
-					// otherwise may edit the kitchen stuff
-					display.getTopPanel().editKitchen.setVisible(true);
-				}
-
-				
-				// here is save the last kitchen thing
-				if(data.kitchens.size() > 0){
-
-					Long lastKitchenId = clientData.lastKitchen;
-					if(lastKitchenId == null) { lastKitchenId = 0L; }
-					
-					Workgroup lastKitchen = null;
-					for(Workgroup kitchIt : data.kitchens){
-						if(kitchIt.id == lastKitchenId){
-							lastKitchen = kitchIt;
-						}
-					}
-					
-					if(lastKitchenId != null && lastKitchen != null){
-						String kitchenName = lastKitchen.getSymbol();
-						display.getTopPanel().isCustomerLabel.setText("Sie sind in der Küche: "+kitchenName+" ");
-						display.getTopPanel().location.setVisible(false);
-						dao.isInKitchen = true;
-						display.getTopPanel().selectedKitchen = lastKitchen;
-						display.getSearchPanel().yourRecipesText.setHTML(" in " + kitchenName + " Rezepten");
-						dao.changeKitchenRecipes(display.getTopPanel().selectedKitchen.id);
-
-					} 
-				} 
-				
-				display.getSearchPanel().SearchInput.setText("");
-				display.getSearchPanel().updateResults(" ");
-				menuPreview.hide();
-
-			}
-			
-		});
-	}
-	*/
 	
 	//REFACTOR: in DataController und View (EVENT)
-public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
+	public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
-		if(dao.isInKitchen){
+		if(dao.cdata.loginInfo.getIsInKitchen()){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
 			if(!recipe.kitchenIds.contains(getTopPanel().selectedKitchen.id)){
@@ -244,12 +119,12 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 				// when this is your first one... so show the panel... should be automatic
 //				Search.yourMealsPanel.setVisible(true);
 				if(recipe.getDirectAncestorID() != null){
-					for(Recipe recipeDesc : dao.clientData.userRecipes){
+					for(Recipe recipeDesc : dao.cdata.userRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
 					}
-					for(Recipe recipeDesc : dao.clientData.kitchenRecipes){
+					for(Recipe recipeDesc : dao.cdata.kitchenRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
@@ -274,11 +149,11 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 					}
 				}*/
 				
-				if(!dao.isInKitchen){
-					dao.clientData.userRecipes.add(recipe);
+				if(!dao.cdata.loginInfo.getIsInKitchen()){
+					dao.cdata.userRecipes.add(recipe);
 				} else {
-					dao.clientData.kitchenRecipes.add(recipe);
-					dao.clientData.currentKitchenRecipes.add(recipe);
+					dao.cdata.kitchenRecipes.add(recipe);
+					dao.cdata.currentKitchenRecipes.add(recipe);
 				}
 				
 				String searchString = Search.SearchInput.getText().trim();
@@ -312,14 +187,14 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 			}
 			public void onSuccess(Boolean ignore) {
 				
-				if(dao.clientData.userRecipes.contains(recipe)){
-					dao.clientData.userRecipes.remove(recipe);
+				if(dao.cdata.userRecipes.contains(recipe)){
+					dao.cdata.userRecipes.remove(recipe);
 				}
 				if(recipe.isOpen()){
-					dao.clientData.publicRecipes.remove(recipe);
+					dao.cdata.publicRecipes.remove(recipe);
 				}
-				if(dao.clientData.kitchenRecipes.contains(recipe)){
-					dao.clientData.kitchenRecipes.remove(recipe);
+				if(dao.cdata.kitchenRecipes.contains(recipe)){
+					dao.cdata.kitchenRecipes.remove(recipe);
 				}
 				if(getTopPanel().selectedKitchen != null)
 					dao.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
@@ -328,24 +203,7 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		});
 	}
 	
-	//REFACTOR: datacontroller
-	void rezeptApproval(final Recipe recipe, final Boolean approve) {
-		dataRpcService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			public void onSuccess(Boolean ignore) {
-// here happens some graphics clinch... or somewhere else...
-				dao.clientData.publicRecipes.remove(recipe);
-				recipe.open = approve;
-				dao.clientData.publicRecipes.add(recipe);
-				
-				//TODO in the display of the recipes show, that is now public
-				
-				getSearchPanel().updateResults(Search.SearchInput.getText());
-			}
-		});
-	}
+	
 	
 
 
@@ -374,70 +232,6 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	          Window.alert("Failed to initialize Url-shortener!");
 	        }
 	      });
-	}
-	
-	//REFACTOR: Entscheid Serverseitig ob Admin, je nachdem Adminrezepte mitschicken...
-	private HandlerRegistration loadAdmin() {
-		
-
-		HandlerRegistration adminHandler = display.loadAdmin();
-		
-		// Always display the Kitchen Dialog of all Customers...
-		
-		// you are the admin, this means, pull all kitchens from the server
-		
-		dataRpcService.getAdminRezepte(new AsyncCallback<List<Recipe>>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			public void onSuccess(List<Recipe> rezepte) {
-				// this shouldn't be necessary, as we are working with pointers:
-				// add all recipes to the public ones, this is an arbitrary choice...
-				// TODO display this fact somewhere, to see which recipes are yours, and which are not.
-				dao.clientData.publicRecipes = rezepte;
-				// this shouldn't be necessary, as we are working with pointers: 
-				getSearchPanel().updateResults(" ");
-			}
-		});
-		
-		
-		dataRpcService.getAdminKitchens(new AsyncCallback<List<Workgroup>>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			
-			public void onSuccess(List<Workgroup> result) {
-				
-				if(result.size() != 0){ // there must be somthing!
-					dao.clientData.kitchens.addAll(result);
-				}
-				// this shouldn't be necessary, as we are working with pointers:
-//				Search.setClientData(data);
-				
-				// is there anything to update?
-//				Search.updateResults(" ");
-				
-			}
-		});
-		
-		return adminHandler;
-	}
-	
-	
-
-	public void loadYourRezepte() {
-		dataRpcService.getYourRezepte(new AsyncCallback<List<Recipe>>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			public void onSuccess(List<Recipe> rezepte) {
-				
-				if(rezepte != null && rezepte.size() > 0){
-					addClientDataRezepte(rezepte);
-				}
-//				displayRezepte(rezepte);
-			}
-		});
 	}
 	
 	public LoginInfo getLoginInfo(){
@@ -596,8 +390,8 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	}
 
 	@Override
-	public Data getClientData() {
-		return clientData;
+	public ClientData getClientData() {
+		return dao.cdata;
 	}
 
 

@@ -33,6 +33,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.geocode.Placemark;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -121,63 +122,66 @@ public void setSuperDisplay(EaternityRechnerView superDisplay){
 	Date date = new Date();
 	Monate.setSelectedIndex(date.getMonth());
 	
-	// ---------------- Listen to the EventBus ----------------
-	presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE, new KitchenChangedEventHandler() {
-		@Override
-		public void onKitchenChanged(KitchenChangedEvent event) {
-			if (event.id == -1) { // not in kitchen
-				locationButton.setEnabled(true);
-				location.setVisible(true);
-				isCustomer.setVisible(false);
-				editKitchen.setVisible(false);
-			}
-			else {
-				locationButton.setEnabled(false);
-				location.setVisible(false);
-				editKitchen.setVisible(true);
-				isCustomer.setVisible(true);
-				isCustomerLabel.setText(" Sie befinden sich in der Küche: " + presenter.getDAO().currentKitchen.getSymbol() + " ");
-			}
-			
-		}
-	});
+	calHTML.addMouseListener( new TooltipListener( "Der Monat in dem Sie kochen.", 5000 /* timeout in milliseconds*/,"toolTipDown",-130,10));
 	
-	presenter.getEventBus().addHandler(LoginChangedEvent.TYPE, new LoginChangedEventHandler() {
-		@Override
-		public void onEvent(LoginChangedEvent event) {
-			if (presenter.getDAO().loginInfo.isLoggedIn()) {
-				signOutLink.setHref(presenter.getDAO().loginInfo.getLogoutUrl());
-				signInLink.setVisible(false);
-				signOutLink.setVisible(true);
-				
-				loginLabel.setText("Willkommen "+ presenter.getDAO().loginInfo.getNickname() +".");
-			}
-			else {
-				// TODO sign out without reload of rechner...
-				signInLink.setVisible(true);
-				signOutLink.setVisible(false);
-				
-				loginLabel.setVisible(false);
-			}
-		}
-	});
-			
+	pinHTML.addMouseListener( new TooltipListener("Der Ort in dem Sie kochen.", 5000 /* timeout in milliseconds*/,"toolTipDown",-110,10));
 	
-	
-	calHTML.addMouseListener(
-			new TooltipListener(
-					"Der Monat in dem Sie kochen.", 5000 /* timeout in milliseconds*/,"toolTipDown",-130,10));
-	
-	
-	pinHTML.addMouseListener(
-			new TooltipListener(
-					"Der Ort in dem Sie kochen.", 5000 /* timeout in milliseconds*/,"toolTipDown",-110,10));
-	
-	//.parse( Integer.toString( TopPanel.Monate.getSelectedIndex() ));
-	
-
+	bind();
   }
   
+  private void bind() {
+	// ---------------- Listen to the EventBus ----------------
+		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE, new KitchenChangedEventHandler() {
+			@Override
+			public void onKitchenChanged(KitchenChangedEvent event) {
+				if (event.id == -1) { // not in kitchen
+					locationButton.setEnabled(true);
+					location.setVisible(true);
+					isCustomer.setVisible(false);
+					editKitchen.setVisible(false);
+				}
+				else {
+					locationButton.setEnabled(false);
+					location.setVisible(false);
+					editKitchen.setVisible(true);
+					isCustomer.setVisible(true);
+					isCustomerLabel.setText(" Sie befinden sich in der Küche: " + presenter.getDAO().cdata.currentKitchen.getSymbol() + " ");
+				}
+			}
+		});
+		
+		presenter.getEventBus().addHandler(LoginChangedEvent.TYPE, new LoginChangedEventHandler() {
+			@Override
+			public void onEvent(LoginChangedEvent event) {
+				if (presenter.getDAO().cdata.loginInfo.isLoggedIn()) {
+					signOutLink.setHref(presenter.getDAO().cdata.loginInfo.getLogoutUrl());
+					signInLink.setVisible(false);
+					signOutLink.setVisible(true);
+					
+					loginLabel.setText("Willkommen "+ presenter.getDAO().cdata.loginInfo.getNickname() +".");
+				}
+				else {
+					// TODO sign out without reload of rechner...
+					signInLink.setHref(presenter.getDAO().cdata.loginInfo.getLoginUrl());
+					signInLink.setVisible(true);
+					signOutLink.setVisible(false);
+					
+					loginLabel.setVisible(false);
+				}
+				if(event.loginInfo.isAdmin()) 
+					ingredientLink.setVisible(true);
+				else
+					ingredientLink.setVisible(true);
+			}
+		});
+  }
+  
+  @UiHandler("ingredientLink")
+  public void onIngredientLinkClicked(ClickEvent event) {
+	  IngredientsDialog dlg = new IngredientsDialog();
+	  dlg.show();
+	  dlg.center();
+  }
 
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {

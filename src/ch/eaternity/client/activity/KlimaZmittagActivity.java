@@ -14,7 +14,6 @@ import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.place.KlimaZmittagPlace;
 import ch.eaternity.client.ui.KlimaZmittagView;
 import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Data;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 

@@ -4,7 +4,7 @@ import ch.eaternity.client.DataController;
 import ch.eaternity.client.ui.widgets.RecipeView;
 import ch.eaternity.client.ui.widgets.Search;
 import ch.eaternity.client.ui.widgets.TopPanel;
-import ch.eaternity.shared.Data;
+import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
@@ -51,8 +51,6 @@ public interface EaternityRechnerView<T> extends IsWidget
 
 		void addNewRecipe();
 
-		void loadYourRezepte();
-
 		LoginInfo getLoginInfo();
 
 		Urlshortener getUrlShortener();
@@ -67,7 +65,7 @@ public interface EaternityRechnerView<T> extends IsWidget
 
 		void recipeApproval(Recipe recipe, boolean b);
 
-		Data getClientData();
+		ClientData getClientData();
 
 		EventBus getEventBus();
 	}
@@ -77,9 +75,6 @@ public interface EaternityRechnerView<T> extends IsWidget
 	
 	int getSelectedMonth();
 	void cloneRecipe(Recipe recipe);
-	void loadYourRechner();
-	HandlerRegistration loadAdmin();
-	void loadLogin();
 	FlexTable getRezeptEditList();
 	FlexTable getRezeptList();
 	void setSelectedRecipeNumber(int i);

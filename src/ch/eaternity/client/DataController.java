@@ -1,35 +1,28 @@
 package ch.eaternity.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import ch.eaternity.client.events.KitchenChangedEvent;
-import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.events.LoadedDataEvent;
-import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.events.LoginChangedEvent;
+import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.ui.MenuPreviewView;
 import ch.eaternity.shared.ClientData;
-import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
-import ch.eaternity.shared.comparators.NameComparator;
-import ch.eaternity.shared.comparators.RezeptNameComparator;
-import ch.eaternity.shared.comparators.RezeptValueComparator;
-import ch.eaternity.shared.comparators.ValueComparator;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DataController {
 	
@@ -39,14 +32,8 @@ public class DataController {
 	private ClientFactory clientFactory;
 	private final DataServiceAsync dataRpcService;
 	private final EventBus eventBus;
-
 	
-	public ClientData clientData = new ClientData();
-
-	public static LoginInfo loginInfo = null;
-	public boolean isInKitchen;
-	public Workgroup currentKitchen;
-	public int selectedMonth;
+	public ClientData cdata = new ClientData();
 
 	// ---------------------- public Methods ----------------------
 	
@@ -56,39 +43,46 @@ public class DataController {
 		this.dataRpcService = factory.getDataServiceRPC();
 		this.eventBus = factory.getEventBus();
 	}
-
+	
 	public void loadData() {
-		dataRpcService.getData(new AsyncCallback<ClientData>() {
+		dataRpcService.getData(GWT.getHostPageBaseURL(), new AsyncCallback<ClientData>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(ClientData data) {
 				// the data objects holds all the data
-				clientData = data;
+				cdata = data;
 				
-				eventBus.fireEvent(new LoadedDataEvent());
-				eventBus.fireEvent(new KitchenChangedEvent(-1L));
-
-				
-				// Manage Loading kitchen
+				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
-				if (loginInfo.getUsedLastKitchen() == true && loginInfo.getLastKitchen() != null)
+				if (cdata.loginInfo.getIsInKitchen() == true && cdata.loginInfo.getLastKitchen() != null)
 				{
-					// load currentKitchen via ID
-					for(Workgroup kitchen : clientData.kitchens){
-						if(kitchen.id == loginInfo.getLastKitchen())
-							currentKitchen = kitchen;
-					}
-					if (currentKitchen == null)
+					cdata.currentKitchen = cdata.getKitchenByID(cdata.loginInfo.getLastKitchen());
+					if (cdata.currentKitchen == null)
 						kitchenLoaded = false;
 				}
 				else
 					kitchenLoaded = false;
 				
-				if (kitchenLoaded)
-					eventBus.fireEvent(new KitchenChangedEvent(currentKitchen.id));
+				if (kitchenLoaded) {
+					changeKitchenRecipes(cdata.currentKitchen.id);
+					eventBus.fireEvent(new KitchenChangedEvent(cdata.currentKitchen.id));
+				}
 				else
 					eventBus.fireEvent(new KitchenChangedEvent(-1L));
+				
+				// fill NoDescs Recipes
+				cdata.userRecipesNoDescs = Util.getUnDescendantedRecipes(cdata.userRecipes);
+				cdata.publicRecipesNoDescs = Util.getUnDescendantedRecipes(cdata.publicRecipes);
+				cdata.currentKitchenRecipesNoDescs = Util.getUnDescendantedRecipes(cdata.currentKitchenRecipes);
+				
+				// Load current Month or Kitchen Month
+				Date date = new Date();
+				cdata.selectedMonth = date.getMonth() + 1;
+				eventBus.fireEvent(new MonthChangedEvent(cdata.selectedMonth));
+				
+				eventBus.fireEvent(new LoginChangedEvent(cdata.loginInfo));
+				
 				
 				
 				//TODO place this somewhere else
@@ -100,19 +94,41 @@ public class DataController {
 		});
 	}
 	
+	// --------------------- Methods accessed by Widgets --------------------- 
+	
+	public void createRecipe() {}
+	
+	public void cloneRecipe(Recipe recipe) {}
+	
+	public void deleteRecipe(Recipe recipe) {}
+	
+	public void addIngredientToMenu(Ingredient ingredient, int grams) {}
+	
+	// probably other place?
+	public void changeMonth(int month) {}
 	
 	public void changeKitchen(Workgroup kitchen) {
 		if (kitchen == null) {
-			isInKitchen = false;
-			currentKitchen = null;
+			cdata.currentKitchen = null;
 			eventBus.fireEvent(new KitchenChangedEvent(-1L));
 		}
 		else {
-			isInKitchen = true;
-			currentKitchen = kitchen;
+			cdata.currentKitchen = kitchen;
 			eventBus.fireEvent(new KitchenChangedEvent(kitchen.id));
 		}
-		
+	}
+	
+
+	void rezeptApproval(final Recipe recipe, final Boolean approve) {
+		dataRpcService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Boolean ignore) {
+				recipe.open = approve;	
+				eventBus.fireEvent(new RecipePublicityChangedEvent(recipe));
+			}
+		});
 	}
 	
 	/*
@@ -130,7 +146,7 @@ public class DataController {
 			for(String search : searches)
 			{
 				// TODO this search algorithm is extremely slow, make faster
-				for(Ingredient zutat : clientData.ingredients){
+				for(Ingredient zutat : cdata.ingredients){
 					if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
 						if(!ingredients.contains(zutat)){
 							zutat.noAlternative = true;
@@ -143,7 +159,7 @@ public class DataController {
 					for(Ingredient zutat : ingredients){
 						if(zutat.getAlternatives() != null){
 							for(Long alternativen_id : zutat.getAlternatives()){
-								for(Ingredient zutat2 : clientData.ingredients){
+								for(Ingredient zutat2 : cdata.ingredients){
 									if(zutat2.getId().equals(alternativen_id)){
 										if(!alternatives.contains(zutat2)){
 											zutat2.noAlternative = false;
@@ -159,7 +175,7 @@ public class DataController {
 			}
 		}
 		else {
-			for(Ingredient zutat : clientData.ingredients){
+			for(Ingredient zutat : cdata.ingredients){
 				ingredients.add(zutat);
 				zutat.noAlternative = true;
 			}
@@ -202,15 +218,15 @@ public class DataController {
 	}
 	
 	public List<Recipe> searchUserRecipes(String searchString) {
-		return searchRecipe(searchString, clientData.userRecipesNoDescs);
+		return searchRecipe(searchString, cdata.userRecipesNoDescs);
 	}
 	
 	public List<Recipe> searchKitchenRecipes(String searchString) {
-		return searchRecipe(searchString, clientData.currentKitchenRecipesNoDescs);
+		return searchRecipe(searchString, cdata.currentKitchenRecipesNoDescs);
 	}
 	
 	public List<Recipe> searchPublicRecipes(String searchString) {
-		return searchRecipe(searchString, clientData.publicRecipesNoDescs);
+		return searchRecipe(searchString, cdata.publicRecipesNoDescs);
 	}
 	
 	
@@ -219,12 +235,12 @@ public class DataController {
 	// Select the KitchenRecipes
 	// Always call updateResults after for propper loading!
 	public void changeKitchenRecipes(Long id) {
-		clientData.currentKitchenRecipes.clear();
-		for(Recipe recipe : clientData.kitchenRecipes){
+		cdata.currentKitchenRecipes.clear();
+		for(Recipe recipe : cdata.kitchenRecipes){
 			for(Long kitchenId : recipe.kitchenIds){
 				if(kitchenId.equals(id))
 				{
-					clientData.currentKitchenRecipes.add(recipe);
+					cdata.currentKitchenRecipes.add(recipe);
 				}
 			}
 		}
@@ -318,10 +334,11 @@ public class DataController {
 		return p[n];
 	}
 	
-	private static void handleError(Throwable error) {
+	private void handleError(Throwable error) {
 		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
 		if (error instanceof NotLoggedInException) {
-			Window.Location.replace(loginInfo.getLogoutUrl());
+			Window.Location.replace(cdata.loginInfo.getLogoutUrl());
 		}
 	}
 }
+
