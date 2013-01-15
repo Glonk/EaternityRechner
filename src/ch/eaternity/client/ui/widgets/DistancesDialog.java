@@ -223,9 +223,9 @@ public class DistancesDialog<T> extends DialogBox{
 		for(Widget widget : superDisplay.getRezeptList()){
 			RecipeView rezeptView = ((RecipeView) widget);
 			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
-			zutaten.addAll(rezeptView.getRezept().Zutaten);
+			zutaten.addAll(rezeptView.getRezept().ingredients);
 			for(IngredientSpecification zutatSpec : zutaten ){
-				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
+				int index = rezeptView.getRezept().ingredients.indexOf(zutatSpec);
 				for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
@@ -233,7 +233,7 @@ public class DistancesDialog<T> extends DialogBox{
 						zutatSpec.setDistance(singleDistance.getDistance());
 						
 						// and this must be propagated forward to the recipeEditView
-						rezeptView.getRezept().Zutaten.set(index, zutatSpec);
+						rezeptView.getRezept().ingredients.set(index, zutatSpec);
 
 						break;
 					}

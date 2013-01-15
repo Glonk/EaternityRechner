@@ -20,6 +20,11 @@ public class MoTransportation implements Serializable, Cloneable{
     {
     	
     }
+    
+    public MoTransportation(MoTransportation toClone) {
+		symbol = new String(toClone.symbol);
+		factor = new Double(toClone.factor);
+	}
 
     public MoTransportation(String symbol) {
     	this.symbol = symbol;

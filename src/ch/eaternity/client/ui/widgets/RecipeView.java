@@ -20,6 +20,7 @@ import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.comparators.ComparatorComparator;
 import ch.eaternity.shared.comparators.ComparatorObject;
 import ch.eaternity.shared.comparators.ComparatorRecipe;
@@ -37,6 +38,8 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
@@ -59,6 +62,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -161,34 +165,11 @@ public class RecipeView<T> extends Composite {
 	    
 	    // this is a new recipe, so nothing to be saved:
 	    setRecipeSavedMode(true);
-
-	    
-	    // we could still consider changing the image in this interface
-//	    galleryWidget = new PhotoGallery(this);
-////	    addInfoPanel.insert(galleryWidget,0);
-//	    menuDecoInfo.add(galleryWidget);
-	    
-//			no more edit here
-//			uploadWidget = new UploadPhoto(EaternityRechner.loginInfo, this);
-//			uploadWidget.setStyleName("notInline");
-			
-			// Bind it to event so uploadWidget can refresh the gallery
-//			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
-//			addInfoPanel.insert(uploadWidget,0);
-//			menuDecoInfo.add(uploadWidget);
-
-	    
-//	    imageUploaderHP.add(panelImages);
-//	    MultiUploader defaultUploader = new MultiUploader();
-//	    imageUploaderHP.add(defaultUploader);
-//	    defaultUploader.avoidRepeatFiles(true);
-//	    defaultUploader.setValidExtensions(new String[] { "jpg", "jpeg", "png", "gif" });
-//	    defaultUploader.setMaximumFiles(1);
-//	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
-
-
-		
 	  }
+	
+	private void bind() {
+		
+	}
 
 
 	public void setRecipeSavedMode(boolean isSaved) {
@@ -403,6 +384,200 @@ void onKeyUp(KeyUpEvent event) {
 	
 	public void showRezept(final Recipe recipe) { 		
 		// this is now getting called by the EaternityRechnerViewImpl:
+
+//		rezeptView.rezeptDetails.setText(recipe.getSubTitle());
+		makeNotPublic.setValue(!recipe.openRequested);
+		
+		//TODO hinzufügen zu welchen Küchen das Rezept gehört.
+		String kitchenString = "";
+		Boolean gotOne = false;
+		for(Long kitchenId : recipe.kitchenIds){
+			Workgroup kitchen = presenter.getClientData().getKitchenByID(kitchenId);
+			if(kitchen != null){
+				kitchenString = kitchenString + " [" + kitchen.getSymbol() +"]";
+				gotOne = true;
+			}	
+		}
+		if(gotOne){
+			kitchenString = " Ist den Küchen zugeordnet: " + kitchenString;
+		}
+		
+		openHTML.setHTML("Nicht veröffentlicht."+kitchenString);
+		if(recipe.isOpen()){
+			openHTML.setHTML("Veröffentlicht."+kitchenString);
+		} else if(recipe.openRequested){
+			openHTML.setHTML("Veröffentlichung angefragt."+kitchenString);
+		}
+		
+		if(recipe.getCookInstruction() != null){
+			recipe.setCookInstruction(recipe.getCookInstruction());
+		}
+		
+		//Date
+		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
+		Date date = recipe.cookingDate;
+		if(date != null)
+		{
+			recipe.cookingDate = date;
+			recipeDate.setText(dtf.format(date));
+		}
+		
+		showImageRezept = new Image();
+		
+		if(presenter.getLoginInfo().isLoggedIn()){
+    	bildEntfernen = new Anchor("Bild entfernen");
+    	bildEntfernen.addStyleName("platzrechts");
+    	bildEntfernen.addClickHandler(new ClickHandler(){
+			@Override
+			public void onClick(ClickEvent event) {
+
+				bildEntfernen.setVisible(false);
+				recipe.image = null;
+//TODO				image should also be pulled out of the database to save space
+			}
+    	});
+    	
+//    	rezeptView.menuDecoInfo.add(rezeptView.bildEntfernen);
+    	bildEntfernen.setVisible(false);
+		}
+    	
+	    if(recipe.image != null){
+	    	getRezept().image = recipe.image;
+	    	showImageRezept.setUrl(getRezept().image.getServingUrl()+"=s150-c");
+	    	
+	    	// TODO check if the following is legacy code...
+//	    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
+//	    	imageUploaderHP.add(showImage);
+	    	
+	    	imagePopUpHandler = showImageRezept.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					ImageOverlay imageOverlay = new ImageOverlay(getRezept().image);
+					imageOverlay.setLoginInfo(presenter.getLoginInfo());
+//					imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
+					
+					final PopupPanel imagePopup = new PopupPanel(true);
+					imagePopup.setAnimationEnabled(true);
+					imagePopup.setWidget(imageOverlay);
+//					imagePopup.setGlassEnabled(true);
+					imagePopup.setAutoHideEnabled(true);
+
+					// TODO what is this???
+					imagePopup.center();
+					imagePopup.setPopupPosition(10, 10);
+				}
+			});
+	    	showImageRezept.setStyleName("imageSmall");
+//	    	rezeptView.menuDecoInfo.insert(rezeptView.showImageRezept,0);
+//	    	if(rezeptView.uploadWidget != null){
+//	    		rezeptView.uploadWidget.setVisible(false);
+//	    	}
+	    	if(presenter.getLoginInfo().isLoggedIn()){
+	    	bildEntfernen.setVisible(true);
+	    	}
+	    }
+	    
+	    final Anchor mehrDetails = new Anchor("mehr Details");
+	    mehrDetails.setStyleName("floatRight");
+	    askForLess = false;
+	    askForLess2 = true;
+	    final String cookingInstructions = recipe.getCookInstruction();
+	    
+	    mehrDetails.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if(askForLess){
+					if(getRezept().image != null){
+						showImageRezept.setUrl(getRezept().image.getServingUrl()+"=s150-c");
+						showImageRezept.setWidth("150px");
+						
+						showImageRezept.setStyleName("imageSmall");
+						
+						
+					}
+//					rezeptView.detailText.setVisible(false);
+//					rezeptView.cookingInstr.setVisible(true);
+//					rezeptView.htmlCooking.setVisible(true);
+					mehrDetails.setText("mehr Details");
+					askForLess = false;
+					if(showImageHandler != null){
+						showImageHandler.removeHandler();
+						showImageHandler = null;
+					}
+					
+				} else {
+//					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+cookingInstructions);
+					if(getRezept().image != null){
+
+//						overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
+//						detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
+						if(showImageHandler == null){
+							showImageHandler = showImageRezept.addLoadHandler(new LoadHandler(){
+								@Override
+								public void onLoad(LoadEvent event) {
+									if(askForLess2){
+//										overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
+//
+//										//				detailText.setHeight(height)
+//										detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
+										askForLess2 = false;
+									}
+								}
+							});
+						}
+						showImageRezept.setUrl(getRezept().image.getServingUrl()+"=s800");
+						showImageRezept.setWidth("340px");
+						showImageRezept.setStyleName("imageBig");
+//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezept.getCookInstruction());
+						
+
+					}
+//					detailText.setWidth("730px");
+//					detailText.setVisible(true);
+//					cookingInstr.setVisible(false);
+//					htmlCooking.setVisible(false);
+					mehrDetails.setText("weniger Details");
+					askForLess = true;
+
+				}
+			}
+	    	
+	    });
+	    
+//	    rezeptView.menuDecoInfo.insert(mehrDetails,1);
+	   
+	    if(recipe.getPersons() != null){
+	    	 recipe.setPersons(recipe.getPersons());	    	
+	    } else {
+	    	recipe.setPersons(4l);
+	    }
+	    
+	    if(recipe.comments.size() > 0){
+	    	recipe.comments.clear();
+			for (int i = 0; i < recipe.comments.size(); i++) {
+				recipe.comments.add(recipe.comments.get(i));
+			}
+	    }
+	    
+//	    amountPersons.setText(recipe.getPersons().toString());
+	    
+//	    cookingInstr.setText(recipe.getCookInstruction());
+//	    showRezept(rezept);
+//	    showRezept(recipe);
+
+		
+	    saved = true;
+	    
+	    if(presenter.getLoginInfo().isAdmin() && recipe.getEmailAddressOwner() != null ) {
+	    	savedHTML.setVisible(true);
+	    	savedHTML.setHTML("Autor: "+recipe.getEmailAddressOwner());
+		} else {
+//			savedHTML.setHTML("gespeichert");
+			savedHTML.setVisible(false);
+		}
+	    
 
 			if(recipe.getPersons() != null){
 				amountPersons.setText(recipe.getPersons().toString());
@@ -822,7 +997,7 @@ void onKeyUp(KeyUpEvent event) {
 		 ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
 		 recipeComparator.clear();
 		
-		for(IngredientSpecification zutatSpec : recipe.Zutaten){
+		for(IngredientSpecification zutatSpec : recipe.ingredients){
 			Ingredient zutat = presenter.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 //			amount of Persons needs to be assigned always!
 			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();

@@ -32,7 +32,10 @@ public class EnergyMix implements Serializable {
 	public String Name;
 	
 	
-	
+	public EnergyMix(EnergyMix toClone) {
+		this.Co2PerKWh = new Double(toClone.Co2PerKWh);
+		this.Name = new String(toClone.Name);
+	}
 
 	public EnergyMix() {
 

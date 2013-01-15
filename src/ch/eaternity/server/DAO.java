@@ -13,7 +13,7 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
-import ch.eaternity.shared.IngredientCondition;
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.RecipeComment;
@@ -42,7 +42,7 @@ public class DAO extends DAOBase
 	static {
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Extraction.class);
-		ObjectifyService.register(IngredientCondition.class);
+		ObjectifyService.register(Condition.class);
 		ObjectifyService.register(MoTransportation.class);
 		ObjectifyService.register(ProductLabel.class);
 		ObjectifyService.register(RecipeComment.class);
@@ -140,7 +140,7 @@ public class DAO extends DAOBase
 			UserRecipeWrapper recipe = iterator.next();
 
 			// for each recipe find all ingredients Specifications
-			for(IngredientSpecification ingSpec : recipe.recipe.Zutaten ){
+			for(IngredientSpecification ingSpec : recipe.recipe.ingredients ){
 				for(Ingredient ingredient: ingredients){
 					if(ingSpec.getZutat_id().equals(ingredient.getId())){
 						ingSpec.setNormalCO2Value(ingredient.getCo2eValue());

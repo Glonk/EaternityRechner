@@ -609,10 +609,9 @@ class="alternate"
 
 					<%	
 					counter = 0;
-					for(IngredientSpecification ingredient: recipe.Zutaten){
-					counter = counter + 1;
-
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %> 
+					for(IngredientSpecification ingredicounter = 0;
+					for(IngredientSpecification ingredient: recipe.ingredients){
+					counter = counter + 1;ngredient.getMengeGramm() %> g <%= ingredient.getName() %> 
 						
 						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 						

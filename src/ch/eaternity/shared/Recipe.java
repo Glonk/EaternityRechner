@@ -26,8 +26,7 @@ public class Recipe implements Serializable, Cloneable{
 	 * 
 	 */
 	private static final long serialVersionUID = -5888386800366492104L;
-	
-
+		
 	@Id Long id;
     
 	private Long directAncestorID;
@@ -35,11 +34,8 @@ public class Recipe implements Serializable, Cloneable{
 	public Boolean ancestorAlreadyMarked;
 	
 	private String symbol;
-	
 	private String subTitle;
-	
 	private String cookInstruction;
-	
 	public UploadedImage image;
 	
 	@Indexed
@@ -59,22 +55,16 @@ public class Recipe implements Serializable, Cloneable{
 	private Long popularity;
 	
 	@Transient
-	private Boolean selected = false;
+	private Boolean selected;
 	
 	@Serialized
 	public ArrayList<RecipeComment> comments = new ArrayList<RecipeComment>();
-	
-    // @Persistent //(mappedBy = "recipe") //, defaultFetchGroup = "true")
-//    @Element(dependent = "true")
+
 	@Serialized
-	public ArrayList<IngredientSpecification> Zutaten = new ArrayList<IngredientSpecification>();
+	public ArrayList<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
 	
 	@Serialized
 	public ArrayList<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
-
-    
-//    @Persistent 
-//    private List<String> ZutatSpecificationKeys = new ArrayList<String>(); 
     
 	private Double CO2Value;
 	public Boolean openRequested;
@@ -86,28 +76,67 @@ public class Recipe implements Serializable, Cloneable{
 	
 
 	public Recipe() {
-
+		symbol = "Ihr Menu";
+		subTitle = "Menu Beschreibung";
+		cookInstruction = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+		open = false;
+		openRequested = true;
+		selected = false;
+		persons = 4L;
+		eaternitySelected = false;
 	}
-
-	public Recipe(String symbol) {
-		this.symbol = symbol;
-	}
-
-	public Recipe(Long id, String symbol) {
+	
+	// clone Constructor
+	public Recipe(Recipe toClone) {
+		// call standard constructor
 		this();
-
-		this.symbol = symbol;
+		this.directAncestorID = toClone.id;
+		this.ancestorAlreadyMarked = false;
+		this.symbol = new String(toClone.symbol);
+		this.subTitle = new String(toClone.subTitle);
+		this.cookInstruction = new String(toClone.cookInstruction);
+		//not propper yet:
+		this.image = toClone.image;
+		
+		this.subTitle = new String(toClone.subTitle);
+		this.energyMix = new EnergyMix(toClone.energyMix);
+		this.ShortUrl = new String(toClone.ShortUrl);
+		
+		for (Long kID : toClone.kitchenIds) {
+			kitchenIds.add(new Long(kID));
+		}
+		this.persons = new Long(toClone.persons);
+		this.createDate = (Date) toClone.createDate.clone();
+		this.cookingDate = (Date) toClone.cookingDate.clone();
+		this.hits = new Long(toClone.hits);
+		this.popularity = new Long(toClone.popularity);
+		
+		this.selected = new Boolean(toClone.selected);
+		
+		for (RecipeComment com : toClone.comments) {
+			comments.add(new RecipeComment(com));
+		}
+		
+		for (IngredientSpecification com : toClone.ingredients) {
+			ingredients.add(new IngredientSpecification(com));
+		}
+		
+		for (DeviceSpecification com : toClone.deviceSpecifications) {
+			deviceSpecifications.add(new DeviceSpecification(com));
+		}
+		
+		this.CO2Value = new Double(toClone.CO2Value);
+		this.openRequested = new Boolean(toClone.openRequested);
+		this.open = new Boolean(toClone.open);
+		this.eaternitySelected = new Boolean(toClone.eaternitySelected);
+		this.bio = new Boolean(toClone.bio);
+		this.regsas = new Boolean(toClone.regsas);
 	}
-
 
 
 	public String getSymbol() {
 		return this.symbol;
 	}
-
-
-
-
 
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
@@ -115,23 +144,22 @@ public class Recipe implements Serializable, Cloneable{
 
 	public void addZutaten(List<IngredientSpecification> zutaten) {
 		for(IngredientSpecification zutat : zutaten){
-//			zutat.setRezept(this);
-			this.Zutaten.add(zutat);
+			this.ingredients.add(zutat);
 		}
 		
 	}
 
 	public ArrayList<IngredientSpecification> getZutaten() {
-		return this.Zutaten;
+		return this.ingredients;
 	}
 
 	public void setZutaten(ArrayList<IngredientSpecification> zutaten) {
-			this.Zutaten = zutaten;
+			this.ingredients = zutaten;
 
 	}
 	
 	public void removeZutat(int index) {
-		this.Zutaten.remove(index);
+		this.ingredients.remove(index);
 	}
 
 
@@ -177,7 +205,7 @@ public class Recipe implements Serializable, Cloneable{
 		
 		double sum = getDeviceCo2Value();
 		
-		for ( IngredientSpecification zutatSpec : Zutaten){
+		for ( IngredientSpecification zutatSpec : ingredients){
 			sum += zutatSpec.getCalculatedCO2Value();
 		}
 		if(persons != null){

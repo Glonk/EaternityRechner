@@ -18,35 +18,24 @@ import com.googlecode.objectify.annotation.Serialized;
 
 public class DeviceSpecification implements Serializable,Cloneable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2701096899616747762L;
 
-
-	/** 
-	 * 
-	 */
-
-
 	@Id Long id;
-     
 	 
 	public Double kWConsumption;
-	
-	 
 	public String deviceName;
-	
-	 
 	public String deviceSpec;
-	
-	 
 	public Long duration;
-	
-	
 
 	public DeviceSpecification() {
 
+	}
+	
+	public DeviceSpecification(DeviceSpecification toClone) {
+		kWConsumption = new Double(toClone.kWConsumption);
+		deviceName = new String(toClone.deviceName);
+		deviceSpec = new String(toClone.deviceSpec);
+		duration = new Long(toClone.duration);
 	}
 
 	public DeviceSpecification(String deviceName,String deviceSpec, Double kWConsumption, Long duration) {

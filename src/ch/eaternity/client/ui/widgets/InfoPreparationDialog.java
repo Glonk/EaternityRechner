@@ -9,7 +9,7 @@ import java.util.List;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
-import ch.eaternity.shared.IngredientCondition;
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Workgroup;
@@ -364,7 +364,7 @@ public class InfoPreparationDialog<T> extends Composite {
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
 //				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
-				recipe.Zutaten.set(selectedRow, zutatSpec);
+				recipe.ingredients.set(selectedRow, zutatSpec);
 //				Double MenuLabelWert = getRezeptCO2(recipe.Zutaten);
 				
 //				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);

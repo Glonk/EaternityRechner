@@ -96,12 +96,12 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
     
     if (sourceRow != 0 || targetRow != 0){ // this case nothing happens
     	
-	    IngredientSpecification switchIng = recipeView.recipe.Zutaten.get(sourceRow);
+	    IngredientSpecification switchIng = recipeView.recipe.ingredients.get(sourceRow);
 	    
-	    recipeView.recipe.Zutaten.remove(sourceRow);
-	    recipeView.recipe.Zutaten.add(targetRow+1, switchIng);
+	    recipeView.recipe.ingredients.remove(sourceRow);
+	    recipeView.recipe.ingredients.add(targetRow+1, switchIng);
 	    
-	    recipeView.displayZutatImMenu( recipeView.recipe.Zutaten );
+	    recipeView.displayZutatImMenu( recipeView.recipe.ingredients );
 	    // end here
     }
     

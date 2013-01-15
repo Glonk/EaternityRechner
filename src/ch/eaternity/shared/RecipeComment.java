@@ -17,6 +17,12 @@ public class RecipeComment implements Serializable, Cloneable{
 	public String symbol;
     public int amount;
     
+    public RecipeComment(RecipeComment toClone)
+    {
+    	symbol = new String(toClone.symbol);
+    	amount = toClone.amount;
+    }
+    
     private RecipeComment()
     {
     	

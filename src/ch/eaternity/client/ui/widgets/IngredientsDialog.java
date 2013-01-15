@@ -8,7 +8,7 @@ import java.util.List;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 //import ch.eaternity.server.Ingredient;
-import ch.eaternity.shared.IngredientCondition;
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
@@ -159,14 +159,14 @@ public class IngredientsDialog extends DialogBox{
 					if (tmpNodeVal1 != null && tmpNodeVal2 != null) {
 						String cond_ar1[] = tmpNodeVal1.split(",");
 						String cond_ar2[] = tmpNodeVal2.split(",");
-						ArrayList<IngredientCondition> newConditions = new ArrayList<IngredientCondition>(cond_ar1.length);
+						ArrayList<Condition> newConditions = new ArrayList<Condition>(cond_ar1.length);
 						
 						if (cond_ar1.length == cond_ar2.length)
 						{
 							for(int i=0; i<cond_ar1.length;i++) {
 								cond_ar1[i] = cond_ar1[i].trim();
 								cond_ar2[i] = cond_ar2[i].trim();
-								IngredientCondition tmpCond = new IngredientCondition(cond_ar1[i]);
+								Condition tmpCond = new Condition(cond_ar1[i]);
 								tmpCond.factor = Double.parseDouble(cond_ar2[i]);
 								newConditions.add(tmpCond);
 							}
@@ -270,7 +270,7 @@ public class IngredientsDialog extends DialogBox{
 						
 					// Extractions (Herkunft)
 					// DEFAULT VALUES, remove after final implementation of database format
-					IngredientCondition stdCond = new IngredientCondition("frisch");
+					Condition stdCond = new Condition("frisch");
 					Production stdProd = new Production("konventionell");
 					MoTransportation stdTrans = new MoTransportation("LKW", 0.188);
 					List<ProductLabel> labels = new ArrayList<ProductLabel>();

@@ -41,7 +41,7 @@ public class Ingredient implements IsSerializable{
     Extraction stdExtraction;
     
     @Embedded
-	public ArrayList<IngredientCondition> conditions;
+	public ArrayList<Condition> conditions;
     @Embedded
 	public ArrayList<Production> productions;
     @Embedded

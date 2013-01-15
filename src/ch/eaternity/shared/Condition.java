@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class IngredientCondition implements Serializable, Cloneable{
+public class Condition implements Serializable, Cloneable{
 
 	/**
 	 * 
@@ -16,16 +16,21 @@ public class IngredientCondition implements Serializable, Cloneable{
 	public String symbol;
 	public Double factor;
 	
-	private IngredientCondition()
+	private Condition()
 	{
 		
 	}
 	
-    public IngredientCondition(String symbol) {
+	public Condition(Condition toClone) {
+		symbol = new String(toClone.symbol);
+		factor = new Double(toClone.factor);
+	}
+	
+    public Condition(String symbol) {
 		this.symbol = symbol;
 	}
     
-    public IngredientCondition(String symbol, Double factor) {
+    public Condition(String symbol, Double factor) {
     	this.symbol = symbol;
     	this.factor = factor;
 	}

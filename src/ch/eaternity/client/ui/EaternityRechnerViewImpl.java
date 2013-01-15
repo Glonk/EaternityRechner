@@ -236,7 +236,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	
 	@UiHandler("addRezeptButton")
 	public void onAddRezeptButtonPress(ClickEvent event) {
-		presenter.addNewRecipe();		
+		presenter.getDAO().createRecipe();		
 	}
 	
 	//REFACTOR: Recipe included

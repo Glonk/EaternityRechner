@@ -930,9 +930,8 @@ for(Recipe recipe: rezeptePersonal){
 							<span style="color:gray;">Für <%= persons %> Personen:</span>
 							<ul class="zutat">
 
-							<%	
-							for(IngredientSpecification ingredient: recipe.Zutaten){
-
+							<%
+								for(IngredientSpecification ingredient: recipe.ingredients){
 							%>
 
 							<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>

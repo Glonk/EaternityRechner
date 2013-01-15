@@ -5,7 +5,7 @@ import java.util.List;
 
 
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
-import ch.eaternity.shared.IngredientCondition;
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.MoTransportation;
@@ -543,11 +543,11 @@ public class InfoZutatDialog<T> extends Composite {
 			FlowPanel flow = new FlowPanel();
 			specificationTable.setWidget(row,1,flow);
 			
-			for(final IngredientCondition condition : zutat.conditions){
+			for(final Condition condition : zutat.conditions){
 				RadioButton conditionBox = new RadioButton("conditions",condition.symbol);
 				// hack to take the first one...
 				if(zutatSpec.getZustand() == null){
-					IngredientCondition zustand = new IngredientCondition(condition.symbol);
+					Condition zustand = new Condition(condition.symbol);
 					zutatSpec.setZustand(zustand);
 				}
 				if(condition.symbol.equalsIgnoreCase(zutatSpec.getZustand().symbol)){
@@ -783,7 +783,7 @@ public class InfoZutatDialog<T> extends Composite {
 //				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
 //				
 //				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
-				recipe.Zutaten.set(selectedRow, zutatSpec);
+				recipe.ingredients.set(selectedRow, zutatSpec);
 //				Double MenuLabelWert = getRezeptCO2(recipe.Zutaten);
 				
 //				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);

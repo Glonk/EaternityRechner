@@ -1443,14 +1443,17 @@ String code = Converter.toString(compute,34);
 			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
 
 			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
-				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
-				}
-				%>
+				<%
+								counter = 0;
+									for(IngredientSpecification ingredient: recipe.ingredients){
+									counter = counter + 1;
+							%><%
+								if(counter != 1){
+							%>, <%
+								}
+							%><span class="nowrap"><%=ingredient.getMengeGramm()%> g <%=ingredient.getName()%></span><%
+								}
+							%>
 			</td>
 			<td class="left-border"><br></td>
 			</tr>
@@ -1461,19 +1464,26 @@ String code = Converter.toString(compute,34);
 			</tr>
 			
 			
-				<%	
-				if(recipe.comments != null){
-				for(RecipeComment comment: recipe.comments){
-
-				%>
+				<%
+											if(recipe.comments != null){
+												for(RecipeComment comment: recipe.comments){
+										%>
 				<tr>
-				<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-				<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+				<td>• <%=comment.symbol%><%
+					if(comment.amount > 0){
+				%><span class="amount"><%=comment.amount%> g CO<sub>2</sub>* </span><%
+					}
+				%></td>
+				<td class="left-border"><%
+					if(comment.amount > 0){
+				%><img class="bar" src="green.png" alt="green" height="11"  width="<%=comment.amount/recipeValue*140%>" /><%
+					}
+				%></td>
 				</tr>
 
 				<%
 					}
-				}
+						}
 				%>
 				
 				<tr>
@@ -1484,20 +1494,17 @@ String code = Converter.toString(compute,34);
 
 				</table>
 			<%
-		}
+				}
+			%>
 
-%>
 
-
-<%		
-
-}
-
+<%
+	}
 %>
 
 
 <%
-}
+	}
 
 
 doIt = false;
@@ -1521,7 +1528,7 @@ if(doIt){
 </tr>
 
 <tr>
-<td><p>Diese Rezepte sind mit unter <%= formatter.format( threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
+<td><p>Diese Rezepte sind mit unter <%=formatter.format( threshold )%> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 <td></td>
 </tr>
 
@@ -1537,22 +1544,20 @@ if(doIt){
 
 </table>
 
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<!--  <%=Integer.toString(rezeptePersonal.size())%>  -->
 <%
-
-
-for(Recipe recipe: rezeptePersonal){
+	for(Recipe recipe: rezeptePersonal){
 
 long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
-			recipe.setCO2Value();
-			Double recipeValue = recipe.getCO2Value() + extra;
-			if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
+	recipe.setCO2Value();
+	Double recipeValue = recipe.getCO2Value() + extra;
+	if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
 
-			String formatted = formatter.format( recipeValue );
-			String persons = Long.toString(recipe.getPersons());
-			%>
+	String formatted = formatter.format( recipeValue );
+	String persons = Long.toString(recipe.getPersons());
+%>
 			
 			<table cellspacing="0" cellpadding="0" class="table listTable" >
 			<tr>
@@ -1563,32 +1568,35 @@ String code = Converter.toString(compute,34);
 			<tr>
 			<td class="bottom-border">
 			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3>
+			<h3><%=recipe.getSymbol()%></h3>
 			</td>
 			<td class="left-border"></td>
 			</tr>
 
 			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td><div class="amount"><%=formatted%> g CO<sub>2</sub>* total</div></td>
 			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
 			</tr>
 			
 			<tr>
 			<td>
 			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			<span class="subTitle"><%=recipe.getSubTitle()%></span>
 			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+			<span style="color:gray;">Zutaten für <%=persons%> Personen:</span><br />
 
 			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
-				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
-				}
-				%>
+				<%
+								counter = 0;
+									for(IngredientSpecification ingredient: recipe.ingredients){
+									counter = counter + 1;
+							%><%
+								if(counter != 1){
+							%>, <%
+								}
+							%><span class="nowrap"><%=ingredient.getMengeGramm()%> g <%=ingredient.getName()%></span><%
+								}
+							%>
 			
 			</td>
 			<td class="left-border"><br></td>
@@ -1600,19 +1608,26 @@ String code = Converter.toString(compute,34);
 			</tr>
 
 			
-			<%	
-			if(recipe.comments != null){
-			for(RecipeComment comment: recipe.comments){
-			
-			%>
+			<%
+							if(recipe.comments != null){
+							for(RecipeComment comment: recipe.comments){
+						%>
 			<tr>
-			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+			<td>• <%=comment.symbol%><%
+				if(comment.amount > 0){
+			%><span class="amount"><%=comment.amount%> g CO<sub>2</sub>* </span><%
+				}
+			%></td>
+			<td class="left-border"><%
+				if(comment.amount > 0){
+			%><img class="bar" src="green.png" alt="green" height="11"  width="<%=comment.amount/recipeValue*140%>" /><%
+				}
+			%></td>
 			</tr>
 
 			<%
 				}
-			}
+				}
 			%>
 			<tr>
 			<td></td>
@@ -1623,21 +1638,19 @@ String code = Converter.toString(compute,34);
 			</table>
 			
 			<%
-		}
-%>
+							}
+						%>
 
 
-<%		
-
-}
-
+<%
+	}
 %>
 
 
 
 
 <%
-}
+	}
 
 
 doIt = false;
@@ -1661,7 +1674,7 @@ if(doIt){
 
 
 <tr>
-<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
+<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%=formatter.format( threshold )%> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 <td></td>
 </tr>
 
@@ -1677,23 +1690,21 @@ if(doIt){
 
 </table>
 	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<!--  <%=Integer.toString(rezeptePersonal.size())%>  -->
 <%
-
-
-for(Recipe recipe: rezeptePersonal){
+	for(Recipe recipe: rezeptePersonal){
 
 long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
-			recipe.setCO2Value();
-			Double recipeValue = recipe.getCO2Value() + extra;
-			if(recipeValue >= threshold){
-			
+	recipe.setCO2Value();
+	Double recipeValue = recipe.getCO2Value() + extra;
+	if(recipeValue >= threshold){
+	
 
-			String formatted = formatter.format(recipeValue );
-			String persons = Long.toString(recipe.getPersons());
-			%>
+	String formatted = formatter.format(recipeValue );
+	String persons = Long.toString(recipe.getPersons());
+%>
 			
 			<table cellspacing="0" cellpadding="0" class="table listTable" >
 			<tr>
@@ -1703,30 +1714,29 @@ String code = Converter.toString(compute,34);
 			
 			<tr>
 			<td class="bottom-border">
-			<h3><%= recipe.getSymbol() %></h3>
+			<h3><%=recipe.getSymbol()%></h3>
 			</td>
 			<td class="left-border"></td>
 			</tr>
 
 			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td><div class="amount"><%=formatted%> g CO<sub>2</sub>* total</div></td>
 			<td class="left-border"><img class="bar" src="gray.png" alt="gray" height="11"  width="140" /></td>
 			</tr>
 			
 			<tr>
 			<td>
 			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			<span class="subTitle"><%=recipe.getSubTitle()%></span>
 			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+			<span style="color:gray;">Zutaten für <%=persons%> Personen:</span><br />
 
 			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
-				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+				<%
+								counter = 0;
+									for(IngredientSpecification ingredient: recipe.ingredients){
+									counter = counter + 1;
+							%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
 				}
 				%>
 

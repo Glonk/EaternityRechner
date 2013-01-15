@@ -41,21 +41,21 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private String name;
 	
 	@Persistent
-	private String RezeptKey;
+	private String recipeKey;
 	
-	private Long zutat_id;
+	private Long ingredientId;
 
-	private int mengeGramm;
+	private int weight;
 	@Serialized
-	private Extraction herkunft;
+	private Extraction extraction;
 	private Date cookingDate;
 	
 	@Embedded
-	private IngredientCondition zustand;
+	private Condition condition;
 	@Embedded
-	private Production produktion;
+	private Production production;
 	@Embedded
-	private MoTransportation transportmittel;
+	private MoTransportation transportation;
 	private double distance; // in km
 	private Long label;
 	private Date startSeason;
@@ -66,23 +66,36 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private double co2ValueNoFactors;
 	private double cost; 
 	
-	public IngredientSpecification(Long zutat_id, String name,
-		 Date cookingDate,IngredientCondition symbol,Production symbol2, 
+	public IngredientSpecification(Long zutat_id, String name, Date cookingDate,Condition symbol,Production symbol2, 
 		 MoTransportation symbol3) {
 		this.setName(name);
 		this.setZutat_id(zutat_id);
 		
 		this.cookingDate = cookingDate;
-		this.zustand = symbol;
-		this.produktion = symbol2;
-		this.transportmittel = symbol3;
-//		this.setLabels(labels);
-		
+		this.condition = symbol;
+		this.production = symbol2;
+		this.transportation = symbol3;	
 	}
 	
-	// TODO clone copy constructor for copying object, remove standart constructor...)
-	public IngredientSpecification(IngredientSpecification toCopy) {
-		
+	// Copy Constructor
+	public IngredientSpecification(IngredientSpecification toClone) {
+		name = new String(toClone.name);
+		recipeKey = new String(toClone.recipeKey);
+		ingredientId = new Long(toClone.ingredientId);
+		weight = toClone.weight;
+		// inlcude Extraction, now just a shallow copy...
+		extraction = toClone.extraction;
+		cookingDate = (Date) toClone.cookingDate.clone();
+		condition = new Condition(toClone.condition);
+		production = new Production(toClone.production);
+		transportation = new MoTransportation(toClone.transportation);
+		distance = toClone.distance;
+		label = new Long(toClone.label);
+		startSeason = (Date)toClone.startSeason.clone();
+		stopSeason = (Date)toClone.stopSeason.clone();
+		NormalCO2Value = toClone.NormalCO2Value;
+		co2ValueNoFactors = toClone.co2ValueNoFactors;
+		cost = toClone.cost;
 	}
 	
 
@@ -97,12 +110,12 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 
 	public void setHerkunft(Extraction stdExtractionSymbol) {
-		this.herkunft = stdExtractionSymbol;
+		this.extraction = stdExtractionSymbol;
 	}
 	
 	
 	public Extraction getHerkunft() {
-		return herkunft;
+		return extraction;
 	}
 	public void setCookingDate(Date cookingDate) {
 		this.cookingDate = cookingDate;
@@ -110,23 +123,23 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public Date getCookingDate() {
 		return cookingDate;
 	}
-	public void setZustand(IngredientCondition zustand) {
-		this.zustand = zustand;
+	public void setZustand(Condition zustand) {
+		this.condition = zustand;
 	}
-	public IngredientCondition getZustand() {
-		return zustand;
+	public Condition getZustand() {
+		return condition;
 	}
 	public void setProduktion(Production produktion) {
-		this.produktion = produktion;
+		this.production = produktion;
 	}
 	public Production getProduktion() {
-		return produktion;
+		return production;
 	}
 	public void setTransportmittel(MoTransportation transportmittel) {
-		this.transportmittel = transportmittel;
+		this.transportation = transportmittel;
 	}
 	public MoTransportation getTransportmittel() {
-		return transportmittel;
+		return transportation;
 	}
 
 	public void setLabel(Long label) {
@@ -155,19 +168,19 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 
 	public void setZutat_id(Long zutat_id) {
-		this.zutat_id = zutat_id;
+		this.ingredientId = zutat_id;
 	}
 
 	public Long getZutat_id() {
-		return zutat_id;
+		return ingredientId;
 	}
 
 	public void setMengeGramm(int mengeGramm) {
-		this.mengeGramm = mengeGramm;
+		this.weight = mengeGramm;
 	}
 
 	public int getMengeGramm() {
-		return mengeGramm;
+		return weight;
 	}
 
 //	public void setLabels(ArrayList<Long> labels) {
@@ -208,14 +221,14 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	 *  TODO this is a hack, hardcoded value. remove after all objects are updated
 	 */
 	public void update() {
-		if(transportmittel.factor == null && transportmittel.symbol.equals("LKW")) {
-			transportmittel.factor = 0.188D;
+		if(transportation.factor == null && transportation.symbol.equals("LKW")) {
+			transportation.factor = 0.188D;
 		}
 	}
 	
 
 	public double calculateCo2ValueNoFactors() {
-		co2ValueNoFactors = NormalCO2Value*mengeGramm/1000;
+		co2ValueNoFactors = NormalCO2Value*weight/1000;
 		return co2ValueNoFactors;
 	}
 
@@ -226,17 +239,17 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 	
 	public double getConditionQuota() {
-		if(zustand != null && zustand.factor != null){
-			return zustand.factor*mengeGramm;
+		if(condition != null && condition.factor != null){
+			return condition.factor*weight;
 		}
 		else
 			return 0.0;
 	}
 	
 	public double getTransportationQuota() {
-		if(transportmittel != null && transportmittel.factor != null){
+		if(transportation != null && transportation.factor != null){
 			if(distance != 0)
-				return transportmittel.factor*distance/1000000*mengeGramm;
+				return transportation.factor*distance/1000000*weight;
 			else
 				return 0.0;
 		} 
@@ -245,8 +258,8 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 	
 	public double getProductionQuota() {
-		if(produktion != null && produktion.factor != null){
-			return produktion.factor*mengeGramm;
+		if(production != null && production.factor != null){
+			return production.factor*weight;
 		}
 		else
 			return 0.0;
@@ -278,13 +291,13 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 
 	public void setRezeptKey(String key) {
-		RezeptKey = key;
+		recipeKey = key;
 	}
 
 
 
 	public String getRezeptKey() {
-		return RezeptKey;
+		return recipeKey;
 	}
 
 

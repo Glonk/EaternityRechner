@@ -21,6 +21,11 @@ public class Production implements Serializable, Cloneable{
 		
 	}
 	
+	public Production(Production toClone) {
+		symbol = new String(toClone.symbol);
+		factor = new Double(toClone.factor);
+	}
+	
     public Production(String symbol) {
 		this.symbol = symbol;
 	}

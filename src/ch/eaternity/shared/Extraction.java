@@ -28,7 +28,7 @@ public class Extraction implements Serializable,Cloneable{
 	public Date stopSeason;
 
 	
-	public IngredientCondition stdCondition;
+	public Condition stdCondition;
 	public Production stdProduction;
 	public MoTransportation stdMoTransportation;
 	
@@ -38,6 +38,13 @@ public class Extraction implements Serializable,Cloneable{
     private Extraction() {
 		
 	}
+    
+    public Extraction(Extraction toClone) {
+    	symbol = new String(toClone.symbol);
+    	startSeason = (Date) toClone.startSeason.clone();
+    	stopSeason = (Date) toClone.stopSeason.clone();
+    	
+    }
 	
     public Extraction(String symbol) {
 		this.symbol = symbol;

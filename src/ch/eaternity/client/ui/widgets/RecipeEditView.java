@@ -494,7 +494,7 @@ public class RecipeEditView<T> extends Composite {
 			 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
 			 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(1));
 			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-			 recipe.Zutaten.set(selectedRow , zutatSpec2);
+			 recipe.ingredients.set(selectedRow , zutatSpec2);
 		 }
 		 
 		 // the selected row in the recipe is not highlighted anymore
@@ -578,7 +578,7 @@ public class RecipeEditView<T> extends Composite {
 			}
 			
 	
-			displayZutatImMenu(recipe.Zutaten);
+			displayZutatImMenu(recipe.ingredients);
 		
 			updateSuggestion();
 	
@@ -621,10 +621,10 @@ public class RecipeEditView<T> extends Composite {
 			IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
 	//			 int index = zutatImMenu.indexOf(zutatSpec);
 	//			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
-			recipe.Zutaten.set(selectedRow , zutatSpec2);
+			recipe.ingredients.set(selectedRow , zutatSpec2);
 		 }
 		 
-		IngredientSpecification zutatSpec = recipe.Zutaten.get(row);
+		IngredientSpecification zutatSpec = recipe.ingredients.get(row);
 
 		if (zutatSpec == null) {
 			return;
@@ -731,10 +731,10 @@ public class RecipeEditView<T> extends Composite {
 		public void onClick(ClickEvent event) {
 			
 			// this list is kept in sync with the table...
-			int removedIndex = recipe.Zutaten.indexOf(zutat);
+			int removedIndex = recipe.ingredients.indexOf(zutat);
 			
 			// by button press both get deleted
-			recipe.Zutaten.remove(removedIndex);
+			recipe.ingredients.remove(removedIndex);
 			MenuTable.removeRow(removedIndex);
 //			EaternityRechner.MenuTable.removeRow(removedIndex);
 			
@@ -943,14 +943,14 @@ public class RecipeEditView<T> extends Composite {
 		Double MenuLabelWert = 0.0;
 		Double MaxMenuWert = 0.0;
 
-		if(recipe.Zutaten.isEmpty()){
+		if(recipe.ingredients.isEmpty()){
 			if(addInfoPanel.getWidgetCount() ==2){
 				addInfoPanel.remove(1);
 			}
 		}
 		
 
-		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
+		for (IngredientSpecification zutatSpec : recipe.ingredients) { 
 			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
 			if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
 				MaxMenuWert = zutatSpec.getCalculatedCO2Value();
@@ -958,10 +958,10 @@ public class RecipeEditView<T> extends Composite {
 			
 		}
 
-		for (IngredientSpecification zutatSpec : recipe.Zutaten) { 
+		for (IngredientSpecification zutatSpec : recipe.ingredients) { 
 			String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-			MenuTable.setText(recipe.Zutaten.indexOf(zutatSpec),4,"ca "+formatted+" g*");
-			MenuTable.setHTML(recipe.Zutaten.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
+			MenuTable.setText(recipe.ingredients.indexOf(zutatSpec),4,"ca "+formatted+" g*");
+			MenuTable.setHTML(recipe.ingredients.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
 		}
 		
 		String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
@@ -1366,7 +1366,7 @@ public class RecipeEditView<T> extends Composite {
 	       ArrayList<ComparatorObject> recipeComparator = new  ArrayList<ComparatorObject>();
 	       recipeComparator.clear();
 	      
-	      for(IngredientSpecification zutatSpec : recipe.Zutaten){
+	      for(IngredientSpecification zutatSpec : recipe.ingredients){
 	          Ingredient zutat = presenter.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 		   //            amount of Persons needs to be assigned always!
 	          Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
