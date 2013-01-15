@@ -29,6 +29,8 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.core.client.GWT;
 import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
@@ -70,6 +72,24 @@ public class DAO extends DAOBase
 		ofy().put(ingredient);
 
 		return ingredient.getId();
+	}
+	
+	public LoginInfo getLoginInfo(String requestUri, User user) {
+		UserService userService = UserServiceFactory.getUserService();
+		LoginInfo loginInfo = new LoginInfo();
+		try {
+			loginInfo = ofy().get(LoginInfo.class, user.getUserId());
+		}
+		catch (NotFoundException e) {
+			  loginInfo.setId(user.getUserId());
+			  loginInfo.setLoggedIn(true);
+			  loginInfo.setEmailAddress(user.getEmail());
+			  loginInfo.setNickname(user.getNickname());
+			  loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
+			  loginInfo.setAdmin(userService.isUserAdmin());
+			  ofy().put(loginInfo);
+		}
+		return loginInfo;
 	}
 
 	public ArrayList<Ingredient> getAllIngredients()

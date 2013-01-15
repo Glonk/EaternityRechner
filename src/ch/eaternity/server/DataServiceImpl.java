@@ -33,6 +33,7 @@ import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.ShortUrl;
+import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
@@ -212,7 +213,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		List<Recipe> openRecipes = new ArrayList<Recipe>();
 		openRecipes = dao.getOpenRecipe();
-		markDescendant(openRecipes);
+		Util.markDescendant(openRecipes);
 		return openRecipes;	
 	}
 
@@ -221,7 +222,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 		yourRecipes = dao.getYourRecipe(getUser());
-		markDescendant(yourRecipes);
+		Util.markDescendant(yourRecipes);
 		return yourRecipes;	
 	}
 	
@@ -234,19 +235,27 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				adminRecipes = dao.adminGetRecipe(userService.getCurrentUser());
 			}
 		}
-		markDescendant(adminRecipes);
+		Util.markDescendant(adminRecipes);
 		return adminRecipes;
 		
 	}
 
-	public ClientData getData() throws NotLoggedInException {
+	public ClientData getData(String requestUri) throws NotLoggedInException {
+		
+		DAO dao = new DAO();
+		ClientData data = new ClientData();
+		data.loginInfo = dao.getLoginInfo(requestUri, getUser());
+		
+		// load all ingredients
+		data.ingredients = dao.getAllIngredients();
+		
+		// DEPRECIATED PM
 		// reference:
 		// http://code.google.com/p/googleappengine/source/browse/trunk/java/demos/gwtguestbook/src/com/google/gwt/sample/gwtguestbook/server/GuestServiceImpl.java
 		PersistenceManager pm = getPersistenceManager();
-		ClientData data = new ClientData();
+		
 
 		try {
-//			
 			ArrayList<SingleDistance> distances = new ArrayList<SingleDistance>();
 			Query q4 = pm.newQuery(SingleDistance.class);
 			List<SingleDistance> singleDistances = (List<SingleDistance>) q4.execute();
@@ -255,107 +264,49 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 					distances.add(singleDistance);
 				}
 			}
-			data.setDistances(distances);
-
-		
+			data.distances = distances;
 		} finally {
 			pm.close();
 		}
 		
-		// haha, this looks so much easier.. I hope that works... yep it does
-		DAO dao = new DAO();
 		
 		if (getUser() != null) {
-			List<Recipe> rezeptePersonal = dao.getYourRecipe(getUser());
-			data.setUserRecipes(rezeptePersonal); // personal
+			data.userRecipes = dao.getYourRecipe(getUser());
+			data.publicRecipes = dao.getOpenRecipe();
+			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); 
 			
-			// here we add the persons recipes belonging to a kitchen
-			// this should be getting all recipes the person belongs to
-			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); // kitchen
-		}
-		
-		
-		List<Recipe> rezepte = getAdminRezepte();
-		if(rezepte.isEmpty()){
-			rezepte = dao.getOpenRecipe();
-		}
-		// remove double entries
-		if(data.userRecipes != null){
-			for(Recipe recipe: data.userRecipes){
-				int removeIndex = -1;
-				for(Recipe rezept2:rezepte){
-					if(rezept2.getId().equals(recipe.getId())){
-						removeIndex = rezepte.indexOf(rezept2);
+			data.kitchens = dao.getYourKitchens(getUser());
+			
+			if (data.loginInfo.isAdmin()) {
+				data.publicRecipes.addAll(getAdminRezepte());
+				
+				// remove double entries
+				for(Recipe recipe: data.userRecipes){
+					int removeIndex = -1;
+					for(Recipe rezept2 : data.publicRecipes){
+						if(rezept2.getId().equals(recipe.getId()))
+							removeIndex = data.publicRecipes.indexOf(rezept2);
 					}
+					if(removeIndex != -1)
+						data.publicRecipes.remove(removeIndex);
 				}
-				if(removeIndex != -1){
-					rezepte.remove(removeIndex);
-				}
+				data.kitchens = getAdminKitchens();
+
+			}
+			else {
+				data.kitchens = dao.getYourKitchens(getUser());
 			}
 		}
-		data.setPublicRecipes(rezepte); // public
+		else {
+			data.kitchens = dao.getOpenKitchen();
+		}
 		
 		// mark descendants of the recipes
-		markDescendant(data.userRecipes);
-		markDescendant(data.kitchenRecipes);
-		markDescendant(data.publicRecipes);
-		
-
-		// add all ingredients
-		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
-		data.setIngredients(ingredients);
-		
-		// get kitchen
-		if (getUser() != null) {
-			// if you are the admin, you also get all the others!
-			data.kitchens = getAdminKitchens();
-			
-			List<Workgroup> kitchenPersonal = dao.getYourKitchens(getUser());
-			
-			for(Workgroup yourKitchen : kitchenPersonal){
-				Boolean notFound = true;
-				for(Workgroup isThere : data.kitchens){
-					if(isThere.id == yourKitchen.id){
-						notFound = false;
-					}
-				}
-				if(notFound){
-					data.kitchens.add(yourKitchen);
-				}
-			}
-			
-		} else {
-			List<Workgroup> kitchensOpen = dao.getOpenKitchen();
-			data.kitchens = kitchensOpen;
-		}
-		
-		// get last kitchen id
-		if (getUser() != null) {
-		    try {
-		    	LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
-		    	data.lastKitchen = loginInfo.getLastKitchen();
-		    } catch (NotFoundException e) {
-		    	
-		    }
-		} else {
-			data.lastKitchen = 0L;
-		}
+		Util.markDescendant(data.userRecipes);
+		Util.markDescendant(data.kitchenRecipes);
+		Util.markDescendant(data.publicRecipes);
 	
 		return data;
-	}
-
-	public void markDescendant(List<Recipe> recipesList) {
-		for( Recipe checkRecipe: recipesList){
-			// has ancestor...
-			if(checkRecipe.getDirectAncestorID() != null){
-				for( Recipe markRecipe: recipesList){
-					if(markRecipe.getId().equals(checkRecipe.getDirectAncestorID())){
-						// found descendants and mark him
-						markRecipe.addDirectDescandentID(checkRecipe.getId());
-					}
-				}			
-			}
-		}
 	}
 
 	private void checkLoggedIn() throws NotLoggedInException {
@@ -410,7 +361,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		try {
 			LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
 			loginInfo.setLastKitchen(lastKitchen);
-			loginInfo.setUsedLastKitchen(true);
+			loginInfo.setIsInKitchen(true);
 			dao.ofy().put(loginInfo);
 			tryIt = true;
 		} catch (NotFoundException e) {
@@ -421,33 +372,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 	
 
+	// not used anymore de
 	public LoginInfo login(String requestUri) {
-	    UserService userService = UserServiceFactory.getUserService();
-	    User user = userService.getCurrentUser();
-	    DAO dao = new DAO();
-	    LoginInfo loginInfo = new LoginInfo();
-
-	    if (user != null) {
-	    	
-		    try {
-		    	loginInfo = dao.ofy().get(LoginInfo.class, user.getUserId());
-		    	
-		    } 
-		    catch (NotFoundException e) {}
-		    
-		      loginInfo.setId(user.getUserId());
-		      loginInfo.setLoggedIn(true);
-		      loginInfo.setEmailAddress(user.getEmail());
-		      loginInfo.setNickname(user.getNickname());
-		      loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
-		      loginInfo.setAdmin(userService.isUserAdmin());
-		      dao.ofy().put(loginInfo);
-		      
-	    } else {
-	      loginInfo.setLoggedIn(false);
-	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
-	    }
-	    return loginInfo;
+		DAO dao = new DAO();
+		return dao.getLoginInfo(requestUri, getUser());
 	  }
 	
 	public String getBlobstoreUploadUrl() {
