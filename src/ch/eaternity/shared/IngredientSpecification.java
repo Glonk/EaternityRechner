@@ -102,7 +102,27 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		cost = toClone.cost;
 	}
 	
-
+	// Copy Constructor from Ingredient
+	public IngredientSpecification(Ingredient ing, int weight) {
+		/*
+		 * 		Extraction stdExtraction = null;
+		for(Extraction extraction: item.getExtractions()){
+			if(item.stdExtractionSymbol.equalsIgnoreCase(extraction.symbol)){
+				stdExtraction = extraction;
+			}
+		}
+		IngredientSpecification ingredientSpecification = new IngredientSpecification(item.getId(), item.getSymbol(),
+				 new Date(),stdExtraction.stdCondition, stdExtraction.stdProduction, 
+				 stdExtraction.stdMoTransportation);
+		ingredientSpecification.setHerkunft(stdExtraction);
+		if (grams == 0)
+			ingredientSpecification.setMengeGramm(item.stdWeight);
+		else
+			ingredientSpecification.setMengeGramm(grams);
+		ingredientSpecification.setSeason(item.startSeason, item.stopSeason);
+		ingredientSpecification.setNormalCO2Value(item.getCo2eValue());*/
+		 
+	}
 	
 	public IngredientSpecification(){
 		

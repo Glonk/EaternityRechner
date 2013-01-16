@@ -3,6 +3,7 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 
 import ch.eaternity.client.events.KitchenChangedEvent;
@@ -10,15 +11,21 @@ import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.RecipeAddedEvent;
+import ch.eaternity.client.events.RecipeDeletedEvent;
+import ch.eaternity.client.events.RecipeIngredientsChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.ui.MenuPreviewView;
 import ch.eaternity.client.ui.widgets.RecipeView;
 import ch.eaternity.client.ui.widgets.Search;
 import ch.eaternity.shared.ClientData;
+import ch.eaternity.shared.Distance;
+import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
 
@@ -27,16 +34,19 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+/**
+ * Manages clientside data object, keeps it in sync with cloud and fires events
+ */
 public class DataController {
 	
 	// ---------------------- Class Variables ----------------------
-
-	// here is the database of all data pushed to....
+	
 	private ClientFactory clientFactory;
 	private final DataServiceAsync dataRpcService;
 	private final EventBus eventBus;
 	
-	public ClientData cdata = new ClientData();
+	// here is the database of all data pushed to....
+	private ClientData cdata = new ClientData();
 
 	// ---------------------- public Methods ----------------------
 	
@@ -46,6 +56,8 @@ public class DataController {
 		this.dataRpcService = factory.getDataServiceRPC();
 		this.eventBus = factory.getEventBus();
 	}
+	
+
 	
 	public void loadData() {
 		dataRpcService.getData(GWT.getHostPageBaseURL(), new AsyncCallback<ClientData>() {
@@ -108,16 +120,18 @@ public class DataController {
 		if (cdata.currentKitchen == null) {
 			if (!recipe.kitchenIds.contains(cdata.currentKitchen.id));
 				recipe.kitchenIds.add(cdata.currentKitchen.id);
+			cdata.kitchenRecipes.add(recipe);
 		}
 		else {
-			
+			cdata.userRecipes.add(recipe);
 		}
-		
+
 		eventBus.fireEvent(new RecipeAddedEvent(recipe));
 	}
 	
-	public void saveRecipe(Recipe recipe) {
+	public void saveRecipe(final Recipe recipe) {
 		
+		// create saveRecipe method...
 		dataRpcService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -156,52 +170,48 @@ public class DataController {
 				// there needs to be an automatic link between normal and editview...
 				rezeptView.recipe.setId(id);
 				
-				// TODO make same sense out of this
-				// this is just a test functionality...
-				// but it could be displayed somewhere else...
-//				rezeptView.codeImage.setHTML(
-//						"<a href="
-//						+ GWT.getHostPageBaseURL()
-//						+ "view.jsp?pid="
-//						+ Converter.toString(recipe.getId(), 34)
-//						+ " ><img src=http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="
-//						+ recipe.ShortUrl.substring(7, recipe.ShortUrl.length())
-//						+ " width=42 height=42 /></a>");
-				
 			}
 		});
 	}
-//REFACTOR: same as add
-	void removeRezept(final Recipe recipe) {
+	
+	public void deleteRecipe(final Recipe recipe) {
 		dataRpcService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
 				
-				if(dao.cdata.userRecipes.contains(recipe)){
-					dao.cdata.userRecipes.remove(recipe);
+				if(cdata.userRecipes.contains(recipe)){
+					cdata.userRecipes.remove(recipe);
 				}
 				if(recipe.isOpen()){
-					dao.cdata.publicRecipes.remove(recipe);
+					cdata.publicRecipes.remove(recipe);
 				}
-				if(dao.cdata.kitchenRecipes.contains(recipe)){
-					dao.cdata.kitchenRecipes.remove(recipe);
+				if(cdata.kitchenRecipes.contains(recipe)){
+					cdata.kitchenRecipes.remove(recipe);
 				}
-				if(getTopPanel().selectedKitchen != null)
-					dao.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
-				getSearchPanel().updateResults(Search.SearchInput.getText());
+				eventBus.fireEvent(new RecipeDeletedEvent(recipe.getId()));
 			}
 		});
 	}
 	
 	
-	public void deleteRecipe(Recipe recipe) {}
 	
-	public void addIngredientToMenu(Ingredient ingredient, int grams) {}
+	public void addIngredientToMenu(Ingredient ingredient, int grams) {
+
+		IngredientSpecification ingSpec = new IngredientSpecification(ingredient, grams);
+		ingSpec.setDistance(cdata.dist.getDistance(ingSpec.getHerkunft().symbol, cdata.currentLocation));
+		
+		cdata.editRecipe.addIngredient(ingSpec);
+
+		eventBus.fireEvent(new RecipeIngredientsChangedEvent());
+	}
 	
 	// probably other place?
-	public void changeMonth(int month) {}
+	public void changeMonth(int month) {
+		cdata.selectedMonth = month;
+		eventBus.fireEvent(new MonthChangedEvent(month));
+	}
 	
 	public void changeKitchen(Workgroup kitchen) {
 		if (kitchen == null) {
@@ -214,8 +224,11 @@ public class DataController {
 		}
 	}
 	
+	public void saveKitchen() {}
+	
+	public void deleteKitchen() {}
 
-	void rezeptApproval(final Recipe recipe, final Boolean approve) {
+	public void approveRecipe(final Recipe recipe, final Boolean approve) {
 		dataRpcService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -435,6 +448,76 @@ public class DataController {
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(cdata.loginInfo.getLogoutUrl());
 		}
+	}
+	
+	// ----------------- Getters -----------------------------
+	public List<Recipe> getPublicRecipes() {
+		return cdata.publicRecipes;
+	}
+
+	public List<Recipe> getPublicRecipesNoDescs() {
+		return cdata.publicRecipesNoDescs;
+	}
+	
+
+	public List<Recipe> getUserRecipes() {
+		return cdata.userRecipes;
+	}
+
+	public List<Recipe> getUserRecipesNoDescs() {
+		return cdata.userRecipesNoDescs;
+	}
+
+	public List<Recipe> getKitchenRecipes() {
+		return cdata.kitchenRecipes;
+	}
+
+	public List<Recipe> getCurrentKitchenRecipes() {
+		return cdata.currentKitchenRecipes;
+	}
+
+	public List<Recipe> getCurrentKitchenRecipesNoDescs() {
+		return cdata.currentKitchenRecipesNoDescs;
+	}
+
+	public List<Recipe> getWorkspaceRecipes() {
+		return cdata.workspaceRecipes;
+	}
+
+	public Recipe getEditRecipe() {
+		return cdata.editRecipe;
+	}
+
+	public List<Ingredient> getIngredients() {
+		return cdata.ingredients;
+	}
+
+	public Distance getDist() {
+		return cdata.dist;
+	}
+
+	public List<SingleDistance> getDistances() {
+		return cdata.distances;
+	}
+
+	public List<Workgroup> getKitchens() {
+		return cdata.kitchens;
+	}
+
+	public LoginInfo getLoginInfo() {
+		return cdata.loginInfo;
+	}
+
+	public Workgroup getCurrentKitchen() {
+		return cdata.currentKitchen;
+	}
+
+	public int getSelectedMonth() {
+		return cdata.selectedMonth;
+	}
+
+	public String getCurrentLocation() {
+		return cdata.currentLocation;
 	}
 }
 

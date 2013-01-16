@@ -44,6 +44,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
+import ch.eaternity.client.DataController;
+import ch.eaternity.client.events.KitchenChangedEvent;
+import ch.eaternity.client.events.KitchenChangedEventHandler;
+import ch.eaternity.client.events.RecipeAddedEvent;
+import ch.eaternity.client.events.RecipeAddedEventHandler;
 import ch.eaternity.client.place.GoodbyePlace;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.client.ui.widgets.ImageOverlay;
@@ -90,7 +95,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	@UiField SelectionStyle selectionStyle;
 	@UiField HorizontalPanel suggestionPanel;
 
-
+	// ----------------- Class Variables ------------------- 
 
 	static int selectedRezept = -1;
 
@@ -99,6 +104,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	static String styleNameOverlap = "overlap";
 
 	private Presenter<T> presenter;
+	private DataController dco;
 	private String name;
 	
 	static RecipeEditView rezeptEditView;
@@ -125,21 +131,33 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		//TODO Reactivate for later use
 		suggestionPanel.setVisible(false);
 	}
+	
+	private void bind() {
+		// ---------------- Listen to the EventBus ----------------
+		presenter.getEventBus().addHandler(RecipeAddedEvent.TYPE, new RecipeAddedEventHandler() {
+			@Override
+			public void onEvent(RecipeAddedEvent event) {
+				RecipeView rezeptView = createNewRecipeView();
+				displayRecipeEditView(rezeptView);
+			    adjustStickyEditLayout();
+			}
+		});
+	}
+	
+	@Override
+	public void setPresenter(Presenter<T> presenter)
+	{
+		this.presenter = presenter;
+		this.dco = presenter.getDCO();
+		searchPanel.setPresenter(presenter);
+		topPanel.setPresenter(presenter);
+	}
 
 	
 	@Override
 	public void setName(String name)
 	{
 		this.name = name;
-	}
-
-
-	@Override
-	public void setPresenter(Presenter<T> presenter)
-	{
-		this.presenter = presenter;
-		searchPanel.setPresenter(presenter);
-		topPanel.setPresenter(presenter);
 	}
 
 	@Override
@@ -162,15 +180,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		return rezeptEditList;
 	}
 	
-
-	@Override
-	public int getSelectedMonth() {
-		return getTopPanel().Monate.getSelectedIndex()+1;
-	}
-
-
-
-	
+	// REFACTOR:  Correct
 	@UiHandler("scrollWorkspace")
     public void onScroll(ScrollEvent event) { 
 		// here we still have an error, when the recipes differ in size...
@@ -191,6 +201,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		editCoverActivated = b;
 	}
 
+	// REFACTOR:  What is this for 
 	public void adjustStickyEditLayout() {
 //		titleHTML.setHTML("EditView: " + Integer.toString(rezeptEditView.getOffsetHeight()) + " scroll: " + Integer.toString(scrollWorkspace.getVerticalScrollPosition()));
 
@@ -233,13 +244,12 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		}
 	} 
 
-	
 	@UiHandler("addRezeptButton")
 	public void onAddRezeptButtonPress(ClickEvent event) {
-		presenter.getDAO().createRecipe();		
+		dco.createRecipe();		
 	}
 	
-	//REFACTOR: Recipe included
+	//REFACTOR: Recipe included, DataController, Event send - DONE
 	public void cloneRecipe(Recipe recipe) {
 		// This is basically right now a clone procedure!
 		// which is okay, if you don't own that recipe already...
@@ -282,8 +292,10 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	
 		
 	}
+	
+	// REFACTOR: Logik + Listeners in activity, darstellung selber in view
 
-
+	// REFACTOR: correct, should listen to eventbus addRecipe
 	public void displayRecipeEditView(final RecipeView rezeptView) {
 		// recipe edit view procedure 
 		if(rezeptEditList.getRowCount() == 0){
@@ -300,6 +312,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 	}
 	
 	
+	// REFACTOR:  correct. change editRecipe in Datacontroller send event maybe
 	@UiHandler("rezeptList")
 	void onRezeptClicked(ClickEvent event) {
 		Cell cell = rezeptList.getCellForEvent(event);
@@ -348,6 +361,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 			rezeptEditList.setWidget(0, 1, rezeptEditView);
 			rezeptEditList.getRowFormatter().setStyleName(0, "recipe");
 			
+			// //REFACTOR: double 
 			rezeptEditView.setRezept(rezeptView.recipe, rezeptView);
 			rezeptEditView.showRezept(rezeptEditView.recipe);
 			
@@ -362,77 +376,7 @@ public class EaternityRechnerViewImpl<T> extends SimpleLayoutPanel implements Ea
 		}
 	}
 	
-	//REFACTOR: direkt zum DataStore, Event
-public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int grams) {
-		
-		// convert zutat to ZutatSpec and call the real method
-		Extraction stdExtraction = null;
-		for(Extraction extraction: item.getExtractions()){
-			if(item.stdExtractionSymbol.equalsIgnoreCase(extraction.symbol)){
-				stdExtraction = extraction;
-			}
-		}
-		IngredientSpecification ingredientSpecification = new IngredientSpecification(item.getId(), item.getSymbol(),
-				 new Date(),stdExtraction.stdCondition, stdExtraction.stdProduction, 
-				 stdExtraction.stdMoTransportation);
-		ingredientSpecification.setHerkunft(stdExtraction);
-		if (grams == 0)
-			ingredientSpecification.setMengeGramm(item.stdWeight);
-		else
-			ingredientSpecification.setMengeGramm(grams);
-		ingredientSpecification.setSeason(item.startSeason, item.stopSeason);
-		ingredientSpecification.setNormalCO2Value(item.getCo2eValue());
-		ArrayList<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
-		
-		
-		zutaten.add(ingredientSpecification);
-		addIngredientsToMenu(zutaten, rezeptView);
-		
-		
-	}
-	
- void addIngredientsToMenu(final ArrayList<IngredientSpecification> zutatenNew,	RecipeView rezeptView) {
-		
-		ArrayList<IngredientSpecification> zutaten = (ArrayList<IngredientSpecification>) zutatenNew.clone();
-		ListIterator<IngredientSpecification> iterator = zutaten.listIterator();
-		while(iterator.hasNext()){
-			IngredientSpecification zutatSpec = iterator.next();
-			for(SingleDistance singleDistance : presenter.getDAO().cdata.distances){
-				if(singleDistance.getFrom().contentEquals(getTopPanel().currentHerkunft) && 
-						singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
-					
-					zutatSpec.setDistance(singleDistance.getDistance());
-					iterator.set(zutatSpec);
-					break;
-				}
 
-			}
-		}
-		
-
-//		RecipeEditView rezeptEditView;
-		
-		// on case this is going to be a new one
-	
-			// get the old one
-//			rezeptView = (RecipeView) rezeptList.getWidget(selectedRezept,1);
-			
-			// there is only one recipe getting handled by both views!
-			Recipe recipe = rezeptView.getRezept();
-			recipe.addZutaten(zutaten);
-			
-			// wohooo, what did i do here... this needs to be much cleaner this procedure
-			
-			
-			rezeptView.setRezept(recipe);
-			 
-			
-			// also manipulate the edit one...
-			// this better should be mirrored ... out now:
-			editCoverActivated = false;	
-
-	
-	}
 	
 //REFACTOR: Event MonthChanged
 	public void updateSaisonAndMore() {
@@ -451,6 +395,7 @@ public void addOneIngredientToMenu(Ingredient item, RecipeView rezeptView, int g
 		}
 	}
 	
+	//REFACTOR: correct
 	public void styleRezept(int row, boolean selected) {
 		if (row != -1) {
 			String style = selectionStyle.selectedRezept();

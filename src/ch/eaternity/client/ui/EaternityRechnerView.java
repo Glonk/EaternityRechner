@@ -36,7 +36,7 @@ public interface EaternityRechnerView<T> extends IsWidget
 
 	public interface Presenter<T>
 	{
-		DataController getDAO();
+		DataController getDCO();
 
 		//		void onAddButtonClicked();
 //		void onDeleteButtonClicked();
@@ -63,8 +63,6 @@ public interface EaternityRechnerView<T> extends IsWidget
 		
 		void removeAllRecipesFromWorkplace();
 
-		void recipeApproval(Recipe recipe, boolean b);
-
 		ClientData getClientData();
 
 		EventBus getEventBus();
@@ -73,7 +71,6 @@ public interface EaternityRechnerView<T> extends IsWidget
 	TopPanel getTopPanel();
 	Search getSearchPanel();
 	
-	int getSelectedMonth();
 	void cloneRecipe(Recipe recipe);
 	FlexTable getRezeptEditList();
 	FlexTable getRezeptList();

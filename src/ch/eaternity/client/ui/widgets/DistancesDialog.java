@@ -1,6 +1,13 @@
 package ch.eaternity.client.ui.widgets;
 
 
+//REFACTOR: duplicate methos with KitchenDialog
+
+
+
+
+
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

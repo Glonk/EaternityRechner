@@ -49,8 +49,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	private final EaternityRechnerPlace place;
 
 	private PlaceController placeController;
-	private DataController dao;
-	private HandlerRegistration adminHandler;
+	private DataController dco;
 	private MenuPreviewView menuPreview;
 	
 	
@@ -64,7 +63,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		this.eventBus = factory.getEventBus();
 		this.display = factory.getEaternityRechnerView();
 		this.placeController = factory.getPlaceController();
-		this.dao = factory.getDataController();
+		this.dco = factory.getDataController();
 		this.place = place;
 		
 		this.menuPreview = factory.getMenuPreviewView();
@@ -80,16 +79,15 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		display.setName(place.getPlaceName());
 		display.setPresenter(this);
 		
-		//REFACTOR: into display 
+		//REFACTOR: into RechnerView
 		display.getSearchPanel().setSuperDisplay(display);
 		display.getTopPanel().setSuperDisplay(display);
 		
-//		container.setWidget(display.asWidget());
 		container.setWidget(display);
 		display.setMenuPreviewDialog(menuPreview);
 
 		// now load the data
-		dao.loadData();
+		dco.loadData();
 		
 		initializeUrlshortener();	
 	}
@@ -99,7 +97,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 		// assign this recipe if necessary to a kitchen:
-		if(dao.cdata.loginInfo.getIsInKitchen()){
+		if(dco.cdata.loginInfo.getIsInKitchen()){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
 			if(!recipe.kitchenIds.contains(getTopPanel().selectedKitchen.id)){
@@ -119,12 +117,12 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				// when this is your first one... so show the panel... should be automatic
 //				Search.yourMealsPanel.setVisible(true);
 				if(recipe.getDirectAncestorID() != null){
-					for(Recipe recipeDesc : dao.cdata.userRecipes){
+					for(Recipe recipeDesc : dco.cdata.userRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
 					}
-					for(Recipe recipeDesc : dao.cdata.kitchenRecipes){
+					for(Recipe recipeDesc : dco.cdata.kitchenRecipes){
 						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
 							recipeDesc.addDirectDescandentID(id);
 						}
@@ -149,11 +147,11 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 					}
 				}*/
 				
-				if(!dao.cdata.loginInfo.getIsInKitchen()){
-					dao.cdata.userRecipes.add(recipe);
+				if(!dco.cdata.loginInfo.getIsInKitchen()){
+					dco.cdata.userRecipes.add(recipe);
 				} else {
-					dao.cdata.kitchenRecipes.add(recipe);
-					dao.cdata.currentKitchenRecipes.add(recipe);
+					dco.cdata.kitchenRecipes.add(recipe);
+					dco.cdata.currentKitchenRecipes.add(recipe);
 				}
 				
 				String searchString = Search.SearchInput.getText().trim();
@@ -187,17 +185,17 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 			}
 			public void onSuccess(Boolean ignore) {
 				
-				if(dao.cdata.userRecipes.contains(recipe)){
-					dao.cdata.userRecipes.remove(recipe);
+				if(dco.cdata.userRecipes.contains(recipe)){
+					dco.cdata.userRecipes.remove(recipe);
 				}
 				if(recipe.isOpen()){
-					dao.cdata.publicRecipes.remove(recipe);
+					dco.cdata.publicRecipes.remove(recipe);
 				}
-				if(dao.cdata.kitchenRecipes.contains(recipe)){
-					dao.cdata.kitchenRecipes.remove(recipe);
+				if(dco.cdata.kitchenRecipes.contains(recipe)){
+					dco.cdata.kitchenRecipes.remove(recipe);
 				}
 				if(getTopPanel().selectedKitchen != null)
-					dao.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
+					dco.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
 				getSearchPanel().updateResults(Search.SearchInput.getText());
 			}
 		});
@@ -237,14 +235,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	public LoginInfo getLoginInfo(){
 		return loginInfo;
 	}
-	
-	public void setAdminHandler(HandlerRegistration adminHandler) {
-		this.adminHandler = adminHandler;
-	}
 
-	public HandlerRegistration getAdminHandler() {
-		return adminHandler;
-	}
 
 
 	/**
@@ -276,6 +267,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		return getTopPanel().Monate.getSelectedIndex()+1;
 	}
 	
+	//REFACTOR: DataController
 	public void addNewRecipe() {
 		// create a new recipe
 		Recipe recipe = new Recipe();
@@ -302,11 +294,13 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		return urlshortener;
 	}
 
+	//REFACTOR: DataController
 	@Override
 	public void removeRecipe(Recipe recipe) {
 		removeRezept(recipe);
 	}
 	
+	//REFACTOR: probably in View
 	@Override
 	public void removeRecipeFromWorkplace(final RecipeView recipeToRemove)
 	{
@@ -341,7 +335,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		}
 	}
 	
-
+	//REFACTOR: into View
 	private void removeRecipeFromWorkplaceNoPrompt(RecipeView recipeToRemove)
 	{
 		int row = recipeToRemove.getWidgetRow(recipeToRemove , display.getRezeptList());
@@ -361,6 +355,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		}
 	}
 	
+	//REFACTOR: into View
 	@Override
 	public void removeAllRecipesFromWorkplace()
 	{
@@ -373,23 +368,19 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		  }
 	}
 
-	@Override
-	public void recipeApproval(Recipe recipe, boolean approve) {
-		rezeptApproval(recipe, approve);
-	}
 
 	@Override
 	public ClientData getClientData() {
-		return dao.cdata;
+		return dco.cdata;
 	}
 
 
 
 	@Override
-	public DataController getDAO() {
+	public DataController getDCO() {
 		
 		// TODO Auto-generated method stub
-		return dao;
+		return dco;
 	}
 	
 	@Override 

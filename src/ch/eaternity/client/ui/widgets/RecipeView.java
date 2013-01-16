@@ -88,7 +88,6 @@ public class RecipeView<T> extends Composite {
 	@UiField AbsolutePanel dragArea;
 	@UiField HTMLPanel SaveRezeptPanel;
 
-	// add Rezept here
 	@UiField Button saveRecipeButton;
 	@UiField Button reportButton;
 
@@ -103,9 +102,6 @@ public class RecipeView<T> extends Composite {
 
 	@UiField HTML topIndikator;
 	@UiField HTML bottomIndikator;
-	
-//	@UiField HorizontalPanel imageUploaderHP;
-
 
 	@UiField public HTML openHTML;
 	@UiField public HTML savedHTML;
@@ -119,9 +115,6 @@ public class RecipeView<T> extends Composite {
 	@UiField public TextBox recipeDate;
 	@UiField public HTML recipeDateError;
 	
-//	private FlowPanel panelImages = new FlowPanel();
-//	private PhotoGallery galleryWidget;
-//	public UploadPhoto uploadWidget;
 	public HandlerRegistration imagePopUpHandler = null;
 	public static int overlap = 0;
 	
@@ -148,7 +141,7 @@ public class RecipeView<T> extends Composite {
 	public void setPresenter(Presenter<T> presenter){
 		this.presenter = presenter;
 		
-	    if(!presenter.getDAO().isInKitchen){
+	    if(!presenter.getDCO().isInKitchen){
 //	    	PrepareButton.setVisible(false);
 	    }
 	    
@@ -169,6 +162,7 @@ public class RecipeView<T> extends Composite {
 	    
 	    // this is a new recipe, so nothing to be saved:
 	    setRecipeSavedMode(true);
+	    bind();
 	  }
 	
 	  private void bind() {
@@ -181,7 +175,7 @@ public class RecipeView<T> extends Composite {
 		});
 	  }
 
-
+	// REFACTOR: correct
 	public void setRecipeSavedMode(boolean isSaved) {
 		
 		// the is saved should only respond if indeed something changed...
@@ -240,7 +234,7 @@ public class RecipeView<T> extends Composite {
 	}
 	
 	
-	
+	// REFACTOR: call DataController Routine...
 	public void saveThisRecipe() {
 		//TODO if the recipe is already in your personal data-store, don't create a new one.
 		// TODO warn that it wasn't saved in the other case
@@ -275,7 +269,8 @@ public class RecipeView<T> extends Composite {
 
 	
 	
-	
+	// REFACTOR: avoid duplicate input... too difficult
+	// REFACTOR: counts for all UiHandlers
 @UiHandler("amountPersons")
 void onKeyUp(KeyUpEvent event) {
 	int keyCode = event.getNativeKeyCode();
@@ -383,7 +378,7 @@ void onKeyUp(KeyUpEvent event) {
 	
 
 
-	
+	// REFACTOR: in cdata now 
 	public void setRezept(Recipe recipe){
 		this.recipe = recipe;
 	}
@@ -392,6 +387,7 @@ void onKeyUp(KeyUpEvent event) {
 		return this.recipe;
 	}	
 	
+	// REFACOTR: duplicate code in RecipeEditView (diplsayZutatImRezept) ...
 	public void showRezept(final Recipe recipe) { 		
 		// this is now getting called by the EaternityRechnerViewImpl:
 
@@ -604,7 +600,7 @@ void onKeyUp(KeyUpEvent event) {
 	}
 
 
-
+	// REFACTOR: Duplicate in RecipeEditView
 
 	void updateSuggestion() {
 

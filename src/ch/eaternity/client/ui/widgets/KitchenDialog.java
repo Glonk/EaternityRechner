@@ -318,59 +318,7 @@ public class KitchenDialog<T> extends DialogBox{
 //			  	        
 			  	      }
 			  	    });
-	    
-//	    cellTable.addColumn(durationsColumn, "Laufzeiten");
-	    
-	    
-	    // SelectionCell.
-//	    final Category[] categories;
-//	    categories = new Category[6];
-//	    for (int i = 0; i < 6; i++) {
-//	        categories[i] = new Category("bla");
-//	      }
-//	    List<String> options = new ArrayList<String>();
-//	    for (Category category : categories) {
-//	      options.add(category.getDisplayName());
-//	    }
-//	    
-//	    addColumn(new CheckboxCell(), "Checkbox", new GetValue<Boolean>() {
-//	      public Boolean getValue(ContactInfo contact) {
-//	        // Checkbox indicates that the contact is a relative.
-//	        // Index 0 = Family.
-//	        return contact.getCategory() == categories[0];
-//	      }
-//	    }, new FieldUpdater<ContactInfo, Boolean>() {
-//	      public void update(int index, ContactInfo object, Boolean value) {
-//	        if (value) {
-//	          // If a relative, use the Family Category.
-//	          pendingChanges.add(new CategoryChange(object, categories[0]));
-//	        } else {
-//	          // If not a relative, use the Contacts Category.
-//	          pendingChanges.add(new CategoryChange(object,
-//	              categories[categories.length - 1]));
-//	        }
-//	      }
-//	    });
-	    
-//	    CONTACTS.get(index)
-	    
-	    
-	    //options is yet not dynamic, so just  leyve this for now as is
-	    // http://stackoverflow.com/questions/4565790/how-to-dynamically-update-the-choices-in-a-selectioncell-using-gwt
-//	    addColumn(new SelectionCell(options), "Std-Laufzeit", new GetValue<String>() {
-//	      public String getValue(Device contact) {
-//	        return contact.stdDuration.toString();
-//	      }
-//	    }, new FieldUpdater<Device, String>() {
-//	      public void update(int index, Device object, String value) {
-//	        for (Category category : categories) {
-//	          if (category.getDisplayName().equals(value)) {
-//	            pendingChanges.add(new CategoryChange(object, category));
-//	            break;
-//	          }
-//	        }
-//	      }
-//	    });
+	   
 	    
 	    
 	    addColumn(new EditTextCell(),
@@ -827,7 +775,7 @@ public class KitchenDialog<T> extends DialogBox{
 		}
 	}
 
-
+	//REFACTOR: Distances Class
 	private void saveDistances() {
 
 		if(!allDistances.isEmpty()){
@@ -848,6 +796,7 @@ public class KitchenDialog<T> extends DialogBox{
 		hide();
 	}
 
+	//REFACTOR: Distances Class
 	private  void calculateDistances(String string, boolean firstTime) {
 		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) presenter.getClientData().getDistances();
 		ArrayList<String> distancesRequested = new ArrayList<String>();
@@ -873,19 +822,9 @@ public class KitchenDialog<T> extends DialogBox{
 			}
 
 		}
-		
-		// we always want the dialog, as there are also other informations
-//		if(!distancesRequested.isEmpty() && firstTime){
-		
-		// why was this here?:
-//			openDialog();
-		
-//		} else {
-//			updateAllZutaten();
-//		}
 	}
 
-
+	//REFACTOR: into recpipe class, 
 	private void updateAllZutaten() {
 		for(Widget widget : superDisplay.getRezeptList()){
 			RecipeView rezeptView = ((RecipeView) widget);
@@ -932,7 +871,7 @@ public class KitchenDialog<T> extends DialogBox{
 
 	@UiHandler("executeButton")
 	void onOkayClicked(ClickEvent event) {
-		presenter.getDAO().changeKitchen(selectedKitchen);
+		presenter.getDCO().changeKitchen(selectedKitchen);
         saveAndCloseDialog();
 	}
 
@@ -954,7 +893,7 @@ public class KitchenDialog<T> extends DialogBox{
 		});
 	}
 
-
+	//REFACTOR: just call DataController saveKitchen
 	private void saveAndCloseDialog() {
 		for (PendingChange<?> pendingChange : pendingChanges) {
 	          pendingChange.commit();
@@ -988,7 +927,7 @@ public class KitchenDialog<T> extends DialogBox{
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
 					presenter.getTopPanel().selectedKitchen.id = kitchenID;
-					presenter.getDAO().changeKitchenRecipes(kitchenID);
+					presenter.getDCO().changeKitchenRecipes(kitchenID);
 					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
 					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);
@@ -1037,6 +976,7 @@ public class KitchenDialog<T> extends DialogBox{
 	}
 
 
+	//REFACTOR: into Distances class
 	void processAddress(final String address, final boolean firstTime) {
 		if (address.length() > 1) { 
 			geocoder.setBaseCountryCode("ch");
@@ -1068,7 +1008,7 @@ public class KitchenDialog<T> extends DialogBox{
 
 
 
-
+	//REFACTOR: duplicate methos with DistanceDialog
 
 
 	void getDistance(final String from, final String to ) {
@@ -1228,7 +1168,7 @@ public class KitchenDialog<T> extends DialogBox{
 	  @UiHandler("leaveKitchen")
 	  public void onLeaveKitchenClick(ClickEvent event) {
 		  presenter.getTopPanel().location.setVisible(true);
-		  presenter.getDAO().isInKitchen = false;
+		  presenter.getDCO().isInKitchen = false;
 		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
 		  presenter.getTopPanel().selectedKitchen = null;
 		  
@@ -1279,41 +1219,12 @@ public class KitchenDialog<T> extends DialogBox{
 	  
 	  @UiHandler("addDevice")
 	  void onAddDevicePress(ClickEvent event) {
-		  
-//    	  int rowCell = cellTable.getRowCount();
-//    	  List<Device> newDevice = Arrays.asList(
-//    			      new Device("","",0.0,  Arrays.asList(1l,5l,10l,20l), 10l));
-//    	  cellTable.setRowData(rowCell, newDevice);
+
 		  Long[] longList ={1l,5l,10l,20l};
     	  devicesHere.add(new Device("","",0.0, longList , 10l));
     	  devidesCellTable.setRowCount(devicesHere.size(), true);
     	  
     	  devidesCellTable.setRowData(0, devicesHere);
-    	  
-//    	  cellTable.redraw();
-//		  
-//		  TextBox name = new TextBox();
-//		  name.setText("Name");
-//		  TextBox consumption = new TextBox();
-//		  consumption.setText("200");
-//		  TextBox stdMinuten = new TextBox();
-//		  stdMinuten.setText("5,10,20");
-//		  
-
-//		  deviceTable.setWidget(row,0,name);
-//		  deviceTable.setWidget(row,1,consumption);
-//		  deviceTable.setWidget(row,2,stdMinuten);
-//		  
-		  
-//		  final Button removeDevice = new Button("x");
-//		  removeDevice.addClickHandler(new ClickHandler() {
-//				public void onClick(ClickEvent event) {
-//					deviceTable.removeRow(getWidgetRow(removeDevice,deviceTable));
-//				}
-//			});	
-//		  
-//		  int row = deviceTable.getRowCount();
-//		  deviceTable.setWidget(row,3,removeDevice);
 		  
 	  }
 	  
@@ -1325,38 +1236,9 @@ public class KitchenDialog<T> extends DialogBox{
     	  personsCellTable.setRowCount(personsHere.size(), true);
     	  
     	  personsCellTable.setRowData(0, personsHere);
-//		  
-////		  TextBox name = new TextBox();
-////		  name.setText("Name");
-//		  TextBox email = new TextBox();
-//		  email.setText("email");
-//		  
-//		  int row = personTable.getRowCount();
-////		  personTable.setWidget(row,0,name);
-//		  personTable.setWidget(row,1,email);
-//		  
-//		  final Button removePerson = new Button("x");
-//		  removePerson.addClickHandler(new ClickHandler() {
-//				public void onClick(ClickEvent event) {
-//					
-//					personTable.removeRow(getWidgetRow(removePerson,personTable));
-//				}
-//			});	
-//		  personTable.setWidget(row,2,removePerson);
 	  }
 	  
-//		private static int getWidgetRow(Widget widget, FlexTable table) {
-//			for (int row = 0; row < table.getRowCount(); row++) {
-//				for (int col = 0; col < table.getCellCount(row); col++) {
-//					Widget w = table.getWidget(row, col);
-//					if (w == widget) {
-//						return row;
-//					}
-//				}
-//			}
-//			throw new RuntimeException("Unable to determine widget row");
-//		}
-	  
+	//REFACTOR: call deleteKitchen in DataController
 	  @UiHandler("deleteKitchen")
 	  void onDeleteKitchenPress(ClickEvent event) {
 		  // clear workspace if kitchen to delete matches kitchen which was worked on

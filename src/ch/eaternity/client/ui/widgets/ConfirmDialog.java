@@ -49,5 +49,7 @@ public class ConfirmDialog extends DialogBox{
 			}
 		}
 	}
+	
+	// REFACTOR: add Click Handlers here, not in Methods.... 
 }
 

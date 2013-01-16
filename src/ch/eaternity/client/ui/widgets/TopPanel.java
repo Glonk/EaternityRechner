@@ -20,6 +20,7 @@ package ch.eaternity.client.ui.widgets;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.ui.EaternityRechnerView;
@@ -78,9 +79,11 @@ public class TopPanel<T> extends Composite {
   @UiField HTML calHTML;
   
   public  Placemark currentLocation;
+//REFACTOR: move them into RechnerView as a top panel?
   public  DistancesDialog ddlg;
   public  KitchenDialog kDlg;
   private EaternityRechnerView superDisplay;
+  private DataController dco;
   
  // here should be all the distances stored 
 protected  ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
@@ -90,6 +93,7 @@ public  Workgroup selectedKitchen;
 private Presenter<T> presenter;
 public void setPresenter(Presenter<T> presenter){
 	this.presenter = presenter;
+	this.dco = presenter.getDCO();
 }
 
 public void setSuperDisplay(EaternityRechnerView superDisplay){
@@ -145,7 +149,7 @@ public void setSuperDisplay(EaternityRechnerView superDisplay){
 					location.setVisible(false);
 					editKitchen.setVisible(true);
 					isCustomer.setVisible(true);
-					isCustomerLabel.setText(" Sie befinden sich in der Küche: " + presenter.getDAO().cdata.currentKitchen.getSymbol() + " ");
+					isCustomerLabel.setText(" Sie befinden sich in der Küche: " + dco.getCurrentKitchen().getSymbol() + " ");
 				}
 			}
 		});
@@ -153,16 +157,16 @@ public void setSuperDisplay(EaternityRechnerView superDisplay){
 		presenter.getEventBus().addHandler(LoginChangedEvent.TYPE, new LoginChangedEventHandler() {
 			@Override
 			public void onEvent(LoginChangedEvent event) {
-				if (presenter.getDAO().cdata.loginInfo.isLoggedIn()) {
-					signOutLink.setHref(presenter.getDAO().cdata.loginInfo.getLogoutUrl());
+				if (dco.getLoginInfo().isLoggedIn()) {
+					signOutLink.setHref(dco.getLoginInfo().getLogoutUrl());
 					signInLink.setVisible(false);
 					signOutLink.setVisible(true);
 					
-					loginLabel.setText("Willkommen "+ presenter.getDAO().cdata.loginInfo.getNickname() +".");
+					loginLabel.setText("Willkommen "+ dco.getLoginInfo().getNickname() +".");
 				}
 				else {
 					// TODO sign out without reload of rechner...
-					signInLink.setHref(presenter.getDAO().cdata.loginInfo.getLoginUrl());
+					signInLink.setHref(dco.getLoginInfo().getLoginUrl());
 					signInLink.setVisible(true);
 					signOutLink.setVisible(false);
 					

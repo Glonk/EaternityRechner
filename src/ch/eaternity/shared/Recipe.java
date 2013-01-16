@@ -58,13 +58,13 @@ public class Recipe implements Serializable, Cloneable{
 	private Boolean selected;
 	
 	@Serialized
-	public ArrayList<RecipeComment> comments = new ArrayList<RecipeComment>();
+	public List<RecipeComment> comments = new ArrayList<RecipeComment>();
 
 	@Serialized
-	public ArrayList<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
+	public List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
 	
 	@Serialized
-	public ArrayList<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
+	public List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
     
 	private Double CO2Value;
 	public Boolean openRequested;
@@ -84,6 +84,7 @@ public class Recipe implements Serializable, Cloneable{
 		selected = false;
 		persons = 4L;
 		eaternitySelected = false;
+		setCO2Value();
 	}
 	
 	// clone Constructor
@@ -131,6 +132,7 @@ public class Recipe implements Serializable, Cloneable{
 		this.eaternitySelected = new Boolean(toClone.eaternitySelected);
 		this.bio = new Boolean(toClone.bio);
 		this.regsas = new Boolean(toClone.regsas);
+		setCO2Value();
 	}
 
 
@@ -142,24 +144,24 @@ public class Recipe implements Serializable, Cloneable{
 		this.symbol = symbol;
 	}
 
-	public void addZutaten(List<IngredientSpecification> zutaten) {
-		for(IngredientSpecification zutat : zutaten){
-			this.ingredients.add(zutat);
-		}
-		
+	public void addIngredient(IngredientSpecification ingSpec) {
+		this.ingredients.add(ingSpec);	
+		setCO2Value();
 	}
 
-	public ArrayList<IngredientSpecification> getZutaten() {
+	public List<IngredientSpecification> getZutaten() {
 		return this.ingredients;
 	}
 
 	public void setZutaten(ArrayList<IngredientSpecification> zutaten) {
 			this.ingredients = zutaten;
+			setCO2Value();
 
 	}
 	
 	public void removeZutat(int index) {
 		this.ingredients.remove(index);
+		setCO2Value();
 	}
 
 
@@ -201,14 +203,12 @@ public class Recipe implements Serializable, Cloneable{
 	}
 
 	public void setCO2Value() {
-
-		
 		double sum = getDeviceCo2Value();
 		
 		for ( IngredientSpecification zutatSpec : ingredients){
 			sum += zutatSpec.getCalculatedCO2Value();
 		}
-		if(persons != null){
+		if(persons != null && persons != 0){
 			CO2Value = sum/persons;
 		} else {
 			CO2Value = sum;
@@ -240,6 +240,7 @@ public class Recipe implements Serializable, Cloneable{
 
 	public void setPersons(Long persons) {
 		this.persons = persons;
+		setCO2Value();
 	}
 
 	public Long getPersons() {

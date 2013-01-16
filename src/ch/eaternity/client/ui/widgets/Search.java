@@ -5,8 +5,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
+import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.MonthChangedEventHandler;
+import ch.eaternity.client.events.RecipeDeletedEvent;
+import ch.eaternity.client.events.RecipeDeletedEventHandler;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEventHandler;
 import ch.eaternity.client.ui.EaternityRechnerView;
@@ -44,7 +49,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
-// TODO check why we need a suggestBox!
+
 
 /**
  * A composite that displays a list of ingredients that can be selected.
@@ -56,53 +61,8 @@ public class Search<T> extends ResizeComposite {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	/**
-	 * Call-back when items are selected. 
-	 */
-	public interface Listener { // Call-back for ingredient click
-		void onItemSelected(Ingredient item);
-	}
-
-	public interface ListenerMeals { // Call-back for menu click
-		void onItemSelected(Recipe item);
-	}
-
-	private Listener listener;
-	private ListenerMeals listenerMeals;
-	
-	static int markedRow = 0;
-	interface MarkingStyle extends CssResource {
-		String markedRow();
-	}
-	
-	// CSS of selected row
-	static int selectedRow = 0;
-	//TODO check why everything crashes for selectedRow = -1
-	interface SelectionStyle extends CssResource {
-		String selectedRow();
-	}
-	
-	// Color the rows alternating
-	interface EvenStyleRow extends CssResource {
-		String evenRow();
-	}
-	
-	// ---------------------- Class Variables ----------------------
-
-	public List<Ingredient> foundIngredients = new ArrayList<Ingredient>();
-	public List<Ingredient> foundAlternativeIngredients = new ArrayList<Ingredient>();
-	public List<Recipe> foundPublicRecipes = new ArrayList<Recipe>();
-	public List<Recipe> foundUserRecipes = new ArrayList<Recipe>();
-	
-	public String searchString = "";
-		
-	// choose this sorting method
-	static int sortMethod = 1;
-
-
-	/**
 	 * User interface elements
 	 */
-	
 	// Legend and informations:
 	@UiField HTMLPanel panelSouth;
 	@UiField HTMLPanel legendPanel;
@@ -117,13 +77,11 @@ public class Search<T> extends ResizeComposite {
 	@UiField Image imageRegloc;
 	@UiField Image imageBio;
 	
-	
 	// Search Panel (Box and Button)
 	@UiField DockLayoutPanel SearchBox;
 	@UiField HTML SearchLabel;
 	@UiField public static HTML yourRecipesText;
 	@UiField public static SuggestBox SearchInput;
-	
 	
 	// Display Results in:
 	@UiField DockLayoutPanel displayResultsPanel;
@@ -131,7 +89,6 @@ public class Search<T> extends ResizeComposite {
 	@UiField SplitLayoutPanel mealsSplitPanels;
 	@UiField SplitLayoutPanel subMealsSplitPanels;
 	@UiField HTMLPanel scrollAbleHtml;
-
 	
 	// Search results Tables
 	@UiField static FlexTable table;
@@ -143,12 +100,129 @@ public class Search<T> extends ResizeComposite {
 	@UiField static SelectionStyle selectionStyle;
 	@UiField static EvenStyleRow evenStyleRow;
 	
-	
 	// sorting of the tables:
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
-
 	
+	// ---------------------- Class Interfaces ---------------------
+	
+	 //Call-back when items are selected. 
+	public interface Listener { // Call-back for ingredient click
+		void onItemSelected(Ingredient item);
+	}
+
+	public interface ListenerMeals { // Call-back for menu click
+		void onItemSelected(Recipe item);
+	}
+
+
+	interface MarkingStyle extends CssResource {
+		String markedRow();
+	}
+	
+	
+	//TODO check why everything crashes for selectedRow = -1
+	interface SelectionStyle extends CssResource {
+		String selectedRow();
+	}
+	
+	// Color the rows alternating
+	interface EvenStyleRow extends CssResource {
+		String evenRow();
+	}
+	
+	// ---------------------- Class Variables ----------------------
+
+		private Presenter<T> presenter;
+		private DataController dco;
+		
+		public List<Ingredient> foundIngredients = new ArrayList<Ingredient>();
+		public List<Ingredient> foundAlternativeIngredients = new ArrayList<Ingredient>();
+		public List<Recipe> foundPublicRecipes = new ArrayList<Recipe>();
+		public List<Recipe> foundUserRecipes = new ArrayList<Recipe>();
+		
+		public String searchString = "";
+			
+		// choose this sorting method
+		static int sortMethod = 1;
+		
+		private Listener listener;
+		private ListenerMeals listenerMeals;
+		
+		// CSS of rows
+		static int markedRow = 0;
+		static int selectedRow = 0;
+		
+
+	// --------------------------- public Methods ----------------------------------
+
+	public void setPresenter(Presenter<T> presenter){
+		this.presenter = presenter;
+		this.dco = dco;
+		initTable(); // just the size
+	}
+	private EaternityRechnerView superDisplay;
+	public void setSuperDisplay(EaternityRechnerView superDisplay){
+		this.superDisplay = superDisplay;
+	}
+
+	public Search() {
+		
+		// bind and display the Search
+		initWidget(binder.createAndBindUi(this));
+
+		// we have to wait till the database is loaded:
+		SearchInput.setText("wird geladen...");
+	
+		SearchInput.setFocus(true);
+		
+
+		subMealsSplitPanels.addStyleName("noSplitter");
+		setVDraggerHeight("0px");
+
+		initToolTips();
+		
+		
+		bind();
+	}
+	
+	private void bind() {
+		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE, new KitchenChangedEventHandler() {
+			@Override
+			public void onKitchenChanged(KitchenChangedEvent event) {
+				if (event.id.equals(-1)) {
+					yourRecipesText.setHTML(" in eigenen Rezepten");
+					updateResults(SearchInput.getText());
+				}
+				else {
+					yourRecipesText.setHTML(" in " + dco.getCurrentKitchen().getSymbol() + " Rezepten");
+					updateResults(SearchInput.getText());
+				}
+					
+			}
+			});
+		presenter.getEventBus().addHandler(RecipePublicityChangedEvent.TYPE, new RecipePublicityChangedEventHandler() {
+			@Override
+			public void onEvent(RecipePublicityChangedEvent event) {
+					
+					// TODO show in public recipes, mark recipe as open
+			}
+			});
+		presenter.getEventBus().addHandler(RecipeDeletedEvent.TYPE, new RecipeDeletedEventHandler() {
+			@Override
+			public void onEvent(RecipeDeletedEvent event) {
+				// Could be faster with just delet list item, but not many times recipes are getting deleted...
+				updateResults(SearchInput.getText());
+			}
+			});
+		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {
+			@Override
+			public void onEvent(MonthChangedEvent event) {
+				displayIngredients();
+			}
+			});
+		
+	}
 	
 	//---------------- UI HANDLERS ----------------
 	
@@ -274,63 +348,8 @@ public class Search<T> extends ResizeComposite {
 		}
 	}
 
-	// --------------------------- public Methods ----------------------------------
 
-	private Presenter<T> presenter;
-	public void setPresenter(Presenter<T> presenter){
-		this.presenter = presenter;
-		initTable(); // just the size
-	}
-	private EaternityRechnerView superDisplay;
-	public void setSuperDisplay(EaternityRechnerView superDisplay){
-		this.superDisplay = superDisplay;
-	}
-
-	public Search() {
-		
-		// bind and display the Search
-		initWidget(binder.createAndBindUi(this));
-
-		// we have to wait till the database is loaded:
-		SearchInput.setText("wird geladen...");
-	
-		SearchInput.setFocus(true);
-		
-
-		subMealsSplitPanels.addStyleName("noSplitter");
-		setVDraggerHeight("0px");
-
-		initToolTips();
-		
-		
-		bind();
-	}
-	
-	private void bind() {
-		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE, new KitchenChangedEventHandler() {
-			@Override
-			public void onKitchenChanged(KitchenChangedEvent event) {
-				if (event.id.equals(-1)) {
-					yourRecipesText.setHTML(" in eigenen Rezepten");
-					updateResults(SearchInput.getText());
-				}
-				else {
-					yourRecipesText.setHTML(" in " + presenter.getDAO().cdata.currentKitchen.getSymbol() + " Rezepten");
-					updateResults(SearchInput.getText());
-				}
-					
-			}
-			});
-		presenter.getEventBus().addHandler(RecipePublicityChangedEvent.TYPE, new RecipePublicityChangedEventHandler() {
-			@Override
-			public void onEvent(RecipePublicityChangedEvent event) {
-					
-					// TODO show in public recipes, mark recipe as open
-			}
-			});
-		
-	}
-
+	// ---------------------------------------------------------------
 	
 	// what is this thing for?
 	public void setVDraggerHeight (String height)
@@ -360,12 +379,12 @@ public class Search<T> extends ResizeComposite {
 		foundUserRecipes.clear();
 		
 		// Get data from Data Controller
-		presenter.getDAO().searchIngredients(searchString, foundIngredients, foundAlternativeIngredients);
-		foundPublicRecipes = presenter.getDAO().searchPublicRecipes(searchString);
-		if (presenter.getDAO().cdata.currentKitchen != null)
-			foundUserRecipes = presenter.getDAO().searchKitchenRecipes(searchString);
+		dco.searchIngredients(searchString, foundIngredients, foundAlternativeIngredients);
+		foundPublicRecipes = dco.searchPublicRecipes(searchString);
+		if (dco.getCurrentKitchen() != null)
+			foundUserRecipes = dco.searchKitchenRecipes(searchString);
 		else 
-			foundUserRecipes = presenter.getDAO().searchUserRecipes(searchString);
+			foundUserRecipes = dco.searchUserRecipes(searchString);
 
 		
 		// Display Results
@@ -558,7 +577,7 @@ public class Search<T> extends ResizeComposite {
 					//  recheck user if he really want to do this...
 					dlg.yesButton.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							presenter.removeRecipe(recipe);
+							dco.deleteRecipe(recipe);
 							tableMealsYours.removeCells(row, 0, tableMealsYours.getCellCount(row));
 							dlg.hide();
 							dlg.clear();
@@ -605,7 +624,7 @@ public class Search<T> extends ResizeComposite {
 					Anchor openThis = new Anchor("o");
 					openThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							presenter.recipeApproval(recipe,true);
+							dco.approveRecipe(recipe,true);
 						}
 					});
 					tableMealsYours.setWidget(row, 2,openThis);
@@ -615,7 +634,7 @@ public class Search<T> extends ResizeComposite {
 					Anchor closeThis = new Anchor("c");
 					closeThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							presenter.recipeApproval(recipe,false);
+							dco.approveRecipe(recipe,false);
 						}
 					});
 					tableMealsYours.setWidget(row, 2,closeThis);
@@ -664,7 +683,7 @@ public class Search<T> extends ResizeComposite {
 						// TODO recheck user if he really want to do this...
 						dlg.yesButton.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								presenter.removeRecipe(recipe);
+								dco.deleteRecipe(recipe);
 								tableMeals.removeCells(row, 0, tableMealsYours.getCellCount(row));
 								dlg.hide();
 								dlg.clear();
@@ -685,7 +704,7 @@ public class Search<T> extends ResizeComposite {
 						Anchor openThis = new Anchor("o");
 						openThis.addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								presenter.recipeApproval(recipe,true);
+								dco.approveRecipe(recipe,true);
 //								 initTable();
 								// why does the layout suck after this button press?????
 							}
@@ -698,7 +717,7 @@ public class Search<T> extends ResizeComposite {
 					Anchor closeThis = new Anchor("c");
 					closeThis.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							presenter.recipeApproval(recipe,false);
+							dco.approveRecipe(recipe,false);
 //							 initTable();
 						}
 					});
@@ -924,7 +943,8 @@ public class Search<T> extends ResizeComposite {
 		} else {
 			rezeptView = superDisplay.createNewRecipeView();
 		}
-		superDisplay.addOneIngredientToMenu(item,rezeptView, grams);
+		dco.addIngredientToMenu(item, grams);
+		// REFACTOR: 
 		rezeptView.showRezept(rezeptView.recipe);
 		superDisplay.displayRecipeEditView(rezeptView);
 		

@@ -19,11 +19,11 @@ public interface ClientFactory {
 	HelloView getHelloView();
 	EaternityRechnerView getEaternityRechnerView();
 	GoodbyeView getGoodbyeView();
+	MenuPreviewView getMenuPreviewView();
+	KlimaZmittagView getKlimaZmittagView();
 	
     // services
     DataServiceAsync getDataServiceRPC();
-	MenuPreviewView getMenuPreviewView();
-	KlimaZmittagView getKlimaZmittagView();
 	DataController getDataController();
 
 }

@@ -79,46 +79,31 @@ public class RecipeEditView<T> extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	
-	@UiField
-	public AbsolutePanel dragArea;
+	@UiField public AbsolutePanel dragArea;
 	@UiField SelectionStyleRow selectionStyleRow;
 	@UiField EvenStyleRow evenStyleRow;
 
 	@UiField FlexTable MenuTable;
-//	@UiField HTMLPanel SaveRezeptPanel;
-//	@UiField HTMLPanel topStatusBar;
-	@UiField
-	public VerticalPanel menuDecoInfo;
-//	@UiField Button RezeptButton;
-//	@UiField Button reportButton;
+	@UiField public VerticalPanel menuDecoInfo;
 	@UiField Anchor PrepareButton;
 	@UiField TextBox RezeptName;
-//	@UiField CheckBox makePublic;
 	@UiField FlexTable SuggestTable;
 	@UiField FlexTable commentTable;
 	@UiField HorizontalPanel addInfoPanel;
 	@UiField Button removeRezeptButton;
-	@UiField
-	public HTMLPanel htmlRezept;
+	@UiField public HTMLPanel htmlRezept;
 	@UiField HTMLPanel rezeptTitle;
-//	@UiField Label rezeptNameTop;
-//	@UiField Label rezeptSubTitleTop;
 
 	@UiField HTML bottomIndikator;
-//	@UiField HorizontalPanel imageUploaderHP;
 	@UiField TextArea cookingInstr;
 	@UiField TextBox amountPersons;
 	@UiField TextBox rezeptDetails;
 	@UiField VerticalPanel MenuTableWrapper;
-	
-//	@UiField HTML titleHTML;
-//	@UiField HTML openHTML;
-//	@UiField HTML savedHTML;
+
 	@UiField HTML detailText;
 	@UiField HTML codeImage;
 	
 	private FlowPanel panelImages = new FlowPanel();
-	private PhotoGallery galleryWidget;
 	public UploadPhoto uploadWidget;
 	public HandlerRegistration imagePopUpHandler = null;
 	static int overlap = 0;
@@ -142,6 +127,9 @@ public class RecipeEditView<T> extends Composite {
 	int  selectedRow = 0;
 	int  selectedRezept = -1;
 	public Recipe recipe;
+	
+	private EaternityRechnerView superDisplay;
+	RecipeView rezeptViewOrigin;
 
 //	static int currentEdit;
 	public int heightOfView;
@@ -151,24 +139,16 @@ public class RecipeEditView<T> extends Composite {
 		this.presenter = presenter;
 		
 	    // this grap becomes visible even when not logged in...
-	    if(presenter.getDAO().cdata.currentKitchen == null){
+	    if(presenter.getDCO().cdata.currentKitchen == null){
 	    	PrepareButton.setVisible(false);
 	    }
 	    
 		if (presenter.getLoginInfo().isLoggedIn()) {
 			uploadWidget = new UploadPhoto(presenter.getLoginInfo(), this);
-			uploadWidget.setStyleName("notInline");
-			
-			// Bind it to event so uploadWidget can refresh the gallery
-//			uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
+			uploadWidget.setStyleName("notInline");		
 			menuDecoInfo.insert(uploadWidget,0);
-//			menuDecoInfo.add( uploadWidget);
-			
-
-
-
 		}
-//	    
+	    
 		
 		if(recipe.getCookInstruction() != null){
 	    	cookingInstr.setText(recipe.getCookInstruction());
@@ -178,21 +158,26 @@ public class RecipeEditView<T> extends Composite {
 	    		cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
 	    	}
 			cookingInstr.setText(cookingIntructions);
-			
-	    }
-		
-//		if(presenter.getLoginInfo().isLoggedIn()) {
-//			// TODO even more....
-////			SaveRezeptPanel.setVisible(true);
-////			topStatusBar.setVisible(true);
-//		} else   {
-////			SaveRezeptPanel.setVisible(false);
-////			topStatusBar.setVisible(false);
-//		}
-//		
+	    }	
 	}
+	
+	public RecipeEditView(RecipeView rezeptView, Recipe recipe,EaternityRechnerView superDisplay) {
+		this.superDisplay = superDisplay;
+	    // does this need to be here?
+	    initWidget(uiBinder.createAndBindUi(this));
+	    
+	    tableRowDragController = new FlexTableRowDragController(dragArea);
+	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
+    
+	    tableRowDragController.registerDropController(flexTableRowDropController);
+
+	    setRezept(recipe, rezeptView);
+	    saved = true;
+	    initTable();
+	  }
 
 
+	//REFACTOR: implement that?
 	// here we add the visuals for commenting
 	public void addCommentingField() {
 		
@@ -270,26 +255,7 @@ public class RecipeEditView<T> extends Composite {
 		commentTable.setWidget(thisRow,1,commentBox);
 		
 	}
-	
-	public void setAmountBox(int thisRow, int amount) {
-		TextBox commentAmountBox = new TextBox();
-		commentAmountBox.setText(Integer.toString(amount));
-		commentAmountBox.addKeyUpHandler(new KeyUpHandler() {
-			public void onKeyUp(KeyUpEvent event)  {
-				int keyCode = event.getNativeKeyCode();
-				if ((Character.isDigit((char) keyCode)) 
-						|| (keyCode == KeyCodes.KEY_BACKSPACE)
-						|| (keyCode == KeyCodes.KEY_DELETE) ) {
-					updateComments();
-				}
-			}
 
-
-			
-		});
-		commentAmountBox.setWidth("20px");
-		commentTable.setWidget(thisRow ,2,commentAmountBox);
-	}
 	
 	private void updateComments() {
 		
@@ -319,55 +285,26 @@ public class RecipeEditView<T> extends Composite {
 		
 	}
 	
-	private EaternityRechnerView superDisplay;
-	
-//	static ArrayList<IngredientSpecification> zutatImMenu = new ArrayList<IngredientSpecification>();
-	
-	
-	public RecipeEditView(RecipeView rezeptView, Recipe recipe,EaternityRechnerView superDisplay) {
-		this.superDisplay = superDisplay;
-	    // does this need to be here?
-	    initWidget(uiBinder.createAndBindUi(this));
-	    
-	    tableRowDragController = new FlexTableRowDragController(dragArea);
-	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
-	    
-    
-	    tableRowDragController.registerDropController(flexTableRowDropController);
-
-//	    currentEdit = EaternityRechner.selectedRezept;
-	    
-
-	    setRezept(recipe, rezeptView);
-	    saved = true;
-	    initTable();
+	public void setAmountBox(int thisRow, int amount) {
+		TextBox commentAmountBox = new TextBox();
+		commentAmountBox.setText(Integer.toString(amount));
+		commentAmountBox.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event)  {
+				int keyCode = event.getNativeKeyCode();
+				if ((Character.isDigit((char) keyCode)) 
+						|| (keyCode == KeyCodes.KEY_BACKSPACE)
+						|| (keyCode == KeyCodes.KEY_DELETE) ) {
+					updateComments();
+				}
+			}
 
 
-	    
-//	    RezeptName.setVisible(false);
-//	    rezeptDetails.setVisible(false);
-//	    cookingInstr.setVisible(false);
-//	    detailText.setVisible(false);
-	    
-//	    galleryWidget = new PhotoGallery(this);
-////	    addInfoPanel.insert(galleryWidget,0);
-//	    menuDecoInfo.add(galleryWidget);
-	    
+			
+		});
+		commentAmountBox.setWidth("20px");
+		commentTable.setWidget(thisRow ,2,commentAmountBox);
+	}
 
-		
-		
-	    
-//	    imageUploaderHP.add(panelImages);
-//	    MultiUploader defaultUploader = new MultiUploader();
-//	    imageUploaderHP.add(defaultUploader);
-//	    defaultUploader.avoidRepeatFiles(true);
-//	    defaultUploader.setValidExtensions(new String[] { "jpg", "jpeg", "png", "gif" });
-//	    defaultUploader.setMaximumFiles(1);
-//	    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
-
-
-		
-	  }
 	
 	
 	public interface Listener {
@@ -386,21 +323,9 @@ public class RecipeEditView<T> extends Composite {
 	public void setListener(Listener listener) {
 		this.listener = listener;
 	}
-	
-	
-	// This Button is now on the small view (why?)
-//	@UiHandler("reportButton")
-//	void onReportClick(ClickEvent event) {
-//        Date date = new Date();
-//        long iTimeStamp = (long) (date.getTime() * .00003);
-//        long code = recipe.getId()*iTimeStamp;
-//
-//		String clear = Converter.toString(code,34);
-//		String url = GWT.getHostPageBaseURL()+ "convert?ids=" + clear;
-//		Window.open(url, "Menu Klima-Bilanz", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes");
-//
-//	}
 
+ // REFACTOR: all UIHandlers: update recipe directly in DataController...
+	// Dont forget to change the save button in each edit...
 	
 	@UiHandler("MenuTable")
 	void onClick(ClickEvent event) {
@@ -449,6 +374,8 @@ public class RecipeEditView<T> extends Composite {
 ////		}
 //	}
 	
+
+	// REFACTOR: do RecipeView and RecipeEditView really need to be synchronized ? much more work...
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
@@ -519,13 +446,7 @@ public class RecipeEditView<T> extends Composite {
 		
 		// is this necessary... it should be only on change...
 		updateSuggestion();
-		
 
-//		RecipeView rezeptView = (RecipeView) superDisplay.getRezeptList().getWidget(EaternityRechner.selectedRezept, 0);
-////		rezeptView.setRezept(recipe);
-////		rezeptView.updateSuggestion();
-//		rezeptView.showRezept(recipe);
-//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 		
 	}
 	
@@ -551,14 +472,13 @@ public class RecipeEditView<T> extends Composite {
 	public void setRezept(Recipe recipe, RecipeView rezeptView){
 		this.recipe = recipe;
 		rezeptViewOrigin = rezeptView;
-//		rezeptViewOrigin = superDisplay.getSelectedRecipeView();
-//		rezeptViewOrigin = (RecipeView) superDisplay.getRezeptList().getWidget(superDisplay.getSelectedRecipeNumber(), 1);
 	}
 
 	public Recipe getRezept(){
 		return this.recipe;
 	}	
 	
+	// REFACOTR: should not be called from outside... listen to EventBus
 	public void showRezept(final Recipe recipe) {
 		
 		
@@ -601,27 +521,23 @@ public class RecipeEditView<T> extends Composite {
 
 	
 	
-
+	// REFACOTR: correct here
 	 public void selectRow(int row) {
 		 
 		 // only show the buttom if we are in a kitchen...
 		 if(presenter.getTopPanel().selectedKitchen != null){
 			 PrepareButton.setVisible(true);
 		 }
-		//TODO uncomment this: why?
-		//Search.leftSplitPanel.setWidgetMinSize(Search.infoZutat, 448);
 
-		
 		 saved = false;
 		 
 		 if(selectedRow != -1 && infoDialogIsOpen ){
-	//		addInfoPanel.getWidgetCount() ==2
+
 			 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
 			 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(0));
 				 
 			IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-	//			 int index = zutatImMenu.indexOf(zutatSpec);
-	//			 zutatImMenu = (ArrayList<IngredientSpecification>) recipe.getZutaten();
+
 			recipe.ingredients.set(selectedRow , zutatSpec2);
 		 }
 		 
@@ -635,14 +551,9 @@ public class RecipeEditView<T> extends Composite {
 		Ingredient zutat = presenter.getClientData().getIngredientByID(ParentZutatId);
 		
 		openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
-//		openSpecificationDialog(zutatSpec,zutat, (TextBox) EaternityRechner.MenuTable.getWidget(row, 1), EaternityRechner.MenuTable,row);
-		//InfoZutat.setZutat(item, clientDataHere.getZutatByID(ParentZutatId),row);
-//
-//		infoZutat.stylePanel(true);
 
 		styleRow(selectedRow, false);
 		
-//		Search.styleRow(Search.selectedRow,false);
 		Search.selectedRow = -1;
 		
 		styleRow(row, true);
@@ -654,9 +565,9 @@ public class RecipeEditView<T> extends Composite {
 		}
 		
 		updateSuggestion();
-//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 	}
 
+	// REFACOTR: correct
 	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
 		// if another one was already open
 		if(infoDialogIsOpen){
@@ -664,21 +575,14 @@ public class RecipeEditView<T> extends Composite {
 		} else {
 			infoDialogIsOpen = true;
 		}
-//		if(addInfoPanel.getWidgetCount() ==2){
-//		 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
-//		 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(1));
-//			addInfoPanel.remove(1);
-//			EaternityRechner.addInfoPanel.remove(2);
-//		}
+
 		menuDecoInfo.setVisible(false);
 		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
 		infoZutat.setPresenter(presenter);
-//		addInfoPanel.add(infoZutat);
 		VerticalPanel verticalDialog = new VerticalPanel();
 		verticalDialog.add(infoZutat);
 		addInfoPanel.insert(verticalDialog, 1);
-//		EaternityRechner.addInfoPanel.insert(infoZutat, 2);
-//		addInfoPanel.add(new HTML("test"));
+
 		
 	}
 	
@@ -699,7 +603,9 @@ public class RecipeEditView<T> extends Composite {
 	
 
 
-	
+	// REFACOTR: here is the BUG located (invalid Ingredient) if we move the line....
+	// duplicate code in RecipeView (showRezept)
+	// create own Ingredients Widget
 	void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
 		
 		if(askForLess != null){
@@ -821,10 +727,6 @@ public class RecipeEditView<T> extends Composite {
 				}
 				
 				updateTable(rowhere,zutat);
-//				int length = (int)  Math.round(Double.valueOf(MengeZutatWert).doubleValue() *0.001);
-//				MenuTable.setText(rowhere,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
-//				MenuTable.setHTML(rowhere, 4, "<div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/1000).concat("px'>.</div>")));
-//				updateSuggestion();
 			}
 
 
@@ -834,45 +736,28 @@ public class RecipeEditView<T> extends Composite {
 	});
 
 	//Name
-	
-
 	if ((row % 2) == 1) {
 		String style = evenStyleRow.evenRow();
 		MenuTable.getRowFormatter().addStyleName(row, style);
 	}
 	MenuTable.setWidget(row, 1, MengeZutat);
-//	EaternityRechner.MenuTable.setWidget(row, 1, MengeZutat);
 	
 	changeIcons(row, zutat);
 	
 	// Remove Button
 	MenuTable.setWidget(row, 6, removeZutat);
 	
-	
 	// drag Handler
     HTML handle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
     tableRowDragController.makeDraggable(handle);
     MenuTable.setWidget(row, 0, handle);
 
-	
-
-
-	
-	
-//	int length = (int) Math.round(zutatSpec.getCalculatedCO2Value());
-//	//	Menge CO2 Äquivalent
-//	MenuTable.setText(row,3,Integer.toString(length).concat("g CO₂-Äquivalent"));
-//
-//	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Integer.toString(length/1000)).concat("px'>.</div>"));
-	
 	updateTable(row,zutat);
-//	MenuTable.setText(row,3,"ca. "+ Double.toString(zutatSpec.getCalculatedCO2Value()).concat("g CO₂-Äquivalent"));
-//	MenuTable.setHTML(row, 4, "<div style='background:#ff0;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/1000).concat("px'>.</div>")));
-//	updateSuggestion();
 	row = row+1;
 	}
 }
 
+	// REFACOTR: good, listen to eventbus, rename to updateIcons
 	public void changeIcons(Integer row, final IngredientSpecification zutat) {
 		HTML icon = new HTML();
 		Boolean itsOkay = true;
@@ -903,13 +788,10 @@ public class RecipeEditView<T> extends Composite {
 			if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
 				icon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
 				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-
-				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-				//		icon.setStyleName("base-icons smiley1");			
+		
 			} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){
 				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-				//		icon.setHTML(icon.getHTML()+"<img src='pixel.png' height=1 width=20 />");
-				//		icon.setStyleName("base-icons smiley2");			
+		
 			} else {
 				icon.setHTML(" g  "+icon.getHTML());
 			}
@@ -930,9 +812,8 @@ public class RecipeEditView<T> extends Composite {
 		MenuTable.setWidget(row, 2,  icon);
 	}
 	
-	RecipeView rezeptViewOrigin;
 	
-	
+	// REFACTOR: into own Suggestion class... 
 	void updateSuggestion() {
 
 //		in the list
@@ -986,6 +867,7 @@ public class RecipeEditView<T> extends Composite {
 		
 	}
 
+	// REFACTOR: into own suggestion class
 	   public void updtTopSuggestion() {
 	      // TODO Algorithm for the Top Suggestions
 	      // Von jedem Gericht gibt es einen CO2 Wert für 4Personen (mit oder ohne Herkunft? oder aus der nächsten Distanz?), 
@@ -1026,9 +908,9 @@ public class RecipeEditView<T> extends Composite {
 	      // add your specific recipe to the others in the database
 	      allRecipes.add(compare);
 	      // and all the others also
-	      allRecipes.addAll( presenter.getDAO().cdata.publicRecipes);
-	      if(presenter.getDAO().cdata.userRecipes != null){
-	          allRecipes.addAll(presenter.getDAO().cdata.userRecipes);
+	      allRecipes.addAll( presenter.getDCO().cdata.publicRecipes);
+	      if(presenter.getDCO().cdata.userRecipes != null){
+	          allRecipes.addAll(presenter.getDCO().cdata.userRecipes);
 	      }
 		   
 	  
@@ -1418,7 +1300,7 @@ public class RecipeEditView<T> extends Composite {
 		throw new RuntimeException("Unable to determine widget row");
 	}
 
-
+	// REFACTOR: listen to EventBus
 	public void updateSaison() {
 		if(addInfoPanel.getWidgetCount() ==2){
 			InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
@@ -1428,23 +1310,13 @@ public class RecipeEditView<T> extends Composite {
 	
 	
 	// here comes the Image Uploader:
-
-   
- 
 	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
 	    public void onFinish(IUploader uploader) {
 	      if (uploader.getStatus() == Status.SUCCESS) {
 	    	 
-//	    	 recipe.imageId = uploader.
 	    	 GWT.log("Successfully uploaded image: "+  uploader.fileUrl(), null);
 	        new PreloadedImage(uploader.fileUrl(), showImage);
 	        
-	        // The server can send information to the client.
-	        // You can parse this information using XML or JSON libraries
-//	        Document doc = XMLParser.parse(uploader.getServerResponse());
-//	        String size = Utils.getXmlNodeValue(doc, "file-1-size");
-//	        String type = Utils.getXmlNodeValue(doc, "file-1-type");
-//	        System.out.println(size + " " + type);
 	      }
 	    }
 	  };

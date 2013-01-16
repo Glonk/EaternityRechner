@@ -25,12 +25,14 @@ public class ClientData implements Serializable{
 	public Recipe editRecipe;
 	
 	public List<Ingredient> ingredients;
+	public Distance dist;
 	public List<SingleDistance> distances;
 	public List<Workgroup> kitchens;
 
 	public LoginInfo loginInfo;
 	public Workgroup currentKitchen; 
 	public int selectedMonth;
+	public String currentLocation;
 	
 	
 	public ClientData() {

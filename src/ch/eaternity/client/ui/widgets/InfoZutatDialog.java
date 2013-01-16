@@ -63,6 +63,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
+
+//REFACTOR: Use UIBinder, declare xml file propper
+
+
 public class InfoZutatDialog<T> extends Composite {
 	interface Binder extends UiBinder<Widget, InfoZutatDialog> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
@@ -176,7 +180,7 @@ public class InfoZutatDialog<T> extends Composite {
 	}
 
 
-	
+	//REFACTOR: correct
 	private void differentOriginSelected(final ListBox herkuenfte){
 		int width = herkuenfte.getOffsetWidth();
 		herkuenfte.setVisible(false);
@@ -212,7 +216,8 @@ public class InfoZutatDialog<T> extends Composite {
 			handlersNotAdded = false;
 		}
 	}
-			
+		
+	//REFACTOR: outSource in Distance class...
 	private void calculateExtractionDistance(final ListBox herkuenfte) {
 		// Don't add if already exists
 	  	boolean found = false;
@@ -276,6 +281,7 @@ public class InfoZutatDialog<T> extends Composite {
 		}			
 	}
 	
+	//REFACTOR: outsource handlers, 
 	public void setValues( final Ingredient zutat){
 		
 		hinweisDetails.setText("");
@@ -446,7 +452,7 @@ public class InfoZutatDialog<T> extends Composite {
 			});
 					
 
-	    	// i want no more plus, but the "andere" field
+
 //	    	flow.add(moreExtractions);
 			
 	    	// select the current extraction in the list
@@ -568,7 +574,7 @@ public class InfoZutatDialog<T> extends Composite {
 		costTextBox.selectAll();
 	}
 	
-
+	//REFACTOR: correct, use Distance class
 	private void triggerHerkunftChange(final Ingredient zutat,
 			final ListBox herkuenfte) {
 		Boolean notChanged = true;
@@ -587,7 +593,7 @@ public class InfoZutatDialog<T> extends Composite {
 	    	notChanged = false;
 	    	
 		} else {
-		for(SingleDistance singleDistance : presenter.getDAO().cdata.distances){
+		for(SingleDistance singleDistance : presenter.getDCO().cdata.distances){
 			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 				
@@ -701,7 +707,7 @@ public class InfoZutatDialog<T> extends Composite {
 	
 	
 	
-	
+	//REFACTOR: listen to eventbus
 	public void updateSaison(IngredientSpecification zutatSpec) {
 		// if it is Greenhouse, or conserved then it should be kohärent...
 		
@@ -768,42 +774,13 @@ public class InfoZutatDialog<T> extends Composite {
 			updateSaison(zutatSpec);
 		}
 		
-//		String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-		
-//		valueLabel.setText(formatted + "g CO2-Äquivalent");
 		if(selectedRow != -1){
-//			if(EaternityRechner.zutatImMenu.contains(zutat)){
-//				EaternityRechner.zutatImMenu.set(EaternityRechner.zutatImMenu.indexOf(zutat), zutat);
-//				
-//				menuTable.setHTML(selectedRow, 3, "ca "+formatted + "g *");
 				recipe.ingredients.set(selectedRow, zutatSpec);
-//				Double MenuLabelWert = getRezeptCO2(recipe.Zutaten);
-				
-//				String formattedMenu = NumberFormat.getFormat("##").format(MenuLabelWert);
-//				suggestTable.setHTML(0,1,"ca <b>"+formattedMenu+"g</b> *");
-				
 				rezeptviewParent.changeIcons(selectedRow, zutatSpec);
 				rezeptviewParent.updateSuggestion();
-//				rezeptviewParent.updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
-//			}
-			//TODO uncomment this:
-			// EaternityRechner.MenuTable.setText(row, 4, ": ca. "+formatted + "g CO2-Äquivalent");
 		}
-		
-		
 	}
 	
-	private void styleLabel( HTMLPanel panel, boolean selected) {
-		
-		String style = selectionStyle.selectedBlob();
-
-		if (selected) {
-			panel.addStyleName(style);
-		} else {
-			panel.removeStyleName(style);
-		}
-	
-}
 	public void setZutatSpec(IngredientSpecification zutatSpec) {
 		this.zutatSpec = zutatSpec;
 	}
@@ -821,13 +798,5 @@ public class InfoZutatDialog<T> extends Composite {
 	}
 	public Recipe getRezept() {
 		return recipe;
-	}
-	private Double getRezeptCO2(List<IngredientSpecification> Zutaten) {
-		Double MenuLabelWert = 0.0;
-		for (IngredientSpecification zutatSpec : Zutaten) { 
-			MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-
-		}
-		return MenuLabelWert;
 	}
 }
