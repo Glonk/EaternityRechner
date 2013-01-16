@@ -9,8 +9,11 @@ import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.RecipeAddedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.ui.MenuPreviewView;
+import ch.eaternity.client.ui.widgets.RecipeView;
+import ch.eaternity.client.ui.widgets.Search;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
@@ -96,9 +99,102 @@ public class DataController {
 	
 	// --------------------- Methods accessed by Widgets --------------------- 
 	
-	public void createRecipe() {}
+	public void createRecipe() {
+		Recipe recipe = new Recipe();
+		cloneRecipe(recipe);
+	}
 	
-	public void cloneRecipe(Recipe recipe) {}
+	public void cloneRecipe(Recipe recipe) {
+		if (cdata.currentKitchen == null) {
+			if (!recipe.kitchenIds.contains(cdata.currentKitchen.id));
+				recipe.kitchenIds.add(cdata.currentKitchen.id);
+		}
+		else {
+			
+		}
+		
+		eventBus.fireEvent(new RecipeAddedEvent(recipe));
+	}
+	
+	public void saveRecipe(Recipe recipe) {
+		
+		dataRpcService.addRezept(recipe, new AsyncCallback<Long>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+
+			public void onSuccess(Long id) {
+
+				// when this is your first one... so show the panel... should be automatic
+//				Search.yourMealsPanel.setVisible(true);
+				if(recipe.getDirectAncestorID() != null){
+					for(Recipe recipeDesc : dao.cdata.userRecipes){
+						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
+							recipeDesc.addDirectDescandentID(id);
+						}
+					}
+					for(Recipe recipeDesc : dao.cdata.kitchenRecipes){
+						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
+							recipeDesc.addDirectDescandentID(id);
+						}
+					}
+
+				}
+				
+				if(!dao.cdata.loginInfo.getIsInKitchen()){
+					dao.cdata.userRecipes.add(recipe);
+				} else {
+					dao.cdata.kitchenRecipes.add(recipe);
+					dao.cdata.currentKitchenRecipes.add(recipe);
+				}
+				
+				String searchString = Search.SearchInput.getText().trim();
+				getSearchPanel().updateResults(searchString);
+				
+				rezeptView.setRecipeSavedMode(true);
+				
+				// there needs to be an automatic link between normal and editview...
+				rezeptView.recipe.setId(id);
+				
+				// TODO make same sense out of this
+				// this is just a test functionality...
+				// but it could be displayed somewhere else...
+//				rezeptView.codeImage.setHTML(
+//						"<a href="
+//						+ GWT.getHostPageBaseURL()
+//						+ "view.jsp?pid="
+//						+ Converter.toString(recipe.getId(), 34)
+//						+ " ><img src=http://chart.apis.google.com/chart?cht=qr&amp;chs=84x84&amp;chld=M|0&amp;chl="
+//						+ recipe.ShortUrl.substring(7, recipe.ShortUrl.length())
+//						+ " width=42 height=42 /></a>");
+				
+			}
+		});
+	}
+//REFACTOR: same as add
+	void removeRezept(final Recipe recipe) {
+		dataRpcService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Boolean ignore) {
+				
+				if(dao.cdata.userRecipes.contains(recipe)){
+					dao.cdata.userRecipes.remove(recipe);
+				}
+				if(recipe.isOpen()){
+					dao.cdata.publicRecipes.remove(recipe);
+				}
+				if(dao.cdata.kitchenRecipes.contains(recipe)){
+					dao.cdata.kitchenRecipes.remove(recipe);
+				}
+				if(getTopPanel().selectedKitchen != null)
+					dao.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
+				getSearchPanel().updateResults(Search.SearchInput.getText());
+			}
+		});
+	}
+	
 	
 	public void deleteRecipe(Recipe recipe) {}
 	

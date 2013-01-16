@@ -14,6 +14,10 @@ import java.util.List;
 
 
 
+import ch.eaternity.client.events.KitchenChangedEvent;
+import ch.eaternity.client.events.KitchenChangedEventHandler;
+import ch.eaternity.client.events.RecipeAddedEvent;
+import ch.eaternity.client.events.RecipeAddedEventHandler;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Converter;
@@ -167,9 +171,15 @@ public class RecipeView<T> extends Composite {
 	    setRecipeSavedMode(true);
 	  }
 	
-	private void bind() {
-		
-	}
+	  private void bind() {
+	  	// ---------------- Listen to the EventBus ----------------
+		presenter.getEventBus().addHandler(RecipeAddedEvent.TYPE, new RecipeAddedEventHandler() {
+			@Override
+			public void onEvent(RecipeAddedEvent event) {
+				showRezept(event.recipe);
+			}
+		});
+	  }
 
 
 	public void setRecipeSavedMode(boolean isSaved) {
@@ -497,9 +507,6 @@ void onKeyUp(KeyUpEvent event) {
 						
 						
 					}
-//					rezeptView.detailText.setVisible(false);
-//					rezeptView.cookingInstr.setVisible(true);
-//					rezeptView.htmlCooking.setVisible(true);
 					mehrDetails.setText("mehr Details");
 					askForLess = false;
 					if(showImageHandler != null){
@@ -510,9 +517,6 @@ void onKeyUp(KeyUpEvent event) {
 				} else {
 //					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+cookingInstructions);
 					if(getRezept().image != null){
-
-//						overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
-//						detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
 						if(showImageHandler == null){
 							showImageHandler = showImageRezept.addLoadHandler(new LoadHandler(){
 								@Override
@@ -530,14 +534,8 @@ void onKeyUp(KeyUpEvent event) {
 						showImageRezept.setUrl(getRezept().image.getServingUrl()+"=s800");
 						showImageRezept.setWidth("340px");
 						showImageRezept.setStyleName("imageBig");
-//						rezeptView.detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+rezept.getCookInstruction());
-						
+			}
 
-					}
-//					detailText.setWidth("730px");
-//					detailText.setVisible(true);
-//					cookingInstr.setVisible(false);
-//					htmlCooking.setVisible(false);
 					mehrDetails.setText("weniger Details");
 					askForLess = true;
 
@@ -560,14 +558,7 @@ void onKeyUp(KeyUpEvent event) {
 				recipe.comments.add(recipe.comments.get(i));
 			}
 	    }
-	    
-//	    amountPersons.setText(recipe.getPersons().toString());
-	    
-//	    cookingInstr.setText(recipe.getCookInstruction());
-//	    showRezept(rezept);
-//	    showRezept(recipe);
 
-		
 	    saved = true;
 	    
 	    if(presenter.getLoginInfo().isAdmin() && recipe.getEmailAddressOwner() != null ) {

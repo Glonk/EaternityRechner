@@ -890,15 +890,15 @@ public class KitchenDialog<T> extends DialogBox{
 		for(Widget widget : superDisplay.getRezeptList()){
 			RecipeView rezeptView = ((RecipeView) widget);
 			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
-			zutaten.addAll(rezeptView.getRezept().Zutaten);
+			zutaten.addAll(rezeptView.getRezept().ingredients);
 			for(IngredientSpecification zutatSpec : zutaten ){
-				int index = rezeptView.getRezept().Zutaten.indexOf(zutatSpec);
+				int index = rezeptView.getRezept().ingredients.indexOf(zutatSpec);
 				for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
 					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
 							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
 
 						zutatSpec.setDistance(singleDistance.getDistance());
-						rezeptView.getRezept().Zutaten.set(index, zutatSpec);
+						rezeptView.getRezept().ingredients.set(index, zutatSpec);
 
 						break;
 					}
@@ -947,7 +947,7 @@ public class KitchenDialog<T> extends DialogBox{
 			}
 			@Override
 			public void onSuccess(Boolean okay) {
-				presenter.getClientData().lastKitchen = id;
+				presenter.getClientData().cdata.lastKitchen = id;
 				presenter.getLoginInfo().setLastKitchen(id);
 				presenter.getLoginInfo().setIsInKitchen(true);
 			}
