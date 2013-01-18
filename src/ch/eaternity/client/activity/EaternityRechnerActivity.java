@@ -67,8 +67,6 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		this.place = place;
 		
 		this.menuPreview = factory.getMenuPreviewView();
-
-		
 	}
 
 	
@@ -177,7 +175,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 			}
 		});
 	}
-//REFACTOR: same as add
+//REFACTOR: same as add - Done
 	void removeRezept(final Recipe recipe) {
 		dataRpcService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
@@ -267,7 +265,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		return getTopPanel().Monate.getSelectedIndex()+1;
 	}
 	
-	//REFACTOR: DataController
+	//REFACTOR: DataController - Done
 	public void addNewRecipe() {
 		// create a new recipe
 		Recipe recipe = new Recipe();

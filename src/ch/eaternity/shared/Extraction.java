@@ -24,12 +24,15 @@ public class Extraction implements Serializable,Cloneable{
     
 	public String symbol;
 	
+	/*
 	public Condition stdCondition;
 	public Production stdProduction;
 	public MoTransportation stdMoTransportation;
 	
 	@Embedded
 	public List<ProductLabel> stdProductLabels;
+	
+	*/
 	
     private Extraction() {}
     

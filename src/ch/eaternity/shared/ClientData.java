@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 
 public class ClientData implements Serializable{
-	
+
 	private static final long serialVersionUID = -8325524250818128692L;
 	public List<Recipe> publicRecipes = new ArrayList<Recipe>();
 	public List<Recipe> publicRecipesNoDescs = new ArrayList<Recipe>();

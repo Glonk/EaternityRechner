@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Serialized;
 
 public class Ingredient implements IsSerializable{
@@ -25,15 +24,17 @@ public class Ingredient implements IsSerializable{
     @Transient
     public Boolean noAlternative;
     private Long[] alternativeIds;
-    Key<Ingredient> alternativeKeys;
  
+    // currently related to Switzerland
 	public Boolean hasSeason;
 	public SeasonDate startSeason;
 	public SeasonDate stopSeason;
+	
 	public List<String> tags;
     
     // possibly to be eliminated
     public String stdExtractionSymbol;
+    
     @Serialized
 	public Extraction stdExtraction;
     @Serialized 

@@ -38,10 +38,6 @@ public interface EaternityRechnerView<T> extends IsWidget
 	{
 		DataController getDCO();
 
-		//		void onAddButtonClicked();
-//		void onDeleteButtonClicked();
-//		void onItemClicked(T clickedItem);
-//		void onItemSelected(T selectedItem);
 		void goTo(Place place);
 		
 		TopPanel getTopPanel();

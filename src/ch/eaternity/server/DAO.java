@@ -182,7 +182,8 @@ public class DAO extends DAOBase
 			ofy().put(kitchen);
 		}
 
-		// here we add more logic...
+		// here we add more logic... 
+		// creates References to correct Staff object
 		for(Staff staff:kitchen.personal){
 			Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", staff.userEmail);
 

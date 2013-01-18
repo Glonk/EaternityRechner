@@ -10,7 +10,9 @@ import javax.persistence.Id;
 public class Staff implements Serializable {
 
 	/** 
+	 * Exists because adding people to kitchens is not related to the google accounts yet necessarly...
 	 * 
+	 * LoginInfo with UserEmail is later in timeline
 	 */
 	private static final long serialVersionUID = 3172640409035191698L;
 	
@@ -20,14 +22,9 @@ public class Staff implements Serializable {
 	public Long id;
    
 	public String userName;
-	
-
 	public String userEmail;
 	
-	
-	
-// this is for the many-to-many relationship of kitchens and the staff
-	
+	// this is for the many-to-many relationship of kitchens and the staff
 	public List<Long> kitchensIds;
 	
 	public Staff() {

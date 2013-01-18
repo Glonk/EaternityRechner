@@ -45,6 +45,7 @@ public class Recipe implements Serializable, Cloneable{
 	public EnergyMix energyMix;
 	
 	public String ShortUrl;
+	// no List, just in one Kitchen
 	public List<Long> kitchenIds =  new ArrayList<Long>(); // empty is no kitchen...
 	
 	private Long persons;
