@@ -30,6 +30,7 @@ public class LoginInfo implements Serializable {
 	//werden die ueberhaupt gespeichert? weil ev. Google Objekt
 	private boolean isInKitchen;
 	private Long currentKitchen;
+	private List<Long> kitchenIDs;
 	// private String lastLogin;
 	// private String lastLocation;
 	
