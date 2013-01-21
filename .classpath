@@ -2,7 +2,15 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
+	<classpathentry kind="con" path="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/urlshortener-v1r7lv1.12.0-beta"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-2.2.3.jar" sourcepath="/Users/manuel/Documents/workspace/objectify-2.2.3/src">
@@ -13,18 +21,10 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dnd-3.1.1.jar"/>
-	<classpathentry kind="src" path=".apt_generated">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtupload-gae-0.6.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwtupload-0.6.4-20110712.073705-11.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet-deps-1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-maps-1.1.1.jar"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
-	<classpathentry kind="con" path="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/urlshortener-v1r7lv1.12.0-beta"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-urlshortener-v1-0.3-alpha.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
