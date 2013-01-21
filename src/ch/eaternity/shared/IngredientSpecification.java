@@ -163,6 +163,10 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public String getStopSeason() {
 		return stopSeason;
 	}
+	
+	public Boolean hasSeason() {
+		return ( startSeason != null && stopSeason != null );
+	}
 
 	public void setZutat_id(Long zutat_id) {
 		this.zutat_id = zutat_id;

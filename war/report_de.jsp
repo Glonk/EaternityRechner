@@ -10,6 +10,8 @@
 
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
+<%@ page import="ch.eaternity.shared.Pair" %>
+
 
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.Locale" %>
@@ -246,7 +248,10 @@ for(Recipe recipe: variables.kitchenRecipes){
 
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
-
+<% 
+Pair<Double, Double> seasonQuotients;
+seasonQuotients = variables.catryzer.getSeasonQuotient();
+%>
 <tr>
 	<td>Total C02 [kg CO2]:</td>
 	<td><%= co2_formatter.format(variables.catryzer.getTotalCo2().totalValue/1000) %></td>
@@ -275,9 +280,19 @@ for(Recipe recipe: variables.kitchenRecipes){
 	<td>Total Cost [CHF]:</td>
 	<td><%= cost_formatter.format(variables.catryzer.getTotalCost()) %></td>
 </tr>
+
 <tr>
-	<td>Season Quotient [percent]:</td>
-	<td><%= cost_formatter.format(variables.catryzer.getSeasonQuotient()*100) %></td>
+	<td>Season Unit Quotient [percent]:</td>
+	<td><%= cost_formatter.format(seasonQuotients.first*100) %></td>
+</tr>
+<tr>
+	<td>Season Weight Quotient [percent]:</td>
+	<td><%= cost_formatter.format(seasonQuotients.second*100) %></td>
+</tr>
+<tr>
+	<td><br />Season Quotients: Number/Weight of ingredients who can have season over number/weight of ingredients who actually have season, are fresh and are grown in switzerland.
+</td>
+	<td></td>
 </tr>
 
 </table>

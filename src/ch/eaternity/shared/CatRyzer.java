@@ -359,31 +359,35 @@ public class CatRyzer {
 	
 	// how many of the vegetables and fruits are seasonal, fresh from switzerland
 	// lies between zero and one
-	public double getSeasonQuotient() {
-		Integer numFruitsAndVegetables = ingSpecs.size();
+	public Pair<Double, Double> getSeasonQuotient() {
+		Integer numFruitsAndVegetables = 0;
 		Integer numAreSeasonal = 0;
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+		Double seasonalWeight = 0.0;
+		Double totalWeight = 0.0;
 		for(IngredientSpecification ingSpec: ingSpecs) {
-			// fruits and veggies?
-			if (getIngredient(ingSpec).tags != null && (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes"))) {	
-				// have season setted?
-				if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
-					SeasonDate dateStart = new SeasonDate();
-					dateStart.setDate(ingSpec.getStartSeason());
-					SeasonDate dateStop = new SeasonDate();
-					dateStop.setDate(ingSpec.getStopSeason());
-					SeasonDate dateCook = new SeasonDate();
-					dateCook.setDate(ingSpec.getCookingDate());
+			if (ingSpec.getCookingDate() != null && ingSpec.hasSeason()) {
+				numFruitsAndVegetables++;
+				totalWeight =  totalWeight + ingSpec.getMengeGramm();
+				
+				SeasonDate dateStart = new SeasonDate();
+				dateStart.setDate(ingSpec.getStartSeason());
+				SeasonDate dateStop = new SeasonDate();
+				dateStop.setDate(ingSpec.getStopSeason());
+				SeasonDate dateCook = new SeasonDate();
+				dateCook.setDate(ingSpec.getCookingDate());
 				// have season?
 				if (dateCook.after(dateStart) && dateCook.before(dateStop)) {
 					// are fresh from switzerland
-					if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch"))
+					if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch")) {
 						numAreSeasonal++;
+						seasonalWeight = seasonalWeight + ingSpec.getMengeGramm();
 					}
 				}
 			}
 		}
-		return numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
+
+		Pair<Double,Double> pair = new Pair<Double,Double>(numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue(), seasonalWeight/totalWeight);
+		return pair;
 	}
 	
 	
