@@ -20,8 +20,10 @@ import ch.eaternity.shared.IngredientSpecification;
 
 
 import com.google.api.gwt.client.impl.ClientGoogleApiRequestTransport;
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
+
 import com.google.api.gwt.shared.GoogleApiRequestTransport;
+
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
