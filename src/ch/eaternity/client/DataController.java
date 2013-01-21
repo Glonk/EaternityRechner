@@ -3,11 +3,8 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
-
 
 import ch.eaternity.client.events.KitchenChangedEvent;
-import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.RecipeAddedEvent;
@@ -15,11 +12,10 @@ import ch.eaternity.client.events.RecipeDeletedEvent;
 import ch.eaternity.client.events.RecipeIngredientsChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.ui.widgets.RecipeView;
 import ch.eaternity.client.ui.widgets.Search;
+import ch.eaternity.client.ui.widgets.TopPanel;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Distance;
-import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.LoginInfo;
@@ -87,9 +83,9 @@ public class DataController {
 					eventBus.fireEvent(new KitchenChangedEvent(-1L));
 				
 				// fill NoDescs Recipes
-				cdata.userRecipesNoDescs = Util.getUnDescendantedRecipes(cdata.userRecipes);
-				cdata.publicRecipesNoDescs = Util.getUnDescendantedRecipes(cdata.publicRecipes);
-				cdata.currentKitchenRecipesNoDescs = Util.getUnDescendantedRecipes(cdata.currentKitchenRecipes);
+				cdata.userRecipes = Util.getUnDescendantedRecipes(cdata.userRecipes);
+				cdata.publicRecipes = Util.getUnDescendantedRecipes(cdata.publicRecipes);
+				cdata.currentKitchenRecipes = Util.getUnDescendantedRecipes(cdata.currentKitchenRecipes);
 				
 				// Load current Month or Kitchen Month
 				Date date = new Date();
@@ -109,7 +105,7 @@ public class DataController {
 		});
 	}
 	
-	// --------------------- Methods accessed by Widgets --------------------- 
+	// --------------------- Methods accessed by SubViews --------------------- 
 	
 	public void createRecipe() {
 		Recipe recipe = new Recipe();
@@ -118,8 +114,8 @@ public class DataController {
 	
 	public void cloneRecipe(Recipe recipe) {
 		if (cdata.currentKitchen == null) {
-			if (!recipe.kitchenIds.contains(cdata.currentKitchen.id));
-				recipe.kitchenIds.add(cdata.currentKitchen.id);
+			if (!recipe.kitchenId.contains(cdata.currentKitchen.id));
+				recipe.kitchenId.add(cdata.currentKitchen.id);
 			cdata.kitchenRecipes.add(recipe);
 		}
 		else {
@@ -129,31 +125,13 @@ public class DataController {
 		eventBus.fireEvent(new RecipeAddedEvent(recipe));
 	}
 	
-	public void saveRecipe(final Recipe recipe) {
-		
-		// create saveRecipe method...
+	public void saveRecipe(final Recipe recipe) { 
 		dataRpcService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 
 			public void onSuccess(Long id) {
-
-				// when this is your first one... so show the panel... should be automatic
-//				Search.yourMealsPanel.setVisible(true);
-				if(recipe.getDirectAncestorID() != null){
-					for(Recipe recipeDesc : dao.cdata.userRecipes){
-						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
-							recipeDesc.addDirectDescandentID(id);
-						}
-					}
-					for(Recipe recipeDesc : dao.cdata.kitchenRecipes){
-						if(recipeDesc.getId().equals(recipe.getDirectAncestorID())){
-							recipeDesc.addDirectDescandentID(id);
-						}
-					}
-
-				}
 				
 				if(!dao.cdata.loginInfo.getIsInKitchen()){
 					dao.cdata.userRecipes.add(recipe);
@@ -180,16 +158,11 @@ public class DataController {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
+				cdata.userRecipes.remove(recipe);
+				cdata.publicRecipes.remove(recipe);
+				cdata.kitchenRecipes.remove(recipe);
+				cdata.currentKitchenRecipes.remove(recipe);
 				
-				if(cdata.userRecipes.contains(recipe)){
-					cdata.userRecipes.remove(recipe);
-				}
-				if(recipe.isOpen()){
-					cdata.publicRecipes.remove(recipe);
-				}
-				if(cdata.kitchenRecipes.contains(recipe)){
-					cdata.kitchenRecipes.remove(recipe);
-				}
 				eventBus.fireEvent(new RecipeDeletedEvent(recipe.getId()));
 			}
 		});
@@ -200,7 +173,7 @@ public class DataController {
 	public void addIngredientToMenu(Ingredient ingredient, int grams) {
 
 		IngredientSpecification ingSpec = new IngredientSpecification(ingredient, grams);
-		ingSpec.setDistance(cdata.dist.getDistance(ingSpec.getHerkunft().symbol, cdata.currentLocation));
+		ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
 		
 		cdata.editRecipe.addIngredient(ingSpec);
 
@@ -327,15 +300,15 @@ public class DataController {
 	}
 	
 	public List<Recipe> searchUserRecipes(String searchString) {
-		return searchRecipe(searchString, cdata.userRecipesNoDescs);
+		return searchRecipe(searchString, cdata.userRecipes);
 	}
 	
 	public List<Recipe> searchKitchenRecipes(String searchString) {
-		return searchRecipe(searchString, cdata.currentKitchenRecipesNoDescs);
+		return searchRecipe(searchString, cdata.currentKitchenRecipes);
 	}
 	
 	public List<Recipe> searchPublicRecipes(String searchString) {
-		return searchRecipe(searchString, cdata.publicRecipesNoDescs);
+		return searchRecipe(searchString, cdata.publicRecipes);
 	}
 	
 	
@@ -346,7 +319,7 @@ public class DataController {
 	public void changeKitchenRecipes(Long id) {
 		cdata.currentKitchenRecipes.clear();
 		for(Recipe recipe : cdata.kitchenRecipes){
-			for(Long kitchenId : recipe.kitchenIds){
+			for(Long kitchenId : recipe.kitchenId){
 				if(kitchenId.equals(id))
 				{
 					cdata.currentKitchenRecipes.add(recipe);
@@ -355,8 +328,35 @@ public class DataController {
 		}
 	}
 	
-	
-	
+	/**
+	 * make sure you fetched all distances before!! otherwise not all ingredients will be updated
+	 * @param processedLocation
+	 */
+
+	public void changeCurrentLocation(String processedLocation) {
+		cdata.currentLocation = processedLocation;
+		
+		// Iterate over all IngredientSpecificatino of Kitchen Recipes or editRecipe
+		List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
+		if (cdata.currentKitchen != null ) {
+			for (Recipe recipe : cdata.currentKitchenRecipes)
+				ingSpecs.addAll(recipe.getZutaten());
+		}
+		else
+			ingSpecs.addAll(cdata.editRecipe.getZutaten());
+		
+		for (IngredientSpecification ingSpec : ingSpecs) {
+				ingSpec.setDistance(cdata.distances.getDistance(processedLocation, ingSpec.getExtraction().symbol));
+		}		
+			
+		// change stdExtraction of all Ingredients
+		for (Ingredient ing : cdata.ingredients) {
+			ing.getExtractions().add(0, ing.stdExtraction); 
+			ing.stdExtraction = ing.getExtractions().get(0);
+		}
+		
+		eventBus.fireEvent(new RecipeIngredientsChangedEvent());
+	}
 	
 	
 	
@@ -365,7 +365,6 @@ public class DataController {
 	 * This function may proof to be useful for a more fuzzy matching!
 	 * This is used for a matching in the recipes names
 	 */
-
 	private static int getLevenshteinDistance(String s, String t) {
 		if (s == null || t == null) {
 			throw new IllegalArgumentException("Strings must not be null");
@@ -455,17 +454,8 @@ public class DataController {
 		return cdata.publicRecipes;
 	}
 
-	public List<Recipe> getPublicRecipesNoDescs() {
-		return cdata.publicRecipesNoDescs;
-	}
-	
-
 	public List<Recipe> getUserRecipes() {
 		return cdata.userRecipes;
-	}
-
-	public List<Recipe> getUserRecipesNoDescs() {
-		return cdata.userRecipesNoDescs;
 	}
 
 	public List<Recipe> getKitchenRecipes() {
@@ -474,10 +464,6 @@ public class DataController {
 
 	public List<Recipe> getCurrentKitchenRecipes() {
 		return cdata.currentKitchenRecipes;
-	}
-
-	public List<Recipe> getCurrentKitchenRecipesNoDescs() {
-		return cdata.currentKitchenRecipesNoDescs;
 	}
 
 	public List<Recipe> getWorkspaceRecipes() {
@@ -493,10 +479,6 @@ public class DataController {
 	}
 
 	public Distance getDist() {
-		return cdata.dist;
-	}
-
-	public List<SingleDistance> getDistances() {
 		return cdata.distances;
 	}
 
@@ -519,5 +501,9 @@ public class DataController {
 	public String getCurrentLocation() {
 		return cdata.currentLocation;
 	}
+
+
+
+
 }
 

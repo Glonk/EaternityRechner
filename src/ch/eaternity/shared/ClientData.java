@@ -11,22 +11,16 @@ public class ClientData implements Serializable{
 
 	private static final long serialVersionUID = -8325524250818128692L;
 	public List<Recipe> publicRecipes = new ArrayList<Recipe>();
-	public List<Recipe> publicRecipesNoDescs = new ArrayList<Recipe>();
-	
 	public List<Recipe> userRecipes = new ArrayList<Recipe>();
-	public List<Recipe> userRecipesNoDescs = new ArrayList<Recipe>();
-	
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+	
 	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
-	public List<Recipe> currentKitchenRecipesNoDescs = new ArrayList<Recipe>();
 	
 	public List<Recipe> workspaceRecipes = new ArrayList<Recipe>();
-	
 	public Recipe editRecipe;
 	
 	public List<Ingredient> ingredients;
-	public Distance dist;
-	public List<SingleDistance> distances;
+	public Distance distances;
 	public List<Workgroup> kitchens;
 
 	public LoginInfo loginInfo;

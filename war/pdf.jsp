@@ -1451,7 +1451,7 @@ String code = Converter.toString(compute,34);
 								if(counter != 1){
 							%>, <%
 								}
-							%><span class="nowrap"><%=ingredient.getMengeGramm()%> g <%=ingredient.getName()%></span><%
+							%><span class="nowrap"><%=ingredient.getWeight()%> g <%=ingredient.getName()%></span><%
 								}
 							%>
 			</td>
@@ -1466,7 +1466,7 @@ String code = Converter.toString(compute,34);
 			
 				<%
 											if(recipe.comments != null){
-												for(RecipeComment comment: recipe.comments){
+																				for(RecipeComment comment: recipe.comments){
 										%>
 				<tr>
 				<td>• <%=comment.symbol%><%
@@ -1483,7 +1483,7 @@ String code = Converter.toString(compute,34);
 
 				<%
 					}
-						}
+								}
 				%>
 				
 				<tr>
@@ -1588,13 +1588,13 @@ String code = Converter.toString(compute,34);
 			
 				<%
 								counter = 0;
-									for(IngredientSpecification ingredient: recipe.ingredients){
-									counter = counter + 1;
+														for(IngredientSpecification ingredient: recipe.ingredients){
+														counter = counter + 1;
 							%><%
 								if(counter != 1){
 							%>, <%
 								}
-							%><span class="nowrap"><%=ingredient.getMengeGramm()%> g <%=ingredient.getName()%></span><%
+							%><span class="nowrap"><%=ingredient.getWeight()%> g <%=ingredient.getName()%></span><%
 								}
 							%>
 			
@@ -1610,7 +1610,7 @@ String code = Converter.toString(compute,34);
 			
 			<%
 							if(recipe.comments != null){
-							for(RecipeComment comment: recipe.comments){
+											for(RecipeComment comment: recipe.comments){
 						%>
 			<tr>
 			<td>• <%=comment.symbol%><%
@@ -1627,7 +1627,7 @@ String code = Converter.toString(compute,34);
 
 			<%
 				}
-				}
+					}
 			%>
 			<tr>
 			<td></td>
@@ -1734,9 +1734,13 @@ String code = Converter.toString(compute,34);
 			
 				<%
 								counter = 0;
-									for(IngredientSpecification ingredient: recipe.ingredients){
-									counter = counter + 1;
-							%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %></span><%
+														for(IngredientSpecification ingredient: recipe.ingredients){
+														counter = counter + 1;
+							%><%
+								if(counter != 1){
+							%>, <%
+								}
+							%><span class="nowrap"><%=ingredient.getWeight()%> g <%= ingredient.getName() %></span><%
 				}
 				%>
 

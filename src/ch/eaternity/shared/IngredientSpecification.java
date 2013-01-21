@@ -60,7 +60,11 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private MoTransportation transportation;
 	private double distance; // in km
 	private Long label;
-	private Boolean hasSeason;
+	
+	public Boolean hasSeason() {
+		return ( startSeason != null && stopSeason != null );
+	}
+
 	private SeasonDate startSeason;
 	private SeasonDate stopSeason;
 	
@@ -133,12 +137,12 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		this.setName(name);
 	}
 
-	public void setHerkunft(Extraction stdExtractionSymbol) {
+	public void setExtraction(Extraction stdExtractionSymbol) {
 		this.extraction = stdExtractionSymbol;
 	}
 	
 	
-	public Extraction getHerkunft() {
+	public Extraction getExtraction() {
 		return extraction;
 	}
 	public void setCookingDate(Date cookingDate) {
@@ -147,22 +151,22 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public Date getCookingDate() {
 		return cookingDate;
 	}
-	public void setZustand(Condition zustand) {
+	public void setCondition(Condition zustand) {
 		this.condition = zustand;
 	}
-	public Condition getZustand() {
+	public Condition getCondition() {
 		return condition;
 	}
-	public void setProduktion(Production produktion) {
+	public void setProduction(Production produktion) {
 		this.production = produktion;
 	}
-	public Production getProduktion() {
+	public Production getProduction() {
 		return production;
 	}
-	public void setTransportmittel(MoTransportation transportmittel) {
+	public void setTransportation(MoTransportation transportmittel) {
 		this.transportation = transportmittel;
 	}
-	public MoTransportation getTransportmittel() {
+	public MoTransportation getTransportation() {
 		return transportation;
 	}
 
@@ -201,11 +205,11 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		return ingredientId;
 	}
 
-	public void setMengeGramm(int mengeGramm) {
-		this.weight = mengeGramm;
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
 
-	public int getMengeGramm() {
+	public int getWeight() {
 		return weight;
 	}
 

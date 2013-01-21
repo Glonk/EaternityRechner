@@ -397,7 +397,7 @@ void onKeyUp(KeyUpEvent event) {
 		//TODO hinzufügen zu welchen Küchen das Rezept gehört.
 		String kitchenString = "";
 		Boolean gotOne = false;
-		for(Long kitchenId : recipe.kitchenIds){
+		for(Long kitchenId : recipe.kitchenId){
 			Workgroup kitchen = presenter.getClientData().getKitchenByID(kitchenId);
 			if(kitchen != null){
 				kitchenString = kitchenString + " [" + kitchen.getSymbol() +"]";
@@ -987,7 +987,7 @@ void onKeyUp(KeyUpEvent event) {
 		for(IngredientSpecification zutatSpec : recipe.ingredients){
 			Ingredient zutat = presenter.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 //			amount of Persons needs to be assigned always!
-			Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdAmountGramm)/recipe.getPersons();
+			Double amount = (1.0*zutatSpec.getWeight()/zutat.stdAmountGramm)/recipe.getPersons();
 			Double alreadyAmount = 0.0;
 			int index = -1;
 //			check if the indgredient is already in there...

@@ -3,23 +3,17 @@ package ch.eaternity.client.ui.widgets;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.events.KitchenChangedEvent;
-import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.EnergyMix;
-import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Workgroup;
-import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Staff;
+import ch.eaternity.shared.Workgroup;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ButtonCell;
@@ -27,39 +21,24 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.geocode.DirectionQueryOptions;
-import com.google.gwt.maps.client.geocode.DirectionResults;
-import com.google.gwt.maps.client.geocode.Directions;
-import com.google.gwt.maps.client.geocode.DirectionsCallback;
-import com.google.gwt.maps.client.geocode.DirectionsPanel;
 import com.google.gwt.maps.client.geocode.Geocoder;
-import com.google.gwt.maps.client.geocode.LatLngCallback;
-import com.google.gwt.maps.client.geocode.LocationCallback;
-import com.google.gwt.maps.client.geocode.Placemark;
-import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -67,35 +46,24 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.sun.corba.se.pept.transport.ContactInfo;
 
 
 public class KitchenDialog<T> extends DialogBox{
-	
-		static Long[] longList ={1l,5l,10l,20l};
-	 private static List<Device> devicesHere = Arrays.asList(
-		      new Device("","",0.0,  longList, 10l));
-	 
-	 private static List<Staff> personsHere = Arrays.asList(new Staff("Name","email"));
-	 
-	 
-	
 	interface Binder extends UiBinder<Widget, KitchenDialog> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private final static Geocoder geocoder = new Geocoder();
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
 
 	@UiField Button executeButton;
-	@UiField FlexTable mapsTable;
 	@UiField ScrollPanel scrollPanel;
-	@UiField FlexTable summaryTable;
 	@UiField FlexTable deviceTable;
 	@UiField FlexTable personTable;
+	@UiField InlineLabel locationLabel;
 	@UiField Button locationButton;
 	@UiField Button addDevice;
 	@UiField Button addPerson;
 	@UiField Button deleteKitchen;
-	@UiField TextBox clientLocationDialog;
 	@UiField TextBox kitchenNameTextBox;
 	@UiField Label kitchenId;
 	@UiField static TextBox energyMix;
@@ -105,14 +73,12 @@ public class KitchenDialog<T> extends DialogBox{
 	@UiField Anchor newKitchen;
 	@UiField HTMLPanel kitchen;
 	
-//	@UiField Button commitButton;
-	@UiField
-	static CellTable<Device> devidesCellTable  = new CellTable<Device>();
+	@UiField static CellTable<Device> devidesCellTable  = new CellTable<Device>();
+	@UiField static CellTable<Staff> personsCellTable  = new CellTable<Staff>();
 	
-	@UiField
-	static CellTable<Staff> personsCellTable  = new CellTable<Staff>();
-	
-//	@UiField SimplePager pager;
+	static Long[] longList ={1l,5l,10l,20l};
+	private static List<Device> devicesHere = Arrays.asList(new Device("","",0.0,  longList, 10l));
+	private static List<Staff> personsHere = Arrays.asList(new Staff("Name","email"));
 	
 	ArrayList<SingleDistance> allDistances = new ArrayList<SingleDistance>();
 	String currentLocation;
@@ -122,8 +88,18 @@ public class KitchenDialog<T> extends DialogBox{
 	Workgroup selectedKitchen;
 	
 	private Presenter<T> presenter;
+	private DataController dco;
+	
+	
+	// ---------------  public Methods--------------- 
+	
+	public KitchenDialog() {
+		currentLocation = dco.getCurrentLocation();
+	}
+	
 	public void setPresenter(Presenter<T> presenter){
 		this.presenter = presenter;
+		this.dco = presenter.getDCO();
 		
 		availableKitchens = presenter.getClientData().kitchens;
 		
@@ -133,7 +109,6 @@ public class KitchenDialog<T> extends DialogBox{
 			newKitchen.energyMix = new EnergyMix("ewz.naturpower",0.01345);
 			newKitchen.hasChanged = true;
 			availableKitchens.add(newKitchen);
-			
 		}
 
 		selectedKitchen = availableKitchens.get(0);
@@ -142,41 +117,9 @@ public class KitchenDialog<T> extends DialogBox{
 		devicesHere = selectedKitchen.devices;
 		personsHere = selectedKitchen.personal;
 		
-
 		openDialog();
-		
 	}
 	
-	private EaternityRechnerView superDisplay;
-
-	
-	Integer timeToWaitForGeocode = 1; // in seconds ( to not flood, and be blocked)
-
-	public KitchenDialog(String location, EaternityRechnerView superDisplay) {
-		this.superDisplay = superDisplay;
-//		String kitchenName = kitchens.getItemText(kitchens.getSelectedIndex());
-//		String kitchenName = "neue Küche";
-		processAddress(location,true);
-		
-		// this is only necessary for the first time...
-		currentLocation = location;
-		
-
-	
-	}
-
-
-	private void addKitchenNamesToList(List<Workgroup> availableKitchens) {
-		for(Workgroup kitchen : availableKitchens){
-			if(kitchen != null){
-				kitchens.addItem(kitchen.getSymbol(),Integer.toString(availableKitchens.indexOf(kitchen))); // +kitchen.location  kitchen.id.toString()+ kitchen.getSymbol() 
-			}
-	
-		}
-
-	}
-
-
 	private void openDialog() {
 		setWidget(binder.createAndBindUi(this));
 		setAnimationEnabled(true);
@@ -184,10 +127,11 @@ public class KitchenDialog<T> extends DialogBox{
 		show();
 		scrollPanel.setHeight("420px");
 		center();
-		clientLocationDialog.setText(currentLocation);
 		
 		kitchenNameTextBox.setText(kitchenName);
 		setText(kitchenName);
+		
+		locationLabel.setText("Ort der Kueche: " + currentLocation);
 		
 		if (selectedKitchen.id != null)
 				kitchenId.setText("Id: " + selectedKitchen.id);
@@ -210,16 +154,245 @@ public class KitchenDialog<T> extends DialogBox{
 		}
 		
 		initCellTable();
-	    
+	}
+
+	  @UiHandler("kitchens")
+	  void onKitchenChange(ChangeEvent event) {
+		   selectedKitchen = availableKitchens.get(kitchens.getSelectedIndex());
+		   switchKitchen();
+	  }
+	
+	  
+	  @UiHandler("addDevice")
+	  void onAddDevicePress(ClickEvent event) {
+	
+		  Long[] longList ={1l,5l,10l,20l};
+	  	  devicesHere.add(new Device("","",0.0, longList , 10l));
+	  devidesCellTable.setRowCount(devicesHere.size(), true);
+	  
+	  devidesCellTable.setRowData(0, devicesHere);
+		  
+	  }
+	  
+	  @UiHandler("addPerson")
+	  void onAddPersonPress(ClickEvent event) {
+		  
+		  
+	  personsHere.add(new Staff("Name","Email"));
+	  	  personsCellTable.setRowCount(personsHere.size(), true);
+	  	  
+	  	  personsCellTable.setRowData(0, personsHere);
+	  }
+	  
+	  @UiHandler("locationButton")
+	  void onClick(ClickEvent event) {
+		  DistancesDialog ddlg = new DistancesDialog(); 
+		  ddlg.setPresenter(presenter);
+	  }
+		  
+	@UiHandler("executeButton")
+	void onOkayClicked(ClickEvent event) {
+		presenter.getDCO().changeKitchen(selectedKitchen);
+	    saveAndCloseDialog();
 	}
 	
+	@UiHandler("kitchenNameTextBox")
+	  void onNameChange(KeyUpEvent event) {
+		  if(kitchenNameTextBox.getText().length()>1){
+			  this.kitchenName = kitchenNameTextBox.getText();
+			  setText(this.kitchenName);
+			  kitchens.setItemText(kitchens.getSelectedIndex(), this.kitchenName);
+			  selectedKitchen.setSymbol(this.kitchenName);
+		  }
+	  }
+	  
+	  @UiHandler("energyMix")
+	  void onEnergyMixChange(KeyUpEvent event) {
+		  if(energyMix.getText().length()>1){			  
+			  selectedKitchen.energyMix.Name = energyMix.getText();
+		  }
+	  }
+	  
+	  @UiHandler("energyMixco2")
+	  void onEnergyMixco2Change(KeyUpEvent event) {
+		  if(energyMixco2.getText().length()>1){ // check of parseDouble is possible
+			  selectedKitchen.energyMix.Co2PerKWh = Double.parseDouble(energyMixco2.getText());
+		  }
+	  }
+
+	  
+	  @UiHandler("newKitchen")
+	  public void onNewKitchenClick(ClickEvent event) {
+		  selectedKitchen = new Workgroup("neue Küche");
+		  selectedKitchen.location = "Zürich, Schweiz";
+		  availableKitchens.add(selectedKitchen);
+		  kitchens.addItem(selectedKitchen.getSymbol());
+		  kitchens.setSelectedIndex(kitchens.getItemCount()-1);
+		  switchKitchen();
+	  }
+
+	  
+	  @UiHandler("leaveKitchen")
+	  public void onLeaveKitchenClick(ClickEvent event) {
+		  presenter.getTopPanel().location.setVisible(true);
+		  presenter.getDCO().isInKitchen = false;
+		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
+		  presenter.getTopPanel().selectedKitchen = null;
+		  
+		  Search.yourRecipesText.setHTML(" in eigenen Rezepten");
+		  
+		  saveLastKitchen(0L);
+	
+		  saveAndCloseDialog();
+	  }
+	  
+		//REFACTOR: call deleteKitchen in DataController
+	  @UiHandler("deleteKitchen")
+	  void onDeleteKitchenPress(ClickEvent event) {
+		  // clear workspace if kitchen to delete matches kitchen which was worked on
+		  //presenter.removeAllRecipesFromWorkplace();
+		  
+		  // alle rezepte der Kueche loeschen
+		  
+		  
+		  // Kueche loeschen
+		  
+		  
+		  // kitchendialog neu laden
+		  
+		  //
+	  }
+	
+	
+	private void addKitchenNamesToList(List<Workgroup> availableKitchens) {
+		for(Workgroup kitchen : availableKitchens){
+			if(kitchen != null){
+				kitchens.addItem(kitchen.getSymbol(),Integer.toString(availableKitchens.indexOf(kitchen))); // +kitchen.location  kitchen.id.toString()+ kitchen.getSymbol() 
+			}
+		}
+	}
+
+
+	public void saveLastKitchen(final Long id) {
+		dataService.setYourLastKitchen(id, new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable error) {
+				Window.alert("Fehler : "+ error.getMessage());
+			}
+			@Override
+			public void onSuccess(Boolean okay) {
+				presenter.getClientData().cdata.lastKitchen = id;
+				presenter.getLoginInfo().setLastKitchen(id);
+				presenter.getLoginInfo().setIsInKitchen(true);
+			}
+		});
+	}
+
+	//REFACTOR: just call DataController saveKitchen
+	private void saveAndCloseDialog() {
+		for (PendingChange<?> pendingChange : pendingChanges) {
+	          pendingChange.commit();
+	        }
+        pendingChanges.clear();
+		
+        for (PendingPersonChange<?> pendingPersonChange : pendingPersonChanges) {
+        	pendingPersonChange.commit();
+	        }
+        pendingPersonChanges.clear();
+        
+		
+		// clear workspace (including prompts for saving) to avoid copying recipies from one kitchen to another)
+		presenter.removeAllRecipesFromWorkplace();
+		
+		
+		// this shoots to many rpc calls... (one should be enough)
+		// shouldn't shoot any, if there is no change...
+		// which exactly for this purpose the requestFactory in GWT 2.1 was developed...
+		if(presenter.getTopPanel().selectedKitchen != null){
+			// this is a hacK:
+			presenter.getTopPanel().selectedKitchen.hasChanged = false;
+			
+			dataService.addKitchen(presenter.getTopPanel().selectedKitchen, new AsyncCallback<Long>() {
+				@Override
+				public void onFailure(Throwable error) {
+					Window.alert("Fehler : "+ error.getMessage());
+				}
+				@Override
+				public void onSuccess(Long kitchenID) {
+					// this adds a new kitchen, yet must not be the selected one:
+					presenter.getTopPanel().selectedKitchen.id = kitchenID;
+					presenter.getDCO().changeKitchenRecipes(kitchenID);
+					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
+					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
+	//				Search.clientData.kitchens.add(kitchen);
+	//				kitchens.addItem(kitchen.getSymbol());
+					saveLastKitchen(kitchenID);
+					
+				}
+			});
+		}
+		
+		// The other kitchens need also to be saved...
+		
+		for(final Workgroup kitchen: availableKitchens){
+			// save all kitchens at once
+			if(kitchen != null && kitchen.hasChanged){ // has changed still needs to be set false	
+				dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
+					@Override
+					public void onFailure(Throwable error) {
+						Window.alert("Fehler : "+ error.getMessage());
+					}
+					@Override
+					public void onSuccess(Long kitchenID) {
+						// this adds a new kitchen, yet must not be the selected one:
+						kitchen.id = kitchenID;
+		//				Search.clientData.kitchens.add(kitchen);
+		//				kitchens.addItem(kitchen.getSymbol());
+					}
+				});
+			}
+		}
+		
+
+		// update search... this should also be done when loaded regular
+		
+		presenter.getSearchPanel().SearchInput.setText("");
+		presenter.getSearchPanel().updateResults(" ");
+		
+		
+		hide();
+	}
+
+
+	private void switchKitchen() {
+		//set Name
+		this.kitchenName = selectedKitchen.getSymbol();
+			setText(this.kitchenName);
+		  kitchenNameTextBox.setText(this.kitchenName);
+		  if (selectedKitchen.id != null)
+			  kitchenId.setText("Id: " + selectedKitchen.id);
+		  else
+			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
+		
+		  devicesHere = selectedKitchen.devices;
+		  devidesCellTable.setRowCount(devicesHere.size(), true);
+		  devidesCellTable.setRowData(0, devicesHere);
+		  devidesCellTable.redraw();
+		  
+		  // also persons
+		  personsHere = selectedKitchen.personal;
+		  personsCellTable.setRowCount(personsHere.size(), true);
+		  personsCellTable.setRowData(0, personsHere);
+		  personsCellTable.redraw();
+		  
+		  // the rest: energy mix, and location
+		  currentLocation = selectedKitchen.location;
+		  locationLabel.setText("Ort der Kueche: " + currentLocation);
+	}
 	
 
 
 	private void initCellTable() {
-		
-
-		
 		devidesCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 		editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
 		
@@ -699,17 +872,10 @@ public class KitchenDialog<T> extends DialogBox{
 		  }
 	  
 	  
-	  public static Long[] parsePropsToList(
-			  String propName,
-			  String delim){
-		  
-//		  for(int i = 1;i <= listToFill.size(); i++){
-//			  listToFill.remove(i);
-//		  }
-//		  List<Long> listToFill = Arrays.asList({});
+	  public static Long[] parsePropsToList( String propName, String delim){
+
 		  Long[] listToFill = {};
 		  
-		   //This is paired down for convenience - assume getSplitList correctly parses to List<String>
 		   List<String> stringList = getSplitList(propName, delim);
 		   for(String s : stringList){
 //		       listToFill.add((T)s.trim());
@@ -725,536 +891,9 @@ public class KitchenDialog<T> extends DialogBox{
 		List<String> myarray = null;
 		String[] parts = propName.split(delim);
 		myarray = Arrays.asList(parts);
-//		StringTokenizer tokens = new StringTokenizer(propName,delim);
-//		int i = 0;
-//		while(tokens.hasMoreTokens()) {
-//		
-//		myarray.add(i++, tokens.nextToken());
-//		}
+
 		return myarray;
 	}
-
-	final static LatLngCallback geocodeResultListener = new
-	LatLngCallback()
-	{
-		@Override
-		public void onSuccess(LatLng latlng)
-		{
-
-			//			herkunft.add(latlng.getLatitude());
-			//			herkunft.add(latlng.getLongitude());
-			Window.alert("- " + latlng.getLongitude() + " -");
-
-		}
-
-		@Override
-		public void onFailure()
-		{
-			Window.alert("Unable to geocode");
-		}
-
-	};
-
-	@Override
-	protected void onPreviewNativeEvent(NativePreviewEvent preview) {
-		super.onPreviewNativeEvent(preview);
-
-		NativeEvent evt = preview.getNativeEvent();
-		if (evt.getType().equals("keydown")) {
-			// Use the popup's key preview hooks to close the dialog when either
-			// enter or escape is pressed.
-			switch (evt.getKeyCode()) {
-			case KeyCodes.KEY_ENTER:
-				mapsTable.removeAllRows();
-				processAddress(clientLocationDialog.getText(),false);
-				break;
-			case KeyCodes.KEY_ESCAPE:
-				hide();
-				break;
-			}
-		}
-	}
-
-	//REFACTOR: Distances Class
-	private void saveDistances() {
-
-		if(!allDistances.isEmpty()){
-			dataService.addDistances(allDistances, new AsyncCallback<Integer>() {
-				@Override
-				public void onFailure(Throwable error) {
-					Window.alert("Fehler : "+ error.getMessage());
-				}
-				@Override
-				public void onSuccess(Integer ignore) {
-					presenter.getClientData().getDistances().addAll(allDistances);
-					updateAllZutaten(); 
-					//				Window.alert(Integer.toString(ignore) + " Distanzen gespeichert.");
-				}
-			});
-		}
-
-		hide();
-	}
-
-	//REFACTOR: Distances Class
-	private  void calculateDistances(String string, boolean firstTime) {
-		ArrayList<SingleDistance> distances = (ArrayList<SingleDistance>) presenter.getClientData().getDistances();
-		ArrayList<String> distancesRequested = new ArrayList<String>();
-		boolean notFound;
-		List<Ingredient> zutaten = presenter.getClientData().getIngredients();
-		for( Ingredient zutat : zutaten){
-			for(Extraction herkunft : zutat.getExtractions()){
-
-				notFound = true;
-				for(SingleDistance singleDistance : distances){
-					if(singleDistance.getFrom().contentEquals(string) && 
-							singleDistance.getTo().contentEquals(herkunft.symbol)){
-						notFound = false;
-					}
-				}
-				if(notFound && !distancesRequested.contains(herkunft.symbol) ){
-
-					distancesRequested.add(herkunft.symbol);
-					getDistance( string, herkunft.symbol);
-				}
-
-
-			}
-
-		}
-	}
-
-	//REFACTOR: into recpipe class, 
-	private void updateAllZutaten() {
-		for(Widget widget : superDisplay.getRezeptList()){
-			RecipeView rezeptView = ((RecipeView) widget);
-			List<IngredientSpecification> zutaten = new ArrayList<IngredientSpecification>();
-			zutaten.addAll(rezeptView.getRezept().ingredients);
-			for(IngredientSpecification zutatSpec : zutaten ){
-				int index = rezeptView.getRezept().ingredients.indexOf(zutatSpec);
-				for(SingleDistance singleDistance : presenter.getClientData().getDistances()){
-					if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-							singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
-
-						zutatSpec.setDistance(singleDistance.getDistance());
-						rezeptView.getRezept().ingredients.set(index, zutatSpec);
-
-						break;
-					}
-
-				}
-			}
-			rezeptView.updateSuggestion();
-
-//			if(rezeptView.addInfoPanel.getWidgetCount() ==2){
-//				rezeptView.addInfoPanel.remove(1);
-//			}
-		}
-	}
-
-
-	private void showTable() {
-
-		summaryTable.removeAllRows();
-		//	    while(iter.hasNext()){
-		for(SingleDistance singleDistance : allDistances){
-			String to = singleDistance.getTo();
-			String formatted = NumberFormat.getFormat("##").format( singleDistance.getDistance()/100000 );
-			if(formatted.contentEquals("0")){
-				summaryTable.setText(summaryTable.getRowCount(), 0, "nach " + to +" : ca. " + formatted + "km");
-			}else{
-				summaryTable.setText(summaryTable.getRowCount(), 0, "nach " + to +" : ca. " + formatted + "00km");
-			}
-		}
-
-	}
-
-	@UiHandler("executeButton")
-	void onOkayClicked(ClickEvent event) {
-		presenter.getDCO().changeKitchen(selectedKitchen);
-        saveAndCloseDialog();
-	}
-
-
-
-
-	public void saveLastKitchen(final Long id) {
-		dataService.setYourLastKitchen(id, new AsyncCallback<Boolean>() {
-			@Override
-			public void onFailure(Throwable error) {
-				Window.alert("Fehler : "+ error.getMessage());
-			}
-			@Override
-			public void onSuccess(Boolean okay) {
-				presenter.getClientData().cdata.lastKitchen = id;
-				presenter.getLoginInfo().setLastKitchen(id);
-				presenter.getLoginInfo().setIsInKitchen(true);
-			}
-		});
-	}
-
-	//REFACTOR: just call DataController saveKitchen
-	private void saveAndCloseDialog() {
-		for (PendingChange<?> pendingChange : pendingChanges) {
-	          pendingChange.commit();
-	        }
-        pendingChanges.clear();
-		
-        for (PendingPersonChange<?> pendingPersonChange : pendingPersonChanges) {
-        	pendingPersonChange.commit();
-	        }
-        pendingPersonChanges.clear();
-        
-		saveDistances();
-		
-		// clear workspace (including prompts for saving) to avoid copying recipies from one kitchen to another)
-		presenter.removeAllRecipesFromWorkplace();
-		
-		
-		// this shoots to many rpc calls... (one should be enough)
-		// shouldn't shoot any, if there is no change...
-		// which exactly for this purpose the requestFactory in GWT 2.1 was developed...
-		if(presenter.getTopPanel().selectedKitchen != null){
-			// this is a hacK:
-			presenter.getTopPanel().selectedKitchen.hasChanged = false;
-			
-			dataService.addKitchen(presenter.getTopPanel().selectedKitchen, new AsyncCallback<Long>() {
-				@Override
-				public void onFailure(Throwable error) {
-					Window.alert("Fehler : "+ error.getMessage());
-				}
-				@Override
-				public void onSuccess(Long kitchenID) {
-					// this adds a new kitchen, yet must not be the selected one:
-					presenter.getTopPanel().selectedKitchen.id = kitchenID;
-					presenter.getDCO().changeKitchenRecipes(kitchenID);
-					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
-					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
-	//				Search.clientData.kitchens.add(kitchen);
-	//				kitchens.addItem(kitchen.getSymbol());
-					saveLastKitchen(kitchenID);
-					
-				}
-			});
-		}
-		
-		// The other kitchens need also to be saved...
-		
-		for(final Workgroup kitchen: availableKitchens){
-			// save all kitchens at once
-			if(kitchen != null && kitchen.hasChanged){ // has changed still needs to be set false	
-				dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
-					@Override
-					public void onFailure(Throwable error) {
-						Window.alert("Fehler : "+ error.getMessage());
-					}
-					@Override
-					public void onSuccess(Long kitchenID) {
-						// this adds a new kitchen, yet must not be the selected one:
-						kitchen.id = kitchenID;
-		//				Search.clientData.kitchens.add(kitchen);
-		//				kitchens.addItem(kitchen.getSymbol());
-					}
-				});
-			}
-		}
-		
-
-		// update search... this should also be done when loaded regular
-		
-		presenter.getSearchPanel().SearchInput.setText("");
-		presenter.getSearchPanel().updateResults(" ");
-		
-		
-		hide();
-	}
-
-	@UiHandler("locationButton")
-	void onLocClicked(ClickEvent event) {
-		mapsTable.removeAllRows();
-		processAddress(clientLocationDialog.getText(),false);
-	}
-
-
-	//REFACTOR: into Distances class
-	void processAddress(final String address, final boolean firstTime) {
-		if (address.length() > 1) { 
-			geocoder.setBaseCountryCode("ch");
-			geocoder.getLocations(address, new LocationCallback() {
-				@Override
-				public void onFailure(int statusCode) {
-					presenter.getTopPanel().locationLabel.setText("Wir können diese Adresse nicht finden: ");
-				}
-
-				@Override
-				public void onSuccess(JsArray<Placemark> locations) {
-					Placemark place = locations.get(0);
-					presenter.getTopPanel().locationLabel.setText("Sie befinden sich in: " +place.getAddress() +"  ");
-					currentLocation = place.getAddress();
-					selectedKitchen.location = currentLocation;
-					setText("Berechne alle Routen von: " + place.getAddress());
-					TopPanel.currentHerkunft = place.getAddress();
-
-					calculateDistances(place.getAddress(),firstTime);
-
-				}
-			});
-		} else {
-			presenter.getTopPanel().locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein: ");
-		}
-
-	}
-
-
-
-
-	//REFACTOR: duplicate methos with DistanceDialog
-
-
-	void getDistance(final String from, final String to ) {
-
-		Timer t = new Timer() {
-			@Override
-			public void run() {
-
-
-
-				geocoder.getLocations(to, new LocationCallback() {
-					@Override
-					public void onFailure(int statusCode) {
-						Window.alert("Diese Zutat hat einen falsche Herkunft: "+ to);
-					}
-
-					@Override
-					public void onSuccess(final JsArray<Placemark> locationsTo) {
-
-						geocoder.getLocations(from, new LocationCallback() {
-							@Override
-							public void onFailure(int statusCode) {
-								Window.alert("Wir können Ihre Adresse nicht zuordnen: " + from);
-							}
-
-							@Override
-							public void onSuccess(JsArray<Placemark> locationsFrom) {
-
-								simpleDirectionsDemo(locationsFrom,locationsTo);
-							}
-						});
-					}
-				});
-				timeToWaitForGeocode = timeToWaitForGeocode - 1000;
-			}
-		};
-		t.schedule(timeToWaitForGeocode);
-		timeToWaitForGeocode = timeToWaitForGeocode + 1000;
-	}
-
-
-	public void simpleDirectionsDemo(final JsArray<Placemark> locationFrom, final JsArray<Placemark> locationTo) {
-		Placemark placeFrom = locationFrom.get(0);
-		Placemark placeTo = locationTo.get(0);
-		final String from = placeFrom.getAddress();
-		final String to = placeTo.getAddress();
-
-		MapWidget map = new MapWidget(locationFrom.get(0).getPoint(), 15);
-		map.setHeight("300px");
-		DirectionsPanel directionsPanel = new DirectionsPanel();
-		DirectionQueryOptions opts = new DirectionQueryOptions(map, directionsPanel);
-		int currentRow = mapsTable.getRowCount();
-		mapsTable.setWidget(currentRow, 0, map);
-		mapsTable.setWidget(currentRow, 1, directionsPanel);
-
-		opts.setLocale("de_DE");
-		opts.setPreserveViewport(true);
-		opts.setRetrievePolyline(false);
-		opts.setRetrieveSteps(false);
-
-		String query = "from: "+from+" to: "+to;
-		Directions.load(query, opts, new DirectionsCallback() {
-
-			public void onFailure(int statusCode) {
-				//	        Window.alert("Es ist ein Fehler aufgetreten...");
-				getDistanceEstimateToCurrent(locationFrom,locationTo,to,true);
-				// remove last row
-				mapsTable.removeRow(mapsTable.getRowCount()-1);
-			}
-
-			public void onSuccess(DirectionResults result) {
-				//	    	Window.alert(Double.toString(result.getDistance().inMeters())+"m from "+from+" to "+to);
-				GWT.log("Successfully loaded directions. Von " + from + " nach " + to +".", null);
-				double distance = result.getDistance().inMeters();
-				SingleDistance singleDistance = new SingleDistance();
-				singleDistance.setFrom(from);
-				singleDistance.setTo(to);
-				singleDistance.setRoad(true);
-				singleDistance.setTriedRoad(true);
-				singleDistance.setDistance(distance);
-
-				allDistances.add(singleDistance);
-				showTable();
-				//	        	updateDistance(distance,zutatSpec);
-
-			}
-		});
-
-
-	}
-
-	void getDistanceEstimateToCurrent(JsArray<Placemark> locations, JsArray<Placemark> locations1, String to, Boolean tried) {
-
-		Placemark place = locations.get(0);
-		double distance = locations1.get(0).getPoint().distanceFrom(place.getPoint());
-
-		SingleDistance singleDistance = new SingleDistance();
-		singleDistance.setFrom(place.getAddress());
-		singleDistance.setTo(to);
-		singleDistance.setRoad(false);
-		singleDistance.setTriedRoad(tried);
-		singleDistance.setDistance(distance);
-
-		allDistances.add(singleDistance);
-		showTable();
-		//	updateDistance(distance,zutatSpec);
-	}
-
-	
-	  @UiHandler("kitchenNameTextBox")
-	  void onNameChange(KeyUpEvent event) {
-		  if(kitchenNameTextBox.getText().length()>1){
-			  this.kitchenName = kitchenNameTextBox.getText();
-			  setText(this.kitchenName);
-			  kitchens.setItemText(kitchens.getSelectedIndex(), this.kitchenName);
-			  selectedKitchen.setSymbol(this.kitchenName);
-		  }
-	  }
-	  
-	  @UiHandler("energyMix")
-	  void onEnergyMixChange(KeyUpEvent event) {
-		  if(energyMix.getText().length()>1){			  
-			  selectedKitchen.energyMix.Name = energyMix.getText();
-		  }
-	  }
-	  
-	  @UiHandler("energyMixco2")
-	  void onEnergyMixco2Change(KeyUpEvent event) {
-		  if(energyMixco2.getText().length()>1){ // check of parseDouble is possible
-			  selectedKitchen.energyMix.Co2PerKWh = Double.parseDouble(energyMixco2.getText());
-		  }
-	  }
-	  
-	  @UiHandler("clientLocationDialog")
-	  void onLocationNameChange(KeyUpEvent event) {
-		  if(clientLocationDialog.getText().length()>1){
-			  selectedKitchen.location = kitchenNameTextBox.getText();
-		  }
-	  }
-	  
-	  @UiHandler("newKitchen")
-	  public void onNewKitchenClick(ClickEvent event) {
-		  selectedKitchen = new Workgroup("neue Küche");
-		  selectedKitchen.location = "Zürich, Schweiz";
-		  availableKitchens.add(selectedKitchen);
-		  kitchens.addItem(selectedKitchen.getSymbol());
-		  kitchens.setSelectedIndex(kitchens.getItemCount()-1);
-		  
-		  //update view:
-		  
-			  // devices
-			  switchKitchen();
-		  
-	  }
-
-	  
-	  @UiHandler("leaveKitchen")
-	  public void onLeaveKitchenClick(ClickEvent event) {
-		  presenter.getTopPanel().location.setVisible(true);
-		  presenter.getDCO().isInKitchen = false;
-		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
-		  presenter.getTopPanel().selectedKitchen = null;
-		  
-		  Search.yourRecipesText.setHTML(" in eigenen Rezepten");
-		  
-		  saveLastKitchen(0L);
-	
-		  saveAndCloseDialog();
-	  }
-
-
-	private void switchKitchen() {
-		
-		//set Name
-		this.kitchenName = selectedKitchen.getSymbol();
-			setText(this.kitchenName);
-		  kitchenNameTextBox.setText(this.kitchenName);
-		  if (selectedKitchen.id != null)
-			  kitchenId.setText("Id: " + selectedKitchen.id);
-		  else
-			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
-		
-		  devicesHere = selectedKitchen.devices;
-		  devidesCellTable.setRowCount(devicesHere.size(), true);
-		  devidesCellTable.setRowData(0, devicesHere);
-		  devidesCellTable.redraw();
-		  
-		  // also persons
-		  personsHere = selectedKitchen.personal;
-		  personsCellTable.setRowCount(personsHere.size(), true);
-		  personsCellTable.setRowData(0, personsHere);
-		  personsCellTable.redraw();
-		  
-		  // the rest: energy mix, and location
-		  currentLocation = selectedKitchen.location;
-		  clientLocationDialog.setText(currentLocation);
-	}
-	  
-	  @UiHandler("kitchens")
-	  void onKitchenChange(ChangeEvent event) {
-//		  int selectedIndex = kitchens.getSelectedIndex();
-//		  if (selectedIndex > 0)
-//		   Window.alert("Something got selected " + kitchens.getValue(selectedIndex));
-		   selectedKitchen = availableKitchens.get(kitchens.getSelectedIndex());
-		   switchKitchen();
-	  }
-
-	  
-	  @UiHandler("addDevice")
-	  void onAddDevicePress(ClickEvent event) {
-
-		  Long[] longList ={1l,5l,10l,20l};
-    	  devicesHere.add(new Device("","",0.0, longList , 10l));
-    	  devidesCellTable.setRowCount(devicesHere.size(), true);
-    	  
-    	  devidesCellTable.setRowData(0, devicesHere);
-		  
-	  }
-	  
-	  @UiHandler("addPerson")
-	  void onAddPersonPress(ClickEvent event) {
-		  
-		  
-    	  personsHere.add(new Staff("Name","Email"));
-    	  personsCellTable.setRowCount(personsHere.size(), true);
-    	  
-    	  personsCellTable.setRowData(0, personsHere);
-	  }
-	  
-	//REFACTOR: call deleteKitchen in DataController
-	  @UiHandler("deleteKitchen")
-	  void onDeleteKitchenPress(ClickEvent event) {
-		  // clear workspace if kitchen to delete matches kitchen which was worked on
-		  //presenter.removeAllRecipesFromWorkplace();
-		  
-		  // alle rezepte der Kueche loeschen
-		  
-		  
-		  // Kueche loeschen
-		  
-		  
-		  // kitchendialog neu laden
-		  
-		  //
-	  }
-	  
 
 		
 }

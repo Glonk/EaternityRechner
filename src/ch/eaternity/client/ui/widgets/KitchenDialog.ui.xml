@@ -69,6 +69,9 @@
 	
 		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
 		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
+		<br />
+		<g:InlineLabel ui:field='locationLabel' >Ort der Küche: </g:InlineLabel>
+		<g:Button ui:field="locationButton" text="Adresse ändern" />
 		<g:Label ui:field='kitchenId' ></g:Label>
 		<br /><br />
 		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
@@ -130,18 +133,6 @@
 			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
 			<g:Button styleName='{style.buttonDelete}' ui:field="deleteKitchen">Küche löschen</g:Button>
 		</g:VerticalPanel>
-		<br /><br />
-		Legen Sie hier den Ort ihrer Küche fest (den Ort, an den alle Zutaten
-		geliefert werden). Es werden alle möglichen Routen berechnet und
-		angezeigt.
-		<!-- g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte 
-			von: </g:InlineLabel -->
-		<g:TextBox ui:field="clientLocationDialog">Zürich, Schweiz</g:TextBox>
-		<g:Button ui:field="locationButton" text="neue Adresse festlegen" />
-
-				<g:FlexTable ui:field='summaryTable' />
-				<g:FlexTable ui:field='mapsTable' />
-			
 		</g:HTMLPanel>
 		</g:ScrollPanel>
 		<hr />

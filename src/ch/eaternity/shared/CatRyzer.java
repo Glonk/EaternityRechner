@@ -368,12 +368,16 @@ public class CatRyzer {
 		public double getSeasonQuotient() {
 			Integer numFruitsAndVegetables = ingSpecs.size();
 			Integer numAreSeasonal = 0;
+			double seasonalWeight = 0.0;
+			double seasonalTotalWeight = 0.0;
 			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
 			for(IngredientSpecification ingSpec: ingSpecs) {
 				// fruits and veggies?
-				if (getIngredient(ingSpec).tags != null && (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes"))) {	
+				//if (getIngredient(ingSpec).tags != null && (getIngredient(ingSpec).tags.contains("fruits") || getIngredient(ingSpec).tags.contains("legumes"))) {	
 					// have season setted?
-					if (ingSpec.getCookingDate() != null && ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
+					if (ingSpec.getCookingDate() != null && ingSpec.ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null) {
+						seasonalTotalWeight =  seasonalTotalWeight + ingSpec.getWeight();
+						
 						SeasonDate dateStart = ingSpec.getStartSeason();
 						SeasonDate dateStop = ingSpec.getStopSeason();
 						SeasonDate dateCook = new SeasonDate();
@@ -381,11 +385,12 @@ public class CatRyzer {
 					// have season?
 					if (dateCook.after(dateStart) && dateCook.before(dateStop)) {
 						// are fresh from switzerland
-						if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch"))
+						if (ingSpec.getExtraction().symbol.equals("Schweiz") && ingSpec.getCondition().symbol.equals("frisch"))
 							numAreSeasonal++;
+							seasonalWeight = seasonalWeight + ingSpec.getWeight();
 						}
 					}
-				}
+				
 			}
 			return numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
 		}
@@ -443,7 +448,7 @@ public class CatRyzer {
 	private Double getWeight(Collection<IngredientSpecification> ingredientsSpecifications) {
 		Double amount = 0.0;
 		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
-			amount = amount + ingredientSpecification.getMengeGramm();
+			amount = amount + ingredientSpecification.getWeight();
 		}
 		return amount;
 	}

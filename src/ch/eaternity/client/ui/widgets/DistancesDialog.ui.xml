@@ -22,8 +22,9 @@
   <g:HTMLPanel width='640px' styleName='{style.panel}'>
    <br />Legen Sie hier den Ort fest, an welchen alle Zutaten geliefert werden. Es werden alle möglichen Routen berechnet und angezeigt. <br /><br />
         <g:InlineLabel ui:field='locationLabel' >Sie befinden sich in der Mitte von: </g:InlineLabel>
-        <g:TextBox ui:field="clientLocationDialog">Zürich, Schweiz</g:TextBox>
+        <g:TextBox ui:field="adressBox">Zürich, Schweiz</g:TextBox>
         <g:Button ui:field="locationButton" text="Adresse festlegen"/>
+        <g:Label ui:field='statusInfo'></g:Label>
      <g:ScrollPanel ui:field="scrollPanel">
      
      <g:HTMLPanel>

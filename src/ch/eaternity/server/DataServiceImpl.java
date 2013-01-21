@@ -132,14 +132,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
 		
 		
-		if(!recipe.kitchenIds.isEmpty()){
-			userRezept.kitchenIds = recipe.kitchenIds;
+		if(!recipe.kitchenId.isEmpty()){
+			userRezept.kitchenIds = recipe.kitchenId;
 		}
 		// TODO : this is not a propper approval process!!!
 		userRezept.requestedOpen = recipe.openRequested;
 		
 		// If recipe belongs to a kitchen, dont assign it a user mail
-		if (recipe.kitchenIds != null && recipe.kitchenIds.size() == 0)
+		if (recipe.kitchenId != null && recipe.kitchenId.size() == 0)
 		{
 			if(userService.getCurrentUser().getEmail() != null){
 				recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );

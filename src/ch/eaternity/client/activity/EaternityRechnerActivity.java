@@ -98,8 +98,8 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		if(dco.cdata.loginInfo.getIsInKitchen()){
 			// then we are in a kitchen :-)
 			// so this recipe belongs into this kitchen, so we add its id
-			if(!recipe.kitchenIds.contains(getTopPanel().selectedKitchen.id)){
-				recipe.kitchenIds.add(getTopPanel().selectedKitchen.id);
+			if(!recipe.kitchenId.contains(getTopPanel().selectedKitchen.id)){
+				recipe.kitchenId.add(getTopPanel().selectedKitchen.id);
 			}
 			
 		}

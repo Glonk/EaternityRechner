@@ -607,11 +607,12 @@ class="alternate"
 				<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
 
 
-					<%	
-					counter = 0;
-					for(IngredientSpecification ingredicounter = 0;
-					for(IngredientSpecification ingredient: recipe.ingredients){
-					counter = counter + 1;ngredient.getMengeGramm() %> g <%= ingredient.getName() %> 
+					<%
+						counter = 0;
+								for(IngredientSpecification ingredicounter = 0;
+								for(IngredientSpecification ingredient: recipe.ingredients){
+								counter = counter + 1;ngredient.getWeight()
+					%> g <%= ingredient.getName() %> 
 						
 						( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 						

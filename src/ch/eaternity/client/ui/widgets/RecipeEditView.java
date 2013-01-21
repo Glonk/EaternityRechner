@@ -696,7 +696,7 @@ public class RecipeEditView<T> extends Composite {
 //	HasHorizontalAlignment.ALIGN_RIGHT
 	final TextBox MengeZutat = new TextBox();
 	MengeZutat.setAlignment(TextAlignment.RIGHT);
-	MengeZutat.setText(Integer.toString(zutat.getMengeGramm()));
+	MengeZutat.setText(Integer.toString(zutat.getWeight()));
 	MengeZutat.setWidth("36px");
 	
 	MengeZutat.addKeyUpHandler( new KeyUpHandler() {
@@ -716,7 +716,7 @@ public class RecipeEditView<T> extends Composite {
 				if(!MengeZutat.getText().equalsIgnoreCase("")){
 					MengeZutatWert = MengeZutat.getText().trim();
 					try {
-						zutat.setMengeGramm(Double.valueOf(MengeZutatWert).intValue());
+						zutat.setWeight(Double.valueOf(MengeZutatWert).intValue());
 					}
 					catch (NumberFormatException nfe) {
 						MengeZutat.setText("");
@@ -763,8 +763,8 @@ public class RecipeEditView<T> extends Composite {
 		Boolean itsOkay = true;
 		
 		
-		if(zutat.getZustand() != null){
-			if(zutat.getZustand().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
+		if(zutat.getCondition() != null){
+			if(zutat.getCondition().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
 				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
 					SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
 					SeasonDate dateStart = zutat.getStartSeason();		
@@ -772,9 +772,9 @@ public class RecipeEditView<T> extends Composite {
 					
 					if( date.after(dateStart) && date.before(dateStop) ){
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (!zutat.getZustand().symbol.equalsIgnoreCase("frisch") && !zutat.getProduktion().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
+					} else if (!zutat.getCondition().symbol.equalsIgnoreCase("frisch") && !zutat.getProduction().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (zutat.getProduktion().symbol.equalsIgnoreCase("GH")) {
+					} else if (zutat.getProduction().symbol.equalsIgnoreCase("GH")) {
 						// nothing
 					} else {
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley3'><img src='pixel.png' height=1 width=20 /></div>");
@@ -785,11 +785,11 @@ public class RecipeEditView<T> extends Composite {
 		}
 		
 		if (itsOkay) {
-			if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < .4){
+			if(zutat.getCalculatedCO2Value()/zutat.getWeight() < .4){
 				icon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
 				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
 		
-			} else	if(zutat.getCalculatedCO2Value()/zutat.getMengeGramm() < 1.2){
+			} else	if(zutat.getCalculatedCO2Value()/zutat.getWeight() < 1.2){
 				icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
 		
 			} else {
@@ -803,7 +803,7 @@ public class RecipeEditView<T> extends Composite {
 		
 		
 		
-		if(zutat.getProduktion() != null && zutat.getProduktion().symbol.equalsIgnoreCase("bio")){
+		if(zutat.getProduction() != null && zutat.getProduction().symbol.equalsIgnoreCase("bio")){
 			icon.setHTML(icon.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
 		}
 		
@@ -1250,7 +1250,7 @@ public class RecipeEditView<T> extends Composite {
 	      for(IngredientSpecification zutatSpec : recipe.ingredients){
 	          Ingredient zutat = presenter.getClientData().getIngredientByID(zutatSpec.getZutat_id());
 		   //            amount of Persons needs to be assigned always!
-	          Double amount = (1.0*zutatSpec.getMengeGramm()/zutat.stdWeight)/recipe.getPersons();
+	          Double amount = (1.0*zutatSpec.getWeight()/zutat.stdWeight)/recipe.getPersons();
 	          Double alreadyAmount = 0.0;
 	          int index = -1;
 		   //            check if the indgredient is already in there...

@@ -938,7 +938,7 @@ for(Recipe recipe: rezeptePersonal){
 								for(IngredientSpecification ingredient: recipe.ingredients){
 							%>
 
-							<li><%= ingredient.getMengeGramm() %> g <span class="ix"><%= ingredient.getName() %></span> </li>
+							<li><%=ingredient.getWeight()%> g <span class="ix"><%= ingredient.getName() %></span> </li>
 
 							<%
 							}

@@ -197,14 +197,14 @@ public void setSuperDisplay(EaternityRechnerView superDisplay){
 
   @UiHandler("locationButton")
   public void onClick(ClickEvent event) {
-	  ddlg = new DistancesDialog(clientLocation.getText(),superDisplay); 
+	  ddlg = new DistancesDialog(); 
 	  ddlg.setPresenter(presenter);
   }
   
 
   @UiHandler("editKitchen")
   public void onEditKitchenClick(ClickEvent event) {
-	  kDlg = new KitchenDialog(clientLocation.getText(),superDisplay); 
+	  kDlg = new KitchenDialog(); 
 	  kDlg.setPresenter(presenter);
   }
   

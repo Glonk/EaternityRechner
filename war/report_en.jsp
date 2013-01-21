@@ -566,9 +566,9 @@ class="alternate"
 					for(IngredientSpecification ingredient: recipe.Zutaten){
 					counter = counter + 1;
 
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingrcounter = 0;
+					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%=ingrcounter = 0;
 					for(IngredientSpecification ingredient: recipe.ingredients){
-					counter = counter + 1;ent.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+					counter = counter + 1;ent.getExtraction() != null){%><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 						
 						</span><%
 					}

@@ -35,6 +35,12 @@ public class SingleDistance implements Serializable {
 	
 	@Persistent
 	private Boolean triedRoad;
+	
+	public SingleDistance(String to, String from, Double distance) {
+		this.to = to;
+		this.from = from;
+		this.distance = distance;
+	}
 
 
 	public void setDistance(Double distance) {

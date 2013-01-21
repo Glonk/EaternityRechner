@@ -171,11 +171,11 @@ public class InfoZutatDialog<T> extends Composite {
 		boolean extractionExists = false;
     	for (Extraction extr : zutat.getExtractions())
     	{
-    		if (zutatSpec.getHerkunft().symbol == extr.symbol)
+    		if (zutatSpec.getExtraction().symbol == extr.symbol)
     			extractionExists = true;
     	}
     	if (!extractionExists)
-    		this.zutat.getExtractions().add(0,zutatSpec.getHerkunft());
+    		this.zutat.getExtractions().add(0,zutatSpec.getExtraction());
 
 	}
 
@@ -429,7 +429,7 @@ public class InfoZutatDialog<T> extends Composite {
 						    	  element.stdProduction = zutat.stdExtraction.stdProduction;
 
 						    	  zutat.getExtractions().add(0, element);
-						    	  zutatSpec.setHerkunft(element);
+						    	  zutatSpec.setExtraction(element);
 						    	  newExtractionBox.setVisible(false);
 						    	  herkuenfte.setVisible(true);
 						    	  herkuenfte.setSelectedIndex(0);
@@ -460,7 +460,7 @@ public class InfoZutatDialog<T> extends Composite {
 	    	int index = -1;
 	    	for (Extraction extr : zutat.getExtractions())
 	    	{
-	    		if (zutatSpec.getHerkunft().symbol == extr.symbol)
+	    		if (zutatSpec.getExtraction().symbol == extr.symbol)
 	    			index = zutat.getExtractions().indexOf(extr);
 	    	}
 	    	if (index != -1)
@@ -481,20 +481,20 @@ public class InfoZutatDialog<T> extends Composite {
 				RadioButton transport = new RadioButton("Transportations",moTransportations.symbol);
 				
 				// hack to take the first one...
-				if(zutatSpec.getTransportmittel() == null){
+				if(zutatSpec.getTransportation() == null){
 					MoTransportation transportmittel = new MoTransportation(moTransportations.symbol,moTransportations.factor);
-					zutatSpec.setTransportmittel(transportmittel);
+					zutatSpec.setTransportation(transportmittel);
 				}
 				
 				
-				if(moTransportations.symbol.equalsIgnoreCase(zutatSpec.getTransportmittel().symbol)){
+				if(moTransportations.symbol.equalsIgnoreCase(zutatSpec.getTransportation().symbol)){
 					transport.setValue(true);
 				}
 				transport.addClickHandler(new ClickHandler() {
 				      public void onClick(ClickEvent event) {
 				        boolean checked = ((RadioButton) event.getSource()).isChecked();
 				        if(checked){
-				        	zutatSpec.setTransportmittel(moTransportations);
+				        	zutatSpec.setTransportation(moTransportations);
 				        	updateZutatCO2();
 				        }
 				      }
@@ -515,12 +515,12 @@ public class InfoZutatDialog<T> extends Composite {
 				RadioButton productionBox = new RadioButton("productions",production.symbol);
 				
 				// hack to take the first one...
-				if(zutatSpec.getProduktion() == null){
+				if(zutatSpec.getProduction() == null){
 					Production herstellung = new Production(production.symbol);
-					zutatSpec.setProduktion(herstellung);
+					zutatSpec.setProduction(herstellung);
 				}
 
-				if(production.symbol.equalsIgnoreCase(zutatSpec.getProduktion().symbol)){
+				if(production.symbol.equalsIgnoreCase(zutatSpec.getProduction().symbol)){
 					productionBox.setValue(true);
 				}
 				
@@ -528,7 +528,7 @@ public class InfoZutatDialog<T> extends Composite {
 				      public void onClick(ClickEvent event) {
 				        boolean checked = ((RadioButton) event.getSource()).isChecked();
 				        if(checked){
-				        	zutatSpec.setProduktion(production);
+				        	zutatSpec.setProduction(production);
 				        	updateZutatCO2();
 				        }
 				      }
@@ -549,18 +549,18 @@ public class InfoZutatDialog<T> extends Composite {
 			for(final Condition condition : zutat.conditions){
 				RadioButton conditionBox = new RadioButton("conditions",condition.symbol);
 				// hack to take the first one...
-				if(zutatSpec.getZustand() == null){
+				if(zutatSpec.getCondition() == null){
 					Condition zustand = new Condition(condition.symbol);
-					zutatSpec.setZustand(zustand);
+					zutatSpec.setCondition(zustand);
 				}
-				if(condition.symbol.equalsIgnoreCase(zutatSpec.getZustand().symbol)){
+				if(condition.symbol.equalsIgnoreCase(zutatSpec.getCondition().symbol)){
 					conditionBox.setValue(true);
 				}
 				conditionBox.addClickHandler(new ClickHandler() {
 				      public void onClick(ClickEvent event) {
 				        boolean checked = ((RadioButton) event.getSource()).isChecked();
 				        if(checked){
-				        	zutatSpec.setZustand(condition);
+				        	zutatSpec.setCondition(condition);
 				        	updateZutatCO2();
 				        }
 				      }
@@ -579,9 +579,9 @@ public class InfoZutatDialog<T> extends Composite {
 			final ListBox herkuenfte) {
 		Boolean notChanged = true;
 		// TODO update also choice for moTransportations
-		zutatSpec.setHerkunft(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
+		zutatSpec.setExtraction(zutat.getExtractions().get((herkuenfte.getSelectedIndex())) );
 		// the case that nothing changed
-		if(TopPanel.currentHerkunft.contentEquals(zutatSpec.getHerkunft().symbol)){
+		if(TopPanel.currentHerkunft.contentEquals(zutatSpec.getExtraction().symbol)){
 			
 			zutatSpec.setDistance(0.0);
 	    	String formatted = NumberFormat.getFormat("##").format( zutatSpec.getDistance()/100000 );
@@ -595,13 +595,13 @@ public class InfoZutatDialog<T> extends Composite {
 		} else {
 		for(SingleDistance singleDistance : presenter.getDCO().cdata.distances){
 			if(singleDistance.getFrom().contentEquals(TopPanel.currentHerkunft) && 
-					singleDistance.getTo().contentEquals(zutatSpec.getHerkunft().symbol)){
+					singleDistance.getTo().contentEquals(zutatSpec.getExtraction().symbol)){
 				
 				zutatSpec.setDistance(singleDistance.getDistance());
 				notChanged = false;
 				boolean deselect = false;
 				if(singleDistance.getTriedRoad() && !singleDistance.getRoad() ){
-					if(zutatSpec.getTransportmittel().symbol.equalsIgnoreCase("LKW") ){
+					if(zutatSpec.getTransportation().symbol.equalsIgnoreCase("LKW") ){
 						deselect = true;
 					}
 					
@@ -615,7 +615,7 @@ public class InfoZutatDialog<T> extends Composite {
 								radioTransport.setChecked(true);
 								for(final MoTransportation moTransportations : zutat.moTransportations){
 									if(moTransportations.symbol.equalsIgnoreCase("Schiff")){
-										zutatSpec.setTransportmittel(moTransportations);
+										zutatSpec.setTransportation(moTransportations);
 									}
 								}
 							}}
@@ -626,7 +626,7 @@ public class InfoZutatDialog<T> extends Composite {
 					}
 					
 				} else if(singleDistance.getTriedRoad() && singleDistance.getRoad()) {
-					if(zutatSpec.getTransportmittel().symbol.equalsIgnoreCase("Schiff") ){
+					if(zutatSpec.getTransportation().symbol.equalsIgnoreCase("Schiff") ){
 						deselect = true;
 					}
 					
@@ -641,7 +641,7 @@ public class InfoZutatDialog<T> extends Composite {
 								radioTransport.setChecked(true);
 								for(final MoTransportation moTransportations : zutat.moTransportations){
 									if(moTransportations.symbol.equalsIgnoreCase("LKW")){
-										zutatSpec.setTransportmittel(moTransportations);
+										zutatSpec.setTransportation(moTransportations);
 									}
 								}
 							}}
@@ -667,7 +667,7 @@ public class InfoZutatDialog<T> extends Composite {
 			kmText.setHTML("Strecke nicht gefunden");
 			zutatSpec.setDistance(0.0);
 			
-			final String to = zutatSpec.getHerkunft().symbol;
+			final String to = zutatSpec.getExtraction().symbol;
 			final String from = TopPanel.currentHerkunft;
 			
 			geocoder.getLocations(to, new LocationCallback() {
@@ -727,9 +727,9 @@ public class InfoZutatDialog<T> extends Composite {
 			specificationTable.setHTML(0, 1, "Diese Zutat hat keine Saison");
 			
 			
-			if(zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)
-					&& zutatSpec.getProduktion() != null && !zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")
-					&& zutatSpec.getZustand() != null && zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
+			if(zutatSpec.getExtraction().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)
+					&& zutatSpec.getProduction() != null && !zutatSpec.getProduction().symbol.equalsIgnoreCase("GH")
+					&& zutatSpec.getCondition() != null && zutatSpec.getCondition().symbol.equalsIgnoreCase("frisch")){
 			
 			// unvollständig:
 			
@@ -741,14 +741,14 @@ public class InfoZutatDialog<T> extends Composite {
 				hinweisPanel.setText("Angaben sind kohärent.");
 				String text = "Die Zutat wurde ";
 				
-				if(!zutatSpec.getHerkunft().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)){
-					text = text +"aus "+ zutatSpec.getHerkunft().symbol +" mit dem " +zutatSpec.getTransportmittel().symbol + " importiert, ";
+				if(!zutatSpec.getExtraction().symbol.equalsIgnoreCase(stdIngredient.stdExtractionSymbol)){
+					text = text +"aus "+ zutatSpec.getExtraction().symbol +" mit dem " +zutatSpec.getTransportation().symbol + " importiert, ";
 				} 
-				if(zutatSpec.getProduktion() != null && zutatSpec.getProduktion().symbol.equalsIgnoreCase("GH")){
+				if(zutatSpec.getProduction() != null && zutatSpec.getProduction().symbol.equalsIgnoreCase("GH")){
 					text = text +"im Gewächshaus produziert, ";
 				}
-				if(zutatSpec.getZustand() != null && !zutatSpec.getZustand().symbol.equalsIgnoreCase("frisch")){
-					text = text + zutatSpec.getZustand().symbol + ", ";
+				if(zutatSpec.getCondition() != null && !zutatSpec.getCondition().symbol.equalsIgnoreCase("frisch")){
+					text = text + zutatSpec.getCondition().symbol + ", ";
 				}
 				String shortText = text.substring(0, text.length()-2);
 				int indexShortText = shortText.lastIndexOf(", ");

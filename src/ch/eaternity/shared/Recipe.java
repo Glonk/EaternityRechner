@@ -30,8 +30,6 @@ public class Recipe implements Serializable, Cloneable{
 	@Id Long id;
     
 	private Long directAncestorID;
-	private List<Long> descandentsIds =  new ArrayList<Long>();
-	public Boolean ancestorAlreadyMarked;
 	
 	private String symbol;
 	private String subTitle;
@@ -46,7 +44,7 @@ public class Recipe implements Serializable, Cloneable{
 	
 	public String ShortUrl;
 	// no List, just in one Kitchen
-	public List<Long> kitchenIds =  new ArrayList<Long>(); // empty is no kitchen...
+	public Long kitchenId; // empty is no kitchen...
 	
 	private Long persons;
 	
@@ -104,8 +102,8 @@ public class Recipe implements Serializable, Cloneable{
 		this.energyMix = new EnergyMix(toClone.energyMix);
 		this.ShortUrl = new String(toClone.ShortUrl);
 		
-		for (Long kID : toClone.kitchenIds) {
-			kitchenIds.add(new Long(kID));
+		for (Long kID : toClone.kitchenId) {
+			kitchenId.add(new Long(kID));
 		}
 		this.persons = new Long(toClone.persons);
 		this.createDate = (Date) toClone.createDate.clone();
