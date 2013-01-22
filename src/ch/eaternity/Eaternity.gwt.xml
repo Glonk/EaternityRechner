@@ -17,26 +17,45 @@
   <inherits name='com.google.gwt.user.theme.standard.Standard'/> 
   
   <inherits name="com.google.gwt.xml.XML" />
-  <inherits name="com.google.api.gwt.ApiCore" />
+  <!-- inherits name="com.google.api.gwt.ApiCore" /-->
+  
+
   <inherits name="com.google.web.bindery.requestfactory.RequestFactory" />
   <inherits name="com.googlecode.objectify.Objectify" />
   <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
   <inherits name='com.google.gwt.maps.GoogleMaps' />
-  <inherits name='com.google.api.gwt.services.Urlshortener' />
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.google.gwt.activity.Activity"/>
   <inherits name="com.google.gwt.place.Place"/>
   <inherits name="gwtupload.GWTUpload"/>
+  <inherits name="com.google.common.collect.Collect"/>
+  
+  
+
+  <!-- For development, a default of `DEBUG` is recommended -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  <set-property name="log_WindowLogger" value="DISABLED" />
+
+  <!-- You'll probably want to disable the default `DivLogger` as well: -->
+<!--   <set-property name="log_DivLogger" value="DISABLED" /> -->
+  
+<!--   Specify a log pattern !-->
+	<set-configuration-property name="log_pattern" value="(%F:%L) %d [%-5p] %m%n" />
+  
+  <!--  <inherits name="org.apache.log4j.Log4j" />
   <inherits name="com.google.gwt.logging.Logging"/>
   	
-  <set-property name="gwt.logging.logLevel" value="SEVERE"/> # To change the default logLevel
+<set-property name="gwt.logging.logLevel" value="DEBUG"/> # To change the default logLevel
 <set-property name="gwt.logging.enabled" value="TRUE"/> # To disable logging
 <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  # To disable a default Handler
 <set-property name="gwt.logging.developmentModeHandler" value="ENABLED" />
-<set-property name="gwt.logging.popupHandler" value="DISABLED" />
+<set-property name="gwt.logging.popupHandler" value="ENABLED" />
 <set-property name="gwt.logging.systemHandler" value="ENABLED" />
 <set-property name="gwt.logging.firebugHandler" value="ENABLED" />
 <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED" />
+-->
+
+
 
 
 <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true" />
@@ -53,6 +72,7 @@
 
 
   <!-- Specify the paths for translatable code                    -->
+  
   <source path='client'/>
   <source path='shared'/>
   

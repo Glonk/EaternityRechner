@@ -24,6 +24,7 @@ import ch.eaternity.shared.comparators.RezeptNameComparator;
 import ch.eaternity.shared.comparators.RezeptValueComparator;
 import ch.eaternity.shared.comparators.ValueComparator;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -735,6 +736,7 @@ public class Search<T> extends ResizeComposite {
 
 
 	}
+
 	
 	
 	@SuppressWarnings("deprecation")
@@ -951,7 +953,7 @@ public class Search<T> extends ResizeComposite {
 		superDisplay.adjustStickyEditLayout();
 
 		t.schedule(200);
-
+		Log.debug("Ingredient Added");
 		selectedRow = row;
 		markedRow = 0;
 

@@ -12,7 +12,19 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.NotLoggedInException;
+import ch.eaternity.shared.Commitment;
+import ch.eaternity.shared.Converter;
+import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.ShortUrl;
+import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Tag;
+import ch.eaternity.shared.UploadedImage;
+import ch.eaternity.shared.Workgroup;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -25,25 +37,12 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import ch.eaternity.client.DataService;
-import ch.eaternity.shared.ClientData;
-import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Converter;
-import ch.eaternity.shared.Data;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.NotLoggedInException;
-import ch.eaternity.shared.ShortUrl;
-import ch.eaternity.shared.Util;
-import ch.eaternity.shared.Workgroup;
-import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Tag;
-import ch.eaternity.shared.UploadedImage;
 
 import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.NotFoundException;
+
+//import org.apache.log4j.Logger; 
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -52,7 +51,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	 */
 	private static final long serialVersionUID = -6050252880920260705L;
 
-	private static final Logger LOG = Logger.getLogger(DataServiceImpl.class.getName());
+	private static final Logger Log = Logger.getLogger(DataServiceImpl.class.getName());
 	private static final PersistenceManagerFactory PMF =
 		JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
@@ -252,6 +251,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// DEPRECIATED PM
 		// reference:
 		// http://code.google.com/p/googleappengine/source/browse/trunk/java/demos/gwtguestbook/src/com/google/gwt/sample/gwtguestbook/server/GuestServiceImpl.java
+		Log.warning("Start fetching Data object");
 		PersistenceManager pm = getPersistenceManager();
 		
 
@@ -275,6 +275,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.publicRecipes = dao.getOpenRecipe();
 			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); 
 			
+
 			data.kitchens = dao.getYourKitchens(getUser());
 			
 			if (data.loginInfo.isAdmin()) {
@@ -297,8 +298,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				data.kitchens = dao.getYourKitchens(getUser());
 			}
 		}
+
 		else {
 			data.kitchens = dao.getOpenKitchen();
+
 		}
 		
 		// mark descendants of the recipes
@@ -306,6 +309,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		Util.markDescendant(data.kitchenRecipes);
 		Util.markDescendant(data.publicRecipes);
 	
+		Log.warning("preparing to return");
 		return data;
 	}
 
@@ -374,8 +378,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	// not used anymore de
 	public LoginInfo login(String requestUri) {
+
 		DAO dao = new DAO();
 		return dao.getLoginInfo(requestUri, getUser());
+
 	  }
 	
 	public String getBlobstoreUploadUrl() {

@@ -32,8 +32,7 @@ import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 
 
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener.UrlContext;
-import com.google.api.gwt.services.urlshortener.shared.model.Url;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;

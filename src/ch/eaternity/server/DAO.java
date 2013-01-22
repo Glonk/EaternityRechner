@@ -1,7 +1,6 @@
 package ch.eaternity.server;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,23 +10,20 @@ import java.util.logging.Logger;
 
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
-import ch.eaternity.shared.Device;
-import ch.eaternity.shared.DeviceSpecification;
-import ch.eaternity.shared.Condition;
+
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.RecipeComment;
-import ch.eaternity.shared.Workgroup;
+import ch.eaternity.shared.IngredientCondition;
+import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.RecipeComment;
 import ch.eaternity.shared.Staff;
+import ch.eaternity.shared.Workgroup;
 
 import com.google.appengine.api.datastore.QueryResultIterator;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -35,7 +31,7 @@ import com.google.gwt.core.client.GWT;
 import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
-import com.googlecode.objectify.helper.DAOBase;
+import com.googlecode.objectify.util.DAOBase;
 
 public class DAO extends DAOBase
 {

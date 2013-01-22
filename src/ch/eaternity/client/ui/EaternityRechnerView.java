@@ -10,13 +10,10 @@ import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 
 
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -48,8 +45,6 @@ public interface EaternityRechnerView<T> extends IsWidget
 		void addNewRecipe();
 
 		LoginInfo getLoginInfo();
-
-		Urlshortener getUrlShortener();
 
 		void addRezept(Recipe recipe, RecipeView rezeptView);
 

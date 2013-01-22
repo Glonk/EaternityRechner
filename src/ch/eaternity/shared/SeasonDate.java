@@ -11,11 +11,12 @@ import java.util.Date;
 public class SeasonDate {
 	public int month;
 	public int day;
-
+	
 	public SeasonDate(int month, int day) {
 		this.month = month;
 		this.day = day;
 	}
+
 
 	public SeasonDate() {}
 	
@@ -23,6 +24,7 @@ public class SeasonDate {
 		month = toClone.month;
 		day = toClone.day;
 	}
+
 
 	/*
 	 * Format: dd.MM
@@ -46,8 +48,6 @@ public class SeasonDate {
 		String strDate = date.getDay() + "." + date.getMonth();
 		return setDate(strDate);
 	}
-
-
 
 	/*
 	 * if the dates are same, after returns true as well (still in season)
@@ -97,4 +97,6 @@ public class SeasonDate {
 	}
 	 */
 
+
 }
+

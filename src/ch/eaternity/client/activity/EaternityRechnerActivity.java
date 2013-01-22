@@ -2,24 +2,26 @@ package ch.eaternity.client.activity;
 
 import java.util.Iterator;
 
+import java.util.List;
+
+
 import ch.eaternity.client.ClientFactory;
-import ch.eaternity.client.DataController;
+import ch.eaternity.client.ConfirmDialog;
 import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.NotLoggedInException;
+import ch.eaternity.client.RecipeView;
+import ch.eaternity.client.Search;
+import ch.eaternity.client.TopPanel;
+import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.ui.widgets.ConfirmDialog;
-import ch.eaternity.client.ui.widgets.RecipeView;
-import ch.eaternity.client.ui.widgets.Search;
-import ch.eaternity.client.ui.widgets.TopPanel;
-import ch.eaternity.shared.ClientData;
+import ch.eaternity.shared.Data;
 import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Workgroup;
 
-import com.google.api.gwt.client.impl.ClientGoogleApiRequestTransport;
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
-import com.google.api.gwt.shared.GoogleApiRequestTransport;
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,6 +37,9 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
+
+//import org.mortbay.log.Log;
+
 
 public class EaternityRechnerActivity extends AbstractActivity implements
 		EaternityRechnerView.Presenter {
@@ -85,7 +90,9 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		display.setMenuPreviewDialog(menuPreview);
 
 		// now load the data
+
 		dco.loadData();
+
 		
 		initializeUrlshortener();	
 	}
@@ -203,32 +210,6 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	
 
 
-	// registering the class is an essential procedure to access the api
-	static Urlshortener urlshortener = GWT.create(Urlshortener.class);
-
-	private void initializeUrlshortener() {
-	  new ClientGoogleApiRequestTransport()
-	      .setApiAccessKey("AIzaSyAkdIvs2SM0URQn5656q9NugoU-3Ix2LYg")
-	      .setApplicationName("eaternityrechner")
-	      .create(new Receiver<GoogleApiRequestTransport>() {
-	        @Override
-	        public void onSuccess(GoogleApiRequestTransport transport) {
-	          urlshortener.initialize(new SimpleEventBus(), transport);
-
-	          // Now that your service is initialized, you can make a request.
-	          // It may be better to publish a "ready" event on the eventBus
-	          // and listen for it to make requests elsewhere in your code.
-//	          makeRequest();
-	          //TODO block saving of a new recipe until this event has fired! (or do this event bus stuff - yeah, right, I have no idea howto :)
-	          
-	        }
-
-	        @Override
-	        public void onFailure(ServerFailure error) {
-	          Window.alert("Failed to initialize Url-shortener!");
-	        }
-	      });
-	}
 	
 	public LoginInfo getLoginInfo(){
 		return loginInfo;
@@ -287,10 +268,6 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		
 	}
 
-	@Override
-	public Urlshortener getUrlShortener() {
-		return urlshortener;
-	}
 
 	//REFACTOR: DataController
 	@Override

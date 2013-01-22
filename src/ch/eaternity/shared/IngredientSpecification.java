@@ -2,6 +2,7 @@
 package ch.eaternity.shared;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,7 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
+
 import com.googlecode.objectify.annotation.Serialized;
 
 
@@ -33,6 +34,15 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	
 	@Id private Long id;
 	
+//    @PrimaryKey
+//    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+//	private Long id;
+//	
+//    @Persistent
+//    @Extension(vendorName="datanucleus", key="gae.pk-id", value="true")
+//    private Long keyId;
+	
+	
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
@@ -45,7 +55,9 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	@Persistent
 	private String recipeKey;
 	
+
 	private Long ingredientId;
+
 
 	private int weight;
 	@Serialized
@@ -57,6 +69,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	@Embedded
 	private Production production;
 	@Embedded
+
 	private MoTransportation transportation;
 	private double distance; // in km
 	private Long label;
@@ -67,10 +80,11 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 	private SeasonDate startSeason;
 	private SeasonDate stopSeason;
+
 	
-	private int NormalCO2Value; // in (Kg Co2)/Kg
 	// no factors included
 	private double co2ValueNoFactors;
+	
 	private double cost; 
 	public List<String> tags;
 	
@@ -177,6 +191,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public Long getLabel() {
 		return label;
 	}
+
 	public void setSeason(String strStart,String strStop) {
 		this.startSeason = new SeasonDate();
 		this.startSeason.setDate(strStart);
@@ -195,6 +210,10 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 	public SeasonDate getStopSeason() {
 		return stopSeason;
+	}
+	
+	public Boolean hasSeason() {
+		return ( startSeason != null && stopSeason != null );
 	}
 
 	public void setZutat_id(Long zutat_id) {
@@ -247,6 +266,14 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		return distance;
 	}
 	
+	public int getKmDistanceRounded() {
+		int d = (int)(distance/10000);
+		if (d%10 >= 5)
+			d = d + 10;
+		int dist = ((int)(d/10))*100;
+		return dist;
+	}
+	
 	/*
 	 *  TODO this is a hack, hardcoded value. remove after all objects are updated
 	 */
@@ -264,8 +291,11 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 
 	public double getCalculatedCO2Value() {
+		// just in case its not setted yet
+		calculateCo2ValueNoFactors();
+		
 		// sum up all parts
-		return calculateCo2ValueNoFactors() + getConditionQuota() + getTransportationQuota() + getProductionQuota();
+		return co2ValueNoFactors + getConditionQuota() + getTransportationQuota() + getProductionQuota();
 	}
 	
 	public double getConditionQuota() {

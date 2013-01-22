@@ -8,7 +8,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.Key;
 
@@ -23,6 +22,7 @@ public class Extraction implements Serializable,Cloneable{
 	@Id Long id;
     
 	public String symbol;
+
 	
 	/*
 	public Condition stdCondition;
@@ -58,4 +58,5 @@ public class Extraction implements Serializable,Cloneable{
         }
         return true;
     }
+
 }

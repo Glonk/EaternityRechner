@@ -30,8 +30,6 @@ import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 
 import com.gargoylesoftware.htmlunit.javascript.host.EventHandler;
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener.UrlContext;
-import com.google.api.gwt.services.urlshortener.shared.model.Url;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -766,11 +764,13 @@ public class RecipeEditView<T> extends Composite {
 		if(zutat.getCondition() != null){
 			if(zutat.getCondition().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
 				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
+
 					SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
 					SeasonDate dateStart = zutat.getStartSeason();		
 					SeasonDate dateStop =  zutat.getStopSeason();
 					
 					if( date.after(dateStart) && date.before(dateStop) ){
+
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
 					} else if (!zutat.getCondition().symbol.equalsIgnoreCase("frisch") && !zutat.getProduction().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
 						icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
