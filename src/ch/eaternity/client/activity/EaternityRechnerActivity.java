@@ -1,67 +1,42 @@
 package ch.eaternity.client.activity;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-
-//import org.mortbay.log.Log;
-import com.allen_sauer.gwt.log.client.Log;
-
-import com.google.api.gwt.client.impl.ClientGoogleApiRequestTransport;
-import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
-import com.google.api.gwt.shared.GoogleApiRequestTransport;
-
-
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.ConfirmDialog;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.EaternityRechner;
-import ch.eaternity.client.IngredientsDialog;
 import ch.eaternity.client.NotLoggedInException;
-import ch.eaternity.client.RecipeEditView;
 import ch.eaternity.client.RecipeView;
 import ch.eaternity.client.Search;
 import ch.eaternity.client.TopPanel;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.place.HelloPlace;
 import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.HelloView;
 import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.widgets.ImageOverlay;
 import ch.eaternity.shared.Data;
-import ch.eaternity.shared.DeviceSpecification;
-import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Workgroup;
+
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.api.services.urlshortener.Urlshortener;
+import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
+//import org.mortbay.log.Log;
 
 public class EaternityRechnerActivity extends AbstractActivity implements
 		EaternityRechnerView.Presenter {
@@ -114,7 +89,6 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		Log.error("Start loading Data");
 		Log.debug("Start loading Data");
 		loadData();
-		initializeUrlshortener();
 
 		// load login
 		loadLoginData();
@@ -349,32 +323,6 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 	
 
 
-	// registering the class is an essential procedure to access the api
-	static Urlshortener urlshortener = GWT.create(Urlshortener.class);
-
-	private void initializeUrlshortener() {
-	  new ClientGoogleApiRequestTransport()
-	      .setApiAccessKey("AIzaSyAkdIvs2SM0URQn5656q9NugoU-3Ix2LYg")
-	      .setApplicationName("eaternityrechner")
-	      .create(new Receiver<GoogleApiRequestTransport>() {
-	        @Override
-	        public void onSuccess(GoogleApiRequestTransport transport) {
-	          urlshortener.initialize(new SimpleEventBus(), transport);
-
-	          // Now that your service is initialized, you can make a request.
-	          // It may be better to publish a "ready" event on the eventBus
-	          // and listen for it to make requests elsewhere in your code.
-//	          makeRequest();
-	          //TODO block saving of a new recipe until this event has fired! (or do this event bus stuff - yeah, right, I have no idea howto :)
-	          
-	        }
-
-	        @Override
-	        public void onFailure(ServerFailure error) {
-	          Window.alert("Failed to initialize Url-shortener!");
-	        }
-	      });
-	}
 	
 	//REFACTOR: Entscheid Serverseitig ob Admin, je nachdem Adminrezepte mitschicken...
 	private HandlerRegistration loadAdmin() {
@@ -566,10 +514,6 @@ public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
 	}
 
-	@Override
-	public Urlshortener getUrlShortener() {
-		return urlshortener;
-	}
 
 	@Override
 	public void removeRecipe(Recipe recipe) {
