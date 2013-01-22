@@ -20,7 +20,6 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Workgroup;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.api.services.urlshortener.Urlshortener;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

@@ -10,7 +10,6 @@ import com.google.gwt.thirdparty.guava.common.collect.Multimap;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.CatRyzer;
 import ch.eaternity.shared.Workgroup;
 
 /*s

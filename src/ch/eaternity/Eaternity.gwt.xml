@@ -28,6 +28,7 @@
   <inherits name="com.google.gwt.activity.Activity"/>
   <inherits name="com.google.gwt.place.Place"/>
   <inherits name="gwtupload.GWTUpload"/>
+  <inherits name="com.google.common.collect.Collect"/>
   
   
 
@@ -53,6 +54,9 @@
 <set-property name="gwt.logging.firebugHandler" value="ENABLED" />
 <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED" />
 -->
+
+
+
 
 <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true" />
 

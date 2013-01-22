@@ -8,7 +8,6 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 
-import com.google.api.services.urlshortener.Urlshortener;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.ComplexPanel;
