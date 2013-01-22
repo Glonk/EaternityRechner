@@ -130,7 +130,7 @@
     <welcome-file>EaternityRechner.html</welcome-file>
   </welcome-file-list>
 
-<!--OnPositive Tools-->
+<!--OnPositive Tools
 <servlet>
 		<servlet-name>baseViewerServlet</servlet-name>
 		<servlet-class>com.onpositive.gae.tools.servlets.BaseViewerServlet</servlet-class>
@@ -194,7 +194,7 @@
     <servlet-name>SystemServiceServlet</servlet-name>
     <url-pattern>/_ah/spi/*</url-pattern>
   </servlet-mapping>
-
+-->
 <servlet>
     <display-name>Remote API Servlet</display-name>
     <servlet-name>RemoteApiServlet</servlet-name>

@@ -17,7 +17,9 @@
   <inherits name='com.google.gwt.user.theme.standard.Standard'/> 
   
   <inherits name="com.google.gwt.xml.XML" />
-  <inherits name="com.google.api.gwt.ApiCore" />
+  <!-- inherits name="com.google.api.gwt.ApiCore" /-->
+  
+
   <inherits name="com.google.web.bindery.requestfactory.RequestFactory" />
   <inherits name="com.googlecode.objectify.Objectify" />
   <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
@@ -66,6 +68,7 @@
 
 
   <!-- Specify the paths for translatable code                    -->
+  
   <source path='client'/>
   <source path='shared'/>
   
