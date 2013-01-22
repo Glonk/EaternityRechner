@@ -12,11 +12,7 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar" sourcepath="/Users/manuel/Documents/workspace/objectify-2.2.3/src">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/manuel/Documents/workspace/objectify-2.2.3/javadoc/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar" />
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-log-3.2.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-2.4.jar"/>
