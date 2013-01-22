@@ -27,18 +27,31 @@
   <inherits name="com.google.gwt.activity.Activity"/>
   <inherits name="com.google.gwt.place.Place"/>
   <inherits name="gwtupload.GWTUpload"/>
+  
+  
+
+  <!-- For development, a default of `DEBUG` is recommended -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  <set-property name="log_WindowLogger" value="DISABLED" />
+
+  <!-- You'll probably want to disable the default `DivLogger` as well: -->
+<!--   <set-property name="log_DivLogger" value="DISABLED" /> -->
+  
+<!--   Specify a log pattern !-->
+	<set-configuration-property name="log_pattern" value="(%F:%L) %d [%-5p] %m%n" />
+  
+  <!--  <inherits name="org.apache.log4j.Log4j" />
   <inherits name="com.google.gwt.logging.Logging"/>
-  <!--  <inherits name="org.apache.log4j.Log4j" />-->
   	
-  <set-property name="gwt.logging.logLevel" value="SEVERE"/> # To change the default logLevel
+<set-property name="gwt.logging.logLevel" value="DEBUG"/> # To change the default logLevel
 <set-property name="gwt.logging.enabled" value="TRUE"/> # To disable logging
 <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  # To disable a default Handler
 <set-property name="gwt.logging.developmentModeHandler" value="ENABLED" />
-<set-property name="gwt.logging.popupHandler" value="DISABLED" />
+<set-property name="gwt.logging.popupHandler" value="ENABLED" />
 <set-property name="gwt.logging.systemHandler" value="ENABLED" />
 <set-property name="gwt.logging.firebugHandler" value="ENABLED" />
 <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED" />
-
+-->
 
 <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true" />
 

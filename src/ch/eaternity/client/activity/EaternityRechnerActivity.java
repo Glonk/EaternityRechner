@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+//import org.mortbay.log.Log;
+import com.allen_sauer.gwt.log.client.Log;
+
 import com.google.api.gwt.client.impl.ClientGoogleApiRequestTransport;
 import com.google.api.gwt.services.urlshortener.shared.Urlshortener;
 import com.google.api.gwt.shared.GoogleApiRequestTransport;
@@ -108,6 +111,8 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		display.setMenuPreviewDialog(menuPreview);
 
 		// now load the data
+		Log.error("Start loading Data");
+		Log.debug("Start loading Data");
 		loadData();
 		initializeUrlshortener();
 

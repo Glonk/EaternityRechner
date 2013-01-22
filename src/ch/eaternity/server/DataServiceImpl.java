@@ -12,7 +12,19 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
-
+import ch.eaternity.client.DataService;
+import ch.eaternity.client.NotLoggedInException;
+import ch.eaternity.shared.Commitment;
+import ch.eaternity.shared.Converter;
+import ch.eaternity.shared.Data;
+import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.ShortUrl;
+import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Tag;
+import ch.eaternity.shared.UploadedImage;
+import ch.eaternity.shared.Workgroup;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -24,23 +36,11 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import ch.eaternity.client.NotLoggedInException;
-import ch.eaternity.client.DataService;
-import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Converter;
-import ch.eaternity.shared.Data;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.ShortUrl;
-import ch.eaternity.shared.Workgroup;
-import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
-import ch.eaternity.shared.Tag;
-import ch.eaternity.shared.UploadedImage;
-
 import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.NotFoundException;
+
+//import org.apache.log4j.Logger; 
 
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
@@ -49,7 +49,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	 */
 	private static final long serialVersionUID = -6050252880920260705L;
 
-	private static final Logger LOG = Logger.getLogger(DataServiceImpl.class.getName());
+	private static final Logger Log = Logger.getLogger(DataServiceImpl.class.getName());
 	private static final PersistenceManagerFactory PMF =
 		JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
@@ -240,6 +240,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public Data getData() throws NotLoggedInException {
 		// reference:
 		// http://code.google.com/p/googleappengine/source/browse/trunk/java/demos/gwtguestbook/src/com/google/gwt/sample/gwtguestbook/server/GuestServiceImpl.java
+		Log.warning("Start fetching Data object");
 		PersistenceManager pm = getPersistenceManager();
 		Data data = new Data();
 
@@ -271,7 +272,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			// this should be getting all recipes the person belongs to
 			data.KitchenRecipes = dao.getKitchenRecipes(getUser()); // kitchen
 		}
-		
+		Log.warning("User Recipes loaded");
 		
 		List<Recipe> rezepte = getAdminRezepte();
 		if(rezepte.isEmpty()){
@@ -293,6 +294,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 		data.setPublicRezepte(rezepte); // public
 		
+		Log.warning("public recipes loaded");
+		
 		// mark descendants of the recipes
 		markDescendant(data.yourRecipes);
 		markDescendant(data.KitchenRecipes);
@@ -302,6 +305,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// add all ingredients
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
 		data.setIngredients(ingredients);
+		
+		Log.warning("ingredients loaded");
 		
 		// get kitchen
 		if (getUser() != null) {
@@ -327,6 +332,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.kitchens = kitchensOpen;
 		}
 		
+		Log.warning("kitchens loaded");
+		
 		// get last kitchen id
 		if (getUser() != null) {
 		    try {
@@ -339,6 +346,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.lastKitchen = 0L;
 		}
 	
+		Log.warning("preparing to return");
 		return data;
 	}
 
@@ -445,6 +453,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	      loginInfo.setLoggedIn(false);
 	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
 	    }
+	    Log.warning(userService.toString());
 	    return loginInfo;
 	  }
 	
