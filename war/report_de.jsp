@@ -405,7 +405,7 @@ if(order == 1) { %>
 class="alternate"
 <% }%> > 
 <td class="menu-name">
-<%= ingredientValue.categoryName %> <!-- (<%=ingredientValue.weight/1000%> kg) -->
+<%= ingredientValue.categoryName %> (<%=ingredientValue.weight/1000%> kg)  (<%= cost_formatter.format(ingredientValue.cost) %> CHF)
 </td>
 <td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, ingredientValue.co2value, co2BarLength) %></td>
 <td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value.totalValue/1000) %></td>
