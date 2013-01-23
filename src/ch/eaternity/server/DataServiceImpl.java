@@ -237,6 +237,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return adminRecipes;
 		
 	}
+	
+	// not working yet, implement it when needed...
+	public ArrayList<SingleDistance> getDistances() {
+		DAO dao = new DAO();
+		ArrayList distances = (ArrayList) dao.getDistances();
+		return distances;
+	}
 
 	public Data getData() throws NotLoggedInException {
 		// reference:
@@ -373,6 +380,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException {
+		
 		PersistenceManager pm = getPersistenceManager();
 
 		try {

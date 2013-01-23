@@ -35,6 +35,8 @@ public class SingleDistance implements Serializable {
 	
 	@Persistent
 	private Boolean triedRoad;
+	
+	public SingleDistance() {}
 
 
 	public void setDistance(Double distance) {

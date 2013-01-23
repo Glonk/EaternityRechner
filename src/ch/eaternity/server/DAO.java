@@ -19,6 +19,7 @@ import ch.eaternity.shared.MoTransportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
+import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Staff;
 import ch.eaternity.shared.Workgroup;
 
@@ -53,7 +54,18 @@ public class DAO extends DAOBase
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
 	
-	/** Your DAO can have your own useful methods */
+	// probably not working yet, still done with persistentManager in DataService...
+	public List<SingleDistance> getDistances() {
+		List<SingleDistance> distances = ofy().query(SingleDistance.class).list();
+		return distances;
+	}
+	
+	// probably not working yet, still done with persistentManager in DataService...
+	public Boolean addDistances(List<SingleDistance> addDistances) {
+		ofy().put(addDistances); 
+		return true;
+	}
+	
 	public Long updateOrCreateIngredient(Ingredient ingredient)
 	{
 		Ingredient found = ofy().find(Ingredient.class, ingredient.getId());
