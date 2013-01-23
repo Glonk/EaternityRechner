@@ -2,41 +2,31 @@ package ch.eaternity.client.activity;
 
 import java.util.Iterator;
 
-import java.util.List;
-
-
 import ch.eaternity.client.ClientFactory;
-import ch.eaternity.client.ConfirmDialog;
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.NotLoggedInException;
-import ch.eaternity.client.RecipeView;
-import ch.eaternity.client.Search;
-import ch.eaternity.client.TopPanel;
-import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.ui.EaternityRechnerView;
 import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.shared.Data;
+import ch.eaternity.client.ui.widgets.ConfirmDialog;
+import ch.eaternity.client.ui.widgets.RecipeView;
+import ch.eaternity.client.ui.widgets.Search;
+import ch.eaternity.client.ui.widgets.TopPanel;
+import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.Workgroup;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 //import org.mortbay.log.Log;
 

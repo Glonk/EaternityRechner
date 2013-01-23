@@ -4,8 +4,7 @@ package ch.eaternity.client;
 import ch.eaternity.client.mvp.AppActivityMapper;
 import ch.eaternity.client.mvp.AppPlaceHistoryMapper;
 import ch.eaternity.client.place.HelloPlace;
-import ch.eaternity.client.widgets.SimpleWidgetPanel;
-
+import ch.eaternity.client.ui.widgets.SimpleWidgetPanel;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
