@@ -241,7 +241,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public Data getData() throws NotLoggedInException {
 		// reference:
 		// http://code.google.com/p/googleappengine/source/browse/trunk/java/demos/gwtguestbook/src/com/google/gwt/sample/gwtguestbook/server/GuestServiceImpl.java
-		Log.warning("Start fetching Data object");
 		PersistenceManager pm = getPersistenceManager();
 		Data data = new Data();
 
@@ -273,7 +272,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			// this should be getting all recipes the person belongs to
 			data.KitchenRecipes = dao.getKitchenRecipes(getUser()); // kitchen
 		}
-		Log.warning("User Recipes loaded");
 		
 		List<Recipe> rezepte = getAdminRezepte();
 		if(rezepte.isEmpty()){
@@ -295,8 +293,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 		data.setPublicRezepte(rezepte); // public
 		
-		Log.warning("public recipes loaded");
-		
 		// mark descendants of the recipes
 		markDescendant(data.yourRecipes);
 		markDescendant(data.KitchenRecipes);
@@ -306,8 +302,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// add all ingredients
 		ArrayList<Ingredient> ingredients = dao.getAllIngredients();
 		data.setIngredients(ingredients);
-		
-		Log.warning("ingredients loaded");
 		
 		// get kitchen
 		if (getUser() != null) {
@@ -333,8 +327,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.kitchens = kitchensOpen;
 		}
 		
-		Log.warning("kitchens loaded");
-		
 		// get last kitchen id
 		if (getUser() != null) {
 		    try {
@@ -347,7 +339,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.lastKitchen = 0L;
 		}
 	
-		Log.warning("preparing to return");
 		return data;
 	}
 
@@ -454,7 +445,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	      loginInfo.setLoggedIn(false);
 	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
 	    }
-	    Log.warning(userService.toString());
 	    return loginInfo;
 	  }
 	

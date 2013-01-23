@@ -84,9 +84,6 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		container.setWidget(display);
 		display.setMenuPreviewDialog(menuPreview);
 
-		// now load the data
-		Log.error("Start loading Data");
-		Log.debug("Start loading Data");
 		loadData();
 
 		// load login

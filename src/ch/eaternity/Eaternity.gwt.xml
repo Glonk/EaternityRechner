@@ -35,6 +35,7 @@
   <!-- For development, a default of `DEBUG` is recommended -->
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
   <set-property name="log_WindowLogger" value="DISABLED" />
+  <set-property name="log_DivLogger" value="DISABLED" />
 
   <!-- You'll probably want to disable the default `DivLogger` as well: -->
 <!--   <set-property name="log_DivLogger" value="DISABLED" /> -->

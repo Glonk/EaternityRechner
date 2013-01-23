@@ -981,7 +981,6 @@ public class Search<T> extends ResizeComposite {
 		superDisplay.adjustStickyEditLayout();
 
 		t.schedule(200);
-		Log.debug("Ingredient Added");
 		selectedRow = row;
 		markedRow = 0;
 
