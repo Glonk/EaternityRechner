@@ -1,17 +1,15 @@
 package ch.eaternity.client.activity;
 
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.DialogBox;
-
 import ch.eaternity.client.ClientFactory;
-import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.HelloPlace;
 import ch.eaternity.client.ui.HelloView;
 import ch.eaternity.client.ui.MenuPreviewView;
+
+import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.DialogBox;
 
 public class HelloActivity extends AbstractActivity implements
 		HelloView.Presenter {

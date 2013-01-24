@@ -17,7 +17,7 @@ public interface ClientFactory {
     
     // the views
 	HelloView getHelloView();
-	RechnerView getEaternityRechnerView();
+	RechnerView getRechnerView();
 	GoodbyeView getGoodbyeView();
 	MenuPreviewView getMenuPreviewView();
 	KlimaZmittagView getKlimaZmittagView();

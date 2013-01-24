@@ -1,12 +1,5 @@
 package ch.eaternity.client;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.place.shared.PlaceController;
-
-import ch.eaternity.client.ui.RechnerView;
-import ch.eaternity.client.ui.RechnerView;
 import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.GoodbyeViewImpl;
 import ch.eaternity.client.ui.HelloView;
@@ -14,6 +7,12 @@ import ch.eaternity.client.ui.HelloViewImpl;
 import ch.eaternity.client.ui.KlimaZmittagView;
 import ch.eaternity.client.ui.KlimaZmittagViewImpl;
 import ch.eaternity.client.ui.MenuPreviewView;
+import ch.eaternity.client.ui.RechnerView;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.place.shared.PlaceController;
 
 public class ClientFactoryImpl implements ClientFactory
 {
@@ -21,7 +20,7 @@ public class ClientFactoryImpl implements ClientFactory
 	private static final PlaceController placeController = new PlaceController(eventBus);
 	private static final HelloView helloView = new HelloViewImpl();
 	private static final KlimaZmittagView klimaZmittagView = new KlimaZmittagViewImpl();
-	private static final RechnerView eaternityRechnerView = new RechnerView();
+	private static final RechnerView RechnerView = new RechnerView();
 	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
 	private static final MenuPreviewView menuPreviewView = new MenuPreviewView();
 	private final DataController dao = new DataController(this);
@@ -41,9 +40,9 @@ public class ClientFactoryImpl implements ClientFactory
 	}
 	
 	@Override
-	public RechnerView getEaternityRechnerView()
+	public RechnerView getRechnerView()
 	{
-		return eaternityRechnerView;
+		return RechnerView;
 	}
 
 	@Override

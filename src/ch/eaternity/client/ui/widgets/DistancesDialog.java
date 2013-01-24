@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.eaternity.client.DataController;
-import ch.eaternity.client.DataService;
-import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.ui.RechnerView;
-import ch.eaternity.client.ui.RechnerView.Presenter;
+import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.shared.Distance;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
@@ -18,7 +15,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -48,7 +44,7 @@ public class DistancesDialog extends DialogBox{
 	private String currentLocation;
 	private List<SingleDistance> allDistances = new ArrayList<SingleDistance>();
 	
-	private Presenter presenter;
+	private RechnerActivity presenter;
 	private DataController dco;
 	private Distance distances;
 	
@@ -71,7 +67,7 @@ public class DistancesDialog extends DialogBox{
 	
 	public DistancesDialog() {}
 	
-	public void setPresenter(Presenter presenter){
+	public void setPresenter(RechnerActivity presenter){
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		this.distances = dco.getDist();

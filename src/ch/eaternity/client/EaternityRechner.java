@@ -3,7 +3,7 @@ package ch.eaternity.client;
 
 import ch.eaternity.client.mvp.AppActivityMapper;
 import ch.eaternity.client.mvp.AppPlaceHistoryMapper;
-import ch.eaternity.client.place.EaternityRechnerPlace;
+import ch.eaternity.client.place.RechnerRecipeViewPlace;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -12,16 +12,13 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -32,7 +29,7 @@ import com.google.web.bindery.event.shared.EventBus;
 public class EaternityRechner implements EntryPoint {
 
 
-	private Place defaultEntryPlace = new EaternityRechnerPlace("");
+	private Place defaultEntryPlace = new RechnerRecipeViewPlace("");
 	private SimplePanel appWidget = new SimplePanel();
 	
 

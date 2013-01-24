@@ -8,6 +8,7 @@ import java.util.List;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.EnergyMix;
@@ -87,7 +88,7 @@ public class KitchenDialog<T> extends DialogBox{
 	List<Workgroup> availableKitchens;
 	Workgroup selectedKitchen;
 	
-	private Presenter<T> presenter;
+	private RechnerActivity presenter;
 	private DataController dco;
 	
 	
@@ -97,7 +98,7 @@ public class KitchenDialog<T> extends DialogBox{
 		currentLocation = dco.getCurrentLocation();
 	}
 	
-	public void setPresenter(Presenter<T> presenter){
+	public void setPresenter(RechnerActivity presenter){
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		
