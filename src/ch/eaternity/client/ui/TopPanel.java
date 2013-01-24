@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package ch.eaternity.client.ui.widgets;
+package ch.eaternity.client.ui;
 
 
 
@@ -23,8 +23,12 @@ import java.util.Date;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
-import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView.Presenter;
+import ch.eaternity.client.ui.widgets.DistancesDialog;
+import ch.eaternity.client.ui.widgets.IngredientsDialog;
+import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
+import ch.eaternity.client.ui.widgets.KitchenDialog;
+import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.client.events.LoginChangedEvent;
@@ -82,7 +86,7 @@ public class TopPanel<T> extends Composite {
 //REFACTOR: move them into RechnerView as a top panel?
   public  DistancesDialog ddlg;
   public  KitchenDialog kDlg;
-  private EaternityRechnerView superDisplay;
+  private RechnerView superDisplay;
   private DataController dco;
   
  // here should be all the distances stored 
@@ -96,7 +100,7 @@ public void setPresenter(Presenter<T> presenter){
 	this.dco = presenter.getDCO();
 }
 
-public void setSuperDisplay(EaternityRechnerView superDisplay){
+public void setSuperDisplay(RechnerView superDisplay){
 	this.superDisplay = superDisplay;
 }
   
@@ -190,7 +194,7 @@ public void setSuperDisplay(EaternityRechnerView superDisplay){
   @UiHandler("Monate")
   void onChange(ChangeEvent event) {
 	  superDisplay.updateSaisonAndMore();
-	  presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
+	  presenter.getSearchPanel().updateResults(IngredientsResultWidget.SearchInput.getText());
 	  // TODO aktualisiere die Saisonalität aller Rezepte... dieser Prozess muss gethreaded sein!
 	  // TODO close the InfozutatDialog when doing this...
   }

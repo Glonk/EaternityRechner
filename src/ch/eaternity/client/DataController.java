@@ -12,8 +12,8 @@ import ch.eaternity.client.events.RecipeDeletedEvent;
 import ch.eaternity.client.events.RecipeIngredientsChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.ui.widgets.Search;
-import ch.eaternity.client.ui.widgets.TopPanel;
+import ch.eaternity.client.ui.TopPanel;
+import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Distance;
 import ch.eaternity.shared.Ingredient;
@@ -43,6 +43,7 @@ public class DataController {
 	
 	// here is the database of all data pushed to....
 	private ClientData cdata = new ClientData();
+	private boolean dataLoaded = false;
 
 	// ---------------------- public Methods ----------------------
 	
@@ -53,7 +54,9 @@ public class DataController {
 		this.eventBus = factory.getEventBus();
 	}
 	
-
+	public boolean dataLoaded() {
+		return dataLoaded;
+	}
 	
 	public void loadData() {
 		dataRpcService.getData(GWT.getHostPageBaseURL(), new AsyncCallback<ClientData>() {
@@ -103,6 +106,7 @@ public class DataController {
 			}
 			
 		});
+		dataLoaded = true;
 	}
 	
 	// --------------------- Methods accessed by SubViews --------------------- 
@@ -140,7 +144,7 @@ public class DataController {
 					dao.cdata.currentKitchenRecipes.add(recipe);
 				}
 				
-				String searchString = Search.SearchInput.getText().trim();
+				String searchString = IngredientsResultWidget.SearchInput.getText().trim();
 				getSearchPanel().updateResults(searchString);
 				
 				rezeptView.setRecipeSavedMode(true);
@@ -500,6 +504,13 @@ public class DataController {
 
 	public String getCurrentLocation() {
 		return cdata.currentLocation;
+	}
+
+
+
+	public void openEditRecipe() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

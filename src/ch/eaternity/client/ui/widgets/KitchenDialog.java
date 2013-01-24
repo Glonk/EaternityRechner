@@ -8,7 +8,7 @@ import java.util.List;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.EnergyMix;
 import ch.eaternity.shared.SingleDistance;
@@ -239,7 +239,7 @@ public class KitchenDialog<T> extends DialogBox{
 		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
 		  presenter.getTopPanel().selectedKitchen = null;
 		  
-		  Search.yourRecipesText.setHTML(" in eigenen Rezepten");
+		  IngredientsResultWidget.yourRecipesText.setHTML(" in eigenen Rezepten");
 		  
 		  saveLastKitchen(0L);
 	
@@ -322,8 +322,8 @@ public class KitchenDialog<T> extends DialogBox{
 					// this adds a new kitchen, yet must not be the selected one:
 					presenter.getTopPanel().selectedKitchen.id = kitchenID;
 					presenter.getDCO().changeKitchenRecipes(kitchenID);
-					presenter.getSearchPanel().updateResults(Search.SearchInput.getText());
-					Search.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
+					presenter.getSearchPanel().updateResults(IngredientsResultWidget.SearchInput.getText());
+					IngredientsResultWidget.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());
 					saveLastKitchen(kitchenID);

@@ -18,8 +18,8 @@ import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.events.RecipeAddedEvent;
 import ch.eaternity.client.events.RecipeAddedEventHandler;
-import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
@@ -149,10 +149,10 @@ public class RecipeView<T> extends Composite {
 		}
 	}
 	
-	private final EaternityRechnerView superDisplay;
+	private final RechnerView superDisplay;
 
 	
-	public RecipeView(Recipe recipe,EaternityRechnerView superDisplay) {
+	public RecipeView(Recipe recipe,RechnerView superDisplay) {
 		this.superDisplay = superDisplay;
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));

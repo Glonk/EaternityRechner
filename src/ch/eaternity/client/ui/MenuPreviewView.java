@@ -3,7 +3,7 @@ package ch.eaternity.client.ui;
 
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

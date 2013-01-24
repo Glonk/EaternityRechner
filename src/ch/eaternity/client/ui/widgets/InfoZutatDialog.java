@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.TopPanel;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;

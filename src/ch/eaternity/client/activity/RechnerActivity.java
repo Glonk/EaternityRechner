@@ -5,13 +5,16 @@ import java.util.Iterator;
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.MenuPreviewView;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
+import ch.eaternity.client.place.RechnerRecipeViewPlace;
+import ch.eaternity.client.ui.RechnerView;
+import ch.eaternity.client.ui.RecipeEdit;
+import ch.eaternity.client.ui.RecipeView;
+import ch.eaternity.client.ui.SearchIngredients;
+import ch.eaternity.client.ui.SearchRecipes;
+import ch.eaternity.client.ui.TopPanel;
 import ch.eaternity.client.ui.widgets.ConfirmDialog;
-import ch.eaternity.client.ui.widgets.RecipeView;
-import ch.eaternity.client.ui.widgets.Search;
-import ch.eaternity.client.ui.widgets.TopPanel;
+import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
@@ -26,65 +29,96 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-//import org.mortbay.log.Log;
 
-
-public class EaternityRechnerActivity extends AbstractActivity implements
-		EaternityRechnerView.Presenter {
-	
-	public static LoginInfo loginInfo = null;
+/**
+ * This is the Activity and the main Presenter in One
+ * @author aurelianjaggi
+ *
+ */
+public class RechnerActivity extends AbstractActivity {
 	
 	private final ClientFactory clientFactory;
-
 	private final DataServiceAsync dataRpcService;
 	private final EventBus eventBus;
-	private final EaternityRechnerView display;
-	private final EaternityRechnerPlace place;
-
 	private PlaceController placeController;
 	private DataController dco;
-	private MenuPreviewView menuPreview;
 	
+	private Place place;
+
+	private final RechnerView rechnerView;
+	private final SearchIngredients searchIngredients;
+	private final SearchRecipes searchRecipes;
+	private final RecipeView recipeView;
+	private final RecipeEdit recipeEdit;
 	
 	
 	// Used to obtain views, eventBus, placeController
 	// Alternatively, could be injected via GIN
-	public EaternityRechnerActivity(EaternityRechnerPlace place, ClientFactory factory) {
+	public RechnerActivity(Place place, ClientFactory factory) {
 		
 		this.clientFactory = factory;
 		this.dataRpcService = factory.getDataServiceRPC();
 		this.eventBus = factory.getEventBus();
-		this.display = factory.getEaternityRechnerView();
+		this.rechnerView = factory.getEaternityRechnerView();
 		this.placeController = factory.getPlaceController();
 		this.dco = factory.getDataController();
 		this.place = place;
 		
-		this.menuPreview = factory.getMenuPreviewView();
+		recipeEdit = new RecipeEdit(this, factory);
+		recipeView = new RecipeView(this, factory);
 	}
 
 	
 	
 	@Override
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
-
-		display.setName(place.getPlaceName());
-		display.setPresenter(this);
 		
-		//REFACTOR: into RechnerView
-		display.getSearchPanel().setSuperDisplay(display);
-		display.getTopPanel().setSuperDisplay(display);
+		SimplePanel searchPanel = rechnerView.getSearchPanel();
+		SimplePanel recipePanel = rechnerView.getRecipePanel();
 		
-		container.setWidget(display);
-		display.setMenuPreviewDialog(menuPreview);
-
-		// now load the data
-
-		dco.loadData();
-
+		if (place instanceof RechnerRecipeViewPlace) {
+			// Load RecipeView into recipecontainer
+			recipePanel.setWidget(recipeView);
+			// Load SearchRecipes into searchcontainer
+			searchPanel.setWidget(searchRecipes);
+		}
+		else if (place instanceof RechnerRecipeEditPlace) {
+			// Load RecipeEdit into recipecontainer
+			recipePanel.setWidget(recipeEdit);
+			// Load SearchIngredients into searchcontainer
+			searchPanel.setWidget(searchIngredients);
+		}
 		
-		initializeUrlshortener();	
+		container.setWidget(rechnerView);
+
+		// now load the data (just once...)
+		if (!dco.dataLoaded())
+			dco.loadData();
+	}
+	
+    /**
+     * Save the EditRecipe before stopping this activity
+     */
+    @Override
+    public String mayStop() {
+    	if (place instanceof RechnerRecipeEditPlace && recipeEdit.hasChanged())
+    		return "Rezept nocht nicht gespeichert. Trotzdem verlassen?";
+        else
+        	return null;
+    }
+	
+	public void setPlace(Place place) {
+		this.place = place; 
+	}
+	
+	/**
+	 * Navigate to a new Place in the browser
+	 */
+	public void goTo(Place place) {
+		placeController.goTo(place);
 	}
 
 	
@@ -149,7 +183,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 					dco.cdata.currentKitchenRecipes.add(recipe);
 				}
 				
-				String searchString = Search.SearchInput.getText().trim();
+				String searchString = IngredientsResultWidget.SearchInput.getText().trim();
 				getSearchPanel().updateResults(searchString);
 				
 				rezeptView.setRecipeSavedMode(true);
@@ -191,7 +225,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 				}
 				if(getTopPanel().selectedKitchen != null)
 					dco.changeKitchenRecipes(getTopPanel().selectedKitchen.id);
-				getSearchPanel().updateResults(Search.SearchInput.getText());
+				getSearchPanel().updateResults(IngredientsResultWidget.SearchInput.getText());
 			}
 		});
 	}
@@ -207,12 +241,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 
 
 
-	/**
-	 * Navigate to a new Place in the browser
-	 */
-	public void goTo(Place place) {
-		placeController.goTo(place);
-	}
+
 	
 	
 	private static void handleError(Throwable error) {
@@ -224,12 +253,12 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	
 
 	public TopPanel getTopPanel() {
-		return display.getTopPanel();
+		return rechnerView.getTopPanel();
 	}
 
 
-	public Search getSearchPanel() {
-		return display.getSearchPanel();
+	public IngredientsResultWidget getSearchPanel() {
+		return rechnerView.getSearchPanel();
 	}
 
 	public int getSelectedMonth() {
@@ -254,7 +283,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 		recipe.open = false;
 		recipe.openRequested = true;
 		//display the recipe
-		display.cloneRecipe(recipe);
+		rechnerView.cloneRecipe(recipe);
 		
 	}
 
@@ -303,19 +332,19 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	//REFACTOR: into View
 	private void removeRecipeFromWorkplaceNoPrompt(RecipeView recipeToRemove)
 	{
-		int row = recipeToRemove.getWidgetRow(recipeToRemove , display.getRezeptList());
+		int row = recipeToRemove.getWidgetRow(recipeToRemove , rechnerView.getRezeptList());
 		
-		display.getRezeptList().remove(recipeToRemove);
-		display.getRezeptList().removeRow(row);
+		rechnerView.getRezeptList().remove(recipeToRemove);
+		rechnerView.getRezeptList().removeRow(row);
 
-		if(display.getSelectedRecipeNumber() == row){
-			display.setSelectedRecipeNumber(-1);
-			display.getSuggestionPanel().clear();
+		if(rechnerView.getSelectedRecipeNumber() == row){
+			rechnerView.setSelectedRecipeNumber(-1);
+			rechnerView.getSuggestionPanel().clear();
 			
 			if(recipeToRemove.isSelected){
 				//close also the Editview! ... or respectively the topview
 				//TODO this fails on the top view...
-				display.closeRecipeEditView();
+				rechnerView.closeRecipeEditView();
 			}
 		}
 	}
@@ -324,7 +353,7 @@ public class EaternityRechnerActivity extends AbstractActivity implements
 	@Override
 	public void removeAllRecipesFromWorkplace()
 	{
-		  Iterator<Widget> it = display.getRezeptList().iterator();
+		  Iterator<Widget> it = rechnerView.getRezeptList().iterator();
 		  while (it.hasNext())
 		  {
 			 RecipeView recipeToRemove = (RecipeView) it.next();

@@ -3,8 +3,7 @@ package ch.eaternity.client;
 
 import ch.eaternity.client.mvp.AppActivityMapper;
 import ch.eaternity.client.mvp.AppPlaceHistoryMapper;
-import ch.eaternity.client.place.HelloPlace;
-import ch.eaternity.client.ui.widgets.SimpleWidgetPanel;
+import ch.eaternity.client.place.EaternityRechnerPlace;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -13,13 +12,17 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.web.bindery.event.shared.EventBus;
 
 
@@ -29,8 +32,8 @@ import com.google.web.bindery.event.shared.EventBus;
 public class EaternityRechner implements EntryPoint {
 
 
-	private Place defaultEntryPlace = new HelloPlace("");
-	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
+	private Place defaultEntryPlace = new EaternityRechnerPlace("");
+	private SimplePanel appWidget = new SimplePanel();
 	
 
 	interface GlobalResources extends ClientBundle {
@@ -78,19 +81,6 @@ public class EaternityRechner implements EntryPoint {
 	    if (Log.isDebugEnabled()) {
 	      startTimeMillis = System.currentTimeMillis();
 	    }
-
-	    /*
-	     * No guards necessary. Code will be compiled out when <code>log_level=OFF</code>
-	     
-	    Log.debug("This is a 'DEBUG' test message");
-	    Log.info("This is a 'INFO' test message");
-	    Log.warn("This is a 'WARN' test message");
-	    Log.error("This is a 'ERROR' test message");
-	    Log.fatal("This is a 'FATAL' test message");
-	     
-
-	    Log.debug("foo.bar.baz", "Using logging categories", (Exception) null);
-	     */
 	    
 	    /*
 	     * Again, we need a guard here, otherwise <code>log_level=OFF</code> would still produce the
@@ -103,8 +93,6 @@ public class EaternityRechner implements EntryPoint {
 	      float durationSeconds = (endTimeMillis - startTimeMillis) / 1000F;
 	      Log.debug("Duration: " + durationSeconds + " seconds");
 	    }
-
-
 
 		ClientFactory clientFactory = GWT.create(ClientFactory.class);
 		EventBus eventBus = clientFactory.getEventBus();

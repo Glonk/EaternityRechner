@@ -14,8 +14,8 @@ import java.util.List;
 
 
 
-import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
@@ -126,7 +126,7 @@ public class RecipeEditView<T> extends Composite {
 	int  selectedRezept = -1;
 	public Recipe recipe;
 	
-	private EaternityRechnerView superDisplay;
+	private RechnerView superDisplay;
 	RecipeView rezeptViewOrigin;
 
 //	static int currentEdit;
@@ -159,7 +159,7 @@ public class RecipeEditView<T> extends Composite {
 	    }	
 	}
 	
-	public RecipeEditView(RecipeView rezeptView, Recipe recipe,EaternityRechnerView superDisplay) {
+	public RecipeEditView(RecipeView rezeptView, Recipe recipe,RechnerView superDisplay) {
 		this.superDisplay = superDisplay;
 	    // does this need to be here?
 	    initWidget(uiBinder.createAndBindUi(this));
@@ -426,7 +426,7 @@ public class RecipeEditView<T> extends Composite {
 		 // the selected row in the recipe is not highlighted anymore
 		 if (selectedRow != -1) {
 			 styleRow(selectedRow, false);
-			 Search.selectedRow = -1;
+			 IngredientsResultWidget.selectedRow = -1;
 		 }
 		 
 
@@ -552,7 +552,7 @@ public class RecipeEditView<T> extends Composite {
 
 		styleRow(selectedRow, false);
 		
-		Search.selectedRow = -1;
+		IngredientsResultWidget.selectedRow = -1;
 		
 		styleRow(row, true);
 

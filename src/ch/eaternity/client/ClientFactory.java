@@ -3,7 +3,7 @@ package ch.eaternity.client;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 
-import ch.eaternity.client.ui.EaternityRechnerView;
+import ch.eaternity.client.ui.RechnerView;
 import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.HelloView;
 import ch.eaternity.client.ui.KlimaZmittagView;
@@ -17,7 +17,7 @@ public interface ClientFactory {
     
     // the views
 	HelloView getHelloView();
-	EaternityRechnerView getEaternityRechnerView();
+	RechnerView getEaternityRechnerView();
 	GoodbyeView getGoodbyeView();
 	MenuPreviewView getMenuPreviewView();
 	KlimaZmittagView getKlimaZmittagView();

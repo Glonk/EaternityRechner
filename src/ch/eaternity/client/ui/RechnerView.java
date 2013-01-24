@@ -1,73 +1,43 @@
 package ch.eaternity.client.ui;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.ListIterator;
+import ch.eaternity.client.DataController;
+import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.RecipeAddedEvent;
+import ch.eaternity.client.events.RecipeAddedEventHandler;
+import ch.eaternity.client.ui.widgets.RecipeEditView;
+import ch.eaternity.client.ui.widgets.RecipeView;
+import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
+import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Recipe;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
-import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
-import ch.eaternity.client.DataController;
-import ch.eaternity.client.events.KitchenChangedEvent;
-import ch.eaternity.client.events.KitchenChangedEventHandler;
-import ch.eaternity.client.events.RecipeAddedEvent;
-import ch.eaternity.client.events.RecipeAddedEventHandler;
-import ch.eaternity.client.place.GoodbyePlace;
-import ch.eaternity.client.ui.RechnerView.Presenter;
-import ch.eaternity.client.ui.widgets.ImageOverlay;
-import ch.eaternity.client.ui.widgets.IngredientsDialog;
-import ch.eaternity.client.ui.widgets.RecipeEditView;
-import ch.eaternity.client.ui.widgets.RecipeView;
-import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
-import ch.eaternity.shared.DeviceSpecification;
-import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.Workgroup;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
-
-public class EaternityRechnerViewImpl extends SimpleLayoutPanel implements RechnerView
+public class RechnerView extends SimpleLayoutPanel
 {
-	@UiTemplate("EaternityRechnerViewImpl.ui.xml")
+	@UiTemplate("RechnerView.ui.xml")
 	interface EaternityRechnerViewUiBinder extends UiBinder<DockLayoutPanel, RechnerView> {}
 	private static EaternityRechnerViewUiBinder uiBinder =
 		GWT.create(EaternityRechnerViewUiBinder.class);
@@ -77,22 +47,9 @@ public class EaternityRechnerViewImpl extends SimpleLayoutPanel implements Rechn
 		String selectedRezept();
 	}
 
-
 	@UiField TopPanel topPanel;
-	@UiField IngredientsResultWidget searchPanel;  
-
-	@UiField FlexTable rezeptList;
-	@UiField FlexTable rezeptEditList;
-	@UiField HTML titleHTML;
-	@UiField DockLayoutPanel topSticky;
-	@UiField HTMLPanel panelNorth;
-	@UiField AbsolutePanel topDragArea;
-	@UiField HTMLPanel topOverflowArea;
-
-	@UiField ScrollPanel scrollWorkspace;
-	@UiField Button addRezeptButton;
-	@UiField SelectionStyle selectionStyle;
-	@UiField HorizontalPanel suggestionPanel;
+	@UiField SimplePanel searchPanel;  
+	@UiField SimplePanel recipePanel;
 
 	// ----------------- Class Variables ------------------- 
 
@@ -102,13 +59,21 @@ public class EaternityRechnerViewImpl extends SimpleLayoutPanel implements Rechn
 	private HandlerRegistration ingredientHandler;
 	static String styleNameOverlap = "overlap";
 
-	private Presenter presenter;
+	private RechnerActivity presenter;
 	private DataController dco;
 	private String name;
 	
 	static RecipeEditView rezeptEditView;
+	
+	public SimplePanel getSearchPanel() {
+		return searchPanel;
+	}
+	
+	public SimplePanel getRecipePanel() {
+		return recipePanel;
+	}
 
-	public RechnerViewImpl()
+	public RechnerView()
 	{
 		setWidget(uiBinder.createAndBindUi(this));
 		// Get rid of scrollbars, and clear out the window's built-in margin,

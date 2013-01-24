@@ -14,8 +14,8 @@ import ch.eaternity.client.events.RecipeDeletedEvent;
 import ch.eaternity.client.events.RecipeDeletedEventHandler;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEventHandler;
-import ch.eaternity.client.ui.EaternityRechnerView;
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SeasonDate;
@@ -55,10 +55,10 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * A composite that displays a list of ingredients that can be selected.
  */
-public class Search<T> extends ResizeComposite {
+public class IngredientsResultWidget extends ResizeComposite {
 	
 	// GWT UI-Binder (to display the search class)
-	interface Binder extends UiBinder<Widget, Search> { }
+	interface Binder extends UiBinder<Widget, IngredientsResultWidget> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
 	/**
@@ -162,12 +162,12 @@ public class Search<T> extends ResizeComposite {
 		this.dco = dco;
 		initTable(); // just the size
 	}
-	private EaternityRechnerView superDisplay;
-	public void setSuperDisplay(EaternityRechnerView superDisplay){
+	private RechnerView superDisplay;
+	public void setSuperDisplay(RechnerView superDisplay){
 		this.superDisplay = superDisplay;
 	}
 
-	public Search() {
+	public IngredientsResultWidget() {
 		
 		// bind and display the Search
 		initWidget(binder.createAndBindUi(this));

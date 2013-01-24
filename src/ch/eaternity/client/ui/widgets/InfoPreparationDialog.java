@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 
-import ch.eaternity.client.ui.EaternityRechnerView.Presenter;
+import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.DeviceSpecification;
 import ch.eaternity.shared.Condition;
