@@ -16,8 +16,8 @@ import java.util.List;
 
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
-import ch.eaternity.client.events.RecipeAddedEvent;
-import ch.eaternity.client.events.RecipeAddedEventHandler;
+import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.ui.RechnerView;
 import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Converter;
@@ -166,9 +166,9 @@ public class RecipeView<T> extends Composite {
 	
 	  private void bind() {
 	  	// ---------------- Listen to the EventBus ----------------
-		presenter.getEventBus().addHandler(RecipeAddedEvent.TYPE, new RecipeAddedEventHandler() {
+		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE, new UpdateRecipeViewEventHandler() {
 			@Override
-			public void onEvent(RecipeAddedEvent event) {
+			public void onEvent(UpdateRecipeViewEvent event) {
 				showRezept(event.recipe);
 			}
 		});

@@ -94,6 +94,9 @@ public class RechnerActivity extends AbstractActivity {
 			searchPanel.setWidget(searchIngredients);
 		}
 		
+		// handle place even further: difference in RecipeScope (user, kitchen, public)
+		// ...
+		
 		container.setWidget(rechnerView);
 
 		// now load the data (just once...)

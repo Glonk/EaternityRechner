@@ -1,12 +1,13 @@
 package ch.eaternity.client.mvp;
 
-import com.google.gwt.place.shared.PlaceHistoryMapper;
-import com.google.gwt.place.shared.WithTokenizers;
-
-import ch.eaternity.client.place.EaternityRechnerPlace;
 import ch.eaternity.client.place.GoodbyePlace;
 import ch.eaternity.client.place.HelloPlace;
 import ch.eaternity.client.place.KlimaZmittagPlace;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
+import ch.eaternity.client.place.RechnerRecipeViewPlace;
+
+import com.google.gwt.place.shared.PlaceHistoryMapper;
+import com.google.gwt.place.shared.WithTokenizers;
 
 /**
  * PlaceHistoryMapper interface is used to attach all places which the
@@ -14,6 +15,6 @@ import ch.eaternity.client.place.KlimaZmittagPlace;
  * annotation or by extending PlaceHistoryMapperWithFactory and creating a
  * separate TokenizerFactory.
  */
-@WithTokenizers( { HelloPlace.Tokenizer.class,EaternityRechnerPlace.Tokenizer.class, GoodbyePlace.Tokenizer.class, KlimaZmittagPlace.Tokenizer.class })
+@WithTokenizers( { HelloPlace.Tokenizer.class,RechnerRecipeViewPlace.Tokenizer.class,RechnerRecipeEditPlace.Tokenizer.class, GoodbyePlace.Tokenizer.class, KlimaZmittagPlace.Tokenizer.class })
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 }

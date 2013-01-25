@@ -2,8 +2,8 @@ package ch.eaternity.client.ui;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.client.events.RecipeAddedEvent;
-import ch.eaternity.client.events.RecipeAddedEventHandler;
+import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.ui.widgets.RecipeView;
 
 import com.google.gwt.core.client.GWT;
@@ -49,10 +49,10 @@ public class RechnerView extends SimpleLayoutPanel {
 		setWidget(uiBinder.createAndBindUi(this));
 		
 		// ---------------- Listen to the EventBus ----------------
-		presenter.getEventBus().addHandler(RecipeAddedEvent.TYPE,
-				new RecipeAddedEventHandler() {
+		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
+				new UpdateRecipeViewEventHandler() {
 					@Override
-					public void onEvent(RecipeAddedEvent event) {
+					public void onEvent(UpdateRecipeViewEvent event) {
 					}
 				});
 	}

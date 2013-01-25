@@ -5,16 +5,18 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 public class RechnerRecipeEditPlace extends Place {
-	private String placeName;
 	
-	public RechnerRecipeEditPlace(String token)
+	// null id means the recipe to edit is found in clientdata (not saved yet, duplicated or newly created)
+	private String id;
+	
+	public RechnerRecipeEditPlace(String id)
 	{
-		this.placeName = token;
+		this.id = id;
 	}
 
-	public String getPlaceName()
+	public String getID()
 	{
-		return placeName;
+		return id;
 	}
 
 	@Prefix("edit") // with "!" -> "!menu" this one gets indexed
@@ -24,7 +26,7 @@ public class RechnerRecipeEditPlace extends Place {
 		@Override
 		public String getToken(RechnerRecipeEditPlace place)
 		{
-			return place.getPlaceName();
+			return place.getID();
 		}
 
 		@Override

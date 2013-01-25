@@ -10,8 +10,8 @@ import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
-import ch.eaternity.client.events.RecipeDeletedEvent;
-import ch.eaternity.client.events.RecipeDeletedEventHandler;
+import ch.eaternity.client.events.LocationChangedEvent;
+import ch.eaternity.client.events.LocationChangedEventHandler;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEventHandler;
 import ch.eaternity.client.ui.RechnerView;
@@ -209,9 +209,9 @@ public class IngredientsResultWidget extends ResizeComposite {
 					// TODO show in public recipes, mark recipe as open
 			}
 			});
-		presenter.getEventBus().addHandler(RecipeDeletedEvent.TYPE, new RecipeDeletedEventHandler() {
+		presenter.getEventBus().addHandler(LocationChangedEvent.TYPE, new LocationChangedEventHandler() {
 			@Override
-			public void onEvent(RecipeDeletedEvent event) {
+			public void onEvent(LocationChangedEvent event) {
 				// Could be faster with just delet list item, but not many times recipes are getting deleted...
 				updateResults(SearchInput.getText());
 			}
@@ -537,7 +537,7 @@ public class IngredientsResultWidget extends ResizeComposite {
 		}
 
 		if(ingredient.hasSeason != null && ingredient.hasSeason){
-			SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
+			SeasonDate date = new SeasonDate(presenter.getCurrentMonth(),1);
 			SeasonDate dateStart = ingredient.startSeason;		
 			SeasonDate dateStop =  ingredient.stopSeason;
 			

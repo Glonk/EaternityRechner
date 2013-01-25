@@ -7,9 +7,9 @@ import java.util.List;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
-import ch.eaternity.client.events.RecipeAddedEvent;
-import ch.eaternity.client.events.RecipeDeletedEvent;
-import ch.eaternity.client.events.RecipeIngredientsChangedEvent;
+import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.events.LocationChangedEvent;
+import ch.eaternity.client.events.CollectionsChangedEvent;
 import ch.eaternity.client.events.RecipePublicityChangedEvent;
 import ch.eaternity.client.ui.MenuPreviewView;
 import ch.eaternity.client.ui.TopPanel;
@@ -92,17 +92,12 @@ public class DataController {
 				
 				// Load current Month or Kitchen Month
 				Date date = new Date();
-				cdata.selectedMonth = date.getMonth() + 1;
-				eventBus.fireEvent(new MonthChangedEvent(cdata.selectedMonth));
+				cdata.currentMonth = date.getMonth() + 1;
+				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));
 				
 				eventBus.fireEvent(new LoginChangedEvent(cdata.loginInfo));
 				
 				
-				
-				//TODO place this somewhere else
-				MenuPreviewView menuPreview = clientFactory.getMenuPreviewView();
-				clientFactory.getEaternityRechnerView().setMenuPreviewDialog(menuPreview);
-				menuPreview.hide();
 			}
 			
 		});
@@ -126,7 +121,7 @@ public class DataController {
 			cdata.userRecipes.add(recipe);
 		}
 
-		eventBus.fireEvent(new RecipeAddedEvent(recipe));
+		eventBus.fireEvent(new UpdateRecipeViewEvent(recipe));
 	}
 	
 	public void saveRecipe(final Recipe recipe) { 
@@ -167,7 +162,7 @@ public class DataController {
 				cdata.kitchenRecipes.remove(recipe);
 				cdata.currentKitchenRecipes.remove(recipe);
 				
-				eventBus.fireEvent(new RecipeDeletedEvent(recipe.getId()));
+				eventBus.fireEvent(new LocationChangedEvent(recipe.getId()));
 			}
 		});
 	}
@@ -181,16 +176,17 @@ public class DataController {
 		
 		cdata.editRecipe.addIngredient(ingSpec);
 
-		eventBus.fireEvent(new RecipeIngredientsChangedEvent());
+		eventBus.fireEvent(new CollectionsChangedEvent());
 	}
 	
 	// probably other place?
 	public void changeMonth(int month) {
-		cdata.selectedMonth = month;
+		cdata.currentMonth = month;
 		eventBus.fireEvent(new MonthChangedEvent(month));
 	}
 	
 	public void changeKitchen(Workgroup kitchen) {
+		//TODO load the currentKitchen Recipes
 		if (kitchen == null) {
 			cdata.currentKitchen = null;
 			eventBus.fireEvent(new KitchenChangedEvent(-1L));
@@ -205,14 +201,15 @@ public class DataController {
 	
 	public void deleteKitchen() {}
 
+	
+	// reload will do it...
 	public void approveRecipe(final Recipe recipe, final Boolean approve) {
 		dataRpcService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
-				recipe.open = approve;	
-				eventBus.fireEvent(new RecipePublicityChangedEvent(recipe));
+				// display in information window: the recipe <name> was successfully approved. 
 			}
 		});
 	}
@@ -359,7 +356,7 @@ public class DataController {
 			ing.stdExtraction = ing.getExtractions().get(0);
 		}
 		
-		eventBus.fireEvent(new RecipeIngredientsChangedEvent());
+		eventBus.fireEvent(new CollectionsChangedEvent());
 	}
 	
 	
@@ -470,10 +467,6 @@ public class DataController {
 		return cdata.currentKitchenRecipes;
 	}
 
-	public List<Recipe> getWorkspaceRecipes() {
-		return cdata.workspaceRecipes;
-	}
-
 	public Recipe getEditRecipe() {
 		return cdata.editRecipe;
 	}
@@ -498,8 +491,8 @@ public class DataController {
 		return cdata.currentKitchen;
 	}
 
-	public int getSelectedMonth() {
-		return cdata.selectedMonth;
+	public int getCurrentMonth() {
+		return cdata.currentMonth;
 	}
 
 	public String getCurrentLocation() {
@@ -507,8 +500,8 @@ public class DataController {
 	}
 
 
-
-	public void openEditRecipe() {
+	
+	public void setEditRecipe() {
 		// TODO Auto-generated method stub
 		
 	}

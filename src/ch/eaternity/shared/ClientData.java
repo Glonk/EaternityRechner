@@ -14,19 +14,20 @@ public class ClientData implements Serializable{
 	public List<Recipe> userRecipes = new ArrayList<Recipe>();
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	
-	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
-	
-	public List<Recipe> workspaceRecipes = new ArrayList<Recipe>();
-	public Recipe editRecipe;
-	
 	public List<Ingredient> ingredients;
 	public Distance distances;
 	public List<Workgroup> kitchens;
 
 	public LoginInfo loginInfo;
+	
+	// probably into activity (state variables) ?
 	public Workgroup currentKitchen; 
-	public int selectedMonth;
+	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
+	
+	public Recipe editRecipe;
+	public int currentMonth;
 	public String currentLocation;
+	String searchstring;
 	
 	
 	public ClientData() {

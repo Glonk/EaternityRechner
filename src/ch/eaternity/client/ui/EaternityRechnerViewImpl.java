@@ -47,8 +47,8 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
-import ch.eaternity.client.events.RecipeAddedEvent;
-import ch.eaternity.client.events.RecipeAddedEventHandler;
+import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.GoodbyePlace;
 import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.client.ui.widgets.ImageOverlay;
@@ -133,9 +133,9 @@ public class EaternityRechnerViewImpl extends SimpleLayoutPanel implements Rechn
 	
 	private void bind() {
 		// ---------------- Listen to the EventBus ----------------
-		presenter.getEventBus().addHandler(RecipeAddedEvent.TYPE, new RecipeAddedEventHandler() {
+		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE, new UpdateRecipeViewEventHandler() {
 			@Override
-			public void onEvent(RecipeAddedEvent event) {
+			public void onEvent(UpdateRecipeViewEvent event) {
 				RecipeView rezeptView = createNewRecipeView();
 				displayRecipeEditView(rezeptView);
 			    adjustStickyEditLayout();

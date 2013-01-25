@@ -765,7 +765,7 @@ public class RecipeEditView<T> extends Composite {
 			if(zutat.getCondition().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
 				if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
 
-					SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
+					SeasonDate date = new SeasonDate(presenter.getCurrentMonth(),1);
 					SeasonDate dateStart = zutat.getStartSeason();		
 					SeasonDate dateStop =  zutat.getStopSeason();
 					

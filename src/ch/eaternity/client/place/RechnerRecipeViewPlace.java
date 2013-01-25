@@ -6,26 +6,27 @@ import com.google.gwt.place.shared.Prefix;
 
 public class RechnerRecipeViewPlace extends Place{
 
-	private String placeName;
+	// used to indicate if we are in userrecipes, kitchenrecipes, public recipes...
+	private String recipeScope;
 	
 	public RechnerRecipeViewPlace(String token)
 	{
-		this.placeName = token;
+		this.recipeScope = token;
 	}
 
-	public String getPlaceName()
+	public String getRecipeScope()
 	{
-		return placeName;
+		return recipeScope;
 	}
 
-	@Prefix("edit") // with "!" -> "!menu" this one gets indexed
+	@Prefix("view") // with "!" -> "!menu" this one gets indexed
 	public static class Tokenizer implements PlaceTokenizer<RechnerRecipeViewPlace>
 	{
 
 		@Override
 		public String getToken(RechnerRecipeViewPlace place)
 		{
-			return place.getPlaceName();
+			return place.getRecipeScope();
 		}
 
 		@Override

@@ -694,7 +694,7 @@ public class InfoZutatDialog<T> extends Composite {
 		
 
 		// This is a hack, takes the first day of the month
-		SeasonDate date = new SeasonDate(presenter.getSelectedMonth(),1);
+		SeasonDate date = new SeasonDate(presenter.getCurrentMonth(),1);
 		SeasonDate dateStart = zutatSpec.getStartSeason();		
 		SeasonDate dateStop =  zutatSpec.getStopSeason();
 		
