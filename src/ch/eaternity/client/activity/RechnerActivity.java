@@ -67,6 +67,8 @@ public class RechnerActivity extends AbstractActivity {
 		this.dco = factory.getDataController();
 		this.place = place;
 		
+		rechnerView.setPresenter(this);
+		
 		recipeEdit = new RecipeEdit(this, factory);
 		recipeView = new RecipeView(this, factory);
 	}
