@@ -9,7 +9,6 @@ import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.client.ui.RechnerView.Presenter;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.EnergyMix;
 import ch.eaternity.shared.SingleDistance;
@@ -25,7 +24,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -102,7 +100,7 @@ public class KitchenDialog<T> extends DialogBox{
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		
-		availableKitchens = presenter.getClientData().kitchens;
+		availableKitchens = dco.getKitchens();
 		
 		if(availableKitchens == null || availableKitchens.size() == 0){
 			availableKitchens = new ArrayList<Workgroup>(1);
@@ -148,9 +146,9 @@ public class KitchenDialog<T> extends DialogBox{
 		
 		addKitchenNamesToList(availableKitchens);
 		
-		if(!presenter.getLoginInfo().isAdmin() && availableKitchens.size() < 2){
+		if(!dco.getLoginInfo().isAdmin() && availableKitchens.size() < 2){
 			kitchen.setVisible(false);
-		} else if(!presenter.getLoginInfo().isAdmin()) {
+		} else if(!dco.getLoginInfo().isAdmin()) {
 			newKitchen.setVisible(false);
 		}
 		
@@ -235,12 +233,6 @@ public class KitchenDialog<T> extends DialogBox{
 	  
 	  @UiHandler("leaveKitchen")
 	  public void onLeaveKitchenClick(ClickEvent event) {
-		  presenter.getTopPanel().location.setVisible(true);
-		  presenter.getDCO().isInKitchen = false;
-		  presenter.getTopPanel().isCustomerLabel.setText("Nichtkommerzielle Nutzung ");
-		  presenter.getTopPanel().selectedKitchen = null;
-		  
-		  IngredientsResultWidget.yourRecipesText.setHTML(" in eigenen Rezepten");
 		  
 		  saveLastKitchen(0L);
 	
@@ -282,9 +274,8 @@ public class KitchenDialog<T> extends DialogBox{
 			}
 			@Override
 			public void onSuccess(Boolean okay) {
-				presenter.getClientData().cdata.lastKitchen = id;
-				presenter.getLoginInfo().setLastKitchen(id);
-				presenter.getLoginInfo().setIsInKitchen(true);
+				dco.getLoginInfo().setLastKitchen(id);
+				dco.getLoginInfo().setIsInKitchen(true);
 			}
 		});
 	}
@@ -302,18 +293,14 @@ public class KitchenDialog<T> extends DialogBox{
         pendingPersonChanges.clear();
         
 		
-		// clear workspace (including prompts for saving) to avoid copying recipies from one kitchen to another)
-		presenter.removeAllRecipesFromWorkplace();
-		
-		
 		// this shoots to many rpc calls... (one should be enough)
 		// shouldn't shoot any, if there is no change...
 		// which exactly for this purpose the requestFactory in GWT 2.1 was developed...
-		if(presenter.getTopPanel().selectedKitchen != null){
+		if(dco.getCurrentKitchen() != null){
 			// this is a hacK:
-			presenter.getTopPanel().selectedKitchen.hasChanged = false;
+			dco.getCurrentKitchen().hasChanged = false;
 			
-			dataService.addKitchen(presenter.getTopPanel().selectedKitchen, new AsyncCallback<Long>() {
+			dataService.addKitchen(dco.getCurrentKitchen(), new AsyncCallback<Long>() {
 				@Override
 				public void onFailure(Throwable error) {
 					Window.alert("Fehler : "+ error.getMessage());
@@ -321,10 +308,7 @@ public class KitchenDialog<T> extends DialogBox{
 				@Override
 				public void onSuccess(Long kitchenID) {
 					// this adds a new kitchen, yet must not be the selected one:
-					presenter.getTopPanel().selectedKitchen.id = kitchenID;
 					presenter.getDCO().changeKitchenRecipes(kitchenID);
-					presenter.getSearchPanel().updateResults(IngredientsResultWidget.SearchInput.getText());
-					IngredientsResultWidget.yourRecipesText.setHTML("in Rezepten von: " + kitchenName );
 	//				Search.clientData.kitchens.add(kitchen);
 	//				kitchens.addItem(kitchen.getSymbol());
 					saveLastKitchen(kitchenID);
@@ -352,14 +336,7 @@ public class KitchenDialog<T> extends DialogBox{
 					}
 				});
 			}
-		}
-		
-
-		// update search... this should also be done when loaded regular
-		
-		presenter.getSearchPanel().SearchInput.setText("");
-		presenter.getSearchPanel().updateResults(" ");
-		
+		}	
 		
 		hide();
 	}

@@ -1,7 +1,8 @@
 <ui:UiBinder
   xmlns:ui='urn:ui:com.google.gwt.uibinder'
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:rechner='urn:import:ch.eaternity.client.ui.widgets'>
+  xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
+  xmlns:rechner='urn:import:ch.eaternity.client.ui'>
   
 <ui:style>
 
@@ -22,7 +23,7 @@
 
 	<g:DockLayoutPanel>
     <g:north size='74'>
-      <g:TopPanel ui:field='topPanel' />
+      <rechner:TopPanel ui:field='topPanel' />
     </g:north>
 
 	<g:west size='265'>

@@ -20,18 +20,6 @@
 </ui:style>
 
 
-	<g:DockLayoutPanel>
-    <g:north size='74'>
-      <g:TopPanel ui:field='topPanel' />
-    </g:north>
-
-	<g:west size='265'>
-       <g:SimplePanel ui:field='searchPanel' />
-    </g:west>
-    <g:center>
-       <g:SimplePanel ui:field='recipePanel' />
-    </g:center>
-  </g:DockLayoutPanel>
 
 
 </ui:UiBinder>

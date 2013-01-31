@@ -164,83 +164,15 @@ position:relative;
 
 </ui:style>
 
-<ui:style field='selectionStyle'
-    type='ch.eaternity.client.ui.EaternityRechnerViewImpl.SelectionStyle'>
-
-  .selectedRezept {
-    background: #F48F28 !important;
-  }
-
- 
-</ui:style>
-	<g:DockLayoutPanel>
-    <g:north size='74'>
-      <g:TopPanel ui:field='topPanel' />
-    </g:north>
-
-	<g:west size='265'>
-       <g:SimplePanel ui:field='searchPanel' />
-    </g:west>
-    <g:center>
-       <g:SimplePanel ui:field='recipePanel' />
-    </g:center>
-  </g:DockLayoutPanel>
 
 
-<!--   <g:DockLayoutPanel> -->
-<!--     <g:north size='74'> -->
-<!--       <rechner:TopPanel ui:field='topPanel' /> -->
-<!--     </g:north> -->
+	
+	<g:Button ui:field="addRecipeButton">neues Rezept</g:Button>
+	<g:FlexTable ui:field="recipeList"></g:FlexTable>
+	
+	
+	<g:Button ui:field="addToCollectionButton">zu Sammlung hinzufuegen</g:Button>
+	<g:Button ui:field="generateReportButton">Report generieren</g:Button>
 
-<!--     <g:center> -->
-<!--       <g:SplitLayoutPanel> -->
-<!--         <g:west size='265'> -->
-<!--           	<rechner:Search ui:field='searchPanel' /> -->
-<!--         </g:west> -->
-<!--         <g:center> -->
-<!--         <g:DockLayoutPanel ui:field="topSticky" > -->
-<!--         		<g:north  size='40'> -->
-<!--        			<g:north size='120/40'> -->
-<!-- 	       		<g:HTMLPanel ui:field="panelNorth" styleName='{style.Worksheet}' > -->
-<!-- 	       			Add Rezept Button -->
-<!-- 	       			<g:Button styleName='{style.gwt-Button}'  ui:field="addRezeptButton" text="Neues Menu"/>  -->
-	       			
-<!-- 	       			 Ihre Rezepte:  -->
-<!-- 	       			<g:HTML ui:field="titleHTML" styleName='{style.inline}'>Wählen Sie eine Zutat um sie dem Menu hinzuzufügen.</g:HTML> -->
-	       			
-<!-- 	       			suggest bar -->
-<!-- 	       			Im Vergleich: -->
-<!-- 		       			<g:HorizontalPanel ui:field='suggestionPanel' styleName='{style.topScores}'> -->
-		
-<!-- 		       			</g:HorizontalPanel> -->
-	       			
-<!-- 	       			here comes the inserted table as illusion of sticky display -->
-<!-- 	       			<g:HTMLPanel ui:field="topOverflowArea" styleName='{style.noOverflow}'> -->
-<!-- 	       			<g:AbsolutePanel ui:field="topDragArea" styleName='{style.relativePosition}'> -->
-	  
-<!-- 	        		</g:AbsolutePanel> -->
-<!-- 	       			</g:HTMLPanel> -->
-<!-- 	       		</g:HTMLPanel> -->
-	       			
-<!--        			</g:north> -->
-<!--        			<g:center> -->
-       			
-<!--        			List of Rezepte -->
-<!--        				<g:ScrollPanel ui:field='scrollWorkspace' > -->
-<!--        					<g:VerticalPanel> -->
-<!-- 	       					<g:FlexTable styleName='{style.WorksheetEditTable}' ui:field='rezeptEditList' cellSpacing='0' cellPadding='0' /> -->
-<!-- 							<g:FlexTable styleName='{style.WorksheetTable}' ui:field='rezeptList' cellSpacing='0' cellPadding='0'/> -->
-<!-- 							<g:HTML><div style="height:200px"></div></g:HTML> -->
-<!-- 						</g:VerticalPanel> -->
-<!-- 					</g:ScrollPanel> -->
-					
-<!-- 				</g:center> -->
-<!--         	</g:DockLayoutPanel> -->
-<!--         </g:center> -->
-
-
-<!--       </g:SplitLayoutPanel> -->
-<!--     </g:center> -->
-<!--   </g:DockLayoutPanel> -->
 
 </ui:UiBinder>

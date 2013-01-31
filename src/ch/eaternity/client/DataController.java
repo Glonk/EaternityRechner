@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.eaternity.client.events.CollectionsChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
-import ch.eaternity.client.events.LocationChangedEvent;
-import ch.eaternity.client.events.CollectionsChangedEvent;
-import ch.eaternity.client.events.RecipePublicityChangedEvent;
-import ch.eaternity.client.ui.MenuPreviewView;
-import ch.eaternity.client.ui.TopPanel;
-import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Distance;
 import ch.eaternity.shared.Ingredient;
@@ -21,7 +16,6 @@ import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
 
@@ -85,10 +79,6 @@ public class DataController {
 				else
 					eventBus.fireEvent(new KitchenChangedEvent(-1L));
 				
-				// fill NoDescs Recipes
-				cdata.userRecipes = Util.getUnDescendantedRecipes(cdata.userRecipes);
-				cdata.publicRecipes = Util.getUnDescendantedRecipes(cdata.publicRecipes);
-				cdata.currentKitchenRecipes = Util.getUnDescendantedRecipes(cdata.currentKitchenRecipes);
 				
 				// Load current Month or Kitchen Month
 				Date date = new Date();
@@ -112,19 +102,19 @@ public class DataController {
 	}
 	
 	public void cloneRecipe(Recipe recipe) {
-		if (cdata.currentKitchen == null) {
-			if (!recipe.kitchenId.contains(cdata.currentKitchen.id));
-				recipe.kitchenId.add(cdata.currentKitchen.id);
+		if (cdata.currentKitchen != null) {
+			recipe.kitchenId = cdata.currentKitchen.id;
 			cdata.kitchenRecipes.add(recipe);
 		}
 		else {
 			cdata.userRecipes.add(recipe);
 		}
 
-		eventBus.fireEvent(new UpdateRecipeViewEvent(recipe));
+		eventBus.fireEvent(new UpdateRecipeViewEvent());
 	}
 	
 	public void saveRecipe(final Recipe recipe) { 
+		/*
 		dataRpcService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -149,6 +139,7 @@ public class DataController {
 				
 			}
 		});
+		*/
 	}
 	
 	public void deleteRecipe(final Recipe recipe) {
@@ -162,7 +153,7 @@ public class DataController {
 				cdata.kitchenRecipes.remove(recipe);
 				cdata.currentKitchenRecipes.remove(recipe);
 				
-				eventBus.fireEvent(new LocationChangedEvent(recipe.getId()));
+				eventBus.fireEvent(new UpdateRecipeViewEvent());
 			}
 		});
 	}
@@ -320,11 +311,9 @@ public class DataController {
 	public void changeKitchenRecipes(Long id) {
 		cdata.currentKitchenRecipes.clear();
 		for(Recipe recipe : cdata.kitchenRecipes){
-			for(Long kitchenId : recipe.kitchenId){
-				if(kitchenId.equals(id))
-				{
-					cdata.currentKitchenRecipes.add(recipe);
-				}
+			if(id.equals(recipe.kitchenId))
+			{
+				cdata.currentKitchenRecipes.add(recipe);
 			}
 		}
 	}

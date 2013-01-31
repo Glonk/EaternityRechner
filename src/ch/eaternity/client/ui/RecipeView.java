@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -26,19 +27,25 @@ public class RecipeView extends Composite {
 	
 	// ---------------------- User Interface Elements --------------
 	@UiField Button addRecipeButton;
+	@UiField FlexTable recipeList;
+	@UiField Button addToCollectionButton;
+	@UiField Button generateReportButton;
 	
 	// ---------------------- Class Variables ----------------------
 	
-	RechnerActivity presenter;
-	DataController dco;
+	private RechnerActivity presenter;
+	private DataController dco;
 	
 	// ---------------------- public Methods -----------------------
 	
-	public RecipeView(RechnerActivity presenter) {
+	public RecipeView() {
+
+		bind();
+	}
+	
+	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		
-		bind();
 	}
 
 	private void openRecipeEdit() {

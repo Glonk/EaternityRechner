@@ -29,7 +29,7 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;
 
 public class UploadPhoto<T> extends Composite implements HasHandlers {
-
+/*
 	private static UploadPhotoUiBinder uiBinder = GWT
 			.create(UploadPhotoUiBinder.class);
 
@@ -201,5 +201,5 @@ public class UploadPhoto<T> extends Composite implements HasHandlers {
 	public HandlerRegistration addGalleryUpdatedEventHandler(
 			GalleryUpdatedEventHandler handler) {
 		return handlerManager.addHandler(GalleryUpdatedEvent.TYPE, handler);
-	}
+	}*/
 }

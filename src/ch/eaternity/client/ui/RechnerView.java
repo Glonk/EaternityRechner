@@ -4,7 +4,6 @@ import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
-import ch.eaternity.client.ui.widgets.RecipeView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
@@ -40,8 +39,8 @@ public class RechnerView extends SimpleLayoutPanel {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 
-		topPanel = new TopPanel(presenter);
-
+		topPanel = new TopPanel();
+		topPanel.setPresenter(presenter);
 		bind();
 	}
 

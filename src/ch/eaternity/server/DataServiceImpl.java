@@ -13,10 +13,10 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 
 import ch.eaternity.client.DataService;
-import ch.eaternity.client.NotLoggedInException;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
-import ch.eaternity.shared.Data;
+import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
@@ -24,6 +24,7 @@ import ch.eaternity.shared.ShortUrl;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
+import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -130,15 +131,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
 		
-		
-		if(!recipe.kitchenId.isEmpty()){
-			userRezept.kitchenIds = recipe.kitchenId;
-		}
+
+		userRezept.kitchenId.add(recipe.kitchenId);
+
 		// TODO : this is not a propper approval process!!!
 		userRezept.requestedOpen = recipe.openRequested;
 		
 		// If recipe belongs to a kitchen, dont assign it a user mail
-		if (recipe.kitchenId != null && recipe.kitchenId.size() == 0)
+		if (recipe.kitchenId != null)
 		{
 			if(userService.getCurrentUser().getEmail() != null){
 				recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
@@ -212,7 +212,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		List<Recipe> openRecipes = new ArrayList<Recipe>();
 		openRecipes = dao.getOpenRecipe();
-		Util.markDescendant(openRecipes);
 		return openRecipes;	
 	}
 
@@ -221,7 +220,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 		yourRecipes = dao.getYourRecipe(getUser());
-		Util.markDescendant(yourRecipes);
 		return yourRecipes;	
 	}
 	
@@ -234,7 +232,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				adminRecipes = dao.adminGetRecipe(userService.getCurrentUser());
 			}
 		}
-		Util.markDescendant(adminRecipes);
 		return adminRecipes;
 		
 	}
@@ -264,7 +261,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 					distances.add(singleDistance);
 				}
 			}
-			data.distances = distances;
+			//data.distances = distances;
 		} finally {
 			pm.close();
 		}
@@ -304,10 +301,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		}
 		
-		// mark descendants of the recipes
-		Util.markDescendant(data.userRecipes);
-		Util.markDescendant(data.kitchenRecipes);
-		Util.markDescendant(data.publicRecipes);
 	
 		Log.warning("preparing to return");
 		return data;

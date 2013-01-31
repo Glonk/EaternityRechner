@@ -14,7 +14,6 @@ import ch.eaternity.client.ui.SearchIngredients;
 import ch.eaternity.client.ui.SearchRecipes;
 import ch.eaternity.client.ui.TopPanel;
 import ch.eaternity.client.ui.widgets.ConfirmDialog;
-import ch.eaternity.client.ui.widgets.IngredientsResultWidget;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
@@ -69,8 +68,15 @@ public class RechnerActivity extends AbstractActivity {
 		
 		rechnerView.setPresenter(this);
 		
-		recipeEdit = new RecipeEdit(this, factory);
-		recipeView = new RecipeView(this, factory);
+		recipeEdit = new RecipeEdit();
+		recipeEdit.setPresenter(this);
+		recipeView = new RecipeView();
+		recipeView.setPresenter(this);
+		
+		searchIngredients = new SearchIngredients();
+		searchIngredients.setPresenter(this);
+		searchRecipes = new SearchRecipes();
+		searchRecipes.setPresenter(this);
 	}
 
 	
@@ -126,7 +132,7 @@ public class RechnerActivity extends AbstractActivity {
 		placeController.goTo(place);
 	}
 
-	
+	/*
 	//REFACTOR: in DataController und View (EVENT)
 	public void addRezept(final Recipe recipe, final RecipeView rezeptView) {
 		
@@ -179,7 +185,7 @@ public class RechnerActivity extends AbstractActivity {
 					if(!getSearchPanel().selectedKitchenRecipes.contains(recipe)){
 						getSearchPanel().selectedKitchenRecipes.add(recipe);
 					}
-				}*/
+				}
 				
 				if(!dco.cdata.loginInfo.getIsInKitchen()){
 					dco.cdata.userRecipes.add(recipe);
@@ -366,23 +372,16 @@ public class RechnerActivity extends AbstractActivity {
 			 removeRecipeFromWorkplace(recipeToRemove);
 		  }
 	}
+	*/
 
-
-	@Override
-	public ClientData getClientData() {
-		return dco.cdata;
-	}
-
-
-
-	@Override
+	
 	public DataController getDCO() {
 		
 		// TODO Auto-generated method stub
 		return dco;
 	}
 	
-	@Override 
+	
 	public EventBus getEventBus() {
 		return this.eventBus;
 	}

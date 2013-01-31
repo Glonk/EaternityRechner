@@ -1,21 +1,10 @@
 package ch.eaternity.client.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.place.GoodbyePlace;
-import ch.eaternity.client.ui.widgets.KitchenDialog;
 
 public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 {

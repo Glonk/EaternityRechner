@@ -74,14 +74,11 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private double distance; // in km
 	private Long label;
 	
-	public Boolean hasSeason() {
-		return ( startSeason != null && stopSeason != null );
-	}
 
 	private SeasonDate startSeason;
 	private SeasonDate stopSeason;
 
-	
+	private int NormalCO2Value;
 	// no factors included
 	private double co2ValueNoFactors;
 	

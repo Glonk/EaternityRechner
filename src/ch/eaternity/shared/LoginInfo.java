@@ -1,6 +1,7 @@
 package ch.eaternity.shared;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;

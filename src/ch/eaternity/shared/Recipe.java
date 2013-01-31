@@ -86,7 +86,6 @@ public class Recipe implements Serializable, Cloneable{
 		// call standard constructor
 		this();
 		this.directAncestorID = toClone.id;
-		this.ancestorAlreadyMarked = false;
 		this.symbol = new String(toClone.symbol);
 		this.subTitle = new String(toClone.subTitle);
 		this.cookInstruction = new String(toClone.cookInstruction);
@@ -96,10 +95,8 @@ public class Recipe implements Serializable, Cloneable{
 		this.subTitle = new String(toClone.subTitle);
 		this.energyMix = new EnergyMix(toClone.energyMix);
 		this.ShortUrl = new String(toClone.ShortUrl);
-		
-		for (Long kID : toClone.kitchenId) {
-			kitchenId.add(new Long(kID));
-		}
+		this.kitchenId = toClone.kitchenId;
+			
 		this.persons = new Long(toClone.persons);
 		this.createDate = (Date) toClone.createDate.clone();
 		this.cookingDate = (Date) toClone.cookingDate.clone();
@@ -279,20 +276,6 @@ public class Recipe implements Serializable, Cloneable{
 
 	public Long getDirectAncestorID() {
 		return directAncestorID;
-	}
-
-	public void setDirectDescandentID(List<Long> directDescandentID) {
-		this.descandentsIds = directDescandentID;
-	}
-	
-	public void addDirectDescandentID(Long directDescandentID) {
-		if(!this.descandentsIds.contains(directDescandentID)){
-			this.descandentsIds.add(directDescandentID);
-		}
-	}
-
-	public List<Long> getDirectDescandentID() {
-		return descandentsIds;
 	}
 
 

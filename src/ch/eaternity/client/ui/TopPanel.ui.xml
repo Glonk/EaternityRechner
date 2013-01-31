@@ -6,31 +6,32 @@
 
 
 	<ui:style>
-		.statusDiv {
-		text-align: right;
-		padding:6px 8px 8px 10px;
-		background:#fff;
-		background: url("header_rechner.jpg") no-repeat 0px 0px;
-		border-bottom: 2.5px solid #bbb;
-		height:58px;
-		vertical-align:top;
-		}
+	.adminDiv {
+	float:right;
 
-		.inline {
-		display: inline
-		}
+	}
+	
+	.statusDiv {
+	text-align: right;
+	padding:6px 8px 8px 10px;
+	background:#fff;
+	background: url("header_rechner.jpg") no-repeat 0px 0px;
+	border-bottom: 2.5px solid #bbb;
+	height:58px;
+	vertical-align:top;
+	}
+
+	.inline {
+	display: inline
+	}
 
 
-		.linksDiv {
-		text-align: right;
-		clear:both;
-		}
 
-		.statusInfo {
-		padding:0em 0em 0em 1em;
-		float: right;
-		text-align: right;
-		}
+	.statusInfo {
+	padding:0em 0em 0em 1em;
+	float: right;
+	text-align: right;
+	}
 
   </ui:style>
 
@@ -38,52 +39,22 @@
 	<g:HTMLPanel>
 
 		<div class="{style.statusDiv}">
-
+			<div class="{style.adminDiv}">
+				<g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
+			</div>
 			<div class="{style.statusInfo}">
-				<g:InlineLabel ui:field='loginLabel' />
+				<g:Button ui:field="userRecipes"></g:Button>
+				<g:Button ui:field="kitchenRecipes"></g:Button>
+				<g:Button ui:field="publicRecipes"></g:Button>
+			
 				<g:HTML ui:field='calHTML' styleName="{style.inline}"><img src="calendar.png" height='24' /></g:HTML>
 				<g:ListBox ui:field="Monate" />
-      	
-      	&nbsp;
-				<g:HTMLPanel ui:field='isCustomer' styleName="{style.inline}">
-					<g:InlineLabel  ui:field='isCustomerLabel'>Nichtkommerzielle Nutzung </g:InlineLabel>
-					<g:Anchor href='javascript:;' ui:field='editKitchen'>(ändern)</g:Anchor>
-				</g:HTMLPanel>
-<!-- 				<g:Anchor href='javascript:;' ui:field='stepOut'>Küche verlassen</g:Anchor> -->
-        &nbsp;
-
-				<g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
 
 				<a href="mailto:info@eaternity.ch">Kontakt</a>
-        
-        &nbsp;
+        		&nbsp;
 				<g:Anchor href='javascript:;' ui:field='signOutLink'>Abmelden</g:Anchor>
 				<g:Anchor href='javascript:;' ui:field='signInLink'>Anmelden</g:Anchor>
-
-				<!-- <g:Label ui:field='loadingLabel' >Rechner initialisiert.</g:Label> -->
-
 			</div>
-
-
-			<div class='{style.linksDiv}'>
-
-				<g:HTMLPanel ui:field='location' styleName="{style.inline}">
-					<g:HTML ui:field='pinHTML' styleName="{style.inline}"><img src="pin.png" height='24' /></g:HTML>
-					<g:InlineLabel ui:field='locationLabel'></g:InlineLabel>
-					<g:TextBox ui:field="clientLocation">Zürich, Schweiz</g:TextBox>
-					<g:Button ui:field="locationButton" text="Adresse festlegen" />
-				</g:HTMLPanel>
-
-<!-- 				<g:HTMLPanel ui:field='kitchen'> -->
-<!-- 					<g:ListBox ui:field="kitchens" /> -->
-
-<!-- 					<g:Anchor href='javascript:;' ui:field='editKitchen'>bearbeiten</g:Anchor> -->
-<!-- 				</g:HTMLPanel> -->
-
-
-			</div>
-
-
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder>

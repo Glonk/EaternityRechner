@@ -26,7 +26,7 @@ public class SearchRecipes extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	// ---------------------- User Interface Elements --------------
-	@UiField Button addRecipeButton;
+
 	
 	// ---------------------- Class Variables ----------------------
 	
@@ -35,10 +35,7 @@ public class SearchRecipes extends Composite {
 	
 	// ---------------------- public Methods -----------------------
 	
-	public SearchRecipes(RechnerActivity presenter) {
-		this.presenter = presenter;
-		this.dco = presenter.getDCO();
-		
+	public SearchRecipes() {
 		bind();
 	}
 	
@@ -55,11 +52,13 @@ public class SearchRecipes extends Composite {
 				});
 	}
 	
-	// ---------------------- UI Handlers ----------------------
-	@UiHandler("addRecipeButton")
-	public void onAddRecipeButtonPress(ClickEvent event) {
-		dco.createRecipe();		
+	public void setPresenter(RechnerActivity presenter) {
+		this.presenter = presenter;
+		this.dco = presenter.getDCO();
 	}
+	
+	// ---------------------- UI Handlers ----------------------
+
 	
 	/**
 	 * @return true if recipe has changed since last save, false otherwise

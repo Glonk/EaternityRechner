@@ -366,20 +366,18 @@ public class CatRyzer {
 		for(IngredientSpecification ingSpec: ingSpecs) {
 			if (ingSpec.getCookingDate() != null && ingSpec.hasSeason()) {
 				numFruitsAndVegetables++;
-				totalWeight =  totalWeight + ingSpec.getMengeGramm();
+				totalWeight =  totalWeight + ingSpec.getWeight();
 				
-				SeasonDate dateStart = new SeasonDate();
-				dateStart.setDate(ingSpec.getStartSeason());
-				SeasonDate dateStop = new SeasonDate();
-				dateStop.setDate(ingSpec.getStopSeason());
+				SeasonDate dateStart = ingSpec.getStartSeason();
+				SeasonDate dateStop = ingSpec.getStopSeason();
 				SeasonDate dateCook = new SeasonDate();
 				dateCook.setDate(ingSpec.getCookingDate());
 				// have season?
 				if (dateCook.after(dateStart) && dateCook.before(dateStop)) {
 					// are fresh from switzerland
-					if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch")) {
+					if (ingSpec.getExtraction().symbol.equals("Schweiz") && ingSpec.getCondition().symbol.equals("frisch")) {
 						numAreSeasonal++;
-						seasonalWeight = seasonalWeight + ingSpec.getMengeGramm();
+						seasonalWeight = seasonalWeight + ingSpec.getWeight();
 					}
 				}
 

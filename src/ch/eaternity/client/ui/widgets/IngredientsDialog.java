@@ -291,16 +291,6 @@ public class IngredientsDialog extends DialogBox{
 							trans_ar1[i] = trans_ar1[i].trim();
 							Extraction tmpExtr = new Extraction(trans_ar1[i]);
 
-							if (newIngredient.hasSeason)
-							{
-								tmpExtr.startSeason = startSeason;
-								tmpExtr.stopSeason = stopSeason;
-							}
-
-							tmpExtr.stdCondition = stdCond;
-							tmpExtr.stdProduction = stdProd;
-							tmpExtr.stdMoTransportation = stdTrans;
-							tmpExtr.stdProductLabels = labels;
 							newExtractions.add(tmpExtr);
 							
 							if(newIngredient.stdExtractionSymbol.equalsIgnoreCase(tmpExtr.symbol))

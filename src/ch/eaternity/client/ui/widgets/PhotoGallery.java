@@ -26,7 +26,7 @@ import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.EaternityRechner;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.UploadedImage;
-
+/*
 public class PhotoGallery extends Composite implements GalleryUpdatedEventHandler {
 
 	private static PhotoGalleryUiBinder uiBinder = GWT
@@ -140,5 +140,5 @@ public class PhotoGallery extends Composite implements GalleryUpdatedEventHandle
 	public void onGalleryUpdated(GalleryUpdatedEvent event) {
 		refreshGallery();
 	}
+*/
 
-}

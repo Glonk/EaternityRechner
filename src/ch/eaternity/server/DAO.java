@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Converter;
 
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientCondition;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.MoTransportation;
@@ -442,43 +442,10 @@ public class DAO extends DAOBase
 			// }
 		}
 
-		markDescendant(kitchenRecipes);
-		// check if descendant is also in the own list
-		Iterator<Recipe> iterator2 = kitchenRecipes.iterator();
-		while(iterator2.hasNext()){
-			Recipe recipeHasDesc = iterator2.next();
-			for( Recipe recipeIsPossibleDesc :kitchenRecipes){
-				// is the descendant in the own list
-				if(recipeHasDesc.getDirectDescandentID().contains(recipeIsPossibleDesc.getId())){
-					// remove recipeHasDesc
-					iterator2.remove();
-					break;
-//					possibleRecipes.remove(recipeHasDesc);
-				}
-			}
-		}
 
 		return kitchenRecipes;
 	}
 	
-	public void markDescendant(List<Recipe> recipesList) {
-		for( Recipe checkRecipe: recipesList){
-			if(checkRecipe.getDirectAncestorID() != null){
-				// has ancestor...
-				for( Recipe markRecipe: recipesList){
-					
-					if(markRecipe.getId().equals(checkRecipe.getDirectAncestorID())){
-						// found descendants and mark him
-						markRecipe.addDirectDescandentID(checkRecipe.getId());
-//						checkRecipe.ancestorAlreadyMarked = true;
-//						break;
-					}
-					
-				}
-							
-			}
-		}
-	}
 	
 	
 	public List<Recipe> getKitchenRecipes(User user) {

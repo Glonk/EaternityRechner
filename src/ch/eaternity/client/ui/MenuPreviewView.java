@@ -2,24 +2,18 @@ package ch.eaternity.client.ui;
 
 
 import ch.eaternity.client.ClientFactory;
-import ch.eaternity.client.place.EaternityRechnerPlace;
-import ch.eaternity.client.ui.RechnerView.Presenter;
+import ch.eaternity.client.place.RechnerRecipeViewPlace;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.http.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Frame;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -133,7 +127,7 @@ public class MenuPreviewView<T> extends DialogBox{
 	@UiHandler("closeButton")
 	void onClickGoodbye(ClickEvent e)
 	{	
-		clientFactory.getPlaceController().goTo(new EaternityRechnerPlace(name));
+		clientFactory.getPlaceController().goTo(new RechnerRecipeViewPlace(name));
 		closeButton.setText("Bitte einen Moment warten, der Rechner wird geladen.");
 		closeButton.setEnabled(false);
 	}
