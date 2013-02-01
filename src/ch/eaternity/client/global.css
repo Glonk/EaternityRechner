@@ -610,7 +610,8 @@ small {
 .content-start {
 /*	display: none;*/
 	padding: 18px 18px;  margin: 0 auto;
-	border: 1.5px solid #FF8300;
+	border: 1.5px solid #54AA54;
+
 	 /*-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius:10px; border: 1.5px solid #FF8300;*/
 	background: #ffffff;
 	
@@ -628,6 +629,11 @@ small {
   -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.25);
      -moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
           box-shadow: 0 2px 5px rgba(0,0,0,.25);
+}
+
+
+.page-header h1 {
+	color: #54AA54;
 }
 
 

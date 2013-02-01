@@ -1,5 +1,7 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
 		.indikator {
@@ -264,7 +266,7 @@
 						</g:CheckBox>
 					</g:HTMLPanel  -->
 					<g:HTMLPanel styleName='{style.floatRight}'>
-						<g:Button styleName='{style.gwt-Button}' ui:field="removeRezeptButton"
+						<b:Button styleName='{style.gwt-Button}' ui:field="removeRezeptButton"
 							text="x" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
@@ -333,9 +335,9 @@
 				
 
 				<!-- g:HTMLPanel styleName='{style.savePanel}' ui:field='SaveRezeptPanel'>
-					<g:Button styleName='{style.gwt-Button}' ui:field="RezeptButton"
+					<b:Button styleName='{style.gwt-Button}' ui:field="RezeptButton"
 						text="Rezept Speichern" />
-					<g:Button styleName='{style.gwt-Button}' ui:field="reportButton"
+					<b:Button styleName='{style.gwt-Button}' ui:field="reportButton"
 						text="Klima-Bilanz PDF" />
 
 				</g:HTMLPanel  -->
@@ -345,12 +347,12 @@
 			<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
 		</g:HTMLPanel>
 		<g:FlowPanel>
-			<g:Button ui:field="newRecipeButton">Neues Rezept</g:Button>
-			<g:Button ui:field="generatePDFButton">PDF generieren</g:Button>
-			<g:Button ui:field="publishButton">veröffentlichen</g:Button>
-			<g:Button ui:field="deleteButton">löschen</g:Button>
-			<g:Button ui:field="duplicateButton">duplizieren</g:Button>
-			<g:Button ui:field="saveButton">speichern</g:Button>
+			<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>
+			<b:Button ui:field="generatePDFButton">PDF generieren</b:Button>
+			<b:Button ui:field="publishButton">veröffentlichen</b:Button>
+			<b:Button ui:field="deleteButton">löschen</b:Button>
+			<b:Button ui:field="duplicateButton">duplizieren</b:Button>
+			<b:Button ui:field="saveButton">speichern</b:Button>
 		</g:FlowPanel>
 	</g:AbsolutePanel>
 

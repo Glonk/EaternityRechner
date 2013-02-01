@@ -61,8 +61,7 @@
 		</b:Container>
 		<b:Container>
 			<b:Footer>
-				<b:Popover text="testpopover" heading="some title"
-				hideDelay="5000">
+				<b:Popover text="testpopover" heading="some title">
 				<b:Button ui:field="button" icon="HEART" type="INFO" size="MINI">Testbutton</b:Button>
 			</b:Popover>
 			<b:Popover text="other popover" heading="other title"
