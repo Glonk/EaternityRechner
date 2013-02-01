@@ -7,6 +7,8 @@ import java.util.List;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
@@ -148,18 +150,18 @@ public class SearchIngredients extends Composite {
 		
 		
 		//  Listen to the EventBus 
-		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
-				new UpdateRecipeViewEventHandler() {
-					@Override
-					public void onEvent(UpdateRecipeViewEvent event) {
-					}
-				});
+		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE, new LoadedDataEventHandler() {
+			@Override
+			public void onLoadedData(LoadedDataEvent event) {
+				updateResults("");
+			}
+		});
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {
 			@Override
 			public void onEvent(MonthChangedEvent event) {
 				displayResults();
 			}
-			});
+		});
 	}
 	
 	public void setPresenter(RechnerActivity presenter) {

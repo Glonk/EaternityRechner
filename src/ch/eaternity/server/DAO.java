@@ -16,6 +16,7 @@ import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Transportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
@@ -73,18 +74,25 @@ public class DAO extends DAOBase
 	public LoginInfo getLoginInfo(String requestUri, User user) {
 		UserService userService = UserServiceFactory.getUserService();
 		LoginInfo loginInfo = new LoginInfo();
-		try {
-			loginInfo = ofy().get(LoginInfo.class, user.getUserId());
-		}
-		catch (NotFoundException e) {
-			  loginInfo.setId(user.getUserId());
-			  loginInfo.setLoggedIn(true);
-			  loginInfo.setEmailAddress(user.getEmail());
-			  loginInfo.setNickname(user.getNickname());
-			  loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
-			  loginInfo.setAdmin(userService.isUserAdmin());
-			  ofy().put(loginInfo);
-		}
+		
+		if (user != null) { 
+			try {
+				loginInfo = ofy().get(LoginInfo.class, user.getUserId());
+			}
+			catch (NotFoundException e) {
+				  loginInfo.setId(user.getUserId());
+				  loginInfo.setLoggedIn(true);
+				  loginInfo.setEmailAddress(user.getEmail());
+				  loginInfo.setNickname(user.getNickname());
+				  loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
+				  loginInfo.setAdmin(userService.isUserAdmin());
+				  ofy().put(loginInfo);
+			}
+		} 
+		else {
+	      loginInfo.setLoggedIn(false);
+	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
+	    }
 		return loginInfo;
 	}
 

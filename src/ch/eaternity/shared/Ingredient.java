@@ -9,7 +9,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.annotation.Serialized;
 
 public class Ingredient implements Serializable{
@@ -28,11 +27,12 @@ public class Ingredient implements Serializable{
     private Boolean noAlternative;
     private List<Long> alternativeIds = new ArrayList<Long>();
 
-
 	// currently related to Switzerland
     private Boolean hasSeason;
-    private SeasonDate startSeason;
-    private SeasonDate stopSeason;
+    @Embedded
+    private SeasonDate startSeason = new SeasonDate();
+    @Embedded
+    private SeasonDate stopSeason = new SeasonDate();
 	
     private List<String> tags = new ArrayList<String>();
     

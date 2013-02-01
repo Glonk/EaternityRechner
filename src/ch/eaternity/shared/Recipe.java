@@ -16,10 +16,6 @@ import com.googlecode.objectify.annotation.Serialized;
 
 public class Recipe implements Serializable, Cloneable{
  
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5888386800366492104L;
 		
 	@Id Long id;

@@ -245,12 +245,12 @@ public class IngredientsDialog extends DialogBox{
 					String startSeason = null, stopSeason = null;
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_start");
 					if (tmpNodeVal1 != null) startSeason = tmpNodeVal1;
-					newIngredient.setStartSeason(startSeason);
+						newIngredient.setStartSeason(startSeason);
 					
 					// stopSeason
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_stop");
 					if (tmpNodeVal1 != null) stopSeason = tmpNodeVal1;
-					newIngredient.setStopSeason(stopSeason);
+						newIngredient.setStopSeason(stopSeason);
 					
 					// has Season Dependency
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saisonabhangig");

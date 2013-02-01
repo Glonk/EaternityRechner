@@ -1,6 +1,7 @@
 package ch.eaternity.client.events;
 
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.GwtEvent.Type;
 
 /**
  * @author Ikai Lan
@@ -12,9 +13,10 @@ import com.google.gwt.event.shared.GwtEvent;
  *
  */
 public class LoadedDataEvent extends GwtEvent<LoadedDataEventHandler> {
-
     public static Type<LoadedDataEventHandler> TYPE = new Type<LoadedDataEventHandler>();
 
+    public LoadedDataEvent() {}
+    
 	@Override
 	public Type<LoadedDataEventHandler> getAssociatedType() {
 		return TYPE;

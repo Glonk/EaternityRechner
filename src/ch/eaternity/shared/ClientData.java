@@ -30,7 +30,7 @@ public class ClientData implements Serializable{
 	public int currentMonth;
 	public String currentLocation;
 	public String searchstring;
-	
+
 	
 	public ClientData() {
 		

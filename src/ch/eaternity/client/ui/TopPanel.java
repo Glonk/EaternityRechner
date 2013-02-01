@@ -60,6 +60,7 @@ public class TopPanel extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		
 		ingredientLink.setVisible(false);
+		signInLink.setVisible(false);
 		signOutLink.setVisible(false);
 		userRecipesButton.setVisible(false);
 		kitchenRecipesButton.setVisible(false);

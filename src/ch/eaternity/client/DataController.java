@@ -6,6 +6,7 @@ import java.util.List;
 
 import ch.eaternity.client.events.CollectionsChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEvent;
+import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
@@ -87,7 +88,7 @@ public class DataController {
 				if (cdata.loginInfo != null)
 					eventBus.fireEvent(new LoginChangedEvent(cdata.loginInfo));
 				
-				
+				eventBus.fireEvent(new LoadedDataEvent());
 			}
 			
 		});
@@ -513,7 +514,6 @@ public class DataController {
 	public String getCurrentLocation() {
 		return cdata.currentLocation;
 	}
-
 
 	
 

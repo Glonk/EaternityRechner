@@ -244,11 +244,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// load all ingredients
 		data.ingredients = dao.getAllIngredients();
 		
+		data.loginInfo = dao.getLoginInfo(requestUri, getUser());
+		
 		//TODO get Distances
 		
 		if (getUser() != null) {
-			data.loginInfo = dao.getLoginInfo(requestUri, getUser());
-			
 			data.userRecipes = dao.getYourRecipe(getUser());
 			data.publicRecipes = dao.getOpenRecipe();
 			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); 

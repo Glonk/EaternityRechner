@@ -52,6 +52,7 @@ public class RechnerActivity extends AbstractActivity {
 	private final SearchRecipes searchRecipes;
 	private final RecipeView recipeView;
 	private final RecipeEdit recipeEdit;
+	private TopPanel topPanel;
 	
 	
 	// Used to obtain views, eventBus, placeController
@@ -88,7 +89,8 @@ public class RechnerActivity extends AbstractActivity {
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
 		// set presenter again (lost because of new place...
-		rechnerView.getTopPanel().setPresenter(this);
+		topPanel = rechnerView.getTopPanel();
+		topPanel.setPresenter(this);
 		
 		if (place instanceof RechnerRecipeViewPlace) {
 			// Load RecipeView into recipecontainer
@@ -112,8 +114,9 @@ public class RechnerActivity extends AbstractActivity {
 		container.setWidget(rechnerView);
 
 		// now load the data (just once...)
-		if (!dco.dataLoaded())
+		if (!dco.dataLoaded()) {
 			dco.loadData();
+		}
 	}
 	
     /**

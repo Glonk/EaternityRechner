@@ -3,6 +3,8 @@ package ch.eaternity.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Id;
+
 /*
  * Represents a start and ending date of a season
  * month: 1 is January, 12 is December
@@ -12,6 +14,8 @@ import java.util.Date;
 public class SeasonDate implements Serializable {
 
 	private static final long serialVersionUID = 8516034014140363621L;
+	
+	@Id Long id;
 	
 	public int month;
 	public int day;
@@ -33,6 +37,7 @@ public class SeasonDate implements Serializable {
 	 * Format: dd.MM
 	 */
 	public boolean setDate(String date) {
+		if (date == null) return false;
 		String splitted[] = date.trim().split("\\.");
 		if(splitted.length == 2) {
 			int day = Integer.parseInt(splitted[0]);
