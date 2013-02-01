@@ -9,7 +9,8 @@ import java.util.TreeSet;
 
 public class ClientData implements Serializable{
 
-	private static final long serialVersionUID = -8325524250818128692L;
+	private static final long serialVersionUID = -8325524250818194857L;
+	
 	public List<Recipe> publicRecipes = new ArrayList<Recipe>();
 	public List<Recipe> userRecipes = new ArrayList<Recipe>();
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
@@ -27,7 +28,7 @@ public class ClientData implements Serializable{
 	public Recipe editRecipe;
 	public int currentMonth;
 	public String currentLocation;
-	String searchstring;
+	public String searchstring;
 	
 	
 	public ClientData() {

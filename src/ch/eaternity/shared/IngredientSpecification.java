@@ -70,7 +70,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	private Production production;
 	@Embedded
 
-	private MoTransportation transportation;
+	private Transportation transportation;
 	private double distance; // in km
 	private Long label;
 	
@@ -86,7 +86,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public List<String> tags;
 	
 	public IngredientSpecification(Long zutat_id, String name, Date cookingDate,Condition symbol,Production symbol2, 
-		 MoTransportation symbol3) {
+		 Transportation symbol3) {
 		this.setName(name);
 		this.setZutat_id(zutat_id);
 		
@@ -107,7 +107,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		cookingDate = (Date) toClone.cookingDate.clone();
 		condition = new Condition(toClone.condition);
 		production = new Production(toClone.production);
-		transportation = new MoTransportation(toClone.transportation);
+		transportation = new Transportation(toClone.transportation);
 		distance = toClone.distance;
 		label = new Long(toClone.label);
 		startSeason = new SeasonDate(toClone.startSeason);
@@ -174,10 +174,10 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	public Production getProduction() {
 		return production;
 	}
-	public void setTransportation(MoTransportation transportmittel) {
+	public void setTransportation(Transportation transportmittel) {
 		this.transportation = transportmittel;
 	}
-	public MoTransportation getTransportation() {
+	public Transportation getTransportation() {
 		return transportation;
 	}
 

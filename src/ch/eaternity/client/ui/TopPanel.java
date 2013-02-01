@@ -35,14 +35,14 @@ public class TopPanel extends Composite {
 	private static final Binder binder = GWT.create(Binder.class);
 	public static String currentHerkunft = "Zürich, Schweiz";
 
-	  @UiField public Anchor signOutLink;
-	  @UiField public Anchor signInLink;
-	  @UiField public Anchor ingredientLink;
-	  @UiField public ListBox Monate;
+	  @UiField Anchor signOutLink;
+	  @UiField Anchor signInLink;
+	  @UiField Anchor ingredientLink;
+	  @UiField ListBox Monate;
 	  
-	  @UiField Button userRecipes;
-	  @UiField Button kitchenRecipes;
-	  @UiField Button publicRecipes;
+	  @UiField Button userRecipesButton;
+	  @UiField Button kitchenRecipesButton;
+	  @UiField Button publicRecipesButton;
 	 
 	  @UiField HTML calHTML;
 
@@ -53,13 +53,16 @@ public class TopPanel extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		bind();
 	}
 
 	public TopPanel() {
+		initWidget(binder.createAndBindUi(this));
+		
 		ingredientLink.setVisible(false);
 		signOutLink.setVisible(false);
-		userRecipes.setVisible(false);
-		kitchenRecipes.setVisible(false);
+		userRecipesButton.setVisible(false);
+		kitchenRecipesButton.setVisible(false);
 
 		Monate.addItem("Januar");
 		Monate.addItem("Februar");
@@ -81,18 +84,16 @@ public class TopPanel extends Composite {
 				"Der Monat in dem Sie kochen.",
 				5000 /* timeout in milliseconds */, "toolTipDown", -130, 10));
 
-		bind();
+		
 	}
 
 	private void bind() {
-		initWidget(binder.createAndBindUi(this));
-		
 		// ---------------- Listen to the EventBus ----------------
 		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE,
 				new KitchenChangedEventHandler() {
 					@Override
 					public void onKitchenChanged(KitchenChangedEvent event) {
-						kitchenRecipes.setText(dco.getCurrentKitchen().getSymbol());
+						kitchenRecipesButton.setText(dco.getCurrentKitchen().getSymbol());
 						}
 					}
 				);
@@ -108,8 +109,8 @@ public class TopPanel extends Composite {
 							signOutLink.setVisible(true);
 
 							if (dco.getKitchens() != null)
-								kitchenRecipes.setVisible(true);			
-							userRecipes.setVisible(true);
+								kitchenRecipesButton.setVisible(true);			
+							userRecipesButton.setVisible(true);
 							
 						} else {
 							// TODO sign out without reload of rechner...
@@ -117,8 +118,8 @@ public class TopPanel extends Composite {
 							signInLink.setVisible(true);
 							signOutLink.setVisible(false);
 
-							kitchenRecipes.setVisible(false);			
-							userRecipes.setVisible(false);
+							kitchenRecipesButton.setVisible(false);			
+							userRecipesButton.setVisible(false);
 						}
 						if (event.loginInfo.isAdmin())
 							ingredientLink.setVisible(true);

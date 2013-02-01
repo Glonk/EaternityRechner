@@ -6,20 +6,13 @@
 <ui:style>
 
 
-.relativePosition {
-	
-	/* this is a hack... what would you do? */
-	position:absolute !important;
-	bottom:4px;
-	background: #F7A959; 
-	overflow:hidden;
-	padding-right:1px;
-	
-	}
+
 
 </ui:style>
 
 
-
+<g:VerticalPanel>
+	<g:Label>Ich bin SerachRecipes</g:Label>
+</g:VerticalPanel>
 
 </ui:UiBinder>

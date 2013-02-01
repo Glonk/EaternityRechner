@@ -32,8 +32,8 @@ public class DataController {
 	// ---------------------- Class Variables ----------------------
 	
 	private ClientFactory clientFactory;
-	private final DataServiceAsync dataRpcService;
-	private final EventBus eventBus;
+	private DataServiceAsync dataRpcService;
+	private EventBus eventBus;
 	
 	// here is the database of all data pushed to....
 	private ClientData cdata = new ClientData();
@@ -41,8 +41,9 @@ public class DataController {
 
 	// ---------------------- public Methods ----------------------
 	
+	public DataController () {}
 	
-	public DataController(ClientFactory factory) {
+	public void setClientFactory(ClientFactory factory) {
 		this.clientFactory = factory;
 		this.dataRpcService = factory.getDataServiceRPC();
 		this.eventBus = factory.getEventBus();
@@ -63,7 +64,7 @@ public class DataController {
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
-				if (cdata.loginInfo.getIsInKitchen() == true && cdata.loginInfo.getLastKitchen() != null)
+				if (cdata.loginInfo != null && cdata.loginInfo.getIsInKitchen() == true && cdata.loginInfo.getLastKitchen() != null)
 				{
 					cdata.currentKitchen = cdata.getKitchenByID(cdata.loginInfo.getLastKitchen());
 					if (cdata.currentKitchen == null)
@@ -76,8 +77,6 @@ public class DataController {
 					changeKitchenRecipes(cdata.currentKitchen.id);
 					eventBus.fireEvent(new KitchenChangedEvent(cdata.currentKitchen.id));
 				}
-				else
-					eventBus.fireEvent(new KitchenChangedEvent(-1L));
 				
 				
 				// Load current Month or Kitchen Month
@@ -85,7 +84,8 @@ public class DataController {
 				cdata.currentMonth = date.getMonth() + 1;
 				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));
 				
-				eventBus.fireEvent(new LoginChangedEvent(cdata.loginInfo));
+				if (cdata.loginInfo != null)
+					eventBus.fireEvent(new LoginChangedEvent(cdata.loginInfo));
 				
 				
 			}
@@ -223,7 +223,7 @@ public class DataController {
 				for(Ingredient zutat : cdata.ingredients){
 					if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
 						if(!ingredients.contains(zutat)){
-							zutat.noAlternative = true;
+							zutat.setNoAlternative(true);
 							ingredients.add(zutat);
 						}
 					}
@@ -236,7 +236,7 @@ public class DataController {
 								for(Ingredient zutat2 : cdata.ingredients){
 									if(zutat2.getId().equals(alternativen_id)){
 										if(!alternatives.contains(zutat2)){
-											zutat2.noAlternative = false;
+											zutat2.setNoAlternative(false);
 											alternatives.add(zutat2);
 										}
 									}
@@ -251,7 +251,7 @@ public class DataController {
 		else {
 			for(Ingredient zutat : cdata.ingredients){
 				ingredients.add(zutat);
-				zutat.noAlternative = true;
+				zutat.setNoAlternative(true);
 			}
 		}
 	}
@@ -341,8 +341,8 @@ public class DataController {
 			
 		// change stdExtraction of all Ingredients
 		for (Ingredient ing : cdata.ingredients) {
-			ing.getExtractions().add(0, ing.stdExtraction); 
-			ing.stdExtraction = ing.getExtractions().get(0);
+			ing.getExtractions().add(0, ing.getStdExtraction()); 
+			ing.setStdExtraction(ing.getExtractions().get(0));
 		}
 		
 		eventBus.fireEvent(new CollectionsChangedEvent());

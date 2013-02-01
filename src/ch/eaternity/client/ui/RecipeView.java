@@ -39,13 +39,14 @@ public class RecipeView extends Composite {
 	// ---------------------- public Methods -----------------------
 	
 	public RecipeView() {
-
-		bind();
+		initWidget(uiBinder.createAndBindUi(this));
+		
 	}
 	
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		bind();
 	}
 
 	private void openRecipeEdit() {
@@ -61,7 +62,7 @@ public class RecipeView extends Composite {
 	
 
 	private void bind() {
-		initWidget(uiBinder.createAndBindUi(this));
+		
 		
 		//  Listen to the EventBus 
 		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,

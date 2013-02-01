@@ -147,7 +147,7 @@ public class RecipeEdit extends Composite {
 	// ---------------------- public Methods -----------------------
 	
 	public RecipeEdit() {
-
+		initWidget(uiBinder.createAndBindUi(this));
 		
 		/*
 	    tableRowDragController = new FlexTableRowDragController(dragArea);
@@ -180,12 +180,12 @@ public class RecipeEdit extends Composite {
 	    }	
 	    */
 		
-		bind();
+		
 	}
 	
 
 	private void bind() {
-		initWidget(uiBinder.createAndBindUi(this));
+		
 		
 		//  Listen to the EventBus 
 		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
@@ -198,6 +198,8 @@ public class RecipeEdit extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		
+		bind();
 	}
 	
 	// ---------------------- UI Handlers ----------------------

@@ -240,38 +240,18 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		DAO dao = new DAO();
 		ClientData data = new ClientData();
-		data.loginInfo = dao.getLoginInfo(requestUri, getUser());
 		
 		// load all ingredients
 		data.ingredients = dao.getAllIngredients();
 		
-		// DEPRECIATED PM
-		// reference:
-		// http://code.google.com/p/googleappengine/source/browse/trunk/java/demos/gwtguestbook/src/com/google/gwt/sample/gwtguestbook/server/GuestServiceImpl.java
-		Log.warning("Start fetching Data object");
-		PersistenceManager pm = getPersistenceManager();
-		
-
-		try {
-			ArrayList<SingleDistance> distances = new ArrayList<SingleDistance>();
-			Query q4 = pm.newQuery(SingleDistance.class);
-			List<SingleDistance> singleDistances = (List<SingleDistance>) q4.execute();
-			for(SingleDistance singleDistance : singleDistances){
-				if(!distances.contains(singleDistance)){
-					distances.add(singleDistance);
-				}
-			}
-			//data.distances = distances;
-		} finally {
-			pm.close();
-		}
-		
+		//TODO get Distances
 		
 		if (getUser() != null) {
+			data.loginInfo = dao.getLoginInfo(requestUri, getUser());
+			
 			data.userRecipes = dao.getYourRecipe(getUser());
 			data.publicRecipes = dao.getOpenRecipe();
 			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); 
-			
 
 			data.kitchens = dao.getYourKitchens(getUser());
 			
@@ -301,8 +281,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		}
 		
-	
-		Log.warning("preparing to return");
 		return data;
 	}
 

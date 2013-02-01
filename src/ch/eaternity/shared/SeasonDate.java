@@ -1,5 +1,6 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /*
@@ -8,17 +9,19 @@ import java.util.Date;
  * day: 1 is first of month, 31 possibly last
  * 
  */
-public class SeasonDate {
+public class SeasonDate implements Serializable {
+
+	private static final long serialVersionUID = 8516034014140363621L;
+	
 	public int month;
 	public int day;
+	
+	public SeasonDate() {}
 	
 	public SeasonDate(int month, int day) {
 		this.month = month;
 		this.day = day;
 	}
-
-
-	public SeasonDate() {}
 	
 	public SeasonDate(SeasonDate toClone) {
 		month = toClone.month;
@@ -75,28 +78,6 @@ public class SeasonDate {
 				return false;
 		return false;
 	}
-
-	/*
-	public int getMonth() {
-		return month;
-	}
-
-
-	public void setMonth(int month) {
-		this.month = month;
-	}
-
-
-	public int getDay() {
-		return day;
-	}
-
-
-	public void setDay(int day) {
-		this.day = day;
-	}
-	 */
-
 
 }
 

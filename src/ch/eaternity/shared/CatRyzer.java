@@ -404,7 +404,7 @@ public class CatRyzer {
 	
 	private void fillCatMultiMap(Multimap<String,IngredientSpecification> catMM, IngredientSpecification ingSpec)
 	{
-		List<String> tags = getIngredient(ingSpec).tags;
+		List<String> tags = getIngredient(ingSpec).getTags();
 		if (tags != null && tags.size() != 0){
 			for (String tag : tags) {
 				for (CatMapping mapping : mappings) {

@@ -243,6 +243,7 @@
 		}
 
   </ui:style>
+  
 	<g:AbsolutePanel ui:field="dragArea">
 		<g:HTMLPanel ui:field="htmlRezept">
 			<!-- <g:HTML ui:field="topIndikator" styleName='{style.indikator}'><div 
@@ -343,14 +344,14 @@
 
 			<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
 		</g:HTMLPanel>
+		<g:FlowPanel>
+			<g:Button ui:field="newRecipeButton">Neues Rezept</g:Button>
+			<g:Button ui:field="generatePDFButton">PDF generieren</g:Button>
+			<g:Button ui:field="publishButton">veröffentlichen</g:Button>
+			<g:Button ui:field="deleteButton">löschen</g:Button>
+			<g:Button ui:field="duplicateButton">duplizieren</g:Button>
+			<g:Button ui:field="saveButton">speichern</g:Button>
+		</g:FlowPanel>
 	</g:AbsolutePanel>
-	<g:FlowPanel>
-		<g:Button ui:field="newRecipeButton">Neues Rezept</g:Button>
-		<g:Button ui:field="generatePDFButton">PDF generieren</g:Button>
-		<g:Button ui:field="publishButton">veröffentlichen</g:Button>
-		<g:Button ui:field="deleteButton">löschen</g:Button>
-		<g:Button ui:field="duplicateButton">duplizieren</g:Button>
-		<g:Button ui:field="saveButton">speichern</g:Button>
-	</g:FlowPanel>
 
 </ui:UiBinder>

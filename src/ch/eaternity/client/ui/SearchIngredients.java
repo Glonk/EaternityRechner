@@ -30,18 +30,18 @@ public class SearchIngredients extends Composite {
 	
 	// ---------------------- Class Variables ----------------------
 	
-	RechnerActivity presenter;
-	DataController dco;
+	private RechnerActivity presenter;
+	private DataController dco;
 	
 	// ---------------------- public Methods -----------------------
 	
 	public SearchIngredients() {
-		bind();
+		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
 
 	private void bind() {
-		initWidget(uiBinder.createAndBindUi(this));
+		
 		
 		//  Listen to the EventBus 
 		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
@@ -55,6 +55,7 @@ public class SearchIngredients extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		bind();
 	}
 	
 	// ---------------------- UI Handlers ----------------------

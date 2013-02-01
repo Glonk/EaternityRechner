@@ -23,7 +23,7 @@ public class ClientFactoryImpl implements ClientFactory
 	private static final RechnerView RechnerView = new RechnerView();
 	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
 	private static final MenuPreviewView menuPreviewView = new MenuPreviewView();
-	private final DataController dao = new DataController(this);
+	private final DataController dao = new DataController();
 	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
 	
 

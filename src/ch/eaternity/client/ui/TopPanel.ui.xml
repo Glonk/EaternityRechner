@@ -43,9 +43,9 @@
 				<g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
 			</div>
 			<div class="{style.statusInfo}">
-				<g:Button ui:field="userRecipes"></g:Button>
-				<g:Button ui:field="kitchenRecipes"></g:Button>
-				<g:Button ui:field="publicRecipes"></g:Button>
+				<g:Button ui:field="userRecipesButton"></g:Button>
+				<g:Button ui:field="kitchenRecipesButton"></g:Button>
+				<g:Button ui:field="publicRecipesButton"></g:Button>
 			
 				<g:HTML ui:field='calHTML' styleName="{style.inline}"><img src="calendar.png" height='24' /></g:HTML>
 				<g:ListBox ui:field="Monate" />

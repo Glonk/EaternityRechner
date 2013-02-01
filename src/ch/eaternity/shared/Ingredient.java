@@ -1,6 +1,7 @@
 package ch.eaternity.shared;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,105 +12,195 @@ import javax.persistence.Transient;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.annotation.Serialized;
 
-public class Ingredient implements IsSerializable{
+public class Ingredient implements Serializable{
 
+	private static final long serialVersionUID = -3996022378367823464L;
+	
     @Id private Long id;
 
     private String symbol;
     private String symbol_en;
 
     private Integer co2eValue;
-    public Integer stdWeight; // in grams
+    private Integer stdWeight; // in grams
     
     @Transient
-    public Boolean noAlternative;
-    private Long[] alternativeIds;
- 
-    // currently related to Switzerland
-	public Boolean hasSeason;
-	public SeasonDate startSeason;
-	public SeasonDate stopSeason;
+    private Boolean noAlternative;
+    private List<Long> alternativeIds = new ArrayList<Long>();
+
+
+	// currently related to Switzerland
+    private Boolean hasSeason;
+    private SeasonDate startSeason;
+    private SeasonDate stopSeason;
 	
-	public List<String> tags;
+    private List<String> tags = new ArrayList<String>();
     
-    // possibly to be eliminated
-    public String stdExtractionSymbol;
-    
+    // stdExtraction should be setted during loading. probably not necessary at all...
     @Serialized
-	public Extraction stdExtraction;
+    private Extraction stdExtraction;
     @Serialized 
-    private List<Extraction> extractions;
+    private List<Extraction> extractions = new ArrayList<Extraction>();
     
     @Embedded
-	public ArrayList<Condition> conditions;
+    private List<Condition> conditions = new ArrayList<Condition>();
     @Embedded
-	public ArrayList<Production> productions;
+    private List<Production> productions  = new ArrayList<Production>();
     @Embedded
-	public ArrayList<MoTransportation> moTransportations;
+    private List<Transportation> transportations = new ArrayList<Transportation>();
     
 
     // ------------------- public Methods  ------------------- 
     
     // empty constructor necessary for GWT serialization
-    private Ingredient() {}
+	private Ingredient() {}
     
     public Ingredient(Long id)
     {
     	this.setId(id);
     }
+
     
 
     
-// getters and setters...
-      
-    
+ // ------------------- getters and setters -------------------
+       
+	public Long getId() {
+		return id;
+	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Long getId() {
-		return id;
+	public String getSymbol() {
+		return symbol;
 	}
 
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
 
-	public String getSymbol() {
-		return symbol;
-	}
-	
-	public void setSymbol_en(String symbol_en) {
-		this.symbol_en = symbol_en;
-	}
-
 	public String getSymbol_en() {
 		return symbol_en;
 	}
 
-	public void setCo2eValue(Integer co2eValue) {
-		this.co2eValue = co2eValue;
+	public void setSymbol_en(String symbol_en) {
+		this.symbol_en = symbol_en;
 	}
 
 	public Integer getCo2eValue() {
 		return co2eValue;
 	}
 
-	public void setAlternatives(Long[] alternativeIds) {
+	public void setCo2eValue(Integer co2eValue) {
+		this.co2eValue = co2eValue;
+	}
+
+	public Integer getStdWeight() {
+		return stdWeight;
+	}
+
+	public void setStdWeight(Integer stdWeight) {
+		this.stdWeight = stdWeight;
+	}
+
+	public Boolean getNoAlternative() {
+		return noAlternative;
+	}
+
+	public void setNoAlternative(Boolean noAlternative) {
+		this.noAlternative = noAlternative;
+	}
+	
+    public List<Long> getAlternatives() {
+		return alternativeIds;
+	}
+
+	public void setAlternatives(List<Long> alternativeIds) {
 		this.alternativeIds = alternativeIds;
 	}
 
-	public Long[] getAlternatives() {
-		return alternativeIds;
+	public Boolean getHasSeason() {
+		return hasSeason;
+	}
+
+	public void setHasSeason(Boolean hasSeason) {
+		this.hasSeason = hasSeason;
+	}
+
+	public SeasonDate getStartSeason() {
+		return startSeason;
+	}
+
+	public void setStartSeason(SeasonDate startSeason) {
+		this.startSeason = startSeason;
+	}
+	
+	public void setStartSeason(String startSeason) {
+		this.startSeason.setDate(startSeason);
+	}
+
+	public SeasonDate getStopSeason() {
+		return stopSeason;
+	}
+
+	public void setStopSeason(SeasonDate stopSeason) {
+		this.stopSeason = stopSeason;
+	}
+	
+	public void setStopSeason(String stopSeason) {
+		this.stopSeason.setDate(stopSeason);
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public Extraction getStdExtraction() {
+		return stdExtraction;
+	}
+
+	public void setStdExtraction(Extraction stdExtraction) {
+		this.stdExtraction = stdExtraction;
+	}
+
+	public List<Extraction> getExtractions() {
+		return extractions;
 	}
 
 	public void setExtractions(List<Extraction> extractions) {
 		this.extractions = extractions;
 	}
 
-	public List<Extraction> getExtractions() {
-		return extractions;
+	public List<Condition> getConditions() {
+		return conditions;
 	}
+
+	public void setConditions(List<Condition> conditions) {
+		this.conditions = conditions;
+	}
+
+	public List<Production> getProductions() {
+		return productions;
+	}
+
+	public void setProductions(List<Production> productions) {
+		this.productions = productions;
+	}
+
+	public List<Transportation> getTransportations() {
+		return transportations;
+	}
+
+	public void setTransportations(List<Transportation> transportations) {
+		this.transportations = transportations;
+	}
+
 
 
 

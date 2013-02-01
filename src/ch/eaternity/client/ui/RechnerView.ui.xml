@@ -1,38 +1,27 @@
-<ui:UiBinder
-  xmlns:ui='urn:ui:com.google.gwt.uibinder'
-  xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
-  xmlns:rechner='urn:import:ch.eaternity.client.ui'>
-  
-<ui:style>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
+	xmlns:rechner='urn:import:ch.eaternity.client.ui'>
+
+	<ui:style>
+		
+	</ui:style>
 
 
-.relativePosition {
-	
-	/* this is a hack... what would you do? */
-	position:absolute !important;
-	bottom:4px;
-	background: #F7A959; 
-	overflow:hidden;
-	padding-right:1px;
-	
-	}
+	<g:DockLayoutPanel unit='PX'>
+		<g:north size='74'>
+			<g:HorizontalPanel>
+				<g:Label>North Panel here</g:Label>
+				<rechner:TopPanel ui:field='topPanel' />
+			</g:HorizontalPanel>
+		</g:north>
 
-</ui:style>
-
-
-	<g:DockLayoutPanel>
-    <g:north size='74'>
-      <rechner:TopPanel ui:field='topPanel' />
-    </g:north>
-
-	<g:west size='265'>
-       <g:SimplePanel ui:field='searchPanel' />
-    </g:west>
-    <g:center>
-       <g:SimplePanel ui:field='recipePanel' />
-    </g:center>
-  </g:DockLayoutPanel>
+		<g:west size='265'>
+			<g:SimplePanel ui:field='searchPanel' />
+		</g:west>
+		<g:center>
+			<g:SimplePanel ui:field='recipePanel' />
+		</g:center>
+	</g:DockLayoutPanel>
 
 
 </ui:UiBinder>

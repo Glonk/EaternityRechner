@@ -64,6 +64,7 @@ public class RechnerActivity extends AbstractActivity {
 		this.rechnerView = factory.getRechnerView();
 		this.placeController = factory.getPlaceController();
 		this.dco = factory.getDataController();
+		dco.setClientFactory(factory);
 		this.place = place;
 		
 		rechnerView.setPresenter(this);

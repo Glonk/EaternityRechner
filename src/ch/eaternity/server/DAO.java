@@ -16,7 +16,7 @@ import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.MoTransportation;
+import ch.eaternity.shared.Transportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
@@ -39,7 +39,7 @@ public class DAO extends DAOBase
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Extraction.class);
 		ObjectifyService.register(Condition.class);
-		ObjectifyService.register(MoTransportation.class);
+		ObjectifyService.register(Transportation.class);
 		ObjectifyService.register(ProductLabel.class);
 		ObjectifyService.register(RecipeComment.class);
 		ObjectifyService.register(IngredientSpecification.class);

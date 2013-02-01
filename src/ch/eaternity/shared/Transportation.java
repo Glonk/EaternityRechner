@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class MoTransportation implements Serializable, Cloneable{
+public class Transportation implements Serializable {
 
 	/**
 	 * 
@@ -16,21 +16,21 @@ public class MoTransportation implements Serializable, Cloneable{
     public String symbol;
 	public Double factor;
     
-    private MoTransportation()
+    private Transportation()
     {
     	
     }
     
-    public MoTransportation(MoTransportation toClone) {
+    public Transportation(Transportation toClone) {
 		symbol = new String(toClone.symbol);
 		factor = new Double(toClone.factor);
 	}
 
-    public MoTransportation(String symbol) {
+    public Transportation(String symbol) {
     	this.symbol = symbol;
 	}
     
-    public MoTransportation(String symbol, Double factor) {
+    public Transportation(String symbol, Double factor) {
     	this.symbol = symbol;
     	this.factor = factor;
 	}
