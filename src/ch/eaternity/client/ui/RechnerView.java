@@ -11,12 +11,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class RechnerView extends SimpleLayoutPanel {
 	@UiTemplate("RechnerView.ui.xml")
-	interface Binder extends UiBinder<DockLayoutPanel, RechnerView> {
+	interface Binder extends UiBinder<HTMLPanel, RechnerView> {
 	}
 
 	private static Binder uiBinder = GWT.create(Binder.class);
@@ -62,9 +63,6 @@ public class RechnerView extends SimpleLayoutPanel {
 
 	public SimplePanel getRecipePanel() {
 		return recipePanel;
-	}
-	public TopPanel getTopPanel() {
-		return topPanel;
 	}
 
 }

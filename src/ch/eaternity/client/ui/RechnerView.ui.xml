@@ -1,24 +1,82 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
-	xmlns:rechner='urn:import:ch.eaternity.client.ui'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
+	xmlns:rechner='urn:import:ch.eaternity.client.ui'
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
 		
 	</ui:style>
 
+	<g:HTMLPanel>
 
-	<g:DockLayoutPanel unit='PX'>
-		<g:north size='100'>
-			<rechner:TopPanel ui:field='topPanel' />
-		</g:north>
 
-		<g:west size='265'>
-			<g:SimplePanel ui:field='searchPanel' />
-		</g:west>
-		<g:center>
-			<g:SimplePanel ui:field='recipePanel' />
-		</g:center>
-	</g:DockLayoutPanel>
+		<b:Container>
+			<b:Row>
+				<b:Column size="3">
+					<g:HTMLPanel>
+					<a href="http://www.eaternity.ch">
+					<img class="logo" src="http://dl.dropbox.com/u/1214503/eaternity-assets/images/generic/logo-eaternity-small_04-11-2010.png" />
+					</a>
+					</g:HTMLPanel>
+				</b:Column>
+				<b:Column size="9">
+				<g:HTMLPanel>
+				<br /><br />
+				</g:HTMLPanel>
+				</b:Column>
+			</b:Row>
+
+			<b:Row>
+			    <b:Column size="9" offset="3">
+			    	<rechner:TopPanel ui:field='topPanel' />
+				</b:Column>
+			</b:Row>
+
+		</b:Container><!-- container -->
+	
+		<b:Container>
+		<g:HTMLPanel>
+			<div class="page content-start">
+			
+			
+			<b:Row>
+			    <b:Column size="4">
+			    	<g:SimplePanel ui:field='searchPanel' />
+				</b:Column>
+				<b:Column size="8">
+					<g:SimplePanel ui:field='recipePanel' />
+				</b:Column>
+			</b:Row>
+		
+			
+		
+
+
+
+		
+			</div>
+			</g:HTMLPanel>
+		</b:Container>
+		<b:Container>
+			<b:Footer>
+				<b:Popover text="testpopover" heading="some title"
+				hideDelay="5000">
+				<b:Button ui:field="button" icon="HEART" type="INFO" size="MINI">Testbutton</b:Button>
+			</b:Popover>
+			<b:Popover text="other popover" heading="other title"
+				placement="TOP">
+				<b:Button icon="LEAF" type="DANGER" size="MINI">Testbutton</b:Button>
+			</b:Popover>
+				<g:Label>Some Text and a </g:Label>
+				<b:Button>Button</b:Button>
+			</b:Footer>
+			
+	
+		</b:Container>
+	</g:HTMLPanel>
+ 
 
 
 </ui:UiBinder>

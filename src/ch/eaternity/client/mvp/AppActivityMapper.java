@@ -11,6 +11,7 @@ import ch.eaternity.client.place.KlimaZmittagPlace;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.core.client.GWT;
@@ -39,17 +40,20 @@ public class AppActivityMapper implements ActivityMapper {
 	 */
 	@Override
 	public Activity getActivity(Place place) {
-		GWT.log("Place called: " + place);
+		
+		Log.info("Place called: " + place);
 		
 		// This is begging for GIN
 		if (place instanceof HelloPlace)
 			return new HelloActivity((HelloPlace) place, clientFactory);
 		
 		else if (place instanceof RechnerRecipeViewPlace) {
+			
 			if (rechnerActivity == null)
 				return new RechnerActivity(place, clientFactory);
 			else  {
 				rechnerActivity.setPlace(place);
+			
 				return rechnerActivity;
 			}
 		}

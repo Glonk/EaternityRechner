@@ -14,7 +14,10 @@
 
 <module rename-to="eaternity">
   <inherits name='com.google.gwt.user.User' />
+  <inherits name='com.google.gwt.junit.JUnit' />
+  
   <inherits name='com.google.gwt.user.theme.standard.Standard'/> 
+  
   
   <inherits name="com.google.gwt.xml.XML" />
   <!-- inherits name="com.google.api.gwt.ApiCore" /-->
@@ -29,6 +32,13 @@
   <inherits name="com.google.gwt.place.Place"/>
   <inherits name="gwtupload.GWTUpload"/>
   <inherits name="com.google.common.collect.Collect"/>
+  
+  <!-- HERE we plan of including the Twitter Bootstrap code -->
+  <inherits name='com.github.gwtbootstrap.Bootstrap' />
+  
+  <!-- HERE we plan ahead of including the GWTP code -->
+  <!-- <inherits name='com.gwtplatform.dispatch.Dispatch' />
+  <inherits name='com.gwtplatform.mvp.Mvp' /> -->
   
   
 
@@ -56,6 +66,8 @@
 <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED" />
 -->
 
+<!-- enable responsive Design automatic adjustments -->
+<set-property name="bootstrap.responsiveDesign" value="true"/>
 
 
 
