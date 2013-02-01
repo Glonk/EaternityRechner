@@ -132,13 +132,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
 		
 
-		userRezept.kitchenId.add(recipe.kitchenId);
+		userRezept.kitchenId.add(recipe.getKitchenId());
 
 		// TODO : this is not a propper approval process!!!
-		userRezept.requestedOpen = recipe.openRequested;
+		userRezept.requestedOpen = recipe.getOpenRequested();
 		
 		// If recipe belongs to a kitchen, dont assign it a user mail
-		if (recipe.kitchenId != null)
+		if (recipe.getKitchenId() != null)
 		{
 			if(userService.getCurrentUser().getEmail() != null){
 				recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
@@ -146,8 +146,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				recipe.setEmailAddressOwner(userService.getCurrentUser().getNickname());
 			}
 		}
-		recipe.open = false;
-		userRezept.approvedOpen = recipe.open;
+		recipe.setOpen(false);
+		userRezept.approvedOpen = recipe.getOpen();
 		
 		
 		userRezept.setRezept(recipe);
@@ -179,7 +179,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		ShortUrl shortURL = gson.fromJson(response, ShortUrl.class);   
 		
 		//assign to the recipe
-		userRezept.recipe.ShortUrl = shortURL.id;
+		userRezept.recipe.setShortUrl(shortURL.id);
 		
 		// then save the recipe again (now with the shortUrl)
 		dao.ofy().put(userRezept);
@@ -193,7 +193,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		DAO dao = new DAO();
 		UserRecipeWrapper userRezept =  dao.getRecipe(rezeptId);
-		userRezept.recipe.open = approve;
+		userRezept.recipe.setOpen(approve);
 		userRezept.approvedOpen = approve;
 		dao.ofy().put(userRezept);
 		return true;

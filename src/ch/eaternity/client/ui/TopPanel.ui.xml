@@ -12,7 +12,7 @@
 	}
 	
 	.statusDiv {
-	text-align: right;
+	text-align:right;
 	padding:6px 8px 8px 10px;
 	background:#fff;
 	background: url("header_rechner.jpg") no-repeat 0px 0px;
@@ -37,24 +37,24 @@
 
 
 	<g:HTMLPanel>
-
+		
 		<div class="{style.statusDiv}">
-			<div class="{style.adminDiv}">
+			<g:HorizontalPanel>
 				<g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
-			</div>
-			<div class="{style.statusInfo}">
-				<g:Button ui:field="userRecipesButton"></g:Button>
-				<g:Button ui:field="kitchenRecipesButton"></g:Button>
-				<g:Button ui:field="publicRecipesButton"></g:Button>
-			
+				
+				<g:Button ui:field="userRecipesButton">Meine Rezepte</g:Button>
+				<g:Button ui:field="kitchenRecipesButton">Kuechen</g:Button>
+				<g:Button ui:field="publicRecipesButton">Offentliche Rezepte</g:Button>
+				
 				<g:HTML ui:field='calHTML' styleName="{style.inline}"><img src="calendar.png" height='24' /></g:HTML>
 				<g:ListBox ui:field="Monate" />
 
-				<a href="mailto:info@eaternity.ch">Kontakt</a>
-        		&nbsp;
+				<g:HTML><a href="mailto:info@eaternity.ch">Kontakt</a></g:HTML>
 				<g:Anchor href='javascript:;' ui:field='signOutLink'>Abmelden</g:Anchor>
 				<g:Anchor href='javascript:;' ui:field='signInLink'>Anmelden</g:Anchor>
-			</div>
+
+			</g:HorizontalPanel>
 		</div>
+		
 	</g:HTMLPanel>
 </ui:UiBinder>

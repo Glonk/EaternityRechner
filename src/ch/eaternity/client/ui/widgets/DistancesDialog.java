@@ -107,12 +107,12 @@ public class DistancesDialog extends DialogBox{
 			List<String> extractions = new ArrayList<String>();
 			if (dco.getCurrentKitchen() != null ) {
 				for (Recipe recipe : dco.getCurrentKitchenRecipes()){
-					for (IngredientSpecification ingSpec : recipe.getZutaten())
+					for (IngredientSpecification ingSpec : recipe.getIngredients())
 						extractions.add(ingSpec.getExtraction().symbol);
 				}
 			}
 			else {
-				for (IngredientSpecification ingSpec : dco.getEditRecipe().getZutaten())
+				for (IngredientSpecification ingSpec : dco.getEditRecipe().getIngredients())
 					extractions.add(ingSpec.getExtraction().symbol);
 			}
 			

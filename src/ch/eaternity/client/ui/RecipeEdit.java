@@ -269,7 +269,7 @@ public class RecipeEdit extends Composite {
 	
 	@UiHandler("removeRezeptButton")
 	void onRemoveClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace("l"));
+		presenter.goTo(new RechnerRecipeViewPlace(""));
 	}
 	
 	@UiHandler("MenuTable")

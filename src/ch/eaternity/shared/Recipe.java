@@ -29,22 +29,22 @@ public class Recipe implements Serializable, Cloneable{
 	private String symbol;
 	private String subTitle;
 	private String cookInstruction;
-	public UploadedImage image;
+	private UploadedImage image;
 	
 	@Indexed
 	private String emailAddressOwner;
 	
 	@Embedded
-	public EnergyMix energyMix;
+	private EnergyMix energyMix;
 	
-	public String ShortUrl;
+	private String ShortUrl;
 	// no List, just in one Kitchen
-	public Long kitchenId; // empty is no kitchen...
+	private Long kitchenId; // empty is no kitchen...
 	
 	private Long persons;
 	
 	private Date createDate;
-	public Date cookingDate;
+	private Date cookingDate;
 	private Long hits;
 	private Long popularity;
 	
@@ -52,20 +52,20 @@ public class Recipe implements Serializable, Cloneable{
 	private Boolean selected;
 	
 	@Serialized
-	public List<RecipeComment> comments = new ArrayList<RecipeComment>();
+	private List<RecipeComment> comments = new ArrayList<RecipeComment>();
 
 	@Serialized
-	public List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
+	private List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
 	
 	@Serialized
-	public List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
+	private List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
     
 	private Double CO2Value;
-	public Boolean openRequested;
-	public Boolean open;
-	public Boolean eaternitySelected;
-	public Boolean bio;
-	public Boolean regsas;
+	private Boolean openRequested;
+	private Boolean open;
+	private Boolean eaternitySelected;
+	private Boolean bio;
+	private Boolean regsas;
 
 	
 
@@ -126,72 +126,16 @@ public class Recipe implements Serializable, Cloneable{
 		setCO2Value();
 	}
 
-
-	public String getSymbol() {
-		return this.symbol;
-	}
-
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
-
 	public void addIngredient(IngredientSpecification ingSpec) {
 		this.ingredients.add(ingSpec);	
-		setCO2Value();
 	}
 
-	public List<IngredientSpecification> getZutaten() {
-		return this.ingredients;
-	}
-
-	public void setZutaten(ArrayList<IngredientSpecification> zutaten) {
-			this.ingredients = zutaten;
-			setCO2Value();
-
-	}
 	
-	public void removeZutat(int index) {
+	public void removeIngredient(int index) {
 		this.ingredients.remove(index);
-		setCO2Value();
 	}
 
 
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-
-	public boolean isOpen() {
-		return open;
-	}
-
-	public void setHits(Long hits) {
-		this.hits = hits;
-	}
-
-	public Long getHits() {
-		return hits;
-	}
-
-	public void setPopularity(Long popularity) {
-		this.popularity = popularity;
-	}
-
-	public Long getPopularity() {
-		return popularity;
-	}
-	public Recipe getRezept(){
-		return this;
-	}
-
-	
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
 
 	public void setCO2Value() {
 		double sum = getDeviceCo2Value();
@@ -217,67 +161,210 @@ public class Recipe implements Serializable, Cloneable{
 		return sum;
 	}
 
-	public double getCO2Value() {
-		return CO2Value;
-	}
-
-	public void setCookInstruction(String cookInstruction) {
-		this.cookInstruction = cookInstruction;
-	}
-
-	public String getCookInstruction() {
-		return cookInstruction;
-	}
-
-	public void setPersons(Long persons) {
-		this.persons = persons;
-		setCO2Value();
-	}
-
-	public Long getPersons() {
-		return persons;
+	public Long getId() {
+		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setSubTitle(String subTitle) {
-		this.subTitle = subTitle;
-	}
-
-	public String getSubTitle() {
-		return subTitle;
-	}
-
-	public void setSelected(Boolean selected) {
-		this.selected = selected;
-	}
-
-	public Boolean getSelected() {
-		return selected;
-	}
-
-	public void setEmailAddressOwner(String emailAddressOwner) {
-		this.emailAddressOwner = emailAddressOwner;
-	}
-
-	public String getEmailAddressOwner() {
-		return emailAddressOwner;
+	public Long getDirectAncestorID() {
+		return directAncestorID;
 	}
 
 	public void setDirectAncestorID(Long directAncestorID) {
 		this.directAncestorID = directAncestorID;
 	}
 
-	public Long getDirectAncestorID() {
-		return directAncestorID;
+	public String getSymbol() {
+		return symbol;
 	}
 
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+
+	public String getSubTitle() {
+		return subTitle;
+	}
+
+	public void setSubTitle(String subTitle) {
+		this.subTitle = subTitle;
+	}
+
+	public String getCookInstruction() {
+		return cookInstruction;
+	}
+
+	public void setCookInstruction(String cookInstruction) {
+		this.cookInstruction = cookInstruction;
+	}
+
+	public UploadedImage getImage() {
+		return image;
+	}
+
+	public void setImage(UploadedImage image) {
+		this.image = image;
+	}
+
+	public String getEmailAddressOwner() {
+		return emailAddressOwner;
+	}
+
+	public void setEmailAddressOwner(String emailAddressOwner) {
+		this.emailAddressOwner = emailAddressOwner;
+	}
+
+	public EnergyMix getEnergyMix() {
+		return energyMix;
+	}
+
+	public void setEnergyMix(EnergyMix energyMix) {
+		this.energyMix = energyMix;
+	}
+
+	public String getShortUrl() {
+		return ShortUrl;
+	}
+
+	public void setShortUrl(String shortUrl) {
+		ShortUrl = shortUrl;
+	}
+
+	public Long getKitchenId() {
+		return kitchenId;
+	}
+
+	public void setKitchenId(Long kitchenId) {
+		this.kitchenId = kitchenId;
+	}
+
+	public Long getPersons() {
+		return persons;
+	}
+
+	public void setPersons(Long persons) {
+		this.persons = persons;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getCookingDate() {
+		return cookingDate;
+	}
+
+	public void setCookingDate(Date cookingDate) {
+		this.cookingDate = cookingDate;
+	}
+
+	public Long getHits() {
+		return hits;
+	}
+
+	public void setHits(Long hits) {
+		this.hits = hits;
+	}
+
+	public Long getPopularity() {
+		return popularity;
+	}
+
+	public void setPopularity(Long popularity) {
+		this.popularity = popularity;
+	}
+
+	public Boolean getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Boolean selected) {
+		this.selected = selected;
+	}
+
+	public List<RecipeComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<RecipeComment> comments) {
+		this.comments = comments;
+	}
+
+	public List<IngredientSpecification> getIngredients() {
+		return ingredients;
+	}
+
+	public void setIngredients(List<IngredientSpecification> ingredients) {
+		this.ingredients = ingredients;
+	}
+
+	public List<DeviceSpecification> getDeviceSpecifications() {
+		return deviceSpecifications;
+	}
+
+	public void setDeviceSpecifications(
+			List<DeviceSpecification> deviceSpecifications) {
+		this.deviceSpecifications = deviceSpecifications;
+	}
+
+	public Double getCO2Value() {
+		setCO2Value();
+		return CO2Value;
+	}
+
+
+	public Boolean getOpenRequested() {
+		return openRequested;
+	}
+
+	public void setOpenRequested(Boolean openRequested) {
+		this.openRequested = openRequested;
+	}
+
+	public Boolean getOpen() {
+		return open;
+	}
+
+	public void setOpen(Boolean open) {
+		this.open = open;
+	}
+
+	public Boolean getEaternitySelected() {
+		return eaternitySelected;
+	}
+
+	public void setEaternitySelected(Boolean eaternitySelected) {
+		this.eaternitySelected = eaternitySelected;
+	}
+
+	public Boolean getBio() {
+		return bio;
+	}
+
+	public void setBio(Boolean bio) {
+		this.bio = bio;
+	}
+
+	public Boolean getRegsas() {
+		return regsas;
+	}
+
+	public void setRegsas(Boolean regsas) {
+		this.regsas = regsas;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	// ------------------- getters and setters --------------------
 
 
 

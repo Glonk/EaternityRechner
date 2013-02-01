@@ -87,12 +87,19 @@ public class RechnerActivity extends AbstractActivity {
 		
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
+		// set presenter again (lost because of new place...
+		rechnerView.getTopPanel().setPresenter(this);
 		
 		if (place instanceof RechnerRecipeViewPlace) {
 			// Load RecipeView into recipecontainer
 			recipePanel.setWidget(recipeView);
 			// Load SearchRecipes into searchcontainer
 			searchPanel.setWidget(searchRecipes);
+			String recipeScope = ((RechnerRecipeViewPlace) place).getRecipeScope();
+			if(recipeScope.equals("p") || recipeScope.equals("u") || recipeScope.equals("k"))
+				dco.setRecipeScope(recipeScope);
+			else
+				dco.setRecipeScope("p");
 		}
 		else if (place instanceof RechnerRecipeEditPlace) {
 			// Load RecipeEdit into recipecontainer
@@ -101,8 +108,6 @@ public class RechnerActivity extends AbstractActivity {
 			searchPanel.setWidget(searchIngredients);
 		}
 		
-		// handle place even further: difference in RecipeScope (user, kitchen, public)
-		// ...
 		
 		container.setWidget(rechnerView);
 

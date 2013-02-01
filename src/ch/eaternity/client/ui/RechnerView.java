@@ -63,5 +63,8 @@ public class RechnerView extends SimpleLayoutPanel {
 	public SimplePanel getRecipePanel() {
 		return recipePanel;
 	}
+	public TopPanel getTopPanel() {
+		return topPanel;
+	}
 
 }

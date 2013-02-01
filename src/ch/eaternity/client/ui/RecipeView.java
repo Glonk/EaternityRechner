@@ -56,7 +56,8 @@ public class RecipeView extends Composite {
 	
 	@UiHandler("addRecipeButton")
 	public void onAddRecipeButtonPress(ClickEvent event) {
-		dco.createRecipe();		
+		dco.createRecipe();
+		presenter.goTo(new RechnerRecipeEditPlace(null));
 	}
 
 	

@@ -181,7 +181,7 @@ public class CatRyzer {
 		writeDatesToIngSpec();
 		//get all ingredients from all recipes, write into single list
 		for (Recipe recipe : recipes){
-			ingSpecs.addAll((Collection<IngredientSpecification>)recipe.getZutaten());
+			ingSpecs.addAll((Collection<IngredientSpecification>)recipe.getIngredients());
 		}
 		recipesLoaded = true;
 	}
@@ -491,15 +491,15 @@ public class CatRyzer {
 		Calendar cal = Calendar.getInstance();
 		cal.set(2001, 0, 1); //year is as expected, month is zero based, date is as expected
 		for (Recipe recipe : recipes){
-			for (IngredientSpecification ingSpec : recipe.getZutaten())
+			for (IngredientSpecification ingSpec : recipe.getIngredients())
 			{
-				if (recipe.cookingDate != null)
-					ingSpec.setCookingDate(recipe.cookingDate);
+				if (recipe.getCookingDate() != null)
+					ingSpec.setCookingDate(recipe.getCookingDate());
 				else
 					ingSpec.setCookingDate(cal.getTime());
 				if (getIngredient(ingSpec) == null) {
 					rootLogger.log(Level.SEVERE, "Ingredient " + ingSpec.getName() + " can not be found and has thus been removed. Id of Specification: " + ingSpec.getId() + " Id of Ingredient: " + ingSpec.getZutat_id());
-					recipe.getZutaten().remove(ingSpec);
+					recipe.getIngredients().remove(ingSpec);
 				}
 			}
 		}

@@ -8,11 +8,8 @@
 
 
 	<g:DockLayoutPanel unit='PX'>
-		<g:north size='74'>
-			<g:HorizontalPanel>
-				<g:Label>North Panel here</g:Label>
-				<rechner:TopPanel ui:field='topPanel' />
-			</g:HorizontalPanel>
+		<g:north size='100'>
+			<rechner:TopPanel ui:field='topPanel' />
 		</g:north>
 
 		<g:west size='265'>

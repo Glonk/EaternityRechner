@@ -24,6 +24,7 @@ public class ClientData implements Serializable{
 	// probably into activity (state variables) ?
 	public Workgroup currentKitchen; 
 	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
+	public String recipeScope;
 	
 	public Recipe editRecipe;
 	public int currentMonth;

@@ -98,20 +98,36 @@ public class DataController {
 	
 	public void createRecipe() {
 		Recipe recipe = new Recipe();
-		cloneRecipe(recipe);
+		setRecipeParameters(recipe);
 	}
 	
-	public void cloneRecipe(Recipe recipe) {
+	public void cloneRecipe(Recipe toclone) {
+		Recipe recipe = new Recipe(toclone);
+		setRecipeParameters(recipe);
+	}
+	
+	private void setRecipeParameters(Recipe recipe) {
+		recipe.setCreateDate(new Date());
+		
 		if (cdata.currentKitchen != null) {
-			recipe.kitchenId = cdata.currentKitchen.id;
+			recipe.setKitchenId(cdata.currentKitchen.id);
 			cdata.kitchenRecipes.add(recipe);
+			cdata.currentKitchenRecipes.add(recipe);
 		}
 		else {
 			cdata.userRecipes.add(recipe);
 		}
-
-		eventBus.fireEvent(new UpdateRecipeViewEvent());
+		
+		if (cdata.loginInfo != null)
+			recipe.setEmailAddressOwner(cdata.loginInfo.getEmailAddress());
+		
+		recipe.setPopularity(0L);
+		recipe.setHits(0L);
+		
+		cdata.editRecipe = recipe;
 	}
+	
+	
 	
 	public void saveRecipe(final Recipe recipe) { 
 		/*
@@ -268,7 +284,7 @@ public class DataController {
 				}
 	
 				// search by matching Ingredient names included in the recipes
-				List<IngredientSpecification> recipeIngredients = recipe.getZutaten();
+				List<IngredientSpecification> recipeIngredients = recipe.getIngredients();
 				if(recipeIngredients != null){
 					int i = 0;
 					for(IngredientSpecification ZutatImRezept : recipeIngredients ){
@@ -311,7 +327,7 @@ public class DataController {
 	public void changeKitchenRecipes(Long id) {
 		cdata.currentKitchenRecipes.clear();
 		for(Recipe recipe : cdata.kitchenRecipes){
-			if(id.equals(recipe.kitchenId))
+			if(id.equals(recipe.getKitchenId()))
 			{
 				cdata.currentKitchenRecipes.add(recipe);
 			}
@@ -330,10 +346,10 @@ public class DataController {
 		List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
 		if (cdata.currentKitchen != null ) {
 			for (Recipe recipe : cdata.currentKitchenRecipes)
-				ingSpecs.addAll(recipe.getZutaten());
+				ingSpecs.addAll(recipe.getIngredients());
 		}
 		else
-			ingSpecs.addAll(cdata.editRecipe.getZutaten());
+			ingSpecs.addAll(cdata.editRecipe.getIngredients());
 		
 		for (IngredientSpecification ingSpec : ingSpecs) {
 				ingSpec.setDistance(cdata.distances.getDistance(processedLocation, ingSpec.getExtraction().symbol));
@@ -439,6 +455,16 @@ public class DataController {
 		}
 	}
 	
+	public void setEditRecipe() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setRecipeScope(String recipeScope) {
+		cdata.recipeScope = recipeScope;
+		
+	}
+	
 	// ----------------- Getters -----------------------------
 	public List<Recipe> getPublicRecipes() {
 		return cdata.publicRecipes;
@@ -490,10 +516,7 @@ public class DataController {
 
 
 	
-	public void setEditRecipe() {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 
 

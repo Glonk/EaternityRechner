@@ -136,7 +136,7 @@ public class DAO extends DAOBase
 			UserRecipeWrapper recipe = iterator.next();
 
 			// for each recipe find all ingredients Specifications
-			for(IngredientSpecification ingSpec : recipe.recipe.ingredients ){
+			for(IngredientSpecification ingSpec : recipe.recipe.getIngredients()){
 				for(Ingredient ingredient: ingredients){
 					if(ingSpec.getZutat_id().equals(ingredient.getId())){
 						ingSpec.setNormalCO2Value(ingredient.getCo2eValue());
@@ -357,8 +357,8 @@ public class DAO extends DAOBase
 				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
 				if(userRezept != null){
 					Recipe recipe = userRezept.getRezept();
-					if(recipe.cookingDate == null){
-						recipe.cookingDate = dt;
+					if(recipe.getCookingDate() == null){
+						recipe.setCookingDate(dt);
 					}
 					recipe.setId(userRezept.id);
 					yourRecipes.add(recipe);
@@ -423,17 +423,17 @@ public class DAO extends DAOBase
 		while (iterator.hasNext()) {
 			UserRecipeWrapper userRezept = iterator.next();
 			Recipe recipe = userRezept.getRezept();
-			if(recipe.cookingDate == null){
-				recipe.cookingDate = dt;
+			if(recipe.getCookingDate() == null){
+				recipe.setCookingDate(dt);
 				log.warning("no date set for recipe" + userRezept.getId().toString());
 				if(recipe.getCreateDate() == null){
 					
 					log.warning("also no createdate set for recipe" + userRezept.getId().toString());
 				} else {
-					recipe.cookingDate = recipe.getCreateDate();
+					recipe.setCookingDate(recipe.getCreateDate());
 				}
 			} else {
-				log.info("date was set: " + recipe.cookingDate.toGMTString());
+				log.info("date was set: " + recipe.getCookingDate().toGMTString());
 			}
 			recipe.setId(userRezept.getId());
 			

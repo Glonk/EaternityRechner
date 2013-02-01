@@ -9,8 +9,8 @@ import ch.eaternity.shared.IngredientSpecification;
 
 public class RezeptDateComparator implements Comparator<Recipe> {
 	public int compare(Recipe r1, Recipe r2) {
-		Date o1 = r1.cookingDate;
-		Date o2 = r2.cookingDate;
+		Date o1 = r1.getCookingDate();
+		Date o2 = r2.getCookingDate();
 		if(o1 != null && o2 != null){
 		return o1.compareTo(o2);
 		} else {

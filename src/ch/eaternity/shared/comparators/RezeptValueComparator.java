@@ -8,8 +8,8 @@ import ch.eaternity.shared.IngredientSpecification;
 
 public class RezeptValueComparator implements Comparator<Recipe> {
 	public int compare(Recipe r1, Recipe r2) {
-		Double o1 = getRezeptCO2(r1.getZutaten(),r1.getPersons());
-		Double o2 = getRezeptCO2(r2.getZutaten(),r2.getPersons());
+		Double o1 = getRezeptCO2(r1.getIngredients(),r1.getPersons());
+		Double o2 = getRezeptCO2(r2.getIngredients(),r2.getPersons());
 
 		return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
 

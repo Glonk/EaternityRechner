@@ -115,16 +115,16 @@ public class StaticPageService {
 			recipe.setCO2Value();
 			values.add(recipe.getCO2Value());
 			
-			if (recipe.cookingDate == null) {
+			if (recipe.getCookingDate() == null) {
 				kitchenRecipes.remove(recipe);
 				rootLogger.log(Level.SEVERE, "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol() + "<br />");
 				errorMessage = errorMessage + "Following recipe has no cooking date setted and thus been removed: " + recipe.getSymbol() + "<br />";
 			}
 			
 			// TODO -> remove this baaaaad hack. Dates where saved wrongly with EHL
-			c.setTime(recipe.cookingDate);
+			c.setTime(recipe.getCookingDate());
 			c.add(Calendar.DATE, 1);  // number of days to add
-			recipe.cookingDate = c.getTime();
+			recipe.setCookingDate(c.getTime());
 		}
 		
 		setMinMax(values);

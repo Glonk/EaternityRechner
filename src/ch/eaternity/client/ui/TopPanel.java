@@ -8,6 +8,7 @@ import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
+import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 
@@ -17,6 +18,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -29,11 +31,9 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class TopPanel extends Composite {
 
-	interface Binder extends UiBinder<Widget, TopPanel> {
-	}
-
+	interface Binder extends UiBinder<Widget, TopPanel> {}
 	private static final Binder binder = GWT.create(Binder.class);
-	public static String currentHerkunft = "Zürich, Schweiz";
+
 
 	  @UiField Anchor signOutLink;
 	  @UiField Anchor signInLink;
@@ -139,6 +139,20 @@ public class TopPanel extends Composite {
 	@UiHandler("Monate")
 	void onChange(ChangeEvent event) {
 		dco.changeMonth(Monate.getSelectedIndex());
+	}
+	
+	
+	@UiHandler("userRecipesButton")
+	public void onUserClicked(ClickEvent event) {
+		presenter.goTo(new RechnerRecipeViewPlace("u"));
+	}
+	@UiHandler("kitchenRecipesButton")
+	public void onKitchenClicked(ClickEvent event) {
+		presenter.goTo(new RechnerRecipeViewPlace("k"));
+	}
+	@UiHandler("publicRecipesButton")
+	public void onRecipesClicked(ClickEvent event) {
+		presenter.goTo(new RechnerRecipeViewPlace("p"));
 	}
 
 }
