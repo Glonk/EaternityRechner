@@ -266,8 +266,7 @@
 						</g:CheckBox>
 					</g:HTMLPanel  -->
 					<g:HTMLPanel styleName='{style.floatRight}'>
-						<b:Button styleName='{style.gwt-Button}' ui:field="removeRezeptButton"
-							text="x" />
+						<b:Close ui:field="removeRezeptButton" />
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 				

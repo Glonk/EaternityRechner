@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
  *
  */
 public class RecipeView extends Composite {
-	interface Binder extends UiBinder<HTMLPanel, RecipeView> { }
+	interface Binder extends UiBinder<Widget, RecipeView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	// ---------------------- User Interface Elements --------------

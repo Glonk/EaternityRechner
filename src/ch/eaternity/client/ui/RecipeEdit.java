@@ -27,6 +27,7 @@ import ch.eaternity.shared.comparators.ComparatorObject;
 import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Close;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -78,7 +79,7 @@ public class RecipeEdit extends Composite {
 	@UiField FlexTable SuggestTable;
 	@UiField FlexTable commentTable;
 	@UiField HorizontalPanel addInfoPanel;
-	@UiField Button removeRezeptButton;
+	@UiField Close removeRezeptButton;
 	@UiField public HTMLPanel htmlRezept;
 	@UiField HTMLPanel rezeptTitle;
 
