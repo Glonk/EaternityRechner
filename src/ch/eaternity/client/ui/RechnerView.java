@@ -5,19 +5,21 @@ import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 
+import com.github.gwtbootstrap.client.ui.Column;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class RechnerView extends SimpleLayoutPanel {
 	@UiTemplate("RechnerView.ui.xml")
-	interface Binder extends UiBinder<HTMLPanel, RechnerView> {
+	interface Binder extends UiBinder<ScrollPanel, RechnerView> {
 	}
 
 	private static Binder uiBinder = GWT.create(Binder.class);
@@ -27,12 +29,19 @@ public class RechnerView extends SimpleLayoutPanel {
 	}
 
 	// ----------------- Class Variables -------------------
+	@UiField ScrollPanel workspace;
 	@UiField TopPanel topPanel;
 	@UiField SimplePanel searchPanel;
 	@UiField SimplePanel recipePanel;
+	@UiField StickyTop stickyTop;
+	@UiField Column sidebar;
 
 	private RechnerActivity presenter;
 	private DataController dco;
+	
+	interface StickyTop extends CssResource {
+		String stickToTop();
+	}
 
 	public RechnerView() {}
 	
@@ -56,6 +65,18 @@ public class RechnerView extends SimpleLayoutPanel {
 					}
 				});
 	}
+	
+	
+	// ---------------- Sidebar stick to top ----------------
+	@UiHandler("workspace")
+    public void onScroll(ScrollEvent event) { 
+		if(workspace.getVerticalScrollPosition() > 160) {
+			sidebar.addStyleName(stickyTop.stickToTop());
+		} else {
+			sidebar.removeStyleName(stickyTop.stickToTop());
+		}
+		
+    }
 
 	public SimplePanel getSearchPanel() {
 		return searchPanel;

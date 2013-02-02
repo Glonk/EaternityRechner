@@ -9,10 +9,22 @@
 		
 	</ui:style>
 
-	<g:HTMLPanel>
+	<ui:style field='stickyTop'
+		type='ch.eaternity.client.ui.RechnerView.StickyTop'>
+
+		.stickToTop {
+		 position:fixed;top:24px
+		}
+
+  </ui:style>
 
 
+	<g:ScrollPanel ui:field='workspace'>
+      <g:HTMLPanel>
+
+		<header>
 		<b:Container>
+		
 			<b:Row>
 				<b:Column size="3">
 					<g:HTMLPanel>
@@ -33,25 +45,31 @@
 			    	<rechner:TopPanel ui:field='topPanel' />
 				</b:Column>
 			</b:Row>
-
+		
 		</b:Container><!-- container -->
-	
+		</header>
+		
 		<b:Container>
 		<g:HTMLPanel>
 			<div class="page content-start">
 			
 			
+			
+				
+					<b:Column size="4"  ui:field='sidebar'>
+						<g:SimplePanel ui:field='searchPanel' />
+					</b:Column>
+				
+			
 			<b:Row>
-			    <b:Column size="4">
-			    	<g:SimplePanel ui:field='searchPanel' />
-				</b:Column>
-				<b:Column size="8">
+
+		
+				<b:Column size="8" offset="4">
 					<g:SimplePanel ui:field='recipePanel' />
 				</b:Column>
 			</b:Row>
 		
-			
-		
+
 
 
 
@@ -59,23 +77,9 @@
 			</div>
 			</g:HTMLPanel>
 		</b:Container>
-		<b:Container>
-			<b:Footer>
-				<b:Popover text="testpopover" heading="some title">
-				<b:Button ui:field="button" icon="HEART" type="INFO" size="MINI">Testbutton</b:Button>
-			</b:Popover>
-			<b:Popover text="other popover" heading="other title"
-				placement="TOP">
-				<b:Button icon="LEAF" type="DANGER" size="MINI">Testbutton</b:Button>
-			</b:Popover>
-				<g:Label>Some Text and a </g:Label>
-				<b:Button>Button</b:Button>
-			</b:Footer>
-			
-	
-		</b:Container>
-	</g:HTMLPanel>
- 
+		</g:HTMLPanel>
+	</g:ScrollPanel>
+
 
 
 </ui:UiBinder>
