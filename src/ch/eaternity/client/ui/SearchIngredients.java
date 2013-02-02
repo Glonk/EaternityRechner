@@ -172,6 +172,7 @@ public class SearchIngredients extends Composite {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		
+		// this makes switching views (places) very slow... if it get's build each time again
 		if(dco.dataLoaded())
 			updateResults("");
 		

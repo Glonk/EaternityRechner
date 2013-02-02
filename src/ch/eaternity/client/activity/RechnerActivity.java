@@ -114,7 +114,7 @@ public class RechnerActivity extends AbstractActivity {
 		// now load the data (just once...)
 		if (!dco.dataLoaded())
 			dco.loadData();
-	}
+		}
 	
     /**
      * Save the EditRecipe before stopping this activity
