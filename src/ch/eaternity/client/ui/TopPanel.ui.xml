@@ -14,11 +14,13 @@
 	.statusDiv {
 	text-align:right;
 	padding:6px 8px 8px 10px;
+	/*
 	background:#fff;
-	background: url("header_rechner.jpg") no-repeat 0px 0px;
+	 background: url("header_rechner.jpg") no-repeat 0px 0px; 
 	border-bottom: 2.5px solid #bbb;
+	*/
 	height:58px;
-	vertical-align:top;
+	vertical-align:bottom;
 	}
 
 	.inline {

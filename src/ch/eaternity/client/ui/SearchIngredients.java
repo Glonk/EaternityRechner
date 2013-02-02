@@ -137,9 +137,13 @@ public class SearchIngredients extends Composite {
 	// ---------------------- public Methods -----------------------
 	
 	public SearchIngredients() {
+		
 		initWidget(uiBinder.createAndBindUi(this));
+		// I want this to span the screen
+		
 		// we have to wait till the database is loaded:
 		SearchInput.setText("wird geladen...");
+		
 		SearchInput.setFocus(true);
 
 		initToolTips();
@@ -167,7 +171,14 @@ public class SearchIngredients extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		
+		if(dco.dataLoaded())
+			updateResults("");
+		
+
+		
 		initTable(); // just the size
+		this.setHeight("720px");
 		bind();
 	}
 	
@@ -252,7 +263,7 @@ public class SearchIngredients extends Composite {
 	public void onLegendCloseClick(ClickEvent event) {
 
 		legendPanel.setStyleName("legend2");
-		displayResultsPanel.setWidgetSize(panelSouth, 80);
+		displayResultsPanel.setWidgetSize(panelSouth, 20);
 		displayResultsPanel.forceLayout();
 
 	}
@@ -431,6 +442,8 @@ public class SearchIngredients extends Composite {
 		@SuppressWarnings("deprecation")
 		private void initToolTips() {
 			
+			// do the tooltips with gwt-bootstrap
+			
 			imageCarrot.setUrl("pixel.png");
 			imageSmiley1.setUrl("pixel.png");
 			imageSmiley2.setUrl("pixel.png");
@@ -463,11 +476,13 @@ public class SearchIngredients extends Composite {
 					new TooltipListener(
 							"biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
 			
+			/**
+			*
+			* SearchLabel.addMouseListener(
+			*		new TooltipListener(
+			*				"Suche nach Zutaten und Rezepten hier.", 5000 ,"yourcssclass",5,-34));
+			*/
 			
-			
-			SearchLabel.addMouseListener(
-					new TooltipListener(
-							"Suche nach Zutaten und Rezepten hier.", 5000 /* timeout in milliseconds*/,"yourcssclass",5,-34));
 			co2Order.addMouseListener(
 					new TooltipListener(
 							"Sortiere Suchergebnisse nach CO₂-Äquivalent Wert.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
@@ -479,7 +494,8 @@ public class SearchIngredients extends Composite {
 		
 		private void initTable() {
 			// this is just basic design stuff
-			table.getColumnFormatter().setWidth(0, "120px");
+			// this is wrong and should be adjusted with bootstrap
+			// table.getColumnFormatter().setWidth(0, "320px");
 		}
 	
 		

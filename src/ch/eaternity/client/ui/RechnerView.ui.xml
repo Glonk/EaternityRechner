@@ -6,14 +6,17 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
+		.sidebar {
 		
+
+		}
 	</ui:style>
 
 	<ui:style field='stickyTop'
 		type='ch.eaternity.client.ui.RechnerView.StickyTop'>
 
 		.stickToTop {
-		 position:fixed;top:24px
+		 position:fixed;top:24px;
 		}
 
   </ui:style>
@@ -51,28 +54,26 @@
 		
 		<b:Container>
 		<g:HTMLPanel>
-			<div class="page content-start">
-			
-			
+			<div class="page content-start"><!-- website design code / bootstrap -->
 			
 				
-					<b:Column size="4"  ui:field='sidebar'>
-						<g:SimplePanel ui:field='searchPanel' />
-					</b:Column>
+
 				
 			
 			<b:Row>
-
-		
-				<b:Column size="8" offset="4">
+				<b:Column size="4" >
+				<g:HTMLPanel>
+					<g:HTMLPanel ui:field='sidebar' styleName='{style.sidebar}'>
+						<g:SimplePanel ui:field='searchPanel' />
+					</g:HTMLPanel>
+					constant content
+				</g:HTMLPanel>
+				</b:Column>
+				<b:Column size="8">
 					<g:SimplePanel ui:field='recipePanel' />
 				</b:Column>
 			</b:Row>
 		
-
-
-
-
 		
 			</div>
 			</g:HTMLPanel>

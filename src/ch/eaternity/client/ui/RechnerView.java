@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -34,7 +35,7 @@ public class RechnerView extends SimpleLayoutPanel {
 	@UiField SimplePanel searchPanel;
 	@UiField SimplePanel recipePanel;
 	@UiField StickyTop stickyTop;
-	@UiField Column sidebar;
+	@UiField HTMLPanel sidebar;
 
 	private RechnerActivity presenter;
 	private DataController dco;

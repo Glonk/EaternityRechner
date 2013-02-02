@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -22,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
  *
  */
 public class RecipeView extends Composite {
-	interface Binder extends UiBinder<Widget, RecipeView> { }
+	interface Binder extends UiBinder<HTMLPanel, RecipeView> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	// ---------------------- User Interface Elements --------------
@@ -46,6 +47,7 @@ public class RecipeView extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		this.setHeight("1600px");
 		bind();
 	}
 
@@ -57,6 +59,8 @@ public class RecipeView extends Composite {
 	@UiHandler("addRecipeButton")
 	public void onAddRecipeButtonPress(ClickEvent event) {
 		dco.createRecipe();
+		// does the RechnerRecipeEditPlace live without a recipe?
+		// the design pattern to encouple everything makes sense -> "strict separation of concerns."
 		presenter.goTo(new RechnerRecipeEditPlace(null));
 	}
 

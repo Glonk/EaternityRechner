@@ -164,7 +164,7 @@ position:relative;
 
 </ui:style>
 
-<g:VerticalPanel>
+<g:HTMLPanel>
 	<g:Button ui:field="addRecipeButton">neues Rezept</g:Button>
 	<g:FlexTable ui:field="recipeList"></g:FlexTable>
 	
@@ -172,6 +172,6 @@ position:relative;
 		<g:Button ui:field="addToCollectionButton">zu Sammlung hinzufuegen</g:Button>
 		<g:Button ui:field="generateReportButton">Report generieren</g:Button>
 	</g:HorizontalPanel>
-</g:VerticalPanel>
+</g:HTMLPanel>
 
 </ui:UiBinder>

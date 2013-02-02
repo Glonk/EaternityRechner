@@ -54,6 +54,7 @@ public class SearchRecipes extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		this.setHeight("720px");
 		bind();
 	}
 	
