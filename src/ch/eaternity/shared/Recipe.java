@@ -18,7 +18,7 @@ public class Recipe implements Serializable, Cloneable{
  
 	private static final long serialVersionUID = -5888386800366492104L;
 		
-	@Id Long id;
+	private @Id Long id;
     
 	private Long directAncestorID;
 	
@@ -127,10 +127,14 @@ public class Recipe implements Serializable, Cloneable{
 	}
 
 	
-	public void removeIngredient(int index) {
+	public void removeIngredientByIndex(int index) {
 		this.ingredients.remove(index);
 	}
 
+	public void removeIngredient(IngredientSpecification ingSpec) {
+		int removedIndex = getIngredients().indexOf(ingSpec);
+		this.ingredients.remove(removedIndex);
+	}
 
 
 	public void setCO2Value() {

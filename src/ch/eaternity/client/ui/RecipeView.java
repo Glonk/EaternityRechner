@@ -52,7 +52,7 @@ public class RecipeView extends Composite {
 	}
 
 	private void openRecipeEdit() {
-		dco.setEditRecipe();
+		//dco.setEditRecipe();
 		presenter.goTo(new RechnerRecipeEditPlace("RecipeName clicked"));
 	}
 	
@@ -61,7 +61,7 @@ public class RecipeView extends Composite {
 		dco.createRecipe();
 		// does the RechnerRecipeEditPlace live without a recipe?
 		// the design pattern to encouple everything makes sense -> "strict separation of concerns."
-		presenter.goTo(new RechnerRecipeEditPlace(null));
+		presenter.goTo(new RechnerRecipeEditPlace("new"));
 	}
 
 	

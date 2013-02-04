@@ -1,20 +1,30 @@
 
 package ch.eaternity.client.ui;
 
+import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
+import gwtupload.client.PreloadedImage;
 import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.IngredientAddedEvent;
+import ch.eaternity.client.events.IngredientAddedEventHandler;
+import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
+import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
+import ch.eaternity.client.ui.widgets.IngredientWidget;
 
 import ch.eaternity.client.ui.widgets.UploadPhoto;
 import ch.eaternity.shared.Ingredient;
@@ -25,16 +35,19 @@ import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.comparators.ComparatorComparator;
 import ch.eaternity.shared.comparators.ComparatorObject;
 import ch.eaternity.shared.comparators.ComparatorRecipe;
+import ch.eaternity.client.ui.widgets.InfoZutatDialog;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -44,6 +57,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -52,6 +66,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
@@ -68,29 +83,34 @@ public class RecipeEdit extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	// ---------------------- User Interface Elements --------------
-	@UiField public AbsolutePanel dragArea;
-	@UiField SelectionStyleRow selectionStyleRow;
-	@UiField EvenStyleRow evenStyleRow;
-
-	@UiField FlexTable MenuTable;
-	@UiField public VerticalPanel menuDecoInfo;
-	@UiField Anchor PreparationButton;
+	@UiField AbsolutePanel dragArea;
+	
+	@UiField Close removeRezeptButton;
 	@UiField TextBox RezeptName;
+	@UiField TextBox rezeptDetails;
+	@UiField Label co2valueLabel;
+	
+	@UiField HTML codeImage;
+	
+	@UiField TextBox amountPersons;
+	@UiField CheckBox makePublic;
+	@UiField TextBox recipeDate;
+	@UiField HTML recipeDateError;
+	
+	@UiField HorizontalPanel addInfoPanel;
+	
 	@UiField FlexTable SuggestTable;
 	@UiField FlexTable commentTable;
-	@UiField HorizontalPanel addInfoPanel;
-	@UiField Close removeRezeptButton;
-	@UiField public HTMLPanel htmlRezept;
-	@UiField HTMLPanel rezeptTitle;
-
-	@UiField HTML bottomIndikator;
+	
+	@UiField Anchor PreparationButton;
+	@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
-	@UiField TextBox amountPersons;
-	@UiField TextBox rezeptDetails;
+	
+	
 	@UiField VerticalPanel MenuTableWrapper;
-
-	@UiField HTML detailText;
-	@UiField HTML codeImage;
+	@UiField FlexTable MenuTable;
+	@UiField FlowPanel collectionPanel;
+	@UiField HTML bottomIndikator;
 	
 	@UiField Button newRecipeButton;
 	@UiField Button generatePDFButton;
@@ -98,6 +118,49 @@ public class RecipeEdit extends Composite {
 	@UiField Button duplicateButton;
 	@UiField Button saveButton;
 	@UiField Button deleteButton;
+	
+	@UiField SelectionStyleRow selectionStyleRow;
+	@UiField EvenStyleRow evenStyleRow;
+	
+	public void updateParameters() {
+		RezeptName.setText(recipe.getSymbol());
+		rezeptDetails.setText(recipe.getSubTitle());
+		amountPersons.setText(recipe.getPersons().toString());
+		
+		// Image
+		if(recipe.getImage() !=null){
+			codeImage.setHTML("<img src='" + recipe.getImage().getServingUrl() + "=s120-c' />");
+		} else {
+			if (dco.getLoginInfo().isLoggedIn()) {
+				codeImage.setHTML("<img src='http://placehold.it/120x120' />");
+			}
+		}
+		
+		//Date
+		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
+		Date date = recipe.getCookingDate();
+		if(date != null)
+		{
+			recipeDate.setText(dtf.format(date));
+		}
+		
+	    if(dco.getCurrentKitchen() == null){
+	    	PreparationButton.setVisible(false);
+	    }
+		
+	    // Cooking instruction
+	    String cookingInstructions = recipe.getCookInstruction();
+	    if(!dco.getLoginInfo().isLoggedIn()){
+	    	cookingInstructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.\n\n" + cookingInstructions;
+    	}
+		cookingInstr.setText(cookingInstructions);
+		
+		if (dco.getLoginInfo().isLoggedIn()) {
+			// only show this if the user is logged in:
+			initializeCommentingField();
+		}
+		
+	}
 	
 	// ---------------------- Class Variables ----------------------
 	
@@ -116,7 +179,7 @@ public class RecipeEdit extends Composite {
 	private Anchor bildEntfernen;
 	private HandlerRegistration showImageHandler = null;
 	private FlexTableRowDragController tableRowDragController = null;
-	//private FlexTableRowDropController flexTableRowDropController = null;
+	private FlexTableRowDropController flexTableRowDropController = null;
 	
 	private boolean saved = false;
 	private boolean infoDialogIsOpen = false;
@@ -151,57 +214,55 @@ public class RecipeEdit extends Composite {
 	public RecipeEdit() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		/*
 	    tableRowDragController = new FlexTableRowDragController(dragArea);
 	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
-    
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
 	    initTable();
 	    
-	    // from the old setpresenter method...
-	    if(dco.getCurrentKitchen() == null){
-	    	PreparationButton.setVisible(false);
-	    }
 	    
 		if (dco.getLoginInfo().isLoggedIn()) {
 			uploadWidget = new UploadPhoto(dco.getLoginInfo(), this);
 			uploadWidget.setStyleName("notInline");		
 			menuDecoInfo.insert(uploadWidget,0);
 		}
-	    
-		
-		if(recipe.getCookInstruction() != null){
-	    	cookingInstr.setText(recipe.getCookInstruction());
-	    } else {
-	    	String cookingIntructions = "Kochanleitung.";
-	    	if(!presenter.getLoginInfo().isLoggedIn()){
-	    		cookingIntructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
-	    	}
-			cookingInstr.setText(cookingIntructions);
-	    }	
-	    */
-		
-		
+
 	}
 	
 
 	private void bind() {
-		
-		
 		//  Listen to the EventBus 
-		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
-				new UpdateRecipeViewEventHandler() {
+		presenter.getEventBus().addHandler(IngredientAddedEvent.TYPE,
+				new IngredientAddedEventHandler() {
 					@Override
-					public void onEvent(UpdateRecipeViewEvent event) {
+					public void onEvent(IngredientAddedEvent event) {
+						addIngredient(event.ing);
+						updateIcons();
 					}
 				});
+		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
+				new MonthChangedEventHandler() {
+					@Override
+					public void onEvent(MonthChangedEvent event) {
+						updateIcons();
+					}
+				});
+		
 	}
+	
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		this.setHeight("1600px");
 		bind();
+	}
+	
+	private void initTable() {
+		MenuTable.getColumnFormatter().setWidth(0, "10px");
+		MenuTable.getColumnFormatter().setWidth(1, "40px");
+		MenuTable.getColumnFormatter().setWidth(2, "170px");
+		MenuTable.getColumnFormatter().setWidth(4, "80px");
+		MenuTable.setCellPadding(1); 
 	}
 	
 	// ---------------------- UI Handlers ----------------------
@@ -290,15 +351,12 @@ public class RecipeEdit extends Composite {
 		if ((Character.isDigit((char) keyCode)) 
 				|| (keyCode == KeyCodes.KEY_BACKSPACE)
 				|| (keyCode == KeyCodes.KEY_DELETE) ) {
-			// TextBox.cancelKey() suppresses the current keyboard event.
 			Long persons = 1l;
 			recipe.setPersons(persons);
 			if(!amountPersons.getText().isEmpty()){
 				persons = Long.parseLong(amountPersons.getText().trim());
 				if(persons > 0){
 					recipe.setPersons(persons);
-					//updateSuggestion();
-//					updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
 				} else {
 //					amountPersons.setText("1");
 				}
@@ -312,7 +370,35 @@ public class RecipeEdit extends Composite {
 		}
 	}
 
+	@UiHandler("recipeDate")
+	void onBlur(BlurEvent event)  {
+		Date date = getDate();
+		if (date != null)
+			dco.getEditRecipe().setCookingDate(date);
+		 	saved = false;
+	}
 	
+	private Date getDate() {
+		String text = recipeDate.getText();
+		Date date = null;
+		try { 
+			if ("".equals(text)) {}
+			else {
+				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
+				date = fmt.parseStrict(text);	
+				recipeDateError.setHTML("");
+				}
+		}
+		catch (IllegalArgumentException IAE) {
+			if(!"TT/MM/JJ".equals(text))
+				recipeDateError.setHTML("'" + text + "' is not a propper formated Date.");
+			else
+				recipeDateError.setHTML("");
+			//recipeDate.setText("");
+			//recipeDate.setCursorPos(0);
+		}
+		return date;
+	}
 	
 	/**
 	 * @return true if recipe has changed since last save, false otherwise
@@ -320,19 +406,89 @@ public class RecipeEdit extends Composite {
 	public boolean hasChanged() {
 		return saved;
 	}
+
+
+	public void loadRecipe(String id) {
+		if (id.equals(null) || id == null || id.equals("new")) {
+			dco.createRecipe();
+		}
+		else {
+			if (!dco.setEditRecipe(Long.parseLong(id)));
+				Window.alert("Recipe with id " + id + " not found. New Recipe created.");
+		}
+		this.recipe = dco.getEditRecipe();
+		updateParameters();
+	}
+	
+	public void removeIngredient(IngredientWidget ingWidget) {
+		recipe.removeIngredient(ingWidget.getIngredient());
+		MenuTable.remove(ingWidget);
+		
+		// does this work to prevent the error? which error?
+		// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
+		/*
+		styleRow(removedIndex, false);
+		
+		if(selectedRow == removedIndex){
+			if(addInfoPanel.getWidgetCount() ==2){
+				addInfoPanel.remove(1);
+			}
+		} else {
+			if(selectedRow > removedIndex){
+				selectedRow = selectedRow-1;
+				selectRow(selectedRow);
+			}
+		}*/
+		
+		// set the colors in the right order...
+		String style = evenStyleRow.evenRow();
+		for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
+			if ((rowIndex % 2) == 1) {
+				MenuTable.getRowFormatter().addStyleName(rowIndex, style);
+			} else {
+				MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
+			}
+		}
+		
+	}
+	
+	
+	public void updateIngredients() {
+		MenuTable.clear();
+		for (IngredientSpecification ingSpec : recipe.getIngredients()) {
+			addIngredient(ingSpec);
+		}
+		
+	}
+	
+	public void addIngredient(IngredientSpecification ingSpec) {
+		IngredientWidget ingWidget = new IngredientWidget(ingSpec,this, dco.getCurrentMonth());
+		MenuTable.add(ingWidget);
+		
+		// drag Handler
+		tableRowDragController.makeDraggable(ingWidget.getDragHandle());
+		
+		int row = MenuTable.getRowCount();
+		//Alternate Coloring
+		if ((row % 2) == 1) {
+			String style = evenStyleRow.evenRow();
+			MenuTable.getRowFormatter().addStyleName(row, style);
+		}
+	}
+
 	
 	// ---------------------- private Methods ---------------------
-/*
-	private void updateIngredients() {}
-	private void updateParameters() {}
 
-		// here we add the visuals for commenting
-		public void addCommentingField() {
-			
+	private void updateIcons() {
+		Iterator<Widget> it = MenuTable.iterator();
+		while (it.hasNext()) {
+			((IngredientWidget)it.next()).updateIcons();
+		}
+	}
 
-			
-			numberofComments = recipe.comments.size();
-			
+		private void initializeCommentingField() {
+			numberofComments = recipe.getComments().size();
+					
 			final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
 			addCommentButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -346,15 +502,13 @@ public class RecipeEdit extends Composite {
 			});
 			
 			for (int i = 0; i < numberofComments; i++) {
-				fillCommentBoxes(recipe.comments.get(i),i);
+				fillCommentBoxes(recipe.getComments().get(i),i);
 			}
 			
 			commentTable.setWidget(numberofComments ,1,addCommentButton);
 		}
 		
-		public void fillCommentBoxes(RecipeComment recipeComment, int thisRow) {
-			
-			
+		private void fillCommentBoxes(RecipeComment recipeComment, int thisRow) {
 			final Anchor removeRowButton = new Anchor("x");
 			removeRowButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
@@ -372,7 +526,6 @@ public class RecipeEdit extends Composite {
 				public void onKeyUp(KeyUpEvent event)  {
 					updateComments();
 				}
-				
 			});
 			
 		
@@ -389,25 +542,18 @@ public class RecipeEdit extends Composite {
 						commentTable.remove(addCommentAmountButton);
 						setAmountBox(thisRow, 0);
 					}
-
-					
 				});
 				
 				commentTable.setWidget(thisRow ,2,addCommentAmountButton);
 			}
 
-			
-			
-			
 			commentTable.setWidget(thisRow,0,removeRowButton);
 			commentTable.setWidget(thisRow,1,commentBox);
-			
 		}
 
 		
 		private void updateComments() {
-			
-			recipe.comments.clear();
+			recipe.getComments().clear();
 			for (int i = 0; i < commentTable.getRowCount()-1; i++) {
 				TextBox readBox = (TextBox) commentTable.getWidget(i, 1);
 				if(readBox.getText() != ""){
@@ -417,20 +563,12 @@ public class RecipeEdit extends Composite {
 						recipeComment.amount = Integer.parseInt(readAmountBox.getText());
 					} catch (ClassCastException error) {
 						recipeComment.amount = 0;
-					} catch (NumberFormatException error2) {
-						
-					}
+					} catch (NumberFormatException error2) {}
 					
-					recipe.comments.add(recipeComment);
-				}
-				
-				
+					recipe.getComments().add(recipeComment);
+				}	
 			}
-			
 			saved = false;
-			
-			
-			
 		}
 		
 		public void setAmountBox(int thisRow, int amount) {
@@ -445,81 +583,14 @@ public class RecipeEdit extends Composite {
 						updateComments();
 					}
 				}
-
-
-				
 			});
 			commentAmountBox.setWidth("20px");
 			commentTable.setWidget(thisRow ,2,commentAmountBox);
 		}
 
 		
-		
-
-		
-
-
-		
-		private void initTable() {
-			MenuTable.getColumnFormatter().setWidth(0, "10px");
-			MenuTable.getColumnFormatter().setWidth(1, "40px");
-			MenuTable.getColumnFormatter().setWidth(2, "170px");
-			MenuTable.getColumnFormatter().setWidth(4, "80px");
-			MenuTable.setCellPadding(1);
-		    
-		}
-		
-		
-		// REFACOTR: should not be called from outside... listen to EventBus
-		public void showRezept(final Recipe recipe) {
-			
-			
-				if(recipe.image !=null){
-					codeImage.setHTML("<img src='" + recipe.image.getServingUrl() + "=s120-c' />");
-				} else {
-					if (dco.getLoginInfo().isLoggedIn()) {
-						codeImage.setHTML("<img src='http://placehold.it/120x120' />");
-					}
-				}
-				
-				if(recipe.getPersons() != null){
-					amountPersons.setText(recipe.getPersons().toString());
-				} else {
-					amountPersons.setText("4");
-					Long persons = Long.parseLong(amountPersons.getText());
-					recipe.setPersons(persons);
-				}
-				
-		
-				displayZutatImMenu(recipe.ingredients);
-			
-				updateSuggestion();
-		
-				
-				RezeptName.setText(recipe.getSymbol());
-				rezeptDetails.setText(recipe.getSubTitle());
-				
-				
-				superDisplay.setTitleHTML("Sie bearbeiten soeben: "+ recipe.getSymbol());
-				
-				if (presenter.getLoginInfo().isLoggedIn()) {
-					// only show this if the user is logged in:
-					addCommentingField();
-					
-				}
-			
-			
-		}
-
-		
-		
-		// REFACOTR: correct here
+	
 		 public void selectRow(int row) {
-			 
-			 // only show the buttom if we are in a kitchen...
-			 if(presenter.getTopPanel().selectedKitchen != null){
-				 PreparationButton.setVisible(true);
-			 }
 
 			 saved = false;
 			 
@@ -530,31 +601,27 @@ public class RecipeEdit extends Composite {
 					 
 				IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
 
-				recipe.ingredients.set(selectedRow , zutatSpec2);
+				recipe.getIngredients().set(selectedRow , zutatSpec2);
 			 }
 			 
-			IngredientSpecification zutatSpec = recipe.ingredients.get(row);
+			IngredientSpecification zutatSpec = recipe.getIngredients().get(row);
 
 			if (zutatSpec == null) {
 				return;
 			}
 			
 			Long ParentZutatId = zutatSpec.getZutat_id();
-			Ingredient zutat = presenter.getClientData().getIngredientByID(ParentZutatId);
+			Ingredient zutat = dco.getIngredientByID(ParentZutatId);
 			
 			openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
 
 			styleRow(selectedRow, false);
-			
 			styleRow(row, true);
-
 			selectedRow = row;
 
 			if (listener != null) {
 				listener.onItemSelected(zutatSpec);
 			}
-			
-			updateSuggestion();
 		}
 
 		// REFACOTR: correct
@@ -578,7 +645,6 @@ public class RecipeEdit extends Composite {
 		
 		
 
-		//TODO do the same for Search BUtton Press
 		void styleRow(int row, boolean selected) {
 			if (row != -1) {
 				String style = selectionStyleRow.selectedRow();
@@ -593,160 +659,9 @@ public class RecipeEdit extends Composite {
 		
 
 
-		// REFACOTR: here is the BUG located (invalid Ingredient) if we move the line....
-		// duplicate code in RecipeView (showRezept)
-		// create own Ingredients Widget
-		void displayZutatImMenu( ArrayList<IngredientSpecification> zutaten) {
-			
-			if(askForLess != null){
-
-				if(showImageHandler != null){
-					showImageHandler.removeHandler();
-					showImageHandler = null;
-				}
-				if(askForLess){
-					if(detailText != null){
-						overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40);
-						detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
-					}
-				}
-			}
-			
-		// TODO here i don't want to re-initialize everything over and over again.
-		MenuTable.removeAllRows();
-//		EaternityRechner.MenuTable.removeAllRows();
-		
-		Integer row = MenuTable.getRowCount();
-
-		for(final IngredientSpecification zutat : zutaten){
-//			
-		Button removeZutat = new Button("x");
-
-		removeZutat.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				
-				// this list is kept in sync with the table...
-				int removedIndex = recipe.ingredients.indexOf(zutat);
-				
-				// by button press both get deleted
-				recipe.ingredients.remove(removedIndex);
-				MenuTable.removeRow(removedIndex);
-//				EaternityRechner.MenuTable.removeRow(removedIndex);
-				
-				// does this work to prevent the error? which error?
-				// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
-				styleRow(removedIndex, false);
-				
-				if(selectedRow == removedIndex){
-					if(addInfoPanel.getWidgetCount() ==2){
-						addInfoPanel.remove(1);
-					}
-				} else {
-					if(selectedRow > removedIndex){
-						selectedRow = selectedRow-1;
-						selectRow(selectedRow);
-					}
-				}
-				
-				// set the colors in the right order...
-				String style = evenStyleRow.evenRow();
-				for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
-					if ((rowIndex % 2) == 1) {
-						MenuTable.getRowFormatter().addStyleName(rowIndex, style);
-					} else {
-						MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
-					}
-				}
-				
-				// what is this for?
-				if(askForLess != null){
-					
-						if(showImageHandler != null){
-							showImageHandler.removeHandler();
-							showImageHandler = null;
-						}
-						if(askForLess){
-					if(detailText != null){
-						overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40 );
-
-						//				rezeptView.detailText.setHeight(height)
-						detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
-					}
-						}
-				}
-				
-				// update all values, that change as there is one ingredient less...
-				updateSuggestion();
-//				updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
-			}
-		});
-		
-//		HasHorizontalAlignment.ALIGN_RIGHT
-		final TextBox MengeZutat = new TextBox();
-		MengeZutat.setAlignment(TextAlignment.RIGHT);
-		MengeZutat.setText(Integer.toString(zutat.getWeight()));
-		MengeZutat.setWidth("36px");
-		
-		MengeZutat.addKeyUpHandler( new KeyUpHandler() {
-			public void onKeyUp(KeyUpEvent event) {
-				int keyCode = event.getNativeKeyCode();
-				if ((!Character.isDigit((char) keyCode)) && (keyCode != KeyCodes.KEY_TAB)
-						&& (keyCode != KeyCodes.KEY_BACKSPACE)
-						&& (keyCode != KeyCodes.KEY_DELETE) && (keyCode != KeyCodes.KEY_ENTER) 
-						&& (keyCode != KeyCodes.KEY_HOME) && (keyCode != KeyCodes.KEY_END)
-						&& (keyCode != KeyCodes.KEY_LEFT) && (keyCode != KeyCodes.KEY_UP)
-						&& (keyCode != KeyCodes.KEY_RIGHT) && (keyCode != KeyCodes.KEY_DOWN)) {
-					// TextBox.cancelKey() suppresses the current keyboard event.
-					MengeZutat.cancelKey();
-				} else {
-					String MengeZutatWert;
-					int rowhere = getWidgetRow(MengeZutat,MenuTable);
-					if(!MengeZutat.getText().equalsIgnoreCase("")){
-						MengeZutatWert = MengeZutat.getText().trim();
-						try {
-							zutat.setWeight(Double.valueOf(MengeZutatWert).intValue());
-						}
-						catch (NumberFormatException nfe) {
-							MengeZutat.setText("");
-						}
-								
-					} else {
-						MengeZutatWert = "";
-					}
-					
-					updateTable(rowhere,zutat);
-				}
-
-
-			}
-
-
-		});
-
-		//Name
-		if ((row % 2) == 1) {
-			String style = evenStyleRow.evenRow();
-			MenuTable.getRowFormatter().addStyleName(row, style);
-		}
-		MenuTable.setWidget(row, 1, MengeZutat);
-		
-		changeIcons(row, zutat);
-		
-		// Remove Button
-		MenuTable.setWidget(row, 6, removeZutat);
-		
-		// drag Handler
-	    HTML handle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
-	    tableRowDragController.makeDraggable(handle);
-	    MenuTable.setWidget(row, 0, handle);
-
-		updateTable(row,zutat);
-		row = row+1;
-		}
-	}
-
 		// REFACOTR: good, listen to eventbus, rename to updateIcons
-		public void changeIcons(Integer row, final IngredientSpecification zutat) {
+		public void updateIcons(Integer row, final IngredientSpecification zutat) {
+	
 			HTML icon = new HTML();
 			Boolean itsOkay = true;
 			
@@ -803,62 +718,10 @@ public class RecipeEdit extends Composite {
 		}
 		
 		
-		// REFACTOR: into own Suggestion class... 
-		//looks like this produces the black bar indicating how much co2 there is compared to other ingredients
-		void updateSuggestion() {
-			
-			Double MenuLabelWert = 0.0;
-			Double MaxMenuWert = 0.0;
-
-			if(recipe.ingredients.isEmpty()){
-				if(addInfoPanel.getWidgetCount() ==2){
-					addInfoPanel.remove(1);
-				}
-			}
-			
-
-			for (IngredientSpecification zutatSpec : recipe.ingredients) { 
-				MenuLabelWert +=zutatSpec.getCalculatedCO2Value();
-				if(zutatSpec.getCalculatedCO2Value()>MaxMenuWert){
-					MaxMenuWert = zutatSpec.getCalculatedCO2Value();
-				}
-				
-			}
-
-			for (IngredientSpecification zutatSpec : recipe.ingredients) { 
-				String formatted = NumberFormat.getFormat("##").format( zutatSpec.getCalculatedCO2Value() );
-				MenuTable.setText(recipe.ingredients.indexOf(zutatSpec),4,"ca "+formatted+" g*");
-				MenuTable.setHTML(recipe.ingredients.indexOf(zutatSpec), 5, "<div style='background:#A3C875;width:40px;height:1.0em;margin-right:5px;'><div style='background:#323533;height:1.0em;width:".concat(Double.toString(zutatSpec.getCalculatedCO2Value()/MaxMenuWert*40).concat("px'>.</div></div>")));
-			}
-			
-			String formatted = NumberFormat.getFormat("##").format(MenuLabelWert);
-			
-			SuggestTable.setCellSpacing(2);
-			SuggestTable.setText(1,0,"SUMME");
-			SuggestTable.getColumnFormatter().setWidth(0, "215px");
-			SuggestTable.setHTML(1,1,"ca <b>"+formatted+" g</b>* CO₂-Äq.");
-			SuggestTable.getColumnFormatter().setWidth(1, "140px");
-			
-			if(recipe.getSymbol() == null){
-		          recipe.setSymbol("Ihr Menu");
-		    }
-		    if(recipe.getSubTitle() == null){
-		        recipe.setSubTitle("Menu Beschreibung");
-		    }
-
-			// updtTopSuggestion();
-		
-			
-			heightOfView = this.getOffsetHeight();
-		
-			
-		}
-
 
 			   
 		private void updateTable(int row,IngredientSpecification zutatSpec){
 			saved = false;
-			updateSuggestion();
 
 		}
 		
@@ -902,9 +765,13 @@ public class RecipeEdit extends Composite {
 		      panelImages.add(image);
 		    }
 		  };
-		  */
 		  
+		  
+	public Recipe getRecipe() {
+		return this.recipe;
 	}
+		  
+}
 
 
 

@@ -1,140 +1,146 @@
 package ch.eaternity.client.ui.widgets;
 
+import ch.eaternity.client.ui.RecipeEdit;
+import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.SeasonDate;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
-/*
-public class IngredientWidget extends Composite{
+import com.google.gwt.user.client.ui.Widget;
+
+public class IngredientWidget extends Composite {
+	interface Binder extends UiBinder<Widget, IngredientWidget> { }
+	private static Binder uiBinder = GWT.create(Binder.class);
 	
-	Button removeZutat = new Button("x");
+	@UiField HTML dragHandle;
+	@UiField TextBox amountBox;
+	@UiField Label nameLabel;
+	@UiField HTMLPanel iconsPanel;
+	@UiField HTMLPanel ratingPanel;
+	@UiField Label co2valueLabel;
+	@UiField Button closeButton;
 	
-	removeZutat.addClickHandler(new ClickHandler() {
-		public void onClick(ClickEvent event) {
+	
+	private IngredientSpecification ingSpec;
+	private RecipeEdit recipeEdit;
+	private int month;
+	
+	public IngredientWidget() {}
 			
-			// this list is kept in sync with the table...
-			int removedIndex = recipe.ingredients.indexOf(zutat);
-			
-			// by button press both get deleted
-			recipe.ingredients.remove(removedIndex);
-			MenuTable.removeRow(removedIndex);
-	//		EaternityRechner.MenuTable.removeRow(removedIndex);
-			
-			// does this work to prevent the error? which error?
-			// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
-			styleRow(removedIndex, false);
-			
-			if(selectedRow == removedIndex){
-				if(addInfoPanel.getWidgetCount() ==2){
-					addInfoPanel.remove(1);
-				}
-			} else {
-				if(selectedRow > removedIndex){
-					selectedRow = selectedRow-1;
-					selectRow(selectedRow);
-				}
-			}
-			
-			// set the colors in the right order...
-			String style = evenStyleRow.evenRow();
-			for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
-				if ((rowIndex % 2) == 1) {
-					MenuTable.getRowFormatter().addStyleName(rowIndex, style);
-				} else {
-					MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
-				}
-			}
-			
-			// what is this for?
-			if(askForLess != null){
-				
-					if(showImageHandler != null){
-						showImageHandler.removeHandler();
-						showImageHandler = null;
-					}
-					if(askForLess){
-				if(detailText != null){
-					overlap = Math.max(1,showImageRezept.getHeight() -  addInfoPanel.getOffsetHeight() +40 );
-	
-					//				rezeptView.detailText.setHeight(height)
-					detailText.setHTML("<img src='pixel.png' style='float:right' width=360 height="+ Integer.toString(overlap)+" />"+recipe.getCookInstruction());
-				}
-					}
-			}
-			
-			// update all values, that change as there is one ingredient less...
-			updateSuggestion();
-	//		updateSuggestion(EaternityRechner.SuggestTable, EaternityRechner.MenuTable);
-		}
-	});
-	
-	//HasHorizontalAlignment.ALIGN_RIGHT
-	final TextBox MengeZutat = new TextBox();
-	MengeZutat.setAlignment(TextAlignment.RIGHT);
-	MengeZutat.setText(Integer.toString(zutat.getWeight()));
-	MengeZutat.setWidth("36px");
-	
-	MengeZutat.addKeyUpHandler( new KeyUpHandler() {
-		public void onKeyUp(KeyUpEvent event) {
-			int keyCode = event.getNativeKeyCode();
-			if ((!Character.isDigit((char) keyCode)) && (keyCode != KeyCodes.KEY_TAB)
-					&& (keyCode != KeyCodes.KEY_BACKSPACE)
-					&& (keyCode != KeyCodes.KEY_DELETE) && (keyCode != KeyCodes.KEY_ENTER) 
-					&& (keyCode != KeyCodes.KEY_HOME) && (keyCode != KeyCodes.KEY_END)
-					&& (keyCode != KeyCodes.KEY_LEFT) && (keyCode != KeyCodes.KEY_UP)
-					&& (keyCode != KeyCodes.KEY_RIGHT) && (keyCode != KeyCodes.KEY_DOWN)) {
-				// TextBox.cancelKey() suppresses the current keyboard event.
-				MengeZutat.cancelKey();
-			} else {
-				String MengeZutatWert;
-				int rowhere = getWidgetRow(MengeZutat,MenuTable);
-				if(!MengeZutat.getText().equalsIgnoreCase("")){
-					MengeZutatWert = MengeZutat.getText().trim();
-					try {
-						zutat.setWeight(Double.valueOf(MengeZutatWert).intValue());
-					}
-					catch (NumberFormatException nfe) {
-						MengeZutat.setText("");
-					}
-							
-				} else {
-					MengeZutatWert = "";
-				}
-				
-				updateTable(rowhere,zutat);
-			}
-	
-	
-		}
-	
-	
-	});
-	
-	//Name
-	if ((row % 2) == 1) {
-		String style = evenStyleRow.evenRow();
-		MenuTable.getRowFormatter().addStyleName(row, style);
+	public IngredientWidget(IngredientSpecification ingSpec, RecipeEdit recipeEdit, int month) {
+		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.ingSpec = ingSpec;
+		this.recipeEdit = recipeEdit;
+		
+		amountBox.setAlignment(TextAlignment.RIGHT);
+		amountBox.setText(Integer.toString(ingSpec.getWeight()));
+		amountBox.setWidth("36px");
+		
+		dragHandle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
+		
+		updateIcons();
 	}
-	MenuTable.setWidget(row, 1, MengeZutat);
 	
-	changeIcons(row, zutat);
-	
-	// Remove Button
-	MenuTable.setWidget(row, 6, removeZutat);
-	
-	// drag Handler
-	HTML handle = new HTML("<div class='dragMe'><img src='pixel.png' width=10 height=20 /></div>");
-	tableRowDragController.makeDraggable(handle);
-	MenuTable.setWidget(row, 0, handle);
-	
-	updateTable(row,zutat);
-	row = row+1;
+	public void updateIcons() {
+			
+			// Saisonal
+			HTML seasonIcon = new HTML();
+			if(ingSpec.getCondition() != null && ingSpec.getCondition().symbol.equalsIgnoreCase("frisch") && ingSpec.getDistance() < 500000){
+				if(ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null){
+
+					SeasonDate date = new SeasonDate(month,1);
+					SeasonDate dateStart = ingSpec.getStartSeason();		
+					SeasonDate dateStop =  ingSpec.getStopSeason();
+					
+					if( date.after(dateStart) && date.before(dateStop) ){
+						seasonIcon.setHTML(seasonIcon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+					} else if (!ingSpec.getCondition().symbol.equalsIgnoreCase("frisch") && !ingSpec.getProduction().symbol.equalsIgnoreCase("GH") && ingSpec.getDistance() < 500000) {
+						seasonIcon.setHTML(seasonIcon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+					} else if (ingSpec.getProduction().symbol.equalsIgnoreCase("GH")) {} 
+			} 
+			
+			// rating
+			HTML ratingIcon = new HTML();
+			if(ingSpec.getCalculatedCO2Value()/ingSpec.getWeight() < .4){
+				ratingIcon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+		
+			} else if(ingSpec.getCalculatedCO2Value()/ingSpec.getWeight() < 1.2){
+				ratingIcon.setHTML("<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+		
+			} else {
+				ratingIcon.setHTML("<div class='extra-icon smiley3'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+
+			// BIO
+			HTML bioIcon = new HTML();
+			if(ingSpec.getProduction() != null && ingSpec.getProduction().symbol.equalsIgnoreCase("bio")){
+				bioIcon.setHTML("<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
+			}
+
+			
+			iconsPanel.add(seasonIcon);
+			iconsPanel.add(bioIcon);
+			iconsPanel.add(seasonIcon);
+		}
 	}
+	
+	@UiHandler("closeButton")
+	public void oncloseButtonPress(ClickEvent event) {	
+		recipeEdit.removeIngredient(this);
+	}
+	
+
+	public IngredientSpecification getIngredient() {
+		return this.ingSpec;
+	}
+	
+	public HTML getDragHandle() {
+		return this.dragHandle;
+	}
+	
+	
+	@UiHandler("amountBox")
+	public void onKeyUp(KeyUpEvent event) {
+		int keyCode = event.getNativeKeyCode();
+		if ((!Character.isDigit((char) keyCode)) && (keyCode != KeyCodes.KEY_TAB)
+				&& (keyCode != KeyCodes.KEY_BACKSPACE)
+				&& (keyCode != KeyCodes.KEY_DELETE) && (keyCode != KeyCodes.KEY_ENTER) 
+				&& (keyCode != KeyCodes.KEY_HOME) && (keyCode != KeyCodes.KEY_END)
+				&& (keyCode != KeyCodes.KEY_LEFT) && (keyCode != KeyCodes.KEY_UP)
+				&& (keyCode != KeyCodes.KEY_RIGHT) && (keyCode != KeyCodes.KEY_DOWN)) {
+			// TextBox.cancelKey() suppresses the current keyboard event.
+			amountBox.cancelKey();
+		} else {
+			String MengeZutatWert;
+			if(!amountBox.getText().equalsIgnoreCase("")){
+				MengeZutatWert = amountBox.getText().trim();
+				try {
+					ingSpec.setWeight(Double.valueOf(MengeZutatWert).intValue());
+				}
+				catch (NumberFormatException nfe) {
+					amountBox.setText("");
+				}
+						
+			} else {
+				MengeZutatWert = "";
+			}
+		}
+	}
+	
+	
 	
 }
-*/
+

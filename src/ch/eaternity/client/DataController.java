@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.eaternity.client.events.CollectionsChangedEvent;
+import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
@@ -180,11 +181,11 @@ public class DataController {
 	public void addIngredientToMenu(Ingredient ingredient, int grams) {
 
 		IngredientSpecification ingSpec = new IngredientSpecification(ingredient, grams);
-		ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
+		//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
 		
 		cdata.editRecipe.addIngredient(ingSpec);
 
-		eventBus.fireEvent(new CollectionsChangedEvent());
+		eventBus.fireEvent(new IngredientAddedEvent(ingSpec));
 	}
 	
 	// probably other place?
@@ -333,6 +334,7 @@ public class DataController {
 				cdata.currentKitchenRecipes.add(recipe);
 			}
 		}
+		cdata.currentKitchen = cdata.getKitchenByID(id);
 	}
 	
 	/**
@@ -365,7 +367,35 @@ public class DataController {
 		eventBus.fireEvent(new CollectionsChangedEvent());
 	}
 	
-	
+	/**
+	 * After call to this function, editRecipe is != null for sure
+	 * @param id
+	 * @return true if recipe with id was found and propperly loaded, false if new recipe was created
+	 */
+	public boolean setEditRecipe(Long id) {
+		boolean found = false;
+		Recipe editRecipe = cdata.getUserRecipeByID(id);
+		if (editRecipe != null) {
+			found = true;
+			cdata.editRecipe = editRecipe;
+		}
+		else {
+			editRecipe = cdata.getKitchenRecipeByID(id);
+			if (editRecipe != null){
+				found = true;
+				cdata.editRecipe = editRecipe;
+				changeKitchenRecipes(editRecipe.getKitchenId());
+			}
+		}		
+		
+		if (!found)
+			createRecipe();
+		return found;
+	}
+
+	public void setRecipeScope(String recipeScope) {
+		cdata.recipeScope = recipeScope;
+	}
 	
 	
 	/**
@@ -456,15 +486,6 @@ public class DataController {
 		}
 	}
 	
-	public void setEditRecipe() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setRecipeScope(String recipeScope) {
-		cdata.recipeScope = recipeScope;
-		
-	}
 	
 	// ----------------- Getters -----------------------------
 	public List<Recipe> getPublicRecipes() {

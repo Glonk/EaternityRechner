@@ -85,4 +85,22 @@ public class ClientData implements Serializable{
 		}
 		return null;
 	}
+	
+	public Recipe getUserRecipeByID(long id) {
+		for(Recipe userRecipe : userRecipes){
+			if (userRecipe.getId() == id){
+				return userRecipe;
+			}
+		}
+		return null;
+	}
+	
+	public Recipe getKitchenRecipeByID(long id) {
+		for(Recipe recipe : kitchenRecipes){
+			if (recipe.getId() == id){
+				return recipe;
+			}
+		}
+		return null;
+	}
 }

@@ -104,6 +104,7 @@ public class RechnerActivity extends AbstractActivity {
 		else if (place instanceof RechnerRecipeEditPlace) {
 			// Load RecipeEdit into recipecontainer
 			recipePanel.setWidget(recipeEdit);
+			recipeEdit.loadRecipe(((RechnerRecipeEditPlace) place).getID());
 			// Load SearchIngredients into searchcontainer
 			searchPanel.setWidget(searchIngredients);
 		}

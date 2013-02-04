@@ -547,7 +547,6 @@ public class SearchIngredients extends Composite {
 			styleRow(selectedRow, false);
 			styleRow(row, true);
 	
-	
 			Timer t = new Timer() {
 				public void run() {
 					styleRow(row, false);
