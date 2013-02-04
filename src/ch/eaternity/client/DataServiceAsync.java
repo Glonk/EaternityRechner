@@ -7,6 +7,7 @@ import java.util.List;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.Staff;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
@@ -17,6 +18,7 @@ import ch.eaternity.shared.UploadedImage;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DataServiceAsync {
+	public void getEnabledUsers(AsyncCallback<List<Staff>> async);
 	public void addRezept(Recipe recipe, AsyncCallback<Long> async);
 	public void removeRezept(Long rezeptId, AsyncCallback<Boolean> async);
 	public void getYourRezepte(AsyncCallback<List<Recipe>> async);

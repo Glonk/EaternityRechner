@@ -56,6 +56,7 @@ public class MenuPreviewView<T> extends DialogBox{
 		center();
 //		setHTML("bla");
 		positionDialog();
+		closeButton.setVisible(false);
 		return this;
 	}
 
@@ -63,6 +64,9 @@ public class MenuPreviewView<T> extends DialogBox{
 	Frame frame = null;
 
 	private ClientFactory clientFactory;
+
+	private String loginURI;
+	
 	void positionDialog(){
 		if(this.isShowing()){
 			int left = (Window.getClientWidth() - getOffsetWidth()) >> 1;
@@ -78,6 +82,10 @@ public class MenuPreviewView<T> extends DialogBox{
 			}
 		}
 
+	}
+	
+	public void setLoginURI(String uri) {
+		loginURI = uri;
 	}
 
 	private void loadContent() {
@@ -113,9 +121,9 @@ public class MenuPreviewView<T> extends DialogBox{
 //				// Couldn't connect to server    
 //				GWT.log(e.getLocalizedMessage());
 //			}
-		} else {
-			contentURl = "http://www.eaternity.ch/disclaimer-eaternity-rechner";
 		}
+		else
+			contentURl = loginURI;
 		
 	    frame = new Frame(contentURl);
 	    frame.setWidth("100%");

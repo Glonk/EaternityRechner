@@ -8,6 +8,7 @@ import java.util.List;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Data;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.Staff;
 import ch.eaternity.shared.Workgroup;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
@@ -22,6 +23,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
+	public List<Staff> getEnabledUsers();
 	public Long addRezept(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException;
 	public List<Recipe> getYourRezepte() throws NotLoggedInException;

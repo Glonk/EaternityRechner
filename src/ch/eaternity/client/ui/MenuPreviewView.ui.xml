@@ -20,6 +20,8 @@
 	</ui:style>
 
 	<g:HTMLPanel>
+	<g:Label width='966px' ui:field="WelcomeText">Bitte logen sie sich ein um den Eaternity Co2-Rechner zu benutzen. Nur freigeschaltete Benutzer
+	erhalten Zugriff auf den Rechner. Eventuelle Freischaltung kann über mail an info@eaternity.ch mit Motivationsgrund angefordert werden.</g:Label>
 		<!-- g:ScrollPanel ui:field="scrollPanel">  -->
 			<g:HTMLPanel width='966px' styleName='{style.panel}'
 				ui:field='previewMenuHtmlPanel'>

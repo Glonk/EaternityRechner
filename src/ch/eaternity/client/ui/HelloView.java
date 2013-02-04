@@ -23,5 +23,14 @@ public interface HelloView extends IsWidget
 		DialogBox getDialogBox();
 	}
 
-	void setMenuPreviewDialog(MenuPreviewView menuPreviewDialog);
+	//public void loadContent(String contentURL);
+	
+	//public void removeFrame();
+	public void setLoginUrl(String url);
+	
+	public void setStatusInfo(String info);
+	
+	public void setButtonText(String text) ;
+	
+	public void setVisibility(boolean visible);
 }

@@ -3,17 +3,39 @@
 			 xmlns:g="urn:import:com.google.gwt.user.client.ui"
 			  xmlns:rechner='urn:import:ch.eaternity.client'>
 	<ui:style>
-		.important {
-			font-weight: bold;
+		.main {
+			width:300px;
+			height: 300px;
+			padding:30px;
+			margin-top:100px;
+			margin-left: auto;
+    		margin-right: auto;
+			background-color: lightgray;
 		}
 		
-		.panel {
-		padding: 10px;
+		.login {
+			margin-top:50px;
+			margin-left: auto;
+    		margin-right: auto;
+    		width:100px;
 		}
+		.statusInfo {
+		margin-top:20px;
+		margin-bottom:20px;
+		color:#8A4B08;
+		}
+		
 		
 	</ui:style>
 	
-	<g:HTMLPanel styleName='{style.panel}'>
+	<g:HTMLPanel styleName='{style.main}'>
+		<g:Label width='300px' ui:field="WelcomeText">Bitte logen sie sich ein um den Eaternity Co2-Rechner zu benutzen. Nur freigeschaltete Benutzer
+		erhalten Zugriff auf den Rechner. Eventuelle Freischaltung kann über mail an info@eaternity.ch mit Motivationsgrund angefordert werden.</g:Label>
+
+		
+		<g:Button ui:field='loginButton' styleName='{style.login}'>Login</g:Button>
+		<!--  <g:HTMLPanel width='966px' styleName='{style.panel}' ui:field='framePanel'></g:HTMLPanel> -->
+		<g:HTML ui:field='statusInfo' styleName='{style.statusInfo}'></g:HTML>
 		
 	</g:HTMLPanel>
 </ui:UiBinder>

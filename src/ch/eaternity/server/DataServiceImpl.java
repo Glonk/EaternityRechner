@@ -22,6 +22,7 @@ import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.ShortUrl;
 import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Staff;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.Workgroup;
@@ -55,6 +56,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 
+	public List<Staff> getEnabledUsers() {
+		DAO dao = new DAO();
+		return dao.getEnabledUsers();
+	}
 	
 	public Long addKitchen(Workgroup kitchen) throws NotLoggedInException {
 //		checkLoggedIn();

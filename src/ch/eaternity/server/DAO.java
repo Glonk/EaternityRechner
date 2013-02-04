@@ -213,6 +213,25 @@ public class DAO extends DAOBase
 		Workgroup kitchen = ofy().get(Workgroup.class,KitchenID);
 		return kitchen;
 	}
+	
+	/**
+	 * 
+	 * @return a list of Staff with all users who have access to the calculator
+	 */
+	public List<Staff> getEnabledUsers() {
+		List<Workgroup> kitchens = new ArrayList<Workgroup>();
+		List<Staff> staffs = new ArrayList<Staff>();
+
+		// The Query itself is Iterable
+		Query<Workgroup> yourUserKitchens = ofy().query(Workgroup.class);
+		QueryResultIterator<Workgroup> iterator = yourUserKitchens.iterator();
+
+		while (iterator.hasNext()) {
+			staffs.addAll(iterator.next().personal);
+		}
+		return staffs;
+
+	}
 
 	public List<Workgroup> getYourKitchens(User user){
 
