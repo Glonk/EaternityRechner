@@ -256,7 +256,6 @@
 	</ui:style>
 		
 		
-	<g:VerticalPanel>
 		<g:AbsolutePanel ui:field="dragArea">
 			<g:VerticalPanel styleName='{style.rezeptDecoration}'>
 
@@ -284,6 +283,7 @@
 
 				<!-- image and description here? any particular design choices -->
 				<g:HTML ui:field='codeImage'></g:HTML>
+				<g:HorizontalPanel ui:field='imageWidgetPanel'></g:HorizontalPanel>
 
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName='{style.recipePersons}'>
@@ -301,8 +301,7 @@
 					<g:HTML ui:field="recipeDateError" styleName="{style.recipeDateError}"></g:HTML>
 				</g:HorizontalPanel>
 
-				<g:HorizontalPanel styleName='{style.hideOverflow}'
-					ui:field='addInfoPanel'>
+				<g:HorizontalPanel styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
 
 					<!-- ingredients list -->
 					<g:VerticalPanel ui:field='MenuTableWrapper'
@@ -333,16 +332,15 @@
 					<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
 				</g:HorizontalPanel>
 				<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
-
+				
+				<g:FlowPanel>
+					<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>
+					<b:Button ui:field="generatePDFButton">PDF generieren</b:Button>
+					<b:Button ui:field="publishButton">veröffentlichen</b:Button>
+					<b:Button ui:field="deleteButton">löschen</b:Button>
+					<b:Button ui:field="duplicateButton">duplizieren</b:Button>
+					<b:Button ui:field="saveButton">speichern</b:Button>
+				</g:FlowPanel>
 			</g:VerticalPanel>
-		</g:AbsolutePanel>
-		<g:FlowPanel>
-			<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>
-			<b:Button ui:field="generatePDFButton">PDF generieren</b:Button>
-			<b:Button ui:field="publishButton">veröffentlichen</b:Button>
-			<b:Button ui:field="deleteButton">löschen</b:Button>
-			<b:Button ui:field="duplicateButton">duplizieren</b:Button>
-			<b:Button ui:field="saveButton">speichern</b:Button>
-		</g:FlowPanel>
-	</g:VerticalPanel>
+	</g:AbsolutePanel>
 </ui:UiBinder>

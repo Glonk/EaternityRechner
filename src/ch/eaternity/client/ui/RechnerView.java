@@ -44,13 +44,14 @@ public class RechnerView extends SimpleLayoutPanel {
 		String stickToTop();
 	}
 
-	public RechnerView() {}
+	public RechnerView() {
+		topPanel = new TopPanel();
+	}
 	
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-
-		topPanel = new TopPanel();
+		
 		topPanel.setPresenter(presenter);
 		bind();
 	}
@@ -78,6 +79,7 @@ public class RechnerView extends SimpleLayoutPanel {
 		}
 		
     }
+	
 
 	public SimplePanel getSearchPanel() {
 		return searchPanel;

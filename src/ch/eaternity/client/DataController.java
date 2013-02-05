@@ -132,32 +132,17 @@ public class DataController {
 	
 	
 	public void saveRecipe(final Recipe recipe) { 
-		/*
 		dataRpcService.addRezept(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 
 			public void onSuccess(Long id) {
+				recipe.setId(id);
 				
-				if(!dao.cdata.loginInfo.getIsInKitchen()){
-					dao.cdata.userRecipes.add(recipe);
-				} else {
-					dao.cdata.kitchenRecipes.add(recipe);
-					dao.cdata.currentKitchenRecipes.add(recipe);
-				}
-				
-				String searchString = IngredientsResultWidget.SearchInput.getText().trim();
-				getSearchPanel().updateResults(searchString);
-				
-				rezeptView.setRecipeSavedMode(true);
-				
-				// there needs to be an automatic link between normal and editview...
-				rezeptView.recipe.setId(id);
-				
+				// show status info that the recipe got saved...
 			}
 		});
-		*/
 	}
 	
 	public void deleteRecipe(final Recipe recipe) {
@@ -178,9 +163,14 @@ public class DataController {
 	
 	
 	
-	public void addIngredientToMenu(Ingredient ingredient, int grams) {
+	public void addIngredientToMenu(Ingredient ingredient, int weight) {
 
-		IngredientSpecification ingSpec = new IngredientSpecification(ingredient, grams);
+		IngredientSpecification ingSpec = new IngredientSpecification(ingredient);
+		if (weight == 0) {
+			ingSpec.setWeight(ingredient.getStdWeight());
+		}
+		else
+			ingSpec.setWeight(weight);
 		//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
 		
 		cdata.editRecipe.addIngredient(ingSpec);
@@ -510,6 +500,10 @@ public class DataController {
 
 	public List<Ingredient> getIngredients() {
 		return cdata.ingredients;
+	}
+	
+	public Ingredient getIngredientByID(long id) {
+		return cdata.getIngredientByID(id);
 	}
 
 	public Distance getDist() {

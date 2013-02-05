@@ -48,23 +48,21 @@ public class AppActivityMapper implements ActivityMapper {
 			return new HelloActivity((HelloPlace) place, clientFactory);
 		
 		else if (place instanceof RechnerRecipeViewPlace) {
-			
-			if (rechnerActivity == null)
-				return new RechnerActivity(place, clientFactory);
+			if (rechnerActivity == null) 
+				this.rechnerActivity = new RechnerActivity(place, clientFactory);
 			else  {
-				rechnerActivity.setPlace(place);
-			
-				return rechnerActivity;
+				rechnerActivity.setPlace(place);		
 			}
+			return rechnerActivity;
 		}
 		
 		else if (place instanceof RechnerRecipeEditPlace) {
-			if (rechnerActivity == null)
-				return new RechnerActivity(place, clientFactory);
+			if (rechnerActivity == null) 
+				this.rechnerActivity = new RechnerActivity(place, clientFactory);
 			else  {
-				rechnerActivity.setPlace(place);
-				return rechnerActivity;
+				rechnerActivity.setPlace(place);		
 			}
+			return rechnerActivity;
 		}
 		
 		else if (place instanceof GoodbyePlace)

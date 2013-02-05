@@ -16,6 +16,8 @@ import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.IngredientAddedEventHandler;
+import ch.eaternity.client.events.LoginChangedEvent;
+import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
@@ -35,7 +37,6 @@ import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.comparators.ComparatorComparator;
 import ch.eaternity.shared.comparators.ComparatorObject;
 import ch.eaternity.shared.comparators.ComparatorRecipe;
-import ch.eaternity.client.ui.widgets.InfoZutatDialog;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
@@ -91,6 +92,7 @@ public class RecipeEdit extends Composite {
 	@UiField Label co2valueLabel;
 	
 	@UiField HTML codeImage;
+	@UiField HorizontalPanel imageWidgetPanel;
 	
 	@UiField TextBox amountPersons;
 	@UiField CheckBox makePublic;
@@ -122,45 +124,6 @@ public class RecipeEdit extends Composite {
 	@UiField SelectionStyleRow selectionStyleRow;
 	@UiField EvenStyleRow evenStyleRow;
 	
-	public void updateParameters() {
-		RezeptName.setText(recipe.getSymbol());
-		rezeptDetails.setText(recipe.getSubTitle());
-		amountPersons.setText(recipe.getPersons().toString());
-		
-		// Image
-		if(recipe.getImage() !=null){
-			codeImage.setHTML("<img src='" + recipe.getImage().getServingUrl() + "=s120-c' />");
-		} else {
-			if (dco.getLoginInfo().isLoggedIn()) {
-				codeImage.setHTML("<img src='http://placehold.it/120x120' />");
-			}
-		}
-		
-		//Date
-		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
-		Date date = recipe.getCookingDate();
-		if(date != null)
-		{
-			recipeDate.setText(dtf.format(date));
-		}
-		
-	    if(dco.getCurrentKitchen() == null){
-	    	PreparationButton.setVisible(false);
-	    }
-		
-	    // Cooking instruction
-	    String cookingInstructions = recipe.getCookInstruction();
-	    if(!dco.getLoginInfo().isLoggedIn()){
-	    	cookingInstructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.\n\n" + cookingInstructions;
-    	}
-		cookingInstr.setText(cookingInstructions);
-		
-		if (dco.getLoginInfo().isLoggedIn()) {
-			// only show this if the user is logged in:
-			initializeCommentingField();
-		}
-		
-	}
 	
 	// ---------------------- Class Variables ----------------------
 	
@@ -187,8 +150,7 @@ public class RecipeEdit extends Composite {
 	private int numberofComments = 0;
 	
 	private Listener listener;
-	private int  selectedRow = 0;
-	private int  selectedRezept = -1;
+	private int selectedRow = 0;
 	private Recipe recipe;
 
 	private int heightOfView;
@@ -218,57 +180,111 @@ public class RecipeEdit extends Composite {
 	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
-	    initTable();
+	    saveButton.setEnabled(false);
+		generatePDFButton.setEnabled(false);
+		publishButton.setEnabled(false);
+		duplicateButton.setEnabled(false);
+		saveButton.setEnabled(false);
+		
+		// Image
+		uploadWidget = new UploadPhoto(this);
+		uploadWidget.setStyleName("notInline");	
+		imageWidgetPanel.insert(uploadWidget,0);
+		imageWidgetPanel.setVisible(false);
 	    
-	    
-		if (dco.getLoginInfo().isLoggedIn()) {
-			uploadWidget = new UploadPhoto(dco.getLoginInfo(), this);
-			uploadWidget.setStyleName("notInline");		
-			menuDecoInfo.insert(uploadWidget,0);
-		}
-
+	    MenuTable.getColumnFormatter().setWidth(0, "300px");
 	}
+	
 	
 
 	private void bind() {
-		//  Listen to the EventBus 
+		// Listen to the EventBus 
 		presenter.getEventBus().addHandler(IngredientAddedEvent.TYPE,
 				new IngredientAddedEventHandler() {
 					@Override
 					public void onEvent(IngredientAddedEvent event) {
-						addIngredient(event.ing);
-						updateIcons();
+						if (recipe != null) {
+							addIngredient(event.ing);
+							updateIcons();
+						}
 					}
 				});
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
 				new MonthChangedEventHandler() {
 					@Override
 					public void onEvent(MonthChangedEvent event) {
-						updateIcons();
+						if (recipe != null)
+							updateIcons();
 					}
 				});
-		
+		presenter.getEventBus().addHandler(LoginChangedEvent.TYPE,
+				new LoginChangedEventHandler() {
+					@Override
+					public void onEvent(LoginChangedEvent event) {
+						if (recipe != null)
+							updateLoginSpecificParameters();
+					}
+				});
 	}
 	
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		this.setHeight("1600px");
+		
 		bind();
 	}
 	
-	private void initTable() {
-		MenuTable.getColumnFormatter().setWidth(0, "10px");
-		MenuTable.getColumnFormatter().setWidth(1, "40px");
-		MenuTable.getColumnFormatter().setWidth(2, "170px");
-		MenuTable.getColumnFormatter().setWidth(4, "80px");
-		MenuTable.setCellPadding(1); 
+	public void updateParameters() {
+		RezeptName.setText(recipe.getSymbol());
+		rezeptDetails.setText(recipe.getSubTitle());
+		amountPersons.setText(recipe.getPersons().toString());
+		
+		// Image
+		if(recipe.getImage() !=null){
+			codeImage.setHTML("<img src='" + recipe.getImage().getServingUrl() + "=s120-c' />");
+		}
+		
+		//Date
+		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
+		Date date = recipe.getCookingDate();
+		if(date != null)
+		{
+			recipeDate.setText(dtf.format(date));
+		}
+		
+	    if(dco.getCurrentKitchen() == null){
+	    	PreparationButton.setVisible(false);
+	    }
+		
+	    // Cooking instruction
+	    String cookingInstructions = recipe.getCookInstruction();
+	    if(dco.getLoginInfo() != null && !dco.getLoginInfo().isLoggedIn() || dco.getLoginInfo() == null){
+	    	cookingInstructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.\n\n" + cookingInstructions;
+    	}
+		cookingInstr.setText(cookingInstructions);
+		updateLoginSpecificParameters();
 	}
 	
+	public void updateLoginSpecificParameters() {
+		if (dco.getLoginInfo() != null && dco.getLoginInfo().isLoggedIn()) {
+			codeImage.setHTML("<img src='http://placehold.it/120x120' />");
+			initializeCommentingField();
+			
+			imageWidgetPanel.setVisible(true);
+			
+		    saveButton.setEnabled(true);
+			generatePDFButton.setEnabled(true);
+			publishButton.setEnabled(true);
+			duplicateButton.setEnabled(true);
+			saveButton.setEnabled(true);
+		}
+	}
+
 	// ---------------------- UI Handlers ----------------------
 	@UiHandler("newRecipeButton")
 	public void onAddRecipeButtonPress(ClickEvent event) {
-		dco.createRecipe();		
+		loadRecipe("new");	
 	}
 	
 	@UiHandler("RezeptName")
@@ -369,6 +385,18 @@ public class RecipeEdit extends Composite {
 			amountPersons.cancelKey();
 		}
 	}
+	/*
+	saveButton.setEnabled(true);
+	generatePDFButton.setEnabled(true);
+	publishButton.setEnabled(true);
+	duplicateButton.setEnabled(true);
+	saveButton.setEnabled(true);
+	*/
+	
+	@UiHandler("saveButton")
+	public void onSaveClicked(ClickEvent event) {
+		dco.saveRecipe(recipe);
+	}
 
 	@UiHandler("recipeDate")
 	void onBlur(BlurEvent event)  {
@@ -443,11 +471,10 @@ public class RecipeEdit extends Composite {
 		// set the colors in the right order...
 		String style = evenStyleRow.evenRow();
 		for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
+			MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
 			if ((rowIndex % 2) == 1) {
 				MenuTable.getRowFormatter().addStyleName(rowIndex, style);
-			} else {
-				MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
-			}
+			} 
 		}
 		
 	}
@@ -462,13 +489,13 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void addIngredient(IngredientSpecification ingSpec) {
+		int row = MenuTable.getRowCount();
 		IngredientWidget ingWidget = new IngredientWidget(ingSpec,this, dco.getCurrentMonth());
-		MenuTable.add(ingWidget);
+		MenuTable.setWidget(row, 0, ingWidget);
 		
 		// drag Handler
-		tableRowDragController.makeDraggable(ingWidget.getDragHandle());
+		tableRowDragController.makeDraggable(ingWidget);
 		
-		int row = MenuTable.getRowCount();
 		//Alternate Coloring
 		if ((row % 2) == 1) {
 			String style = evenStyleRow.evenRow();
@@ -487,25 +514,27 @@ public class RecipeEdit extends Composite {
 	}
 
 		private void initializeCommentingField() {
-			numberofComments = recipe.getComments().size();
-					
-			final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
-			addCommentButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-					commentTable.remove(addCommentButton);
-					fillCommentBoxes(null,numberofComments);
-					numberofComments = numberofComments +1;
-					commentTable.setWidget(numberofComments ,1,addCommentButton);
-
+			if (recipe.getComments() != null) {
+				numberofComments = recipe.getComments().size();
+						
+				final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
+				addCommentButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+						commentTable.remove(addCommentButton);
+						fillCommentBoxes(null,numberofComments);
+						numberofComments = numberofComments +1;
+						commentTable.setWidget(numberofComments ,1,addCommentButton);
+	
+					}
+	
+				});
+				
+				for (int i = 0; i < numberofComments; i++) {
+					fillCommentBoxes(recipe.getComments().get(i),i);
 				}
-
-			});
-			
-			for (int i = 0; i < numberofComments; i++) {
-				fillCommentBoxes(recipe.getComments().get(i),i);
+				
+				commentTable.setWidget(numberofComments ,1,addCommentButton);
 			}
-			
-			commentTable.setWidget(numberofComments ,1,addCommentButton);
 		}
 		
 		private void fillCommentBoxes(RecipeComment recipeComment, int thisRow) {
@@ -590,187 +619,116 @@ public class RecipeEdit extends Composite {
 
 		
 	
-		 public void selectRow(int row) {
+	public void selectRow(int row) {
 
-			 saved = false;
-			 
-			 if(selectedRow != -1 && infoDialogIsOpen ){
+		saved = false;
 
-				 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
-				 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(0));
-					 
-				IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
+		if (selectedRow != -1 && infoDialogIsOpen) {
 
-				recipe.getIngredients().set(selectedRow , zutatSpec2);
-			 }
-			 
-			IngredientSpecification zutatSpec = recipe.getIngredients().get(row);
+			VerticalPanel verticalInfoPanel = (VerticalPanel) (addInfoPanel.getWidget(1));
+			//InfoZutatDialog infoDialog = (InfoZutatDialog) (verticalInfoPanel.getWidget(0));
 
-			if (zutatSpec == null) {
-				return;
-			}
-			
-			Long ParentZutatId = zutatSpec.getZutat_id();
-			Ingredient zutat = dco.getIngredientByID(ParentZutatId);
-			
-			openSpecificationDialog(zutatSpec,zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable,row);
+			//IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
 
-			styleRow(selectedRow, false);
-			styleRow(row, true);
-			selectedRow = row;
-
-			if (listener != null) {
-				listener.onItemSelected(zutatSpec);
-			}
+			//recipe.getIngredients().set(selectedRow, zutatSpec2);
 		}
 
-		// REFACOTR: correct
-		private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat,  TextBox amount,FlexTable MenuTable,int selectedRow) {
-			// if another one was already open
-			if(infoDialogIsOpen){
-				addInfoPanel.remove(1);
+		IngredientSpecification zutatSpec = recipe.getIngredients().get(row);
+
+		if (zutatSpec == null) {
+			return;
+		}
+
+		Ingredient zutat = dco.getIngredientByID(zutatSpec.getZutat_id());
+
+		//openSpecificationDialog(zutatSpec, zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable, row);
+
+		styleRow(selectedRow, false);
+		styleRow(row, true);
+		selectedRow = row;
+
+		if (listener != null) {
+			listener.onItemSelected(zutatSpec);
+		}
+	}
+
+/*
+	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable MenuTable, int selectedRow) {
+		// if another one was already open
+		if (infoDialogIsOpen) {
+			addInfoPanel.remove(1);
+		} else {
+			infoDialogIsOpen = true;
+		}
+
+		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec, zutat, amount, MenuTable, selectedRow, recipe, SuggestTable, this);
+		infoZutat.setPresenter(presenter);
+		addInfoPanel.insert(infoZutat, 1);
+	}
+		*/
+		
+
+	void styleRow(int row, boolean selected) {
+		if (row != -1) {
+			String style = selectionStyleRow.selectedRow();
+
+			if (selected) {
+				MenuTable.getRowFormatter().addStyleName(row, style);
 			} else {
-				infoDialogIsOpen = true;
+				MenuTable.getRowFormatter().removeStyleName(row, style);
 			}
-
-			menuDecoInfo.setVisible(false);
-			InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec,zutat,amount,MenuTable,selectedRow,recipe,SuggestTable,this);
-			infoZutat.setPresenter(presenter);
-			VerticalPanel verticalDialog = new VerticalPanel();
-			verticalDialog.add(infoZutat);
-			addInfoPanel.insert(verticalDialog, 1);
-
-			
 		}
-		
-		
+	}
 
-		void styleRow(int row, boolean selected) {
-			if (row != -1) {
-				String style = selectionStyleRow.selectedRow();
-
-				if (selected) {
-					MenuTable.getRowFormatter().addStyleName(row, style);
-				} else {
-					MenuTable.getRowFormatter().removeStyleName(row, style);
+	private static int getWidgetRow(Widget widget, FlexTable table) {
+		for (int row = 0; row < table.getRowCount(); row++) {
+			for (int col = 0; col < table.getCellCount(row); col++) {
+				Widget w = table.getWidget(row, col);
+				if (w == widget) {
+					return row;
 				}
 			}
 		}
-		
-
-
-		// REFACOTR: good, listen to eventbus, rename to updateIcons
-		public void updateIcons(Integer row, final IngredientSpecification zutat) {
+		throw new RuntimeException("Unable to determine widget row");
+	}
+/*
+	// REFACTOR: listen to EventBus
+	public void updateIngSpecWidgetSaison() {
+		if (addInfoPanel.getWidgetCount() == 2) {
+			InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
+			infoZutat.updateSaison();
+		}
+	}
+	*/
 	
-			HTML icon = new HTML();
-			Boolean itsOkay = true;
-			
-			
-			if(zutat.getCondition() != null){
-				if(zutat.getCondition().symbol.equalsIgnoreCase("frisch") && zutat.getDistance() < 500000){
-					if(zutat.getStartSeason() != null && zutat.getStopSeason() != null){
+	public void setImageUrl(String url) {
+		codeImage.setHTML("<img src='" + url + "=s120-c' />");
+	}
 
-						SeasonDate date = new SeasonDate(presenter.getCurrentMonth(),1);
-						SeasonDate dateStart = zutat.getStartSeason();		
-						SeasonDate dateStop =  zutat.getStopSeason();
-						
-						if( date.after(dateStart) && date.before(dateStop) ){
+	// here comes the Image Uploader:
+	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
+		public void onFinish(IUploader uploader) {
+			if (uploader.getStatus() == Status.SUCCESS) {
 
-							icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-						} else if (!zutat.getCondition().symbol.equalsIgnoreCase("frisch") && !zutat.getProduction().symbol.equalsIgnoreCase("GH") && zutat.getDistance() < 500000) {
-							icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-						} else if (zutat.getProduction().symbol.equalsIgnoreCase("GH")) {
-							// nothing
-						} else {
-							icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley3'><img src='pixel.png' height=1 width=20 /></div>");
-							itsOkay = false;
-						}
-					}
-				} 
+				GWT.log("Successfully uploaded image: " + uploader.fileUrl(), null);
+				new PreloadedImage(uploader.fileUrl(), showImage);
+
 			}
-			
-			if (itsOkay) {
-				if(zutat.getCalculatedCO2Value()/zutat.getWeight() < .4){
-					icon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-					icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-			
-				} else	if(zutat.getCalculatedCO2Value()/zutat.getWeight() < 1.2){
-					icon.setHTML(" g  <div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>"+icon.getHTML());
-			
-				} else {
-					icon.setHTML(" g  "+icon.getHTML());
-				}
-			} else {
-				icon.setHTML(" g  "+icon.getHTML());
-			}
-			
-
-			
-			
-			
-			if(zutat.getProduction() != null && zutat.getProduction().symbol.equalsIgnoreCase("bio")){
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
-			}
-			
-			icon.setHTML(icon.getHTML()+zutat.getName());
-			
-			MenuTable.setWidget(row, 2,  icon);
 		}
-		
-		
+	};
 
-			   
-		private void updateTable(int row,IngredientSpecification zutatSpec){
-			saved = false;
-
+	// Attach an image to the pictures viewer
+	OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
+		public void onLoad(PreloadedImage image) {
+			image.setWidth("125px");
+			panelImages.add(image);
 		}
-		
-		private static int getWidgetRow(Widget widget, FlexTable table) {
-			for (int row = 0; row < table.getRowCount(); row++) {
-				for (int col = 0; col < table.getCellCount(row); col++) {
-					Widget w = table.getWidget(row, col);
-					if (w == widget) {
-						return row;
-					}
-				}
-			}
-			throw new RuntimeException("Unable to determine widget row");
-		}
+	};
 
-		// REFACTOR: listen to EventBus
-		public void updateSaison() {
-			if(addInfoPanel.getWidgetCount() ==2){
-				InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
-				 infoZutat.updateSaison(infoZutat.zutatSpec);
-			 }
-		}
-		
-		
-		// here comes the Image Uploader:
-		private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
-		    public void onFinish(IUploader uploader) {
-		      if (uploader.getStatus() == Status.SUCCESS) {
-		    	 
-		    	 GWT.log("Successfully uploaded image: "+  uploader.fileUrl(), null);
-		        new PreloadedImage(uploader.fileUrl(), showImage);
-		        
-		      }
-		    }
-		  };
-
-		  // Attach an image to the pictures viewer
-		  OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
-		    public void onLoad(PreloadedImage image) {
-		      image.setWidth("125px");
-		      panelImages.add(image);
-		    }
-		  };
-		  
-		  
 	public Recipe getRecipe() {
 		return this.recipe;
 	}
-		  
+
 }
 
 

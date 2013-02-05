@@ -147,7 +147,7 @@ public class IngredientsDialog extends DialogBox{
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
 					if (tmpNodeVal1 != null) newIngredient.setStdWeight(Integer.parseInt( tmpNodeVal1 ));
 					else newIngredient.setStdWeight(100);
-					
+				
 					
 					//Conditions
 					// TODO catch if factors doesn't match symbols
@@ -283,6 +283,26 @@ public class IngredientsDialog extends DialogBox{
 						
 					}
 					else isValidIng = false;
+					
+					// std Extractions
+					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Herkunft");
+					if (tmpNodeVal1 != null) {
+						for (Extraction extr : newIngredient.getExtractions()) {
+							if (extr.symbol.equals(tmpNodeVal1))
+								newIngredient.setStdExtraction(extr);
+						}
+						if (newIngredient.getStdExtraction() == null) {
+							Extraction notInListExtraction = new Extraction(tmpNodeVal1);
+							newIngredient.setStdExtraction(notInListExtraction);
+							// add the std extraction which is not in the list to the extractions
+							
+						}
+					}
+					else {
+						Extraction notInListExtraction = new Extraction("Schweiz");
+						newIngredient.setStdExtraction(notInListExtraction);
+						newIngredient.getExtractions().add(notInListExtraction);
+					}
 					
 					// symbol english
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name_Englisch");

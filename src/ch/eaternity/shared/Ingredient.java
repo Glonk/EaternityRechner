@@ -36,7 +36,6 @@ public class Ingredient implements Serializable{
 	
     private List<String> tags = new ArrayList<String>();
     
-    // stdExtraction should be setted during loading. probably not necessary at all...
     @Serialized
     private Extraction stdExtraction;
     @Serialized 

@@ -16,13 +16,13 @@ import com.google.gwt.place.shared.PlaceController;
 
 public class ClientFactoryImpl implements ClientFactory
 {
-	private static final EventBus eventBus = new SimpleEventBus();
-	private static final PlaceController placeController = new PlaceController(eventBus);
-	private static final HelloView helloView = new HelloViewImpl();
-	private static final KlimaZmittagView klimaZmittagView = new KlimaZmittagViewImpl();
-	private static final RechnerView RechnerView = new RechnerView();
-	private static final GoodbyeView goodbyeView = new GoodbyeViewImpl();
-	private static final MenuPreviewView menuPreviewView = new MenuPreviewView();
+	private final EventBus eventBus = new SimpleEventBus();
+	private final PlaceController placeController = new PlaceController(eventBus);
+	private final HelloView helloView = new HelloViewImpl();
+	private final KlimaZmittagView klimaZmittagView = new KlimaZmittagViewImpl();
+	private final RechnerView RechnerView = new RechnerView();
+	private final GoodbyeView goodbyeView = new GoodbyeViewImpl();
+	private final MenuPreviewView menuPreviewView = new MenuPreviewView();
 	private final DataController dao = new DataController();
 	private final DataServiceAsync dataRpcService = GWT.create(DataService.class);
 	

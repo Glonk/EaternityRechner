@@ -47,7 +47,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
     private String encodedKey;
-    
+	
 	@Persistent
 	private String name;
     private String name_en;
@@ -72,18 +72,16 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 	private Transportation transportation;
 	private double distance; // in km
-	private Long label;
-	
 
 	private SeasonDate startSeason;
 	private SeasonDate stopSeason;
 
-	private int NormalCO2Value;
+	private int normalCO2Value;
 	// no factors included
 	private double co2ValueNoFactors;
 	
 	private double cost; 
-	public List<String> tags;
+	public List<String> tags = new ArrayList<String>();
 	
 	public IngredientSpecification(Long zutat_id, String name, Date cookingDate,Condition symbol,Production symbol2, 
 		 Transportation symbol3) {
@@ -109,35 +107,33 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		production = new Production(toClone.production);
 		transportation = new Transportation(toClone.transportation);
 		distance = toClone.distance;
-		label = new Long(toClone.label);
 		startSeason = new SeasonDate(toClone.startSeason);
 		stopSeason = new SeasonDate(toClone.startSeason);
-		NormalCO2Value = toClone.NormalCO2Value;
+		normalCO2Value = toClone.normalCO2Value;
 		co2ValueNoFactors = toClone.co2ValueNoFactors;
 		cost = toClone.cost;
 	}
 	
 	// Copy Constructor from Ingredient
-	public IngredientSpecification(Ingredient ing, int weight) {
-		/*
-		 * 		Extraction stdExtraction = null;
-		for(Extraction extraction: item.getExtractions()){
-			if(item.stdExtractionSymbol.equalsIgnoreCase(extraction.symbol)){
-				stdExtraction = extraction;
-			}
+	public IngredientSpecification(Ingredient ing) {
+		name = new String(ing.getSymbol());
+		name_en = new String(ing.getSymbol_en());
+		ingredientId = new Long(ing.getId());
+		extraction = new Extraction(ing.getStdExtraction());
+		if (ing.getConditions() != null)
+			condition = new Condition(ing.getConditions().get(0));
+		if (ing.getProductions() != null)
+			production = new Production(ing.getProductions().get(0));
+		if (ing.getTransportations() != null)
+			transportation = new Transportation(ing.getTransportations().get(0));
+		startSeason = new SeasonDate(ing.getStartSeason());
+		stopSeason = new SeasonDate(ing.getStopSeason());
+		normalCO2Value = new Integer(ing.getCo2eValue());
+		for (String tag : ing.getTags()) {
+			tags.add(new String(tag));
 		}
-		IngredientSpecification ingredientSpecification = new IngredientSpecification(item.getId(), item.getSymbol(),
-				 new Date(),stdExtraction.stdCondition, stdExtraction.stdProduction, 
-				 stdExtraction.stdMoTransportation);
-		ingredientSpecification.setHerkunft(stdExtraction);
-		if (grams == 0)
-			ingredientSpecification.setMengeGramm(item.stdWeight);
-		else
-			ingredientSpecification.setMengeGramm(grams);
-		ingredientSpecification.setSeason(item.startSeason, item.stopSeason);
-		ingredientSpecification.setNormalCO2Value(item.getCo2eValue());*/
-		 
 	}
+
 	
 	public IngredientSpecification(){
 		
@@ -179,14 +175,6 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	}
 	public Transportation getTransportation() {
 		return transportation;
-	}
-
-	public void setLabel(Long label) {
-		this.label = label;
-	}
-
-	public Long getLabel() {
-		return label;
 	}
 
 	public void setSeason(String strStart,String strStop) {
@@ -282,7 +270,7 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 	
 
 	public double calculateCo2ValueNoFactors() {
-		co2ValueNoFactors = NormalCO2Value*weight/1000;
+		co2ValueNoFactors = normalCO2Value*weight/1000;
 		return co2ValueNoFactors;
 	}
 
@@ -324,13 +312,13 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 
 
 	public void setNormalCO2Value(int normalCO2Value) {
-		NormalCO2Value = normalCO2Value;
+		normalCO2Value = normalCO2Value;
 	}
 
 
 
 	public int getNormalCO2Value() {
-		return NormalCO2Value;
+		return normalCO2Value;
 	}
 
 

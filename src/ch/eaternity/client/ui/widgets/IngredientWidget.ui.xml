@@ -5,17 +5,24 @@
 
 
   <ui:style>
-  
+  	.co2label {
+		text-align: right;
+		margin-right: 15px;
+		width:40px;
+	}
+	.amountBox {
+		margin-right:5px;
+	}
   </ui:style>
 
 	<g:HorizontalPanel>
-		<g:HTML ui:field="dragHandle"></g:HTML>
-		<g:TextBox ui:field="amountBox">100</g:TextBox>
+		<g:HTML ui:field="dragHandle"><div class='dragMe'><img src='pixel.png' width='10' height='20' /></div></g:HTML>
+		<g:TextBox ui:field="amountBox" styleName='{style.amountBox}'>100</g:TextBox>
 		<g:Label>g</g:Label>
-		<g:Label ui:field="nameLabel"></g:Label>
-		<g:HTMLPanel ui:field="iconsPanel"></g:HTMLPanel>
-		<g:HTMLPanel ui:field="ratingPanel"></g:HTMLPanel>
-		<g:Label ui:field="co2valueLabel"></g:Label>
+		<g:Label ui:field="nameLabel" width='170px'></g:Label>
+		<g:HTMLPanel ui:field="iconsPanel" width='60px'></g:HTMLPanel>
+		<g:HTMLPanel ui:field="ratingPanel" width='30px'></g:HTMLPanel>
+		<g:Label ui:field="co2valueLabel" styleName='{style.co2label}'></g:Label>
 		<g:Button ui:field="closeButton">x</g:Button>
 	</g:HorizontalPanel>
 </ui:UiBinder>

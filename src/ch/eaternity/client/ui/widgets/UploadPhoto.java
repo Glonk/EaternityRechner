@@ -22,42 +22,29 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
+import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;
 
-public class UploadPhoto<T> extends Composite implements HasHandlers {
-/*
-	private static UploadPhotoUiBinder uiBinder = GWT
-			.create(UploadPhotoUiBinder.class);
+public class UploadPhoto extends Composite implements HasHandlers {
 
-	DataServiceAsync userImageService = GWT.create(DataService.class);
+	private static UploadPhotoUiBinder uiBinder = GWT.create(UploadPhotoUiBinder.class);
+	interface UploadPhotoUiBinder extends UiBinder<Widget, UploadPhoto> {}
 
+	@UiField Button uploadButton;
+	@UiField FormPanel uploadForm;
+	@UiField FileUpload uploadField;
+	
+	private Recipe recipe;
+	private DataServiceAsync userImageService = GWT.create(DataService.class);
 	private HandlerManager handlerManager;
 
-	interface UploadPhotoUiBinder extends UiBinder<Widget, UploadPhoto> {
-	}
-
-	@UiField
-	Button uploadButton;
-
-	@UiField
-	FormPanel uploadForm;
-
-	@UiField
-	FileUpload uploadField;
-
-	LoginInfo loginInfo;
-	
-	Recipe recipe;
-
-	public UploadPhoto(final LoginInfo loginInfo,final RecipeEditView<T> editRecipeView) {
+	public UploadPhoto(final RecipeEdit editRecipeView) {
 		handlerManager = new HandlerManager(this);
 		
-		this.recipe = editRecipeView.recipe;
-		this.loginInfo = loginInfo;
+		this.recipe = editRecipeView.getRecipe();
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -93,57 +80,19 @@ public class UploadPhoto<T> extends Composite implements HasHandlers {
 									@Override
 									public void onSuccess(final UploadedImage result) {
 										
-										editRecipeView.getRezept().image = result;
-									    
-									    	Image showImage = editRecipeView.showImageRezept;
-									    	showImage.setUrl(result.getServingUrl()+"=s150-c");
-//									    	setHTML("<img src='" +GWT.getModuleBaseURL()+ recipe.image.getServingUrl() + "' />"+recipe.getCookInstruction());
-//									    	rezeptView.imageUploaderHP.add(showImage);
-//									    	showImage.setStylePrimaryName("cursorStyle");
-									    	if(editRecipeView.imagePopUpHandler != null){
-									    		editRecipeView.imagePopUpHandler.removeHandler();
-									    	}
-									    	if(editRecipeView.showImageHandler != null){
-									    		editRecipeView.showImageHandler.removeHandler();
-									    		editRecipeView.showImageHandler = null;
-									    	}
-									    	
-									    	editRecipeView.imagePopUpHandler = showImage.addClickHandler(new ClickHandler() {
-
-												@Override
-												public void onClick(ClickEvent event) {
-													ImageOverlay imageOverlay = new ImageOverlay(result);
-//													imageOverlay.addGalleryUpdatedEventHandler(PhotoGallery.this);
-													
-													final PopupPanel imagePopup = new PopupPanel(true);
-													imagePopup.setAnimationEnabled(true);
-													imagePopup.setWidget(imageOverlay);
-//													imagePopup.setGlassEnabled(true);
-													imagePopup.setAutoHideEnabled(true);
-
-													// TODO what is this???
-													imagePopup.center();
-													imagePopup.setPopupPosition(10, 10);
-												}
-											});
-//									    	showImage.addStyleName("inline");
-									    	
-									    	editRecipeView.menuDecoInfo.insert(showImage,0);
-									    	editRecipeView.askForLess2 = true;
-									    	editRecipeView.bildEntfernen.setVisible(true);
-									    	editRecipeView.uploadWidget.setVisible(false);
+										editRecipeView.getRecipe().setImage(result);
+									    editRecipeView.setImageUrl(result.getServingUrl()+"=s150-c");
+									    	//editRecipeView.bildEntfernen.setVisible(true);
+									    	//editRecipeView.uploadWidget.setVisible(false);
 									    
 										
-										ImageOverlay overlay = new ImageOverlay(
-												result);
-										GalleryUpdatedEvent event = new GalleryUpdatedEvent();
-										fireEvent(event);
+										ImageOverlay overlay = new ImageOverlay(result);
+										fireEvent(new GalleryUpdatedEvent());
 
 										// TODO: Add something here that says,
 										// hey, upload succeeded
 
-										final PopupPanel imagePopup = new PopupPanel(
-												true);
+										final PopupPanel imagePopup = new PopupPanel(true);
 										imagePopup.setAnimationEnabled(true);
 										imagePopup.setWidget(overlay);
 //										imagePopup.setGlassEnabled(true);
@@ -201,5 +150,5 @@ public class UploadPhoto<T> extends Composite implements HasHandlers {
 	public HandlerRegistration addGalleryUpdatedEventHandler(
 			GalleryUpdatedEventHandler handler) {
 		return handlerManager.addHandler(GalleryUpdatedEvent.TYPE, handler);
-	}*/
+	}
 }

@@ -1,7 +1,5 @@
 package ch.eaternity.client.activity;
 
-import java.util.Iterator;
-
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
@@ -12,24 +10,14 @@ import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.client.ui.RecipeView;
 import ch.eaternity.client.ui.SearchIngredients;
 import ch.eaternity.client.ui.SearchRecipes;
-import ch.eaternity.client.ui.TopPanel;
-import ch.eaternity.client.ui.widgets.ConfirmDialog;
-import ch.eaternity.shared.ClientData;
-import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.NotLoggedInException;
-import ch.eaternity.shared.Recipe;
 
 import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 
 /**
@@ -53,11 +41,12 @@ public class RechnerActivity extends AbstractActivity {
 	private final RecipeView recipeView;
 	private final RecipeEdit recipeEdit;
 	
+	private AcceptsOneWidget container;
+	
 	
 	// Used to obtain views, eventBus, placeController
 	// Alternatively, could be injected via GIN
-	public RechnerActivity(Place place, ClientFactory factory) {
-		
+	public RechnerActivity(Place place, ClientFactory factory) {		
 		this.clientFactory = factory;
 		this.dataRpcService = factory.getDataServiceRPC();
 		this.eventBus = factory.getEventBus();
@@ -84,7 +73,7 @@ public class RechnerActivity extends AbstractActivity {
 	
 	@Override
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
-		
+		this.container = container;
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
 		// set presenter again (lost because of new place...
@@ -127,9 +116,15 @@ public class RechnerActivity extends AbstractActivity {
         else
         	return null;
     }
+    
+    @Override
+    public void onStop() {
+    	Window.alert("Stop now");
+    }
 	
 	public void setPlace(Place place) {
 		this.place = place; 
+		this.start(container, eventBus);
 	}
 	
 	/**
