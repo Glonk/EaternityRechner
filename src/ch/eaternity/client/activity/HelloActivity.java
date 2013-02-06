@@ -72,7 +72,7 @@ public class HelloActivity extends AbstractActivity implements
 								goTo(new EaternityRechnerPlace(""));
 							}
 							else {
-								helloView.setStatusInfo("You are logged in as: " + loginInfo.getEmailAddress() + "<br /><br />You are not an enabled User. Write to info@eaternity.ch for registration please.");
+								helloView.setStatusInfo("Du bist eingelogt als: " + loginInfo.getEmailAddress() + "<br /><br />Du bist kein freigeschalteter Benutzer.");
 								helloView.setLoginUrl(loginInfo.getLogoutUrl());
 								helloView.setButtonText("Logout");
 								helloView.setVisibility(true);

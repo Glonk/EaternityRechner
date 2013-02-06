@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -21,6 +22,7 @@ public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 	//@UiField HTMLPanel framePanel;
 	@UiField HTML statusInfo;
 	@UiField Button loginButton;
+	@UiField Image logoImage;
 	
 	private Presenter listener;
 	private String name;
@@ -31,6 +33,9 @@ public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 	public HelloViewImpl()
 	{
 		setWidget(uiBinder.createAndBindUi(this));
+		logoImage.setUrl("/images/logo-eaternity.png");
+		logoImage.setSize("300px", "131px");
+		
 		this.setVisible(false);
 	}
 	
