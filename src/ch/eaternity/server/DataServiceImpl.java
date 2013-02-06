@@ -121,71 +121,46 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 
 	 
-	public Long addRezept(Recipe recipe) throws NotLoggedInException, IOException {
-//		checkLoggedIn();
-		UserService userService = UserServiceFactory.getUserService();
-		if(userService.getCurrentUser() == null){
-			throw new NotLoggedInException("Not logged in.");
-		}
+	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException {
+		checkLoggedIn();
 		
 		DAO dao = new DAO();
-		UserRecipeWrapper userRezept = new UserRecipeWrapper(getUser());
+		UserRecipeWrapper userRecipeWrap;
 		
-
-		userRezept.kitchenId.add(recipe.getKitchenId());
-
-		// TODO : this is not a propper approval process!!!
-		userRezept.requestedOpen = recipe.getOpenRequested();
-		
-		// If recipe belongs to a kitchen, dont assign it a user mail
-		if (recipe.getKitchenId() != null)
-		{
-			if(userService.getCurrentUser().getEmail() != null){
-				recipe.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
-			} else {
-				recipe.setEmailAddressOwner(userService.getCurrentUser().getNickname());
-			}
+		if (recipe.getId() != null) {
+			userRecipeWrap =  dao.getRecipe(recipe.getId());
+			userRecipeWrap.setRecipe(recipe);
+			dao.ofy().put(userRecipeWrap);
 		}
-		recipe.setOpen(false);
-		userRezept.approvedOpen = recipe.getOpen();
-		
-		
-		userRezept.setRezept(recipe);
-		dao.ofy().put(userRezept);
-		userRezept.recipe.setId(userRezept.id);
-		
-		// add the shortener call:
-		
-		// define URL to shorten
-		String clear = Converter.toString(recipe.getId(),34);
-	    String longUrl = getBaseUrl() + "view.jsp?pid=" + clear;
-	    
-		
-		//TODO a try and catch (and async?) here
-		HTTPRequest req = new HTTPRequest(
-				new URL("https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAkdIvs2SM0URQn5656q9NugoU-3Ix2LYg"),
-				HTTPMethod.POST);
-		req.addHeader(
-				new HTTPHeader("Content-Type", "application/json"));
-		req.setPayload(
-				new String("{\"longUrl\": \"" + longUrl + "\"}").getBytes());
-		
-		HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
-		String response = new String(res.getContent());
-//		System.out.println(response);
+		else { 
+			userRecipeWrap = new UserRecipeWrapper(getUser());
+	
+			userRecipeWrap.setKitchenId(recipe.getKitchenId());
+	
+			// TODO : this is not a propper approval process!!!
+			userRecipeWrap.setRequestedOpen(recipe.getOpenRequested());
+			
+			// If recipe belongs to a kitchen, dont assign it a user mail
+			if (recipe.getKitchenId() != null)
+			{
+				if(getUser().getEmail() != null){
+					recipe.setEmailAddressOwner(getUser().getEmail() );
+				} else {
+					recipe.setEmailAddressOwner(getUser().getNickname());
+				}
+			}
+			recipe.setOpen(false);
+			userRecipeWrap.setApprovedOpen(recipe.getOpen());
+			
+			userRecipeWrap.setRecipe(recipe);
+			dao.ofy().put(userRecipeWrap);
+			userRecipeWrap.getRecipe().setId(userRecipeWrap.id);
+			
+			// then save the recipe again (now with the id in the recipe setted)
+			dao.ofy().put(userRecipeWrap);
+		}
 
-
-		Gson gson = new Gson();
-		ShortUrl shortURL = gson.fromJson(response, ShortUrl.class);   
-		
-		//assign to the recipe
-		userRezept.recipe.setShortUrl(shortURL.id);
-		
-		// then save the recipe again (now with the shortUrl)
-		dao.ofy().put(userRezept);
-
-
-		return userRezept.id;
+		return userRecipeWrap.id;
 	}
 
 	// TODO approve and disapprove Recipe
@@ -193,8 +168,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		DAO dao = new DAO();
 		UserRecipeWrapper userRezept =  dao.getRecipe(rezeptId);
-		userRezept.recipe.setOpen(approve);
-		userRezept.approvedOpen = approve;
+		userRezept.getRecipe().setOpen(approve);
+		userRezept.setApprovedOpen(approve);
 		dao.ofy().put(userRezept);
 		return true;
 	}

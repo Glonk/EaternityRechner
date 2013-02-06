@@ -132,17 +132,23 @@ public class DataController {
 	
 	
 	public void saveRecipe(final Recipe recipe) { 
-		dataRpcService.addRezept(recipe, new AsyncCallback<Long>() {
+		dataRpcService.saveRecipe(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 
 			public void onSuccess(Long id) {
 				recipe.setId(id);
+				if (cdata.recipeScope.equals("u") || cdata.recipeScope.equals("p")) 
+					cdata.userRecipes.add(recipe);
+				else if (cdata.recipeScope.equals("k"))
+					cdata.currentKitchenRecipes.add(recipe);
+					cdata.kitchenRecipes.add(recipe);
 				
 				// show status info that the recipe got saved...
 			}
 		});
+		eventBus.fireEvent(new UpdateRecipeViewEvent());
 	}
 	
 	public void deleteRecipe(final Recipe recipe) {
@@ -386,6 +392,9 @@ public class DataController {
 	public void setRecipeScope(String recipeScope) {
 		cdata.recipeScope = recipeScope;
 	}
+	public String getRecipeScope() {
+		return cdata.recipeScope;
+	}
 	
 	
 	/**
@@ -528,6 +537,10 @@ public class DataController {
 
 	public String getCurrentLocation() {
 		return cdata.currentLocation;
+	}
+
+	public void clearEditRecipe() {
+		cdata.editRecipe = null;
 	}
 
 	

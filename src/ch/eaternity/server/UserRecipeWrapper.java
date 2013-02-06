@@ -1,8 +1,6 @@
 package ch.eaternity.server;
 
 import java.util.Date;
-import java.util.List;
-
 
 import javax.persistence.Id;
 
@@ -17,31 +15,27 @@ public class UserRecipeWrapper{
 
 	@Id Long id;
 	
-	public Date createDate;
+	private Date createDate;
 	
-	@Indexed
-	public User user;
-	
-	
-	@Indexed
-	public List<Long> kitchenId;
-	
+	@Indexed private User user;
+	@Indexed private Long kitchenId;
+
+
 	// for fast access requests
-	public Boolean approvedOpen;
-	public Boolean requestedOpen;
+	private Boolean approvedOpen;
+	private Boolean requestedOpen;
 	
-	@Serialized
-	public Recipe recipe;
+	@Serialized private Recipe recipe;
+	
+	
+	public UserRecipeWrapper(){}
+	
 	
 	public void setUser(User user) {
 		this.user = user;
 	}
 	public User getUser() {
 		return user;
-	}
-	
-	public UserRecipeWrapper(){
-		
 	}
 
 	public UserRecipeWrapper( User user){
@@ -55,13 +49,27 @@ public class UserRecipeWrapper{
 		this.user = user;	
 	}
 
+	public Long getKitchenId() {
+		return kitchenId;
+	}
+
+
+	public void setKitchenId(Long kitchenId) {
+		this.kitchenId = kitchenId;
+	}
+
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	
 	public Date getCreateDate() {
 		return this.createDate;
 	}
-	public void setRezept(Recipe recipe) {
+	public void setRecipe(Recipe recipe) {
 		this.recipe = recipe;
 	}
-	public Recipe getRezept() {
+	public Recipe getRecipe() {
 		return recipe;
 	}
 
@@ -75,6 +83,25 @@ public class UserRecipeWrapper{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Boolean getApprovedOpen() {
+		return approvedOpen;
+	}
+
+
+	public void setApprovedOpen(Boolean approvedOpen) {
+		this.approvedOpen = approvedOpen;
+	}
+
+
+	public Boolean getRequestedOpen() {
+		return requestedOpen;
+	}
+
+
+	public void setRequestedOpen(Boolean requestedOpen) {
+		this.requestedOpen = requestedOpen;
 	}
 
 

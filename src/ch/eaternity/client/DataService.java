@@ -21,7 +21,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
-	public Long addRezept(Recipe recipe) throws NotLoggedInException, IOException;
+	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException;
 	public List<Recipe> getYourRezepte() throws NotLoggedInException;
 	public List<Recipe> getOpenRecipe();

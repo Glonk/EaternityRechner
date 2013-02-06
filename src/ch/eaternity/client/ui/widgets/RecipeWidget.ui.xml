@@ -1,0 +1,84 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:mail='urn:import:ch.eaternity.client'>
+
+
+
+	<ui:style>
+  	.wrapper {
+		background-color:#ebebeb;
+		margin-bottom:5px;
+		padding:5px;
+		width:700px;
+	}
+	.title {
+		font-size:20px;
+		font-weight:bold;
+	}
+	.subtitle {
+		font-size:14px;
+	}
+	.recipeRating {
+
+	}
+	.rightBox {
+		position:relative;
+		right:10px;
+		margin-left:10px;
+	}
+	.co2 {
+		font-size:30px;
+		font-weight:bold;
+		margin-right:5px;
+		float:left;
+	}
+	.unit {
+		font-size:16px;
+		font-weight:bold;
+		position:relative;
+		bottom:0px;
+	}
+
+	.deleteButton {
+
+	}
+  </ui:style>
+
+	<g:HorizontalPanel styleName='{style.wrapper}'>
+		<g:HTML ui:field='recipeImage'></g:HTML>
+		<g:VerticalPanel>
+			<g:Label ui:field='recipeTitle' styleName='{style.title}'></g:Label>
+			<g:Label ui:field='recipeSubTitle' styleName='{style.subtitle}'></g:Label>
+		</g:VerticalPanel>
+		<g:HTMLPanel styleName='{style.rightBox}'>
+			<div style='float:left;'>
+				<g:HTML ui:field='recipeRating' styleName='{style.recipeRating}'></g:HTML>
+			</div>
+			
+			<div style=''>
+				<g:Button ui:field='deleteButton' styleName='{style.deleteButton}'>x</g:Button>
+			</div>
+			
+				<g:Label ui:field='recipeCo2Value' styleName='{style.co2}'></g:Label>
+				<div style='font-size:16px;
+							font-weight:bold;
+							'>g*/p.P.</div>
+		
+		
+		</g:HTMLPanel>
+		
+		
+		
+		
+<!-- 		<g:HorizontalPanel styleName='{style.rightBox}'> -->
+<!-- 			<g:HTML ui:field='recipeRating' styleName='{style.recipeRating}'></g:HTML> -->
+<!-- 			<g:VerticalPanel> -->
+<!-- 				<g:Button ui:field='deleteButton' styleName='{style.deleteButton}'>x</g:Button> -->
+<!-- 				<g:HorizontalPanel> -->
+<!-- 					<g:Label ui:field='recipeCo2Value' styleName='{style.co2}'></g:Label> -->
+<!-- 					<g:Label styleName='{style.unit}'>g*p.P.</g:Label> -->
+<!-- 				</g:HorizontalPanel> -->
+<!-- 			</g:VerticalPanel> -->
+<!-- 		</g:HorizontalPanel> -->
+	</g:HorizontalPanel>
+</ui:UiBinder>

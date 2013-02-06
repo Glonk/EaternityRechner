@@ -1,10 +1,15 @@
 package ch.eaternity.client.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
+import ch.eaternity.client.ui.widgets.RecipeWidget;
+import ch.eaternity.shared.Recipe;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,7 +19,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -36,6 +40,8 @@ public class RecipeView extends Composite {
 	
 	private RechnerActivity presenter;
 	private DataController dco;
+	
+	private List<Recipe> recipes = new ArrayList<Recipe>();
 	
 	// ---------------------- public Methods -----------------------
 	
@@ -67,15 +73,34 @@ public class RecipeView extends Composite {
 	
 
 	private void bind() {
-		
-		
 		//  Listen to the EventBus 
 		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
 				new UpdateRecipeViewEventHandler() {
 					@Override
 					public void onEvent(UpdateRecipeViewEvent event) {
+						updateList();
 					}
 				});
+	}
+	
+	private void updateList() {
+		String recipeScope = dco.getRecipeScope();
+		if (recipeScope.equals("u")) 
+			recipes = dco.getUserRecipes();
+		else if (recipeScope.equals("k"))
+			recipes = dco.getCurrentKitchenRecipes();
+		else if (recipeScope.equals("p"))
+			recipes = dco.getPublicRecipes();
+		else
+			{}//TODO display error message
+		
+		recipeList.removeAllRows();
+		int row = 0;
+		for (Recipe recipe : recipes) {
+			RecipeWidget recipeWidget = new RecipeWidget(recipe);
+			recipeList.setWidget(row,0,recipeWidget);
+			row =+ 1;
+		}
 	}
 	
 	// ---------------------- UI Handlers ----------------------

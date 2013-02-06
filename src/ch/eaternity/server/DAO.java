@@ -144,7 +144,7 @@ public class DAO extends DAOBase
 			UserRecipeWrapper recipe = iterator.next();
 
 			// for each recipe find all ingredients Specifications
-			for(IngredientSpecification ingSpec : recipe.recipe.getIngredients()){
+			for(IngredientSpecification ingSpec : recipe.getRecipe().getIngredients()){
 				for(Ingredient ingredient: ingredients){
 					if(ingSpec.getZutat_id().equals(ingredient.getId())){
 						ingSpec.setNormalCO2Value(ingredient.getCo2eValue());
@@ -153,7 +153,7 @@ public class DAO extends DAOBase
 				}
 
 			}
-			recipe.recipe.setCO2Value();
+			recipe.getRecipe().setCO2Value();
 			ofy().put(recipe);
 
 		}
@@ -320,7 +320,7 @@ public class DAO extends DAOBase
 
 		while (iterator.hasNext()) {
 			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRezept();
+			Recipe recipe = userRezept.getRecipe();
 			recipe.setId( userRezept.id);
 			yourRecipes.add(recipe);
 		}
@@ -364,7 +364,7 @@ public class DAO extends DAOBase
 			if(computeId != 0L){
 				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
 				if(userRezept != null){
-					Recipe recipe = userRezept.getRezept();
+					Recipe recipe = userRezept.getRecipe();
 					if(recipe.getCookingDate() == null){
 						recipe.setCookingDate(dt);
 					}
@@ -388,7 +388,7 @@ public class DAO extends DAOBase
 
 		while (iterator.hasNext()) {
 			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRezept();
+			Recipe recipe = userRezept.getRecipe();
 			recipe.setId(userRezept.id);
 			adminRecipes.add(recipe);
 		}
@@ -407,7 +407,7 @@ public class DAO extends DAOBase
 
 		while (iterator.hasNext()) {
 			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRezept();
+			Recipe recipe = userRezept.getRecipe();
 			recipe.setId( userRezept.id);
 			openRecipes.add(recipe);
 		}
@@ -430,7 +430,7 @@ public class DAO extends DAOBase
 
 		while (iterator.hasNext()) {
 			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRezept();
+			Recipe recipe = userRezept.getRecipe();
 			if(recipe.getCookingDate() == null){
 				recipe.setCookingDate(dt);
 				log.warning("no date set for recipe" + userRezept.getId().toString());
@@ -477,7 +477,7 @@ public class DAO extends DAOBase
 
 				while (iterator.hasNext()) {
 					UserRecipeWrapper userRezept = iterator.next();
-					Recipe recipe = userRezept.getRezept();
+					Recipe recipe = userRezept.getRecipe();
 					recipe.setId( userRezept.id);
 					if(!kitchenRecipes.contains(recipe)){
 						kitchenRecipes.add(recipe);
@@ -499,7 +499,7 @@ public class DAO extends DAOBase
 
 			while (iteratorMore.hasNext()) {
 				UserRecipeWrapper userRezept = iteratorMore.next();
-				Recipe recipe = userRezept.getRezept();
+				Recipe recipe = userRezept.getRecipe();
 				recipe.setId( userRezept.id);
 				if(!kitchenRecipes.contains(recipe)){
 					kitchenRecipes.add(recipe);

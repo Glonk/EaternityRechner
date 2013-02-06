@@ -90,12 +90,13 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
     
     // my additions
     int sourceRow = trDragController.getDragRow();
+    int size = trDragController.getDraggableTable().getRowCount();
     
     if (targetRow >= sourceRow) {
         targetRow--;
       }
     
-    if (sourceRow != 0 || targetRow != 0){ // this case nothing happens
+    if (sourceRow >= 0 && sourceRow < size && targetRow >= 0 && targetRow < size){ // this case nothing happens
     	
 	    IngredientSpecification switchIng = recipeEdit.getRecipe().getIngredients().get(sourceRow);
 	    

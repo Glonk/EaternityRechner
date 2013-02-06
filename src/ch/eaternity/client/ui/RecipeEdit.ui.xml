@@ -261,7 +261,7 @@
 
 				<!-- Close Recipe Button -->
 				<g:HTMLPanel styleName='{style.floatRight}'>
-					<b:Close ui:field="removeRezeptButton" />
+					<b:Close ui:field="closeRecipe" />
 				</g:HTMLPanel>
 
 				<g:HorizontalPanel>

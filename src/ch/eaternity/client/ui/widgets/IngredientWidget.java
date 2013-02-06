@@ -47,6 +47,7 @@ public class IngredientWidget extends Composite {
 		amountBox.setAlignment(TextAlignment.RIGHT);
 		amountBox.setText(Integer.toString(ingSpec.getWeight()));
 		amountBox.setWidth("36px");
+		amountBox.setVisible(false);
 		
 		nameLabel.setText(ingSpec.getName());
 		setCo2Value(ingSpec.getCalculatedCO2Value());

@@ -24,6 +24,7 @@ import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
+import ch.eaternity.client.ui.widgets.ConfirmDialog;
 import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
 import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
 import ch.eaternity.client.ui.widgets.IngredientWidget;
@@ -86,7 +87,7 @@ public class RecipeEdit extends Composite {
 	// ---------------------- User Interface Elements --------------
 	@UiField AbsolutePanel dragArea;
 	
-	@UiField Close removeRezeptButton;
+	@UiField Close closeRecipe;
 	@UiField TextBox RezeptName;
 	@UiField TextBox rezeptDetails;
 	@UiField Label co2valueLabel;
@@ -264,6 +265,9 @@ public class RecipeEdit extends Composite {
     	}
 		cookingInstr.setText(cookingInstructions);
 		updateLoginSpecificParameters();
+		updateCo2Value();
+		updateIngredients();
+		
 	}
 	
 	public void updateLoginSpecificParameters() {
@@ -279,6 +283,14 @@ public class RecipeEdit extends Composite {
 			duplicateButton.setEnabled(true);
 			saveButton.setEnabled(true);
 		}
+	}
+	
+	private void updateCo2Value() {
+		double co2value = 0l;
+		for (IngredientSpecification ingSpec : recipe.getIngredients()) {
+			co2value = co2value + ingSpec.getCalculatedCO2Value();
+		}
+		co2valueLabel.setText("" + ((int)co2value));
 	}
 
 	// ---------------------- UI Handlers ----------------------
@@ -346,7 +358,7 @@ public class RecipeEdit extends Composite {
 		*/
 	}
 	
-	@UiHandler("removeRezeptButton")
+	@UiHandler("closeRecipe")
 	void onRemoveClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(""));
 	}
@@ -476,7 +488,7 @@ public class RecipeEdit extends Composite {
 				MenuTable.getRowFormatter().addStyleName(rowIndex, style);
 			} 
 		}
-		
+		updateCo2Value();
 	}
 	
 	
@@ -485,7 +497,7 @@ public class RecipeEdit extends Composite {
 		for (IngredientSpecification ingSpec : recipe.getIngredients()) {
 			addIngredient(ingSpec);
 		}
-		
+		updateCo2Value();
 	}
 	
 	public void addIngredient(IngredientSpecification ingSpec) {
@@ -494,13 +506,14 @@ public class RecipeEdit extends Composite {
 		MenuTable.setWidget(row, 0, ingWidget);
 		
 		// drag Handler
-		tableRowDragController.makeDraggable(ingWidget);
+		tableRowDragController.makeDraggable(ingWidget,ingWidget.getDragHandle());
 		
 		//Alternate Coloring
 		if ((row % 2) == 1) {
 			String style = evenStyleRow.evenRow();
 			MenuTable.getRowFormatter().addStyleName(row, style);
 		}
+		updateCo2Value();
 	}
 
 	
@@ -728,6 +741,38 @@ public class RecipeEdit extends Composite {
 	public Recipe getRecipe() {
 		return this.recipe;
 	}
+
+
+	public void closeRecipeEdit() {
+		if (!saved) {
+			String saveText = recipe.getSymbol() + " ist noch nicht gespeichert!";
+			final ConfirmDialog dlg = new ConfirmDialog(saveText);
+			dlg.statusLabel.setText("Speichern?");
+
+			dlg.yesButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					dco.saveRecipe(recipe);
+					dlg.hide();
+				}
+			});
+			dlg.noButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					dlg.hide();
+				}
+			});
+
+			dlg.show();
+			dlg.center();
+		}
+		
+		dco.clearEditRecipe();
+		
+	}
+
+
+
+
+	
 
 }
 
