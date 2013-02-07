@@ -219,7 +219,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// load all ingredients
 		data.ingredients = dao.getAllIngredients();
 		
-		data.loginInfo = dao.getLoginInfo(requestUri, getUser());
+		data.loginInfo = dao.getLoginInfo(requestUri);
 		
 		//TODO get Distances
 		
@@ -326,7 +326,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public LoginInfo login(String requestUri) {
 
 		DAO dao = new DAO();
-		return dao.getLoginInfo(requestUri, getUser());
+		return dao.getLoginInfo(requestUri);
 
 	  }
 	

@@ -71,9 +71,10 @@ public class DAO extends DAOBase
 		return ingredient.getId();
 	}
 	
-	public LoginInfo getLoginInfo(String requestUri, User user) {
+	public LoginInfo getLoginInfo(String requestUri) {
 		UserService userService = UserServiceFactory.getUserService();
 		LoginInfo loginInfo = new LoginInfo();
+		User user = userService.getCurrentUser();
 		
 		if (user != null) { 
 			try {

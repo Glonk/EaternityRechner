@@ -179,7 +179,10 @@ public class DataController {
 			ingSpec.setWeight(weight);
 		//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
 		
-		cdata.editRecipe.addIngredient(ingSpec);
+		if (cdata.editRecipe != null)
+			cdata.editRecipe.addIngredient(ingSpec);
+		else
+			Window.alert("Edit Recipe is null");
 
 		eventBus.fireEvent(new IngredientAddedEvent(ingSpec));
 	}
@@ -389,12 +392,7 @@ public class DataController {
 		return found;
 	}
 
-	public void setRecipeScope(String recipeScope) {
-		cdata.recipeScope = recipeScope;
-	}
-	public String getRecipeScope() {
-		return cdata.recipeScope;
-	}
+
 	
 	
 	/**
@@ -544,7 +542,14 @@ public class DataController {
 	}
 
 	
-
+	public void setRecipeScope(String recipeScope) {
+		cdata.recipeScope = recipeScope;
+	}
+	public String getRecipeScope() {
+		if (cdata.recipeScope == null) 
+			cdata.recipeScope = "p";
+		return cdata.recipeScope;
+	}
 
 
 
