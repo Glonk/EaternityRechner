@@ -162,7 +162,7 @@ public class RecipeView<T> extends Composite {
 	    
 	    // this is a new recipe, so nothing to be saved:
 	    setRecipeSavedMode(true);
-
+	    reportButton.setVisible(false);
 	    
 	    // we could still consider changing the image in this interface
 //	    galleryWidget = new PhotoGallery(this);
@@ -196,12 +196,12 @@ public class RecipeView<T> extends Composite {
 		
 		// the is saved should only respond if indeed something changed...
 		saved = isSaved;
-		reportButton.setEnabled(isSaved);
+		//reportButton.setEnabled(isSaved);
 		
 		makePublic.setVisible(true);
 
-		reportButton.setVisible(isSaved);
-		reportButton.setEnabled(isSaved);
+		//reportButton.setVisible(isSaved);
+		//reportButton.setEnabled(isSaved);
 		
 		// the button switches -> faded out until some change happened
 		saveRecipeButton.setEnabled(!isSaved);
