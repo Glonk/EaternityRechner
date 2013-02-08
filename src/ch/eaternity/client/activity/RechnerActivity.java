@@ -11,6 +11,7 @@ import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.client.ui.RecipeView;
 import ch.eaternity.client.ui.SearchIngredients;
 import ch.eaternity.client.ui.SearchRecipes;
+import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
@@ -81,22 +82,16 @@ public class RechnerActivity extends AbstractActivity {
 		rechnerView.getTopPanel().setPresenter(this);
 		
 		if (place instanceof RechnerRecipeViewPlace) {
-			// Load RecipeView into recipecontainer
 			recipePanel.setWidget(recipeView);
-			// Load SearchRecipes into searchcontainer
 			searchPanel.setWidget(searchRecipes);
-			String recipeScope = ((RechnerRecipeViewPlace) place).getRecipeScope();
-			if(recipeScope.equals("p") || recipeScope.equals("u") || recipeScope.equals("k"))
-				dco.setRecipeScope(recipeScope);
-			else
-				dco.setRecipeScope("p");
+			
+			RecipeScope recipeScope = ((RechnerRecipeViewPlace) place).getRecipeScope();
+			dco.setRecipeScope(recipeScope);
 			eventBus.fireEvent(new UpdateRecipeViewEvent());
 		}
 		else if (place instanceof RechnerRecipeEditPlace) {
-			// Load RecipeEdit into recipecontainer
 			recipePanel.setWidget(recipeEdit);
 			recipeEdit.loadRecipe(((RechnerRecipeEditPlace) place).getID());
-			// Load SearchIngredients into searchcontainer
 			searchPanel.setWidget(searchIngredients);
 		}
 		

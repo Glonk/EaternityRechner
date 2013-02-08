@@ -32,7 +32,7 @@
 
 
 <%
-// Hole Rezepte die zum Benutzer gehören
+	// Hole Rezepte die zum Benutzer gehören
 
 		String BASEURL = request.getRequestURL().toString();
 
@@ -46,14 +46,14 @@
 		
 		Boolean doPdf = false;
 		if(pdf != null){
-			doPdf = true;
+	doPdf = true;
 		}
 		Boolean DoItAll = true;
 		
 		String thresholdString = request.getParameter("median");
 		Integer threshold = 1550;
 		if(thresholdString != null){
-			threshold = Integer.valueOf(thresholdString);
+	threshold = Integer.valueOf(thresholdString);
 		} 
 
 		Double third = (double)threshold / 3;
@@ -70,34 +70,34 @@
 		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 		
 		if (user != null && permanentId == null) {
-			rezeptePersonal = dao.getYourRecipe(user);
-			kitchenRecipes = dao.getKitchenRecipes(user);
-			
-			adminRecipes = dao.adminGetRecipe(user);
-			
-			// remove double entries for admin
-			if(rezeptePersonal != null){
-				for(Recipe recipe: rezeptePersonal){
-					int removeIndex = -1;
-					for(Recipe rezept2:adminRecipes){
-						if(rezept2.getId().equals(recipe.getId())){
-							removeIndex = adminRecipes.indexOf(rezept2);
-						}
-					}
-					if(removeIndex != -1){
-						adminRecipes.remove(removeIndex);
-					}
+	rezeptePersonal = dao.getUserRecipes(user);
+	kitchenRecipes = dao.getKitchenRecipes(user);
+	
+	adminRecipes = dao.adminGetRecipe(user);
+	
+	// remove double entries for admin
+	if(rezeptePersonal != null){
+		for(Recipe recipe: rezeptePersonal){
+			int removeIndex = -1;
+			for(Recipe rezept2:adminRecipes){
+				if(rezept2.getId().equals(recipe.getId())){
+					removeIndex = adminRecipes.indexOf(rezept2);
 				}
 			}
-			
+			if(removeIndex != -1){
+				adminRecipes.remove(removeIndex);
+			}
+		}
+	}
+	
 		} else {
 		 if(tempIds != null){
-			rezeptePersonal = dao.getRecipeByIds(tempIds,true);
+	rezeptePersonal = dao.getRecipeByIds(tempIds,true);
 		 } else {
-			 if(permanentId != null){
-				rezeptePersonal = dao.getRecipeByIds(permanentId,false);
-				DoItAll = false;
-			 } 
+	 if(permanentId != null){
+		rezeptePersonal = dao.getRecipeByIds(permanentId,false);
+		DoItAll = false;
+	 } 
 		 }
 		}
 		
@@ -120,37 +120,36 @@
         long iTimeStamp = (long) (date.getTime() * .00003);
 		
 		if(rezeptePersonal.size() != 0){
-			ArrayList<Double> values = new ArrayList<Double>();
+	ArrayList<Double> values = new ArrayList<Double>();
 	
-			//  go over the Recipes in the Workspace
-			for(Recipe recipe: rezeptePersonal){
-				values.add((double) recipe.getCO2Value());
-				average = average + recipe.getCO2Value();
-				counter++;
-				recipe.setCO2Value();
-				if(recipe.getCO2Value()>MaxValueRezept){
-					MaxValueRezept = recipe.getCO2Value();
-				} 
-				if(recipe.getCO2Value()<MinValueRezept){
-					MinValueRezept = recipe.getCO2Value();
-				}
-			}
-			average = average /counter;
-			
-				
-			Collections.sort(values);
+	//  go over the Recipes in the Workspace
+	for(Recipe recipe: rezeptePersonal){
+		values.add((double) recipe.getCO2Value());
+		average = average + recipe.getCO2Value();
+		counter++;
+		recipe.setCO2Value();
+		if(recipe.getCO2Value()>MaxValueRezept){
+			MaxValueRezept = recipe.getCO2Value();
+		} 
+		if(recipe.getCO2Value()<MinValueRezept){
+			MinValueRezept = recipe.getCO2Value();
+		}
+	}
+	average = average /counter;
+	
+		
+	Collections.sort(values);
 		  
 		    if (values.size() % 2 == 1)
-			median = values.get((values.size()+1)/2-1);
+	median = values.get((values.size()+1)/2-1);
 		    else
 		    {
-			double lower = values.get(values.size()/2-1);
-			double upper = values.get(values.size()/2);
+	double lower = values.get(values.size()/2-1);
+	double upper = values.get(values.size()/2);
 		 
-			median = (lower + upper) / 2.0;
+	median = (lower + upper) / 2.0;
 		    }	    
 		}
-		
 %>
 
 

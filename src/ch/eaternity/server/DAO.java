@@ -57,6 +57,48 @@ public class DAO extends DAOBase
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
 	
+	
+	public LoginInfo getLoginInfo(String requestUri) {
+		UserService userService = UserServiceFactory.getUserService();
+		LoginInfo loginInfo = new LoginInfo();
+		User user = userService.getCurrentUser();
+
+		if (user != null) {
+			try {
+				loginInfo = ofy().get(LoginInfo.class, user.getUserId());
+			} catch (NotFoundException e) {
+				loginInfo.setId(user.getUserId());
+				loginInfo.setLoggedIn(true);
+			}
+			// reset everything in case it got changed...
+			loginInfo.setEmailAddress(user.getEmail());
+			loginInfo.setNickname(user.getNickname());
+			loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
+			loginInfo.setAdmin(userService.isUserAdmin());
+			ofy().put(loginInfo);
+		} else {
+			loginInfo.setLoggedIn(false);
+			loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
+		}
+		return loginInfo;
+	}
+
+
+	public Long CreateImage(ImageBlob image)
+	{
+		ofy().put(image);
+		//        ImagesService imgS = ImagesServiceFactory.getImagesService();
+		//        String test = imgS.getServingUrl(image.getPicture());
+		// I propably want something like this: http://jeremyblythe.blogspot.com/
+		return image.getId();
+	}
+
+	public ImageBlob getImage(Long imageID)
+	{
+		return ofy().get(ImageBlob.class, imageID);
+
+	}
+	
 	/** Your DAO can have your own useful methods */
 	public Long updateOrCreateIngredient(Ingredient ingredient)
 	{
@@ -71,32 +113,6 @@ public class DAO extends DAOBase
 		return ingredient.getId();
 	}
 	
-	public LoginInfo getLoginInfo(String requestUri) {
-		UserService userService = UserServiceFactory.getUserService();
-		LoginInfo loginInfo = new LoginInfo();
-		User user = userService.getCurrentUser();
-		
-		if (user != null) { 
-			try {
-				loginInfo = ofy().get(LoginInfo.class, user.getUserId());
-			}
-			catch (NotFoundException e) {
-				  loginInfo.setId(user.getUserId());
-				  loginInfo.setLoggedIn(true);
-				  loginInfo.setEmailAddress(user.getEmail());
-				  loginInfo.setNickname(user.getNickname());
-				  loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
-				  loginInfo.setAdmin(userService.isUserAdmin());
-				  ofy().put(loginInfo);
-			}
-		} 
-		else {
-	      loginInfo.setLoggedIn(false);
-	      loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
-	    }
-		return loginInfo;
-	}
-
 	public ArrayList<Ingredient> getAllIngredients()
 	{
 		//        Objectify ofy = ObjectifyService.begin();
@@ -112,21 +128,6 @@ public class DAO extends DAOBase
 		}
 
 		return ingredients;
-	}
-
-	public Long CreateImage(ImageBlob image)
-	{
-		ofy().put(image);
-		//        ImagesService imgS = ImagesServiceFactory.getImagesService();
-		//        String test = imgS.getServingUrl(image.getPicture());
-		// I propably want something like this: http://jeremyblythe.blogspot.com/
-		return image.getId();
-	}
-
-	public ImageBlob getImage(Long imageID)
-	{
-		return ofy().get(ImageBlob.class, imageID);
-
 	}
 
 	public Boolean CreateIngredients(ArrayList<Ingredient> ingredients)
@@ -295,7 +296,6 @@ public class DAO extends DAOBase
 			Workgroup kitchen = iterator.next();
 			openKitchens.add(kitchen);
 		}
-
 		return openKitchens;
 
 	}
@@ -305,13 +305,20 @@ public class DAO extends DAOBase
 		ofy().put(recipe);
 		return true;
 	}
+	
+	public Boolean deleteRecipe(Long id) {
+		UserRecipeWrapper userRecipeWrap = getRecipe(id);
+		
+		ofy().put(userRecipeWrap);
+		return true;
+	}
 
 	public UserRecipeWrapper getRecipe(Long recipeID){
 		UserRecipeWrapper userRezept = ofy().get(UserRecipeWrapper.class,recipeID);
 		return userRezept;
 	}
 
-	public List<Recipe> getYourRecipe(User user){
+	public List<Recipe> getUserRecipes(User user){
 
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 

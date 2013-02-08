@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DataServiceAsync {
 	public void saveRecipe(Recipe recipe, AsyncCallback<Long> async);
-	public void removeRezept(Long rezeptId, AsyncCallback<Boolean> async);
+	public void deleteRecipe(Long rezeptId, AsyncCallback<Boolean> async);
 	public void getYourRezepte(AsyncCallback<List<Recipe>> async);
 	public void getOpenRecipe(AsyncCallback<List<Recipe>> async);
 	public void getAdminRezepte(AsyncCallback<List<Recipe>> asyncCallback);

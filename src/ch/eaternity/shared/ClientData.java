@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import ch.eaternity.shared.Util.RecipeScope;
+
 
 public class ClientData implements Serializable{
 
@@ -24,18 +26,13 @@ public class ClientData implements Serializable{
 	// probably into activity (state variables) ?
 	public Workgroup currentKitchen; 
 	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
-	//public String recipeScope = "p";
 	
 	public Recipe editRecipe;
 	public int currentMonth;
 	public String currentLocation;
 	public String searchstring;
-
-	enum RecipeScope { PUBLIC, KITCHEN, USER };
 	
-	static RecipeScope recipeScope;
-	
-	recipeScope2 = RecipeScope.PUBLIC;
+	public RecipeScope recipeScope = RecipeScope.PUBLIC;
 	
 	public ClientData() {
 		

@@ -1,5 +1,6 @@
 package ch.eaternity.client.ui.widgets;
 
+import ch.eaternity.client.DataController;
 import ch.eaternity.shared.Recipe;
 
 import com.google.gwt.core.client.GWT;
@@ -29,12 +30,14 @@ public class RecipeWidget extends Composite {
 	@UiField Button deleteButton;
 	
 	private Recipe recipe;
+	private DataController dco;
 	
 	public RecipeWidget() {}
 	
-	public RecipeWidget(Recipe recipe) {
+	public RecipeWidget(Recipe recipe, DataController dco) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.recipe = recipe;
+		this.dco = dco;
 		
 		if(recipe.getImage() !=null){
 			recipeImage.setHTML("<img src='" + recipe.getImage().getServingUrl() + "=s80-c' />");
@@ -59,5 +62,6 @@ public class RecipeWidget extends Composite {
 	
 	@UiHandler("deleteButton")
 	public void onDeleteClicked(ClickEvent event) {
+		dco.deleteRecipe(recipe);
 	}
 }

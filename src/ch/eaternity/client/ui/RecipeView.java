@@ -10,6 +10,7 @@ import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.ui.widgets.RecipeWidget;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -84,12 +85,12 @@ public class RecipeView extends Composite {
 	}
 	
 	private void updateList() {
-		String recipeScope = dco.getRecipeScope();
-		if (recipeScope.equals("u")) 
+		RecipeScope recipeScope = dco.getRecipeScope();
+		if (recipeScope == RecipeScope.USER) 
 			recipes = dco.getUserRecipes();
-		else if (recipeScope.equals("k"))
+		else if (recipeScope == RecipeScope.KITCHEN)
 			recipes = dco.getCurrentKitchenRecipes();
-		else if (recipeScope.equals("p"))
+		else if (recipeScope == RecipeScope.PUBLIC)
 			recipes = dco.getPublicRecipes();
 		else
 			{}//TODO display error message
@@ -97,13 +98,15 @@ public class RecipeView extends Composite {
 		recipeList.removeAllRows();
 		int row = 0;
 		for (Recipe recipe : recipes) {
-			RecipeWidget recipeWidget = new RecipeWidget(recipe);
+			RecipeWidget recipeWidget = new RecipeWidget(recipe,dco);
+			recipeList.insertRow(row);
 			recipeList.setWidget(row,0,recipeWidget);
-			row =+ 1;
+			row = row + 1;
 		}
 	}
 	
 	// ---------------------- UI Handlers ----------------------
+	
 	
 	// ---------------------- private Methods ----------------------
 	

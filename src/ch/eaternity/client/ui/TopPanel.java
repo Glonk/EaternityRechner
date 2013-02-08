@@ -11,6 +11,7 @@ import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
+import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -145,15 +146,15 @@ public class TopPanel extends Composite {
 	
 	@UiHandler("userRecipesButton")
 	public void onUserClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace("u"));
+		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.USER.toString()));
 	}
 	@UiHandler("kitchenRecipesButton")
 	public void onKitchenClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace("k"));
+		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
 	}
 	@UiHandler("publicRecipesButton")
 	public void onRecipesClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace("p"));
+		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.PUBLIC.toString()));
 	}
 
 }

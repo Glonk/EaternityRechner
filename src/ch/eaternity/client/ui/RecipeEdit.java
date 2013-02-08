@@ -264,6 +264,12 @@ public class RecipeEdit extends Composite {
 	    	cookingInstructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.\n\n" + cookingInstructions;
     	}
 		cookingInstr.setText(cookingInstructions);
+		
+		if (recipe.getOpen() == true)
+			publishButton.setText("Veröffentlichung rückgängig");
+		else
+			publishButton.setText("veröffentlichen");
+		
 		updateLoginSpecificParameters();
 		updateCo2Value();
 		updateIngredients();
@@ -294,10 +300,6 @@ public class RecipeEdit extends Composite {
 	}
 
 	// ---------------------- UI Handlers ----------------------
-	@UiHandler("newRecipeButton")
-	public void onAddRecipeButtonPress(ClickEvent event) {
-		loadRecipe("new");	
-	}
 	
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
@@ -358,10 +360,6 @@ public class RecipeEdit extends Composite {
 		*/
 	}
 	
-	@UiHandler("closeRecipe")
-	void onRemoveClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace(""));
-	}
 	
 	@UiHandler("MenuTable")
 	void onClick(ClickEvent event) {
@@ -397,18 +395,38 @@ public class RecipeEdit extends Composite {
 			amountPersons.cancelKey();
 		}
 	}
-	/*
-	saveButton.setEnabled(true);
-	generatePDFButton.setEnabled(true);
-	publishButton.setEnabled(true);
-	duplicateButton.setEnabled(true);
-	saveButton.setEnabled(true);
-	*/
+
 	
 	@UiHandler("saveButton")
 	public void onSaveClicked(ClickEvent event) {
 		dco.saveRecipe(recipe);
+		saved = true;
+		//TODO Statusmeldung
 	}
+	
+	@UiHandler("closeRecipe")
+	void onCloseClicked(ClickEvent event) {
+		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
+	}
+	
+	@UiHandler("newRecipeButton")
+	public void onAddRecipeButtonPress(ClickEvent event) {
+		presenter.goTo(new RechnerRecipeEditPlace("new"));
+	}
+	
+	@UiHandler("deleteButton") 
+	public void onDeleteClicked(ClickEvent event) {
+		saved = true;
+		dco.deleteRecipe(recipe);
+		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
+	}
+	
+	@UiHandler("publishButton")
+	public void onPublishClicked(ClickEvent event) {
+		dco.approveRecipe(recipe, true);
+		//TODO Statusmeldung
+	}
+
 
 	@UiHandler("recipeDate")
 	void onBlur(BlurEvent event)  {

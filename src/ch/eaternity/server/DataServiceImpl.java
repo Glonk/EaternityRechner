@@ -1,7 +1,6 @@
 package ch.eaternity.server;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,36 +9,24 @@ import java.util.logging.Logger;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Query;
 
 import ch.eaternity.client.DataService;
-import ch.eaternity.shared.NotLoggedInException;
-import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.ClientData;
+import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.ShortUrl;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
-import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Workgroup;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.urlfetch.HTTPHeader;
-import com.google.appengine.api.urlfetch.HTTPMethod;
-import com.google.appengine.api.urlfetch.HTTPRequest;
-import com.google.appengine.api.urlfetch.HTTPResponse;
-import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-
-
-import com.google.gson.Gson;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.NotFoundException;
 
@@ -174,10 +161,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return true;
 	}
  
-	public Boolean removeRezept(Long rezeptId) throws NotLoggedInException {
+	public Boolean deleteRecipe(Long recipeId) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		dao.ofy().delete(UserRecipeWrapper.class,rezeptId);
+		dao.deleteRecipe(recipeId);
 		return true;
 	}
 
@@ -194,7 +181,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		DAO dao = new DAO();
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
-		yourRecipes = dao.getYourRecipe(getUser());
+		yourRecipes = dao.getUserRecipes(getUser());
 		return yourRecipes;	
 	}
 	
@@ -224,7 +211,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		//TODO get Distances
 		
 		if (getUser() != null) {
-			data.userRecipes = dao.getYourRecipe(getUser());
+			data.userRecipes = dao.getUserRecipes(getUser());
 			data.publicRecipes = dao.getOpenRecipe();
 			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); 
 

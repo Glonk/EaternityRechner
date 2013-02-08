@@ -19,6 +19,7 @@ import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
+import ch.eaternity.shared.Util.RecipeScope;
 import ch.eaternity.shared.Workgroup;
 
 import com.google.gwt.core.client.GWT;
@@ -139,12 +140,16 @@ public class DataController {
 
 			public void onSuccess(Long id) {
 				recipe.setId(id);
-				if (cdata.recipeScope.equals("u") || cdata.recipeScope.equals("p")) 
-					cdata.userRecipes.add(recipe);
-				else if (cdata.recipeScope.equals("k"))
-					cdata.currentKitchenRecipes.add(recipe);
+				if (recipe.getKitchenId() == null) {
+					if (cdata.getUserRecipeByID(id) == null) {
+						cdata.userRecipes.add(recipe);
+					}
+				}
+				else{
+					if (recipe.getKitchenId() == cdata.currentKitchen.id)
+						cdata.currentKitchenRecipes.add(recipe);
 					cdata.kitchenRecipes.add(recipe);
-				
+				}
 				// show status info that the recipe got saved...
 			}
 		});
@@ -152,7 +157,7 @@ public class DataController {
 	}
 	
 	public void deleteRecipe(final Recipe recipe) {
-		dataRpcService.removeRezept(recipe.getId(), new AsyncCallback<Boolean>() {
+		dataRpcService.deleteRecipe(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
@@ -161,7 +166,8 @@ public class DataController {
 				cdata.publicRecipes.remove(recipe);
 				cdata.kitchenRecipes.remove(recipe);
 				cdata.currentKitchenRecipes.remove(recipe);
-				
+				if (cdata.editRecipe == recipe)
+					cdata.editRecipe = null;
 				eventBus.fireEvent(new UpdateRecipeViewEvent());
 			}
 		});
@@ -194,13 +200,19 @@ public class DataController {
 	}
 	
 	public void changeKitchen(Workgroup kitchen) {
-		//TODO load the currentKitchen Recipes
+		// maybee kitchen = null not necessary...
 		if (kitchen == null) {
 			cdata.currentKitchen = null;
+			cdata.currentKitchenRecipes = null;
 			eventBus.fireEvent(new KitchenChangedEvent(-1L));
 		}
 		else {
 			cdata.currentKitchen = kitchen;
+			for (Recipe recipe : cdata.kitchenRecipes) {
+				if (recipe.getKitchenId() == kitchen.id);
+					cdata.currentKitchenRecipes.add(recipe);
+			}
+			
 			eventBus.fireEvent(new KitchenChangedEvent(kitchen.id));
 		}
 	}
@@ -542,12 +554,12 @@ public class DataController {
 	}
 
 	
-	public void setRecipeScope(String recipeScope) {
+	public void setRecipeScope(RecipeScope recipeScope) {
 		cdata.recipeScope = recipeScope;
 	}
-	public String getRecipeScope() {
+	public RecipeScope getRecipeScope() {
 		if (cdata.recipeScope == null) 
-			cdata.recipeScope = "p";
+			cdata.recipeScope = RecipeScope.PUBLIC;
 		return cdata.recipeScope;
 	}
 

@@ -130,6 +130,7 @@
 			height: 18px;
 			width: 238px;
 			padding-left: 4px;
+			margin-bottom: 30px;
 			font-size: 13px;
 			background: #F7A959;
 			text-align: left;
@@ -239,6 +240,9 @@
 		.gwt-Button[disabled]:hover {
 			border: 1px outset #ccc;
 		}
+		.codeImage {
+			height:150px;
+		}
 	</ui:style>
 
 	<ui:style field='selectionStyleRow'
@@ -282,7 +286,7 @@
 				</g:HorizontalPanel>
 
 				<!-- image and description here? any particular design choices -->
-				<g:HTML ui:field='codeImage'></g:HTML>
+				<g:HTML ui:field='codeImage' styleName='{style.codeImage}'></g:HTML>
 				<g:HorizontalPanel ui:field='imageWidgetPanel'></g:HorizontalPanel>
 
 				<g:HorizontalPanel>
@@ -316,7 +320,7 @@
 					</g:VerticalPanel>
 
 				</g:HorizontalPanel>
-
+				<g:Label>Kochanleitung:</g:Label>
 				<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea>
 
 				<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'

@@ -37,7 +37,7 @@
 
 
 <%
-// Hole Rezepte die zum Benutzer gehören
+	// Hole Rezepte die zum Benutzer gehören
 
 String BASEURL = request.getRequestURL().toString();
 
@@ -85,7 +85,7 @@ List<Recipe> rezeptePersonal = new ArrayList<Recipe>();
 List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 
 if (user != null) {
-	rezeptePersonal = dao.getYourRecipe(user);
+	rezeptePersonal = dao.getUserRecipes(user);
 	kitchenRecipes = dao.getKitchenRecipes(user);
 	
 	adminRecipes = dao.adminGetRecipe(user);
@@ -93,19 +93,18 @@ if (user != null) {
 	// remove double entries for admin
 	if(rezeptePersonal != null){
 		for(Recipe recipe: rezeptePersonal){
-			int removeIndex = -1;
-			for(Recipe rezept2:adminRecipes){
-				if(rezept2.getId().equals(recipe.getId())){
-					removeIndex = adminRecipes.indexOf(rezept2);
-				}
-			}
-			if(removeIndex != -1){
-				adminRecipes.remove(removeIndex);
-			}
+	int removeIndex = -1;
+	for(Recipe rezept2:adminRecipes){
+		if(rezept2.getId().equals(recipe.getId())){
+			removeIndex = adminRecipes.indexOf(rezept2);
 		}
 	}
-	
-			 			%>
+	if(removeIndex != -1){
+		adminRecipes.remove(removeIndex);
+	}
+		}
+	}
+%>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
 	<script src="jquery.docraptor.js" type="text/javascript"></script>

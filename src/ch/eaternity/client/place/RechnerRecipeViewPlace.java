@@ -1,5 +1,7 @@
 package ch.eaternity.client.place;
 
+import ch.eaternity.shared.Util.RecipeScope;
+
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
@@ -7,14 +9,21 @@ import com.google.gwt.place.shared.Prefix;
 public class RechnerRecipeViewPlace extends Place{
 
 	// used to indicate if we are in userrecipes, kitchenrecipes, public recipes...
-	private String recipeScope;
+	private RecipeScope recipeScope;
 	
-	public RechnerRecipeViewPlace(String token)
+	public RechnerRecipeViewPlace(String recipeScopeStr)
 	{
-		this.recipeScope = token;
+		if (recipeScopeStr.equals("USER")) 
+			recipeScope = RecipeScope.USER;
+		else if (recipeScopeStr.equals("KITCHEN"))
+			recipeScope = RecipeScope.KITCHEN;
+		else if (recipeScopeStr.equals("PUBLIC"))
+			recipeScope = RecipeScope.PUBLIC;
+		else 
+			recipeScope = RecipeScope.PUBLIC;
 	}
 
-	public String getRecipeScope()
+	public RecipeScope getRecipeScope()
 	{
 		return recipeScope;
 	}
@@ -26,7 +35,7 @@ public class RechnerRecipeViewPlace extends Place{
 		@Override
 		public String getToken(RechnerRecipeViewPlace place)
 		{
-			return place.getRecipeScope();
+			return place.getRecipeScope().toString();
 		}
 
 		@Override
