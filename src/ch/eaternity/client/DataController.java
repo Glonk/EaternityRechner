@@ -121,8 +121,10 @@ public class DataController {
 			cdata.userRecipes.add(recipe);
 		}
 		
-		if (cdata.loginInfo != null)
+		if (cdata.loginInfo != null) {
 			recipe.setEmailAddressOwner(cdata.loginInfo.getEmailAddress());
+			recipe.setUserID(cdata.loginInfo.getId());
+		}
 		
 		recipe.setPopularity(0L);
 		recipe.setHits(0L);

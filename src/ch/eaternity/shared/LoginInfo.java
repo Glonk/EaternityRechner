@@ -13,7 +13,7 @@ public class LoginInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 8516034014140362835L;
 	
-	@Id private String id;
+	@Id private Long id;
 	
 	// standard values
 	private boolean loggedIn;
@@ -107,11 +107,11 @@ public class LoginInfo implements Serializable {
 	}
 
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 }

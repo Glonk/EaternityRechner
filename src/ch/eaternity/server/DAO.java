@@ -67,7 +67,14 @@ public class DAO extends DAOBase
 			try {
 				loginInfo = ofy().get(LoginInfo.class, user.getUserId());
 			} catch (NotFoundException e) {
-				loginInfo.setId(user.getUserId());
+				try {
+					loginInfo.setId(Long.parseLong(user.getUserId()));;
+				}
+				catch (NumberFormatException nfe) {
+					loginInfo.setLoggedIn(false);
+					loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
+				}
+				
 				loginInfo.setLoggedIn(true);
 			}
 			// reset everything in case it got changed...
@@ -307,14 +314,14 @@ public class DAO extends DAOBase
 	}
 	
 	public Boolean deleteRecipe(Long id) {
-		UserRecipeWrapper userRecipeWrap = getRecipe(id);
+		Recipe userRecipe = getRecipe(id);
 		
-		ofy().put(userRecipeWrap);
+		ofy().put(userRecipe);
 		return true;
 	}
 
-	public UserRecipeWrapper getRecipe(Long recipeID){
-		UserRecipeWrapper userRezept = ofy().get(UserRecipeWrapper.class,recipeID);
+	public Recipe getRecipe(Long recipeID){
+		Recipe userRezept = ofy().get(Recipe.class,recipeID);
 		return userRezept;
 	}
 
@@ -323,18 +330,15 @@ public class DAO extends DAOBase
 		List<Recipe> yourRecipes = new ArrayList<Recipe>();
 
 		// The Query itself is Iterable
-		Query<UserRecipeWrapper> yourUserRecipes = ofy().query(UserRecipeWrapper.class).filter("user", user);
-		QueryResultIterator<UserRecipeWrapper> iterator = yourUserRecipes.iterator();
+		Query<Recipe> yourUserRecipes = ofy().query(Recipe.class).filter("userID", user.getUserId());
+		QueryResultIterator<Recipe> iterator = yourUserRecipes.iterator();
 
 		while (iterator.hasNext()) {
-			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRecipe();
-			recipe.setId( userRezept.id);
+			Recipe recipe = iterator.next();
 			yourRecipes.add(recipe);
 		}
 
 		return yourRecipes;
-
 	}
 
 	public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){

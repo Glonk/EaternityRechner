@@ -29,7 +29,9 @@ public class Recipe implements Serializable, Cloneable{
 	
 	@Indexed
 	private String emailAddressOwner;
-	
+	@Indexed
+	private Long userID;
+
 	@Embedded
 	private EnergyMix energyMix;
 	
@@ -211,6 +213,15 @@ public class Recipe implements Serializable, Cloneable{
 
 	public String getEmailAddressOwner() {
 		return emailAddressOwner;
+	}
+	
+	
+	public Long getUserID() {
+		return userID;
+	}
+
+	public void setUserID(Long userID) {
+		this.userID = userID;
 	}
 
 	public void setEmailAddressOwner(String emailAddressOwner) {

@@ -112,52 +112,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		
 		DAO dao = new DAO();
-		UserRecipeWrapper userRecipeWrap;
 		
-		if (recipe.getId() != null) {
-			userRecipeWrap =  dao.getRecipe(recipe.getId());
-			userRecipeWrap.setRecipe(recipe);
-			dao.ofy().put(userRecipeWrap);
-		}
-		else { 
-			userRecipeWrap = new UserRecipeWrapper(getUser());
-	
-			userRecipeWrap.setKitchenId(recipe.getKitchenId());
-	
-			// TODO : this is not a propper approval process!!!
-			userRecipeWrap.setRequestedOpen(recipe.getOpenRequested());
-			
-			// If recipe belongs to a kitchen, dont assign it a user mail
-			if (recipe.getKitchenId() != null)
-			{
-				if(getUser().getEmail() != null){
-					recipe.setEmailAddressOwner(getUser().getEmail() );
-				} else {
-					recipe.setEmailAddressOwner(getUser().getNickname());
-				}
-			}
-			recipe.setOpen(false);
-			userRecipeWrap.setApprovedOpen(recipe.getOpen());
-			
-			userRecipeWrap.setRecipe(recipe);
-			dao.ofy().put(userRecipeWrap);
-			userRecipeWrap.getRecipe().setId(userRecipeWrap.id);
-			
-			// then save the recipe again (now with the id in the recipe setted)
-			dao.ofy().put(userRecipeWrap);
-		}
+		dao.saveRecipe(recipe);
 
-		return userRecipeWrap.id;
+		return recipe.getId();
 	}
 
 	// TODO approve and disapprove Recipe
 	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		UserRecipeWrapper userRezept =  dao.getRecipe(rezeptId);
-		userRezept.getRecipe().setOpen(approve);
-		userRezept.setApprovedOpen(approve);
-		dao.ofy().put(userRezept);
+		Recipe userRezept =  dao.getRecipe(rezeptId);
+		userRezept.setOpen(approve);
+		dao.saveRecipe(userRezept);
 		return true;
 	}
  
