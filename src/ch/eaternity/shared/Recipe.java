@@ -22,6 +22,8 @@ public class Recipe implements Serializable, Cloneable{
     
 	private Long directAncestorID;
 	
+	private boolean deleted;
+
 	private String symbol;
 	private String subTitle;
 	private String cookInstruction;
@@ -71,8 +73,9 @@ public class Recipe implements Serializable, Cloneable{
 		symbol = "Ihr Menu";
 		subTitle = "Menu Beschreibung";
 		cookInstruction = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+		deleted = false;
 		open = false;
-		openRequested = true;
+		openRequested = false;
 		selected = false;
 		persons = 4L;
 		eaternitySelected = false;
@@ -163,6 +166,8 @@ public class Recipe implements Serializable, Cloneable{
 		return sum;
 	}
 
+	// ------------------- getters and setters --------------------
+	
 	public Long getId() {
 		return id;
 	}
@@ -375,9 +380,15 @@ public class Recipe implements Serializable, Cloneable{
 		return serialVersionUID;
 	}
 
-	// ------------------- getters and setters --------------------
+	
 
+	public boolean isDeleted() {
+		return deleted;
+	}
 
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
 
 }

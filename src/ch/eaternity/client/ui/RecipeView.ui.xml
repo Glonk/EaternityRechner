@@ -1,7 +1,8 @@
 <ui:UiBinder
   xmlns:ui='urn:ui:com.google.gwt.uibinder'
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:rechner='urn:import:ch.eaternity.client.ui.widgets'>
+  xmlns:rechner='urn:import:ch.eaternity.client.ui.widgets'
+  xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
   
 <ui:style>
 
@@ -165,6 +166,7 @@ position:relative;
 </ui:style>
 
 <g:HTMLPanel>
+	<g:HorizontalPanel ui:field='alertPanel'></g:HorizontalPanel>
 	<g:Button ui:field="addRecipeButton">neues Rezept</g:Button>
 	<g:FlexTable ui:field="recipeList"></g:FlexTable>
 	

@@ -19,12 +19,12 @@ public class ClientData implements Serializable{
 	
 	public List<Ingredient> ingredients;
 	public Distance distances;
-	public List<Workgroup> kitchens;
+	public List<Kitchen> kitchens;
 
 	public LoginInfo loginInfo;
 	
 	// probably into activity (state variables) ?
-	public Workgroup currentKitchen; 
+	public Kitchen currentKitchen; 
 	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
 	
 	public Recipe editRecipe;
@@ -79,9 +79,9 @@ public class ClientData implements Serializable{
 	}
 	
 	
-	public Workgroup getKitchenByID(long id){
-		for(Workgroup kitchen : kitchens){
-			if (kitchen.id == id){
+	public Kitchen getKitchenByID(long id){
+		for(Kitchen kitchen : kitchens){
+			if (kitchen.getId() == id){
 				return kitchen;
 			}
 		}
@@ -90,7 +90,7 @@ public class ClientData implements Serializable{
 	
 	public Recipe getUserRecipeByID(long id) {
 		for(Recipe userRecipe : userRecipes){
-			if (userRecipe.getId() == id){
+			if (userRecipe.getId() != null && id == userRecipe.getId()){
 				return userRecipe;
 			}
 		}

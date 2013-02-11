@@ -7,6 +7,9 @@ import java.util.List;
 
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.IngredientsLoadedEvent;
+import ch.eaternity.client.events.UpdateRecipeViewEvent;
 //import ch.eaternity.server.Ingredient;
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
@@ -51,9 +54,10 @@ public class IngredientsDialog extends DialogBox{
 	@UiField Label statusLabel;
 	
 	private final DataServiceAsync ingredientsService = GWT.create(DataService.class);
+	private RechnerActivity presenter;
 	
-	public IngredientsDialog() {
-		
+	public IngredientsDialog(RechnerActivity presenter) {
+		this.presenter = presenter;
 		// Use this opportunity to set the dialog's caption.
 		setText("Add here your Ingredients.xml");
 		setWidget(binder.createAndBindUi(this));
@@ -72,9 +76,7 @@ public class IngredientsDialog extends DialogBox{
 					processFile(file);
 				}
 			}
-		});
-//		getIngredients();
-		
+		});	
 	}
 	
 	
@@ -89,7 +91,6 @@ public class IngredientsDialog extends DialogBox{
 			NodeList zutatenLst = messageDom.getElementsByTagName("ROW");
 			//Window.alert( Integer.toString(zutatenLst.getLength()) + " Ingredients found." );
 			 
-			Long lastid = null;
 			String tmpNodeVal1, tmpNodeVal2;
 			boolean isValidIng = true;
 			int amValidIngs = 0;
@@ -353,6 +354,8 @@ public class IngredientsDialog extends DialogBox{
 			public void onSuccess(Boolean success) {
 				if(success){
 					Window.alert("XML File import successful!");
+					presenter.getEventBus().fireEvent(new IngredientsLoadedEvent());
+					hide();
 				}
 			}
 		});

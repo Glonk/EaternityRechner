@@ -12,6 +12,8 @@ import ch.eaternity.client.ui.widgets.RecipeWidget;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util.RecipeScope;
 
+import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,7 +22,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 
 /**
  * 
@@ -32,6 +36,7 @@ public class RecipeView extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	// ---------------------- User Interface Elements --------------
+	@UiField HorizontalPanel alertPanel;
 	@UiField Button addRecipeButton;
 	@UiField FlexTable recipeList;
 	@UiField Button addToCollectionButton;
@@ -54,25 +59,27 @@ public class RecipeView extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.setHeight("1600px");
+		this.setHeight("1000px");
 		bind();
 	}
 
-	private void openRecipeEdit() {
-		//dco.setEditRecipe();
-		presenter.goTo(new RechnerRecipeEditPlace("RecipeName clicked"));
-	}
 	
 	@UiHandler("addRecipeButton")
 	public void onAddRecipeButtonPress(ClickEvent event) {
-		dco.createRecipe();
-		// does the RechnerRecipeEditPlace live without a recipe?
-		// the design pattern to encouple everything makes sense -> "strict separation of concerns."
+		
 		presenter.goTo(new RechnerRecipeEditPlace("new"));
 	}
-
 	
-
+	@UiHandler("recipeList")
+	void onRecipeClicked(ClickEvent event) {
+		Cell cell = recipeList.getCellForEvent(event);
+		if (cell != null) {
+			int row = cell.getRowIndex();
+			RecipeWidget recipeWidget = (RecipeWidget) recipeList.getWidget(row, 1);
+			presenter.goTo(new RechnerRecipeEditPlace(recipeWidget.getRecipeId().toString()));
+		}
+	}
+		
 	private void bind() {
 		//  Listen to the EventBus 
 		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
@@ -86,14 +93,35 @@ public class RecipeView extends Composite {
 	
 	private void updateList() {
 		RecipeScope recipeScope = dco.getRecipeScope();
-		if (recipeScope == RecipeScope.USER) 
-			recipes = dco.getUserRecipes();
-		else if (recipeScope == RecipeScope.KITCHEN)
-			recipes = dco.getCurrentKitchenRecipes();
+		
+		if (recipeScope == RecipeScope.USER ) {
+			if (dco.getLoginInfo().isLoggedIn())
+				recipes = dco.getUserRecipes();
+			else {
+				Alert alert = new Alert("Your not logged in. Login and try again.");
+				alert.setType(AlertType.WARNING);
+				alert.setClose(true);
+				alertPanel.add(alert);
+
+				recipes.clear();
+			}
+		}
+		else if (recipeScope == RecipeScope.KITCHEN) {
+			if (dco.getCurrentKitchen() != null)
+				recipes = dco.getCurrentKitchenRecipes();
+			else {
+				Alert alert = new Alert("Your not in a kitchen. Try to enter a kitchen again.");
+				alert.setType(AlertType.WARNING);
+				alert.setClose(true);
+				alertPanel.add(alert);
+				
+				recipes.clear();
+			}
+		}
 		else if (recipeScope == RecipeScope.PUBLIC)
 			recipes = dco.getPublicRecipes();
-		else
-			{}//TODO display error message
+		else 
+			recipes = dco.getPublicRecipes();
 		
 		recipeList.removeAllRows();
 		int row = 0;

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+
 public class LoginInfo implements Serializable {
 
 	/**
@@ -27,18 +28,12 @@ public class LoginInfo implements Serializable {
 	private String nickname;
 	private boolean admin;
 
-	// eaternity-rechner stuff
-	//werden die ueberhaupt gespeichert? weil ev. Google Objekt
-	private boolean isInKitchen;
-	private Long currentKitchen;
+	private Long currentKitchenId;
 	private List<Long> kitchenIDs;
-	// private String lastLogin;
-	// private String lastLocation;
-	
 
 	public LoginInfo() {
 		admin = false;
-		isInKitchen = false;
+		currentKitchenId = null;
 		loggedIn = false;
 	}
 	
@@ -90,20 +85,17 @@ public class LoginInfo implements Serializable {
 		return this.admin;
 	}
 
-	public void setIsInKitchen(Boolean isInKitchen) {
-		this.isInKitchen = isInKitchen;
+	public boolean setCurrentKitchen(Long kitchenId) {
+		if (kitchenIDs.contains(kitchenId)) {
+			this.currentKitchenId = kitchenId;
+			return true;
+		}
+		else
+			return false;
 	}
 
-	public Boolean getIsInKitchen() {
-		return isInKitchen;
-	}
-
-	public void setLastKitchen(Long lastKitchen) {
-		this.currentKitchen = lastKitchen;
-	}
-
-	public Long getLastKitchen() {
-		return currentKitchen;
+	public Long getCurrentKitchen() {
+		return currentKitchenId;
 	}
 
 
@@ -114,4 +106,13 @@ public class LoginInfo implements Serializable {
 	public Long getId() {
 		return id;
 	}
+
+	public List<Long> getKitchenIDs() {
+		return kitchenIDs;
+	}
+
+	public void setKitchenIDs(List<Long> kitchenIDs) {
+		this.kitchenIDs = kitchenIDs;
+	}
+
 }

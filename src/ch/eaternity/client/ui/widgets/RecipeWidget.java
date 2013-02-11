@@ -64,4 +64,9 @@ public class RecipeWidget extends Composite {
 	public void onDeleteClicked(ClickEvent event) {
 		dco.deleteRecipe(recipe);
 	}
+	
+	public Long getRecipeId() {
+		return recipe.getId();
+	}
+	
 }

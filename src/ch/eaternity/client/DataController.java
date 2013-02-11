@@ -15,12 +15,12 @@ import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Distance;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Util.RecipeScope;
-import ch.eaternity.shared.Workgroup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -67,9 +67,9 @@ public class DataController {
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
-				if (cdata.loginInfo != null && cdata.loginInfo.getIsInKitchen() == true && cdata.loginInfo.getLastKitchen() != null)
+				if (cdata.loginInfo != null && cdata.loginInfo.getCurrentKitchen() != null)
 				{
-					cdata.currentKitchen = cdata.getKitchenByID(cdata.loginInfo.getLastKitchen());
+					cdata.currentKitchen = cdata.getKitchenByID(cdata.loginInfo.getCurrentKitchen());
 					if (cdata.currentKitchen == null)
 						kitchenLoaded = false;
 				}
@@ -77,8 +77,7 @@ public class DataController {
 					kitchenLoaded = false;
 				
 				if (kitchenLoaded) {
-					changeKitchenRecipes(cdata.currentKitchen.id);
-					eventBus.fireEvent(new KitchenChangedEvent(cdata.currentKitchen.id));
+					changeKitchen(cdata.currentKitchen.getId());
 				}
 				
 				
@@ -113,7 +112,7 @@ public class DataController {
 		recipe.setCreateDate(new Date());
 		
 		if (cdata.currentKitchen != null) {
-			recipe.setKitchenId(cdata.currentKitchen.id);
+			recipe.setKitchenId(cdata.currentKitchen.getId());
 			cdata.kitchenRecipes.add(recipe);
 			cdata.currentKitchenRecipes.add(recipe);
 		}
@@ -148,11 +147,12 @@ public class DataController {
 					}
 				}
 				else{
-					if (recipe.getKitchenId() == cdata.currentKitchen.id)
+					if (recipe.getKitchenId() == cdata.currentKitchen.getId())
 						cdata.currentKitchenRecipes.add(recipe);
 					cdata.kitchenRecipes.add(recipe);
 				}
-				// show status info that the recipe got saved...
+				//TODO show status info that the recipe got saved...
+				// set place accordingly
 			}
 		});
 		eventBus.fireEvent(new UpdateRecipeViewEvent());
@@ -175,7 +175,54 @@ public class DataController {
 		});
 	}
 	
-	
+	/**
+	 * After call to this function, editRecipe is != null for sure
+	 * @param id
+	 * @return true if recipe with id was found and propperly loaded, false if new recipe was created
+	 */
+	public Recipe setEditRecipe(String idStr) {
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		if (idStr.equals(null) || idStr == null || idStr.equals("new")) {
+			createRecipe();
+		}
+		else {
+			boolean found = false;
+			try {
+				Long id = Long.parseLong(idStr);
+
+				Recipe editRecipe = cdata.getUserRecipeByID(id);
+				if (editRecipe != null) {
+					found = true;
+					cdata.editRecipe = editRecipe;
+				}
+				else {
+					editRecipe = cdata.getKitchenRecipeByID(id);
+					if (editRecipe != null){
+						found = true;
+						cdata.editRecipe = editRecipe;
+						changeKitchen(editRecipe.getKitchenId());
+					}
+					else
+						Window.alert("Recipe with id " + id + " not found. New Recipe created.");
+				}
+			}
+			catch (NumberFormatException nfe) {}
+			
+			if (!found)
+				createRecipe();
+		}
+		return cdata.editRecipe;
+	}
 	
 	public void addIngredientToMenu(Ingredient ingredient, int weight) {
 
@@ -201,22 +248,34 @@ public class DataController {
 		eventBus.fireEvent(new MonthChangedEvent(month));
 	}
 	
-	public void changeKitchen(Workgroup kitchen) {
+	public void changeKitchen(Long kitchenId) {
+		Kitchen kitchen = cdata.getKitchenByID(kitchenId);
 		// maybee kitchen = null not necessary...
 		if (kitchen == null) {
 			cdata.currentKitchen = null;
 			cdata.currentKitchenRecipes = null;
+			cdata.loginInfo.setCurrentKitchen(null);
+			
 			eventBus.fireEvent(new KitchenChangedEvent(-1L));
 		}
 		else {
 			cdata.currentKitchen = kitchen;
+			cdata.loginInfo.setCurrentKitchen(kitchen.getId());
 			for (Recipe recipe : cdata.kitchenRecipes) {
-				if (recipe.getKitchenId() == kitchen.id);
+				if (recipe.getKitchenId() == kitchen.getId());
 					cdata.currentKitchenRecipes.add(recipe);
 			}
-			
-			eventBus.fireEvent(new KitchenChangedEvent(kitchen.id));
+			eventBus.fireEvent(new KitchenChangedEvent(kitchen.getId()));
 		}
+		
+		
+		dataRpcService.setCurrentKitchen(kitchen.getId(), new AsyncCallback<Boolean>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Boolean ignore) {}
+		});
+	
 	}
 	
 	public void saveKitchen() {}
@@ -379,32 +438,6 @@ public class DataController {
 		
 		eventBus.fireEvent(new CollectionsChangedEvent());
 	}
-	
-	/**
-	 * After call to this function, editRecipe is != null for sure
-	 * @param id
-	 * @return true if recipe with id was found and propperly loaded, false if new recipe was created
-	 */
-	public boolean setEditRecipe(Long id) {
-		boolean found = false;
-		Recipe editRecipe = cdata.getUserRecipeByID(id);
-		if (editRecipe != null) {
-			found = true;
-			cdata.editRecipe = editRecipe;
-		}
-		else {
-			editRecipe = cdata.getKitchenRecipeByID(id);
-			if (editRecipe != null){
-				found = true;
-				cdata.editRecipe = editRecipe;
-				changeKitchenRecipes(editRecipe.getKitchenId());
-			}
-		}		
-		
-		if (!found)
-			createRecipe();
-		return found;
-	}
 
 
 	
@@ -531,7 +564,7 @@ public class DataController {
 		return cdata.distances;
 	}
 
-	public List<Workgroup> getKitchens() {
+	public List<Kitchen> getKitchens() {
 		return cdata.kitchens;
 	}
 
@@ -539,7 +572,7 @@ public class DataController {
 		return cdata.loginInfo;
 	}
 
-	public Workgroup getCurrentKitchen() {
+	public Kitchen getCurrentKitchen() {
 		return cdata.currentKitchen;
 	}
 

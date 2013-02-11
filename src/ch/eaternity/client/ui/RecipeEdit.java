@@ -16,6 +16,8 @@ import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.IngredientAddedEventHandler;
+import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
@@ -153,8 +155,11 @@ public class RecipeEdit extends Composite {
 	private Listener listener;
 	private int selectedRow = 0;
 	private Recipe recipe;
-
+	private String recipeId;
+	
 	private int heightOfView;
+
+	
 	
 	public interface Listener {
 		void onItemSelected(IngredientSpecification item);
@@ -224,6 +229,14 @@ public class RecipeEdit extends Composite {
 					public void onEvent(LoginChangedEvent event) {
 						if (recipe != null)
 							updateLoginSpecificParameters();
+					}
+				});
+		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE,
+				new LoadedDataEventHandler() {
+					@Override
+					public void onLoadedData(LoadedDataEvent event) {
+						if (recipe == null)
+							loadRecipe(recipeId);
 					}
 				});
 	}
@@ -465,16 +478,14 @@ public class RecipeEdit extends Composite {
 		return saved;
 	}
 
+	public void setRecipeId(String id) {
+		this.recipeId = id;
+		if (dco.dataLoaded())
+			loadRecipe(id);
+	}
 
 	public void loadRecipe(String id) {
-		if (id.equals(null) || id == null || id.equals("new")) {
-			dco.createRecipe();
-		}
-		else {
-			if (!dco.setEditRecipe(Long.parseLong(id)));
-				Window.alert("Recipe with id " + id + " not found. New Recipe created.");
-		}
-		this.recipe = dco.getEditRecipe();
+		this.recipe = dco.setEditRecipe(id);
 		updateParameters();
 	}
 	

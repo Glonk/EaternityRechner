@@ -113,6 +113,10 @@ public class TopPanel extends Composite {
 							if (dco.getKitchens() != null)
 								kitchenRecipesButton.setVisible(true);			
 							userRecipesButton.setVisible(true);
+							if (event.loginInfo.isAdmin())
+								ingredientLink.setVisible(false);
+							else
+								ingredientLink.setVisible(true);
 							
 						} else {
 							// TODO sign out without reload of rechner...
@@ -122,18 +126,15 @@ public class TopPanel extends Composite {
 
 							kitchenRecipesButton.setVisible(false);			
 							userRecipesButton.setVisible(false);
+							ingredientLink.setVisible(false);
 						}
-						if (event.loginInfo.isAdmin())
-							ingredientLink.setVisible(true);
-						else
-							ingredientLink.setVisible(true);
 					}
 				});
 	}
 
 	@UiHandler("ingredientLink")
 	public void onIngredientLinkClicked(ClickEvent event) {
-		IngredientsDialog dlg = new IngredientsDialog();
+		IngredientsDialog dlg = new IngredientsDialog(presenter);
 		dlg.show();
 		dlg.center();
 	}

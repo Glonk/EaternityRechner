@@ -20,7 +20,7 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
-import ch.eaternity.shared.Workgroup;
+import ch.eaternity.shared.Kitchen;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -45,7 +45,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 
 	
-	public Long addKitchen(Workgroup kitchen) throws NotLoggedInException {
+	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
 //		checkLoggedIn();
 		UserService userService = UserServiceFactory.getUserService();
 		if(userService.getCurrentUser() == null){
@@ -60,7 +60,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				kitchen.setEmailAddressOwner(userService.getCurrentUser().getNickname());
 			}
 		}
-		kitchen.open = false;
 
 		return dao.saveKitchen(kitchen);
 //		ofy().put(kitchen);
@@ -68,32 +67,23 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 	}
 	
-	public Boolean approveKitchen(Long kitchenId, Boolean approve) throws NotLoggedInException {
-		checkLoggedIn();
-		DAO dao = new DAO();
-		Workgroup kitchen =  dao.getKitchen(kitchenId);
-		kitchen.open = approve;
-		kitchen.approvedOpen = approve;
-		dao.ofy().put(kitchen);
-		return true;
-	}
 	
 	public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		dao.ofy().delete(Workgroup.class,kitchenId);
+		dao.ofy().delete(Kitchen.class,kitchenId);
 		return true;
 	}
 	
-	public List<Workgroup> getYourKitchens() throws NotLoggedInException {
+	public List<Kitchen> getYourKitchens() throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
 		return dao.getYourKitchens(getUser());	
 	}
 	
-	public List<Workgroup> getAdminKitchens() throws NotLoggedInException{
+	public List<Kitchen> getAdminKitchens() throws NotLoggedInException{
 		UserService userService = UserServiceFactory.getUserService();
-		List<Workgroup> adminRecipes = new ArrayList<Workgroup>();
+		List<Kitchen> adminRecipes = new ArrayList<Kitchen>();
 		if(userService.getCurrentUser() != null){
 			if(userService.isUserAdmin()){
 				DAO dao = new DAO();
@@ -259,19 +249,17 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return dao.getAllIngredientsXml();
 	}
 
-	public Boolean setYourLastKitchen(Long lastKitchen) throws NotLoggedInException {
+	public Boolean setCurrentKitchen(Long lastKitchen) throws NotLoggedInException {
 		DAO dao = new DAO();
-		boolean tryIt = false;
 		try {
 			LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
-			loginInfo.setLastKitchen(lastKitchen);
-			loginInfo.setIsInKitchen(true);
+			if (!loginInfo.setCurrentKitchen(lastKitchen))
+				return false;
 			dao.ofy().put(loginInfo);
-			tryIt = true;
 		} catch (NotFoundException e) {
-			tryIt = false;
+			return false;
 		} 
-		return tryIt;
+		return true;
 	}
 	
 	
