@@ -6,14 +6,13 @@ import gwtupload.client.IUploader;
 import gwtupload.client.PreloadedImage;
 import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.AlertEvent;
+import ch.eaternity.client.events.AlertEventHandler;
 import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.IngredientAddedEventHandler;
 import ch.eaternity.client.events.LoadedDataEvent;
@@ -22,27 +21,22 @@ import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
-import ch.eaternity.client.events.UpdateRecipeViewEvent;
-import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.ConfirmDialog;
 import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
 import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
 import ch.eaternity.client.ui.widgets.IngredientWidget;
-
 import ch.eaternity.client.ui.widgets.UploadPhoto;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
-import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.comparators.ComparatorComparator;
-import ch.eaternity.shared.comparators.ComparatorObject;
-import ch.eaternity.shared.comparators.ComparatorRecipe;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.github.gwtbootstrap.client.ui.Alert;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -52,28 +46,24 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
-
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -90,6 +80,7 @@ public class RecipeEdit extends Composite {
 	@UiField AbsolutePanel dragArea;
 	
 	@UiField Close closeRecipe;
+	@UiField VerticalPanel alertPanel;
 	@UiField TextBox RezeptName;
 	@UiField TextBox rezeptDetails;
 	@UiField Label co2valueLabel;
@@ -156,9 +147,6 @@ public class RecipeEdit extends Composite {
 	private int selectedRow = 0;
 	private Recipe recipe;
 	private String recipeId;
-	
-	private int heightOfView;
-
 	
 	
 	public interface Listener {
@@ -235,8 +223,23 @@ public class RecipeEdit extends Composite {
 				new LoadedDataEventHandler() {
 					@Override
 					public void onLoadedData(LoadedDataEvent event) {
-						if (recipe == null)
-							loadRecipe(recipeId);
+						loadRecipe(recipeId);
+					}
+				});
+		presenter.getEventBus().addHandler(AlertEvent.TYPE,
+				new AlertEventHandler() {
+					@Override
+					public void onEvent(final AlertEvent event) {
+						if (event.destination == AlertEvent.Destination.EDIT) {
+							alertPanel.insert(event.alert,0);
+							Timer t = new Timer() {
+								public void run() {
+									event.alert.close();
+								}
+							};
+							if (event.timeDisplayed != null)
+								t.schedule(event.timeDisplayed);
+						}
 					}
 				});
 	}
@@ -274,7 +277,7 @@ public class RecipeEdit extends Composite {
 	    // Cooking instruction
 	    String cookingInstructions = recipe.getCookInstruction();
 	    if(dco.getLoginInfo() != null && !dco.getLoginInfo().isLoggedIn() || dco.getLoginInfo() == null){
-	    	cookingInstructions = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.\n\n" + cookingInstructions;
+	    	presenter.getEventBus().fireEvent(new AlertEvent("Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.", AlertType.INFO, AlertEvent.Destination.VIEW));
     	}
 		cookingInstr.setText(cookingInstructions);
 		
@@ -422,9 +425,10 @@ public class RecipeEdit extends Composite {
 		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
 	}
 	
-	@UiHandler("newRecipeButton")
-	public void onAddRecipeButtonPress(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeEditPlace("new"));
+	@UiHandler("generatePDFButton")
+	public void onGeneratePDFButtonClicked(ClickEvent event) {
+		presenter.getEventBus().fireEvent(new AlertEvent("This is a veeeery Long message which should be displayd in RecipeEdit and not in RecipeView", AlertType.ERROR, AlertEvent.Destination.EDIT));
+		
 	}
 	
 	@UiHandler("deleteButton") 
@@ -440,6 +444,10 @@ public class RecipeEdit extends Composite {
 		//TODO Statusmeldung
 	}
 
+	@UiHandler("newRecipeButton")
+	public void onAddRecipeButtonPress(ClickEvent event) {
+		presenter.goTo(new RechnerRecipeEditPlace("new"));
+	}
 
 	@UiHandler("recipeDate")
 	void onBlur(BlurEvent event)  {
@@ -480,6 +488,8 @@ public class RecipeEdit extends Composite {
 
 	public void setRecipeId(String id) {
 		this.recipeId = id;
+		
+		// if data is already loaded load recipe, otherwise wait for the LoadedDataEvent
 		if (dco.dataLoaded())
 			loadRecipe(id);
 	}

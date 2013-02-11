@@ -166,7 +166,7 @@ position:relative;
 </ui:style>
 
 <g:HTMLPanel>
-	<g:HorizontalPanel ui:field='alertPanel'></g:HorizontalPanel>
+	<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
 	<g:Button ui:field="addRecipeButton">neues Rezept</g:Button>
 	<g:FlexTable ui:field="recipeList"></g:FlexTable>
 	

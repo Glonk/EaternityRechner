@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.eaternity.client.events.AlertEvent;
 import ch.eaternity.client.events.CollectionsChangedEvent;
 import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.events.LocationChangedEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
@@ -22,6 +24,7 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Util.RecipeScope;
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
@@ -156,6 +159,7 @@ public class DataController {
 			}
 		});
 		eventBus.fireEvent(new UpdateRecipeViewEvent());
+		eventBus.fireEvent(new AlertEvent("Rezept gespeichert.", AlertType.INFO, AlertEvent.Destination.EDIT, 2000));
 	}
 	
 	public void deleteRecipe(final Recipe recipe) {
@@ -178,20 +182,10 @@ public class DataController {
 	/**
 	 * After call to this function, editRecipe is != null for sure
 	 * @param id
-	 * @return true if recipe with id was found and propperly loaded, false if new recipe was created
+	 * @return editRecipe with id was found and propperly loaded, false if new recipe was created
 	 */
 	public Recipe setEditRecipe(String idStr) {
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		if (idStr.equals(null) || idStr == null || idStr.equals("new")) {
 			createRecipe();
 		}
@@ -211,15 +205,15 @@ public class DataController {
 						found = true;
 						cdata.editRecipe = editRecipe;
 						changeKitchen(editRecipe.getKitchenId());
-					}
-					else
-						Window.alert("Recipe with id " + id + " not found. New Recipe created.");
+					}	
 				}
 			}
 			catch (NumberFormatException nfe) {}
 			
-			if (!found)
+			if (!found) {
 				createRecipe();
+				eventBus.fireEvent(new AlertEvent("Rezept mit ID " + idStr + " nicht gefunden. Neues Rezept erstellt.", AlertType.INFO, AlertEvent.Destination.EDIT, 10000));
+			}
 		}
 		return cdata.editRecipe;
 	}
@@ -234,12 +228,12 @@ public class DataController {
 			ingSpec.setWeight(weight);
 		//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
 		
-		if (cdata.editRecipe != null)
+		if (cdata.editRecipe != null) {
 			cdata.editRecipe.addIngredient(ingSpec);
+			eventBus.fireEvent(new IngredientAddedEvent(ingSpec));
+		}
 		else
 			Window.alert("Edit Recipe is null");
-
-		eventBus.fireEvent(new IngredientAddedEvent(ingSpec));
 	}
 	
 	// probably other place?
@@ -290,10 +284,53 @@ public class DataController {
 				handleError(error);
 			}
 			public void onSuccess(Boolean ignore) {
-				// display in information window: the recipe <name> was successfully approved. 
+				eventBus.fireEvent(new AlertEvent("Rezept veröffentlicht. Bitte Seite erneut laden um das Rezept in den öffentlichen Rezepten zu sehen.", AlertType.INFO, AlertEvent.Destination.EDIT)); 
 			}
 		});
 	}
+	// Select the KitchenRecipes
+	// Always call updateResults after for propper loading!
+	public void changeKitchenRecipes(Long id) {
+		cdata.currentKitchenRecipes.clear();
+		for(Recipe recipe : cdata.kitchenRecipes){
+			if(id.equals(recipe.getKitchenId()))
+			{
+				cdata.currentKitchenRecipes.add(recipe);
+			}
+		}
+		cdata.currentKitchen = cdata.getKitchenByID(id);
+	}
+	
+	/**
+	 * make sure you fetched all distances before!! otherwise not all ingredients will be updated
+	 * @param processedLocation
+	 */
+
+	public void changeCurrentLocation(String processedLocation) {
+		cdata.currentLocation = processedLocation;
+		
+		// Iterate over all IngredientSpecificatino of Kitchen Recipes or editRecipe
+		List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
+		if (cdata.currentKitchen != null ) {
+			for (Recipe recipe : cdata.currentKitchenRecipes)
+				ingSpecs.addAll(recipe.getIngredients());
+		}
+		else
+			ingSpecs.addAll(cdata.editRecipe.getIngredients());
+		
+		for (IngredientSpecification ingSpec : ingSpecs) {
+				ingSpec.setDistance(cdata.distances.getDistance(processedLocation, ingSpec.getExtraction().symbol));
+		}		
+			
+		// change stdExtraction of all Ingredients
+		for (Ingredient ing : cdata.ingredients) {
+			ing.getExtractions().add(0, ing.getStdExtraction()); 
+			ing.setStdExtraction(ing.getExtractions().get(0));
+		}
+		
+		eventBus.fireEvent(new LocationChangedEvent(cdata.currentLocation));
+	}
+	
 	
 	/*
 	 * 
@@ -393,51 +430,7 @@ public class DataController {
 		return searchRecipe(searchString, cdata.publicRecipes);
 	}
 	
-	
-	
-	
-	// Select the KitchenRecipes
-	// Always call updateResults after for propper loading!
-	public void changeKitchenRecipes(Long id) {
-		cdata.currentKitchenRecipes.clear();
-		for(Recipe recipe : cdata.kitchenRecipes){
-			if(id.equals(recipe.getKitchenId()))
-			{
-				cdata.currentKitchenRecipes.add(recipe);
-			}
-		}
-		cdata.currentKitchen = cdata.getKitchenByID(id);
-	}
-	
-	/**
-	 * make sure you fetched all distances before!! otherwise not all ingredients will be updated
-	 * @param processedLocation
-	 */
 
-	public void changeCurrentLocation(String processedLocation) {
-		cdata.currentLocation = processedLocation;
-		
-		// Iterate over all IngredientSpecificatino of Kitchen Recipes or editRecipe
-		List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
-		if (cdata.currentKitchen != null ) {
-			for (Recipe recipe : cdata.currentKitchenRecipes)
-				ingSpecs.addAll(recipe.getIngredients());
-		}
-		else
-			ingSpecs.addAll(cdata.editRecipe.getIngredients());
-		
-		for (IngredientSpecification ingSpec : ingSpecs) {
-				ingSpec.setDistance(cdata.distances.getDistance(processedLocation, ingSpec.getExtraction().symbol));
-		}		
-			
-		// change stdExtraction of all Ingredients
-		for (Ingredient ing : cdata.ingredients) {
-			ing.getExtractions().add(0, ing.getStdExtraction()); 
-			ing.setStdExtraction(ing.getExtractions().get(0));
-		}
-		
-		eventBus.fireEvent(new CollectionsChangedEvent());
-	}
 
 
 	

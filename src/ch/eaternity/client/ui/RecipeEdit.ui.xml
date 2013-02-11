@@ -263,7 +263,7 @@
 		
 		<g:AbsolutePanel ui:field="dragArea">
 			<g:VerticalPanel styleName='{style.rezeptDecoration}'>
-				
+				<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
 				<!-- Close Recipe Button -->
 				<g:HTMLPanel styleName='{style.floatRight}'>
 					<b:Close ui:field="closeRecipe" />
