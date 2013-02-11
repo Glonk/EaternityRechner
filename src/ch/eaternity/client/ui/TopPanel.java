@@ -13,15 +13,18 @@ import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.Util.RecipeScope;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
@@ -55,6 +58,8 @@ public class TopPanel extends Composite {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		bind();
+		RecipeScope recipeScope = dco.getRecipeScope();
+		colorRecipeScope(recipeScope);
 	}
 
 	public TopPanel() {
@@ -91,6 +96,16 @@ public class TopPanel extends Composite {
 
 	private void bind() {
 		// ---------------- Listen to the EventBus ----------------
+		presenter.getEventBus().addHandler(PlaceChangeEvent.TYPE,
+				new PlaceChangeEvent.Handler() {
+					@Override
+					public void onPlaceChange(PlaceChangeEvent event) {
+						if (event.getNewPlace() instanceof RechnerRecipeViewPlace) {
+							RecipeScope recipeScope = ((RechnerRecipeViewPlace)event.getNewPlace()).getRecipeScope();
+							colorRecipeScope(recipeScope);
+						}
+					}
+				});
 		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE,
 				new KitchenChangedEventHandler() {
 					@Override
@@ -131,6 +146,19 @@ public class TopPanel extends Composite {
 					}
 				});
 	}
+	
+	private void colorRecipeScope(RecipeScope recipeScope) {
+		userRecipesButton.setType(ButtonType.DEFAULT);
+		kitchenRecipesButton.setType(ButtonType.DEFAULT);
+		publicRecipesButton.setType(ButtonType.DEFAULT);
+		
+		switch (recipeScope) {
+			case USER: userRecipesButton.setType(ButtonType.PRIMARY); break;
+			case KITCHEN: kitchenRecipesButton.setType(ButtonType.PRIMARY);break;
+			case PUBLIC: publicRecipesButton.setType(ButtonType.PRIMARY);break;
+		}	
+	}
+	
 
 	@UiHandler("ingredientLink")
 	public void onIngredientLinkClicked(ClickEvent event) {

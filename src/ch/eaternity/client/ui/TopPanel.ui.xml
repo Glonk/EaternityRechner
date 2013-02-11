@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE ui:UiBinder 
   SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent"
 >
+
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:mail='urn:import:ch.eaternity.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:mail='urn:import:ch.eaternity.client'
+	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 
 	<ui:style>
@@ -44,9 +47,9 @@
 			<g:HorizontalPanel>
 				<g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
 				
-				<g:Button ui:field="userRecipesButton">Meine Rezepte</g:Button>
-				<g:Button ui:field="kitchenRecipesButton">Kuechen</g:Button>
-				<g:Button ui:field="publicRecipesButton">Offentliche Rezepte</g:Button>
+				<b:Button ui:field="userRecipesButton">Meine Rezepte</b:Button>
+				<b:Button ui:field="kitchenRecipesButton">Kuechen</b:Button>
+				<b:Button ui:field="publicRecipesButton">Offentliche Rezepte</b:Button>
 				
 				<g:HTML ui:field='calHTML' styleName="{style.inline}"><img src="calendar.png" height='24' /></g:HTML>
 				<g:ListBox ui:field="Monate" />

@@ -72,7 +72,7 @@ public class Recipe implements Serializable, Cloneable{
 	public Recipe() {
 		symbol = "Ihr Menu";
 		subTitle = "Menu Beschreibung";
-		cookInstruction = "Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.";
+		cookInstruction = "Zubereitung";
 		deleted = false;
 		open = false;
 		openRequested = false;

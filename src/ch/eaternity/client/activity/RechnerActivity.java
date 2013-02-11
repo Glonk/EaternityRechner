@@ -76,14 +76,12 @@ public class RechnerActivity extends AbstractActivity {
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
 		this.container = container;
 		
-		//  load the data (just once...)
+		// now load the data (just once...)
 		if (!dco.dataLoaded())
 			dco.loadData();
 	
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
-		// set presenter again (lost because of new place...
-		rechnerView.getTopPanel().setPresenter(this);
 		
 		if (place instanceof RechnerRecipeViewPlace) {
 			recipePanel.setWidget(recipeView);
@@ -100,6 +98,9 @@ public class RechnerActivity extends AbstractActivity {
 			searchPanel.setWidget(searchIngredients);
 		}
 		
+		// set presenter again (lost because of new place...
+		rechnerView.getTopPanel().setPresenter(this);
+		
 		container.setWidget(rechnerView);
 	}
 	
@@ -108,7 +109,7 @@ public class RechnerActivity extends AbstractActivity {
      */
     @Override
     public String mayStop() {
-    	if (place instanceof RechnerRecipeEditPlace && recipeEdit.hasChanged())
+    	if (place instanceof RechnerRecipeEditPlace && !recipeEdit.isSaved())
     		return "Rezept nocht nicht gespeichert. Trotzdem verlassen?";
         else
         	return null;

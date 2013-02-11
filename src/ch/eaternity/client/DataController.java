@@ -114,14 +114,8 @@ public class DataController {
 	private void setRecipeParameters(Recipe recipe) {
 		recipe.setCreateDate(new Date());
 		
-		if (cdata.currentKitchen != null) {
+		if (cdata.currentKitchen != null)
 			recipe.setKitchenId(cdata.currentKitchen.getId());
-			cdata.kitchenRecipes.add(recipe);
-			cdata.currentKitchenRecipes.add(recipe);
-		}
-		else {
-			cdata.userRecipes.add(recipe);
-		}
 		
 		if (cdata.loginInfo != null) {
 			recipe.setEmailAddressOwner(cdata.loginInfo.getEmailAddress());

@@ -253,6 +253,7 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void updateParameters() {
+		changeSaveStatus(false);
 		RezeptName.setText(recipe.getSymbol());
 		rezeptDetails.setText(recipe.getSubTitle());
 		amountPersons.setText(recipe.getPersons().toString());
@@ -277,7 +278,7 @@ public class RecipeEdit extends Composite {
 	    // Cooking instruction
 	    String cookingInstructions = recipe.getCookInstruction();
 	    if(dco.getLoginInfo() != null && !dco.getLoginInfo().isLoggedIn() || dco.getLoginInfo() == null){
-	    	presenter.getEventBus().fireEvent(new AlertEvent("Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.", AlertType.INFO, AlertEvent.Destination.VIEW));
+	    	presenter.getEventBus().fireEvent(new AlertEvent("Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.", AlertType.INFO, AlertEvent.Destination.EDIT));
     	}
 		cookingInstr.setText(cookingInstructions);
 		
@@ -299,7 +300,6 @@ public class RecipeEdit extends Composite {
 			
 			imageWidgetPanel.setVisible(true);
 			
-		    saveButton.setEnabled(true);
 			generatePDFButton.setEnabled(true);
 			publishButton.setEnabled(true);
 			duplicateButton.setEnabled(true);
@@ -321,6 +321,7 @@ public class RecipeEdit extends Composite {
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
 			recipe.setSymbol(RezeptName.getText());
+			changeSaveStatus(false);
 		}
 	}
 	
@@ -328,6 +329,7 @@ public class RecipeEdit extends Composite {
 	void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
 			recipe.setCookInstruction(cookingInstr.getText());
+			changeSaveStatus(false);
 		}
 	}
 
@@ -335,6 +337,7 @@ public class RecipeEdit extends Composite {
 	void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
 			recipe.setSubTitle(rezeptDetails.getText());
+			changeSaveStatus(false);
 		}
 	}
 
@@ -399,6 +402,7 @@ public class RecipeEdit extends Composite {
 				persons = Long.parseLong(amountPersons.getText().trim());
 				if(persons > 0){
 					recipe.setPersons(persons);
+					changeSaveStatus(false);
 				} else {
 //					amountPersons.setText("1");
 				}
@@ -416,8 +420,7 @@ public class RecipeEdit extends Composite {
 	@UiHandler("saveButton")
 	public void onSaveClicked(ClickEvent event) {
 		dco.saveRecipe(recipe);
-		saved = true;
-		//TODO Statusmeldung
+		changeSaveStatus(true);
 	}
 	
 	@UiHandler("closeRecipe")
@@ -434,14 +437,14 @@ public class RecipeEdit extends Composite {
 	@UiHandler("deleteButton") 
 	public void onDeleteClicked(ClickEvent event) {
 		saved = true;
-		dco.deleteRecipe(recipe);
+		if (dco.getLoginInfo().isLoggedIn())
+			dco.deleteRecipe(recipe);
 		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
 	}
 	
 	@UiHandler("publishButton")
 	public void onPublishClicked(ClickEvent event) {
 		dco.approveRecipe(recipe, true);
-		//TODO Statusmeldung
 	}
 
 	@UiHandler("newRecipeButton")
@@ -452,9 +455,10 @@ public class RecipeEdit extends Composite {
 	@UiHandler("recipeDate")
 	void onBlur(BlurEvent event)  {
 		Date date = getDate();
-		if (date != null)
+		if (date != null) {
 			dco.getEditRecipe().setCookingDate(date);
-		 	saved = false;
+			changeSaveStatus(false);
+		}
 	}
 	
 	private Date getDate() {
@@ -482,8 +486,13 @@ public class RecipeEdit extends Composite {
 	/**
 	 * @return true if recipe has changed since last save, false otherwise
 	 */
-	public boolean hasChanged() {
+	public boolean isSaved() {
 		return saved;
+	}
+	
+	private void changeSaveStatus(boolean saved) {
+		this.saved = saved;
+		saveButton.setEnabled(!saved);
 	}
 
 	public void setRecipeId(String id) {
@@ -495,6 +504,7 @@ public class RecipeEdit extends Composite {
 	}
 
 	public void loadRecipe(String id) {
+		
 		this.recipe = dco.setEditRecipe(id);
 		updateParameters();
 	}
@@ -649,7 +659,7 @@ public class RecipeEdit extends Composite {
 					recipe.getComments().add(recipeComment);
 				}	
 			}
-			saved = false;
+			changeSaveStatus(false);
 		}
 		
 		public void setAmountBox(int thisRow, int amount) {
@@ -673,7 +683,8 @@ public class RecipeEdit extends Composite {
 	
 	public void selectRow(int row) {
 
-		saved = false;
+		// maybee into dialog?
+		changeSaveStatus(false);
 
 		if (selectedRow != -1 && infoDialogIsOpen) {
 
@@ -783,7 +794,7 @@ public class RecipeEdit extends Composite {
 
 
 	public void closeRecipeEdit() {
-		if (!saved) {
+		if (!saved && dco.getLoginInfo().isLoggedIn()) {
 			String saveText = recipe.getSymbol() + " ist noch nicht gespeichert!";
 			final ConfirmDialog dlg = new ConfirmDialog(saveText);
 			dlg.statusLabel.setText("Speichern?");
