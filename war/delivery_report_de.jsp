@@ -22,9 +22,6 @@
 <%@ page import="java.text.DecimalFormat" %>
 
 
-
-
-
 <html>
 <head>
 
@@ -36,19 +33,22 @@
 <%
 // get request parameters
 
+Locale locale = Locale.GERMAN
+
 String BASEURL = request.getRequestURL().toString();
 String tempIds = request.getParameter("ids");
 String permanentId = request.getParameter("pid");
 String kitchenId = request.getParameter("kid");
 String pdf = request.getParameter("pdf");
 
+StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf,locale);
 
 // ------------------------ Define Categories Here ------------------------
 
-CatRyzer catryzer = new CatRyzer();
+CatRyzer catryzer = new CatRyzer(kitchenRecipes,locale);
+
 List<CatRyzer.CatFormula>  categoryFormulas = new ArrayList<CatRyzer.CatFormula>();
 
-//CatFormula(String category, String formula, boolean isHeading)
 categoryFormulas.add(catryzer.new CatFormula("<strong>Pflanzliche Produkte</strong>","rice,spices&herbs,sweets,oil and fat,-animal-based,-animal based,legumes,fruits,mushrooms,preprocessed,grain,nuts,seeds",true));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Reisprodukte","rice"));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Gewürze & Kräuter","spices&herbs"));
@@ -79,7 +79,13 @@ categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (auf Fruchtb
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (auf Milchbasis)","milk"));
 categoryFormulas.add(catryzer.new CatFormula("&nbsp;&nbsp;Getränke (weitere)","beverage,-alcohol,-fruitjuice,-milk"));
 
-StaticPageService variables = new StaticPageService(BASEURL,tempIds,permanentId,kitchenId,pdf,categoryFormulas,Locale.GERMAN);
+catryzer.setCatFormulas(categoryFormulas);
+catryzer.categoryze();
+
+List<CatRyzer.DateValue> valuesByDate = catryzer.getDateValues();
+List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
+List<CatRyzer.CategoryValue> valuesByIngredient = catryzer.getIngVals();
+List<CatRyzer.CategoryValuesByDates> valuesByDate_Category = catryzer.getCatValsByDates(); 
 
 int counter = 0;
 int counterIterate = 0;
@@ -211,12 +217,15 @@ else { %>
 
 <%
 for(Recipe recipe: variables.kitchenRecipes){
+	values.add(recipe.getCO2Value());
+}
+for(Recipe recipe: variables.kitchenRecipes){
 
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value()  ;
+	Double recipeValue = recipe.getCO2Value();
 	
 	String clear = Converter.toString(recipe.getId(),34);
-	String length = variables.getNormalisedLength(recipeValue);
+	String length = variables.getNormalisedLength(recipeValue, values);
 	String recipeValueFormatted = co2_formatter.format(recipeValue/1000);
 	%>
 			
@@ -400,7 +409,7 @@ for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 %>
 
 <tr <%
-int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
+int order = (variables.valuesByIngredient.indexOf(ingredientValue) - counterIterate ) % 2; 
 if(order == 1) { %>
 class="alternate"
 <% }%> > 

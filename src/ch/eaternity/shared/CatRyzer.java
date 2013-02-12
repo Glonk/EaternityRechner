@@ -302,19 +302,6 @@ public class CatRyzer {
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
 			
-			// fill Ingredients Mulimap for worst Ingredient beast top 10 
-			for (IngredientSpecification ingSpec : ingSpecs) {
-				if (locale.equals(Locale.ENGLISH))
-					ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
-				else if (locale.equals(Locale.GERMAN))
-					ingMultiMap.put(ingSpec.getName(), ingSpec);
-			}
-			
-			for (String name : ingMultiMap.keySet()) {
-				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
-				ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getWeight(ingCollection), getCost(ingCollection)));
-			}
-			
 			// sort CategoryValue by co2-value
 			Collections.sort(ingredientValues,new CategoryValuesComparator());
 		
@@ -337,6 +324,19 @@ public class CatRyzer {
 	}
 	
 	public List<CategoryValue> getIngVals() {
+		// fill Ingredients Mulimap for worst Ingredient beast top 10 
+		for (IngredientSpecification ingSpec : ingSpecs) {
+			if (locale.equals(Locale.ENGLISH))
+				ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
+			else if (locale.equals(Locale.GERMAN))
+				ingMultiMap.put(ingSpec.getName(), ingSpec);
+		}
+		
+		for (String name : ingMultiMap.keySet()) {
+			Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
+			ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getWeight(ingCollection), getCost(ingCollection)));
+		}
+		
 		return this.ingredientValues;	
 	}
 
