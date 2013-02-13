@@ -147,6 +147,11 @@ public class StaticPageService {
 		return html;
 	}
 	
+	public String getCo2ValueBarSimple(Collection<Double> allValues, Double value, int totalLength) {
+		String html = "<div class=\"co2bar\" style=\"background-color:green; width: " + totalLength/getMax(allValues)*value + "px;\">&nbsp;</div>";
+		return html;
+	}
+	
 	
 	// just for testing
 	public double getMax(Collection<Double> values) {

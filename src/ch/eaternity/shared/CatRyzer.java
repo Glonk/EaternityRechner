@@ -318,11 +318,6 @@ public class CatRyzer {
 		return this.dateValues;
 	}
 	
-	public List<IngredientSpecification> getIngValsByRecipe(Recipe recipe) {
-		List<IngredientSpecification> ingSpecs = recipe.getZutaten();
-		
-	}
-	
 	public List<CategoryValue> getIngVals() {
 		// fill Ingredients Mulimap for worst Ingredient beast top 10 
 		for (IngredientSpecification ingSpec : ingSpecs) {
@@ -348,6 +343,18 @@ public class CatRyzer {
 		return getCo2Value(ingSpecs);
 	}
 	
+	public Co2Value getCo2Value(Collection<IngredientSpecification> ingsSpecs) {
+		Co2Value co2value = new Co2Value(0.0,0.0,0.0,0.0,0.0);
+		for (IngredientSpecification ingSpec : ingsSpecs) {
+			co2value.condQuota = co2value.condQuota + ingSpec.getConditionQuota();
+			co2value.transQuota = co2value.transQuota + ingSpec.getTransportationQuota();
+			co2value.prodQuota = co2value.prodQuota + ingSpec.getProductionQuota();
+			co2value.noFactorsQuota = co2value.noFactorsQuota + ingSpec.calculateCo2ValueNoFactors();
+			co2value.totalValue = co2value.totalValue + ingSpec.getCalculatedCO2Value();
+		}
+		return co2value;
+	}
+	
 	// return total weight in grams
 	public Double getTotalWeight() {
 		return getWeight(ingSpecs);
@@ -358,9 +365,29 @@ public class CatRyzer {
 		return getCost(ingSpecs);
 	}
 	
+	public Double getWeight(Collection<IngredientSpecification> ingredientsSpecifications) {
+		Double amount = 0.0;
+		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
+			amount = amount + ingredientSpecification.getMengeGramm();
+		}
+		return amount;
+	}
+	
+	public Double getCost(Collection<IngredientSpecification> ingredientsSpecifications) {
+		Double cost = 0.0;
+		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
+			cost = cost + ingredientSpecification.getCost();
+		}
+		return cost;
+	}
+	
+	public Pair<Double, Double> getTotalSeasonQuotient(Collection<IngredientSpecification> ingsSpecs) {
+		return getSeasonQuotient(ingSpecs);
+	}
+	
 	// how many of the vegetables and fruits are seasonal, fresh from switzerland
 	// lies between zero and one
-	public Pair<Double, Double> getSeasonQuotient() {
+	public Pair<Double, Double> getSeasonQuotient(Collection<IngredientSpecification> ingSpecs) {
 		Integer numFruitsAndVegetables = 0;
 		Integer numAreSeasonal = 0;
 		Double seasonalWeight = 0.0;
@@ -416,33 +443,8 @@ public class CatRyzer {
 		}
 	}
 	
-	private Co2Value getCo2Value(Collection<IngredientSpecification> ingsSpecs) {
-		Co2Value co2value = new Co2Value(0.0,0.0,0.0,0.0,0.0);
-		for (IngredientSpecification ingSpec : ingsSpecs) {
-			co2value.condQuota = co2value.condQuota + ingSpec.getConditionQuota();
-			co2value.transQuota = co2value.transQuota + ingSpec.getTransportationQuota();
-			co2value.prodQuota = co2value.prodQuota + ingSpec.getProductionQuota();
-			co2value.noFactorsQuota = co2value.noFactorsQuota + ingSpec.calculateCo2ValueNoFactors();
-			co2value.totalValue = co2value.totalValue + ingSpec.getCalculatedCO2Value();
-		}
-		return co2value;
-	}
 	
-	private Double getWeight(Collection<IngredientSpecification> ingredientsSpecifications) {
-		Double amount = 0.0;
-		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
-			amount = amount + ingredientSpecification.getMengeGramm();
-		}
-		return amount;
-	}
-	
-	private Double getCost(Collection<IngredientSpecification> ingredientsSpecifications) {
-		Double cost = 0.0;
-		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
-			cost = cost + ingredientSpecification.getCost();
-		}
-		return cost;
-	}
+
 	
 	
 	public Set<String> getIngredientsNames_de(Collection<IngredientSpecification> ingSpecs){

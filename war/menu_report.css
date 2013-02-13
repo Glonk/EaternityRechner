@@ -27,6 +27,10 @@ h1 {
   width: 20em;
   margin-top: 1em;
 }
+.co2bar {
+	height: 0.688em;
+	
+}
 
 h2 { 
   page-break-after: avoid;
