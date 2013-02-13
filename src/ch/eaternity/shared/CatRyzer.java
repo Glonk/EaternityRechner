@@ -301,11 +301,6 @@ public class CatRyzer {
 				}
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
-			
-			// sort CategoryValue by co2-value
-			Collections.sort(ingredientValues,new CategoryValuesComparator());
-		
-			
 		}
 		else
 			throw new IllegalStateException("Object not initialized");
@@ -323,6 +318,11 @@ public class CatRyzer {
 		return this.dateValues;
 	}
 	
+	public List<IngredientSpecification> getIngValsByRecipe(Recipe recipe) {
+		List<IngredientSpecification> ingSpecs = recipe.getZutaten();
+		
+	}
+	
 	public List<CategoryValue> getIngVals() {
 		// fill Ingredients Mulimap for worst Ingredient beast top 10 
 		for (IngredientSpecification ingSpec : ingSpecs) {
@@ -336,6 +336,9 @@ public class CatRyzer {
 			Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
 			ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getWeight(ingCollection), getCost(ingCollection)));
 		}
+		
+		// sort CategoryValue by co2-value
+		Collections.sort(ingredientValues,new CategoryValuesComparator());
 		
 		return this.ingredientValues;	
 	}

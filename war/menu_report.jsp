@@ -835,7 +835,7 @@ for(Recipe recipe: vars.recipes){
 	<%
 }
 
-// -------------------------------- Top 20 intensive Ingredients --------------------------- 
+// -------------------------------- Top 3 intensive Ingredients --------------------------- 
  %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
