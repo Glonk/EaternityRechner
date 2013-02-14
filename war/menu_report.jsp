@@ -982,12 +982,14 @@ for(Recipe recipe: vars.recipes){
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + extra;
 	
-	// normalise recipeValue to amount of persons passed by parameter
-	recipeValue = recipeValue/recipe.getPersons()*persons;
 	
 	if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
 	
 		String formatted = formatter.format( recipeValue );
+		
+		// normalise recipeValue to amount of persons passed by parameter
+		recipeValue = recipeValue/recipe.getPersons()*persons;
+		
 		%>
 		
 		<table cellspacing="0" cellpadding="0" class="table listTable" >
@@ -1101,13 +1103,15 @@ String code = Converter.toString(compute,34);
 			recipe.setCO2Value();
 			Double recipeValue = recipe.getCO2Value() + extra;
 			
-			// normalise recipeValue to amount of persons passed by parameter
-			recipeValue = recipeValue/recipe.getPersons()*persons;
+
 			
 			if(recipeValue >= threshold){
 			
 
 			String formatted = formatter.format(recipeValue );
+			
+			// normalise recipeValue to amount of persons passed by parameter
+			recipeValue = recipeValue/recipe.getPersons()*persons;
 			%>
 			
 			<table cellspacing="0" cellpadding="0" class="table listTable" >
