@@ -136,14 +136,14 @@ public class StaticPageService {
 		String html = "";
 		
 		if (value.noFactorsQuota > 0.0) 
-			html = html + "<div class=\"co2bar\" style=\"background-color:blue; float:left; width: " + totalLength/getMax(allValues)*value.noFactorsQuota + "px;\">&nbsp;</div>";
+			html = html + "<img class='bar' src='gray.png' alt='gray' height='11'  width=" + totalLength/getMax(allValues)*value.noFactorsQuota + " />";
 		if (value.transQuota > 0.0) 
-			html = html + "<div class=\"co2bar\" style=\"background-color:green; float:left; width: " + totalLength/getMax(allValues)*value.transQuota + "px;\">&nbsp;</div>";
+			html = html + "<img class='bar' src='orange.png' alt='orange' height='11'  width=" + totalLength/getMax(allValues)*value.transQuota + " />";
 		if (value.condQuota > 0.0) 
-			html = html + "<div class=\"co2bar\" style=\"background-color:yellow; float:left; width: " + totalLength/getMax(allValues)*value.condQuota + "px;\">&nbsp;</div>";
+			html = html + "<img class='bar' src='green.png' alt='green' height='11'  width=" + totalLength/getMax(allValues)*value.condQuota + " />";
 		if (value.prodQuota > 0.0) 
-			html = html + "<div class=\"co2bar\" style=\"background-color:red; float:left; width: " + totalLength/getMax(allValues)*value.prodQuota + "px;\">&nbsp;</div>";
-		html = html + "<div style=\"clear:both;\"";
+			html = html + "<img class='bar' src='light-gray.png' alt='light-gray' height='11'  width=" + totalLength/getMax(allValues)*value.prodQuota + " />";
+
 		return html;
 	}
 	
