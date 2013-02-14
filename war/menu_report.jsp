@@ -158,6 +158,9 @@
     size: A4 landscape
 }
 
+h3 {
+	font-size: 24pt;
+}
 
 </style>
 
@@ -862,7 +865,7 @@ for(Recipe recipe: vars.recipes){
 	</tr>
 	
 	<tr>
-	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten</td>
+	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
 	<td class="left-border"></td>
 	<td class="co2value" ></td>
 	<td ></td>
@@ -1072,7 +1075,7 @@ for(Recipe recipe: vars.recipes){
 	</tr>
 	
 	<tr>
-	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten</td>
+	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
 	<td class="left-border"></td>
 	<td class="co2value" ></td>
 	<td ></td>
@@ -1289,7 +1292,7 @@ String code = Converter.toString(compute,34);
 	</tr>
 	
 	<tr>
-	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten</td>
+	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
 	<td class="left-border"></td>
 	<td class="co2value" ></td>
 	<td ></td>
