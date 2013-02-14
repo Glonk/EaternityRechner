@@ -52,24 +52,33 @@
 	int co2BarLength = 180;
 	int barOffset = 45;
 
-	// parse request parameters
-	String pdf = request.getParameter("pdf");
-	Boolean doPdf = false;
-	if(pdf != null){
-		doPdf = true;
+	try {
+		// parse request parameters
+		String pdf = request.getParameter("pdf");
+		Boolean doPdf = false;
+		if(pdf != null){
+			doPdf = true;
+		}
+		
+		String thresholdString = request.getParameter("median");
+		Integer threshold = 1550;
+		if(thresholdString != null){
+			threshold = Integer.valueOf(thresholdString);
+		} 
+		
+		String extraString = request.getParameter("extra");
+		Integer extra = 0;
+		if(extraString != null){
+			extra = Integer.valueOf(extraString);
+		}
+		
+		String personString = request.getParameter("persons");
+		Integer persons = 4;
+		if(personString != null){
+			extra = Integer.valueOf(personString);
+		}
 	}
-	
-	String thresholdString = request.getParameter("median");
-	Integer threshold = 1550;
-	if(thresholdString != null){
-		threshold = Integer.valueOf(thresholdString);
-	} 
-	
-	String extraString = request.getParameter("extra");
-	Integer extra = 0;
-	if(extraString != null){
-		extra = Integer.valueOf(extraString);
-	}
+	catch (NumerFormatException nfe) {}
 
 	Double third = (double)threshold / 3;
 	Double half = (double)threshold / 2;
