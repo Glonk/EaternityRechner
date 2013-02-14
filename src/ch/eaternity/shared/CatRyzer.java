@@ -29,7 +29,6 @@ public class CatRyzer {
 		public String category;
 		public List<String> hastags = new ArrayList<String>();
 		public List<String> hasnotthistags  = new ArrayList<String>();
-		
 		public CatMapping() {}
 	}
 	

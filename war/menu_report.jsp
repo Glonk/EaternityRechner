@@ -28,7 +28,7 @@
 <%@ page import="java.io.BufferedReader" %>
 <%@ page import="java.io.InputStreamReader" %>
 <%@ page import="java.io.IOException" %>
-
+<%@ page import="java.lang.NumberFormatException" %>
 
 
 <html>
@@ -52,33 +52,34 @@
 	int co2BarLength = 180;
 	int barOffset = 45;
 
+	Boolean doPdf = false;
+	Integer threshold = 1550;
+	Integer extra = 0;
+	Integer persons = 4;
+	
+	// parse request parameters
 	try {
-		// parse request parameters
 		String pdf = request.getParameter("pdf");
-		Boolean doPdf = false;
 		if(pdf != null){
 			doPdf = true;
 		}
 		
 		String thresholdString = request.getParameter("median");
-		Integer threshold = 1550;
 		if(thresholdString != null){
 			threshold = Integer.valueOf(thresholdString);
 		} 
 		
 		String extraString = request.getParameter("extra");
-		Integer extra = 0;
 		if(extraString != null){
 			extra = Integer.valueOf(extraString);
 		}
 		
 		String personString = request.getParameter("persons");
-		Integer persons = 4;
 		if(personString != null){
 			extra = Integer.valueOf(personString);
 		}
 	}
-	catch (NumerFormatException nfe) {}
+	catch (NumberFormatException nfe) {}
 
 	Double third = (double)threshold / 3;
 	Double half = (double)threshold / 2;
@@ -615,7 +616,6 @@ for(Recipe recipe: vars.recipes){
 	String length = formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
 
 	String formatted = formatter.format( recipeValue);
-	String persons = Long.toString(recipe.getPersons());
 	
 	String moreOrLess = "";
 	String percent ="";
@@ -770,183 +770,177 @@ for(Recipe recipe: vars.recipes){
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + extra;
 	if(recipeValue < climateFriendlyValue){
-	
-	
-	String formatted = formatter.format( recipeValue );
-	String persons = Long.toString(recipe.getPersons());
-	
-	
-	%>
-	
-	<table cellspacing="0" cellpadding="0" class="table listTable" >
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	<tr>
-	<td class="bottom-border">
-	<img class="smile" src="smiley8.png" alt="smiley" />
-	<img class="smile" src="smiley8.png" alt="smiley" />
-	<h3><%= recipe.getSymbol() %></h3>
-	</td>
-	<td class="left-border"></td>
-	</tr>
 
-	<tr>
-	<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-	<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
-	</tr>
-	
-	<tr>
-	<td>
-	
-	<span class="subTitle"><%= recipe.getSubTitle() %></span>
-	
-	<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
-
-	
-	<%	
-	counter = 0;
-	for(IngredientSpecification ingredient: recipe.Zutaten){
-		counter = counter + 1;
-	
-		%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %>
-			( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
-		</span><%
-	}
-	%>
-	</td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
-	
-	<%	
-	if(recipe.comments != null){
-		for(RecipeComment comment: recipe.comments){
-	
+		
+		String formatted = formatter.format( recipeValue );
+		
+		// normalise recipeValue to amount of persons passed by parameter
+		recipeValue = recipeValue/recipe.getPersons()*persons;
+		
 		%>
+		
+		<table cellspacing="0" cellpadding="0" class="table listTable" >
 		<tr>
-		<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-		<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+		<td></td>
+		<td class="left-border"><br></td>
 		</tr>
-	
-		<%
-		}
-	}
-	%>
-	
-	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
-	</tr>
-	
+		
+		<tr>
+		<td class="bottom-border">
+		<img class="smile" src="smiley8.png" alt="smiley" />
+		<img class="smile" src="smiley8.png" alt="smiley" />
+		<h3><%= recipe.getSymbol() %></h3>
 
-	</table>
-	<%
-
-
-
-	// -------------------------------- Top 3 intensive Ingredients --------------------------- 
-	 %>
-	
-	<table cellspacing="0" cellpadding="0" class="table toc" >
-	
-	<tr>
-	<td></td>
-	<td class="gray left-border"></td>
-	<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
-	<td></td>
-	</tr>
-	
-	<tr>
-	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
-	<td class="left-border"></td>
-	<td class="co2value" ></td>
-	<td ></td>
-	</tr>
-	
-	
-	<%
-	counterIterate = 0;
-	
-	List<IngredientSpecification> ingredients = recipe.getZutaten();
-	Collections.sort(ingredients, new IngredientValueComparator());
-
-	
-	List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
-	
-	for(IngredientSpecification ingSpec : ingTop3){
-		values.add(ingSpec.getCalculatedCO2Value());
-	}
-	
-	
-	for(IngredientSpecification ingSpec : ingTop3){ %>
-	
-		<tr <%
-		int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
-		if(order == 1) { %>
-		class="alternate"
-		<% }%> > 
-		<td class="menu-name">
-		<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()%> g)  (<%= cost_formatter.format(ingSpec.getCost()) %> CHF)
 		</td>
-		<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value(), co2BarLength) %></td>
-		<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()) %></td>
-	
+		<td class="left-border"></td>
 		</tr>
 	
-	<%}%>
-	</table>
+		<tr>
+		<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+		<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
+		</tr>
+		
+		<tr>
+		<td>
+		
+		<span class="subTitle"><%= recipe.getSubTitle() %></span>
+		
+		<span style="color:gray;">Zutaten für <%= persons.toString() %> Personen:</span><br />
+	
+		
+		<%	
+		counter = 0;
+		for(IngredientSpecification ingredient: recipe.Zutaten){
+			counter = counter + 1;
+		
+			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm()/recipe.getPersons()*persons %> g <%= ingredient.getName() %>
+				( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+			</span><%
+		}
+		%>
+		</td>
+		<td class="left-border"><br></td>
+		</tr>
+		
+		<tr>
+		<td></td>
+		<td class="left-border"><br></td>
+		</tr>
+		
+		
+		<%	
+		if(recipe.comments != null){
+			for(RecipeComment comment: recipe.comments){
+		
+			%>
+			<tr>
+			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
+			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+			</tr>
+		
+			<%
+			}
+		}
+		%>
+		
+		<tr>
+		<td></td>
+		<td class="left-border"><br></td>
+		</tr>
+		
+	
+		</table>
+		<%
 	
 	
 	
-
-
-
-	<!-- -------------- Total Values ---------------- -->
-	<% 
-	Pair<Double, Double> seasonQuotients;
-	seasonQuotients = catryzer.getSeasonQuotient(recipe.getZutaten());
-	%>
+		// -------------------------------- Top 3 intensive Ingredients --------------------------- 
+		 %>
+		
+		<table cellspacing="0" cellpadding="0" class="table toc" >
+		
+		<tr>
+		<td></td>
+		<td class="gray left-border"></td>
+		<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+		<td></td>
+		</tr>
+		
+		<tr>
+		<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
+		<td class="left-border"></td>
+		<td class="co2value" ></td>
+		<td ></td>
+		</tr>
+		
+		
+		<%
+		counterIterate = 0;
+		
+		List<IngredientSpecification> ingredients = recipe.getZutaten();
+		Collections.sort(ingredients, new IngredientValueComparator());
 	
-	<table cellspacing="0" cellpadding="0" class="table toc" >
-		<tr>
-			<td>Total C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).totalValue) %></td>
-		</tr>
-		<tr>
-			<td style="color:blue;">Without Factors [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).noFactorsQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:green;">Transportation C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).transQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:yellow;">Condition C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).condQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:red;">Production C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).prodQuota) %></td>
-		</tr>
-		<tr>
-			<td>Total Weight [g]:</td>
-			<td><%= weight_formatter.format( catryzer.getWeight(recipe.getZutaten())) %></td>
-		</tr>
-		<tr>
-			<td>Total Cost [CHF]:</td>
-			<td><%= cost_formatter.format( catryzer.getCost(recipe.getZutaten())) %></td>
-		</tr>
-			
-	</table>
-
+		
+		List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
+		
+		for(IngredientSpecification ingSpec : ingTop3){
+			values.add(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons);
+		}
+		
+		
+		for(IngredientSpecification ingSpec : ingTop3){ %>
+		
+			<tr <%
+			int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
+			if(order == 1) { %>
+			class="alternate"
+			<% }%> > 
+			<td class="menu-name">
+			<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
+			</td>
+			<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons, co2BarLength) %></td>
+			<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons) %></td>
+		
+			</tr>
+		
+		<%}%>
+		</table>
+	
+	
+		<!-- -------------- Total Values ---------------- -->
+		<% 
+		Pair<Double, Double> seasonQuotients;
+		seasonQuotients = catryzer.getSeasonQuotient(recipe.getZutaten());
+		%>
+		
+		<table cellspacing="0" cellpadding="0" class="table toc" >
+			<tr>
+				<td>CO2 Rohwert ohne Anteile [g CO<sub>2</sub>]:</td>
+				<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).noFactorsQuota/recipe.getPersons()*persons) %></td>
+			</tr>
+			<tr>
+				<td >Anteil Transport [g CO<sub>2</sub>]:</td>
+				<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).transQuota/recipe.getPersons()*persons) %></td>
+			</tr>
+			<tr>
+				<td >Anteil Zustand [g CO<sub>2</sub>]:</td>
+				<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).condQuota/recipe.getPersons()*persons) %></td>
+			</tr>
+			<tr>
+				<td >Anteil Herstellung [g CO<sub>2</sub>]:</td>
+				<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).prodQuota/recipe.getPersons()*persons) %></td>
+			</tr>
+			<tr>
+				<td>Gewicht [g]:</td>
+				<td><%= weight_formatter.format( catryzer.getWeight(recipe.getZutaten())/recipe.getPersons()*persons) %></td>
+			</tr>
+			<% if (catryzer.getCost(recipe.getZutaten()) > 0) { %>
+			<tr>
+				<td>Kosten [CHF]:</td>
+				<td><%= cost_formatter.format( catryzer.getCost(recipe.getZutaten())/recipe.getPersons()*persons) %></td>
+			</tr>
+			<% } %>
+		</table>
 	<%}%>
 <%}%>
 
@@ -987,10 +981,13 @@ for(Recipe recipe: vars.recipes){
 	
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + extra;
+	
+	// normalise recipeValue to amount of persons passed by parameter
+	recipeValue = recipeValue/recipe.getPersons()*persons;
+	
 	if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
 	
 		String formatted = formatter.format( recipeValue );
-		String persons = Long.toString(recipe.getPersons());
 		%>
 		
 		<table cellspacing="0" cellpadding="0" class="table listTable" >
@@ -1017,15 +1014,15 @@ for(Recipe recipe: vars.recipes){
 		
 		<span class="subTitle"><%= recipe.getSubTitle() %></span>
 		
-		<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+		<span style="color:gray;">Zutaten für <%= persons.toString() %> Personen:</span><br />
 		
 		<%	
 		counter = 0;
 		for(IngredientSpecification ingredient: recipe.Zutaten){
 			counter = counter + 1;
 		
-			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %>
-			( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm()/recipe.getPersons()*persons %> g <%= ingredient.getName() %>
+				( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 			</span><%
 		}
 		%>
@@ -1057,108 +1054,9 @@ for(Recipe recipe: vars.recipes){
 		<td class="left-border"><br></td>
 		</tr>
 		</table>
-		
-			<%
 
-
-
-	// -------------------------------- Top 3 intensive Ingredients --------------------------- 
-	 %>
-	
-	<table cellspacing="0" cellpadding="0" class="table toc" >
-	
-	<tr>
-	<td></td>
-	<td class="gray left-border"></td>
-	<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
-	<td></td>
-	</tr>
-	
-	<tr>
-	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
-	<td class="left-border"></td>
-	<td class="co2value" ></td>
-	<td ></td>
-	</tr>
-	
-	
-	<%
-	counterIterate = 0;
-	
-	List<IngredientSpecification> ingredients = recipe.getZutaten();
-	Collections.sort(ingredients, new IngredientValueComparator());
-
-	
-	List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
-	
-	for(IngredientSpecification ingSpec : ingTop3){
-		values.add(ingSpec.getCalculatedCO2Value());
-	}
-	
-	
-	for(IngredientSpecification ingSpec : ingTop3){ %>
-	
-		<tr <%
-		int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
-		if(order == 1) { %>
-		class="alternate"
-		<% }%> > 
-		<td class="menu-name">
-		<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()%> g)  (<%= cost_formatter.format(ingSpec.getCost()) %> CHF)
-		</td>
-		<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value(), co2BarLength) %></td>
-		<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()) %></td>
-	
-		</tr>
-	
-	<%}%>
-	</table>
-	
-	
-	
-
-
-
-	<!-- -------------- Total Values ---------------- -->
-	<% 
-	Pair<Double, Double> seasonQuotients;
-	seasonQuotients = catryzer.getSeasonQuotient(recipe.getZutaten());
-	%>
-	
-	<table cellspacing="0" cellpadding="0" class="table toc" >
-		<tr>
-			<td>Total C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).totalValue) %></td>
-		</tr>
-		<tr>
-			<td style="color:blue;">Without Factors [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).noFactorsQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:green;">Transportation C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).transQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:yellow;">Condition C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).condQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:red;">Production C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).prodQuota) %></td>
-		</tr>
-		<tr>
-			<td>Total Weight [g]:</td>
-			<td><%= weight_formatter.format( catryzer.getWeight(recipe.getZutaten())) %></td>
-		</tr>
-		<tr>
-			<td>Total Cost [CHF]:</td>
-			<td><%= cost_formatter.format( catryzer.getCost(recipe.getZutaten())) %></td>
-		</tr>
-		
-	</table>
-	
-	<%}%>
-<%}%>
+		<% } %>
+<% } %>
 
 
 
@@ -1202,11 +1100,14 @@ String code = Converter.toString(compute,34);
 
 			recipe.setCO2Value();
 			Double recipeValue = recipe.getCO2Value() + extra;
+			
+			// normalise recipeValue to amount of persons passed by parameter
+			recipeValue = recipeValue/recipe.getPersons()*persons;
+			
 			if(recipeValue >= threshold){
 			
 
 			String formatted = formatter.format(recipeValue );
-			String persons = Long.toString(recipe.getPersons());
 			%>
 			
 			<table cellspacing="0" cellpadding="0" class="table listTable" >
@@ -1232,19 +1133,19 @@ String code = Converter.toString(compute,34);
 			
 			<span class="subTitle"><%= recipe.getSubTitle() %></span>
 			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+			<span style="color:gray;">Zutaten für <%= persons.toString() %> Personen:</span><br />
 
 			
-				<%	
-				counter = 0;
-				for(IngredientSpecification ingredient: recipe.Zutaten){
+			<%	
+			counter = 0;
+			for(IngredientSpecification ingredient: recipe.Zutaten){
 				counter = counter + 1;
-
-				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm() %> g <%= ingredient.getName() %>
-				( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+			
+				%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm()/recipe.getPersons()*persons %> g <%= ingredient.getName() %>
+					( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 				</span><%
-				}
-				%>
+			}
+			%>
 
 			</td>
 			<td class="left-border"><br></td>
@@ -1275,107 +1176,10 @@ String code = Converter.toString(compute,34);
 				</tr>
 
 				</table>
-					<%
 
+		<% } %>
+<% } %>
 
-
-	// -------------------------------- Top 3 intensive Ingredients --------------------------- 
-	 %>
-	
-	<table cellspacing="0" cellpadding="0" class="table toc" >
-	
-	<tr>
-	<td></td>
-	<td class="gray left-border"></td>
-	<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
-	<td></td>
-	</tr>
-	
-	<tr>
-	<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
-	<td class="left-border"></td>
-	<td class="co2value" ></td>
-	<td ></td>
-	</tr>
-	
-	
-	<%
-	counterIterate = 0;
-	
-	List<IngredientSpecification> ingredients = recipe.getZutaten();
-	Collections.sort(ingredients, new IngredientValueComparator());
-
-	
-	List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
-	
-	for(IngredientSpecification ingSpec : ingTop3){
-		values.add(ingSpec.getCalculatedCO2Value());
-	}
-	
-	
-	for(IngredientSpecification ingSpec : ingTop3){ %>
-	
-		<tr <%
-		int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
-		if(order == 1) { %>
-		class="alternate"
-		<% }%> > 
-		<td class="menu-name">
-		<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()%> g)  (<%= cost_formatter.format(ingSpec.getCost()) %> CHF)
-		</td>
-		<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value(), co2BarLength) %></td>
-		<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()) %></td>
-	
-		</tr>
-	
-	<%}%>
-	</table>
-	
-	
-	
-
-
-
-	<!-- -------------- Total Values ---------------- -->
-	<% 
-	Pair<Double, Double> seasonQuotients;
-	seasonQuotients = catryzer.getSeasonQuotient(recipe.getZutaten());
-	%>
-	
-	<table cellspacing="0" cellpadding="0" class="table toc" >
-		<tr>
-			<td>Total C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).totalValue) %></td>
-		</tr>
-		<tr>
-			<td style="color:blue;">Without Factors [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).noFactorsQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:green;">Transportation C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).transQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:yellow;">Condition C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).condQuota) %></td>
-		</tr>
-		<tr>
-			<td style="color:red;">Production C02 [g CO2]:</td>
-			<td><%= co2_formatter.format( catryzer.getCo2Value(recipe.getZutaten()).prodQuota) %></td>
-		</tr>
-		<tr>
-			<td>Total Weight [g]:</td>
-			<td><%= weight_formatter.format( catryzer.getWeight(recipe.getZutaten())) %></td>
-		</tr>
-		<tr>
-			<td>Total Cost [CHF]:</td>
-			<td><%= cost_formatter.format( catryzer.getCost(recipe.getZutaten())) %></td>
-		</tr>
-			
-	</table>
-	
-	<%}	
-}%>
 
 
 </div> <!-- class=content -->
