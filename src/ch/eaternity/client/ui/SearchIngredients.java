@@ -330,6 +330,9 @@ public class SearchIngredients extends Composite {
 			switch(sortMethod){
 			case 1:{
 				//"co2-value"
+				
+				// pre sort values on the server, at best with a cron job (task queu) on appengine
+				// this should make this routine a little faster (not really)
 				Collections.sort(foundIngredients,new ValueComparator());
 				Collections.sort(foundAlternativeIngredients,new ValueComparator());
 				break;
@@ -359,6 +362,7 @@ public class SearchIngredients extends Composite {
 				Collections.sort(foundIngredients,new NameComparator());
 				Collections.sort(foundAlternativeIngredients,new NameComparator());
 			}
+
 			}
 		}
 		
@@ -367,6 +371,7 @@ public class SearchIngredients extends Composite {
 		// ----------------------------- private Methods -------------------------------------------
 		
 		private void displayResults() {
+			//TODO this is the killer, this is to slow
 			table.removeAllRows();
 			if(foundIngredients != null){
 				// display all noALternative Ingredients
@@ -403,16 +408,20 @@ public class SearchIngredients extends Composite {
 		private void displayIngredient(final Ingredient ingredient) {
 			int row = table.getRowCount();
 	
-	
+			// this is the bottleneck, this is to slow, when executed 400times, so the html needs to pre-computed!
+			// I even think this has something todo with the dom - to display this large table
+			// one could try to store the big table of all ingredients as one big string, and just fill that in for the special case 
+			
 			HTML icon = new HTML();
-	
+			String htmlString ="";
+			
 			if(ingredient.getCo2eValue() < 400){
 				icon.setStyleName("base-icons");
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+				htmlString = htmlString+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>";
+				htmlString = htmlString+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>";
 			} else	if(ingredient.getCo2eValue() < 1200){
 				icon.setStyleName("base-icons");	
-				icon.setHTML(icon.getHTML()+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
+				htmlString = htmlString+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>";
 	
 			}
 	
@@ -422,18 +431,18 @@ public class SearchIngredients extends Composite {
 				SeasonDate dateStop =  ingredient.getStopSeason();
 				
 				if( date.after(dateStart) && date.before(dateStop) ){
-					icon.setHTML(icon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+					htmlString = htmlString+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>";
 				} 
 			}
 	
 			if(ingredient.getNoAlternative()){
-			icon.setHTML(icon.getHTML()+"<div class='ingText'>"+ingredient.getSymbol()+"</div>");
+				htmlString = htmlString+"<div class='ingText'>"+ingredient.getSymbol()+"</div>";
 			
 			} else {
-				icon.setHTML(icon.getHTML()+"(alt): " +ingredient.getSymbol());
+				htmlString = htmlString+"(alt): " +ingredient.getSymbol();
 			}
-	
-			icon.setHTML(icon.getHTML()+"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10).concat(" g*")+"</div>");
+			
+			icon.setHTML(htmlString +"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10) + " g*</div>");
 	
 			table.setWidget(row,0,icon);
 		}

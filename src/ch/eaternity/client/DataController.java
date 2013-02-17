@@ -337,7 +337,7 @@ public class DataController {
 
 			String[] searches = searchString.split(" ");
 
-			// consider strings with whitespaces, seek for each word individually
+			// consider strings with whitespaces, seek for each string individually
 			for(String search : searches)
 			{
 				// TODO this search algorithm is extremely slow, make faster
@@ -370,6 +370,7 @@ public class DataController {
 			}
 		}
 		else {
+			// the search routine is also fast enough, the lag comes later
 			for(Ingredient zutat : cdata.ingredients){
 				ingredients.add(zutat);
 				zutat.setNoAlternative(true);
@@ -386,6 +387,13 @@ public class DataController {
 				// search by Name
 				if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
 					result.add(recipe);
+				}
+				
+				// idea: it also splits up the recipes names by whitespaces
+				for(String snippet : recipe.getSymbol().split(" ")){
+				if( getLevenshteinDistance(snippet,searchString) < 2){
+					result.add(recipe);
+					}
 				}
 	
 				// search by matching Ingredient names included in the recipes
