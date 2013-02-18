@@ -52,32 +52,27 @@
 	int co2BarLength = 180;
 	int barOffset = 45;
 
+	// standard values not setted in StaticPageService
 	Boolean doPdf = false;
 	Integer threshold = 1550;
 	Integer extra = 0;
 	Integer persons = 4;
 	
+	StaticPageService vars = new StaticPageService(request,Locale.GERMAN,false);
+	
 	// parse request parameters
 	try {
-		String pdf = request.getParameter("pdf");
-		if(pdf != null){
+		if(vars.pdfStr != null)
 			doPdf = true;
-		}
+
+		if(vars.thresholdStr != null)
+			threshold = Integer.valueOf(vars.thresholdStr);
 		
-		String thresholdString = request.getParameter("median");
-		if(thresholdString != null){
-			threshold = Integer.valueOf(thresholdString);
-		} 
+		if(vars.extraStr != null)
+			extra = Integer.valueOf(vars.extraStr);
 		
-		String extraString = request.getParameter("extra");
-		if(extraString != null){
-			extra = Integer.valueOf(extraString);
-		}
-		
-		String personString = request.getParameter("persons");
-		if(personString != null){
-			persons = Integer.valueOf(personString);
-		}
+		if(vars.personsStr != null)
+			persons = Integer.valueOf(vars.personsStr);
 	}
 	catch (NumberFormatException nfe) {}
 
@@ -96,14 +91,18 @@
 	Date date = new Date();
 	long iTimeStamp = (long) (date.getTime() * .00003);
 	 
-	StaticPageService vars = new StaticPageService(request,Locale.GERMAN,false);
+	
 		
 	// Initialize Catryzer
 	CatRyzer catryzer = new CatRyzer(vars.recipes,locale);
 	List<CatRyzer.CategoryValue> valuesByIngredient = catryzer.getIngVals();
+	%>
 	
 	
-%>
+	<!-- Load the StaticPageService as a Bean, handlich Parameter passing between jsp's and Snippets -->
+	<jsp:useBean id="staticPageService" scope="session"
+	class="ch.eaternity.server.StaticPageService" />
+
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
 	<script src="jquery.docraptor.js" type="text/javascript"></script>
@@ -759,101 +758,24 @@ out.print(herko);
 
 </table>
 	
-<%
 
 
+
+
+<% 
 for(Recipe recipe: vars.recipes){
-
-	long compute = recipe.getId() * iTimeStamp;
-	String code = Converter.toString(compute,34);
-
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + extra;
+	Double recipeValue = recipe.getCO2Value() + extra;	
+	
 	if(recipeValue < climateFriendlyValue){
+		vars.tempRecipes.clear();
+		vars.tempRecipes.add(recipe);
 
-		
-		String formatted = formatter.format( recipeValue );
-		
-		// normalise recipeValue to amount of persons passed by parameter
-		recipeValue = recipeValue/recipe.getPersons()*persons;
-		
-		%>
-		
-		<table cellspacing="0" cellpadding="0" class="table listTable" >
-		<tr>
-		<td></td>
-		<td class="left-border"><br></td>
-		</tr>
-		
-		<tr>
-		<td class="bottom-border">
-		<img class="smile" src="smiley8.png" alt="smiley" />
-		<img class="smile" src="smiley8.png" alt="smiley" />
-		<h3><%= recipe.getSymbol() %></h3>
-
-		</td>
-		<td class="left-border"></td>
-		</tr>
+	%>
 	
-		<tr>
-		<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
-		<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
-		</tr>
-		
-		<tr>
-		<td>
-		
-		<span class="subTitle"><%= recipe.getSubTitle() %></span>
-		
-		<span style="color:gray;">Zutaten für <%= persons.toString() %> Personen:</span><br />
+	<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
 	
-		
-		<%	
-		counter = 0;
-		for(IngredientSpecification ingredient: recipe.Zutaten){
-			counter = counter + 1;
-		
-			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm()/recipe.getPersons()*persons %> g <%= ingredient.getName() %>
-				( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
-			</span><%
-		}
-		%>
-		</td>
-		<td class="left-border"><br></td>
-		</tr>
-		
-		<tr>
-		<td></td>
-		<td class="left-border"><br></td>
-		</tr>
-		
-		
-		<%	
-		if(recipe.comments != null){
-			for(RecipeComment comment: recipe.comments){
-		
-			%>
-			<tr>
-			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
-			</tr>
-		
-			<%
-			}
-		}
-		%>
-		
-		<tr>
-		<td></td>
-		<td class="left-border"><br></td>
-		</tr>
-		
-	
-		</table>
-		<%
-	
-	
-	
+		<% 
 		// -------------------------------- Top 3 intensive Ingredients --------------------------- 
 		 %>
 		
