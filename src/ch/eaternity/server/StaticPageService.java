@@ -5,7 +5,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 import ch.eaternity.server.DAO;
-import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 
 import ch.eaternity.shared.CatRyzer.Co2Value;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -31,22 +29,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class StaticPageService {
 
-	private static final long serialVersionUID = 588838682566492104L;
-	
 	// -------------- Class Variables --------------
 	public String BASEURL;
 	public String tempIds;
 	public String permanentId;
 	public String kitchenId;
-	public String pdfStr;
-	public String thresholdStr;
-	public String extraStr;
-	public String personsStr;
-
-	public boolean pdf;
-	public Integer threshold;
-	public Integer extra;
-	public Integer persons;
+	public String pdf;
 	
 	public Logger rootLogger;
 	public String errorMessage;
@@ -54,20 +42,14 @@ public class StaticPageService {
 
 	public UserService userService;
 	public User user;
+	public DAO dao;
 
 	public List<Recipe> recipes = new ArrayList<Recipe>();
 	public Long kitchenLongId = 0L;
 	public List<Double> values = new ArrayList<Double>();
-	
-	// passing Parameters when used as a bean
-	public List<Recipe> tempRecipes;
-	public List<Ingredient> tempIngredients;
-	public int tempStartIndex;
-	public int tempStopIndex;
 
+	public SimpleDateFormat dateFormatter;
 	public boolean DoItWithPermanentIds = true;
-	
-	private DAO dao;
 	
 // --------------------- public Methods --------------
 	
@@ -83,15 +65,13 @@ public class StaticPageService {
 	
 		this();
 		
+		dateFormatter = new SimpleDateFormat("d. MMMM yyyy",locale);
 		 
 		BASEURL = request.getRequestURL().toString();
 		tempIds = request.getParameter("ids");
 		permanentId = request.getParameter("pid");
 		kitchenId = request.getParameter("kid");
-		pdfStr = request.getParameter("pdf");
-		thresholdStr = request.getParameter("median");
-		extraStr = request.getParameter("extra");
-		personsStr = request.getParameter("persons");
+		pdf = request.getParameter("pdf");
 		
 		// -------------- Parse Request Parameters -----------------
 		
@@ -217,166 +197,6 @@ public class StaticPageService {
 		
 		DecimalFormat formatter = new DecimalFormat("##");
 		return formatter.format(val/getMax(values)*200);
-	}
-
-	public String getBASEURL() {
-		return BASEURL;
-	}
-
-	public void setBASEURL(String bASEURL) {
-		BASEURL = bASEURL;
-	}
-
-	public String getTempIds() {
-		return tempIds;
-	}
-
-	public void setTempIds(String tempIds) {
-		this.tempIds = tempIds;
-	}
-
-	public String getPermanentId() {
-		return permanentId;
-	}
-
-	public void setPermanentId(String permanentId) {
-		this.permanentId = permanentId;
-	}
-
-	public String getKitchenId() {
-		return kitchenId;
-	}
-
-	public void setKitchenId(String kitchenId) {
-		this.kitchenId = kitchenId;
-	}
-
-	public boolean isPdf() {
-		return pdf;
-	}
-
-	public void setPdf(boolean pdf) {
-		this.pdf = pdf;
-	}
-
-	public Integer getThreshold() {
-		return threshold;
-	}
-
-	public void setThreshold(Integer threshold) {
-		this.threshold = threshold;
-	}
-
-	public Integer getExtra() {
-		return extra;
-	}
-
-	public void setExtra(Integer extra) {
-		this.extra = extra;
-	}
-
-	public Integer getPersons() {
-		return persons;
-	}
-
-	public void setPersons(Integer persons) {
-		this.persons = persons;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	public boolean isEverythingFine() {
-		return everythingFine;
-	}
-
-	public void setEverythingFine(boolean everythingFine) {
-		this.everythingFine = everythingFine;
-	}
-
-	public UserService getUserService() {
-		return userService;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public List<Recipe> getRecipes() {
-		return recipes;
-	}
-
-	public void setRecipes(List<Recipe> recipes) {
-		this.recipes = recipes;
-	}
-
-	public Long getKitchenLongId() {
-		return kitchenLongId;
-	}
-
-	public void setKitchenLongId(Long kitchenLongId) {
-		this.kitchenLongId = kitchenLongId;
-	}
-
-	public List<Double> getValues() {
-		return values;
-	}
-
-	public void setValues(List<Double> values) {
-		this.values = values;
-	}
-
-	public List<Recipe> getTempRecipe() {
-		return tempRecipes;
-	}
-
-	public void setTempRecipe(List<Recipe> tempRecipe) {
-		this.tempRecipes = tempRecipe;
-	}
-
-	public List<Ingredient> getTempIngredients() {
-		return tempIngredients;
-	}
-
-	public void setTempIngredients(List<Ingredient> tempIngredients) {
-		this.tempIngredients = tempIngredients;
-	}
-
-	public int getTempStartIndex() {
-		return tempStartIndex;
-	}
-
-	public void setTempStartIndex(int tempStartIndex) {
-		this.tempStartIndex = tempStartIndex;
-	}
-
-	public int getTempStopIndex() {
-		return tempStopIndex;
-	}
-
-	public void setTempStopIndex(int tempStopIndex) {
-		this.tempStopIndex = tempStopIndex;
-	}
-
-	public boolean isDoItWithPermanentIds() {
-		return DoItWithPermanentIds;
-	}
-
-	public void setDoItWithPermanentIds(boolean doItWithPermanentIds) {
-		DoItWithPermanentIds = doItWithPermanentIds;
 	}
 
 
