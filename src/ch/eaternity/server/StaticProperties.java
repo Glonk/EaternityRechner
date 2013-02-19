@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 
 public class StaticProperties implements Serializable {
@@ -26,6 +28,15 @@ public class StaticProperties implements Serializable {
 	public int co2BarLength = 180;
 	public int barOffset = 45;
 
+	public String BASEURL;
+	public String tempIds;
+	public String permanentId;
+	public String kitchenId;
+	public String pdfStr;
+	public String thresholdStr;
+	public String extraStr;
+	public String personsStr;
+	
 	// standard values not setted in StaticPageService
 	public Boolean doPdf = false;
 	public Integer threshold = 1550;
@@ -36,6 +47,33 @@ public class StaticProperties implements Serializable {
 	
 	public StaticProperties() {}
 	
+	public void initialize(HttpServletRequest request) {
+		BASEURL = request.getRequestURL().toString();
+		tempIds = request.getParameter("ids");
+		permanentId = request.getParameter("pid");
+		kitchenId = request.getParameter("kid");
+		pdfStr = request.getParameter("pdf");
+		thresholdStr = request.getParameter("median");
+		extraStr = request.getParameter("extra");
+		personsStr = request.getParameter("persons");
+		
+		// parse request parameters
+		try {
+			if(pdfStr != null)
+				doPdf = true;
+
+			if(thresholdStr != null)
+				threshold = Integer.valueOf(thresholdStr);
+			
+			if(extraStr != null)
+				extra = Integer.valueOf(extraStr);
+			
+			if(personsStr != null)
+				persons = Integer.valueOf(personsStr);
+		}
+		catch (NumberFormatException nfe) {}
+		
+	}
 	
 	public Locale getLocale() {
 		return locale;

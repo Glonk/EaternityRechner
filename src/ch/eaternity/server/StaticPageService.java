@@ -35,19 +35,6 @@ public class StaticPageService implements Serializable{
 	private static final long serialVersionUID = 588838682566492104L;
 	
 	// -------------- Class Variables --------------
-	public String BASEURL;
-	public String tempIds;
-	public String permanentId;
-	public String kitchenId;
-	public String pdfStr;
-	public String thresholdStr;
-	public String extraStr;
-	public String personsStr;
-
-	public boolean pdf = true;
-	public Integer threshold = 1500;
-	public Integer extra = 0;
-	public Integer persons = 1;
 	
 	public String errorMessage;
 	public boolean everythingFine = true;
@@ -55,29 +42,17 @@ public class StaticPageService implements Serializable{
 	public List<Recipe> recipes = new ArrayList<Recipe>();
 	public Long kitchenLongId = 0L;
 	public List<Double> values = new ArrayList<Double>();
-	
-	// passing Parameters when used as a bean
-
 
 	public boolean DoItWithPermanentIds = true;
 	
-	public StaticProperties properties;
+	private StaticProperties properties;
 
 	
 // --------------------- public Methods --------------
 	
 	public StaticPageService() {}
 	
-	public void initialize(HttpServletRequest request, StaticProperties properties, boolean removeRecipesWithoutDate) {
-		 
-		BASEURL = request.getRequestURL().toString();
-		tempIds = request.getParameter("ids");
-		permanentId = request.getParameter("pid");
-		kitchenId = request.getParameter("kid");
-		pdfStr = request.getParameter("pdf");
-		thresholdStr = request.getParameter("median");
-		extraStr = request.getParameter("extra");
-		personsStr = request.getParameter("persons");
+	public void initialize(StaticProperties properties, boolean removeRecipesWithoutDate) {
 		
 		// -------------- Parse Request Parameters -----------------
 		Logger rootLogger = Logger.getLogger("");
@@ -86,15 +61,15 @@ public class StaticPageService implements Serializable{
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		
-		if(tempIds != null){
-			recipes = dao.getRecipeByIds(tempIds,true);
+		if(properties.tempIds != null){
+			recipes = dao.getRecipeByIds(properties.tempIds,true);
 		} 
-		else if(permanentId != null){
-			recipes = dao.getRecipeByIds(permanentId,false);
+		else if(properties.permanentId != null){
+			recipes = dao.getRecipeByIds(properties.permanentId,false);
 			DoItWithPermanentIds  = false;
 		} 
-		else if(kitchenId != null){
-			kitchenLongId = Long.parseLong(kitchenId);
+		else if(properties.kitchenId != null){
+			kitchenLongId = Long.parseLong(properties.kitchenId);
 			recipes = dao.getKitchenRecipes(kitchenLongId);
 			DoItWithPermanentIds = false;
 		}
@@ -208,70 +183,6 @@ public class StaticPageService implements Serializable{
 		
 		DecimalFormat formatter = new DecimalFormat("##");
 		return formatter.format(val/getMax(values)*200);
-	}
-
-	public String getBASEURL() {
-		return BASEURL;
-	}
-
-	public void setBASEURL(String bASEURL) {
-		BASEURL = bASEURL;
-	}
-
-	public String getTempIds() {
-		return tempIds;
-	}
-
-	public void setTempIds(String tempIds) {
-		this.tempIds = tempIds;
-	}
-
-	public String getPermanentId() {
-		return permanentId;
-	}
-
-	public void setPermanentId(String permanentId) {
-		this.permanentId = permanentId;
-	}
-
-	public String getKitchenId() {
-		return kitchenId;
-	}
-
-	public void setKitchenId(String kitchenId) {
-		this.kitchenId = kitchenId;
-	}
-
-	public boolean isPdf() {
-		return pdf;
-	}
-
-	public void setPdf(boolean pdf) {
-		this.pdf = pdf;
-	}
-
-	public Integer getThreshold() {
-		return threshold;
-	}
-
-	public void setThreshold(Integer threshold) {
-		this.threshold = threshold;
-	}
-
-	public Integer getExtra() {
-		return extra;
-	}
-
-	public void setExtra(Integer extra) {
-		this.extra = extra;
-	}
-
-	public Integer getPersons() {
-		return persons;
-	}
-
-	public void setPersons(Integer persons) {
-		this.persons = persons;
 	}
 
 	public String getErrorMessage() {

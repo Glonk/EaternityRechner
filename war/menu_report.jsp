@@ -7,14 +7,14 @@
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
 <%@ page import="ch.eaternity.shared.comparators.IngredientValueComparator" %>
-
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
+<%@ page import="ch.eaternity.shared.Pair" %>
+
 <%@ page import="ch.eaternity.server.StaticPageService" %>
 <%@ page import="ch.eaternity.server.StaticProperties" %>
 <%@ page import="ch.eaternity.server.StaticTempBean" %>
-<%@ page import="ch.eaternity.shared.Pair" %>
-<%@ page import="java.util.Locale" %>
 
+<%@ page import="java.util.Locale" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
@@ -68,23 +68,13 @@
 	properties.co2BarLength = 180;
 	properties.barOffset = 45;
 	
-	vars.initialize(request,properties,false);
+	// standard values for request if not set
+	properties.doPdf = false;
+	properties.threshold = 1550;
+	properties.extra = 0;
+	properties.persons = 4;
 	
-	// parse request parameters
-	try {
-		if(vars.pdfStr != null)
-			properties.doPdf = true;
-
-		if(vars.thresholdStr != null)
-			properties.threshold = Integer.valueOf(vars.thresholdStr);
-		
-		if(vars.extraStr != null)
-			properties.extra = Integer.valueOf(vars.extraStr);
-		
-		if(vars.personsStr != null)
-			properties.persons = Integer.valueOf(vars.personsStr);
-	}
-	catch (NumberFormatException nfe) {}
+	vars.initialize(properties,false);
 
 	Double third = (double)properties.threshold / 3;
 	Double half = (double)properties.threshold / 2;
@@ -513,7 +503,7 @@ else { %>
 					 </td>
 
 					 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(vars.DoItWithPermanentIds) { %>
-<a href="<%= vars.BASEURL %>?pid="><img src="QR--CODE" width="42" height="42" /></a>
+<a href="<%= properties.BASEURL %>?pid="><img src="QR--CODE" width="42" height="42" /></a>
 						<% } else { %> <span style="color:red;font-size:9pt;"></span> <% } %>
 					 </td>
 					</tr>
@@ -919,7 +909,7 @@ for(Recipe recipe: vars.recipes){
 		<%
 	} 
 	else {
-    	if (vars.tempIds == null){
+    	if (properties.tempIds == null){
 			%>
 			Sie sind nicht angemeldet.
 			<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Anmelden</a>?
