@@ -7,6 +7,7 @@
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
 <%@ page import="ch.eaternity.shared.comparators.IngredientValueComparator" %>
+<%@ page import="ch.eaternity.shared.comparators.IngredientValueNoFactorsComparator" %>
 
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.server.StaticPageService" %>
@@ -45,7 +46,7 @@
 	DecimalFormat formatter = new DecimalFormat("##");
 	DecimalFormat co2_formatter = new DecimalFormat("##");
 	DecimalFormat cost_formatter = new DecimalFormat("##");
-	DecimalFormat weight_formatter = new DecimalFormat("##.#");
+	DecimalFormat weight_formatter = new DecimalFormat("##");
 	DecimalFormat distance_formatter = new DecimalFormat("##");
 	SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 	
@@ -56,6 +57,8 @@
 	Integer threshold = 1550;
 	Integer extra = 0;
 	Integer persons = 4;
+	double valueThreshold = 1.0;
+	double weightThreshold = 1.0;
 	
 	// parse request parameters
 	try {
@@ -77,6 +80,16 @@
 		String personString = request.getParameter("persons");
 		if(personString != null){
 			persons = Integer.valueOf(personString);
+		}
+		
+		String valueThresholdStr = request.getParameter("valueThreshold");
+		if(valueThresholdStr != null){
+			valueThreshold = Double.valueOf(valueThresholdStr);
+		}
+		
+		String weightThresholdStr = request.getParameter("weightThreshold");
+		if(weightThresholdStr != null){
+			weightThreshold = Double.valueOf(weightThresholdStr);
 		}
 	}
 	catch (NumberFormatException nfe) {}
@@ -743,7 +756,7 @@ out.print(herko);
 </tr>
 	
 <tr>
-<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= co2_formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
 <td></td>
 </tr>
 
@@ -770,12 +783,11 @@ for(Recipe recipe: vars.recipes){
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + extra;
 	if(recipeValue < climateFriendlyValue){
-
-		
-		String formatted = formatter.format( recipeValue );
 		
 		// normalise recipeValue to amount of persons passed by parameter
-		recipeValue = recipeValue/recipe.getPersons()*persons;
+		recipeValue = recipeValue*persons;
+		
+		String formatted = co2_formatter.format( recipeValue );	
 		
 		%>
 		
@@ -867,7 +879,7 @@ for(Recipe recipe: vars.recipes){
 		</tr>
 		
 		<tr>
-		<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
+		<td class="table-header bottom-border">Zutatenranking</td>
 		<td class="left-border"></td>
 		<td class="co2value" ></td>
 		<td ></td>
@@ -878,32 +890,34 @@ for(Recipe recipe: vars.recipes){
 		counterIterate = 0;
 		
 		List<IngredientSpecification> ingredients = recipe.getZutaten();
-		Collections.sort(ingredients, new IngredientValueComparator());
+		Collections.sort(ingredients, new IngredientValueNoFactorsComparator());
 	
 		
-		List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
+		//List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
 		
-		for(IngredientSpecification ingSpec : ingTop3){
-			values.add(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons);
+		for(IngredientSpecification ingSpec : ingredients){
+			values.add(ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons);
 		}
 		
 		
-		for(IngredientSpecification ingSpec : ingTop3){ %>
-		
-			<tr <%
-			int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
-			if(order == 1) { %>
-			class="alternate"
-			<% }%> > 
-			<td class="menu-name">
-			<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
-			</td>
-			<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons, co2BarLength) %></td>
-			<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons) %></td>
-		
-			</tr>
-		
-		<%}%>
+		for(IngredientSpecification ingSpec : ingredients){ 
+			if (ingSpec.getMengeGramm() > catryzer.getWeight(ingredients)/100.0*weightThreshold || ingSpec.calculateCo2ValueNoFactors() > catryzer.getCo2Value(ingredients).noFactorsQuota/100.0*valueThreshold) {
+				%>
+				<tr <%
+				int order = (ingredients.indexOf(ingSpec) - counterIterate ) % 2; 
+				if(order == 1) { %>
+				class="alternate"
+				<% }%> > 
+				<td class="menu-name">
+				<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
+				</td>
+				<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons, co2BarLength) %></td>
+				<td class="co2value" ><%= co2_formatter.format(ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons) %></td>
+			
+				</tr>
+			<%
+			}
+		}%>
 		</table>
 	
 	
@@ -957,7 +971,7 @@ for(Recipe recipe: vars.recipes){
 </tr>
 
 <tr>
-<td><p>Diese Rezepte sind mit unter <%= formatter.format( threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
+<td><p>Diese Rezepte sind mit unter <%= co2_formatter.format( threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 <td></td>
 </tr>
 
@@ -985,11 +999,10 @@ for(Recipe recipe: vars.recipes){
 	
 	if(recipeValue >= climateFriendlyValue && recipeValue < threshold){
 	
-		String formatted = formatter.format( recipeValue );
-		
 		// normalise recipeValue to amount of persons passed by parameter
-		recipeValue = recipeValue/recipe.getPersons()*persons;
+		recipeValue = recipeValue*persons;
 		
+		String formatted = co2_formatter.format( recipeValue );	
 		%>
 		
 		<table cellspacing="0" cellpadding="0" class="table listTable" >
@@ -1063,7 +1076,7 @@ for(Recipe recipe: vars.recipes){
 		// -------------------------------- Top 3 intensive Ingredients --------------------------- 
 		 %>
 		
-		<table cellspacing="0" cellpadding="0" class="table toc" >
+				<table cellspacing="0" cellpadding="0" class="table toc" >
 		
 		<tr>
 		<td></td>
@@ -1073,7 +1086,7 @@ for(Recipe recipe: vars.recipes){
 		</tr>
 		
 		<tr>
-		<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
+		<td class="table-header bottom-border">Zutatenranking</td>
 		<td class="left-border"></td>
 		<td class="co2value" ></td>
 		<td ></td>
@@ -1084,32 +1097,34 @@ for(Recipe recipe: vars.recipes){
 		counterIterate = 0;
 		
 		List<IngredientSpecification> ingredients = recipe.getZutaten();
-		Collections.sort(ingredients, new IngredientValueComparator());
+		Collections.sort(ingredients, new IngredientValueNoFactorsComparator());
 	
 		
-		List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
+		//List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
 		
-		for(IngredientSpecification ingSpec : ingTop3){
-			values.add(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons);
+		for(IngredientSpecification ingSpec : ingredients){
+			values.add(ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons);
 		}
 		
 		
-		for(IngredientSpecification ingSpec : ingTop3){ %>
-		
-			<tr <%
-			int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
-			if(order == 1) { %>
-			class="alternate"
-			<% }%> > 
-			<td class="menu-name">
-			<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
-			</td>
-			<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons, co2BarLength) %></td>
-			<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons) %></td>
-		
-			</tr>
-		
-		<%}%>
+		for(IngredientSpecification ingSpec : ingredients){ 
+			if (ingSpec.getMengeGramm() > catryzer.getWeight(ingredients)/100.0*weightThreshold || ingSpec.calculateCo2ValueNoFactors() > catryzer.getCo2Value(ingredients).noFactorsQuota/100.0*valueThreshold) {
+				%>
+				<tr <%
+				int order = (ingredients.indexOf(ingSpec) - counterIterate ) % 2; 
+				if(order == 1) { %>
+				class="alternate"
+				<% }%> > 
+				<td class="menu-name">
+				<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
+				</td>
+				<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons, co2BarLength) %></td>
+				<td class="co2value" ><%= co2_formatter.format(ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons) %></td>
+			
+				</tr>
+			<%
+			}
+		}%>
 		</table>
 	
 	
@@ -1166,7 +1181,7 @@ for(Recipe recipe: vars.recipes){
 
 
 <tr>
-<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
+<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= co2_formatter.format( threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 <td></td>
 </tr>
 
@@ -1196,12 +1211,10 @@ String code = Converter.toString(compute,34);
 
 			
 			if(recipeValue >= threshold){
-			
-
-			String formatted = formatter.format(recipeValue );
-			
 			// normalise recipeValue to amount of persons passed by parameter
-			recipeValue = recipeValue/recipe.getPersons()*persons;
+			recipeValue = recipeValue*persons;
+			
+			String formatted = co2_formatter.format( recipeValue );	
 			%>
 			
 			<table cellspacing="0" cellpadding="0" class="table listTable" >
@@ -1278,7 +1291,7 @@ String code = Converter.toString(compute,34);
 		// -------------------------------- Top 3 intensive Ingredients --------------------------- 
 		 %>
 		
-		<table cellspacing="0" cellpadding="0" class="table toc" >
+				<table cellspacing="0" cellpadding="0" class="table toc" >
 		
 		<tr>
 		<td></td>
@@ -1288,7 +1301,7 @@ String code = Converter.toString(compute,34);
 		</tr>
 		
 		<tr>
-		<td class="table-header bottom-border">Top 3 CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
+		<td class="table-header bottom-border">Zutatenranking</td>
 		<td class="left-border"></td>
 		<td class="co2value" ></td>
 		<td ></td>
@@ -1299,32 +1312,34 @@ String code = Converter.toString(compute,34);
 		counterIterate = 0;
 		
 		List<IngredientSpecification> ingredients = recipe.getZutaten();
-		Collections.sort(ingredients, new IngredientValueComparator());
+		Collections.sort(ingredients, new IngredientValueNoFactorsComparator());
 	
 		
-		List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
+		//List<IngredientSpecification> ingTop3 = ingredients.subList(0,3);
 		
-		for(IngredientSpecification ingSpec : ingTop3){
-			values.add(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons);
+		for(IngredientSpecification ingSpec : ingredients){
+			values.add(ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons);
 		}
 		
 		
-		for(IngredientSpecification ingSpec : ingTop3){ %>
-		
-			<tr <%
-			int order = (ingTop3.indexOf(ingSpec) - counterIterate ) % 2; 
-			if(order == 1) { %>
-			class="alternate"
-			<% }%> > 
-			<td class="menu-name">
-			<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
-			</td>
-			<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons, co2BarLength) %></td>
-			<td class="co2value" ><%= co2_formatter.format(ingSpec.getCalculatedCO2Value()/recipe.getPersons()*persons) %></td>
-		
-			</tr>
-		
-		<%}%>
+		for(IngredientSpecification ingSpec : ingredients){ 
+			if (ingSpec.getMengeGramm() > catryzer.getWeight(ingredients)/100.0*weightThreshold || ingSpec.calculateCo2ValueNoFactors() > catryzer.getCo2Value(ingredients).noFactorsQuota/100.0*valueThreshold) {
+				%>
+				<tr <%
+				int order = (ingredients.indexOf(ingSpec) - counterIterate ) % 2; 
+				if(order == 1) { %>
+				class="alternate"
+				<% }%> > 
+				<td class="menu-name">
+				<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()/recipe.getPersons()*persons%> g)  (<%= cost_formatter.format(ingSpec.getCost()/recipe.getPersons()*persons) %> CHF)
+				</td>
+				<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons, co2BarLength) %></td>
+				<td class="co2value" ><%= co2_formatter.format(ingSpec.calculateCo2ValueNoFactors()/recipe.getPersons()*persons) %></td>
+			
+				</tr>
+			<%
+			}
+		}%>
 		</table>
 	
 	
