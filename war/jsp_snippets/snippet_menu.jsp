@@ -18,18 +18,24 @@
 <jsp:useBean id="vars" scope="session"
      class="ch.eaternity.server.StaticPageService" />
      
+<jsp:useBean id="temp" scope="session"
+	class="ch.eaternity.server.StaticTempBean" />
+	
+<jsp:useBean id="properties" scope="session"
+	class="ch.eaternity.server.StaticProperties" />
+     
 <%
 DecimalFormat formatter = new DecimalFormat("##");
 
-List<Recipe> recipes = vars.getRecipes();
+List<Recipe> recipes = temp.getRecipes();
 
 if (recipes.size() > 0) {
 	Recipe recipe = recipes.get(0);
 	
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + vars.getExtra();
+	Double recipeValue = recipe.getCO2Value() + properties.getExtra();
 		
-	String co2ValueStr = formatter.format( recipeValue );
+	String co2ValueStr = properties.co2_formatter.format( recipeValue );
 	
 	// normalise recipeValue to amount of persons passed by parameter
 	recipeValue = recipeValue/recipe.getPersons()*vars.getPersons();

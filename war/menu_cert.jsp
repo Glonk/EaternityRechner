@@ -13,7 +13,7 @@
 <%@ page import="java.util.Collections" %>
 
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
-<%@ page import="ch.eaternity.server.StaticPageService" %>
+<%@ page import="ch.eaternity.server.reports.StaticPageService" %>
 <%@ page import="java.util.Locale" %>
 
 <%@ page import="java.net.MalformedURLException" %>

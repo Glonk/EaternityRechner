@@ -6,6 +6,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 import ch.eaternity.server.DAO;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
 
 import ch.eaternity.shared.CatRyzer.Co2Value;
@@ -29,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 /*
  * For outsourcing all functionality of report_lang.jsp
  */
-public class StaticPageService {
+public class StaticPageService implements Serializable{
 
 	private static final long serialVersionUID = 588838682566492104L;
 	
@@ -43,46 +44,31 @@ public class StaticPageService {
 	public String extraStr;
 	public String personsStr;
 
-	public boolean pdf;
-	public Integer threshold;
-	public Integer extra;
-	public Integer persons;
+	public boolean pdf = true;
+	public Integer threshold = 1500;
+	public Integer extra = 0;
+	public Integer persons = 1;
 	
-	public Logger rootLogger;
 	public String errorMessage;
 	public boolean everythingFine = true;
-
-	public UserService userService;
-	public User user;
 
 	public List<Recipe> recipes = new ArrayList<Recipe>();
 	public Long kitchenLongId = 0L;
 	public List<Double> values = new ArrayList<Double>();
 	
 	// passing Parameters when used as a bean
-	public List<Recipe> tempRecipes;
-	public List<Ingredient> tempIngredients;
-	public int tempStartIndex;
-	public int tempStopIndex;
+
 
 	public boolean DoItWithPermanentIds = true;
 	
-	private DAO dao;
+	public StaticProperties properties;
+
 	
 // --------------------- public Methods --------------
 	
-	public StaticPageService() {
-		rootLogger = Logger.getLogger("");
-		dao = new DAO();
-		
-		userService = UserServiceFactory.getUserService();
-		user = userService.getCurrentUser();
-	}
+	public StaticPageService() {}
 	
-	public StaticPageService(HttpServletRequest request, Locale locale, boolean removeRecipesWithoutDate) {
-	
-		this();
-		
+	public void initialize(HttpServletRequest request, StaticProperties properties, boolean removeRecipesWithoutDate) {
 		 
 		BASEURL = request.getRequestURL().toString();
 		tempIds = request.getParameter("ids");
@@ -94,6 +80,11 @@ public class StaticPageService {
 		personsStr = request.getParameter("persons");
 		
 		// -------------- Parse Request Parameters -----------------
+		Logger rootLogger = Logger.getLogger("");
+		DAO dao = new DAO();
+		
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
 		
 		if(tempIds != null){
 			recipes = dao.getRecipeByIds(tempIds,true);
@@ -299,21 +290,6 @@ public class StaticPageService {
 		this.everythingFine = everythingFine;
 	}
 
-	public UserService getUserService() {
-		return userService;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	public List<Recipe> getRecipes() {
 		return recipes;
@@ -337,38 +313,6 @@ public class StaticPageService {
 
 	public void setValues(List<Double> values) {
 		this.values = values;
-	}
-
-	public List<Recipe> getTempRecipe() {
-		return tempRecipes;
-	}
-
-	public void setTempRecipe(List<Recipe> tempRecipe) {
-		this.tempRecipes = tempRecipe;
-	}
-
-	public List<Ingredient> getTempIngredients() {
-		return tempIngredients;
-	}
-
-	public void setTempIngredients(List<Ingredient> tempIngredients) {
-		this.tempIngredients = tempIngredients;
-	}
-
-	public int getTempStartIndex() {
-		return tempStartIndex;
-	}
-
-	public void setTempStartIndex(int tempStartIndex) {
-		this.tempStartIndex = tempStartIndex;
-	}
-
-	public int getTempStopIndex() {
-		return tempStopIndex;
-	}
-
-	public void setTempStopIndex(int tempStopIndex) {
-		this.tempStopIndex = tempStopIndex;
 	}
 
 	public boolean isDoItWithPermanentIds() {
