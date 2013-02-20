@@ -37,6 +37,7 @@ public class CO2Value {
 		return sum;
 	}
 	
+	
 	public CO2Value(IngredientSpecification ingSpec) {
 		this.prodQuota = ingSpec.getProductionQuota();
 		this.transQuota = ingSpec.getTransportationQuota();

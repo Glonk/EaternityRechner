@@ -196,6 +196,17 @@ public class Recipe implements Serializable, Cloneable{
 	public double getCO2Value() {
 		return CO2Value;
 	}
+	
+	public CO2Value getCO2ValueExpanded() {
+		CO2Value co2Value = new CO2Value();
+		for ( IngredientSpecification zutatSpec : Zutaten){
+			co2Value = co2Value.add(new CO2Value(zutatSpec));
+		}
+		if(persons != null)
+			co2Value = co2Value.mult(1.0/persons);
+
+		return co2Value;
+	}
 
 	public void setCookInstruction(String cookInstruction) {
 		this.cookInstruction = cookInstruction;

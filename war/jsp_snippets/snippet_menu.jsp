@@ -36,11 +36,11 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 	
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + properties.getExtra();
-		
-	String co2ValueStr = properties.co2_formatter.format( recipeValue );
 	
-	// normalise recipeValue to amount of persons passed by parameter
-	recipeValue = recipeValue/recipe.getPersons()*properties.getPersons();
+	// normalise recipeValue to amount of persons
+	recipeValue = recipeValue*properties.getPersons();
+	
+	String co2ValueStr = properties.co2_formatter.format( recipeValue );
 	
 	%>
 	
@@ -62,7 +62,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 	
 		<tr>
 		<td><div class="amount"><%= co2ValueStr %> g CO<sub>2</sub>* total</div></td>
-		<td class="left-border"><%=StaticHTMLSnippets.getCo2ValueBar(temp.getCo2Values(), Util.getCO2Value(recipe.getZutaten()), properties.co2BarLength, properties.valueType)%></td>
+		<td class="left-border"><%=StaticHTMLSnippets.getCo2ValueBar(temp.getCo2Values(), recipe.getCO2ValueExpanded(), properties.co2BarLength, properties.valueType)%></td>
 		</tr>
 		
 		<tr>

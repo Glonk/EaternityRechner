@@ -75,11 +75,7 @@ public class Util {
 	static public CO2Value getCO2Value(Collection<IngredientSpecification> ingsSpecs) {
 		CO2Value co2value = new CO2Value(0.0,0.0,0.0,0.0,0.0);
 		for (IngredientSpecification ingSpec : ingsSpecs) {
-			co2value.condQuota = co2value.condQuota + ingSpec.getConditionQuota();
-			co2value.transQuota = co2value.transQuota + ingSpec.getTransportationQuota();
-			co2value.prodQuota = co2value.prodQuota + ingSpec.getProductionQuota();
-			co2value.noFactorsQuota = co2value.noFactorsQuota + ingSpec.calculateCo2ValueNoFactors();
-			co2value.totalValue = co2value.totalValue + ingSpec.getCalculatedCO2Value();
+			co2value = co2value.add(new CO2Value(ingSpec));
 		}
 		return co2value;
 	}
