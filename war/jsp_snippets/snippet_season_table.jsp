@@ -6,7 +6,6 @@
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.shared.Pair" %>
-<%@ page import="ch.eaternity.shared.Util" %>
 
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
@@ -35,34 +34,34 @@ class="ch.eaternity.server.jsp.StaticProperties" />
 List<IngredientSpecification> ingredients = temp.getIngredients();
 CatRyzer catryzer = new CatRyzer();
 Pair<Double, Double> seasonQuotients;
-seasonQuotients = Util.getSeasonQuotient(ingredients);
+seasonQuotients = catryzer.getSeasonQuotient(ingredients);
 %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 	<tr>
 		<td>CO2 Rohwert ohne Anteile [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).noFactorsQuota*temp.getPersonFactor())%></td>
+		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).noFactorsQuota*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
 		<td >Anteil Transport [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).transQuota*temp.getPersonFactor())%></td>
+		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).transQuota*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
 		<td >Anteil Konservierungsmethoden [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).condQuota*temp.getPersonFactor())%></td>
+		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).condQuota*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
 		<td >Anteil Produktionsmethoden [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).prodQuota*temp.getPersonFactor())%></td>
+		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).prodQuota*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
 		<td>Gewicht [g]:</td>
-		<td><%= properties.weight_formatter.format( Util.getWeight(ingredients)*temp.getPersonFactor()) %></td>
+		<td><%= properties.weight_formatter.format( catryzer.getWeight(ingredients)*temp.getPersonFactor()) %></td>
 	</tr>
-	<% if (Util.getCost(ingredients) > 0) { %>
+	<% if (catryzer.getCost(ingredients) > 0) { %>
 	<tr>
 		<td>Kosten [CHF]:</td>
-		<td><%= properties.cost_formatter.format( Util.getCost(ingredients)*temp.getPersonFactor()) %></td>
+		<td><%= properties.cost_formatter.format( catryzer.getCost(ingredients)*temp.getPersonFactor()) %></td>
 	</tr>
 	<% } %>
 </table>

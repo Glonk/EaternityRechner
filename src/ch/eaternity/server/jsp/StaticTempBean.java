@@ -1,11 +1,13 @@
-package ch.eaternity.server;
+package ch.eaternity.server.jsp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.CO2Value;;
 
 public class StaticTempBean implements Serializable {
 	
@@ -17,6 +19,8 @@ public class StaticTempBean implements Serializable {
 	public List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
 	public int startIndex;
 	public int stopIndex;
+	
+	public Collection<CO2Value> co2Values = new ArrayList<CO2Value>();
 	
 	public double personFactor;
 	
@@ -30,6 +34,7 @@ public class StaticTempBean implements Serializable {
 	public void clear() {
 		recipes.clear();
 		ingredients.clear();
+		co2Values.clear();
 		startIndex = 0;
 		stopIndex = 0;
 		personFactor = 1;
@@ -75,5 +80,13 @@ public class StaticTempBean implements Serializable {
 
 	public void setPersonFactor(double personFactor) {
 		this.personFactor = personFactor;
+	}
+
+	public Collection<CO2Value> getCo2Values() {
+		return co2Values;
+	}
+
+	public void setCo2Values(Collection<CO2Value> co2Values) {
+		this.co2Values = co2Values;
 	}
 }

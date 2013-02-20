@@ -1,15 +1,17 @@
-package ch.eaternity.server;
+package ch.eaternity.server.jsp;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 import ch.eaternity.server.DAO;
+import ch.eaternity.server.jsp.StaticProperties.ValueType;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Util;
 
-import ch.eaternity.shared.CatRyzer.Co2Value;
+import ch.eaternity.shared.CO2Value;
 import ch.eaternity.shared.comparators.RezeptDateComparator;
 
 import java.util.Collection;
@@ -30,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 /*
  * For outsourcing all functionality of report_lang.jsp
  */
-public class StaticPageService implements Serializable{
+public class StaticDataLoader implements Serializable{
 
 	private static final long serialVersionUID = 588838682566492104L;
 	
@@ -41,7 +43,6 @@ public class StaticPageService implements Serializable{
 
 	public List<Recipe> recipes = new ArrayList<Recipe>();
 	public Long kitchenLongId = 0L;
-	public List<Double> values = new ArrayList<Double>();
 
 	public boolean DoItWithPermanentIds = true;
 	
@@ -50,7 +51,7 @@ public class StaticPageService implements Serializable{
 	
 // --------------------- public Methods --------------
 	
-	public StaticPageService() {}
+	public StaticDataLoader() {}
 	
 	public void initialize(StaticProperties properties, boolean removeRecipesWithoutDate) {
 		
@@ -91,7 +92,6 @@ public class StaticPageService implements Serializable{
 		//  Load the corresponding Recipes
 		for(Recipe recipe: recipes){
 			recipe.setCO2Value();
-			values.add(recipe.getCO2Value());
 			
 			if (removeRecipesWithoutDate && recipe.cookingDate == null) {
 				recipes.remove(recipe);
@@ -118,72 +118,6 @@ public class StaticPageService implements Serializable{
 		
 	}
 	
-	public String getCo2ValueBar(Collection<Double> allValues, Co2Value value, int totalLength) {
-		String html = "";
-		
-		if (value.noFactorsQuota > 0.0) 
-			html = html + "<img class='bar' src='gray.png' alt='gray' height='11'  width=" + totalLength/getMax(allValues)*value.noFactorsQuota + " />";
-		if (value.transQuota > 0.0) 
-			html = html + "<img class='bar' src='orange.png' alt='orange' height='11'  width=" + totalLength/getMax(allValues)*value.transQuota + " />";
-		if (value.condQuota > 0.0) 
-			html = html + "<img class='bar' src='green.png' alt='green' height='11'  width=" + totalLength/getMax(allValues)*value.condQuota + " />";
-		if (value.prodQuota > 0.0) 
-			html = html + "<img class='bar' src='light-gray.png' alt='light-gray' height='11'  width=" + totalLength/getMax(allValues)*value.prodQuota + " />";
-
-		return html;
-	}
-	
-	public String getCo2ValueBarSimple(Collection<Double> allValues, Double value, int totalLength) {
-		String html = "<img class='bar' src='gray.png' alt='gray' height='11'  width=" + totalLength/getMax(allValues)*value + " />";
-		return html;
-	}
-	
-	
-	// just for testing
-	public double getMax(Collection<Double> values) {
-		double max = 0.0;
-		for (Double value : values) {
-			if(value>max)
-				max = value;
-		}
-		return max;
-	}
-	
-	public Double getAverage() {
-		Double average = 0D;
-		for (Double value : values) {
-			average = average + value;
-		}
-		average = average / values.size();
-		return average;
-	}
-	
-	public Double getMedian() {
-		Collections.sort(values);
-		Double median = 0D;
-		
-	    if (values.size() % 2 == 1)
-	    	median = values.get((values.size()+1)/2-1);
-	    else
-	    {
-	    	double lower;
-			if (values.size() >= 1)
-				lower = values.get(values.size()/2-1);
-			else
-				lower = values.get(values.size()/2);
-			
-			double upper = (values.get(values.size()/2));				
-
-			median = ((lower + upper) / 2.0);
-	    }
-	    return median;
-	}
-	
-	public String getNormalisedLength(Double val, Collection<Double> values) {
-		
-		DecimalFormat formatter = new DecimalFormat("##");
-		return formatter.format(val/getMax(values)*200);
-	}
 
 	public String getErrorMessage() {
 		return errorMessage;
@@ -218,13 +152,6 @@ public class StaticPageService implements Serializable{
 		this.kitchenLongId = kitchenLongId;
 	}
 
-	public List<Double> getValues() {
-		return values;
-	}
-
-	public void setValues(List<Double> values) {
-		this.values = values;
-	}
 
 	public boolean isDoItWithPermanentIds() {
 		return DoItWithPermanentIds;

@@ -1,4 +1,4 @@
-package ch.eaternity.server;
+package ch.eaternity.server.jsp;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 public class StaticProperties implements Serializable {
 
 	private static final long serialVersionUID = 528832345466492104L;
+	
+	static public enum ValueType {
+		COMPACT, EXPANDED
+	}
 	
 	// -------------------------- public Fields -------------------------
 	
@@ -43,6 +47,19 @@ public class StaticProperties implements Serializable {
 	public Integer extra = 0;
 	public Integer persons = 4;
 	
+	public Double third = (double) threshold / 3;
+	public Double half = (double) threshold / 2;
+	public Double twoFifth = (double) threshold / 5 * 2;
+	public Double climateFriendlyValue = twoFifth;
+	
+	// ingredient Ranking which one should be displayed in percent
+	public Double valueThreshold = 0.0;
+	public Double weightThreshold = 0.0;
+	
+	public boolean DoItWithPermanentIds = true;
+	
+	public ValueType valueType = ValueType.COMPACT;
+	
 	// -------------------------- public Methods -------------------------
 	
 	public StaticProperties() {}
@@ -56,7 +73,14 @@ public class StaticProperties implements Serializable {
 		thresholdStr = request.getParameter("median");
 		extraStr = request.getParameter("extra");
 		personsStr = request.getParameter("persons");
+		String valueThresholdStr = request.getParameter("valueThreshold");
+		String weightThresholdStr = request.getParameter("weightThreshold");
 		
+		if(permanentId != null)
+			DoItWithPermanentIds  = false;
+		else if(kitchenId != null)
+			DoItWithPermanentIds = false;
+			
 		// parse request parameters
 		try {
 			if(pdfStr != null)
@@ -70,6 +94,15 @@ public class StaticProperties implements Serializable {
 			
 			if(personsStr != null)
 				persons = Integer.valueOf(personsStr);
+			
+			if(valueThresholdStr != null){
+				valueThreshold = Double.valueOf(valueThresholdStr);
+			}
+
+			
+			if(weightThresholdStr != null){
+				weightThreshold = Double.valueOf(weightThresholdStr);
+			}
 		}
 		catch (NumberFormatException nfe) {}
 		
@@ -152,5 +185,109 @@ public class StaticProperties implements Serializable {
 	}
 	public void setPersons(Integer persons) {
 		this.persons = persons;
+	}
+
+	public String getBASEURL() {
+		return BASEURL;
+	}
+
+	public void setBASEURL(String bASEURL) {
+		BASEURL = bASEURL;
+	}
+
+	public String getTempIds() {
+		return tempIds;
+	}
+
+	public void setTempIds(String tempIds) {
+		this.tempIds = tempIds;
+	}
+
+	public String getPermanentId() {
+		return permanentId;
+	}
+
+	public void setPermanentId(String permanentId) {
+		this.permanentId = permanentId;
+	}
+
+	public String getKitchenId() {
+		return kitchenId;
+	}
+
+	public void setKitchenId(String kitchenId) {
+		this.kitchenId = kitchenId;
+	}
+
+	public String getPdfStr() {
+		return pdfStr;
+	}
+
+	public void setPdfStr(String pdfStr) {
+		this.pdfStr = pdfStr;
+	}
+
+	public String getThresholdStr() {
+		return thresholdStr;
+	}
+
+	public void setThresholdStr(String thresholdStr) {
+		this.thresholdStr = thresholdStr;
+	}
+
+	public String getExtraStr() {
+		return extraStr;
+	}
+
+	public void setExtraStr(String extraStr) {
+		this.extraStr = extraStr;
+	}
+
+	public String getPersonsStr() {
+		return personsStr;
+	}
+
+	public void setPersonsStr(String personsStr) {
+		this.personsStr = personsStr;
+	}
+
+	public Double getThird() {
+		return third;
+	}
+
+	public void setThird(Double third) {
+		this.third = third;
+	}
+
+	public Double getHalf() {
+		return half;
+	}
+
+	public void setHalf(Double half) {
+		this.half = half;
+	}
+
+	public Double getTwoFifth() {
+		return twoFifth;
+	}
+
+	public void setTwoFifth(Double twoFifth) {
+		this.twoFifth = twoFifth;
+	}
+
+	public Double getClimateFriendlyValue() {
+		return climateFriendlyValue;
+	}
+
+	public void setClimateFriendlyValue(Double climateFriendlyValue) {
+		this.climateFriendlyValue = climateFriendlyValue;
+	}
+
+	public boolean isDoItWithPermanentIds() {
+		return DoItWithPermanentIds;
+	}
+
+	public void setDoItWithPermanentIds(boolean doItWithPermanentIds) {
+		DoItWithPermanentIds = doItWithPermanentIds;
 	}
 }

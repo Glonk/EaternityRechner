@@ -3,6 +3,8 @@
 
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.comparators.IngredientValueComparator" %>
+<%@ page import="ch.eaternity.shared.Util" %>
+<%@ page import="ch.eaternity.shared.CO2Value" %>
 
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
@@ -10,25 +12,26 @@
 <%@ page import="java.util.Collections" %>
 <%@ page import="java.text.DecimalFormat" %>
 
-<%@ page import="ch.eaternity.server.StaticPageService" %>
-<%@ page import="ch.eaternity.server.StaticProperties" %>
+<%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
+<%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
+<%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
 
 
 
 <jsp:useBean id="vars" scope="session"
-     class="ch.eaternity.server.StaticPageService" />
+     class="ch.eaternity.server.jsp.StaticDataLoader" />
      
 <jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.StaticTempBean" />
+	class="ch.eaternity.server.jsp.StaticTempBean" />
      
 <jsp:useBean id="properties" scope="session"
-	class="ch.eaternity.server.StaticProperties" />
+	class="ch.eaternity.server.jsp.StaticProperties" />
 	
 <%
 
 List<IngredientSpecification> ingredients = temp.getIngredients();
-Collection<Double> values = new ArrayList<Double>();
+Collection<CO2Value> values = new ArrayList<CO2Value>();
 int counterIterate = 0;
 
 Collections.sort(ingredients, new IngredientValueComparator());
@@ -37,7 +40,7 @@ Collections.sort(ingredients, new IngredientValueComparator());
 List<IngredientSpecification> ingTop = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
 
 for(IngredientSpecification ingSpec : ingTop){
-	values.add(ingSpec.getCalculatedCO2Value()*temp.getPersonFactor());
+	values.add((new CO2Value(ingSpec)).mult(temp.getPersonFactor()));
 }
 
 
@@ -61,22 +64,25 @@ if (ingredients.size() > 0) {
 		
 		
 		<%
-		for(IngredientSpecification ingSpec : ingTop){ %>
+							for(IngredientSpecification ingSpec : ingTop){ 
+							if (ingSpec.getMengeGramm() > Util.getWeight(ingredients)/100.0*properties.weightThreshold || ingSpec.calculateCo2ValueNoFactors() > Util.getCO2Value(ingredients).noFactorsQuota/100.0*properties.valueThreshold) {
+						%>
+				<tr <%
+				int order = (ingTop.indexOf(ingSpec) - counterIterate ) % 2; 
+				if(order == 1) { %>
+				class="alternate"
+				<% }%> > 
+				<td class="menu-name">
+				<%= ingSpec.getName() %> (<%=properties.weight_formatter.format(ingSpec.getMengeGramm()*temp.getPersonFactor())%> g) <% if (ingSpec.getCost() > 0) { %> (<%= properties.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF) <% } %>
+				</td>
+				<td class="left-border" width="<%= properties.co2BarLength + properties.barOffset %>px"><%= StaticHTMLSnippets.getCo2ValueBar(values, new CO2Value(ingSpec), properties.co2BarLength, properties.valueType) %></td>
+				<td class="co2value" ><%= properties.co2_formatter.format(ingSpec.getCalculatedCO2Value()*temp.getPersonFactor()) %></td>
+			
+				</tr>
 		
-			<tr <%
-			int order = (ingTop.indexOf(ingSpec) - counterIterate ) % 2; 
-			if(order == 1) { %>
-			class="alternate"
-			<% }%> > 
-			<td class="menu-name">
-			<%= ingSpec.getName() %> (<%=ingSpec.getMengeGramm()*temp.getPersonFactor()%> g)  (<%= properties.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF)
-			</td>
-			<td class="left-border" width="<%= properties.co2BarLength + properties.barOffset %>px"><%= vars.getCo2ValueBarSimple(values, ingSpec.getCalculatedCO2Value()*temp.getPersonFactor(), properties.co2BarLength) %></td>
-			<td class="co2value" ><%= properties.co2_formatter.format(ingSpec.getCalculatedCO2Value()*temp.getPersonFactor()) %></td>
-		
-			</tr>
-		
-		<%}%>
+			<%
+			}
+		}%>
 		</table>
 	
 	

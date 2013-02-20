@@ -4,32 +4,34 @@
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
+<%@ page import="ch.eaternity.shared.CO2Value" %>
+<%@ page import="ch.eaternity.shared.Util" %>
 
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
 
-
-<%@ page import="ch.eaternity.server.StaticPageService" %>
+<%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
+<%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
 <%@ page import="java.util.Date" %>
 
 
 <jsp:useBean id="vars" scope="session"
-     class="ch.eaternity.server.StaticPageService" />
+     class="ch.eaternity.server.jsp.StaticDataLoader" />
      
 <jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.StaticTempBean" />
+	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
 <jsp:useBean id="properties" scope="session"
-	class="ch.eaternity.server.StaticProperties" />
+	class="ch.eaternity.server.jsp.StaticProperties" />
      
 <%
 DecimalFormat formatter = new DecimalFormat("##");
 
 List<Recipe> recipes = temp.getRecipes();
 
-if (recipes.size() > 0) {
+if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 	Recipe recipe = recipes.get(0);
 	
 	recipe.setCO2Value();
@@ -60,7 +62,7 @@ if (recipes.size() > 0) {
 	
 		<tr>
 		<td><div class="amount"><%= co2ValueStr %> g CO<sub>2</sub>* total</div></td>
-		<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
+		<td class="left-border"><%=StaticHTMLSnippets.getCo2ValueBar(temp.getCo2Values(), Util.getCO2Value(recipe.getZutaten()), properties.co2BarLength, properties.valueType)%></td>
 		</tr>
 		
 		<tr>
@@ -98,7 +100,7 @@ if (recipes.size() > 0) {
 			%>
 			<tr>
 			<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+			<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*temp.personFactor*140 %>" /><% } %></td>
 			</tr>
 		
 			<%

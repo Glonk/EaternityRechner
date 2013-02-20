@@ -52,52 +52,14 @@ public class CatRyzer {
 		}
 	}
 	
-	public class Co2Value {
-		public double prodQuota;
-		public double transQuota;
-		public double condQuota;
-		public double noFactorsQuota;
-		public double totalValue;
-		
-		public Co2Value() {
-			this.prodQuota = 0.0;
-			this.transQuota = 0.0;
-			this.condQuota = 0.0;
-			this.noFactorsQuota = 0.0;
-			this.totalValue = 0.0;
-		}
-		
-		public Co2Value(double totalValue) {
-			this.totalValue = totalValue;
-		}
-		
-		public Co2Value(double prodQuota, double transQuota, double condQuota, double noFactorsQuota, double totalValue) {
-			this.prodQuota = prodQuota;
-			this.transQuota = transQuota;
-			this.condQuota = condQuota;
-			this.noFactorsQuota = noFactorsQuota;
-			this.totalValue = totalValue;
-		}
-		
-		public Co2Value add(Co2Value other) {
-			Co2Value sum = new Co2Value();
-			sum.prodQuota = this.prodQuota + other.prodQuota;
-			sum.transQuota = this.transQuota + other.transQuota;
-			sum.condQuota = this.condQuota + other.condQuota;
-			sum.noFactorsQuota = this.noFactorsQuota + other.noFactorsQuota;
-			sum.totalValue = this.totalValue + other.totalValue;
-			return sum;
-		}
-
-	}
 	
 	public class DateValue {
 		public Date date;
-		public Co2Value co2value;
+		public CO2Value co2value;
 		
 		public DateValue() {}
 		
-		public DateValue(Date date, Co2Value co2value) {
+		public DateValue(Date date, CO2Value co2value) {
 			this.date = date;
 			this.co2value = co2value;
 		}
@@ -105,21 +67,21 @@ public class CatRyzer {
 	
 	public class CategoryValue {
 		public String categoryName;
-		public Co2Value co2value;
+		public CO2Value co2value;
 		public Double weight;
 		public Double cost;
 		
 		public CategoryValue(){}
 		
-		public CategoryValue(String name, Co2Value co2value) {
+		public CategoryValue(String name, CO2Value co2value) {
 			this.categoryName = name;
 			this.co2value = co2value;
 		}
-		public CategoryValue(String name, Co2Value co2value, Double amountGram) {
+		public CategoryValue(String name, CO2Value co2value, Double amountGram) {
 			this(name,co2value);
 			this.weight = amountGram;
 		}
-		public CategoryValue(String name, Co2Value co2value, Double amountGram, Double cost) {
+		public CategoryValue(String name, CO2Value co2value, Double amountGram, Double cost) {
 			this(name,co2value);
 			this.weight = amountGram;
 			this.cost = cost;
@@ -130,7 +92,7 @@ public class CatRyzer {
 		public List<CategoryValue> categories;
 		//mulltiple dates are possible, usually just one
 		public List<Date> date = new ArrayList<Date>();
-		public Co2Value co2value;
+		public CO2Value co2value;
 		
 		public CategoryValuesByDates(){}
 		
@@ -268,12 +230,12 @@ public class CatRyzer {
 			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
 			for (Date date : dateOfKeys) {
 				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
-				dateValues.add(new DateValue(date, getCo2Value(ingredientsSpecification)));
+				dateValues.add(new DateValue(date, Util.getCO2Value(ingredientsSpecification)));
 			}
 			
 			for (CatMapping mapping : mappings) {
 				Collection<IngredientSpecification> ingSpecs = catMultiMap.get(mapping.category);
-				categoryValues.add(new CategoryValue(mapping.category, getCo2Value(ingSpecs), getWeight(ingSpecs), getCost(ingSpecs)));
+				categoryValues.add(new CategoryValue(mapping.category, Util.getCO2Value(ingSpecs), Util.getWeight(ingSpecs), Util.getCost(ingSpecs)));
 			}
 			
 
@@ -288,13 +250,13 @@ public class CatRyzer {
 				Multimap<String,IngredientSpecification> catMM = MapOfcatMultiMap.get(date);
 				
 				for (CatMapping mapping : mappings) {
-					categoryValues.add(new CategoryValue(mapping.category, getCo2Value(catMM.get(mapping.category))));
+					categoryValues.add(new CategoryValue(mapping.category, Util.getCO2Value(catMM.get(mapping.category))));
 				}
 				
 				CategoryValuesByDates categoryValuesByDates = new CategoryValuesByDates();
 				categoryValuesByDates.date.add(date);
 				categoryValuesByDates.categories = categoryValues;
-				categoryValuesByDates.co2value = new Co2Value();
+				categoryValuesByDates.co2value = new CO2Value();
 				for (CategoryValue catval : categoryValues){
 					categoryValuesByDates.co2value = categoryValuesByDates.co2value.add(catval.co2value);
 				}
@@ -321,14 +283,14 @@ public class CatRyzer {
 		// fill Ingredients Mulimap for worst Ingredient beast top 10 
 		for (IngredientSpecification ingSpec : ingSpecs) {
 			if (locale.equals(Locale.ENGLISH))
-				ingMultiMap.put(getIngredientName_en(ingSpec), ingSpec);
+				ingMultiMap.put(Util.getIngredientName_en(ingSpec, ingredients), ingSpec);
 			else if (locale.equals(Locale.GERMAN))
 				ingMultiMap.put(ingSpec.getName(), ingSpec);
 		}
 		
 		for (String name : ingMultiMap.keySet()) {
 			Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
-			ingredientValues.add(new CategoryValue(name, getCo2Value(ingCollection), getWeight(ingCollection), getCost(ingCollection)));
+			ingredientValues.add(new CategoryValue(name, Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection)));
 		}
 		
 		// sort CategoryValue by co2-value
@@ -338,88 +300,26 @@ public class CatRyzer {
 	}
 
 	// return total co2 amount in grams
-	public Co2Value getTotalCo2() {
-		return getCo2Value(ingSpecs);
-	}
-	
-	public Co2Value getCo2Value(Collection<IngredientSpecification> ingsSpecs) {
-		Co2Value co2value = new Co2Value(0.0,0.0,0.0,0.0,0.0);
-		for (IngredientSpecification ingSpec : ingsSpecs) {
-			co2value.condQuota = co2value.condQuota + ingSpec.getConditionQuota();
-			co2value.transQuota = co2value.transQuota + ingSpec.getTransportationQuota();
-			co2value.prodQuota = co2value.prodQuota + ingSpec.getProductionQuota();
-			co2value.noFactorsQuota = co2value.noFactorsQuota + ingSpec.calculateCo2ValueNoFactors();
-			co2value.totalValue = co2value.totalValue + ingSpec.getCalculatedCO2Value();
-		}
-		return co2value;
+	public CO2Value getTotalCo2() {
+		return Util.getCO2Value(ingSpecs);
 	}
 	
 	// return total weight in grams
 	public Double getTotalWeight() {
-		return getWeight(ingSpecs);
+		return Util.getWeight(ingSpecs);
 	}
 	
 	//returns total cost in currency which was inputed
 	public Double getTotalCost() {
-		return getCost(ingSpecs);
-	}
-	
-	public Double getWeight(Collection<IngredientSpecification> ingredientsSpecifications) {
-		Double amount = 0.0;
-		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
-			amount = amount + ingredientSpecification.getMengeGramm();
-		}
-		return amount;
-	}
-	
-	public Double getCost(Collection<IngredientSpecification> ingredientsSpecifications) {
-		Double cost = 0.0;
-		for (IngredientSpecification ingredientSpecification : ingredientsSpecifications) {
-			cost = cost + ingredientSpecification.getCost();
-		}
-		return cost;
+		return Util.getCost(ingSpecs);
 	}
 	
 	public Pair<Double, Double> getTotalSeasonQuotient(Collection<IngredientSpecification> ingsSpecs) {
-		return getSeasonQuotient(ingSpecs);
+		return Util.getSeasonQuotient(ingSpecs);
 	}
-	
-	// how many of the vegetables and fruits are seasonal, fresh from switzerland
-	// lies between zero and one
-	public Pair<Double, Double> getSeasonQuotient(Collection<IngredientSpecification> ingSpecs) {
-		Integer numFruitsAndVegetables = 0;
-		Integer numAreSeasonal = 0;
-		Double seasonalWeight = 0.0;
-		Double totalWeight = 0.0;
-		for(IngredientSpecification ingSpec: ingSpecs) {
-			if (ingSpec.getCookingDate() != null && ingSpec.hasSeason()) {
-				numFruitsAndVegetables++;
-				totalWeight =  totalWeight + ingSpec.getMengeGramm();
-				
-				SeasonDate dateStart = new SeasonDate();
-				dateStart.setDate(ingSpec.getStartSeason());
-				SeasonDate dateStop = new SeasonDate();
-				dateStop.setDate(ingSpec.getStopSeason());
-				SeasonDate dateCook = new SeasonDate();
-				dateCook.setDate(ingSpec.getCookingDate());
-				// have season?
-				if (dateCook.after(dateStart) && dateCook.before(dateStop)) {
-					// are fresh from switzerland
-					if (ingSpec.getHerkunft().symbol.equals("Schweiz") && ingSpec.getZustand().symbol.equals("frisch")) {
-						numAreSeasonal++;
-						seasonalWeight = seasonalWeight + ingSpec.getMengeGramm();
-					}
-				}
-			}
-		}
 
-		Pair<Double,Double> pair = new Pair<Double,Double>(numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue(), seasonalWeight/totalWeight);
-		return pair;
-	}
-	
 	
 	// -------------- Private --------------
-
 	
 	public static
 	<T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
@@ -442,37 +342,6 @@ public class CatRyzer {
 		}
 	}
 	
-	
-
-	
-	
-	public Set<String> getIngredientsNames_de(Collection<IngredientSpecification> ingSpecs){
-		Set<String> names = new HashSet<String>();
-		for (IngredientSpecification ingSpec : ingSpecs){
-			names.add(ingSpec.getName());
-		}
-		
-		return names;
-	}
-	
-	public Set<String> getIngredientsNames_en(Collection<IngredientSpecification> ingSpecs){
-		Set<String> names = new HashSet<String>();
-		for (IngredientSpecification ingSpec : ingSpecs){
-				names.add(getIngredientName_en(ingSpec));
-		}	
-		return names;
-	}
-	
-	public String getIngredientName_en(IngredientSpecification ingSpec){
-		Ingredient ing = getIngredient(ingSpec);
-		if (ing == null)
-			return ingSpec.getName();
-		else if (ing.getSymbol_en() == null)
-			return ingSpec.getName() + "(no eng)";
-		else
-			return ing.getSymbol_en();
-	}
-	
 	//returns null if not found
 	private Ingredient getIngredient(IngredientSpecification ingspec) {
 		return getIngredient(ingspec.getZutat_id());
@@ -487,6 +356,7 @@ public class CatRyzer {
 		}
 		return null;
 	}
+	
 	
 	private void writeDatesToIngSpec(){
 		Calendar cal = Calendar.getInstance();

@@ -73,12 +73,11 @@
 	Date date = new Date();
     long iTimeStamp = (long) (date.getTime() * .00003);
     
-    StaticPageService vars = new StaticPageService(request,Locale.GERMAN,false);
+    StaticDataLoader vars = new StaticDataLoader(request,Locale.GERMAN,false);
 		
 	// Initialize Catryzer
 	CatRyzer catryzer = new CatRyzer(vars.recipes,locale);
 	List<CatRyzer.CategoryValue> valuesByIngredient = catryzer.getIngVals();
-	
 %>
 
 
