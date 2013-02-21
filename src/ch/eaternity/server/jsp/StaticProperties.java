@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.math.RoundingMode;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -73,7 +74,9 @@ public class StaticProperties implements Serializable {
 	
 	// -------------------------- public Methods -------------------------
 	
-	public StaticProperties() {}
+	public StaticProperties() {
+		formatter.setRoundingMode(RoundingMode.FLOOR);
+	}
 	
 	public void initialize(HttpServletRequest request) {
 		BASEURL = request.getRequestURL().toString();

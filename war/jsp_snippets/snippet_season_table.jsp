@@ -6,6 +6,8 @@
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.shared.Pair" %>
+<%@ page import="ch.eaternity.shared.Util" %>
+<%@ page import="ch.eaternity.shared.SeasonDate" %>
 
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
@@ -18,6 +20,29 @@
 
 <%@ page import="java.util.Date" %>
 
+<style>
+	.month td {
+		width:2.5em;
+		border-left-color: 	#929292;
+		border-left-style: solid;
+		border-left-width: 1px;
+		text-align:center;
+		font-size: 10pt;
+	}
+	
+	.selected {
+		border-color: 	#929292;
+		border-style: solid;
+		border-width:1px;
+	}
+	.bottom-border td{
+	border-bottom-color: #929292;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	vertical-align: top;
+	width:auto;
+}
+</style>
 
 <jsp:useBean id="vars" scope="session"
      class="ch.eaternity.server.jsp.StaticDataLoader" />
@@ -27,42 +52,80 @@
 	
 <jsp:useBean id="properties" scope="session"
 class="ch.eaternity.server.jsp.StaticProperties" />
-     
-     
+  
 <%
+List<Recipe> recipes = temp.getRecipes();
 
-List<IngredientSpecification> ingredients = temp.getIngredients();
-CatRyzer catryzer = new CatRyzer();
-Pair<Double, Double> seasonQuotients;
-seasonQuotients = catryzer.getSeasonQuotient(ingredients);
-%>
+ %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
+
+
+	<!-- top row -->
 	<tr>
-		<td>CO2 Rohwert ohne Anteile [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).noFactorsQuota*temp.getPersonFactor())%></td>
+		<td></td>
+		<td class="co2label left-border"></td>
+		<td class="gray left-border bottom-border" colspan="12" style="text-align:left;width:36em">Monat</td>
+		<td class="left-border"></td>
+		<td></td>
 	</tr>
-	<tr>
-		<td >Anteil Transport [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).transQuota*temp.getPersonFactor())%></td>
+	
+	
+	<!-- header row -->
+	<tr class="bottom-border month">
+		<td class="table-header bottom-border" style="border-left-width: 0px;width:auto; text-align:left;">Name</td>
+		<td class="co2label left-border bottom-border table-header" style="width:auto;"><span class="nowrap">&nbsp;<%= properties.co2Unit %> CO<sub>2</sub>*&nbsp;</span></td>
+		
+		<td>&nbsp;Jan&nbsp;</td><td>&nbsp;Feb&nbsp;</td><td>&nbsp;Mär&nbsp;</td><td>&nbsp;Apr&nbsp;</td><td>&nbsp;Mai&nbsp;</td><td>&nbsp;Jun&nbsp;</td><td>&nbsp;Jul&nbsp;</td><td>&nbsp;Aug&nbsp;</td><td>&nbsp;Sep&nbsp;</td><td>&nbsp;Okt&nbsp;</td><td>&nbsp;Nov&nbsp;</td><td>&nbsp;Dez&nbsp;</td>
+		
+		<td class="left-border table-header bottom-border" style="text-align:center;width:auto;"><span class="nowrap">&nbsp;Woche&nbsp;</span></td>
 	</tr>
-	<tr>
-		<td >Anteil Konservierungsmethoden [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).condQuota*temp.getPersonFactor())%></td>
+
+
+	<!-- empty row -->
+	<tr> 
+	<td class="menu-name">&nbsp;
+	</td>
+	<td class="co2value left-border" ></td>
+	
+	<td class="left-border"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+		
+	
+	<td class="left-border"></td>
 	</tr>
-	<tr>
-		<td >Anteil Produktionsmethoden [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( catryzer.getCO2Value(ingredients).prodQuota*temp.getPersonFactor())%></td>
-	</tr>
-	<tr>
-		<td>Gewicht [g]:</td>
-		<td><%= properties.weight_formatter.format( catryzer.getWeight(ingredients)*temp.getPersonFactor()) %></td>
-	</tr>
-	<% if (catryzer.getCost(ingredients) > 0) { %>
-	<tr>
-		<td>Kosten [CHF]:</td>
-		<td><%= properties.cost_formatter.format( catryzer.getCost(ingredients)*temp.getPersonFactor()) %></td>
-	</tr>
+
+	<!-- menu rows -->	
+	<% for (Recipe recipe : recipes) { 
+		Pair<SeasonDate,SeasonDate> seasonSpan = Util.getSeasonSpan(recipe);
+		%>
+		<tr> 
+			<td class="menu-name">
+				<% if (recipe.getCO2Value() < properties.threshold) { %>
+					<img class="smile" src="smiley8.png" alt="smiley" />
+				<% } if (recipe.getCO2Value() < properties.climateFriendlyValue) { %>
+					<img class="smile" src="smiley8.png" alt="smiley" />
+				<% } %>
+				<span class="nowrap"><%= recipe.getSymbol() %></span>
+			</td>
+			<td class="co2value left-border right-border" style="text-align:center;font-weight: 600;" ><%= properties.co2_formatter.format( recipe.getCO2Value() * properties.co2Unit.conversionFactor ) %></td>
+			
+			<% for (int i=1; i<=12; i++) { %>
+				<td<% 
+				if (seasonSpan.first.before(new SeasonDate(i,31)) && seasonSpan.second.after(new SeasonDate(i,1))) { %> class="green"<% } %>></td>
+			<% } %>
+				
+			<td class="woche left-border" style="text-align:center;font-weight: 600;" >32</td>
+		</tr>
 	<% } %>
+	
+	
+	<!-- empty row -->
+	<tr  > 
+		<td class="menu-name">&nbsp;</td>
+		<td class="co2value left-border" ></td>
+		<td class="left-border"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td class="left-border"></td>
+	</tr>
+	
 </table>
 	

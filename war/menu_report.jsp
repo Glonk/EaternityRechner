@@ -26,6 +26,7 @@
 <%@ page import="java.util.Date" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Collections" %>
+<%@ page import="java.math.RoundingMode" %>
 
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
@@ -56,22 +57,23 @@
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
-<%
+<% 
 	//Specific Parameters to set for Display] 
 	properties.locale = Locale.GERMAN;
 
-	properties.weightUnit = Weight.KILOGRAM;
+	properties.weightUnit = Weight.GRAM;
 	properties.co2Unit = Weight.GRAM;		
 			
 	properties.formatter = new DecimalFormat("##");
+	properties.formatter.setRoundingMode(RoundingMode.FLOOR);
 	properties.co2_formatter = new DecimalFormat("##");
 	properties.cost_formatter = new DecimalFormat("##");
-	properties.weight_formatter = new DecimalFormat("##.#");
+	properties.weight_formatter = new DecimalFormat("##");
 	properties.distance_formatter = new DecimalFormat("##");
 	properties.dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 	
-	properties.co2BarLength = 180;
-	properties.barOffset = 45;
+	properties.co2BarLength = 200;
+	properties.barOffset = 70;
 	
 	// standard values for request if not set
 	properties.doPdf = false;
@@ -79,7 +81,7 @@
 	properties.extra = 0;
 	properties.persons = 4;
 	
-	properties.valueType = StaticProperties.ValueType.EXPANDED;
+	properties.valueType = StaticProperties.ValueType.COMPACT;
 	properties.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
 	
 	properties.initialize(request);
@@ -100,7 +102,6 @@
 		
 	// Initialize Catryzer
 	CatRyzer catryzer = new CatRyzer(vars.recipes,properties.locale);
-	List<CatRyzer.CategoryValue> valuesByIngredient = catryzer.getIngVals();
 	%>
 
 
@@ -241,6 +242,8 @@ function getBaseURL() {
 
 </head>
 
+<!--  ----------------------------------- Body Begin --------------------------------------- -->
+
 <body onLoad="initThis()">
 
 <%
@@ -296,13 +299,34 @@ else { %>
 <!-- --------------------------- Certificate Box -------------------------------------- -->
 
 <%
-
-temp.recipes.addAll(vars.recipes);
+temp.clear();
+temp.co2Values.addAll(Util.getCO2ValuesRecipes(vars.recipes));
 
 %>
 
 <jsp:include page="/jsp_snippets/snippet_certificate.jsp" />
 
+<!-- --------------------------- Season Table -------------------------------------- -->
+
+<%
+temp.clear();
+temp.recipes.addAll(vars.recipes);
+
+%>
+<table cellspacing="0" cellpadding="0" class="table" >
+	<tr>
+		<td class="table-header">Prima, Frisch und Saisonal kochen.</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td><p>Auch Rezepte können eine Saison haben. Schaut man sich jede einzelne Zutat an sieht man sofort, wann ein Rezept saison hat. Manchmal lohnt es sich also eine saisonale Zutat als alternative zu verwenden - oder das Rezept dann zu kochen, wenn es auch am besten schmeckt. Dann wenn alles frisch ist und aus der Region kommt.</p></td>
+		<td></td>
+	</tr>
+</table>
+
+<table cellspacing="0" cellpadding="0" class="table" >
+
+<jsp:include page="/jsp_snippets/snippet_season_table.jsp" />
 
 <!-- --------------------------- Menu List -------------------------------------- -->
 
@@ -512,22 +536,21 @@ out.print(herko);
 	 -->
 </table>
 
-<% 
-for(Recipe recipe: vars.recipes){
+<%
+	for(Recipe recipe: vars.recipes){
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + properties.extra;	
 	
 	if(recipeValue < properties.climateFriendlyValue){
 		temp.clear();
 		temp.recipes.add(recipe);
-		temp.co2Values.addAll(Util.getCO2Values(recipe.getZutaten()));
+		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
 		
 		temp.ingredients.addAll(recipe.getZutaten());
 		temp.stopIndex = 3;
 		
-		temp.personFactor = properties.persons/recipe.getPersons();
-
-		%>
+		temp.personFactor = properties.persons/recipe.getPersons().doubleValue();
+%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
 		
@@ -536,8 +559,12 @@ for(Recipe recipe: vars.recipes){
 		<jsp:include page="/jsp_snippets/snippet_totalvalues.jsp" /> 
 	
 
-	<%}%>
-<%}%>
+	<%
+ 			}
+ 		%>
+<%
+	}
+%>
 
 
 
@@ -550,7 +577,7 @@ for(Recipe recipe: vars.recipes){
 	</tr>
 	
 	<tr>
-	<td><p>Diese Rezepte sind mit unter <%= properties.formatter.format( properties.threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
+	<td><p>Diese Rezepte sind mit unter <%=properties.formatter.format( properties.threshold )%> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 	<td></td>
 	</tr>
 	<!--  
@@ -566,7 +593,7 @@ for(Recipe recipe: vars.recipes){
 </table>
 
 <%
-for(Recipe recipe: vars.recipes){
+	for(Recipe recipe: vars.recipes){
 	
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + properties.extra;
@@ -574,14 +601,13 @@ for(Recipe recipe: vars.recipes){
 	if(recipeValue >= properties.climateFriendlyValue && recipeValue < properties.threshold){
 		temp.clear();
 		temp.recipes.add(recipe);
-		temp.co2Values.addAll(Util.getCO2Values(recipe.getZutaten()));
+		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
 		
 		temp.ingredients.addAll(recipe.getZutaten());
 		temp.stopIndex = 3;
 		
-		temp.personFactor = properties.persons/recipe.getPersons();
-
-		%>
+		temp.personFactor = properties.persons/recipe.getPersons().doubleValue();
+%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
 		
@@ -589,8 +615,12 @@ for(Recipe recipe: vars.recipes){
 		
 		<jsp:include page="/jsp_snippets/snippet_totalvalues.jsp" /> 
 		
-	<%}%>
-<%}%>
+	<%
+ 				}
+ 			%>
+<%
+	}
+%>
 
 
 
@@ -606,7 +636,7 @@ for(Recipe recipe: vars.recipes){
 	
 	
 	<tr>
-	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= properties.formatter.format( properties.threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
+	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%=properties.formatter.format( properties.threshold )%> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 	<td></td>
 	</tr>
 	<!--  
@@ -623,23 +653,21 @@ for(Recipe recipe: vars.recipes){
 </table>
 	
 <%
+		for(Recipe recipe: vars.recipes){
 
-for(Recipe recipe: vars.recipes){
+		recipe.setCO2Value();
+		Double recipeValue = recipe.getCO2Value() + properties.extra;
 
-	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + properties.extra;
-
-	if(recipeValue >= properties.threshold){
-		temp.clear();
-		temp.recipes.add(recipe);
-		temp.co2Values.addAll(Util.getCO2Values(recipe.getZutaten()));
-		
-		temp.ingredients.addAll(recipe.getZutaten());
-		temp.stopIndex = 3;
-		
-		temp.personFactor = properties.persons/recipe.getPersons();
-
-		%>
+		if(recipeValue >= properties.threshold){
+			temp.clear();
+			temp.recipes.add(recipe);
+			temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
+			
+			temp.ingredients.addAll(recipe.getZutaten());
+			temp.stopIndex = 3;
+			
+			temp.personFactor = properties.persons/recipe.getPersons().doubleValue();
+	%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
 		

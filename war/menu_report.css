@@ -67,7 +67,7 @@ h3 {
 
 .content {
 /*     page-break-after: always; */
-	margin: 30pt 40pt 30pt 20pt;
+	margin: 30pt 0pt 30pt 20pt;
 }
 
 .page-break {
@@ -497,6 +497,13 @@ padding: 1em 0.5em 0.5em 3em;
 	border-left-color: #929292;
 	border-left-style: solid;
 	border-left-width: 1px;
+	vertical-align: center;
+}
+
+.right-border{
+	border-right-color: #929292;
+	border-right-style: solid;
+	border-right-width: 1px;
 	vertical-align: center;
 }
 

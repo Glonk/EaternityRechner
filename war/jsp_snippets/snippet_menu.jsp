@@ -52,13 +52,16 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		</tr>
 		
 		<tr>
-		<td class="bottom-border">
-		<img class="smile" src="smiley8.png" alt="smiley" />
-		<img class="smile" src="smiley8.png" alt="smiley" />
-		<h3><%= recipe.getSymbol() %></h3>
-	
-		</td>
-		<td class="left-border"></td>
+			<td class="bottom-border">
+				<% if (recipe.getCO2Value() < properties.threshold) { %>
+					<img class="smile" src="smiley8.png" alt="smiley" />
+				<% } if (recipe.getCO2Value() < properties.climateFriendlyValue) { %>
+					<img class="smile" src="smiley8.png" alt="smiley" />
+				<% } %>
+				<h3><%= recipe.getSymbol() %></h3>
+		
+			</td>
+			<td class="left-border"></td>
 		</tr>
 	
 		<tr>

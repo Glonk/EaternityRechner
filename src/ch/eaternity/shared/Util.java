@@ -49,6 +49,15 @@ public class Util {
 		return average;
 	}
 	
+	static public Double getAverageCO2Value(Collection<CO2Value> values) {
+		Double average = 0D;
+		for (CO2Value value : values) {
+			average = average + value.totalValue;
+		}
+		average = average / values.size();
+		return average;
+	}
+	
 	static public Double getMedian(List<Double> values) {
 		Collections.sort(values);
 		Double median = 0D;
@@ -80,14 +89,21 @@ public class Util {
 		return co2value;
 	}
 	
-	static public Collection<CO2Value> getCO2Values(Collection<IngredientSpecification> ingsSpecs) {
+	static public Collection<CO2Value> getCO2ValuesIngredients(Collection<IngredientSpecification> ingsSpecs) {
 		Collection<CO2Value> values = new ArrayList<CO2Value>();
 		for (IngredientSpecification ingSpec : ingsSpecs) {
 			values.add(new CO2Value(ingSpec));
 		}
 		return values;
 	}
-	
+
+	static public Collection<CO2Value> getCO2ValuesRecipes(Collection<Recipe> recipes) {
+		Collection<CO2Value> values = new ArrayList<CO2Value>();
+		for (Recipe recipe : recipes) {
+			values.add(recipe.getCO2ValueExpanded());
+		}
+		return values;
+	}
 
 	
 	static public Double getWeight(Collection<IngredientSpecification> ingredientsSpecifications) {
@@ -150,9 +166,31 @@ public class Util {
 			seasonUnitQuotient = numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
 		if (totalWeight > 0.0) 
 			seasonWeightQuotient = seasonalWeight/totalWeight;
-
-		Pair<Double,Double> pair = new Pair<Double,Double>(seasonUnitQuotient, seasonWeightQuotient);
-		return pair;
+		 
+		return new Pair<Double,Double>(seasonUnitQuotient, seasonWeightQuotient);
+	}
+	
+	static public Pair<SeasonDate,SeasonDate> getSeasonSpan(Recipe recipe) {
+		SeasonDate start = new SeasonDate(1,1);
+		SeasonDate stop = new SeasonDate(12,31);
+		SeasonDate startSaison = new SeasonDate();
+		SeasonDate stopSaison = new SeasonDate();
+		
+		for (IngredientSpecification ingSpec : recipe.getZutaten()) {
+			if (ingSpec.hasSeason()) {
+				
+				startSaison = new SeasonDate();
+				startSaison.setDate(ingSpec.getStartSeason());
+				if (startSaison.after(start))
+					start = new SeasonDate(startSaison);
+				
+				stopSaison = new SeasonDate();
+				stopSaison.setDate(ingSpec.getStopSeason());
+				if (stopSaison.before(stop))
+					stop = stopSaison;
+			}
+		}
+		return new Pair<SeasonDate,SeasonDate>(start, stop);
 	}
 	
 	//returns null if not found

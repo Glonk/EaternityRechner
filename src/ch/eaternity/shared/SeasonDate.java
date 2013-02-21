@@ -42,6 +42,11 @@ public class SeasonDate {
 		return setDate(strDate);
 	}
 	
+	public SeasonDate(SeasonDate toClone) {
+		month = toClone.month;
+		day = toClone.day;
+	}
+	
 
 	/*
 	 * if the dates are same, after returns true as well (still in season)

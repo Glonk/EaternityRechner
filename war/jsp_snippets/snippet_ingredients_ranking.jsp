@@ -45,7 +45,7 @@ for(IngredientSpecification ingSpec : ingredients){
 }
 
 
-if (ingredients.size() > 0) {
+if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
 	%>
 	<table cellspacing="0" cellpadding="0" class="table toc" >
 		
@@ -82,7 +82,7 @@ if (ingredients.size() > 0) {
 				<td class="menu-name">
 				<%= ingSpec.getName() %> (<%= properties.weight_formatter.format(ingSpec.getMengeGramm()*properties.weightUnit.conversionFactor*temp.getPersonFactor()) + " " + properties.weightUnit + ")" %><% if (ingSpec.getCost() > 0) { %> (<%= properties.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF) <% } %>
 				</td>
-				<td class="left-border" width="<%= properties.co2BarLength + properties.barOffset %>px"><%= StaticHTMLSnippets.getCo2ValueBar(values, new CO2Value(ingSpec), properties.co2BarLength, properties.valueType) %></td>
+				<td class="left-border" width="<%= properties.co2BarLength + properties.barOffset %>px"><%= StaticHTMLSnippets.getCo2ValueBar(values, (new CO2Value(ingSpec)).mult(temp.getPersonFactor()), properties.co2BarLength, properties.valueType) %></td>
 				<td class="co2value" ><%= properties.co2_formatter.format(ingSpec.getCalculatedCO2Value()*properties.co2Unit.conversionFactor*temp.getPersonFactor()) %></td>
 			
 				</tr>
@@ -95,4 +95,7 @@ if (ingredients.size() > 0) {
 	
 <%		
 }
+else { %>
+Keine Zutat oder keinen PersonFactor gesetzt in TempBean.
+<% }
 %>

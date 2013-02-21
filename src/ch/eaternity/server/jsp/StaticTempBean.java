@@ -16,11 +16,13 @@ public class StaticTempBean implements Serializable {
 	// -------------------------- public Fields -------------------------
 	
 	public List<Recipe> recipes= new ArrayList<Recipe>();
+
 	public List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
 	public int startIndex;
 	public int stopIndex;
 	
 	public Collection<CO2Value> co2Values = new ArrayList<CO2Value>();
+	public CO2Value co2Value;
 	
 	public double personFactor;
 	public double persons;
@@ -90,5 +92,20 @@ public class StaticTempBean implements Serializable {
 
 	public void setCo2Values(Collection<CO2Value> co2Values) {
 		this.co2Values = co2Values;
+	}
+	public CO2Value getCo2Value() {
+		return co2Value;
+	}
+
+	public void setCo2Value(CO2Value co2Value) {
+		this.co2Value = co2Value;
+	}
+
+	public double getPersons() {
+		return persons;
+	}
+
+	public void setPersons(double persons) {
+		this.persons = persons;
 	}
 }
