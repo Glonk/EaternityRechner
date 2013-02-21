@@ -61,10 +61,10 @@
 	properties.locale = Locale.GERMAN;
 
 	properties.weightUnit = Weight.KILOGRAM;
-	properties.co2Unit = Weight.KILOGRAM;		
+	properties.co2Unit = Weight.GRAM;		
 			
 	properties.formatter = new DecimalFormat("##");
-	properties.co2_formatter = new DecimalFormat("##.#");
+	properties.co2_formatter = new DecimalFormat("##");
 	properties.cost_formatter = new DecimalFormat("##");
 	properties.weight_formatter = new DecimalFormat("##.#");
 	properties.distance_formatter = new DecimalFormat("##");
@@ -80,6 +80,7 @@
 	properties.persons = 4;
 	
 	properties.valueType = StaticProperties.ValueType.EXPANDED;
+	properties.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
 	
 	properties.initialize(request);
 	
@@ -308,14 +309,12 @@ temp.recipes.addAll(vars.recipes);
 <form name="htmlAdder" method="POST" action=";">
 	
 <table cellspacing="0" cellpadding="0" class="table toc" >
-
-
-<tr>
-<td></td>
-<td class="gray left-border"></td>
-<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
-<td></td>
-</tr>
+	<tr>
+		<td></td>
+		<td class="gray left-border"></td>
+		<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>* pro Person</span></td>
+		<td></td>
+	</tr>
 
 <%
 
@@ -382,19 +381,14 @@ for(Recipe recipe: vars.recipes){
 	if(recipe.cookingDate != null){
 		dateString = properties.dateFormatter.format(recipe.cookingDate);
 	}
-	
 
 	recipe.setCO2Value();
-	
 	Double recipeValue = recipe.getCO2Value() + properties.extra;
 	
 	String length = properties.formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
-
 	String formatted = properties.formatter.format( recipeValue);
-	
 	String moreOrLess = "";
 	String percent ="";
-
 	
 	if((recipeValue+properties.extra)>(properties.threshold)){
 		percent = "+" + properties.formatter.format( ((recipeValue-properties.threshold)/(properties.threshold))*100 ) + "%";
@@ -402,15 +396,12 @@ for(Recipe recipe: vars.recipes){
 		percent = "-" + properties.formatter.format( ((properties.threshold-recipeValue)/(properties.threshold))*100 ) + "%";
 	}
 
-	
-
-	
 	if((recipeValue < properties.climateFriendlyValue) && notDoneFirst){
 		
 		smilies = "<img class='smile' src='smiley8.png' alt='smiley' /><img class='smile' src='smiley8.png' alt='smiley' />";
 		
 		if(notDoneFirst){
-		notDoneFirst = false;
+			notDoneFirst = false;
 		%>
 		
 		<tr>
@@ -431,11 +422,7 @@ for(Recipe recipe: vars.recipes){
 		if(notDoneSeccond){
 			notDoneSeccond = false;
 			out.print(klima);
-			klima = "";
-			
-			%>
-		
-
+			klima = ""; %>
 		
 		<tr>
 		<td class="table-header bottom-border">Gut</td>
@@ -443,12 +430,9 @@ for(Recipe recipe: vars.recipes){
 		<td class="co2value" ></td>
 		<td class="co2percent"  ></td>
 		</tr>
-		
-		
 		<%
-	}
-	
 		}
+	}
 		if((recipeValue > properties.threshold) && notDoneThird){ 
 			
 			smilies = "";
@@ -469,8 +453,8 @@ for(Recipe recipe: vars.recipes){
 		</tr>
 
 		<%
+		}
 	}
-}
 		%>
 		
 		<tr <%
@@ -486,9 +470,7 @@ for(Recipe recipe: vars.recipes){
 		<td class="co2value" ><%= formatted %></td>
 		<td class="co2percent" ><%= percent %></td>
 		</tr>
-
 		<%
-
 }	
 
 out.print(klima);
@@ -511,24 +493,23 @@ out.print(herko);
 
 <table cellspacing="0" cellpadding="0" class="table new-page listTable" >
 	<tr>
-	<td class="table-header">Grossartig</td>
-	<td></td>
+		<td class="table-header">Grossartig</td>
+		<td></td>
 	</tr>
-		
 	<tr>
-	<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= properties.co2_formatter.format( properties.climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
-	<td></td>
+		<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= properties.co2_formatter.format( properties.climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+		<td></td>
 	</tr>
-	
+	<!-- 
 	<tr>
-	<td class="bottom-border"></td>
-	<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
+		<td class="bottom-border"></td>
+		<td class="green left-border">Potential in g CO<sub>2</sub>* pro Person</td>
 	</tr>
-	
 	<tr>
-	<td></td>
-	<td class="left-border"><br></td>
+		<td></td>
+		<td class="left-border"><br></td>
 	</tr>
+	 -->
 </table>
 
 <% 
@@ -572,7 +553,7 @@ for(Recipe recipe: vars.recipes){
 	<td><p>Diese Rezepte sind mit unter <%= properties.formatter.format( properties.threshold ) %> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 	<td></td>
 	</tr>
-	
+	<!--  
 	<tr>
 	<td class="bottom-border"></td>
 	<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
@@ -581,7 +562,7 @@ for(Recipe recipe: vars.recipes){
 	<tr>
 	<td></td>
 	<td class="left-border"><br></td>
-	</tr>
+	</tr> -->
 </table>
 
 <%
@@ -593,11 +574,12 @@ for(Recipe recipe: vars.recipes){
 	if(recipeValue >= properties.climateFriendlyValue && recipeValue < properties.threshold){
 		temp.clear();
 		temp.recipes.add(recipe);
+		temp.co2Values.addAll(Util.getCO2Values(recipe.getZutaten()));
 		
 		temp.ingredients.addAll(recipe.getZutaten());
 		temp.stopIndex = 3;
 		
-		temp.personFactor = recipe.getPersons()*properties.persons;
+		temp.personFactor = properties.persons/recipe.getPersons();
 
 		%>
 		
@@ -627,7 +609,7 @@ for(Recipe recipe: vars.recipes){
 	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%= properties.formatter.format( properties.threshold ) %> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 	<td></td>
 	</tr>
-	
+	<!--  
 	<tr>
 	<td class="bottom-border"></td>
 	<td class="green left-border">Potential in g CO<sub>2</sub>*</td>
@@ -637,6 +619,7 @@ for(Recipe recipe: vars.recipes){
 	<td></td>
 	<td class="left-border"><br></td>
 	</tr>
+	-->
 </table>
 	
 <%
@@ -649,11 +632,12 @@ for(Recipe recipe: vars.recipes){
 	if(recipeValue >= properties.threshold){
 		temp.clear();
 		temp.recipes.add(recipe);
+		temp.co2Values.addAll(Util.getCO2Values(recipe.getZutaten()));
 		
 		temp.ingredients.addAll(recipe.getZutaten());
 		temp.stopIndex = 3;
 		
-		temp.personFactor = recipe.getPersons()*properties.persons;
+		temp.personFactor = properties.persons/recipe.getPersons();
 
 		%>
 		

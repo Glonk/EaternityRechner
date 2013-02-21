@@ -273,6 +273,7 @@ public class IngredientsDialog extends DialogBox{
 					MoTransportation stdTrans = new MoTransportation("LKW", 0.188);
 					List<ProductLabel> labels = new ArrayList<ProductLabel>();
 					labels.add(new ProductLabel("knospe"));
+					Extraction tmpExtr;
 					
 					tmpNodeVal1 = getTagContent(zutatElmnt, "herkunfte");
 					
@@ -282,7 +283,7 @@ public class IngredientsDialog extends DialogBox{
 						
 						for(int i=0; i<trans_ar1.length;i++) {
 							trans_ar1[i] = trans_ar1[i].trim();
-							Extraction tmpExtr = new Extraction(trans_ar1[i]);
+							tmpExtr = new Extraction(trans_ar1[i]);
 							if (newIngredient.hasSeason)
 							{
 								tmpExtr.startSeason = startSeason;
@@ -295,7 +296,20 @@ public class IngredientsDialog extends DialogBox{
 							newExtractions.add(tmpExtr);
 							
 							if(newIngredient.stdExtractionSymbol.equalsIgnoreCase(tmpExtr.symbol))
-								newIngredient.stdExtraction = tmpExtr;
+								newIngredient.stdExtraction = tmpExtr;		
+						}
+						if (newIngredient.stdExtraction == null) {
+							tmpExtr = new Extraction(newIngredient.stdExtractionSymbol);
+							if (newIngredient.hasSeason)
+							{
+								tmpExtr.startSeason = startSeason;
+								tmpExtr.stopSeason = stopSeason;
+							}
+							tmpExtr.stdCondition = stdCond;
+							tmpExtr.stdProduction = stdProd;
+							tmpExtr.stdMoTransportation = stdTrans;
+							tmpExtr.stdProductLabels = labels;
+							newExtractions.add(tmpExtr);
 						}
 						newIngredient.setExtractions(newExtractions);
 						

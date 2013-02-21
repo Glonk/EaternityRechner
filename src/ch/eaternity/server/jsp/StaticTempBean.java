@@ -23,6 +23,7 @@ public class StaticTempBean implements Serializable {
 	public Collection<CO2Value> co2Values = new ArrayList<CO2Value>();
 	
 	public double personFactor;
+	public double persons;
 	
 	// -------------------------- public Methods -------------------------
 	
@@ -38,6 +39,7 @@ public class StaticTempBean implements Serializable {
 		startIndex = 0;
 		stopIndex = 0;
 		personFactor = 1;
+		persons = 1;
 	}
 	
 	// ------------------- Getters and Setters ------------------------------

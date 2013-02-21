@@ -20,6 +20,10 @@ public class StaticProperties implements Serializable {
 		COMPACT, EXPANDED
 	}
 	
+	static public enum IngredientRepresentation {
+		COMPACT, EXPANDED
+	}
+	
 	// -------------------------- public Fields -------------------------
 	
 	// Here all the Standard values are setted
@@ -65,6 +69,7 @@ public class StaticProperties implements Serializable {
 	public boolean DoItWithPermanentIds = true;
 	
 	public ValueType valueType = ValueType.COMPACT;
+	public IngredientRepresentation ingredientRepresentation = IngredientRepresentation.COMPACT;
 	
 	// -------------------------- public Methods -------------------------
 	

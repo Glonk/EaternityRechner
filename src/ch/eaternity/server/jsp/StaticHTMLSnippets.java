@@ -24,6 +24,7 @@ public class StaticHTMLSnippets {
 				html = html + "<img class='bar' src='light-gray.png' alt='light-gray' height='11'  width=" + formatter.format(totalLength/max*value.prodQuota) + " />";
 		}
 		else {
+			html = "";
 			html = html +  "<img class='bar' src='gray.png' alt='gray' height='11'  width=" + formatter.format(totalLength/max*value.totalValue) + " />";
 		}
 		return html;

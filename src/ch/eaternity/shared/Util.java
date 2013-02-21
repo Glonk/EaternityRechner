@@ -108,7 +108,14 @@ public class Util {
 	
 	
 	// how many of the vegetables and fruits are seasonal, fresh from switzerland
+	// 
 	// lies between zero and one
+	/**
+	 * 
+	 * @param ingSpecs
+	 * @return Pair.first = seasonUnitQuotient
+	 * @return Pair.second = seasonWeightQuotient
+	 */
 	static public Pair<Double, Double> getSeasonQuotient(Collection<IngredientSpecification> ingSpecs) {
 		Integer numFruitsAndVegetables = 0;
 		Integer numAreSeasonal = 0;
@@ -135,8 +142,16 @@ public class Util {
 				}
 			}
 		}
+		
+		Double seasonWeightQuotient = 1.0;
+		Double seasonUnitQuotient = 1.0;
+		
+		if (numFruitsAndVegetables > 0) 
+			seasonUnitQuotient = numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue();
+		if (totalWeight > 0.0) 
+			seasonWeightQuotient = seasonalWeight/totalWeight;
 
-		Pair<Double,Double> pair = new Pair<Double,Double>(numAreSeasonal.doubleValue()/numFruitsAndVegetables.doubleValue(), seasonalWeight/totalWeight);
+		Pair<Double,Double> pair = new Pair<Double,Double>(seasonUnitQuotient, seasonWeightQuotient);
 		return pair;
 	}
 	

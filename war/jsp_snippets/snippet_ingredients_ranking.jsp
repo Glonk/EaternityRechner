@@ -36,10 +36,11 @@ int counterIterate = 0;
 
 Collections.sort(ingredients, new IngredientValueComparator());
 
+if (!(properties.weightThreshold > 0.0 || properties.valueThreshold > 0.0)) {
+	ingredients = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
+}
 
-List<IngredientSpecification> ingTop = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
-
-for(IngredientSpecification ingSpec : ingTop){
+for(IngredientSpecification ingSpec : ingredients){
 	values.add((new CO2Value(ingSpec)).mult(temp.getPersonFactor()));
 }
 
@@ -56,19 +57,25 @@ if (ingredients.size() > 0) {
 		</tr>
 		
 		<tr>
-		<td class="table-header bottom-border">Top <%= temp.getStopIndex() %> CO<sub>2</sub>-intensive Zutaten in diesem Rezept</td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td ></td>
+			<td class="table-header bottom-border">
+			<% if (properties.valueThreshold > 0.0 || properties.weightThreshold > 0.0 ) { %>
+				Zutatenranking 
+			<% }
+			else { %>
+			Top <%= temp.getStopIndex() %> CO<sub>2</sub>-intensive Zutaten in diesem Rezept <% } %>
+			</td>
+			<td class="left-border"></td>
+			<td class="co2value" ></td>
+			<td ></td>
 		</tr>
 		
 		
 		<%
-		for(IngredientSpecification ingSpec : ingTop){ 
+		for(IngredientSpecification ingSpec : ingredients){ 
 			if (ingSpec.getMengeGramm() > Util.getWeight(ingredients)/100.0*properties.weightThreshold || ingSpec.calculateCo2ValueNoFactors() > Util.getCO2Value(ingredients).noFactorsQuota/100.0*properties.valueThreshold) {
 				%>
 				<tr <%
-				int order = (ingTop.indexOf(ingSpec) - counterIterate ) % 2; 
+				int order = (ingredients.indexOf(ingSpec) - counterIterate ) % 2; 
 				if(order == 1) { %>
 				class="alternate"
 				<% }%> > 

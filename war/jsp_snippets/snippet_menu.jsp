@@ -13,6 +13,7 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
+<%@ page import="ch.eaternity.server.jsp.StaticProperties.IngredientRepresentation" %>
 
 <%@ page import="java.util.Date" %>
 
@@ -62,7 +63,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 	
 		<tr>
 		<td><div class="amount"><%= co2ValueStr + " " + properties.co2Unit %> CO<sub>2</sub>* total</div></td>
-		<td class="left-border"><%=StaticHTMLSnippets.getCo2ValueBar(temp.getCo2Values(), recipe.getCO2ValueExpanded(), properties.co2BarLength, properties.valueType)%></td>
+		<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
 		</tr>
 		
 		<tr>
@@ -71,18 +72,13 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		<span class="subTitle"><%= recipe.getSubTitle() %></span>
 		
 		<span style="color:gray;">Zutaten für <%= properties.getPersons().toString() %> Personen:</span><br />
-	
 		
-		<%	
-		int counter = 0;
-		for(IngredientSpecification ingredient: recipe.Zutaten){
-			counter = counter + 1;
-		
-			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= properties.weight_formatter.format(ingredient.getMengeGramm()*properties.weightUnit.conversionFactor/recipe.getPersons()*properties.getPersons()) + " " + properties.co2Unit + " " + ingredient.getName() %>
-				( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
-			</span><%
-		}
+		<% 
+		temp.persons = recipe.getPersons(); 
+		temp.ingredients = recipe.getZutaten();
 		%>
+		<jsp:include page="/jsp_snippets/snippet_ingredients.jsp" />
+		
 		</td>
 		<td class="left-border"><br></td>
 		</tr>
@@ -94,6 +90,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		
 		
 		<%	
+		// needs to be corrected with g / kg transformations
 		if(recipe.comments != null){
 			for(RecipeComment comment: recipe.comments){
 		

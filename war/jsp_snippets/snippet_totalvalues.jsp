@@ -40,30 +40,38 @@ seasonQuotients = Util.getSeasonQuotient(ingredients);
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 	<tr>
-		<td>CO2 Rohwert ohne Anteile [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).noFactorsQuota*temp.getPersonFactor())%></td>
+		<td>CO2 Rohwert ohne Anteile [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).noFactorsQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td >Anteil Transport [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).transQuota*temp.getPersonFactor())%></td>
+		<td >Anteil Transport [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).transQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td >Anteil Konservierungsmethoden [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).condQuota*temp.getPersonFactor())%></td>
+		<td >Anteil Konservierungsmethoden [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).condQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td >Anteil Produktionsmethoden [g CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).prodQuota*temp.getPersonFactor())%></td>
+		<td >Anteil Produktionsmethoden [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).prodQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td>Gewicht [g]:</td>
-		<td><%= properties.weight_formatter.format( Util.getWeight(ingredients)*temp.getPersonFactor()) %></td>
+		<td>Gewicht [<%= properties.weightUnit %>]:</td>
+		<td><%= properties.weight_formatter.format( Util.getWeight(ingredients)*properties.weightUnit.conversionFactor*temp.getPersonFactor()) %></td>
 	</tr>
 	<% if (Util.getCost(ingredients) > 0) { %>
-	<tr>
-		<td>Kosten [CHF]:</td>
-		<td><%= properties.cost_formatter.format( Util.getCost(ingredients)*temp.getPersonFactor()) %></td>
-	</tr>
+		<tr>
+			<td>Kosten [CHF]:</td>
+			<td><%= properties.cost_formatter.format( Util.getCost(ingredients)*temp.getPersonFactor()) %></td>
+		</tr>
 	<% } %>
+	<tr>
+		<td>Saison Stückzahlquotient [%]:</td>
+		<td><%= properties.formatter.format(seasonQuotients.first*100) %></td>
+	</tr>
+	<tr>
+		<td>Saison Gewichtsquotient [%]:</td>
+		<td><%= properties.formatter.format(seasonQuotients.second*100) %></td>
+	</tr>
 </table>
 	
