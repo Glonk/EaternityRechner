@@ -7,6 +7,9 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import ch.eaternity.shared.Quantity;
+import ch.eaternity.shared.Quantity.Weight;
+
 
 
 public class StaticProperties implements Serializable {
@@ -22,6 +25,9 @@ public class StaticProperties implements Serializable {
 	// Here all the Standard values are setted
 	public Locale locale = Locale.GERMAN;
 
+	public Quantity.Weight weightUnit = Weight.GRAM;
+	public Quantity.Weight co2Unit = Weight.GRAM;
+	
 	public DecimalFormat formatter = new DecimalFormat("##");
 	public DecimalFormat co2_formatter = new DecimalFormat("##");
 	public DecimalFormat cost_formatter = new DecimalFormat("##");

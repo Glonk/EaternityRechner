@@ -51,7 +51,7 @@ if (ingredients.size() > 0) {
 		<tr>
 		<td></td>
 		<td class="gray left-border"></td>
-		<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>*</span></td>
+		<td class="gray co2label"><span class="nowrap"><%= properties.co2Unit %> CO<sub>2</sub>*</span></td>
 		<td></td>
 		</tr>
 		
@@ -64,19 +64,19 @@ if (ingredients.size() > 0) {
 		
 		
 		<%
-							for(IngredientSpecification ingSpec : ingTop){ 
-							if (ingSpec.getMengeGramm() > Util.getWeight(ingredients)/100.0*properties.weightThreshold || ingSpec.calculateCo2ValueNoFactors() > Util.getCO2Value(ingredients).noFactorsQuota/100.0*properties.valueThreshold) {
-						%>
+		for(IngredientSpecification ingSpec : ingTop){ 
+			if (ingSpec.getMengeGramm() > Util.getWeight(ingredients)/100.0*properties.weightThreshold || ingSpec.calculateCo2ValueNoFactors() > Util.getCO2Value(ingredients).noFactorsQuota/100.0*properties.valueThreshold) {
+				%>
 				<tr <%
 				int order = (ingTop.indexOf(ingSpec) - counterIterate ) % 2; 
 				if(order == 1) { %>
 				class="alternate"
 				<% }%> > 
 				<td class="menu-name">
-				<%= ingSpec.getName() %> (<%=properties.weight_formatter.format(ingSpec.getMengeGramm()*temp.getPersonFactor())%> g) <% if (ingSpec.getCost() > 0) { %> (<%= properties.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF) <% } %>
+				<%= ingSpec.getName() %> (<%= properties.weight_formatter.format(ingSpec.getMengeGramm()*properties.weightUnit.conversionFactor*temp.getPersonFactor()) + " " + properties.weightUnit + ")" %><% if (ingSpec.getCost() > 0) { %> (<%= properties.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF) <% } %>
 				</td>
 				<td class="left-border" width="<%= properties.co2BarLength + properties.barOffset %>px"><%= StaticHTMLSnippets.getCo2ValueBar(values, new CO2Value(ingSpec), properties.co2BarLength, properties.valueType) %></td>
-				<td class="co2value" ><%= properties.co2_formatter.format(ingSpec.getCalculatedCO2Value()*temp.getPersonFactor()) %></td>
+				<td class="co2value" ><%= properties.co2_formatter.format(ingSpec.getCalculatedCO2Value()*properties.co2Unit.conversionFactor*temp.getPersonFactor()) %></td>
 			
 				</tr>
 		

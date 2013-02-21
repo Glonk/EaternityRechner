@@ -40,7 +40,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 	// normalise recipeValue to amount of persons
 	recipeValue = recipeValue*properties.getPersons();
 	
-	String co2ValueStr = properties.co2_formatter.format( recipeValue );
+	String co2ValueStr = properties.co2_formatter.format( recipeValue * properties.co2Unit.conversionFactor );
 	
 	%>
 	
@@ -61,7 +61,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		</tr>
 	
 		<tr>
-		<td><div class="amount"><%= co2ValueStr %> g CO<sub>2</sub>* total</div></td>
+		<td><div class="amount"><%= co2ValueStr + " " + properties.co2Unit %> CO<sub>2</sub>* total</div></td>
 		<td class="left-border"><%=StaticHTMLSnippets.getCo2ValueBar(temp.getCo2Values(), recipe.getCO2ValueExpanded(), properties.co2BarLength, properties.valueType)%></td>
 		</tr>
 		
@@ -78,7 +78,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		for(IngredientSpecification ingredient: recipe.Zutaten){
 			counter = counter + 1;
 		
-			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= ingredient.getMengeGramm()/recipe.getPersons()*properties.getPersons() %> g <%= ingredient.getName() %>
+			%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%= properties.weight_formatter.format(ingredient.getMengeGramm()*properties.weightUnit.conversionFactor/recipe.getPersons()*properties.getPersons()) + " " + properties.co2Unit + " " + ingredient.getName() %>
 				( <% if(ingredient.getHerkunft() != null){ %><%= ingredient.getHerkunft().symbol %><% } %>  | <%=  ingredient.getKmDistanceRounded() %>km  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
 			</span><%
 		}

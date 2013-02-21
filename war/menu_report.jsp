@@ -10,6 +10,7 @@
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.shared.Pair" %>
 <%@ page import="ch.eaternity.shared.Util" %>
+<%@ page import="ch.eaternity.shared.Quantity.Weight" %>
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
@@ -59,8 +60,11 @@
 	//Specific Parameters to set for Display] 
 	properties.locale = Locale.GERMAN;
 
+	properties.weightUnit = Weight.KILOGRAM;
+	properties.co2Unit = Weight.KILOGRAM;		
+			
 	properties.formatter = new DecimalFormat("##");
-	properties.co2_formatter = new DecimalFormat("##");
+	properties.co2_formatter = new DecimalFormat("##.#");
 	properties.cost_formatter = new DecimalFormat("##");
 	properties.weight_formatter = new DecimalFormat("##.#");
 	properties.distance_formatter = new DecimalFormat("##");

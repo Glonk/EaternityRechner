@@ -1,5 +1,7 @@
 package ch.eaternity.shared;
 
+
+// co2 equivalent in g 
 public class CO2Value {
 	public double prodQuota;
 	public double transQuota;

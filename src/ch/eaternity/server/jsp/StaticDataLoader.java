@@ -38,7 +38,7 @@ public class StaticDataLoader implements Serializable{
 	
 	// -------------- Class Variables --------------
 	
-	public String errorMessage;
+	public String errorMessage = "";
 	public boolean everythingFine = true;
 
 	public List<Recipe> recipes = new ArrayList<Recipe>();
