@@ -13,18 +13,12 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
-<%@ page import="ch.eaternity.server.jsp.StaticProperties.IngredientRepresentation" %>
 
-<%@ page import="java.util.Date" %>
-
-
-<jsp:useBean id="vars" scope="session"
-     class="ch.eaternity.server.jsp.StaticDataLoader" />
      
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 	class="ch.eaternity.server.jsp.StaticProperties" />
      
 <%
@@ -36,12 +30,12 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 	Recipe recipe = recipes.get(0);
 	
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + properties.getExtra();
+	Double recipeValue = recipe.getCO2Value() + props.getExtra();
 	
 	// normalise recipeValue to amount of persons
-	recipeValue = recipeValue*properties.getPersons();
+	recipeValue = recipeValue*props.getPersons();
 	
-	String co2ValueStr = properties.co2_formatter.format( recipeValue * properties.co2Unit.conversionFactor );
+	String co2ValueStr = props.co2_formatter.format( recipeValue * props.co2Unit.conversionFactor );
 	
 	%>
 	
@@ -53,9 +47,9 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		
 		<tr>
 			<td class="bottom-border">
-				<% if (recipe.getCO2Value() < properties.threshold) { %>
+				<% if (recipe.getCO2Value() < props.threshold) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
-				<% } if (recipe.getCO2Value() < properties.climateFriendlyValue) { %>
+				<% } if (recipe.getCO2Value() < props.climateFriendlyValue) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
 				<% } %>
 				<h3><%= recipe.getSymbol() %></h3>
@@ -65,7 +59,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		</tr>
 	
 		<tr>
-		<td><div class="amount"><%= co2ValueStr + " " + properties.co2Unit %> CO<sub>2</sub>* total</div></td>
+		<td><div class="amount"><%= co2ValueStr + " " + props.co2Unit %> CO<sub>2</sub>* total</div></td>
 		<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
 		</tr>
 		
@@ -74,7 +68,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		
 		<span class="subTitle"><%= recipe.getSubTitle() %></span>
 		
-		<span style="color:gray;">Zutaten für <%= properties.getPersons().toString() %> Personen:</span><br />
+		<span style="color:gray;">Zutaten für <%= props.getPersons().toString() %> Personen:</span><br />
 		
 		<% 
 		temp.persons = recipe.getPersons(); 

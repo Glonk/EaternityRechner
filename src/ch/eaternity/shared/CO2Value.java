@@ -1,8 +1,13 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
 
-// co2 equivalent in g 
-public class CO2Value {
+
+//co2 equivalent in g, splitted up by all the different quotas/factors
+public class CO2Value implements Serializable {
+	
+	private static final long serialVersionUID = -2858313456721887438L;
+	
 	public double prodQuota;
 	public double transQuota;
 	public double condQuota;

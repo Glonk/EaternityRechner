@@ -29,7 +29,7 @@
 	catryzer
 */
 
-List<IngredientSpecification> ingredients = catryzer.getIngredientSpecifications()();
+List<IngredientSpecification> ingredients = catryzer.getIngredientSpecifications();
 Pair<Double, Double> seasonQuotients;
 seasonQuotients = Util.getSeasonQuotient(ingredients);
 int counter;

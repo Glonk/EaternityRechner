@@ -1,23 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
-<%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
-<%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.shared.Pair" %>
 <%@ page import="ch.eaternity.shared.Util" %>
 
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.text.DecimalFormat" %>
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
-
-
-<%@ page import="java.util.Date" %>
 
 
 <jsp:useBean id="data" scope="session"

@@ -1,10 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-
 <%@ page import="ch.eaternity.shared.Recipe" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
-<%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.shared.Pair" %>
 <%@ page import="ch.eaternity.shared.Util" %>
 <%@ page import="ch.eaternity.shared.SeasonDate" %>
@@ -13,12 +9,9 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
 
-<%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 
-
-<%@ page import="java.util.Date" %>
 
 <style>
 	.month td {
@@ -35,22 +28,19 @@
 		border-style: solid;
 		border-width:1px;
 	}
-	.bottom-border td{
-	border-bottom-color: #929292;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	vertical-align: top;
-	width:auto;
-}
+	.bottom-border td {
+		border-bottom-color: #929292;
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		vertical-align: top;
+		width:auto;
+	}
 </style>
-
-<jsp:useBean id="vars" scope="session"
-     class="ch.eaternity.server.jsp.StaticDataLoader" />
     
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 class="ch.eaternity.server.jsp.StaticProperties" />
   
 <%
@@ -74,7 +64,7 @@ List<Recipe> recipes = temp.getRecipes();
 	<!-- header row -->
 	<tr class="bottom-border month">
 		<td class="table-header bottom-border" style="border-left-width: 0px;width:auto; text-align:left;">Name</td>
-		<td class="co2label left-border bottom-border table-header" style="width:auto;"><span class="nowrap">&nbsp;<%= properties.co2Unit %> CO<sub>2</sub>*&nbsp;</span></td>
+		<td class="co2label left-border bottom-border table-header" style="width:auto;"><span class="nowrap">&nbsp;<%= props.co2Unit %> CO<sub>2</sub>*&nbsp;</span></td>
 		
 		<td>&nbsp;Jan&nbsp;</td><td>&nbsp;Feb&nbsp;</td><td>&nbsp;Mär&nbsp;</td><td>&nbsp;Apr&nbsp;</td><td>&nbsp;Mai&nbsp;</td><td>&nbsp;Jun&nbsp;</td><td>&nbsp;Jul&nbsp;</td><td>&nbsp;Aug&nbsp;</td><td>&nbsp;Sep&nbsp;</td><td>&nbsp;Okt&nbsp;</td><td>&nbsp;Nov&nbsp;</td><td>&nbsp;Dez&nbsp;</td>
 		
@@ -100,14 +90,14 @@ List<Recipe> recipes = temp.getRecipes();
 		%>
 		<tr> 
 			<td class="menu-name">
-				<% if (recipe.getCO2Value() < properties.threshold) { %>
+				<% if (recipe.getCO2Value() < props.threshold) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
-				<% } if (recipe.getCO2Value() < properties.climateFriendlyValue) { %>
+				<% } if (recipe.getCO2Value() < props.climateFriendlyValue) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
 				<% } %>
 				<span class="nowrap"><%= recipe.getSymbol() %></span>
 			</td>
-			<td class="co2value left-border right-border" style="text-align:center;font-weight: 600;" ><%= properties.co2_formatter.format( recipe.getCO2Value() * properties.co2Unit.conversionFactor ) %></td>
+			<td class="co2value left-border right-border" style="text-align:center;font-weight: 600;" ><%= props.co2_formatter.format( recipe.getCO2Value() * props.co2Unit.conversionFactor ) %></td>
 			
 			<% for (int i=1; i<=12; i++) { %>
 				<td<% 

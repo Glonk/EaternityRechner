@@ -1,11 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
-<%@ page import="ch.eaternity.shared.Recipe" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
-<%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.CatRyzer" %>
-<%@ page import="ch.eaternity.shared.Pair" %>
 <%@ page import="ch.eaternity.shared.Util" %>
 <%@ page import="ch.eaternity.shared.CO2Value" %>
 
@@ -19,16 +14,10 @@
 <%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 
 
-<%@ page import="java.util.Date" %>
-
-
-<jsp:useBean id="vars" scope="session"
-     class="ch.eaternity.server.jsp.StaticDataLoader" />
-    
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 class="ch.eaternity.server.jsp.StaticProperties" />
      
      
@@ -47,34 +36,34 @@ average = Util.getAverageCO2Value(co2Values);
 if(average > 0){
 	
 	String total = "200";
-	String klimafriendly = properties.formatter.format(200*2/5);
-	String length = properties.formatter.format(average/(properties.threshold)*200);
-	String formatted = properties.formatter.format( average );
+	String klimafriendly = props.formatter.format(200*2/5);
+	String length = props.formatter.format(average/(props.threshold)*200);
+	String formatted = props.formatter.format( average );
 	
 	String moreOrLess = "";
 	String percent ="";
 	Integer position = 1;
 	
-	if(average <= properties.threshold){
-		percent = properties.formatter.format( -((average-properties.threshold)/(properties.threshold))*100 );
+	if(average <= props.threshold){
+		percent = props.formatter.format( -((average-props.threshold)/(props.threshold))*100 );
 	
-		if((properties.climateFriendlyValue-average)<0){
+		if((props.climateFriendlyValue-average)<0){
 			moreOrLess = "weniger";
 			position = 2;
 		} 
 		else {
-			percent = properties.formatter.format( ((properties.climateFriendlyValue-average)/(properties.climateFriendlyValue))*100 );
+			percent = props.formatter.format( ((props.climateFriendlyValue-average)/(props.climateFriendlyValue))*100 );
 			moreOrLess = "weniger";
 		}
 	
 	}
 	
-	if(average > (properties.threshold)){
+	if(average > (props.threshold)){
 		position = 3;
 		length = "200";
-		total = properties.formatter.format((properties.threshold/average)*200);
-		klimafriendly = properties.formatter.format((properties.climateFriendlyValue/average)*200);
-		percent = properties.formatter.format( ((average-properties.threshold)/(properties.threshold))*100 );
+		total = props.formatter.format((props.threshold/average)*200);
+		klimafriendly = props.formatter.format((props.climateFriendlyValue/average)*200);
+		percent = props.formatter.format( ((average-props.threshold)/(props.threshold))*100 );
 		moreOrLess = "mehr";
 	}
 
@@ -248,8 +237,8 @@ if(average > 0){
 
 				 </td>
 
-				 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(properties.DoItWithPermanentIds) { %>
-<a href="<%= properties.BASEURL %>?pid="><img src="QR--CODE" width="42" height="42" /></a>
+				 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(props.DoItWithPermanentIds) { %>
+<a href="<%= props.BASEURL %>?pid="><img src="QR--CODE" width="42" height="42" /></a>
 					<% } else { %> <span style="color:red;font-size:9pt;"></span> <% } %>
 				 </td>
 				</tr>

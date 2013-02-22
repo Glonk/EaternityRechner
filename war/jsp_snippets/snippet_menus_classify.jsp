@@ -21,13 +21,13 @@
 
 <%@ page import="java.text.DecimalFormat" %>
 
-<jsp:useBean id="vars" scope="session"
+<jsp:useBean id="data" scope="session"
      class="ch.eaternity.server.jsp.StaticDataLoader" />
      
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 	class="ch.eaternity.server.jsp.StaticProperties" />
      
 <%
@@ -58,7 +58,7 @@ long iTimeStamp = (long) (date.getTime() * .00003);
 for (Recipe recipe : recipes) {
 	values.add(recipe.getCO2Value());
 }
-Collections.sort(vars.recipes,new RezeptValueComparator());
+Collections.sort(data.recipes,new RezeptValueComparator());
 
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
@@ -66,13 +66,13 @@ Boolean notDoneThird = true;
 
 Double MaxValueRezept = Util.getMax(values);
 
-Double adjustedAverageLength = properties.threshold/MaxValueRezept*200;
-Double climateFriendlyValueLength = properties.climateFriendlyValue/MaxValueRezept*200;
-String averageLength = properties.formatter.format(adjustedAverageLength);
-String formattedClimate = properties.formatter.format(properties.climateFriendlyValue);
+Double adjustedAverageLength = props.threshold/MaxValueRezept*200;
+Double climateFriendlyValueLength = props.climateFriendlyValue/MaxValueRezept*200;
+String averageLength = props.formatter.format(adjustedAverageLength);
+String formattedClimate = props.formatter.format(props.climateFriendlyValue);
 String smilies = "";
-String extraFormat = properties.formatter.format(properties.extra);
-String lengthExtra = properties.formatter.format(properties.extra/MaxValueRezept*200);
+String extraFormat = props.formatter.format(props.extra);
+String lengthExtra = props.formatter.format(props.extra/MaxValueRezept*200);
 
 
 	String klima = "<tr>"
@@ -103,12 +103,12 @@ String lengthExtra = properties.formatter.format(properties.extra/MaxValueRezept
 	+"Herkömmliches Menu"
 	+"</td>"
 	+"<td class='left-border' style='background:#F7F7F7'><img class='bar' src='gray.png' alt='gray' height='11' width='" + averageLength + "' /></td>"
-	+"<td class='co2value' style='background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;' >" + properties.threshold + "</td>"
+	+"<td class='co2value' style='background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;' >" + props.threshold + "</td>"
 	+"<td class='co2percent'  ></td>"
 	+"</tr>";
 
 
-for(Recipe recipe: vars.recipes){
+for(Recipe recipe: data.recipes){
 
 	long compute = recipe.getId() * iTimeStamp;
 
@@ -116,24 +116,24 @@ for(Recipe recipe: vars.recipes){
 	String clear = Converter.toString(recipe.getId(),34);
 	String dateString = "";
 	if(recipe.cookingDate != null){
-		dateString = properties.dateFormatter.format(recipe.cookingDate);
+		dateString = props.dateFormatter.format(recipe.cookingDate);
 	}
 
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + properties.extra;
+	Double recipeValue = recipe.getCO2Value() + props.extra;
 	
-	String length = properties.formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
-	String formatted = properties.formatter.format( recipeValue);
+	String length = props.formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
+	String formatted = props.formatter.format( recipeValue);
 	String moreOrLess = "";
 	String percent ="";
 	
-	if((recipeValue+properties.extra)>(properties.threshold)){
-		percent = "+" + properties.formatter.format( ((recipeValue-properties.threshold)/(properties.threshold))*100 ) + "%";
+	if((recipeValue+props.extra)>(props.threshold)){
+		percent = "+" + props.formatter.format( ((recipeValue-props.threshold)/(props.threshold))*100 ) + "%";
 	} else {
-		percent = "-" + properties.formatter.format( ((properties.threshold-recipeValue)/(properties.threshold))*100 ) + "%";
+		percent = "-" + props.formatter.format( ((props.threshold-recipeValue)/(props.threshold))*100 ) + "%";
 	}
 
-	if((recipeValue < properties.climateFriendlyValue) && notDoneFirst){
+	if((recipeValue < props.climateFriendlyValue) && notDoneFirst){
 		
 		smilies = "<img class='smile' src='smiley8.png' alt='smiley' /><img class='smile' src='smiley8.png' alt='smiley' />";
 		
@@ -152,7 +152,7 @@ for(Recipe recipe: vars.recipes){
 		}
 		
 		}
-		if((recipeValue > properties.climateFriendlyValue) && (recipeValue < properties.threshold) &&  notDoneSeccond){ 
+		if((recipeValue > props.climateFriendlyValue) && (recipeValue < props.threshold) &&  notDoneSeccond){ 
 			
 			smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
 			
@@ -170,7 +170,7 @@ for(Recipe recipe: vars.recipes){
 		<%
 		}
 	}
-		if((recipeValue > properties.threshold) && notDoneThird){ 
+		if((recipeValue > props.threshold) && notDoneThird){ 
 			
 			smilies = "";
 			
@@ -195,12 +195,12 @@ for(Recipe recipe: vars.recipes){
 		%>
 		
 		<tr <%
-		int order = (vars.recipes.indexOf(recipe)) % 2; 
+		int order = (data.recipes.indexOf(recipe)) % 2; 
 		if(order == 1) { %>
 		class="alternate"
 		<% }%> > 
 		<td class="menu-name">
-		<% if(vars.DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
+		<% if(data.DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
 		<%= smilies %><%= recipe.getSymbol() %>
 		</td>
 		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
@@ -217,7 +217,7 @@ out.print(herko);
 </table>
 
 <ul style="font-size:9pt;color:grey;">
-<li>Die Menus haben einen Durchschnitt von: <%= properties.formatter.format(Util.getAverage(values)) %> g CO<sub>2</sub>* (Median: <%= properties.formatter.format(Util.getMedian((List<Double>)values)) %> g CO<sub>2</sub>*) pro Person.</li>
-<% if(properties.extra != 0) {%><li><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /> Bei den Menüs wurde <%=extraFormat %> g CO<sub>2</sub>* für die Zubereitung hinzugerechnet.</li><% }%>
+<li>Die Menus haben einen Durchschnitt von: <%= props.formatter.format(Util.getAverage(values)) %> g CO<sub>2</sub>* (Median: <%= props.formatter.format(Util.getMedian((List<Double>)values)) %> g CO<sub>2</sub>*) pro Person.</li>
+<% if(props.extra != 0) {%><li><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /> Bei den Menüs wurde <%=extraFormat %> g CO<sub>2</sub>* für die Zubereitung hinzugerechnet.</li><% }%>
 </ul>
 </form>
