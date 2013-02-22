@@ -60,11 +60,8 @@ h3 {
 .cover-up {
 	margin-top:5em;
 	background:white;
-/*	border-color: black; */
-/*
-	background-image: url(light-gray.png);
-	background: light-gray.png;*/
-	bottom:20em;	position:absolute;
+	bottom:20em;	
+	position:absolute;
 	-moz-border-radius-bottomright:6px;
 	-webkit-border-bottom-right-radius:6px;
 	border-bottom-right-radius:6px;

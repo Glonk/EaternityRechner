@@ -1,36 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ page import="ch.eaternity.server.DAO" %>
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
-
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Calendar" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.text.DecimalFormat" %>
-<%@ page import="java.util.Collections" %>
-
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
-<%@ page import="java.util.Locale" %>
-
-<%@ page import="java.net.MalformedURLException" %>
-<%@ page import="java.net.URL" %>
-<%@ page import="java.io.BufferedReader" %>
-<%@ page import="java.io.InputStreamReader" %>
-<%@ page import="java.io.IOException" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="java.util.Collection" %>
-
-<%@ page import="ch.eaternity.shared.Recipe" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
-<%@ page import="ch.eaternity.shared.Converter" %>
-<%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
-<%@ page import="ch.eaternity.shared.comparators.IngredientValueComparator" %>
-<%@ page import="ch.eaternity.shared.CatRyzer" %>
-<%@ page import="ch.eaternity.shared.Pair" %>
 <%@ page import="ch.eaternity.shared.Util" %>
 <%@ page import="ch.eaternity.shared.Quantity.Weight" %>
 
@@ -40,7 +14,6 @@
 
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.text.DecimalFormat" %>
@@ -54,12 +27,6 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 
-<%@ page import="java.net.MalformedURLException" %>
-<%@ page import="java.net.URL" %>
-<%@ page import="java.io.BufferedReader" %>
-<%@ page import="java.io.InputStreamReader" %>
-<%@ page import="java.io.IOException" %>
-<%@ page import="java.lang.NumberFormatException" %>
 
 <html>
 <head>
@@ -67,7 +34,7 @@
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <title>Menü Klima-Bilanz Zertifikat</title>
 
-<link rel="stylesheet" type="text/css" href="menu_cert.css">
+<link rel="stylesheet" type="text/css" href="reports.css">
 
 <!-- Load the StaticPageService as a Bean, handlich Parameter passing between jsp's and Snippets -->
 <jsp:useBean id="vars" scope="session"
@@ -257,7 +224,7 @@ if (!vars.everythingFine){
 }
 else { %>
 
-<div class="website-content">
+<div class="website-content" style="width: 704px;">
 
 <div id="header-right">
 	<img class="logo-klein" src="logo-eaternity-huge_04-11-2010.png" alt="logo-eaternity-huge_04-11-2010" />
@@ -276,55 +243,54 @@ for(Recipe recipe: vars.recipes){
 	
 <!-- Titel and Image -->
 	<table style="font-weight: 300;font-size: 14pt; margin-top:0em;">
-	<tr width="660">
-	<td height="140">
-		<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
-		<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= properties.co2_formatter.format( recipe.getCO2Value() ) %> g CO<sub>2</sub>* pro Person.</p>
-		
-		<%
-		if(recipe.image != null){
-			%>
-			
-			<% if(!properties.doPdf){%>
-				<img class="cover-all" src="<%=recipe.image.getServingUrl()%>=s800" />
-			<% } else { %>
-				<img class="cover-all" src="COVER-<%=recipe.image.getServingUrl()%>-IMAGE" />
-			<% } %>
-			 
-			
-			<%
-		}
-		
-		%>
-	</td>
-	</tr>
-			
-<!-- Ingredient List -->
-		<tr>
-		<td>
-			<table cellspacing="0" cellpadding="0" class="table cover-up" >
-				<tr>
-					<td>
-					<span style="color:gray;">Für <%= properties.persons %> Personen:</span>
-					<ul class="zutat">
-						<%for(IngredientSpecification ingredient: recipe.Zutaten){ %>
-							<li><%= ingredient.getMengeGramm()/recipe.getPersons()*properties.persons %> g <span class="ix"><%= ingredient.getName() %></span> </li>
-						<% } %>
-
-					</ul>
-
-					</td>
-					<td><br>
-						<p style="display:block;clear:both"><%= recipe.getCookInstruction() %></p>
-					</td>
-				</tr>
-			</table>
-		</td>
+		<tr width="660">
+			<td height="140">
+				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
+				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= properties.co2_formatter.format( recipe.getCO2Value() ) %> g CO<sub>2</sub>* pro Person.</p>
+				
+				<%
+				if(recipe.image != null){
+					%>
+					
+					<% if(!properties.doPdf){%>
+						<img class="cover-all" src="<%=recipe.image.getServingUrl()%>=s800" />
+					<% } else { %>
+						<img class="cover-all" src="COVER-<%=recipe.image.getServingUrl()%>-IMAGE" />
+					<% } %>
+					 
+					
+					<%
+				}
+				
+				%>
+			</td>
 		</tr>
+				
+	<!-- Ingredient List -->
 		<tr>
-		<td>
-	</td>
-	</tr>
+			<td>
+				<table cellspacing="0" cellpadding="0" class="table cover-up" >
+					<tr>
+						<td>
+							<span style="color:gray;">Für <%= properties.persons %> Personen:</span>
+							<ul class="zutat">
+								<%for(IngredientSpecification ingredient: recipe.Zutaten){ %>
+									<li><%= ingredient.getMengeGramm()/recipe.getPersons()*properties.persons %> g <span class="ix"><%= ingredient.getName() %></span> </li>
+								<% } %>
+		
+							</ul>
+						</td>
+						<td style="vertical-align:top;"><br>
+							<p style="display:block;clear:both">
+							<% 
+							if (recipe.getCookInstruction() != null)
+								out.print(recipe.getCookInstruction()); %>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
 	</table>
 
 <!-- --------------------------- Certificate Box -------------------------------------- -->
@@ -337,11 +303,8 @@ temp.co2Values.addAll(Util.getCO2ValuesRecipes(vars.recipes));
 
 <jsp:include page="/jsp_snippets/snippet_certificate.jsp" />
 	
-
-
-<a style="float:right" TARGET="_blank" href="http://test.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Menu als PDF herunterladen.</a>
-
-
+	
+<a TARGET="_blank" href="http://test.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view">Dieses Menu als PDF herunterladen.</a>
 
 
 	<% } //for loop over recipes %>

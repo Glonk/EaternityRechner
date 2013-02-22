@@ -4,11 +4,7 @@
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
-<%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
-<%@ page import="ch.eaternity.shared.comparators.IngredientValueComparator" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
-<%@ page import="ch.eaternity.shared.Pair" %>
 <%@ page import="ch.eaternity.shared.Util" %>
 <%@ page import="ch.eaternity.shared.Quantity.Weight" %>
 
@@ -18,7 +14,6 @@
 
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Calendar" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.text.DecimalFormat" %>
@@ -32,20 +27,13 @@
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 
-<%@ page import="java.net.MalformedURLException" %>
-<%@ page import="java.net.URL" %>
-<%@ page import="java.io.BufferedReader" %>
-<%@ page import="java.io.InputStreamReader" %>
-<%@ page import="java.io.IOException" %>
-<%@ page import="java.lang.NumberFormatException" %>
-
 
 <html>
 <head>
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <title>Menü Report</title>
-<link rel="stylesheet" type="text/css" href="menu_report.css">
+<link rel="stylesheet" type="text/css" href="reports.css">
 
 <!-- Load the StaticPageService as a Bean, handlich Parameter passing between jsp's and Snippets -->
 <jsp:useBean id="vars" scope="session"
@@ -311,8 +299,8 @@ temp.co2Values.addAll(Util.getCO2ValuesRecipes(vars.recipes));
 <%
 temp.clear();
 temp.recipes.addAll(vars.recipes);
-
 %>
+
 <table cellspacing="0" cellpadding="0" class="table" >
 	<tr>
 		<td class="table-header">Prima, Frisch und Saisonal kochen.</td>
@@ -324,196 +312,21 @@ temp.recipes.addAll(vars.recipes);
 	</tr>
 </table>
 
-<table cellspacing="0" cellpadding="0" class="table" >
 
 <jsp:include page="/jsp_snippets/snippet_season_table.jsp" />
 
-<!-- --------------------------- Menu List -------------------------------------- -->
+<!-- --------------------------- Menu Classify List -------------------------------------- -->
 
-<form name="htmlAdder" method="POST" action=";">
-	
-<table cellspacing="0" cellpadding="0" class="table toc" >
-	<tr>
-		<td></td>
-		<td class="gray left-border"></td>
-		<td class="gray co2label"><span class="nowrap">g CO<sub>2</sub>* pro Person</span></td>
-		<td></td>
-	</tr>
-
-<%
-
-for (Recipe recipe : vars.recipes) {
-	values.add(recipe.getCO2Value());
-}
-Collections.sort(vars.recipes,new RezeptValueComparator());
-
-Boolean notDoneFirst = true;
-Boolean notDoneSeccond = true;
-Boolean notDoneThird = true;
-
-Double MaxValueRezept = Util.getMax(values);
-
-Double adjustedAverageLength = properties.threshold/MaxValueRezept*200;
-Double climateFriendlyValueLength = properties.climateFriendlyValue/MaxValueRezept*200;
-String averageLength = properties.formatter.format(adjustedAverageLength);
-String formattedClimate = properties.formatter.format(properties.climateFriendlyValue);
-String smilies = "";
-String extraFormat = properties.formatter.format(properties.extra);
-String lengthExtra = properties.formatter.format(properties.extra/MaxValueRezept*200);
-
-
-	String klima = "<tr>"
-	+"<td class='table-header'><br /></td>"
-	+"<td class='left-border'></td>"
-	+"<td class='co2value' ></td>"
-	+"<td class='co2percent'  ></td>"
-	+"</tr>"
-+""
-	+"<tr>"
-	+"<td class='menu-name' style='text-align:right;'>"
-	+"Klimafreundliches Menu"
-	+"</td>"
-	+"<td class='left-border'><img class='bar' src='orange.png' alt='gray' height='11' width='" + climateFriendlyValueLength + "' /></td>"
-	+"<td class='co2value' >" + formattedClimate + "</td>"
-	+"<td class='co2percent'  ></td>"
-	+"</tr>";
-	
-	String herko = "<tr>"
-	+"<td class='table-header'><br /></td>"
-	+"<td class='left-border'></td>"
-	+"<td class='co2value' ></td>"
-	+"<td class='co2percent'  ></td>"
-	+"</tr>"
-+""
-	+"<tr>"
-	+"<td class='menu-name' style='text-align:right;'>"
-	+"Herkömmliches Menu"
-	+"</td>"
-	+"<td class='left-border' style='background:#F7F7F7'><img class='bar' src='gray.png' alt='gray' height='11' width='" + averageLength + "' /></td>"
-	+"<td class='co2value' style='background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;' >" + properties.threshold + "</td>"
-	+"<td class='co2percent'  ></td>"
-	+"</tr>";
-
-
-for(Recipe recipe: vars.recipes){
-
-	long compute = recipe.getId() * iTimeStamp;
-
-	String code = Converter.toString(compute,34);
-	String clear = Converter.toString(recipe.getId(),34);
-	String dateString = "";
-	if(recipe.cookingDate != null){
-		dateString = properties.dateFormatter.format(recipe.cookingDate);
-	}
-
-	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + properties.extra;
-	
-	String length = properties.formatter.format(recipe.getCO2Value()/MaxValueRezept*200);
-	String formatted = properties.formatter.format( recipeValue);
-	String moreOrLess = "";
-	String percent ="";
-	
-	if((recipeValue+properties.extra)>(properties.threshold)){
-		percent = "+" + properties.formatter.format( ((recipeValue-properties.threshold)/(properties.threshold))*100 ) + "%";
-	} else {
-		percent = "-" + properties.formatter.format( ((properties.threshold-recipeValue)/(properties.threshold))*100 ) + "%";
-	}
-
-	if((recipeValue < properties.climateFriendlyValue) && notDoneFirst){
-		
-		smilies = "<img class='smile' src='smiley8.png' alt='smiley' /><img class='smile' src='smiley8.png' alt='smiley' />";
-		
-		if(notDoneFirst){
-			notDoneFirst = false;
-		%>
-		
-		<tr>
-		<td class="table-header bottom-border">Grossartig</td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td ></td>
-		</tr>
-		
-		<%
-		}
-		
-		}
-		if((recipeValue > properties.climateFriendlyValue) && (recipeValue < properties.threshold) &&  notDoneSeccond){ 
-			
-			smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
-			
-		if(notDoneSeccond){
-			notDoneSeccond = false;
-			out.print(klima);
-			klima = ""; %>
-		
-		<tr>
-		<td class="table-header bottom-border">Gut</td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td class="co2percent"  ></td>
-		</tr>
-		<%
-		}
-	}
-		if((recipeValue > properties.threshold) && notDoneThird){ 
-			
-			smilies = "";
-			
-			if(notDoneThird){
-				notDoneThird = false;
-				out.print(klima);
-				out.print(herko);
-				klima = "";
-				herko = "";
-			%>
-
-		<tr>
-		<td class="table-header bottom-border">Über Durchschnitt</td>
-		<td class="left-border"></td>
-		<td class="co2value" ></td>
-		<td class="co2percent"  ></td>
-		</tr>
-
-		<%
-		}
-	}
-		%>
-		
-		<tr <%
-		int order = (vars.recipes.indexOf(recipe) - counterIterate ) % 2; 
-		if(order == 1) { %>
-		class="alternate"
-		<% }%> > 
-		<td class="menu-name">
-		<% if(vars.DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-		<%= smilies %><%= recipe.getSymbol() %>
-		</td>
-		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-		<td class="co2value" ><%= formatted %></td>
-		<td class="co2percent" ><%= percent %></td>
-		</tr>
-		<%
-}	
-
-out.print(klima);
-out.print(herko);
-
+<% 
+temp.clear();
+temp.recipes.addAll(vars.recipes);
 %>
-</table>
 
-<ul style="font-size:9pt;color:grey;">
-<li>Die Menus haben einen Durchschnitt von: <%= properties.formatter.format(Util.getAverage(values)) %> g CO<sub>2</sub>* (Median: <%= properties.formatter.format(Util.getMedian((List<Double>)values)) %> g CO<sub>2</sub>*) pro Person.</li>
-<% if(properties.extra != 0) {%><li><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /> Bei den Menüs wurde <%=extraFormat %> g CO<sub>2</sub>* für die Zubereitung hinzugerechnet.</li><% }%>
-</ul>
-</form>
+<jsp:include page="/jsp_snippets/snippet_menus_classify.jsp" />
 
 
 
 <!-- --------------------------- Menu Details Grossartig -------------------------------------- -->
-
-
 
 <table cellspacing="0" cellpadding="0" class="table new-page listTable" >
 	<tr>

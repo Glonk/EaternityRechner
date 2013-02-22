@@ -79,7 +79,7 @@ if(average > 0){
 	}
 
 	%>			
-	<table style="font-weight: 300;font-size: 14pt; margin-top:4em" >
+	<table style="font-weight:300; font-size: 14pt; margin-top:0em" >
 	<!-- label of the label -->
 	<tr><td>
 
