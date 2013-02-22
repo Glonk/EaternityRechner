@@ -36,10 +36,10 @@
 <link rel="stylesheet" type="text/css" href="reports.css">
 
 <!-- Load the StaticPageService as a Bean, handlich Parameter passing between jsp's and Snippets -->
-<jsp:useBean id="vars" scope="session"
+<jsp:useBean id="data" scope="session"
 	class="ch.eaternity.server.jsp.StaticDataLoader" />
 
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 	class="ch.eaternity.server.jsp.StaticProperties" />
 
 <jsp:useBean id="temp" scope="session"
@@ -47,34 +47,34 @@
 	
 <% 
 	//Specific Parameters to set for Display] 
-	properties.locale = Locale.GERMAN;
+	props.locale = Locale.GERMAN;
 
-	properties.weightUnit = Weight.GRAM;
-	properties.co2Unit = Weight.GRAM;		
+	props.weightUnit = Weight.GRAM;
+	props.co2Unit = Weight.GRAM;		
 			
-	properties.formatter = new DecimalFormat("##");
-	properties.formatter.setRoundingMode(RoundingMode.FLOOR);
-	properties.co2_formatter = new DecimalFormat("##");
-	properties.cost_formatter = new DecimalFormat("##");
-	properties.weight_formatter = new DecimalFormat("##");
-	properties.distance_formatter = new DecimalFormat("##");
-	properties.dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
+	props.formatter = new DecimalFormat("##");
+	props.formatter.setRoundingMode(RoundingMode.FLOOR);
+	props.co2_formatter = new DecimalFormat("##");
+	props.cost_formatter = new DecimalFormat("##");
+	props.weight_formatter = new DecimalFormat("##");
+	props.distance_formatter = new DecimalFormat("##");
+	props.dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 	
-	properties.co2BarLength = 200;
-	properties.barOffset = 70;
+	props.co2BarLength = 200;
+	props.barOffset = 70;
 	
 	// standard values for request if not set
-	properties.doPdf = false;
-	properties.threshold = 1550;
-	properties.extra = 0;
-	properties.persons = 4;
+	props.doPdf = false;
+	props.threshold = 1550;
+	props.extra = 0;
+	props.persons = 4;
 	
-	properties.valueType = StaticProperties.ValueType.COMPACT;
-	properties.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
+	props.valueType = StaticProperties.ValueType.COMPACT;
+	props.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
 	
-	properties.initialize(request);
+	props.initialize(request);
 	
-	vars.initialize(properties,false);
+	data.initialize(props,false);
 	
 	Integer counter = 0;
 	int counterIterate = 0;
@@ -89,7 +89,7 @@
 	User user = userService.getCurrentUser();
 		
 	// Initialize Catryzer
-	CatRyzer catryzer = new CatRyzer(vars.recipes,properties.locale);
+	CatRyzer catryzer = new CatRyzer(data.recipes,props.locale);
 	%>
 
 
@@ -162,7 +162,7 @@ baseUrl = getBaseURL();
 
 
 <% 
-for(Recipe recipe: vars.recipes){
+for(Recipe recipe: data.recipes){
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34); 
 	%>
@@ -236,10 +236,10 @@ function getBaseURL() {
 
 <%
 //Avoid displaying anything if someting is wrong.
-if (!vars.everythingFine){
+if (!data.everythingFine){
 	%>
 		Wrong Inputs. See Log for Details.<br /><br />
-		<%= vars.errorMessage %>
+		<%= data.errorMessage %>
 	<%
 	
 }
@@ -265,7 +265,7 @@ else { %>
 </div>
 
 <h1>Menu Optimierung</h1>
-<% if(vars.DoItWithPermanentIds) { %>
+<% if(data.DoItWithPermanentIds) { %>
 
 <a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Dokument für die markierten Menus als PDF herunterladen.</a>
 
@@ -288,7 +288,7 @@ else { %>
 
 <%
 temp.clear();
-temp.co2Values.addAll(Util.getCO2ValuesRecipes(vars.recipes));
+temp.co2Values.addAll(Util.getCO2ValuesRecipes(data.recipes));
 
 %>
 
@@ -298,7 +298,7 @@ temp.co2Values.addAll(Util.getCO2ValuesRecipes(vars.recipes));
 
 <%
 temp.clear();
-temp.recipes.addAll(vars.recipes);
+temp.recipes.addAll(data.recipes);
 %>
 
 <table cellspacing="0" cellpadding="0" class="table" >
@@ -319,7 +319,7 @@ temp.recipes.addAll(vars.recipes);
 
 <% 
 temp.clear();
-temp.recipes.addAll(vars.recipes);
+temp.recipes.addAll(data.recipes);
 %>
 
 <jsp:include page="/jsp_snippets/snippet_menus_classify.jsp" />
@@ -334,7 +334,7 @@ temp.recipes.addAll(vars.recipes);
 		<td></td>
 	</tr>
 	<tr>
-		<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= properties.co2_formatter.format( properties.climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+		<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= props.co2_formatter.format( props.climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
 		<td></td>
 	</tr>
 	<!-- 
@@ -350,11 +350,11 @@ temp.recipes.addAll(vars.recipes);
 </table>
 
 <%
-	for(Recipe recipe: vars.recipes){
+	for(Recipe recipe: data.recipes){
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + properties.extra;	
+	Double recipeValue = recipe.getCO2Value() + props.extra;	
 	
-	if(recipeValue < properties.climateFriendlyValue){
+	if(recipeValue < props.climateFriendlyValue){
 		temp.clear();
 		temp.recipes.add(recipe);
 		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
@@ -362,7 +362,7 @@ temp.recipes.addAll(vars.recipes);
 		temp.ingredients.addAll(recipe.getZutaten());
 		temp.stopIndex = 3;
 		
-		temp.personFactor = properties.persons/recipe.getPersons().doubleValue();
+		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -390,7 +390,7 @@ temp.recipes.addAll(vars.recipes);
 	</tr>
 	
 	<tr>
-	<td><p>Diese Rezepte sind mit unter <%=properties.formatter.format( properties.threshold )%> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
+	<td><p>Diese Rezepte sind mit unter <%=props.formatter.format( props.threshold )%> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 	<td></td>
 	</tr>
 	<!--  
@@ -406,12 +406,12 @@ temp.recipes.addAll(vars.recipes);
 </table>
 
 <%
-	for(Recipe recipe: vars.recipes){
+	for(Recipe recipe: data.recipes){
 	
 	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + properties.extra;
+	Double recipeValue = recipe.getCO2Value() + props.extra;
 	
-	if(recipeValue >= properties.climateFriendlyValue && recipeValue < properties.threshold){
+	if(recipeValue >= props.climateFriendlyValue && recipeValue < props.threshold){
 		temp.clear();
 		temp.recipes.add(recipe);
 		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
@@ -419,7 +419,7 @@ temp.recipes.addAll(vars.recipes);
 		temp.ingredients.addAll(recipe.getZutaten());
 		temp.stopIndex = 3;
 		
-		temp.personFactor = properties.persons/recipe.getPersons().doubleValue();
+		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -449,7 +449,7 @@ temp.recipes.addAll(vars.recipes);
 	
 	
 	<tr>
-	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%=properties.formatter.format( properties.threshold )%> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
+	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%=props.formatter.format( props.threshold )%> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 	<td></td>
 	</tr>
 	<!--  
@@ -466,12 +466,12 @@ temp.recipes.addAll(vars.recipes);
 </table>
 	
 <%
-		for(Recipe recipe: vars.recipes){
+		for(Recipe recipe: data.recipes){
 
 		recipe.setCO2Value();
-		Double recipeValue = recipe.getCO2Value() + properties.extra;
+		Double recipeValue = recipe.getCO2Value() + props.extra;
 
-		if(recipeValue >= properties.threshold){
+		if(recipeValue >= props.threshold){
 			temp.clear();
 			temp.recipes.add(recipe);
 			temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
@@ -479,7 +479,7 @@ temp.recipes.addAll(vars.recipes);
 			temp.ingredients.addAll(recipe.getZutaten());
 			temp.stopIndex = 3;
 			
-			temp.personFactor = properties.persons/recipe.getPersons().doubleValue();
+			temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 	%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -506,7 +506,7 @@ temp.recipes.addAll(vars.recipes);
 
 </div> <!-- class=content-website -->
 
-<% if(vars.DoItWithPermanentIds) { %>
+<% if(data.DoItWithPermanentIds) { %>
 <div class="login">
 	<%
 	if (user != null) { %>
@@ -514,7 +514,7 @@ temp.recipes.addAll(vars.recipes);
 		<%
 	} 
 	else {
-    	if (properties.tempIds == null){
+    	if (props.tempIds == null){
 			%>
 			Sie sind nicht angemeldet.
 			<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Anmelden</a>?

@@ -194,6 +194,7 @@ public class Recipe implements Serializable, Cloneable{
 	}
 
 	public double getCO2Value() {
+		setCO2Value();
 		return CO2Value;
 	}
 	

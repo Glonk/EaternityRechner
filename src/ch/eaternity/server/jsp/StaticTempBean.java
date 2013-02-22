@@ -26,6 +26,8 @@ public class StaticTempBean implements Serializable {
 	
 	public double personFactor;
 	public double persons;
+	public String title;
+	public String subtitle;
 	
 	// -------------------------- public Methods -------------------------
 	
@@ -107,5 +109,21 @@ public class StaticTempBean implements Serializable {
 
 	public void setPersons(double persons) {
 		this.persons = persons;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getSubtitle() {
+		return subtitle;
+	}
+
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
 	}
 }

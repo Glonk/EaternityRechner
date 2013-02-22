@@ -103,52 +103,59 @@ public class CatRyzer {
 	}
 	
 	// -------------- Class Variables --------------
-	DAO dao = new DAO();
-	Logger rootLogger;
+	
 	private List<Recipe> recipes 					= new ArrayList<Recipe>();
 	private List<IngredientSpecification> ingSpecs  = new ArrayList<IngredientSpecification>();
 	private List<Ingredient> ingredients 			= new ArrayList<Ingredient>();
 
 	private boolean initializedMapping = false;
-	private boolean recipesLoaded = false;
-
-	private List<DateValue> dateValues 				= new ArrayList<DateValue>();
-	private List<CategoryValue> categoryValues 		= new ArrayList<CategoryValue>();
-	private List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
-	private List<CategoryValue> ingredientValues 	= new ArrayList<CategoryValue>();
+	private boolean ingredientsLoaded = false;
 	
 	private Locale locale;
-	
-	public Multimap<String,IngredientSpecification> ingMultiMap = HashMultimap.create();
-	public Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
 	public List<CatMapping> mappings 				= new ArrayList<CatMapping>();
-	
 	
 	
 	// -------------- Functions --------------
 	// Constructors
 	public CatRyzer() {
-		//Initialize the Logger
-		rootLogger = Logger.getLogger("");
+		DAO dao = new DAO();
 		ingredients = dao.getAllIngredients();
 	}
 	
 	public CatRyzer(List<Recipe> recipes, Locale locale)
 	{
 		this();
-		this.recipes = recipes;
 		this.locale = locale;
-		writeDatesToIngSpec();
-		//get all ingredients from all recipes, write into single list
-		for (Recipe recipe : recipes){
-			ingSpecs.addAll((Collection<IngredientSpecification>)recipe.getZutaten());
-		}
-		recipesLoaded = true;
+		setRecipes(recipes);
+	}
+	
+	public CatRyzer(Collection<IngredientSpecification> ingSpecs, Locale locale) {
+		this();
+		this.locale = locale;
+		setIngredients((List<IngredientSpecification>) ingSpecs);
 	}
 	
 	
 	
-	// -------------- Public --------------
+	// -------------- Public Methods --------------
+	
+	public void setRecipes(List<Recipe> recipes) {
+		this.recipes = recipes;
+		writeDatesToIngSpec();
+		
+		//get all ingredients from all recipes, write into single list
+		for (Recipe recipe : recipes){
+			ingSpecs.addAll((Collection<IngredientSpecification>)recipe.getZutaten());
+		}
+		ingredientsLoaded = true;
+	}
+	
+	public void setIngredients(List<IngredientSpecification> ingSpecs) {
+		this.ingSpecs = ingSpecs;
+		ingredientsLoaded = true;
+	}
+	
+	
 	/***
 	 * Sets the current mapping of categories to tags
 	 * @param str_mappings (Category, Tag1, Tag2, -Tag3, ...)
@@ -179,35 +186,13 @@ public class CatRyzer {
 		}
 		initializedMapping = true;
 	}
+
 	
-	// prepares the objects CategoryValue and CategoryValuesByDates
-	public void categoryze() throws IllegalStateException{
-		if (initializedMapping && recipesLoaded)
-		{	
-			
-			// ---- first populate the dateValue List ------
-			Multimap<Date,IngredientSpecification> dateMultiMap = HashMultimap.create();
-			
-			for (IngredientSpecification ingSpec : ingSpecs){
-				Date date = ingSpec.getCookingDate();
-				dateMultiMap.put(date, ingSpec);
-			}
-						
-			// ---- second populate the categoryValue List ------
-			// The Multimap could probably substitute categoryValues in the future ...
-			// ... when it wouldn't be so darn f*ing complicated to debug ; )
-			// String : Category, Long: id of Ingredient
-			
-			for (IngredientSpecification ingSpec : ingSpecs){
-				if (getIngredient(ingSpec) == null) {
-					rootLogger.log(Level.SEVERE, "Ingredient can not be found. Id of IngredientSpecification: " + ingSpec.getId() + " Id of Ingredient: " + ingSpec.getZutat_id());
-				}
-				else {
-					fillCatMultiMap(catMultiMap, ingSpec);
-				}
-			}
-			
-			// ---- third populate the CategoryValuesByDates List ------
+	public List<CategoryValuesByDates> getCatValsByDates() {
+		List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
+		
+		if (initializedMapping && ingredientsLoaded)
+		{
 			Map<Date,Multimap<String,IngredientSpecification>> MapOfcatMultiMap = new HashMap<Date,Multimap<String,IngredientSpecification>>();
 			
 			for (IngredientSpecification ingSpec : ingSpecs){
@@ -224,21 +209,7 @@ public class CatRyzer {
 				MapOfcatMultiMap.put(date, catMM);
 			}
 			
-			// -------------------- Converting MAPS to LISTS -------------------------
-
-			// sort the Date Set
-			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
-			for (Date date : dateOfKeys) {
-				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
-				dateValues.add(new DateValue(date, Util.getCO2Value(ingredientsSpecification)));
-			}
-			
-			for (CatMapping mapping : mappings) {
-				Collection<IngredientSpecification> ingSpecs = catMultiMap.get(mapping.category);
-				categoryValues.add(new CategoryValue(mapping.category, Util.getCO2Value(ingSpecs), Util.getWeight(ingSpecs), Util.getCost(ingSpecs)));
-			}
-			
-
+			//  Converting MAPS to LISTS 
 			
 			// sort the date set
 			List<Date> dateOfKeys2 = asSortedList(MapOfcatMultiMap.keySet());
@@ -263,41 +234,128 @@ public class CatRyzer {
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
 		}
-		else
-			throw new IllegalStateException("Object not initialized");
-	}
-	
-	public List<CategoryValuesByDates> getCatValsByDates() {
-		return this.categoryValuesByDatesList;
+		return categoryValuesByDatesList;
 	}
 	
 	public List<CategoryValue> getCatVals() {
-		return this.categoryValues;	
+		Logger rootLogger = Logger.getLogger("");
+		List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
+		
+		Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
+		
+		if (initializedMapping && ingredientsLoaded)
+		{	
+			// String : Category, Long: id of Ingredient
+			for (IngredientSpecification ingSpec : ingSpecs){
+				if (getIngredient(ingSpec) == null) {
+					rootLogger.log(Level.SEVERE, "Ingredient can not be found. Id of IngredientSpecification: " + ingSpec.getId() + " Id of Ingredient: " + ingSpec.getZutat_id());
+				}
+				else {
+					fillCatMultiMap(catMultiMap, ingSpec);
+				}
+			}
+			
+			//  Converting MAPS to LISTS 
+			for (CatMapping mapping : mappings) {
+				Collection<IngredientSpecification> ingSpecs = catMultiMap.get(mapping.category);
+				categoryValues.add(new CategoryValue(mapping.category, Util.getCO2Value(ingSpecs), Util.getWeight(ingSpecs), Util.getCost(ingSpecs)));
+			}
+		}
+		return categoryValues;	
 	}
 	
 	public List<DateValue> getDateValues() {
-		return this.dateValues;
+		List<DateValue> dateValues = new ArrayList<DateValue>();
+		
+		if (initializedMapping && ingredientsLoaded)
+		{	
+			
+			// ---- first populate the dateValue List ------
+			Multimap<Date,IngredientSpecification> dateMultiMap = HashMultimap.create();
+			
+			for (IngredientSpecification ingSpec : ingSpecs){
+				Date date = ingSpec.getCookingDate();
+				dateMultiMap.put(date, ingSpec);
+			}
+			
+		//  Converting MAPS to LISTS 
+			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
+			for (Date date : dateOfKeys) {
+				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
+				dateValues.add(new DateValue(date, Util.getCO2Value(ingredientsSpecification)));
+			}
+		}
+			
+		return dateValues;
 	}
 	
+	// use for internationalisation again, not used at the moment
 	public List<CategoryValue> getIngVals() {
-		// fill Ingredients Mulimap for worst Ingredient beast top 10 
-		for (IngredientSpecification ingSpec : ingSpecs) {
-			if (locale.equals(Locale.ENGLISH))
-				ingMultiMap.put(Util.getIngredientName_en(ingSpec, ingredients), ingSpec);
-			else if (locale.equals(Locale.GERMAN))
-				ingMultiMap.put(ingSpec.getName(), ingSpec);
+		List<CategoryValue> ingredientValues 	= new ArrayList<CategoryValue>();
+		
+		Multimap<String,IngredientSpecification> ingMultiMap = HashMultimap.create();
+		
+		if (initializedMapping && ingredientsLoaded)
+		{	
+			// fill Ingredients Mulimap for worst Ingredient beast top 10 
+			for (IngredientSpecification ingSpec : ingSpecs) {
+				if (locale.equals(Locale.ENGLISH))
+					ingMultiMap.put(Util.getIngredientName_en(ingSpec, ingredients), ingSpec);
+				else if (locale.equals(Locale.GERMAN))
+					ingMultiMap.put(ingSpec.getName(), ingSpec);
+			}
+			
+			for (String name : ingMultiMap.keySet()) {
+				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
+				ingredientValues.add(new CategoryValue(name, Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection)));
+			}
+			
+			// sort CategoryValue by co2-value
+			Collections.sort(ingredientValues,new CategoryValuesComparator());
 		}
-		
-		for (String name : ingMultiMap.keySet()) {
-			Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
-			ingredientValues.add(new CategoryValue(name, Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection)));
-		}
-		
-		// sort CategoryValue by co2-value
-		Collections.sort(ingredientValues,new CategoryValuesComparator());
-		
-		return this.ingredientValues;	
+		return ingredientValues;	
 	}
+	
+	/**
+	 *  get ingredients per category
+	 * @return String1: categoryName, String2: ingredientName, null if not initialized
+	 * 
+	 */
+	
+	public Set<Pair<String,Set<String>>> getIngredientsByCategory() {
+		Logger rootLogger = Logger.getLogger("");
+		
+		Set<Pair<String,Set<String>>> ingredientsByCategory = new HashSet<Pair<String,Set<String>>>();
+		
+		if (initializedMapping && ingredientsLoaded){
+			Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
+			
+			// String : Category, Long: id of Ingredient
+			for (IngredientSpecification ingSpec : ingSpecs){
+				if (getIngredient(ingSpec) == null) {
+					rootLogger.log(Level.WARNING, "Ingredient can not be found. Id of IngredientSpecification: " + ingSpec.getId() + " Id of Ingredient: " + ingSpec.getZutat_id());
+				}
+				else {
+					fillCatMultiMap(catMultiMap, ingSpec);
+				}
+			}
+						
+			for(CatMapping mapping : mappings)
+			{
+				Set<String> ingredientNames;
+				Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(mapping.category);
+				if (locale == Locale.ENGLISH)
+					ingredientNames = Util.getIngredientsNames_en(ingredientsSpecification, ingredients);
+				else
+					ingredientNames = Util.getIngredientsNames_de(ingredientsSpecification);
+				ingredientsByCategory.add(new Pair<String,Set<String>>(mapping.category, ingredientNames));
+			}
+		}	
+		else
+			rootLogger.log(Level.WARNING, "CatRyzer not initialized. Returning ingredientsByCategory null");
+		return ingredientsByCategory;
+	}
+
 
 	// return total co2 amount in grams
 	public CO2Value getTotalCo2() {
@@ -317,9 +375,13 @@ public class CatRyzer {
 	public Pair<Double, Double> getTotalSeasonQuotient(Collection<IngredientSpecification> ingsSpecs) {
 		return Util.getSeasonQuotient(ingSpecs);
 	}
+	
+	public List<IngredientSpecification> getIngredientSpecifications() {
+		return this.ingSpecs;
+	}
 
 	
-	// -------------- Private --------------
+	// -------------- Private Methods --------------
 	
 	public static
 	<T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
@@ -359,6 +421,7 @@ public class CatRyzer {
 	
 	
 	private void writeDatesToIngSpec(){
+		Logger rootLogger = Logger.getLogger("");
 		Calendar cal = Calendar.getInstance();
 		cal.set(2001, 0, 1); //year is as expected, month is zero based, date is as expected
 		for (Recipe recipe : recipes){
@@ -386,6 +449,7 @@ public class CatRyzer {
 		}
 		return doesntContainTags;
 	}
+
 	
 
 }

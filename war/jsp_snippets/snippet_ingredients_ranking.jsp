@@ -16,19 +16,20 @@
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
-
-
-
-<jsp:useBean id="vars" scope="session"
-     class="ch.eaternity.server.jsp.StaticDataLoader" />
      
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
      
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 	class="ch.eaternity.server.jsp.StaticProperties" />
 	
 <%
+/* uses following variables in Temp:
+	- ingredients
+	- personFactor
+	- startIndex
+	- stopIndex
+*/
 
 List<IngredientSpecification> ingredients = temp.getIngredients();
 Collection<CO2Value> values = new ArrayList<CO2Value>();
@@ -36,7 +37,7 @@ int counterIterate = 0;
 
 Collections.sort(ingredients, new IngredientValueComparator());
 
-if (!(properties.weightThreshold > 0.0 || properties.valueThreshold > 0.0)) {
+if (!(props.weightThreshold > 0.0 || props.valueThreshold > 0.0)) {
 	ingredients = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
 }
 
@@ -52,13 +53,13 @@ if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
 		<tr>
 		<td></td>
 		<td class="gray left-border"></td>
-		<td class="gray co2label"><span class="nowrap"><%= properties.co2Unit %> CO<sub>2</sub>*</span></td>
+		<td class="gray co2label"><span class="nowrap"><%= props.co2Unit %> CO<sub>2</sub>*</span></td>
 		<td></td>
 		</tr>
 		
 		<tr>
 			<td class="table-header bottom-border">
-			<% if (properties.valueThreshold > 0.0 || properties.weightThreshold > 0.0 ) { %>
+			<% if (props.valueThreshold > 0.0 || props.weightThreshold > 0.0 ) { %>
 				Zutatenranking 
 			<% }
 			else { %>
@@ -72,7 +73,7 @@ if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
 		
 		<%
 		for(IngredientSpecification ingSpec : ingredients){ 
-			if (ingSpec.getMengeGramm() > Util.getWeight(ingredients)/100.0*properties.weightThreshold || ingSpec.calculateCo2ValueNoFactors() > Util.getCO2Value(ingredients).noFactorsQuota/100.0*properties.valueThreshold) {
+			if (ingSpec.getMengeGramm() > Util.getWeight(ingredients)/100.0*props.weightThreshold || ingSpec.calculateCo2ValueNoFactors() > Util.getCO2Value(ingredients).noFactorsQuota/100.0*props.valueThreshold) {
 				%>
 				<tr <%
 				int order = (ingredients.indexOf(ingSpec) - counterIterate ) % 2; 
@@ -80,10 +81,10 @@ if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
 				class="alternate"
 				<% }%> > 
 				<td class="menu-name">
-				<%= ingSpec.getName() %> (<%= properties.weight_formatter.format(ingSpec.getMengeGramm()*properties.weightUnit.conversionFactor*temp.getPersonFactor()) + " " + properties.weightUnit + ")" %><% if (ingSpec.getCost() > 0) { %> (<%= properties.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF) <% } %>
+				<%= ingSpec.getName() %> (<%= props.weight_formatter.format(ingSpec.getMengeGramm()*props.weightUnit.conversionFactor*temp.getPersonFactor()) + " " + props.weightUnit + ")" %><% if (ingSpec.getCost() > 0) { %> (<%= props.cost_formatter.format(ingSpec.getCost()*temp.getPersonFactor()) %> CHF) <% } %>
 				</td>
-				<td class="left-border" width="<%= properties.co2BarLength + properties.barOffset %>px"><%= StaticHTMLSnippets.getCo2ValueBar(values, (new CO2Value(ingSpec)).mult(temp.getPersonFactor()), properties.co2BarLength, properties.valueType) %></td>
-				<td class="co2value" ><%= properties.co2_formatter.format(ingSpec.getCalculatedCO2Value()*properties.co2Unit.conversionFactor*temp.getPersonFactor()) %></td>
+				<td class="left-border" width="<%= props.co2BarLength + props.barOffset %>px"><%= StaticHTMLSnippets.getCo2ValueBar(values, (new CO2Value(ingSpec)).mult(temp.getPersonFactor()), props.co2BarLength, props.valueType) %></td>
+				<td class="co2value" ><%= props.co2_formatter.format(ingSpec.getCalculatedCO2Value()*props.co2Unit.conversionFactor*temp.getPersonFactor()) %></td>
 			
 				</tr>
 		

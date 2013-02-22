@@ -20,17 +20,21 @@
 <%@ page import="java.util.Date" %>
 
 
-<jsp:useBean id="vars" scope="session"
+<jsp:useBean id="data" scope="session"
      class="ch.eaternity.server.jsp.StaticDataLoader" />
     
 <jsp:useBean id="temp" scope="session"
 	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
-<jsp:useBean id="properties" scope="session"
+<jsp:useBean id="props" scope="session"
 class="ch.eaternity.server.jsp.StaticProperties" />
      
      
 <%
+/* uses following variables in Temp:
+	ingredients
+	personFactor
+*/
 
 List<IngredientSpecification> ingredients = temp.getIngredients();
 CatRyzer catryzer = new CatRyzer();
@@ -40,38 +44,38 @@ seasonQuotients = Util.getSeasonQuotient(ingredients);
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 	<tr>
-		<td>CO2 Rohwert ohne Anteile [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).noFactorsQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
+		<td>CO2 Rohwert ohne Anteile [<%= props.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=props.co2_formatter.format( Util.getCO2Value(ingredients).noFactorsQuota*props.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td >Anteil Transport [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).transQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
+		<td >Anteil Transport [<%= props.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=props.co2_formatter.format( Util.getCO2Value(ingredients).transQuota*props.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td >Anteil Konservierungsmethoden [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).condQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
+		<td >Anteil Konservierungsmethoden [<%= props.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=props.co2_formatter.format( Util.getCO2Value(ingredients).condQuota*props.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td >Anteil Produktionsmethoden [<%= properties.co2Unit %> CO<sub>2</sub>]:</td>
-		<td><%=properties.co2_formatter.format( Util.getCO2Value(ingredients).prodQuota*properties.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
+		<td >Anteil Produktionsmethoden [<%= props.co2Unit %> CO<sub>2</sub>]:</td>
+		<td><%=props.co2_formatter.format( Util.getCO2Value(ingredients).prodQuota*props.co2Unit.conversionFactor*temp.getPersonFactor())%></td>
 	</tr>
 	<tr>
-		<td>Gewicht [<%= properties.weightUnit %>]:</td>
-		<td><%= properties.weight_formatter.format( Util.getWeight(ingredients)*properties.weightUnit.conversionFactor*temp.getPersonFactor()) %></td>
+		<td>Gewicht [<%= props.weightUnit %>]:</td>
+		<td><%= props.weight_formatter.format( Util.getWeight(ingredients)*props.weightUnit.conversionFactor*temp.getPersonFactor()) %></td>
 	</tr>
 	<% if (Util.getCost(ingredients) > 0) { %>
 		<tr>
 			<td>Kosten [CHF]:</td>
-			<td><%= properties.cost_formatter.format( Util.getCost(ingredients)*temp.getPersonFactor()) %></td>
+			<td><%= props.cost_formatter.format( Util.getCost(ingredients)*temp.getPersonFactor()) %></td>
 		</tr>
 	<% } %>
 	<tr>
 		<td>Saison Stückzahlquotient [%]:</td>
-		<td><%= properties.formatter.format(seasonQuotients.first*100) %></td>
+		<td><%= props.formatter.format(seasonQuotients.first*100) %></td>
 	</tr>
 	<tr>
 		<td>Saison Gewichtsquotient [%]:</td>
-		<td><%= properties.formatter.format(seasonQuotients.second*100) %></td>
+		<td><%= props.formatter.format(seasonQuotients.second*100) %></td>
 	</tr>
 </table>
 	
