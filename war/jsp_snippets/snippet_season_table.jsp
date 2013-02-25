@@ -11,7 +11,7 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 
 
 <style>
@@ -41,14 +41,12 @@
 
   
 <%
+      	StaticProperties props = (StaticProperties)request.getAttribute("props");
+      StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+      StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
-
-List<Recipe> recipes = temp.getRecipes();
-
- %>
+      List<Recipe> recipes = temp.getRecipes();
+      %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 

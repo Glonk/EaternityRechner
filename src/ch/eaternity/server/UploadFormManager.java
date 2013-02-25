@@ -26,7 +26,7 @@ import javax.servlet.http.*;
  *
  * @author laihaiming@google.com (Haiming Lai)
  */
-class UploadFormManager {
+public class UploadFormManager {
   private final List<Asset> assets = new ArrayList<Asset>();
   private final HttpServletRequest req;
   /* @Nullable */ private String outputType;
@@ -41,7 +41,7 @@ class UploadFormManager {
    * @throws FileUploadException thrown from file upload servlet.
    * @throws IOException thrown from IO operations.
    */
-  void processForm() throws FileUploadException, IOException {
+  public void processForm() throws FileUploadException, IOException {
     int assetsNumber = 0;
     List<String> assetMimeTypeList = new ArrayList<String>();
     List<byte[]> assetDataList = new ArrayList<byte[]>();
@@ -124,28 +124,28 @@ class UploadFormManager {
   /**
    * @return The uploaded file name, or null if not present.
    */
-  String getFileName() {
+  public String getFileName() {
     return assets.get(0).getName();
   }
 
   /**
    * @return The input mime type, or null if not present.
    */
-  String getInputType() {
+  public String getInputType() {
     return assets.get(0).getMimeType();
   }
 
   /**
    * @return The output mime type, or null if not present.
    */
-  String getOutputType() {
+  public String getOutputType() {
     return outputType;
   }
 
   /**
    * @return All assets associated with the document to be converted.
    */
-  List<Asset> getAssets() {
+  public List<Asset> getAssets() {
     return Collections.unmodifiableList(assets);
   }
 }

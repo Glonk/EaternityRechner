@@ -8,7 +8,7 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties.IngredientRepresentation" %>
 
@@ -16,16 +16,16 @@
      
      
 <%
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+            	StaticProperties props = (StaticProperties)request.getAttribute("props");
+            StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+            StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
-List<IngredientSpecification> ingSpecs = temp.getIngredients();
-		
-int counter = 0;
-for(IngredientSpecification ingredient: ingSpecs){
-	counter = counter + 1;
-	%>
+            List<IngredientSpecification> ingSpecs = temp.getIngredients();
+            		
+            int counter = 0;
+            for(IngredientSpecification ingredient: ingSpecs){
+            	counter = counter + 1;
+            %>
 	<span class="nowrap">
 	<%= props.weight_formatter.format(ingredient.getMengeGramm()*props.weightUnit.conversionFactor/temp.persons*props.getPersons()) + " " + props.weightUnit + " " + ingredient.getName() %>
 	<% if (props.ingredientRepresentation == IngredientRepresentation.EXPANDED) { %>

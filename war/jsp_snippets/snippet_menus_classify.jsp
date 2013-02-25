@@ -11,7 +11,7 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties.IngredientRepresentation" %>
 
@@ -26,22 +26,20 @@
 
      
 <%
+     	StaticProperties props = (StaticProperties)request.getAttribute("props");
+     StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+     StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+     DecimalFormat formatter = new DecimalFormat("##");
 
-DecimalFormat formatter = new DecimalFormat("##");
+     List<Recipe> recipes = temp.getRecipes();
 
-List<Recipe> recipes = temp.getRecipes();
+     Collection<Double> values = new ArrayList<Double>();
 
-Collection<Double> values = new ArrayList<Double>();
-
-// this should be disfunctional by now
-Date date = new Date();
-long iTimeStamp = (long) (date.getTime() * .00003);
-
-%>
+     // this should be disfunctional by now
+     Date date = new Date();
+     long iTimeStamp = (long) (date.getTime() * .00003);
+     %>
 	
 <form name="htmlAdder" method="POST" action=";">
 	

@@ -11,27 +11,27 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 
 
 
      
      
 <%
-/* uses following variables in Temp:
-	ingredients
-	personFactor
-*/
+          	/* uses following variables in Temp:
+          	ingredients
+          	personFactor
+          */
 
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+          StaticProperties props = (StaticProperties)request.getAttribute("props");
+          StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+          StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
-List<IngredientSpecification> ingredients = temp.getIngredients();
-CatRyzer catryzer = new CatRyzer();
-Pair<Double, Double> seasonQuotients;
-seasonQuotients = Util.getSeasonQuotient(ingredients);
-%>
+          List<IngredientSpecification> ingredients = temp.getIngredients();
+          CatRyzer catryzer = new CatRyzer();
+          Pair<Double, Double> seasonQuotients;
+          seasonQuotients = Util.getSeasonQuotient(ingredients);
+          %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 	<tr>

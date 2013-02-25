@@ -14,42 +14,42 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
      
 	
 <%
-/* uses following variables in Temp:
-	- ingredients
-	- personFactor
-	- startIndex
-	- stopIndex
-*/
+     		/* uses following variables in Temp:
+     		- ingredients
+     		- personFactor
+     		- startIndex
+     		- stopIndex
+     	*/
 
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
-
-
-List<IngredientSpecification> ingredients = temp.getIngredients();
-Collection<CO2Value> values = new ArrayList<CO2Value>();
-int counterIterate = 0;
-
-Collections.sort(ingredients, new IngredientValueComparator());
-
-if (!(props.weightThreshold > 0.0 || props.valueThreshold > 0.0)) {
-	if (temp.getStartIndex() >= 0 && temp.getStartIndex() < ingredients.size() && temp.getStopIndex() >= temp.getStartIndex() && temp.getStopIndex() <= ingredients.size())
-		ingredients = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
-}
-
-for(IngredientSpecification ingSpec : ingredients){
-	values.add((new CO2Value(ingSpec)).mult(temp.getPersonFactor()));
-}
+     	StaticProperties props = (StaticProperties)request.getAttribute("props");
+     	StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+     	StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
 
-if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
-	%>
+     	List<IngredientSpecification> ingredients = temp.getIngredients();
+     	Collection<CO2Value> values = new ArrayList<CO2Value>();
+     	int counterIterate = 0;
+
+     	Collections.sort(ingredients, new IngredientValueComparator());
+
+     	if (!(props.weightThreshold > 0.0 || props.valueThreshold > 0.0)) {
+     		if (temp.getStartIndex() >= 0 && temp.getStartIndex() < ingredients.size() && temp.getStopIndex() >= temp.getStartIndex() && temp.getStopIndex() <= ingredients.size())
+     			ingredients = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
+     	}
+
+     	for(IngredientSpecification ingSpec : ingredients){
+     		values.add((new CO2Value(ingSpec)).mult(temp.getPersonFactor()));
+     	}
+
+
+     	if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
+     	%>
 	<table cellspacing="0" cellpadding="0" class="table toc" >
 		
 		<tr>

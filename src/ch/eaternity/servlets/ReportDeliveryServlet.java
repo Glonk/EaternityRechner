@@ -1,10 +1,9 @@
-package ch.eaternity.server;
+package ch.eaternity.servlets;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -14,15 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import ch.eaternity.server.jsp.StaticDataLoader;
 import ch.eaternity.server.jsp.StaticProperties;
-import ch.eaternity.server.jsp.StaticTempBean;
-import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.Recipe;
+import ch.eaternity.server.jsp.StaticTemp;
+import ch.eaternity.shared.CatRyzer;
 import ch.eaternity.shared.Quantity.Weight;
-import ch.eaternity.shared.Util;
 
-public class MenuReportServlet extends HttpServlet 
+public class ReportDeliveryServlet extends HttpServlet 
 {
-	private static final long serialVersionUID = -3362523456737718L;
+	private static final long serialVersionUID = -336252343456718L;
 	
 	
 	@Override
@@ -37,7 +34,7 @@ public class MenuReportServlet extends HttpServlet
 		
 		StaticProperties props = new StaticProperties();
 		StaticDataLoader data = new StaticDataLoader();
-		StaticTempBean temp = new StaticTempBean();
+		StaticTemp temp = new StaticTemp();
 		
 		props.locale = Locale.GERMAN;
 
@@ -68,9 +65,12 @@ public class MenuReportServlet extends HttpServlet
 		
 		data.initialize(props,false);
 		
+		CatRyzer catryzer = new CatRyzer(data.recipes,props);
+		
 		request.setAttribute("data", data);
 		request.setAttribute("props", props);
 		request.setAttribute("temp", temp);
-		request.getRequestDispatcher("/menu_report.jsp").forward(request, response);
+		request.setAttribute("catryzer", catryzer);		
+		request.getRequestDispatcher("/report_delivery.jsp").forward(request, response);
 	}
 }

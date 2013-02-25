@@ -11,27 +11,27 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 
      
      
 <%
-/* uses following variables in Temp:
-	catryzer
-*/
+          	/* uses following variables in Temp:
+          	catryzer
+          */
 
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
-CatRyzer catryzer = (CatRyzer)request.getAttribute("catryzer");
+          StaticProperties props = (StaticProperties)request.getAttribute("props");
+          StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+          StaticTemp temp = (StaticTemp)request.getAttribute("temp");
+          CatRyzer catryzer = (CatRyzer)request.getAttribute("catryzer");
 
-List<IngredientSpecification> ingredients = catryzer.getIngredientSpecifications();
-Pair<Double, Double> seasonQuotients;
-seasonQuotients = Util.getSeasonQuotient(ingredients);
-int counter;
+          List<IngredientSpecification> ingredients = catryzer.getIngredientSpecifications();
+          Pair<Double, Double> seasonQuotients;
+          seasonQuotients = Util.getSeasonQuotient(ingredients);
+          int counter;
 
-Set<Pair<String,Set<String>>> ingredientsByCategory = catryzer.getIngredientsByCategory();
-%>
+          Set<Pair<String,Set<String>>> ingredientsByCategory = catryzer.getIngredientsByCategory();
+          %>
 
 
 <h2>Kategorienübersicht</h2>

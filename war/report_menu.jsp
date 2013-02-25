@@ -4,7 +4,6 @@
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.IngredientSpecification" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
-<%@ page import="ch.eaternity.shared.CatRyzer" %>
 <%@ page import="ch.eaternity.shared.Util" %>
 <%@ page import="ch.eaternity.shared.Quantity.Weight" %>
 
@@ -36,8 +35,6 @@
 <link rel="stylesheet" type="text/css" href="reports.css">
 	
 <% 
-
-
 	StaticProperties props = (StaticProperties)request.getAttribute("props");
 	StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
 	StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
@@ -53,8 +50,6 @@
 	 
 	UserService userService = UserServiceFactory.getUserService();
 	User user = userService.getCurrentUser();
-
-	
 	%>
 
 
@@ -328,6 +323,7 @@ temp.recipes.addAll(data.recipes);
 		temp.stopIndex = 5;
 		
 		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
+		temp.title = "<h3>" + recipe.getSymbol() + "</h3>";
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -385,6 +381,7 @@ temp.recipes.addAll(data.recipes);
 		temp.stopIndex = 3;
 		
 		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
+		temp.title = "<h3>" + recipe.getSymbol() + "</h3>"
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -445,6 +442,7 @@ temp.recipes.addAll(data.recipes);
 			temp.stopIndex = 3;
 			
 			temp.personFactor = props.persons/recipe.getPersons().doubleValue();
+			temp.title = "<h3>" + recipe.getSymbol() + "</h3>"
 	%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />

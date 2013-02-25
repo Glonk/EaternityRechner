@@ -9,29 +9,28 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
 
      
      
 <%
-/* uses following variables in Temp:
-	catryzer
-*/
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
-CatRyzer catryzer = (CatRyzer)request.getAttribute("catryzer");
+          	/* uses following variables in Temp:
+          	catryzer
+          */
+          StaticProperties props = (StaticProperties)request.getAttribute("props");
+          StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+          StaticTemp temp = (StaticTemp)request.getAttribute("temp");
+          CatRyzer catryzer = (CatRyzer)request.getAttribute("catryzer");
 
-List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
-List<CO2Value> co2Values = new ArrayList<CO2Value> ();
+          List<CatRyzer.CategoryValue> valuesByCategory = catryzer.getCatVals();
+          List<CO2Value> co2Values = new ArrayList<CO2Value> ();
 
-for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
-	co2Values.add(categoryValue.co2value);
-}
-
-%>
+          for(CatRyzer.CategoryValue categoryValue : valuesByCategory){
+          	co2Values.add(categoryValue.co2value);
+          }
+          %>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 

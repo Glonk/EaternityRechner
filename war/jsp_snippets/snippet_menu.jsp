@@ -13,32 +13,24 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
      
      
 <%
-StaticProperties props = (StaticProperties)request.getAttribute("props");
-StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+	StaticProperties props = (StaticProperties)request.getAttribute("props");
+	StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+	StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
-DecimalFormat formatter = new DecimalFormat("##");
 
-List<Recipe> recipes = temp.getRecipes();
-
-if (recipes.size() > 0 && temp.getCo2Values() != null ) {
-	Recipe recipe = recipes.get(0);
-	
-	recipe.setCO2Value();
-	Double recipeValue = recipe.getCO2Value() + props.getExtra();
-	
-	// normalise recipeValue to amount of persons
-	recipeValue = recipeValue*props.getPersons();
-	
-	String co2ValueStr = props.co2_formatter.format( recipeValue * props.co2Unit.conversionFactor );
-	
-	%>
+    if (temp.getCo2Values() != null ) {
+    
+    	Double recipeValue = temp.recipe.getCO2Value() + props.getExtra();
+    	
+    	// normalise recipeValue to amount of persons
+    	recipeValue = recipeValue*props.getPersons();
+    %>
 	
 	<table cellspacing="0" cellpadding="0" class="table listTable" >
 		<tr>
@@ -48,32 +40,34 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		
 		<tr>
 			<td class="bottom-border">
-				<% if (recipe.getCO2Value() < props.average) { %>
+				<% 
+				if (temp.displaySmilies) {
+					if (temp.recipe.getCO2Value() < props.average) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
-				<% } if (recipe.getCO2Value() < props.climateFriendlyValue) { %>
+				<% } if (temp.recipe.getCO2Value() < props.climateFriendlyValue) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
-				<% } %>
-				<h3><%= recipe.getSymbol() %></h3>
-		
+				<% 	} 
+				}%>
+				<%= temp.title %>
 			</td>
 			<td class="left-border"></td>
 		</tr>
 	
 		<tr>
-		<td><div class="amount"><%= co2ValueStr + " " + props.co2Unit %> CO<sub>2</sub>* total</div></td>
+		<td><div class="amount"><%= props.co2_formatter.format( recipeValue * props.co2Unit.conversionFactor ) + " " + props.co2Unit %> CO<sub>2</sub>* total</div></td>
 		<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
 		</tr>
 		
 		<tr>
 		<td>
 		
-		<span class="subTitle"><%= recipe.getSubTitle() %></span>
+		<span class="subTitle"><%= temp.recipe.getSubTitle() %></span>
 		
 		<span style="color:gray;">Zutaten für <%= props.getPersons().toString() %> Personen:</span><br />
 		
 		<% 
-		temp.persons = recipe.getPersons(); 
-		temp.ingredients = recipe.getZutaten();
+		temp.persons = temp.recipe.getPersons(); 
+		temp.ingredients = temp.recipe.getZutaten();
 		%>
 		<jsp:include page="/jsp_snippets/snippet_ingredients.jsp" />
 		
@@ -89,8 +83,8 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		
 		<%	
 		// needs to be corrected with g / kg transformations
-		if(recipe.comments != null){
-			for(RecipeComment comment: recipe.comments){
+		if(temp.recipe.comments != null){
+			for(RecipeComment comment: temp.recipe.comments){
 		
 			%>
 			<tr>

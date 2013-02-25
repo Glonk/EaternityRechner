@@ -5,17 +5,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ch.eaternity.shared.CategoryQuantities;
 import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.CO2Value;;
 
-public class StaticTempBean implements Serializable {
+public class StaticTemp implements Serializable {
 	
 	private static final long serialVersionUID = 5288234456492104L;
 	
 	// -------------------------- public Fields -------------------------
 	
 	public List<Recipe> recipes= new ArrayList<Recipe>();
+	public Recipe recipe;
 
 	public List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
 	public int startIndex;
@@ -24,16 +26,25 @@ public class StaticTempBean implements Serializable {
 	public Collection<CO2Value> co2Values = new ArrayList<CO2Value>();
 	public CO2Value co2Value;
 	
+	public List<CategoryQuantities> catQuantities = new ArrayList<CategoryQuantities>();
+	
 	public double personFactor;
 	public double persons;
 	public String title;
 	public String subtitle;
+	public List<String> itemNames = new ArrayList<String>();
+	
+	public boolean displayCost = false;
+	public boolean displayWeight = false;
+	public boolean displayCo2Value = true;
+	public boolean displaySmilies = true;
 	
 	// -------------------------- public Methods -------------------------
 	
-	public StaticTempBean () {
+	public StaticTemp () {
 		startIndex = 0;
 		stopIndex = 0;
+		clear();
 	}
 	
 	public void clear() {

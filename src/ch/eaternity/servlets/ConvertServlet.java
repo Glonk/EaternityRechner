@@ -1,7 +1,8 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-package ch.eaternity.server;
+package ch.eaternity.servlets;
 
+import ch.eaternity.server.UploadFormManager;
 import ch.eaternity.shared.Recipe;
 
 import com.google.appengine.api.conversion.Asset;

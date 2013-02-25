@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ch.eaternity.server.DAO;
+import ch.eaternity.server.jsp.StaticProperties;
 import ch.eaternity.shared.comparators.CategoryValuesComparator;
 
 import com.google.common.collect.HashMultimap;
@@ -53,50 +54,15 @@ public class CatRyzer {
 	}
 	
 	
-	public class DateValue {
-		public Date date;
-		public CO2Value co2value;
-		
-		public DateValue() {}
-		
-		public DateValue(Date date, CO2Value co2value) {
-			this.date = date;
-			this.co2value = co2value;
-		}
-	}
-	
-	public class CategoryValue {
-		public String categoryName;
-		public CO2Value co2value;
-		public Double weight;
-		public Double cost;
-		
-		public CategoryValue(){}
-		
-		public CategoryValue(String name, CO2Value co2value) {
-			this.categoryName = name;
-			this.co2value = co2value;
-		}
-		public CategoryValue(String name, CO2Value co2value, Double amountGram) {
-			this(name,co2value);
-			this.weight = amountGram;
-		}
-		public CategoryValue(String name, CO2Value co2value, Double amountGram, Double cost) {
-			this(name,co2value);
-			this.weight = amountGram;
-			this.cost = cost;
-		}
-	}
-	
-	public class CategoryValuesByDates {
-		public List<CategoryValue> categories;
+	public class CategoryValuesByDate {
+		public List<CategoryQuantities> categories;
 		//mulltiple dates are possible, usually just one
 		public List<Date> date = new ArrayList<Date>();
 		public CO2Value co2value;
 		
-		public CategoryValuesByDates(){}
+		public CategoryValuesByDate(){}
 		
-		public CategoryValuesByDates(List<CategoryValue> categories, List<Date> date){
+		public CategoryValuesByDate(List<CategoryQuantities> categories, List<Date> date){
 			this.categories = categories;
 			this.date = date;
 		}
@@ -111,7 +77,7 @@ public class CatRyzer {
 	private boolean initializedMapping = false;
 	private boolean ingredientsLoaded = false;
 	
-	private Locale locale;
+	private StaticProperties props;
 	public List<CatMapping> mappings 				= new ArrayList<CatMapping>();
 	
 	
@@ -122,16 +88,16 @@ public class CatRyzer {
 		ingredients = dao.getAllIngredients();
 	}
 	
-	public CatRyzer(List<Recipe> recipes, Locale locale)
+	public CatRyzer(List<Recipe> recipes, StaticProperties props)
 	{
 		this();
-		this.locale = locale;
+		this.props = props;
 		setRecipes(recipes);
 	}
 	
-	public CatRyzer(Collection<IngredientSpecification> ingSpecs, Locale locale) {
+	public CatRyzer(Collection<IngredientSpecification> ingSpecs, StaticProperties props) {
 		this();
-		this.locale = locale;
+		this.props = props;
 		setIngredients((List<IngredientSpecification>) ingSpecs);
 	}
 	
@@ -188,8 +154,8 @@ public class CatRyzer {
 	}
 
 	
-	public List<CategoryValuesByDates> getCatValsByDates() {
-		List<CategoryValuesByDates> categoryValuesByDatesList = new ArrayList<CategoryValuesByDates>();
+	public List<CategoryValuesByDate> getCatValsByDates() {
+		List<CategoryValuesByDate> categoryValuesByDatesList = new ArrayList<CategoryValuesByDate>();
 		
 		if (initializedMapping && ingredientsLoaded)
 		{
@@ -216,20 +182,21 @@ public class CatRyzer {
 			
 			for(Date date : dateOfKeys2)
 			{
-				List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
+				List<CategoryQuantities> categoryValues = new ArrayList<CategoryQuantities>();
 				
 				Multimap<String,IngredientSpecification> catMM = MapOfcatMultiMap.get(date);
 				
 				for (CatMapping mapping : mappings) {
-					categoryValues.add(new CategoryValue(mapping.category, Util.getCO2Value(catMM.get(mapping.category))));
+					Collection<IngredientSpecification> ingredientSpecs = catMM.get(mapping.category);
+					categoryValues.add(new CategoryQuantities(mapping.category, Util.getCO2Value(ingredientSpecs), Util.getWeight(ingredientSpecs), Util.getCost(ingredientSpecs), null));
 				}
 				
-				CategoryValuesByDates categoryValuesByDates = new CategoryValuesByDates();
+				CategoryValuesByDate categoryValuesByDates = new CategoryValuesByDate();
 				categoryValuesByDates.date.add(date);
 				categoryValuesByDates.categories = categoryValues;
 				categoryValuesByDates.co2value = new CO2Value();
-				for (CategoryValue catval : categoryValues){
-					categoryValuesByDates.co2value = categoryValuesByDates.co2value.add(catval.co2value);
+				for (CategoryQuantities catval : categoryValues){
+					categoryValuesByDates.co2value = categoryValuesByDates.co2value.add(catval.co2Value);
 				}
 				categoryValuesByDatesList.add(categoryValuesByDates);
 			}
@@ -237,9 +204,9 @@ public class CatRyzer {
 		return categoryValuesByDatesList;
 	}
 	
-	public List<CategoryValue> getCatVals() {
+	public List<CategoryQuantities> getCatVals() {
 		Logger rootLogger = Logger.getLogger("");
-		List<CategoryValue> categoryValues = new ArrayList<CategoryValue>();
+		List<CategoryQuantities> categoryValues = new ArrayList<CategoryQuantities>();
 		
 		Multimap<String,IngredientSpecification> catMultiMap = HashMultimap.create();
 		
@@ -258,14 +225,14 @@ public class CatRyzer {
 			//  Converting MAPS to LISTS 
 			for (CatMapping mapping : mappings) {
 				Collection<IngredientSpecification> ingSpecs = catMultiMap.get(mapping.category);
-				categoryValues.add(new CategoryValue(mapping.category, Util.getCO2Value(ingSpecs), Util.getWeight(ingSpecs), Util.getCost(ingSpecs)));
+				categoryValues.add(new CategoryQuantities(mapping.category, Util.getCO2Value(ingSpecs), Util.getWeight(ingSpecs), Util.getCost(ingSpecs), null));
 			}
 		}
 		return categoryValues;	
 	}
 	
-	public List<DateValue> getDateValues() {
-		List<DateValue> dateValues = new ArrayList<DateValue>();
+	public List<CategoryQuantities> getDateValues() {
+		List<CategoryQuantities> dateValues = new ArrayList<CategoryQuantities>();
 		
 		if (initializedMapping && ingredientsLoaded)
 		{	
@@ -281,8 +248,8 @@ public class CatRyzer {
 		//  Converting MAPS to LISTS 
 			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
 			for (Date date : dateOfKeys) {
-				Collection<IngredientSpecification> ingredientsSpecification = dateMultiMap.get(date);
-				dateValues.add(new DateValue(date, Util.getCO2Value(ingredientsSpecification)));
+				Collection<IngredientSpecification> ingCollection = dateMultiMap.get(date);
+				dateValues.add(new CategoryQuantities(props.dateFormatter.format(date), Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection), date));
 			}
 		}
 			
@@ -290,8 +257,8 @@ public class CatRyzer {
 	}
 	
 	// use for internationalisation again, not used at the moment
-	public List<CategoryValue> getIngVals() {
-		List<CategoryValue> ingredientValues 	= new ArrayList<CategoryValue>();
+	public List<CategoryQuantities> getIngVals() {
+		List<CategoryQuantities> ingredientValues 	= new ArrayList<CategoryQuantities>();
 		
 		Multimap<String,IngredientSpecification> ingMultiMap = HashMultimap.create();
 		
@@ -299,19 +266,16 @@ public class CatRyzer {
 		{	
 			// fill Ingredients Mulimap for worst Ingredient beast top 10 
 			for (IngredientSpecification ingSpec : ingSpecs) {
-				if (locale.equals(Locale.ENGLISH))
+				if (props.locale.equals(Locale.ENGLISH))
 					ingMultiMap.put(Util.getIngredientName_en(ingSpec, ingredients), ingSpec);
-				else if (locale.equals(Locale.GERMAN))
+				else if (props.locale.equals(Locale.GERMAN))
 					ingMultiMap.put(ingSpec.getName(), ingSpec);
 			}
 			
 			for (String name : ingMultiMap.keySet()) {
 				Collection<IngredientSpecification> ingCollection = ingMultiMap.get(name);
-				ingredientValues.add(new CategoryValue(name, Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection)));
+				ingredientValues.add(new CategoryQuantities(name, Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection), null));
 			}
-			
-			// sort CategoryValue by co2-value
-			Collections.sort(ingredientValues,new CategoryValuesComparator());
 		}
 		return ingredientValues;	
 	}
@@ -344,7 +308,7 @@ public class CatRyzer {
 			{
 				Set<String> ingredientNames;
 				Collection<IngredientSpecification> ingredientsSpecification = catMultiMap.get(mapping.category);
-				if (locale == Locale.ENGLISH)
+				if (props.locale == Locale.ENGLISH)
 					ingredientNames = Util.getIngredientsNames_en(ingredientsSpecification, ingredients);
 				else
 					ingredientNames = Util.getIngredientsNames_de(ingredientsSpecification);

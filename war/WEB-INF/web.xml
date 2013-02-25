@@ -39,14 +39,8 @@
         <url-pattern>/appstats/*</url-pattern>
     </servlet-mapping>
 
-    <security-constraint>
-        <web-resource-collection>
-            <url-pattern>/appstats/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
+
+
     
     
   <!-- Servlets -->
@@ -81,7 +75,7 @@
    <!-- extra servlet to upload images (could be integrated into dataservice...) -->
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
-		<servlet-class>ch.eaternity.server.UploadServlet</servlet-class>
+		<servlet-class>ch.eaternity.server.servlets.UploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	   <servlet-name>uploadServlet</servlet-name>
@@ -90,21 +84,39 @@
 	
 	 <servlet>
     <servlet-name>Convert</servlet-name>
-    <servlet-class>ch.eaternity.server.ConvertServlet</servlet-class>
+    <servlet-class>ch.eaternity.server.servlets.ConvertServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Convert</servlet-name>
     <url-pattern>/convert</url-pattern>
   </servlet-mapping>
   	
-  	<!-- Testing Servlets -->
+  	<!-- Reporting Servlets -->
 	<servlet>
-		<servlet-name>menuReportServlet</servlet-name>
-		<servlet-class>ch.eaternity.server.MenuReportServlet</servlet-class>
+		<servlet-name>reportMenuServlet</servlet-name>
+		<servlet-class>ch.eaternity.server.ReportMenuServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	   <servlet-name>menuReportServlet</servlet-name>
-	   <url-pattern>/menu_report</url-pattern>
+	   <servlet-name>reportMenuServlet</servlet-name>
+	   <url-pattern>/report_menu</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>reportCertificateServlet</servlet-name>
+		<servlet-class>ch.eaternity.server.servlets.ReportCertificateServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	   <servlet-name>reportCertificateServlet</servlet-name>
+	   <url-pattern>/report_certificate</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>reportDeliveryServlet</servlet-name>
+		<servlet-class>ch.eaternity.server.servlets.ReportDeliveryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	   <servlet-name>reportDeliveryServlet</servlet-name>
+	   <url-pattern>/report_delivery</url-pattern>
 	</servlet-mapping>
 
 <!--System Services by google (admin interface)

@@ -1,4 +1,4 @@
-package ch.eaternity.server;
+package ch.eaternity.servlets;
 
 import java.io.IOException;
 import java.util.Date;
