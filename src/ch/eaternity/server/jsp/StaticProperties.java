@@ -47,21 +47,17 @@ public class StaticProperties implements Serializable {
 	public String tempIds;
 	public String permanentId;
 	public String kitchenId;
-	public String pdfStr;
-	public String thresholdStr;
-	public String extraStr;
-	public String personsStr;
 	
 	// standard values not setted in StaticPageService
 	public Boolean doPdf = false;
-	public Integer threshold = 1550;
+	public Integer average = 1550;
 	public Integer extra = 0;
 	public Integer persons = 4;
 	
-	public Double third = (double) threshold / 3;
-	public Double half = (double) threshold / 2;
-	public Double twoFifth = (double) threshold / 5 * 2;
-	public Double climateFriendlyValue = twoFifth;
+	public Double third;
+	public Double half;
+	public Double twoFifth;
+	public Double climateFriendlyValue;
 	
 	// ingredient Ranking which one should be displayed in percent
 	public Double valueThreshold = 0.0;
@@ -76,6 +72,7 @@ public class StaticProperties implements Serializable {
 	
 	public StaticProperties() {
 		formatter.setRoundingMode(RoundingMode.FLOOR);
+		setAverageDependencies();
 	}
 	
 	public void initialize(HttpServletRequest request) {
@@ -83,10 +80,10 @@ public class StaticProperties implements Serializable {
 		tempIds = request.getParameter("ids");
 		permanentId = request.getParameter("pid");
 		kitchenId = request.getParameter("kid");
-		pdfStr = request.getParameter("pdf");
-		thresholdStr = request.getParameter("median");
-		extraStr = request.getParameter("extra");
-		personsStr = request.getParameter("persons");
+		String pdfStr = request.getParameter("pdf");
+		String averageStr = request.getParameter("average");
+		String extraStr = request.getParameter("extra");
+		String personsStr = request.getParameter("persons");
 		String valueThresholdStr = request.getParameter("valueThreshold");
 		String weightThresholdStr = request.getParameter("weightThreshold");
 		
@@ -100,8 +97,8 @@ public class StaticProperties implements Serializable {
 			if(pdfStr != null)
 				doPdf = true;
 
-			if(thresholdStr != null)
-				threshold = Integer.valueOf(thresholdStr);
+			if(averageStr != null)
+				average = Integer.valueOf(averageStr);
 			
 			if(extraStr != null)
 				extra = Integer.valueOf(extraStr);
@@ -112,14 +109,20 @@ public class StaticProperties implements Serializable {
 			if(valueThresholdStr != null){
 				valueThreshold = Double.valueOf(valueThresholdStr);
 			}
-
 			
 			if(weightThresholdStr != null){
 				weightThreshold = Double.valueOf(weightThresholdStr);
 			}
 		}
 		catch (NumberFormatException nfe) {}
-		
+		setAverageDependencies();
+	}
+	
+	private void setAverageDependencies() {
+		third = (double) average / 3;
+		half = (double) average / 2;
+		twoFifth = (double) average / 5 * 2;
+		climateFriendlyValue = twoFifth;
 	}
 	
 	public Locale getLocale() {
@@ -182,11 +185,11 @@ public class StaticProperties implements Serializable {
 	public void setDoPdf(Boolean doPdf) {
 		this.doPdf = doPdf;
 	}
-	public Integer getThreshold() {
-		return threshold;
+	public Integer getAverage() {
+		return average;
 	}
-	public void setThreshold(Integer threshold) {
-		this.threshold = threshold;
+	public void setAverage(Integer average) {
+		this.average = average;
 	}
 	public Integer getExtra() {
 		return extra;
@@ -231,38 +234,6 @@ public class StaticProperties implements Serializable {
 
 	public void setKitchenId(String kitchenId) {
 		this.kitchenId = kitchenId;
-	}
-
-	public String getPdfStr() {
-		return pdfStr;
-	}
-
-	public void setPdfStr(String pdfStr) {
-		this.pdfStr = pdfStr;
-	}
-
-	public String getThresholdStr() {
-		return thresholdStr;
-	}
-
-	public void setThresholdStr(String thresholdStr) {
-		this.thresholdStr = thresholdStr;
-	}
-
-	public String getExtraStr() {
-		return extraStr;
-	}
-
-	public void setExtraStr(String extraStr) {
-		this.extraStr = extraStr;
-	}
-
-	public String getPersonsStr() {
-		return personsStr;
-	}
-
-	public void setPersonsStr(String personsStr) {
-		this.personsStr = personsStr;
 	}
 
 	public Double getThird() {

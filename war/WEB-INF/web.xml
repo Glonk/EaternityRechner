@@ -96,6 +96,16 @@
     <servlet-name>Convert</servlet-name>
     <url-pattern>/convert</url-pattern>
   </servlet-mapping>
+  	
+  	<!-- Testing Servlets -->
+	<servlet>
+		<servlet-name>menuReportServlet</servlet-name>
+		<servlet-class>ch.eaternity.server.MenuReportServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	   <servlet-name>menuReportServlet</servlet-name>
+	   <url-pattern>/menu_report</url-pattern>
+	</servlet-mapping>
 
 <!--System Services by google (admin interface)
   <servlet>

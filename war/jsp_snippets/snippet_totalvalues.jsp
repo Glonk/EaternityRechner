@@ -14,14 +14,7 @@
 <%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 
 
-<jsp:useBean id="data" scope="session"
-     class="ch.eaternity.server.jsp.StaticDataLoader" />
-    
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-	
-<jsp:useBean id="props" scope="session"
-class="ch.eaternity.server.jsp.StaticProperties" />
+
      
      
 <%
@@ -29,6 +22,10 @@ class="ch.eaternity.server.jsp.StaticProperties" />
 	ingredients
 	personFactor
 */
+
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
 
 List<IngredientSpecification> ingredients = temp.getIngredients();
 CatRyzer catryzer = new CatRyzer();

@@ -13,21 +13,17 @@
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 
-    
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-	
-<jsp:useBean id="props" scope="session"
-	class="ch.eaternity.server.jsp.StaticProperties" />
-
-<jsp:useBean id="catryzer" scope="session"
-	class="ch.eaternity.shared.CatRyzer" />
      
      
 <%
 /* uses following variables in Temp:
 	catryzer
 */
+
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+CatRyzer catryzer = (CatRyzer)request.getAttribute("catryzer");
 
 List<IngredientSpecification> ingredients = catryzer.getIngredientSpecifications();
 Pair<Double, Double> seasonQuotients;

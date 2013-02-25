@@ -10,6 +10,8 @@
 <%@ page import="ch.eaternity.shared.Converter" %>
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
+<%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties.IngredientRepresentation" %>
 
@@ -21,16 +23,14 @@
 
 <%@ page import="java.text.DecimalFormat" %>
 
-<jsp:useBean id="data" scope="session"
-     class="ch.eaternity.server.jsp.StaticDataLoader" />
-     
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-	
-<jsp:useBean id="props" scope="session"
-	class="ch.eaternity.server.jsp.StaticProperties" />
+
      
 <%
+
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+
 DecimalFormat formatter = new DecimalFormat("##");
 
 List<Recipe> recipes = temp.getRecipes();
@@ -66,7 +66,7 @@ Boolean notDoneThird = true;
 
 Double MaxValueRezept = Util.getMax(values);
 
-Double adjustedAverageLength = props.threshold/MaxValueRezept*200;
+Double adjustedAverageLength = props.average/MaxValueRezept*200;
 Double climateFriendlyValueLength = props.climateFriendlyValue/MaxValueRezept*200;
 String averageLength = props.formatter.format(adjustedAverageLength);
 String formattedClimate = props.formatter.format(props.climateFriendlyValue);
@@ -103,7 +103,7 @@ String lengthExtra = props.formatter.format(props.extra/MaxValueRezept*200);
 	+"Herkömmliches Menu"
 	+"</td>"
 	+"<td class='left-border' style='background:#F7F7F7'><img class='bar' src='gray.png' alt='gray' height='11' width='" + averageLength + "' /></td>"
-	+"<td class='co2value' style='background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;' >" + props.threshold + "</td>"
+	+"<td class='co2value' style='background:#F7F7F7;padding:0.2em 1em 0.3em 0.3em;' >" + props.average + "</td>"
 	+"<td class='co2percent'  ></td>"
 	+"</tr>";
 
@@ -127,10 +127,10 @@ for(Recipe recipe: data.recipes){
 	String moreOrLess = "";
 	String percent ="";
 	
-	if((recipeValue+props.extra)>(props.threshold)){
-		percent = "+" + props.formatter.format( ((recipeValue-props.threshold)/(props.threshold))*100 ) + "%";
+	if((recipeValue+props.extra)>(props.average)){
+		percent = "+" + props.formatter.format( ((recipeValue-props.average)/(props.average))*100 ) + "%";
 	} else {
-		percent = "-" + props.formatter.format( ((props.threshold-recipeValue)/(props.threshold))*100 ) + "%";
+		percent = "-" + props.formatter.format( ((props.average-recipeValue)/(props.average))*100 ) + "%";
 	}
 
 	if((recipeValue < props.climateFriendlyValue) && notDoneFirst){
@@ -152,7 +152,7 @@ for(Recipe recipe: data.recipes){
 		}
 		
 		}
-		if((recipeValue > props.climateFriendlyValue) && (recipeValue < props.threshold) &&  notDoneSeccond){ 
+		if((recipeValue > props.climateFriendlyValue) && (recipeValue < props.average) &&  notDoneSeccond){ 
 			
 			smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
 			
@@ -170,7 +170,7 @@ for(Recipe recipe: data.recipes){
 		<%
 		}
 	}
-		if((recipeValue > props.threshold) && notDoneThird){ 
+		if((recipeValue > props.average) && notDoneThird){ 
 			
 			smilies = "";
 			

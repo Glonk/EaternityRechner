@@ -34,47 +34,13 @@
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <title>Menü Report</title>
 <link rel="stylesheet" type="text/css" href="reports.css">
-
-<!-- Load the StaticPageService as a Bean, handlich Parameter passing between jsp's and Snippets -->
-<jsp:useBean id="data" scope="session"
-	class="ch.eaternity.server.jsp.StaticDataLoader" />
-
-<jsp:useBean id="props" scope="session"
-	class="ch.eaternity.server.jsp.StaticProperties" />
-
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
 	
 <% 
-	//Specific Parameters to set for Display] 
-	props.locale = Locale.GERMAN;
 
-	props.weightUnit = Weight.GRAM;
-	props.co2Unit = Weight.GRAM;		
-			
-	props.formatter = new DecimalFormat("##");
-	props.formatter.setRoundingMode(RoundingMode.FLOOR);
-	props.co2_formatter = new DecimalFormat("##");
-	props.cost_formatter = new DecimalFormat("##");
-	props.weight_formatter = new DecimalFormat("##");
-	props.distance_formatter = new DecimalFormat("##");
-	props.dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
-	
-	props.co2BarLength = 200;
-	props.barOffset = 70;
-	
-	// standard values for request if not set
-	props.doPdf = false;
-	props.threshold = 1550;
-	props.extra = 0;
-	props.persons = 4;
-	
-	props.valueType = StaticProperties.ValueType.COMPACT;
-	props.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
-	
-	props.initialize(request);
-	
-	data.initialize(props,false);
+
+	StaticProperties props = (StaticProperties)request.getAttribute("props");
+	StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+	StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
 	
 	Integer counter = 0;
 	int counterIterate = 0;
@@ -87,9 +53,8 @@
 	 
 	UserService userService = UserServiceFactory.getUserService();
 	User user = userService.getCurrentUser();
-		
-	// Initialize Catryzer
-	CatRyzer catryzer = new CatRyzer(data.recipes,props.locale);
+
+	
 	%>
 
 
@@ -289,7 +254,6 @@ else { %>
 <%
 temp.clear();
 temp.co2Values.addAll(Util.getCO2ValuesRecipes(data.recipes));
-
 %>
 
 <jsp:include page="/jsp_snippets/snippet_certificate.jsp" />
@@ -360,7 +324,8 @@ temp.recipes.addAll(data.recipes);
 		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
 		
 		temp.ingredients.addAll(recipe.getZutaten());
-		temp.stopIndex = 3;
+		temp.startIndex = 0;
+		temp.stopIndex = 5;
 		
 		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 %>
@@ -390,7 +355,7 @@ temp.recipes.addAll(data.recipes);
 	</tr>
 	
 	<tr>
-	<td><p>Diese Rezepte sind mit unter <%=props.formatter.format( props.threshold )%> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
+	<td><p>Diese Rezepte sind mit unter <%=props.formatter.format( props.average )%> g CO<sub>2</sub>* bereits besser als der Durchschnitt. Das ist schonmal ganz gut. <!--Am Rezept sind teilweise weitere Verbesserungen möglich. Sind einige der Vorschläge pro Rezept umsetzbar, wäre dies natürlich grossartig.--></p></td>
 	<td></td>
 	</tr>
 	<!--  
@@ -411,7 +376,7 @@ temp.recipes.addAll(data.recipes);
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value() + props.extra;
 	
-	if(recipeValue >= props.climateFriendlyValue && recipeValue < props.threshold){
+	if(recipeValue >= props.climateFriendlyValue && recipeValue < props.average){
 		temp.clear();
 		temp.recipes.add(recipe);
 		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
@@ -449,7 +414,7 @@ temp.recipes.addAll(data.recipes);
 	
 	
 	<tr>
-	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%=props.formatter.format( props.threshold )%> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
+	<td><p><!--An diesen Rezepten lässt sich entweder noch etwas verbessern – oder man verwendet ein neues alternatives Rezept. -->Diese Rezepte haben über <%=props.formatter.format( props.average )%> g CO<sub>2</sub>*. Sie haben also eine unterdurchschnittliche Klimabilanz. Hier wäre es gut noch nachzubessern.</p></td>
 	<td></td>
 	</tr>
 	<!--  
@@ -471,7 +436,7 @@ temp.recipes.addAll(data.recipes);
 		recipe.setCO2Value();
 		Double recipeValue = recipe.getCO2Value() + props.extra;
 
-		if(recipeValue >= props.threshold){
+		if(recipeValue >= props.average){
 			temp.clear();
 			temp.recipes.add(recipe);
 			temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));

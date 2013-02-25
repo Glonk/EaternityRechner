@@ -12,16 +12,17 @@
 <%@ page import="java.text.DecimalFormat" %>
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
+<%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
      
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-	
-<jsp:useBean id="props" scope="session"
-	class="ch.eaternity.server.jsp.StaticProperties" />
      
 <%
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+
 DecimalFormat formatter = new DecimalFormat("##");
 
 List<Recipe> recipes = temp.getRecipes();
@@ -47,7 +48,7 @@ if (recipes.size() > 0 && temp.getCo2Values() != null ) {
 		
 		<tr>
 			<td class="bottom-border">
-				<% if (recipe.getCO2Value() < props.threshold) { %>
+				<% if (recipe.getCO2Value() < props.average) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />
 				<% } if (recipe.getCO2Value() < props.climateFriendlyValue) { %>
 					<img class="smile" src="smiley8.png" alt="smiley" />

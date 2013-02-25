@@ -7,18 +7,18 @@
 <%@ page import="java.util.ArrayList" %>
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
+<%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties.IngredientRepresentation" %>
 
   
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-	
-<jsp:useBean id="props" scope="session"
-	class="ch.eaternity.server.jsp.StaticProperties" />
      
      
 <%
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
 
 List<IngredientSpecification> ingSpecs = temp.getIngredients();
 		

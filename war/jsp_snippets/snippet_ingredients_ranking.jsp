@@ -14,14 +14,10 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
 
      
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-     
-<jsp:useBean id="props" scope="session"
-	class="ch.eaternity.server.jsp.StaticProperties" />
 	
 <%
 /* uses following variables in Temp:
@@ -31,6 +27,11 @@
 	- stopIndex
 */
 
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+
+
 List<IngredientSpecification> ingredients = temp.getIngredients();
 Collection<CO2Value> values = new ArrayList<CO2Value>();
 int counterIterate = 0;
@@ -38,7 +39,8 @@ int counterIterate = 0;
 Collections.sort(ingredients, new IngredientValueComparator());
 
 if (!(props.weightThreshold > 0.0 || props.valueThreshold > 0.0)) {
-	ingredients = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
+	if (temp.getStartIndex() >= 0 && temp.getStartIndex() < ingredients.size() && temp.getStopIndex() >= temp.getStartIndex() && temp.getStopIndex() <= ingredients.size())
+		ingredients = ingredients.subList(temp.getStartIndex(),temp.getStopIndex());
 }
 
 for(IngredientSpecification ingSpec : ingredients){
@@ -63,7 +65,7 @@ if (ingredients.size() > 0 && temp.getPersonFactor() > 0.0) {
 				Zutatenranking 
 			<% }
 			else { %>
-			Top <%= temp.getStopIndex() %> CO<sub>2</sub>-intensive Zutaten in diesem Rezept <% } %>
+			Top <%= ingredients.size() %> CO<sub>2</sub>-intensive Zutaten in diesem Rezept <% } %>
 			</td>
 			<td class="left-border"></td>
 			<td class="co2value" ></td>

@@ -13,15 +13,13 @@
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
 
-
-<jsp:useBean id="temp" scope="session"
-	class="ch.eaternity.server.jsp.StaticTempBean" />
-	
-<jsp:useBean id="props" scope="session"
-class="ch.eaternity.server.jsp.StaticProperties" />
      
      
 <%
+
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
 
 Collection<CO2Value> co2Values = new ArrayList<CO2Value>();
 co2Values = temp.getCo2Values();
@@ -37,15 +35,15 @@ if(average > 0){
 	
 	String total = "200";
 	String klimafriendly = props.formatter.format(200*2/5);
-	String length = props.formatter.format(average/(props.threshold)*200);
+	String length = props.formatter.format(average/(props.average)*200);
 	String formatted = props.formatter.format( average );
 	
 	String moreOrLess = "";
 	String percent ="";
 	Integer position = 1;
 	
-	if(average <= props.threshold){
-		percent = props.formatter.format( -((average-props.threshold)/(props.threshold))*100 );
+	if(average <= props.average){
+		percent = props.formatter.format( -((average-props.average)/(props.average))*100 );
 	
 		if((props.climateFriendlyValue-average)<0){
 			moreOrLess = "weniger";
@@ -58,12 +56,12 @@ if(average > 0){
 	
 	}
 	
-	if(average > (props.threshold)){
+	if(average > (props.average)){
 		position = 3;
 		length = "200";
-		total = props.formatter.format((props.threshold/average)*200);
+		total = props.formatter.format((props.average/average)*200);
 		klimafriendly = props.formatter.format((props.climateFriendlyValue/average)*200);
-		percent = props.formatter.format( ((average-props.threshold)/(props.threshold))*100 );
+		percent = props.formatter.format( ((average-props.average)/(props.average))*100 );
 		moreOrLess = "mehr";
 	}
 
