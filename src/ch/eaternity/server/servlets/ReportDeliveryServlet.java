@@ -1,4 +1,4 @@
-package ch.eaternity.servlets;
+package ch.eaternity.server.servlets;
 
 import java.io.IOException;
 import java.math.RoundingMode;

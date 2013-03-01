@@ -94,7 +94,7 @@
   	<!-- Reporting Servlets -->
 	<servlet>
 		<servlet-name>reportMenuServlet</servlet-name>
-		<servlet-class>ch.eaternity.server.ReportMenuServlet</servlet-class>
+		<servlet-class>ch.eaternity.server.servlets.ReportMenuServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	   <servlet-name>reportMenuServlet</servlet-name>

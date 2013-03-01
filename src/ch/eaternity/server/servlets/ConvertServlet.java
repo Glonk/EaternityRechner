@@ -1,6 +1,6 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-package ch.eaternity.servlets;
+package ch.eaternity.server.servlets;
 
 import ch.eaternity.server.UploadFormManager;
 import ch.eaternity.shared.Recipe;

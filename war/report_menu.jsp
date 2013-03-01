@@ -9,7 +9,7 @@
 
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
-<%@ page import="ch.eaternity.server.jsp.StaticTempBean" %>
+<%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.util.List" %>
@@ -37,7 +37,7 @@
 <% 
 	StaticProperties props = (StaticProperties)request.getAttribute("props");
 	StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-	StaticTempBean temp = (StaticTempBean)request.getAttribute("temp");
+	StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 	
 	Integer counter = 0;
 	int counterIterate = 0;
@@ -381,7 +381,7 @@ temp.recipes.addAll(data.recipes);
 		temp.stopIndex = 3;
 		
 		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
-		temp.title = "<h3>" + recipe.getSymbol() + "</h3>"
+		temp.title = "<h3>" + recipe.getSymbol() + "</h3>";
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -442,7 +442,7 @@ temp.recipes.addAll(data.recipes);
 			temp.stopIndex = 3;
 			
 			temp.personFactor = props.persons/recipe.getPersons().doubleValue();
-			temp.title = "<h3>" + recipe.getSymbol() + "</h3>"
+			temp.title = "<h3>" + recipe.getSymbol() + "</h3>";
 	%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
