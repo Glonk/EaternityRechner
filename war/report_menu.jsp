@@ -315,7 +315,7 @@ temp.recipes.addAll(data.recipes);
 	
 	if(recipeValue < props.climateFriendlyValue){
 		temp.clear();
-		temp.recipes.add(recipe);
+		temp.recipe = recipe;
 		temp.co2Values.addAll(Util.getCO2ValuesIngredients(recipe.getZutaten()));
 		
 		temp.ingredients.addAll(recipe.getZutaten());
@@ -324,6 +324,7 @@ temp.recipes.addAll(data.recipes);
 		
 		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 		temp.title = "<h3>" + recipe.getSymbol() + "</h3>";
+		temp.subtitle = recipe.getSubTitle();
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -382,6 +383,7 @@ temp.recipes.addAll(data.recipes);
 		
 		temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 		temp.title = "<h3>" + recipe.getSymbol() + "</h3>";
+		temp.subtitle = recipe.getSubTitle();
 %>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />
@@ -443,6 +445,7 @@ temp.recipes.addAll(data.recipes);
 			
 			temp.personFactor = props.persons/recipe.getPersons().doubleValue();
 			temp.title = "<h3>" + recipe.getSymbol() + "</h3>";
+			temp.subtitle = recipe.getSubTitle();
 	%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />

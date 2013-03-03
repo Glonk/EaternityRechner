@@ -18,7 +18,7 @@ import ch.eaternity.shared.Quantity.Weight;
 
 public class ReportMenuServlet extends HttpServlet 
 {
-	private static final long serialVersionUID = -3362523456737718L;
+	private static final long serialVersionUID = -336259876537718L;
 	
 	
 	@Override

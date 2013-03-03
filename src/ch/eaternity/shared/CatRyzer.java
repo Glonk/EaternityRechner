@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import ch.eaternity.server.DAO;
 import ch.eaternity.server.jsp.StaticProperties;
-import ch.eaternity.shared.comparators.CategoryValuesComparator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -249,7 +248,8 @@ public class CatRyzer {
 			List<Date> dateOfKeys = asSortedList(dateMultiMap.keySet());
 			for (Date date : dateOfKeys) {
 				Collection<IngredientSpecification> ingCollection = dateMultiMap.get(date);
-				dateValues.add(new CategoryQuantities(props.dateFormatter.format(date), Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection), date));
+				// TODO: Remove hack (null as a date works, everything else not...
+				dateValues.add(new CategoryQuantities("" + props.dateFormatter.format(date), Util.getCO2Value(ingCollection), Util.getWeight(ingCollection), Util.getCost(ingCollection), null));
 			}
 		}
 			

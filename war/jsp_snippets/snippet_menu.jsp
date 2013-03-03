@@ -15,21 +15,28 @@
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticTemp" %>
 <%@ page import="ch.eaternity.server.jsp.StaticHTMLSnippets" %>
-
-     
+  
      
 <%
-	StaticProperties props = (StaticProperties)request.getAttribute("props");
-	StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-	StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
+/* uses following variables in Temp:
+	- recipe
+	- personFactor
+	- displaySmilies
+	- title
+	- subtitle
+*/
 
-    if (temp.getCo2Values() != null ) {
-    
-    	Double recipeValue = temp.recipe.getCO2Value() + props.getExtra();
-    	
-    	// normalise recipeValue to amount of persons
-    	recipeValue = recipeValue*props.getPersons();
+StaticProperties props = (StaticProperties)request.getAttribute("props");
+StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
+StaticTemp temp = (StaticTemp)request.getAttribute("temp");
+
+if (temp.recipe != null) {
+		
+  	Double recipeValue = temp.recipe.getCO2Value() + props.getExtra();
+  	
+  	// normalise recipeValue to amount of persons
+  	recipeValue = recipeValue*props.getPersons();
     %>
 	
 	<table cellspacing="0" cellpadding="0" class="table listTable" >
@@ -61,7 +68,7 @@
 		<tr>
 		<td>
 		
-		<span class="subTitle"><%= temp.recipe.getSubTitle() %></span>
+		<span class="subTitle"><%= temp.subtitle %></span>
 		
 		<span style="color:gray;">Zutaten für <%= props.getPersons().toString() %> Personen:</span><br />
 		
@@ -106,4 +113,7 @@
 	
 <%		
 }
-%>
+else
+{ %>
+No recipe setted for snippet_menu in temp.
+<% } %>

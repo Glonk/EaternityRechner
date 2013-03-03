@@ -26,7 +26,11 @@
 
      
 <%
-     	StaticProperties props = (StaticProperties)request.getAttribute("props");
+/* uses following variables in Temp:
+- recipes
+*/
+
+     StaticProperties props = (StaticProperties)request.getAttribute("props");
      StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
      StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 

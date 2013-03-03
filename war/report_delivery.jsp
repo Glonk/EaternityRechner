@@ -34,8 +34,8 @@
 <head>
 
 <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<title>Klima-Bilanz Report</title>
-<link rel="stylesheet" type="text/css" href="report.css">
+<title>CO2 Bilanzen Lieferscheine</title>
+<link rel="stylesheet" type="text/css" href="reports.css">
 
 
 <%
@@ -179,7 +179,7 @@ else { %>
 
 <div class="content">
 
-<h1>CO2 Nahrungsbeschaffungsreport?</h1>
+<h1>CO2 Bilanzen Lieferscheine</h1>
 
 <% // -------------------------------- Delivery Receipts Overview --------------------------- %>
 
@@ -274,7 +274,7 @@ for(CatRyzer.CategoryValuesByDate categoriesByDates : catryzer.getCatValsByDates
 		  out.println("NO DATE SPECIFIED: The Error is: " + e);
 	}
 	
-	temp.title = props.dateFormatter.format(thisDate) + "Gesamte CO2-Emissionen nach Kategorie";
+	temp.title = props.dateFormatter.format(thisDate) + " Gesamte CO2-Emissionen nach Kategorie";
 	temp.catQuantities = categoriesByDates.categories;
 	%>
 	
@@ -307,6 +307,8 @@ for(CatRyzer.CategoryValuesByDate categoriesByDates : catryzer.getCatValsByDates
 		temp.title = "<h3>Lieferschein: " + recipe.getSymbol() + "</h3>";
 		temp.subtitle = "Datum: " + datumString;
 		temp.personFactor = 1;
+		temp.recipe = recipe;
+		temp.displaySmilies = false;
 		%>
 		
 		<jsp:include page="/jsp_snippets/snippet_menu.jsp" />

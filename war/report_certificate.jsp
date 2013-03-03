@@ -43,34 +43,34 @@
 	StaticTemp temp = (StaticTemp)request.getAttribute("temp");
 
 	//Specific Parameters to set for Display] 
-	properties.locale = Locale.GERMAN;
+	props.locale = Locale.GERMAN;
 
-	properties.weightUnit = Weight.GRAM;
-	properties.co2Unit = Weight.GRAM;		
+	props.weightUnit = Weight.GRAM;
+	props.co2Unit = Weight.GRAM;		
 	
-	properties.formatter = new DecimalFormat("##");
-	properties.formatter.setRoundingMode(RoundingMode.FLOOR);
-	properties.co2_formatter = new DecimalFormat("##");
-	properties.cost_formatter = new DecimalFormat("##");
-	properties.weight_formatter = new DecimalFormat("##");
-	properties.distance_formatter = new DecimalFormat("##");
-	properties.dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
+	props.formatter = new DecimalFormat("##");
+	props.formatter.setRoundingMode(RoundingMode.FLOOR);
+	props.co2_formatter = new DecimalFormat("##");
+	props.cost_formatter = new DecimalFormat("##");
+	props.weight_formatter = new DecimalFormat("##");
+	props.distance_formatter = new DecimalFormat("##");
+	props.dateFormatter = new SimpleDateFormat("dd.MMMM yyyy");
 	
-	properties.co2BarLength = 200;
-	properties.barOffset = 70;
+	props.co2BarLength = 200;
+	props.barOffset = 70;
 	
 	// standard values for request if not set
-	properties.doPdf = false;
-	properties.threshold = 1550;
-	properties.extra = 0;
-	properties.persons = 4;
+	props.doPdf = false;
+	props.average = 1550;
+	props.extra = 0;
+	props.persons = 4;
 	
-	properties.valueType = StaticProperties.ValueType.COMPACT;
-	properties.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
+	props.valueType = StaticProperties.ValueType.COMPACT;
+	props.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
 	
-	properties.initialize(request);
+	props.initialize(request);
 	
-	vars.initialize(properties,false);
+	data.initialize(props,false);
 	
 	Integer counter = 0;
 	int counterIterate = 0;
@@ -87,7 +87,7 @@
 
 
 <style type="text/css">
-<% if(!properties.doPdf){ %>
+<% if(!props.doPdf){ %>
 	@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
 	
 	@font-face {
@@ -133,7 +133,7 @@ baseUrl = getBaseURL();
 
 
 <% 
-for(Recipe recipe: vars.recipes){
+for(Recipe recipe: data.recipes){
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34); 
 	String clear = Converter.toString(recipe.getId(),34);
@@ -207,10 +207,10 @@ function getBaseURL() {
 <!--  ----------------------------------- Body Begin --------------------------------------- -->
 <%
 //Avoid displaying anything if someting is wrong.
-if (!vars.everythingFine){
+if (!data.everythingFine){
 	%>
 		Wrong Inputs. See Log for Details.<br /><br />
-		<%= vars.errorMessage %>
+		<%= data.errorMessage %>
 	<%
 	
 }
@@ -226,7 +226,7 @@ else { %>
 <div class="content">
 
 <%
-for(Recipe recipe: vars.recipes){
+for(Recipe recipe: data.recipes){
 
 	
 	%>	
@@ -238,13 +238,13 @@ for(Recipe recipe: vars.recipes){
 		<tr width="660">
 			<td height="140">
 				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
-				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= properties.co2_formatter.format( recipe.getCO2Value() ) %> g CO<sub>2</sub>* pro Person.</p>
+				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= props.co2_formatter.format( recipe.getCO2Value() ) %> g CO<sub>2</sub>* pro Person.</p>
 				
 				<%
 				if(recipe.image != null){
 					%>
 					
-					<% if(!properties.doPdf){%>
+					<% if(!props.doPdf){%>
 						<img class="cover-all" src="<%=recipe.image.getServingUrl()%>=s800" />
 					<% } else { %>
 						<img class="cover-all" src="COVER-<%=recipe.image.getServingUrl()%>-IMAGE" />
@@ -264,10 +264,10 @@ for(Recipe recipe: vars.recipes){
 				<table cellspacing="0" cellpadding="0" class="table cover-up" >
 					<tr>
 						<td>
-							<span style="color:gray;">Für <%= properties.persons %> Personen:</span>
+							<span style="color:gray;">Für <%= props.persons %> Personen:</span>
 							<ul class="zutat">
 								<%for(IngredientSpecification ingredient: recipe.Zutaten){ %>
-									<li><%= ingredient.getMengeGramm()/recipe.getPersons()*properties.persons %> g <span class="ix"><%= ingredient.getName() %></span> </li>
+									<li><%= ingredient.getMengeGramm()/recipe.getPersons()*props.persons %> g <span class="ix"><%= ingredient.getName() %></span> </li>
 								<% } %>
 		
 							</ul>
@@ -290,7 +290,7 @@ for(Recipe recipe: vars.recipes){
 <%
 temp.recipes.clear();
 temp.co2Value = recipe.getCO2ValueExpanded();
-temp.co2Values.addAll(Util.getCO2ValuesRecipes(vars.recipes));
+temp.co2Values.addAll(Util.getCO2ValuesRecipes(data.recipes));
 %>
 
 <jsp:include page="/jsp_snippets/snippet_certificate.jsp" />
