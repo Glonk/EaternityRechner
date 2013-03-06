@@ -8,6 +8,9 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="java.util.Locale" %>
+
 
 <%@ page import="ch.eaternity.server.jsp.StaticProperties" %>
 <%@ page import="ch.eaternity.server.jsp.StaticDataLoader" %>
@@ -41,12 +44,20 @@
 
   
 <%
-      	StaticProperties props = (StaticProperties)request.getAttribute("props");
-      StaticDataLoader data = (StaticDataLoader)request.getAttribute("data");
-      StaticTemp temp = (StaticTemp)request.getAttribute("temp");
-
-      List<Recipe> recipes = temp.getRecipes();
-      %>
+	/* uses following variables in Temp:
+		- ingredients
+		- personFactor
+	*/
+	
+	StaticProperties props = (StaticProperties)request.getAttribute("props");
+	StaticTemp temp = (StaticTemp)request.getAttribute("temp");
+	
+	List<Recipe> recipes = temp.getRecipes();
+	
+	Calendar cookingDateCal = Calendar.getInstance(Locale.GERMAN);
+	Pair<SeasonDate,SeasonDate> seasonSpan = new Pair<SeasonDate,SeasonDate>(new SeasonDate(),new SeasonDate());
+	String classString = "";
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -86,7 +97,10 @@
 
 	<!-- menu rows -->	
 	<% for (Recipe recipe : recipes) { 
-		Pair<SeasonDate,SeasonDate> seasonSpan = Util.getSeasonSpan(recipe);
+		seasonSpan = Util.getSeasonSpan(recipe);
+		if (recipe.cookingDate != null) {
+			cookingDateCal.setTime(recipe.cookingDate);
+		}
 		%>
 		<tr> 
 			<td class="menu-name">
@@ -100,11 +114,21 @@
 			<td class="co2value left-border right-border" style="text-align:center;font-weight: 600;" ><%= props.co2_formatter.format( recipe.getCO2Value() * props.co2Unit.conversionFactor ) %></td>
 			
 			<% for (int i=1; i<=12; i++) { %>
-				<td<% 
-				if (seasonSpan.first.before(new SeasonDate(i,31)) && seasonSpan.second.after(new SeasonDate(i,1))) { %> class="green"<% } %>></td>
+				<td<%
+				classString = "";
+					if (seasonSpan.first.before(new SeasonDate(i,31)) && seasonSpan.second.after(new SeasonDate(i,1))) { 
+						classString += " green"; } 
+					if (recipe.cookingDate != null && cookingDateCal.get(Calendar.MONTH) == (i-1)) { 
+						classString += " selected"; } %>
+						
+				class="<%= classString %>"></td>
 			<% } %>
 				
-			<td class="woche left-border" style="text-align:center;font-weight: 600;" >32</td>
+			<td class="woche left-border" style="text-align:center;font-weight: 600;" >
+				<% if (recipe.cookingDate != null) { 
+					out.print(cookingDateCal.get( Calendar.WEEK_OF_YEAR ));
+				} %>
+			</td>
 		</tr>
 	<% } %>
 	

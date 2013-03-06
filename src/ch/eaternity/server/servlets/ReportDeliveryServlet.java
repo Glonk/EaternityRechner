@@ -60,6 +60,7 @@ public class ReportDeliveryServlet extends HttpServlet
 		
 		props.valueType = StaticProperties.ValueType.EXPANDED;
 		props.ingredientRepresentation = StaticProperties.IngredientRepresentation.EXPANDED;
+		props.isDelivery = true;
 		
 		props.initialize(request);
 		

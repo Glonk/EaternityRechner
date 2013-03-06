@@ -17,7 +17,14 @@ public class SeasonDate {
 		this.day = day;
 	}
 	
-	public SeasonDate() {}
+	public SeasonDate() {
+		month = 0;
+		day = 0;
+	}
+	
+	public SeasonDate(Date date) {
+		setDate(date);
+	}
 	
 	/*
 	 * Format: dd.MM
@@ -38,8 +45,11 @@ public class SeasonDate {
 	}
 	
 	public boolean setDate(Date date) {
-		String strDate = date.getDay() + "." + date.getMonth();
-		return setDate(strDate);
+		if (date != null) {
+			String strDate = date.getDay() + "." + date.getMonth();
+			return setDate(strDate);
+		}
+		else return false;
 	}
 	
 	public SeasonDate(SeasonDate toClone) {

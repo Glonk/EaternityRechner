@@ -69,8 +69,9 @@ if (temp.recipe != null) {
 		<td>
 		
 		<span class="subTitle"><%= temp.subtitle %></span>
-		
-		<span style="color:gray;">Zutaten für <%= props.getPersons().toString() %> Personen:</span><br />
+		<% if (!props.isDelivery) { %>
+			<span style="color:gray;">Zutaten für <%= props.getPersons().toString() %> Personen:</span><br />
+		<% } %>
 		
 		<% 
 		temp.persons = temp.recipe.getPersons(); 

@@ -67,6 +67,7 @@ public class StaticProperties implements Serializable {
 	
 	public ValueType valueType = ValueType.COMPACT;
 	public IngredientRepresentation ingredientRepresentation = IngredientRepresentation.COMPACT;
+	public boolean isDelivery = false;
 	
 	// -------------------------- public Methods -------------------------
 	
