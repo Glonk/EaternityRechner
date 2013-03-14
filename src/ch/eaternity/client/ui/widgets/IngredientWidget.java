@@ -47,17 +47,18 @@ public class IngredientWidget extends Composite {
 		amountBox.setAlignment(TextAlignment.RIGHT);
 		amountBox.setText(Integer.toString(ingSpec.getWeight()));
 		amountBox.setWidth("36px");
-		amountBox.setVisible(false);
 		
 		nameLabel.setText(ingSpec.getName());
-		setCo2Value(ingSpec.getCalculatedCO2Value());
+		updateCO2Value();
 		
 		updateIcons();
 	}
+
 	
-	private void setCo2Value(double value) {
-		co2valueLabel.setText("" + ((int)value) +"g");
+	public void updateCO2Value() {
+		co2valueLabel.setText("" + ((int)ingSpec.getCalculatedCO2Value()) +"g");
 	}
+
 	
 	public void updateIcons() {
 			
@@ -134,7 +135,7 @@ public class IngredientWidget extends Composite {
 				MengeZutatWert = amountBox.getText().trim();
 				try {
 					ingSpec.setWeight(Double.valueOf(MengeZutatWert).intValue());
-					setCo2Value(ingSpec.getCalculatedCO2Value());
+					updateCO2Value();
 				}
 				catch (NumberFormatException nfe) {
 					amountBox.setText("");

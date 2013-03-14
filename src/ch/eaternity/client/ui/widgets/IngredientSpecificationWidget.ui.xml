@@ -1,0 +1,77 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:mail='urn:import:ch.eaternity.client'>
+
+
+
+  <ui:style>
+	.NameLabel {}
+	
+	.SpecificationLabel {
+		width: 150px;
+
+	}
+	
+	.style.SpecificationList {
+		width: 100px;
+	}
+	
+	.UnknownExtractionTextBox {}
+	
+	.kmHTML {
+	}
+
+	.CostTextBox {
+		width: 60px;
+	}
+
+	
+	.CurrencyLabel {}
+	
+	.CostErrorLabel {}
+	
+	.CoherenceHTML{}
+  </ui:style>
+
+	<g:VerticalPanel>
+		
+	
+		<g:HorizontalPanel>
+			<g:Label ui:field="NameLabel" styleName='{style.NameLabel}'></g:Label>
+			<g:Button ui:field="closeButton">x</g:Button>
+		</g:HorizontalPanel>
+		
+		<g:Label ui:field="SeasonLabel" styleName='{style.SpecificationLabel}'></g:Label>
+		
+		<g:HorizontalPanel>
+			<g:Label ui:field="ExtractionLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:ListBox ui:field="ExtractionList" styleName='{style.SpecificationList}'></g:ListBox>
+			<g:TextBox ui:field="UnknownExtractionTextBox" styleName='{style.UnknownExtractionTextBox}'></g:TextBox>
+			<g:HTML ui:field="kmHTML" styleName='{style.kmHTML}'></g:HTML>
+		</g:HorizontalPanel>
+
+		<g:HorizontalPanel>
+			<g:Label ui:field="TransportationLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:ListBox ui:field="TransportationList" styleName='{style.SpecificationList}'></g:ListBox>
+		</g:HorizontalPanel>
+
+		<g:HorizontalPanel>
+			<g:Label ui:field="ProductionLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:ListBox ui:field="ProductionList" styleName='{style.SpecificationList}'></g:ListBox>
+		</g:HorizontalPanel>
+
+		<g:HorizontalPanel>
+			<g:Label ui:field="ConditionLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:ListBox ui:field="ConditionList" styleName='{style.SpecificationList}'></g:ListBox>
+		</g:HorizontalPanel>
+		
+		<g:HorizontalPanel>
+			<g:Label ui:field="CostLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:TextBox ui:field="CostTextBox" styleName='{style.CostTextBox}'></g:TextBox>
+			<g:Label ui:field="CurrencyLabel" styleName='{style.CurrencyLabel}'> CHF </g:Label>
+			<g:Label ui:field="CostErrorLabel" styleName='{style.CostErrorLabel}'></g:Label>
+		</g:HorizontalPanel>
+		
+		<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
+	</g:VerticalPanel>
+</ui:UiBinder>

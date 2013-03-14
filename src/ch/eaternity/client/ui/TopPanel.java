@@ -126,12 +126,14 @@ public class TopPanel extends Composite {
 							signOutLink.setVisible(true);
 
 							if (dco.getKitchens() != null)
-								kitchenRecipesButton.setVisible(true);			
+								kitchenRecipesButton.setVisible(true);	
+							
 							userRecipesButton.setVisible(true);
+							
 							if (event.loginInfo.isAdmin())
-								ingredientLink.setVisible(false);
-							else
 								ingredientLink.setVisible(true);
+							else
+								ingredientLink.setVisible(false);
 							
 						} else {
 							// TODO sign out without reload of rechner...

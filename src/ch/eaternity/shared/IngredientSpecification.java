@@ -148,6 +148,10 @@ public class IngredientSpecification  implements Serializable, Cloneable  {
 		this.extraction = stdExtractionSymbol;
 	}
 	
+	public Ingredient getIngredient() {
+		return new Ingredient(4l);
+	}
+	
 	
 	public Extraction getExtraction() {
 		return extraction;

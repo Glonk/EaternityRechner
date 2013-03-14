@@ -540,6 +540,10 @@ public class RecipeEdit extends Composite {
 		updateCo2Value();
 	}
 	
+	public void updateIngredientValue(IngredientSpecification ingSpec) {
+		((IngredientWidget)MenuTable.getWidget(selectedRow,0)).updateCO2Value();
+	}
+	
 	
 	public void updateIngredients() {
 		MenuTable.clear();
