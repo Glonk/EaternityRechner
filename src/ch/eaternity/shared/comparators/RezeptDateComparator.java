@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Ingredient;
 
 public class RezeptDateComparator implements Comparator<Recipe> {
 	public int compare(Recipe r1, Recipe r2) {

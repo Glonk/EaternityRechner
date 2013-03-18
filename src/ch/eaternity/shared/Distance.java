@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.maps.client.MapWidget;
@@ -26,7 +30,7 @@ public class Distance implements Serializable {
 	private static final long serialVersionUID = 3172640409035191495L;
 	
 	// Home (to), From, Distance
-	private Map<String,Map<String,Double>> distMM;
+	private Map<String,Map<String,Quantity>> distMM;
 	private final static Geocoder geocoder = new Geocoder();
 	
 	// how many seconds to wait for the distance request call
@@ -42,24 +46,24 @@ public class Distance implements Serializable {
 	 * @param to
 	 * @return null if distance doesnt exist
 	 */
-	public double getDistance(String from, String to) {
+	public Quantity getDistance(String from, String to) {
 		Double dist = null;
 		HashMap<String,Double> toMap = (HashMap<String, Double>) distMM.get(to);
 		if (toMap != null) {
 			dist = toMap.get(from);
 		}
-		return dist;
+		return new QuantityImpl(dist, Unit.METER);
 	}
 	
 	/**
 	 * Checks weather location can be found in Google Maps
-	 * @return Returns "failed" if location wasnt found, translated location otherwise
+	 * @return Returns null if location wasnt found, translated location otherwise
 	 */
 	public String strProcessLocation(final String location) {
 		Placemark processedLocation = processLocation(location);
 		
 		if (processedLocation == null)
-			return "failed";
+			return null;
 		else {
 			return processedLocation.getAddress();
 		}
@@ -88,14 +92,14 @@ public class Distance implements Serializable {
 	}
 	
 	
-	public void writeDistances(String homeLocation, List<IngredientSpecification> ingSpecs, final FlexTable mapsTable) {
+	public void writeDistances(String homeLocation, List<Ingredient> ingSpecs, final FlexTable mapsTable) {
 		double dist;
 		HashMap<String,Double> homeMap = (HashMap<String, Double>) distMM.get(homeLocation);
 		if (homeMap == null) {
 			homeMap = new HashMap<String,Double>();
 		}
 		else {
-			for (IngredientSpecification ingSpec : ingSpecs) {
+			for (Ingredient ingSpec : ingSpecs) {
 				String from = ingSpec.getExtraction().symbol;
 				if (homeMap.containsKey(from)) {
 					ingSpec.setDistance(homeMap.get(from));

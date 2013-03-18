@@ -55,7 +55,7 @@ public class Recipe implements Serializable, Cloneable{
 	private List<RecipeComment> comments = new ArrayList<RecipeComment>();
 
 	@Serialized
-	private List<IngredientSpecification> ingredients = new ArrayList<IngredientSpecification>();
+	private List<Ingredient> ingredients = new ArrayList<Ingredient>();
 	
 	@Serialized
 	private List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
@@ -110,8 +110,8 @@ public class Recipe implements Serializable, Cloneable{
 			comments.add(new RecipeComment(com));
 		}
 		
-		for (IngredientSpecification com : toClone.ingredients) {
-			ingredients.add(new IngredientSpecification(com));
+		for (Ingredient com : toClone.ingredients) {
+			ingredients.add(new Ingredient(com));
 		}
 		
 		for (DeviceSpecification com : toClone.deviceSpecifications) {
@@ -127,7 +127,7 @@ public class Recipe implements Serializable, Cloneable{
 		setCO2Value();
 	}
 
-	public void addIngredient(IngredientSpecification ingSpec) {
+	public void addIngredient(Ingredient ingSpec) {
 		this.ingredients.add(ingSpec);	
 	}
 
@@ -136,7 +136,7 @@ public class Recipe implements Serializable, Cloneable{
 		this.ingredients.remove(index);
 	}
 
-	public void removeIngredient(IngredientSpecification ingSpec) {
+	public void removeIngredient(Ingredient ingSpec) {
 		int removedIndex = getIngredients().indexOf(ingSpec);
 		this.ingredients.remove(removedIndex);
 	}
@@ -145,7 +145,7 @@ public class Recipe implements Serializable, Cloneable{
 	public void setCO2Value() {
 		double sum = getDeviceCo2Value();
 		
-		for ( IngredientSpecification zutatSpec : ingredients){
+		for ( Ingredient zutatSpec : ingredients){
 			sum += zutatSpec.getCalculatedCO2Value();
 		}
 		if(persons != null && persons != 0){
@@ -313,11 +313,11 @@ public class Recipe implements Serializable, Cloneable{
 		this.comments = comments;
 	}
 
-	public List<IngredientSpecification> getIngredients() {
+	public List<Ingredient> getIngredients() {
 		return ingredients;
 	}
 
-	public void setIngredients(List<IngredientSpecification> ingredients) {
+	public void setIngredients(List<Ingredient> ingredients) {
 		this.ingredients = ingredients;
 	}
 

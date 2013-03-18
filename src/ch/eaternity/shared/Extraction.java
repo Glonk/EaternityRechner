@@ -44,6 +44,10 @@ public class Extraction implements Serializable,Cloneable{
 		this.symbol = symbol;
 	}
     
+    public String getName() {
+    	return this.symbol;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

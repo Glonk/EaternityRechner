@@ -13,7 +13,7 @@ import javax.jdo.PersistenceManagerFactory;
 import ch.eaternity.client.DataService;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
@@ -233,13 +233,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return distances.size();
 	}
 	
-	public Boolean persistIngredients(ArrayList<Ingredient> ingredients)  throws NotLoggedInException
+	public Boolean persistIngredients(ArrayList<FoodProduct> products)  throws NotLoggedInException
 	{
 		
 		DAO dao = new DAO();
 
-		Boolean success = dao.CreateIngredients(ingredients);
-		return success;
+		for (FoodProduct product : products)
+			dao.updateOrCreateIngredient(product);
+		return true;
 		
 	}
 	

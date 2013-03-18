@@ -28,8 +28,8 @@ import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
 import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
 import ch.eaternity.client.ui.widgets.IngredientWidget;
 import ch.eaternity.client.ui.widgets.UploadPhoto;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
 
@@ -150,7 +150,7 @@ public class RecipeEdit extends Composite {
 	
 	
 	public interface Listener {
-		void onItemSelected(IngredientSpecification item);
+		void onItemSelected(Ingredient item);
 	}
 	
 	interface SelectionStyleRow extends CssResource {
@@ -309,7 +309,7 @@ public class RecipeEdit extends Composite {
 	
 	private void updateCo2Value() {
 		double co2value = 0l;
-		for (IngredientSpecification ingSpec : recipe.getIngredients()) {
+		for (Ingredient ingSpec : recipe.getIngredients()) {
 			co2value = co2value + ingSpec.getCalculatedCO2Value();
 		}
 		co2valueLabel.setText("" + ((int)co2value));
@@ -540,22 +540,22 @@ public class RecipeEdit extends Composite {
 		updateCo2Value();
 	}
 	
-	public void updateIngredientValue(IngredientSpecification ingSpec) {
+	public void updateIngredientValue(Ingredient ingSpec) {
 		((IngredientWidget)MenuTable.getWidget(selectedRow,0)).updateCO2Value();
 	}
 	
 	
 	public void updateIngredients() {
 		MenuTable.clear();
-		for (IngredientSpecification ingSpec : recipe.getIngredients()) {
+		for (Ingredient ingSpec : recipe.getIngredients()) {
 			addIngredient(ingSpec);
 		}
 		updateCo2Value();
 	}
 	
-	public void addIngredient(IngredientSpecification ingSpec) {
+	public void addIngredient(Ingredient ingSpec) {
 		int row = MenuTable.getRowCount();
-		IngredientWidget ingWidget = new IngredientWidget(ingSpec,this, dco.getCurrentMonth());
+		IngredientWidget ingWidget = new IngredientWidget(dco, ingSpec,this, dco.getCurrentMonth());
 		MenuTable.setWidget(row, 0, ingWidget);
 		
 		// drag Handler
@@ -700,13 +700,13 @@ public class RecipeEdit extends Composite {
 			//recipe.getIngredients().set(selectedRow, zutatSpec2);
 		}
 
-		IngredientSpecification zutatSpec = recipe.getIngredients().get(row);
+		Ingredient zutatSpec = recipe.getIngredients().get(row);
 
 		if (zutatSpec == null) {
 			return;
 		}
 
-		Ingredient zutat = dco.getIngredientByID(zutatSpec.getZutat_id());
+		FoodProduct zutat = dco.getIngredientByID(zutatSpec.getId());
 
 		//openSpecificationDialog(zutatSpec, zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable, row);
 

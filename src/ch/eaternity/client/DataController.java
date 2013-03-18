@@ -3,6 +3,9 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import org.eaticious.common.Quantity;
 
 import ch.eaternity.client.events.AlertEvent;
 import ch.eaternity.client.events.CollectionsChangedEvent;
@@ -15,8 +18,8 @@ import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Distance;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
@@ -212,10 +215,10 @@ public class DataController {
 		return cdata.editRecipe;
 	}
 	
-	public void addIngredientToMenu(Ingredient ingredient, int weight) {
+	public void addIngredientToMenu(FoodProduct ingredient, Quantity weight) {
 
-		IngredientSpecification ingSpec = new IngredientSpecification(ingredient);
-		if (weight == 0) {
+		Ingredient ingSpec = new Ingredient(ingredient);
+		if (weight == null) {
 			ingSpec.setWeight(ingredient.getStdWeight());
 		}
 		else
@@ -304,7 +307,7 @@ public class DataController {
 		cdata.currentLocation = processedLocation;
 		
 		// Iterate over all IngredientSpecificatino of Kitchen Recipes or editRecipe
-		List<IngredientSpecification> ingSpecs = new ArrayList<IngredientSpecification>();
+		List<Ingredient> ingSpecs = new ArrayList<Ingredient>();
 		if (cdata.currentKitchen != null ) {
 			for (Recipe recipe : cdata.currentKitchenRecipes)
 				ingSpecs.addAll(recipe.getIngredients());
@@ -312,15 +315,10 @@ public class DataController {
 		else
 			ingSpecs.addAll(cdata.editRecipe.getIngredients());
 		
-		for (IngredientSpecification ingSpec : ingSpecs) {
+		for (Ingredient ingSpec : ingSpecs) {
 				ingSpec.setDistance(cdata.distances.getDistance(processedLocation, ingSpec.getExtraction().symbol));
 		}		
 			
-		// change stdExtraction of all Ingredients
-		for (Ingredient ing : cdata.ingredients) {
-			ing.getExtractions().add(0, ing.getStdExtraction()); 
-			ing.setStdExtraction(ing.getExtractions().get(0));
-		}
 		
 		eventBus.fireEvent(new LocationChangedEvent(cdata.currentLocation));
 	}
@@ -329,7 +327,7 @@ public class DataController {
 	/*
 	 * 
 	 */
-	public void searchIngredients(String searchString, List<Ingredient> ingredients, List<Ingredient> alternatives) {
+	public void searchIngredients(String searchString, List<FoodProduct> ingredients, List<FoodProduct> alternatives) {
 		ingredients.clear();
 		alternatives.clear();
 		
@@ -341,23 +339,23 @@ public class DataController {
 			for(String search : searches)
 			{
 				// TODO this search algorithm is extremely slow, make faster
-				for(Ingredient zutat : cdata.ingredients){
-					if( search.trim().length() <= zutat.getSymbol().length() &&  zutat.getSymbol().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
-						if(!ingredients.contains(zutat)){
-							zutat.setNoAlternative(true);
-							ingredients.add(zutat);
+				for(FoodProduct product : cdata.ingredients){
+					if( search.trim().length() <= product.getName(cdata.locale).length() &&  product.getName(cdata.locale).substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
+						if(!ingredients.contains(product)){
+							product.setNotASubstitute(true);
+							ingredients.add(product);
 						}
 					}
 				}
 				// only look for alternatives, if there is only 1 result
 				if(ingredients.size() == 1){
-					for(Ingredient zutat : ingredients){
-						if(zutat.getAlternatives() != null){
-							for(Long alternativen_id : zutat.getAlternatives()){
-								for(Ingredient zutat2 : cdata.ingredients){
+					for(FoodProduct zutat : ingredients){
+						if(zutat.getSubstitues() != null){
+							for(Long alternativen_id : zutat.getSubstitues()){
+								for(FoodProduct zutat2 : cdata.ingredients){
 									if(zutat2.getId().equals(alternativen_id)){
 										if(!alternatives.contains(zutat2)){
-											zutat2.setNoAlternative(false);
+											zutat2.setNotASubstitute(false);
 											alternatives.add(zutat2);
 										}
 									}
@@ -371,9 +369,9 @@ public class DataController {
 		}
 		else {
 			// the search routine is also fast enough, the lag comes later
-			for(Ingredient zutat : cdata.ingredients){
+			for(FoodProduct zutat : cdata.ingredients){
 				ingredients.add(zutat);
-				zutat.setNoAlternative(true);
+				zutat.setNotASubstitute(true);
 			}
 		}
 	}
@@ -397,13 +395,13 @@ public class DataController {
 				}
 	
 				// search by matching Ingredient names included in the recipes
-				List<IngredientSpecification> recipeIngredients = recipe.getIngredients();
+				List<Ingredient> recipeIngredients = recipe.getIngredients();
 				if(recipeIngredients != null){
 					int i = 0;
-					for(IngredientSpecification ZutatImRezept : recipeIngredients ){
+					for(Ingredient ZutatImRezept : recipeIngredients ){
 						if(ZutatImRezept != null){
 							for(String search2 : searches){
-								if( search2.trim().length() <= ZutatImRezept.getName().length() &&  ZutatImRezept.getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
+								if( search2.trim().length() <= ZutatImRezept.getProduct().getName(cdata.locale).length() &&  ZutatImRezept.getProduct().getName(cdata.locale).substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
 									i++;
 								}
 							}
@@ -547,11 +545,11 @@ public class DataController {
 		return cdata.editRecipe;
 	}
 
-	public List<Ingredient> getIngredients() {
+	public List<FoodProduct> getIngredients() {
 		return cdata.ingredients;
 	}
 	
-	public Ingredient getIngredientByID(long id) {
+	public FoodProduct getIngredientByID(long id) {
 		return cdata.getIngredientByID(id);
 	}
 
@@ -577,6 +575,9 @@ public class DataController {
 
 	public String getCurrentLocation() {
 		return cdata.currentLocation;
+	}
+	public Locale getLocale() {
+		return cdata.locale;
 	}
 
 	public void clearEditRecipe() {

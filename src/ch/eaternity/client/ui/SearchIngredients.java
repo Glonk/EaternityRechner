@@ -5,18 +5,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Season;
+import org.eaticious.common.SeasonDate;
+import org.eaticious.common.SeasonDateImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
-import ch.eaternity.client.events.UpdateRecipeViewEvent;
-import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.ui.widgets.TooltipListener;
-import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.comparators.NameComparator;
 import ch.eaternity.shared.comparators.ValueComparator;
 
@@ -91,7 +95,7 @@ public class SearchIngredients extends Composite {
 	
 	 //Call-back when items are selected. 
 	public interface Listener { // Call-back for ingredient click
-		void onItemSelected(Ingredient item);
+		void onItemSelected(FoodProduct item);
 	}
 
 	public interface ListenerMeals { // Call-back for menu click
@@ -119,8 +123,8 @@ public class SearchIngredients extends Composite {
 	private RechnerActivity presenter;
 	private DataController dco;
 	
-	public List<Ingredient> foundIngredients = new ArrayList<Ingredient>();
-	public List<Ingredient> foundAlternativeIngredients = new ArrayList<Ingredient>();
+	public List<FoodProduct> foundIngredients = new ArrayList<FoodProduct>();
+	public List<FoodProduct> foundAlternativeIngredients = new ArrayList<FoodProduct>();
 	
 	public String searchString = "";
 		
@@ -359,8 +363,8 @@ public class SearchIngredients extends Composite {
 				//			    chain.addComparator(new NameComparator());
 				//			    chain.addComparator(new NumberComparator()
 				
-				Collections.sort(foundIngredients,new NameComparator());
-				Collections.sort(foundAlternativeIngredients,new NameComparator());
+				Collections.sort(foundIngredients, new NameComparator(dco.getLocale()));
+				Collections.sort(foundAlternativeIngredients, new NameComparator(dco.getLocale()));
 			}
 
 			}
@@ -375,16 +379,16 @@ public class SearchIngredients extends Composite {
 			table.removeAllRows();
 			if(foundIngredients != null){
 				// display all noALternative Ingredients
-				for (final Ingredient item : foundIngredients){
-					if (item.getNoAlternative())
+				for (final FoodProduct item : foundIngredients){
+					if (item.isNotASubstitute())
 						displayIngredient(item);
 				}
 			
 					
 				// display all alternative Ingredients (sorted as well)
 				// boolean textlabeladded = false;
-				for (final Ingredient item : foundAlternativeIngredients){
-					if (!item.getNoAlternative())
+				for (final FoodProduct item : foundAlternativeIngredients){
+					if (!item.isNotASubstitute())
 					{
 						/* alternative dividing section *
 						if (!textlabeladded)
@@ -405,7 +409,7 @@ public class SearchIngredients extends Composite {
 		/**
 		 * the displaying functions for ingredients
 		 */
-		private void displayIngredient(final Ingredient ingredient) {
+		private void displayIngredient(final FoodProduct ingredient) {
 			int row = table.getRowCount();
 	
 			// this is the bottleneck, this is to slow, when executed 400times, so the html needs to pre-computed!
@@ -415,34 +419,33 @@ public class SearchIngredients extends Composite {
 			HTML icon = new HTML();
 			String htmlString ="";
 			
-			if(ingredient.getCo2eValue() < 400){
+			if(ingredient.getCo2eValue().convert(Unit.GRAM).getAmount() < 400){
 				icon.setStyleName("base-icons");
 				htmlString = htmlString+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>";
 				htmlString = htmlString+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>";
-			} else	if(ingredient.getCo2eValue() < 1200){
+			} else	if(ingredient.getCo2eValue().convert(Unit.GRAM).getAmount() < 1200){
 				icon.setStyleName("base-icons");	
 				htmlString = htmlString+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>";
 	
 			}
 	
-			if(ingredient.getHasSeason() != null && ingredient.getHasSeason()){
-				SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
-				SeasonDate dateStart = ingredient.getStartSeason();		
-				SeasonDate dateStop =  ingredient.getStopSeason();
+			Season season = ingredient.getSeason();
+			if(season != null){
+				SeasonDate date = new SeasonDateImpl(dco.getCurrentMonth(),1);
 				
-				if( date.after(dateStart) && date.before(dateStop) ){
+				if( date.after(season.getBeginning()) && date.before(season.getEnd()) ){
 					htmlString = htmlString+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>";
 				} 
 			}
 	
-			if(ingredient.getNoAlternative()){
-				htmlString = htmlString+"<div class='ingText'>"+ingredient.getSymbol()+"</div>";
+			if(ingredient.isNotASubstitute()){
+				htmlString = htmlString+"<div class='ingText'>"+ingredient.getName(dco.getLocale())+"</div>";
 			
 			} else {
-				htmlString = htmlString+"(alt): " +ingredient.getSymbol();
+				htmlString = htmlString+"(alt): " +ingredient.getName(dco.getLocale());
 			}
 			
-			icon.setHTML(htmlString +"<div class='putRight'>ca "+Integer.toString((int) ingredient.getCo2eValue()/10) + " g*</div>");
+			icon.setHTML(htmlString +"<div class='putRight'>ca "+Double.toString( ingredient.getCo2eValue().getAmount()/10) + " g*</div>");
 	
 			table.setWidget(row,0,icon);
 		}
@@ -511,7 +514,7 @@ public class SearchIngredients extends Composite {
 		
 	
 		private void selectRow(final int row) {
-			Ingredient item;
+			FoodProduct item;
 			
 			// get the grams from the input
 			// if 2 valid numbers exist, take the first valid one
@@ -561,8 +564,11 @@ public class SearchIngredients extends Composite {
 					styleRow(row, false);
 				}
 			};
-	
-			dco.addIngredientToMenu(item, grams);
+			
+			Quantity weigth = null;
+			if (grams != 0)
+				weigth = new QuantityImpl((double)grams,Unit.GRAM);
+			dco.addIngredientToMenu(item, weigth);
 	
 			t.schedule(200);
 			selectedRow = row;

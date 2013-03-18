@@ -1,11 +1,11 @@
 package ch.eaternity.shared.comparators;
 
-import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.FoodProduct;
 
 public class ComparatorObject {
 	public Long key;
 	public Double value;
-	public Ingredient ingredient;
+	public FoodProduct ingredient;
 	public ComparatorObject(){
 		
 	}

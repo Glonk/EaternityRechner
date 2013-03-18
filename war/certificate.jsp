@@ -6,7 +6,7 @@
 
 <%@ page import="ch.eaternity.server.DAO" %>
 <%@ page import="ch.eaternity.shared.Recipe" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
+<%@ page import="ch.eaternity.shared.Ingredient" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
 
 <%@ page import="java.util.List" %>
@@ -78,15 +78,15 @@
 	// remove double entries for admin
 	if(rezeptePersonal != null){
 		for(Recipe recipe: rezeptePersonal){
-			int removeIndex = -1;
-			for(Recipe rezept2:adminRecipes){
-				if(rezept2.getId().equals(recipe.getId())){
-					removeIndex = adminRecipes.indexOf(rezept2);
-				}
-			}
-			if(removeIndex != -1){
-				adminRecipes.remove(removeIndex);
-			}
+	int removeIndex = -1;
+	for(Recipe rezept2:adminRecipes){
+		if(rezept2.getId().equals(recipe.getId())){
+			removeIndex = adminRecipes.indexOf(rezept2);
+		}
+	}
+	if(removeIndex != -1){
+		adminRecipes.remove(removeIndex);
+	}
 		}
 	}
 	
@@ -129,10 +129,10 @@
 		counter++;
 		recipe.setCO2Value();
 		if(recipe.getCO2Value()>MaxValueRezept){
-			MaxValueRezept = recipe.getCO2Value();
+	MaxValueRezept = recipe.getCO2Value();
 		} 
 		if(recipe.getCO2Value()<MinValueRezept){
-			MinValueRezept = recipe.getCO2Value();
+	MinValueRezept = recipe.getCO2Value();
 		}
 	}
 	average = average /counter;
@@ -155,7 +155,7 @@
 
 
 <style type="text/css">
-<% if(!doPdf){ %>
+<%if(!doPdf){%>
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
 
 @font-face {
@@ -164,7 +164,7 @@
   font-weight: 300;
   src: local('Open Sans Light'), local('OpenSans-Light'), url('opensans300.woff') format('woff');
 }
-<% } %>
+<%}%>
 
 @page {
   size: A4;
@@ -720,14 +720,11 @@ idsToAdd = new Array();
 baseUrl = getBaseURL();
 
 
-<% 
-for(Recipe recipe: rezeptePersonal){
+<%for(Recipe recipe: rezeptePersonal){
 	long compute = recipe.getId() * iTimeStamp;
 	String code = Converter.toString(compute,34); 
-	String clear = Converter.toString(recipe.getId(),34);
-
-	%>
-idsToAdd['<%= clear %>'] = true<%	 }	%>
+	String clear = Converter.toString(recipe.getId(),34);%>
+idsToAdd['<%=clear%>'] = true<%}%>
 
 arrayAdd(idsToAdd)
  }
@@ -817,12 +814,13 @@ function getBaseURL() {
 
 <div class="content">
 
-<% if(true) { %>
+<%
+	if(true) {
+%>
 
 
 <%
-
-boolean doIt = false;
+	boolean doIt = false;
 if(rezeptePersonal.size() != 0){
 doIt = true;
 }
@@ -832,7 +830,7 @@ if(doIt){
 
 
 <%
-}
+	}
 
 
 }
@@ -856,68 +854,72 @@ if(doIt){
 
 for(Recipe recipe: rezeptePersonal){
 
-			long compute = recipe.getId() * iTimeStamp;
-			String code = Converter.toString(compute,34);
-			
-			String clear = Converter.toString(recipe.getId(),34);
+	long compute = recipe.getId() * iTimeStamp;
+	String code = Converter.toString(compute,34);
+	
+	String clear = Converter.toString(recipe.getId(),34);
 
-			recipe.setCO2Value();
-			if(recipe.getCO2Value() > 0){
-			
-			String total = "200";
-			String klimafriendly = formatter.format(200*2/5);
-			String length = formatter.format(recipe.getCO2Value()/(threshold)*200);
-			String formatted = formatter.format( recipe.getCO2Value() );
-			
-			String moreOrLess = "";
-			String percent ="";
-			Integer position = 1;
-			
-			if((climateFriendlyValue-recipe.getCO2Value())<0){
-				percent = formatter.format( (-(climateFriendlyValue-recipe.getCO2Value())/(climateFriendlyValue))*100 );
-				moreOrLess = "mehr";
-				position = 2;
-			} else {
-				percent = formatter.format( ((climateFriendlyValue-recipe.getCO2Value())/(climateFriendlyValue))*100 );
-				moreOrLess = "weniger";
-			}
-			
-			if(recipe.getCO2Value()>(threshold)){
-				position = 3;
-				length = "200";
-				total = formatter.format((threshold/recipe.getCO2Value())*200);
-				klimafriendly = formatter.format((climateFriendlyValue/recipe.getCO2Value())*200);
-				percent = formatter.format( ((recipe.getCO2Value()-threshold)/(threshold))*100 );
-				
-			}
-			
-			
-			
-			String persons = Long.toString(recipe.getPersons());
-			
-			%>			
+	recipe.setCO2Value();
+	if(recipe.getCO2Value() > 0){
+	
+	String total = "200";
+	String klimafriendly = formatter.format(200*2/5);
+	String length = formatter.format(recipe.getCO2Value()/(threshold)*200);
+	String formatted = formatter.format( recipe.getCO2Value() );
+	
+	String moreOrLess = "";
+	String percent ="";
+	Integer position = 1;
+	
+	if((climateFriendlyValue-recipe.getCO2Value())<0){
+		percent = formatter.format( (-(climateFriendlyValue-recipe.getCO2Value())/(climateFriendlyValue))*100 );
+		moreOrLess = "mehr";
+		position = 2;
+	} else {
+		percent = formatter.format( ((climateFriendlyValue-recipe.getCO2Value())/(climateFriendlyValue))*100 );
+		moreOrLess = "weniger";
+	}
+	
+	if(recipe.getCO2Value()>(threshold)){
+		position = 3;
+		length = "200";
+		total = formatter.format((threshold/recipe.getCO2Value())*200);
+		klimafriendly = formatter.format((climateFriendlyValue/recipe.getCO2Value())*200);
+		percent = formatter.format( ((recipe.getCO2Value()-threshold)/(threshold))*100 );
+		
+	}
+	
+	
+	
+	String persons = Long.toString(recipe.getPersons());
+%>			
 			<table style="font-weight: 300;font-size: 14pt; margin-top:-4em;">
 						<!-- label of table -->
 			<tr width="660">
 			<td height="140">
-				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%= recipe.getSymbol() %></h3>
-				<p style="display:block;clear:both">	<%= recipe.getSubTitle() %> – <%= formatted %> g CO<sub>2</sub>* pro Person.</p>
+				<h3 style="font-size: 28pt; padding-bottom:0em; display:block; margin-right:5em;"><%=recipe.getSymbol()%></h3>
+				<p style="display:block;clear:both">	<%=recipe.getSubTitle()%> – <%=formatted%> g CO<sub>2</sub>* pro Person.</p>
 				
 				<%
-				if(recipe.image != null){
-					%>
+									if(recipe.image != null){
+								%>
 					
-					<% if(!doPdf){%>
+					<%
+											if(!doPdf){
+										%>
 						<img class="cover-all" src="<%=recipe.image.getServingUrl()%>=s800" />
-					<% } else { %>
+					<%
+						} else {
+					%>
 						<img class="cover-all" src="COVER-<%=recipe.image.getServingUrl()%>-IMAGE" />
-					<% } %>
+					<%
+						}
+					%>
 					 
 					
 					<%
-				}
-				
-				%>
+					 											}
+					 										%>
 			</td>
 			</tr>
 			
@@ -925,16 +927,16 @@ for(Recipe recipe: rezeptePersonal){
 			<tr>
 			<td>
 				<table cellspacing="0" cellpadding="0" class="table cover-up" >
-				<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+				<!--  <%=Integer.toString(rezeptePersonal.size())%>  -->
 							<tr>
 							<td>
 
 
-							<span style="color:gray;">Für <%= persons %> Personen:</span>
+							<span style="color:gray;">Für <%=persons%> Personen:</span>
 							<ul class="zutat">
 
 							<%
-								for(IngredientSpecification ingredient: recipe.ingredients){
+								for(Ingredient ingredient: recipe.ingredients){
 							%>
 
 							<li><%=ingredient.getWeight()%> g <span class="ix"><%= ingredient.getName() %></span> </li>

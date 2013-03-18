@@ -3,6 +3,7 @@ package ch.eaternity.shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,7 +18,7 @@ public class ClientData implements Serializable{
 	public List<Recipe> userRecipes = new ArrayList<Recipe>();
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	
-	public List<Ingredient> ingredients;
+	public List<FoodProduct> ingredients;
 	public Distance distances;
 	public List<Kitchen> kitchens;
 
@@ -30,6 +31,7 @@ public class ClientData implements Serializable{
 	public Recipe editRecipe;
 	public int currentMonth;
 	public String currentLocation;
+	public Locale locale;
 	public String searchstring;
 	
 	public RecipeScope recipeScope = RecipeScope.PUBLIC;
@@ -45,9 +47,9 @@ public class ClientData implements Serializable{
 		oracleIndex.add("all");
 
 		if(this.ingredients != null){
-			for(Ingredient zutat : this.ingredients){
+			for(FoodProduct zutat : this.ingredients){
 				if(zutat != null){
-					oracleIndex.add(zutat.getSymbol());
+					oracleIndex.add(zutat.getName(locale));
 				}
 			}
 		}
@@ -69,8 +71,8 @@ public class ClientData implements Serializable{
 		return oracleIndex;
 	}
 	
-	public Ingredient getIngredientByID(long id){
-		for(Ingredient zutat : ingredients){
+	public FoodProduct getIngredientByID(long id){
+		for(FoodProduct zutat : ingredients){
 			if (zutat.getId() == id){
 				return zutat;
 			}

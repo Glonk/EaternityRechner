@@ -3,6 +3,15 @@ package ch.eaternity.client.ui.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Season;
+import org.eaticious.common.SeasonDate;
+import org.eaticious.common.SeasonDateImpl;
+import org.eaticious.common.SeasonImpl;
+import org.eaticious.common.SeasonType;
+import org.eaticious.common.Unit;
 
 
 import ch.eaternity.client.DataService;
@@ -13,11 +22,10 @@ import ch.eaternity.client.events.UpdateRecipeViewEvent;
 //import ch.eaternity.server.Ingredient;
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Transportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Production;
-import ch.eaternity.shared.SeasonDate;
 
 
 import com.google.gwt.core.client.GWT;
@@ -82,8 +90,8 @@ public class IngredientsDialog extends DialogBox{
 	
 	private void processFile(String messageXml) {
 		try {
-			ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
-			ArrayList<Ingredient> invalid_ingredients = new ArrayList<Ingredient>();
+			ArrayList<FoodProduct> ingredients = new ArrayList<FoodProduct>();
+			ArrayList<FoodProduct> invalid_ingredients = new ArrayList<FoodProduct>();
 			
 			// parse the XML document into a DOM
 			Document messageDom = XMLParser.parse(messageXml);
@@ -105,7 +113,7 @@ public class IngredientsDialog extends DialogBox{
 					// id
 //					Window.alert("Zutat Id : "  + ((Node) zutatId.item(0)).getNodeValue());
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Identifikations_Nummer");
-					Ingredient newIngredient = new Ingredient(0L);
+					FoodProduct newIngredient = new FoodProduct();
 					if (tmpNodeVal1 != null) newIngredient.setId(Long.parseLong( tmpNodeVal1 ));
 					else {
 						isValidIng = false;
@@ -116,13 +124,13 @@ public class IngredientsDialog extends DialogBox{
 					// symbol
 //					Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name");
-					if (tmpNodeVal1 != null) newIngredient.setSymbol( tmpNodeVal1 );
+					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1, Locale.GERMAN );
 					else isValidIng = false;
 					
 					// CO2eWert		
 					tmpNodeVal1 = getTagContent(zutatElmnt, "CO2eq_Wert");
 					//Window.alert("CO2eWert : "  + Math.round(Float.parseFloat( nodeValue )*1000));
-					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( Math.round(Float.parseFloat( tmpNodeVal1 )*1000) );
+					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( new QuantityImpl(Double.parseDouble( tmpNodeVal1 )*1000, Unit.KILOGRAM) );
 					else isValidIng = false;
 					
 					
@@ -138,7 +146,7 @@ public class IngredientsDialog extends DialogBox{
 							newAlternativen.add(Long.parseLong(alt_ar[i]));
 							
 						}
-						newIngredient.setAlternatives(newAlternativen);
+						newIngredient.setSubstitutes(newAlternativen);
 					}
 					//else isValidIng = false;
 					
@@ -146,8 +154,8 @@ public class IngredientsDialog extends DialogBox{
 					
 					// std mengeGramm
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
-					if (tmpNodeVal1 != null) newIngredient.setStdWeight(Integer.parseInt( tmpNodeVal1 ));
-					else newIngredient.setStdWeight(100);
+					if (tmpNodeVal1 != null) newIngredient.setStdWeight(new QuantityImpl(Double.parseDouble( tmpNodeVal1 ), Unit.GRAM));
+					else newIngredient.setStdWeight(new QuantityImpl(100.0, Unit.GRAM));
 				
 					
 					//Conditions
@@ -175,7 +183,7 @@ public class IngredientsDialog extends DialogBox{
 					}
 					else {
 						isValidIng = false;
-						Window.alert("Problem with:"+ newIngredient.getSymbol());
+						Window.alert("Problem with:"+ newIngredient.getName(Locale.GERMAN));
 					}
 					
 					// Tags oder Labels
@@ -242,30 +250,18 @@ public class IngredientsDialog extends DialogBox{
 					}
 					else isValidIng = false;
 					
-					// startSeason
-					String startSeason = null, stopSeason = null;
+					// Season
+					Season season = null;
+					
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_start");
-					if (tmpNodeVal1 != null) startSeason = tmpNodeVal1;
-						newIngredient.setStartSeason(startSeason);
-					
-					// stopSeason
-					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_stop");
-					if (tmpNodeVal1 != null) stopSeason = tmpNodeVal1;
-						newIngredient.setStopSeason(stopSeason);
-					
-					// has Season Dependency
-					tmpNodeVal1 = getTagContent(zutatElmnt, "saisonabhangig");
-					if (tmpNodeVal1 != null) 
-					{
-						int seasondep = Integer.parseInt( tmpNodeVal1 );
-						if(seasondep == 1)
-							// startseason and stopseason needs to be setted for having seasondependency
-							if (startSeason != null && stopSeason != null)
-								newIngredient.setHasSeason(true);
-							else isValidIng = false;
-						else newIngredient.setHasSeason(false);
+					tmpNodeVal2 = getTagContent(zutatElmnt, "saison_stop");
+						
+					if (tmpNodeVal1 != null && tmpNodeVal1 != null)	{
+						SeasonDate startDate = new SeasonDateImpl();
+						SeasonDate stopDate = new SeasonDateImpl();
+						if (startDate.setDate(tmpNodeVal1) && stopDate.setDate(tmpNodeVal2)) 
+							season = new SeasonImpl(startDate, stopDate, SeasonType.MAIN_SEASON);
 					}
-					else newIngredient.setHasSeason(false);
 					
 						
 					// Extractions (Herkunft)
@@ -285,29 +281,10 @@ public class IngredientsDialog extends DialogBox{
 					}
 					else isValidIng = false;
 					
-					// std Extractions
-					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Herkunft");
-					if (tmpNodeVal1 != null) {
-						for (Extraction extr : newIngredient.getExtractions()) {
-							if (extr.symbol.equals(tmpNodeVal1))
-								newIngredient.setStdExtraction(extr);
-						}
-						if (newIngredient.getStdExtraction() == null) {
-							Extraction notInListExtraction = new Extraction(tmpNodeVal1);
-							newIngredient.setStdExtraction(notInListExtraction);
-							// add the std extraction which is not in the list to the extractions
-							
-						}
-					}
-					else {
-						Extraction notInListExtraction = new Extraction("Schweiz");
-						newIngredient.setStdExtraction(notInListExtraction);
-						newIngredient.getExtractions().add(notInListExtraction);
-					}
 					
 					// symbol english
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name_Englisch");
-					if (tmpNodeVal1 != null) newIngredient.setSymbol_en( tmpNodeVal1.trim() );
+					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1.trim(), Locale.ENGLISH );
 					//else isValidIng = false;
 
 					// all elements are properly parsed add ingredient
@@ -324,9 +301,9 @@ public class IngredientsDialog extends DialogBox{
 			if(!ingredients.isEmpty())
 			{
 				String invalid_ingredients_names = "";
-				for (Ingredient ing : invalid_ingredients)
+				for (FoodProduct ing : invalid_ingredients)
 				{
-					invalid_ingredients_names = invalid_ingredients_names + ing.getSymbol() + "\n";
+					invalid_ingredients_names = invalid_ingredients_names + ing.getName(Locale.GERMAN) + "\n";
 				}
 				Window.alert(
 					amValidIngs + " valid ingredients in xml.\n" + 
@@ -346,7 +323,7 @@ public class IngredientsDialog extends DialogBox{
 		}
 	}
 
-	private void persistIngredients(ArrayList<Ingredient> ingredients) {
+	private void persistIngredients(ArrayList<FoodProduct> ingredients) {
 		ingredientsService.persistIngredients(ingredients, new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				Window.alert(error.getMessage());

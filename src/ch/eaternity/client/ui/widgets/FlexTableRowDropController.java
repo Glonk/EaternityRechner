@@ -16,7 +16,7 @@ package ch.eaternity.client.ui.widgets;
 import java.util.ArrayList;
 
 import ch.eaternity.client.ui.RecipeEdit;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Ingredient;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.InsertPanel;
@@ -98,7 +98,7 @@ public final class FlexTableRowDropController extends AbstractPositioningDropCon
     
     if (sourceRow >= 0 && sourceRow < size && targetRow >= 0 && targetRow < size){ // this case nothing happens
     	
-	    IngredientSpecification switchIng = recipeEdit.getRecipe().getIngredients().get(sourceRow);
+	    Ingredient switchIng = recipeEdit.getRecipe().getIngredients().get(sourceRow);
 	    
 	    recipeEdit.getRecipe().getIngredients().remove(sourceRow);
 	    recipeEdit.getRecipe().getIngredients().add(targetRow+1, switchIng);

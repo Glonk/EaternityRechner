@@ -7,7 +7,7 @@ import java.util.List;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.ClientData;
-import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.Recipe;
@@ -28,7 +28,7 @@ public interface DataServiceAsync {
 
 	public void getData(String requestUri, AsyncCallback<ClientData> async);
 	public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
-	public void persistIngredients(ArrayList<Ingredient> ingredients,
+	public void persistIngredients(ArrayList<FoodProduct> ingredients,
 			AsyncCallback<Boolean> asyncCallback);
 
 	public void addKitchen(Kitchen kitchen, AsyncCallback<Long> async);

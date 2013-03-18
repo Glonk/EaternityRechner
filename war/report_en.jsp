@@ -6,7 +6,7 @@
 
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
+<%@ page import="ch.eaternity.shared.Ingredient" %>
 
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
@@ -32,7 +32,7 @@
 
 
 <%
-// get request parameters
+	// get request parameters
 
 String BASEURL = request.getRequestURL().toString();
 String tempIds = request.getParameter("ids");
@@ -89,8 +89,6 @@ DecimalFormat distance_formatter = new DecimalFormat("##");
 
 int co2BarLength = 180;
 int barOffset = 45;
-
-
 %>
 
 <style type="text/css">
@@ -138,16 +136,16 @@ int barOffset = 45;
 </head>
 
 <body>
-<% 
-// Avoid displaying anything if someting is wrong.
+<%
+	// Avoid displaying anything if someting is wrong.
 if (!variables.everythingFine){
-	%>
+%>
 		Wrong Inputs. See Log for Details.<br /><br />
-		<%= variables.errorMessage %>
+		<%=variables.errorMessage%>
 	<%
-	
-}
-else { %>
+		}
+	else {
+	%>
 	
 
 
@@ -189,7 +187,9 @@ else { %>
 
 <h1>CO2 Food-Sourcing Report</h1>
 
-<% // -------------------------------- Delivery Receipts Overview --------------------------- %>
+<%
+	// -------------------------------- Delivery Receipts Overview ---------------------------
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -208,7 +208,7 @@ else { %>
 </tr>
 
 <%
-for(Recipe recipe: variables.kitchenRecipes){
+	for(Recipe recipe: variables.kitchenRecipes){
 
 	recipe.setCO2Value();
 	Double recipeValue = recipe.getCO2Value()  ;
@@ -216,24 +216,23 @@ for(Recipe recipe: variables.kitchenRecipes){
 	String clear = Converter.toString(recipe.getId(),34);
 	String length = variables.getNormalisedLength(recipeValue);
 	String recipeValueFormatted = co2_formatter.format(recipeValue/1000);
-	%>
+%>
 			
-	<tr <%
-	int order = (variables.kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
-	if(order == 1) { %>
+	<tr <%int order = (variables.kitchenRecipes.indexOf(recipe) - counterIterate ) % 2; 
+	if(order == 1) {%>
 	class="alternate"
-	<% }%> > 
+	<%}%> > 
 	<td class="menu-name">
-	<input type="checkbox" name="<%= clear %>" checked="checked" class="hiddenOnPage">
-	<%= recipe.getSymbol() %>
+	<input type="checkbox" name="<%=clear%>" checked="checked" class="hiddenOnPage">
+	<%=recipe.getSymbol()%>
 	</td>
-	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-	<td class="co2value" ><%= recipeValueFormatted %></td>
+	<td class="left-border"><img class="bar" src="green.png" alt="gray" height="11" width="<%=length%>" /></td>
+	<td class="co2value" ><%=recipeValueFormatted%></td>
 	</tr>
 
 
-<% 
-} 
+<%
+	}
 %>
 
 
@@ -241,7 +240,9 @@ for(Recipe recipe: variables.kitchenRecipes){
 
 <br/><br/><br/><br/>
 
-<% // -------------------------------- Total CO2 Impact by Date --------------------------- %>
+<%
+	// -------------------------------- Total CO2 Impact by Date ---------------------------
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -260,7 +261,7 @@ for(Recipe recipe: variables.kitchenRecipes){
 </tr>
 
 <%
-counterIterate = 0;
+	counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0;
 
@@ -271,31 +272,29 @@ variables.setMinMax(values);
 
 
 for(CatRyzer.DateValue categoryValue : variables.valuesByDate){
-	
 %>
 
-<tr <%
-int order = (variables.valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
-if(order == 1) { %>
+<tr <%int order = (variables.valuesByDate.indexOf(categoryValue) - counterIterate ) % 2; 
+if(order == 1) {%>
 class="alternate"
-<% }%> > 
+<%}%> > 
 <td class="menu-name">
 	<%
-	String datumString = "NO DATE SPECIFIED";
-	try {
-		datumString = variables.dateFormatter.format(categoryValue.date);
-	} catch (Exception e) {
-		            out.println("The Error is: " + e);
-	}
-	%><%= datumString %>
+		String datumString = "NO DATE SPECIFIED";
+		try {
+			datumString = variables.dateFormatter.format(categoryValue.date);
+		} catch (Exception e) {
+			            out.println("The Error is: " + e);
+		}
+	%><%=datumString%>
 </td>
-<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
-<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
+<td class="left-border" width="<%=co2BarLength + barOffset%>px"><%=variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength)%></td>
+<td class="co2value" ><%=co2_formatter.format(categoryValue.co2value.totalValue/1000)%></td>
 </tr>
 
 
 <%
-}
+	}
 %>
 
 </table>
@@ -305,7 +304,9 @@ class="alternate"
 <br /><br /><br />
 
 
-<% // -------------------------------- Top 20 intensive Ingredients --------------------------- %>
+<%
+	// -------------------------------- Top 20 intensive Ingredients ---------------------------
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -326,7 +327,7 @@ class="alternate"
 
 
 <%
-counterIterate = 0;
+	counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0; 
 
@@ -343,29 +344,30 @@ for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 	
 	if (variables.valuesByIngredient.indexOf(ingredientValue) == 20){
 		break;
-	} 
+	}
 %>
 
-<tr <%
-int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
-if(order == 1) { %>
+<tr <%int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
+if(order == 1) {%>
 class="alternate"
-<% }%> > 
+<%}%> > 
 <td class="menu-name">
-<%= ingredientValue.categoryName %> <!-- (<%=ingredientValue.weight/1000%> kg) -->
+<%=ingredientValue.categoryName%> <!-- (<%=ingredientValue.weight/1000%> kg) -->
 </td>
-<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, ingredientValue.co2value, co2BarLength) %></td>
-<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value.totalValue/1000) %></td>
+<td class="left-border" width="<%=co2BarLength + barOffset%>px"><%=variables.getCo2ValueBar(values, ingredientValue.co2value, co2BarLength)%></td>
+<td class="co2value" ><%=co2_formatter.format(ingredientValue.co2value.totalValue/1000)%></td>
 
 </tr>
 
 <%
-}
+	}
 %>
 </table>
 
 
-<% // -------------------------------- Total CO2 Impact by Category --------------------------- %>
+<%
+	// -------------------------------- Total CO2 Impact by Category ---------------------------
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -384,7 +386,7 @@ class="alternate"
 </tr>
 
 <%
-counterIterate = 0;
+	counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0; 
 
@@ -397,23 +399,21 @@ variables.setMinMax(values);
 
 
 for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
-
 %>
 
-	<tr <%
-	int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
-	if(order == 1) { %>
+	<tr <%int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
+	if(order == 1) {%>
 	class="alternate"
-	<% }%> > 
+	<%}%> > 
 	<td class="menu-name">
-	<%= categoryValue.categoryName %>
+	<%=categoryValue.categoryName%>
 	</td>
-	<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
-	<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
+	<td class="left-border" width="<%=co2BarLength + barOffset%>px"><%=variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength)%></td>
+	<td class="co2value" ><%=co2_formatter.format(categoryValue.co2value.totalValue/1000)%></td>
 	</tr>
 
 <%
-}
+	}
 %>
 
 </table>
@@ -421,17 +421,17 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 
 <br /><br /><br /><br />
 
-<% // -------------------------------- Total CO2 Impact by Date - Category --------------------------- %>
+<%
+	// -------------------------------- Total CO2 Impact by Date - Category ---------------------------
+%>
 
 <%
-counterIterate = 0;
+	counterIterate = 0;
 for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Category){
 
 // if date == 0, show something for no date
 	
 	Date thisDate = categoriesByDates.date.get(0);
-
-
 %>
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -444,13 +444,13 @@ for(CatRyzer.CategoryValuesByDates categoriesByDates : variables.valuesByDate_Ca
 
 <tr>
 <td class="table-header bottom-border">	<%
-	String datumString = "NO DATE SPECIFIED";
-	try {
-		datumString = variables.dateFormatter.format(thisDate);
-	} catch (Exception e) {
-		  out.println("The Error is: " + e);
-	}
-	%><%= datumString %>  -  CO2 Impact by Category</td>
+		String datumString = "NO DATE SPECIFIED";
+		try {
+			datumString = variables.dateFormatter.format(thisDate);
+		} catch (Exception e) {
+			  out.println("The Error is: " + e);
+		}
+	%><%=datumString%>  -  CO2 Impact by Category</td>
 <td class="left-border"></td>
 <td class="co2value" ></td>
 <td ></td>
@@ -476,17 +476,17 @@ for(CatRyzer.CategoryValue categoryValue : categoriesByDates.categories){
 <tr <%int order = (categoriesByDates.categories.indexOf(categoryValue) - counterIterate ) % 2; 
 if(order == 1) {%>
 class="alternate"
-<% }%> > 
+<%}%> > 
 <td class="menu-name">
-<%= categoryValue.categoryName %>
+<%=categoryValue.categoryName%>
 </td>
-<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
-<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
+<td class="left-border" width="<%=co2BarLength + barOffset%>px"><%=variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength)%></td>
+<td class="co2value" ><%=co2_formatter.format(categoryValue.co2value.totalValue/1000)%></td>
 </tr>
 
 
 <%
-}	
+	}
 %>
 </table>
 
@@ -500,7 +500,7 @@ class="alternate"
 	} catch (Exception e) {
 		  out.println("The Error is: " + e);
 	}
-	%><%= datumString %>
+%><%=datumString%>
 	</td>
 <td></td>
 </tr>
@@ -514,12 +514,11 @@ class="alternate"
 	
 
 	<%
+			// valuesByDate_Calender
 
-	// valuesByDate_Calender
+			for(Recipe recipe: variables.kitchenRecipes){
 
-	for(Recipe recipe: variables.kitchenRecipes){
-
-		if(thisDate.equals(recipe.cookingDate)){
+				if(thisDate.equals(recipe.cookingDate)){
 
 				recipe.setCO2Value();
 				Double recipeValue = recipe.getCO2Value()  ;
@@ -532,9 +531,7 @@ class="alternate"
 				} catch (Exception e) {
 					  out.println("The Error is: " + e);
 				}
-
-
-				%>
+		%>
 
 				<table cellspacing="0" cellpadding="0" class="table listTable" >
 				<tr>
@@ -546,36 +543,53 @@ class="alternate"
 				<td class="bottom-border">
 				<!-- <img class="smile" src="smiley8.png" alt="smiley" />
 				<img class="smile" src="smiley8.png" alt="smiley" /> -->
-				<h3>Delivery Receipt: <%= recipe.getSymbol() %></h3>
+				<h3>Delivery Receipt: <%=recipe.getSymbol()%></h3>
 				</td>
 				<td class="left-border"></td>
 				</tr>
 
 				<tr>
-				<td><div class="amount"><%= formatted %> kg CO<sub>2</sub>* total</div></td>
+				<td><div class="amount"><%=formatted%> kg CO<sub>2</sub>* total</div></td>
 				<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="200" /></td>
 				</tr>
 
 				<tr>
 				<td>
 
-				<span class="subTitle">Date: <%= datumString %></span>
+				<span class="subTitle">Date: <%=datumString%></span>
 
-				<!-- <span style="color:gray;"><%= recipe.getSubTitle() %>/span><br /> -->
+				<!-- <span style="color:gray;"><%=recipe.getSubTitle()%>/span><br /> -->
 
 
-					<%	
-					counter = 0;
-					for(IngredientSpecification ingredient: recipe.Zutaten){
-					counter = counter + 1;
-
-					%><% if(counter != 1){ %>, <% } %><span class="nowrap"><%=ingrcounter = 0;
-					for(IngredientSpecification ingredient: recipe.ingredients){
-					counter = counter + 1;ent.getExtraction() != null){%><%= ingredient.getHerkunft().symbol %><% } %>  | <% if(ingredient.getZustand() != null){ %><%= ingredient.getZustand().symbol %> | <% } %><% if(ingredient.getProduktion() != null){ %><%= ingredient.getProduktion().symbol %> | <% } %> <% if(ingredient.getTransportmittel() != null){ %><%= ingredient.getTransportmittel().symbol %><% } %> )
+					<%
+						counter = 0;
+								for(Ingredient ingredient: recipe.Zutaten){
+								counter = counter + 1;
+					%><%
+						if(counter != 1){
+					%>, <%
+						}
+					%><span class="nowrap"><%=ingrcounter = 0;
+					for(Ingredient ingredient: recipe.ingredients){
+					counter = counter + 1;ent.getExtraction() != null){%><%=ingredient.getHerkunft().symbol%><%
+						}
+					%>  | <%
+						if(ingredient.getZustand() != null){
+					%><%=ingredient.getZustand().symbol%> | <%
+						}
+					%><%
+						if(ingredient.getProduktion() != null){
+					%><%=ingredient.getProduktion().symbol%> | <%
+						}
+					%> <%
+ 	if(ingredient.getTransportmittel() != null){
+ %><%=ingredient.getTransportmittel().symbol%><%
+ 	}
+ %> )
 						
 						</span><%
-					}
-					%>
+ 	}
+ %>
 					
 					
 					
@@ -589,19 +603,26 @@ class="alternate"
 				</tr>
 
 
-					<%	
-					if(recipe.comments != null){
-					for(RecipeComment comment: recipe.comments){
-
+					<%
+						if(recipe.comments != null){
+								for(RecipeComment comment: recipe.comments){
 					%>
 					<tr>
-					<td>• <%= comment.symbol %><% if(comment.amount > 0){ %><span class="amount"><%= comment.amount %> g CO<sub>2</sub>* </span><% } %></td>
-					<td class="left-border"><% if(comment.amount > 0){ %><img class="bar" src="green.png" alt="green" height="11"  width="<%= comment.amount/recipeValue*140 %>" /><% } %></td>
+					<td>• <%=comment.symbol%><%
+						if(comment.amount > 0){
+					%><span class="amount"><%=comment.amount%> g CO<sub>2</sub>* </span><%
+						}
+					%></td>
+					<td class="left-border"><%
+						if(comment.amount > 0){
+					%><img class="bar" src="green.png" alt="green" height="11"  width="<%=comment.amount/recipeValue*140%>" /><%
+						}
+					%></td>
 					</tr>
 
 					<%
 						}
-					}
+								}
 					%>
 
 					<tr>
@@ -612,27 +633,29 @@ class="alternate"
 
 					</table>
 				<%
-			}		
-	}
-}
-%>
+					}		
+					}
+				}
+				%>
 
 </table>
 
 
 
-<% // -------------------------------- Overview Categories --------------------------- %>
+<%
+	// -------------------------------- Overview Categories ---------------------------
+%>
 
 <br /><br /><br />
 <h2>Overview Categories</h2>
 <br /><br /><br />
 
 <%
-// get ingredients per category
+	// get ingredients per category
 for(CatRyzer.CatMapping mapping : variables.catryzer.mappings)
 {
 	
-	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(mapping.category);
+	Collection<Ingredient> ingredientsSpecification = variables.catryzer.catMultiMap.get(mapping.category);
 	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames_en(ingredientsSpecification);
 %>
 

@@ -2,13 +2,16 @@ package ch.eaternity.shared.comparators;
 
 import java.util.Comparator;
 
-import ch.eaternity.shared.Ingredient;
+import org.eaticious.common.Quantity;
+import org.eaticious.common.Unit;
 
-public class ValueComparator implements Comparator<Ingredient> {
-	  public int compare(Ingredient z1, Ingredient z2) {
-		  long o1 = z1.getCo2eValue();
-		  long o2 = z2.getCo2eValue();
+import ch.eaternity.shared.FoodProduct;
+
+public class ValueComparator implements Comparator<FoodProduct> {
+	  public int compare(FoodProduct z1, FoodProduct z2) {
+		  Quantity o1 = z1.getCo2eValue();
+		  Quantity o2 = z2.getCo2eValue();
 		  
-	    return -Long.valueOf(o2).compareTo(Long.valueOf(o1));
+	    return -Double.valueOf(o2.convert(Unit.GRAM).getAmount()).compareTo(Double.valueOf(o1.convert(Unit.GRAM).getAmount()));
 	  }
 	}

@@ -6,7 +6,7 @@
 
 <%@ page import="ch.eaternity.shared.Recipe" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
+<%@ page import="ch.eaternity.shared.Ingredient" %>
 
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.CatRyzer" %>
@@ -32,7 +32,7 @@
 
 
 <%
-// get request parameters
+	// get request parameters
 
 String BASEURL = request.getRequestURL().toString();
 String tempIds = request.getParameter("ids");
@@ -88,8 +88,6 @@ DecimalFormat distance_formatter = new DecimalFormat("##");
 
 int co2BarLength = 180;
 int barOffset = 45;
-
-
 %>
 
 <style type="text/css">
@@ -136,16 +134,16 @@ int barOffset = 45;
 </head>
 
 <body>
-<% 
-// Avoid displaying anything if someting is wrong.
+<%
+	// Avoid displaying anything if someting is wrong.
 if (!variables.everythingFine){
-	%>
+%>
 		Wrong Inputs. See Log for Details.<br /><br />
-		<%= variables.errorMessage %>
+		<%=variables.errorMessage%>
 	<%
-	
-}
-else { %>
+		}
+	else {
+	%>
 	
 
 
@@ -189,7 +187,9 @@ else { %>
 
 ZFV: Offerte BAG
 
-<% // -------------------------------- Total CO2 Impact by Category --------------------------- %>
+<%
+	// -------------------------------- Total CO2 Impact by Category ---------------------------
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -208,7 +208,7 @@ ZFV: Offerte BAG
 </tr>
 
 <%
-counterIterate = 0;
+	counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0; 
 
@@ -223,20 +223,19 @@ variables.setMinMax(values);
 for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 %>
 
-	<tr <%
-	int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
-	if(order == 1) { %>
+	<tr <%int order = (variables.valuesByCategory.indexOf(categoryValue) - counterIterate ) % 2; 
+	if(order == 1) {%>
 	class="alternate"
-	<% }%> > 
+	<%}%> > 
 	<td class="menu-name">
-	<%= categoryValue.categoryName %>
+	<%=categoryValue.categoryName%>
 	</td>
-	<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength) %></td>
-	<td class="co2value" ><%= co2_formatter.format(categoryValue.co2value.totalValue/1000) %></td>
+	<td class="left-border" width="<%=co2BarLength + barOffset%>px"><%=variables.getCo2ValueBar(values, categoryValue.co2value, co2BarLength)%></td>
+	<td class="co2value" ><%=co2_formatter.format(categoryValue.co2value.totalValue/1000)%></td>
 	</tr>
 
 <%
-}
+	}
 %>
 
 </table>
@@ -245,7 +244,9 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 <br /><br /><br /><br />
 
 
-<% // -------------------------------- Top 20 intensive Ingredients --------------------------- %>
+<%
+	// -------------------------------- Top 20 intensive Ingredients ---------------------------
+%>
 
 <table cellspacing="0" cellpadding="0" class="table toc" >
 
@@ -266,7 +267,7 @@ for(CatRyzer.CategoryValue categoryValue : variables.valuesByCategory){
 
 
 <%
-counterIterate = 0;
+	counterIterate = 0;
 variables.maxValTemp = 0.0;
 variables.minValTemp = 10000000.0; 
 
@@ -282,24 +283,23 @@ for(CatRyzer.CategoryValue ingredientValue : variables.valuesByIngredient){
 	
 	if (variables.valuesByIngredient.indexOf(ingredientValue) == 15){
 		break;
-	} 
+	}
 %>
 
-<tr <%
-int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
-if(order == 1) { %>
+<tr <%int order = (variables.valuesByCategory.indexOf(ingredientValue) - counterIterate ) % 2; 
+if(order == 1) {%>
 class="alternate"
-<% }%> > 
+<%}%> > 
 <td class="menu-name">
-<%= ingredientValue.categoryName %> <!-- (<%=ingredientValue.weight/1000%> kg) -->
+<%=ingredientValue.categoryName%> <!-- (<%=ingredientValue.weight/1000%> kg) -->
 </td>
-<td class="left-border" width="<%= co2BarLength + barOffset %>px"><%= variables.getCo2ValueBar(values, ingredientValue.co2value, co2BarLength) %></td>
-<td class="co2value" ><%= co2_formatter.format(ingredientValue.co2value.totalValue/1000) %></td>
+<td class="left-border" width="<%=co2BarLength + barOffset%>px"><%=variables.getCo2ValueBar(values, ingredientValue.co2value, co2BarLength)%></td>
+<td class="co2value" ><%=co2_formatter.format(ingredientValue.co2value.totalValue/1000)%></td>
 
 </tr>
 
 <%
-}
+	}
 %>
 </table>
 
@@ -308,18 +308,20 @@ class="alternate"
 
 
 
-<% // -------------------------------- Overview Categories --------------------------- %>
+<%
+	// -------------------------------- Overview Categories ---------------------------
+%>
 
 <br /><br /><br />
 <h2>Kategorienübersicht</h2>
 <br /><br /><br />
 
 <%
-// get ingredients per category
+	// get ingredients per category
 for(CatRyzer.CatMapping mapping : variables.catryzer.mappings)
 {
 	
-	Collection<IngredientSpecification> ingredientsSpecification = variables.catryzer.catMultiMap.get(mapping.category);
+	Collection<Ingredient> ingredientsSpecification = variables.catryzer.catMultiMap.get(mapping.category);
 	Set<String> ingredientsNames = variables.catryzer.getIngredientsNames_de(ingredientsSpecification);
 %>
 

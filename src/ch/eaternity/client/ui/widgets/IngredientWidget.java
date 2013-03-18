@@ -1,8 +1,14 @@
 package ch.eaternity.client.ui.widgets;
 
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Season;
+import org.eaticious.common.SeasonDate;
+import org.eaticious.common.SeasonDateImpl;
+import org.eaticious.common.Unit;
+
+import ch.eaternity.client.DataController;
 import ch.eaternity.client.ui.RecipeEdit;
-import ch.eaternity.shared.IngredientSpecification;
-import ch.eaternity.shared.SeasonDate;
+import ch.eaternity.shared.Ingredient;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,23 +38,25 @@ public class IngredientWidget extends Composite {
 	@UiField Label co2valueLabel;
 	@UiField Button closeButton;
 	
-	private IngredientSpecification ingSpec;
+	private DataController dco;
+	private Ingredient ingredient;
 	private RecipeEdit recipeEdit;
 	private int month;
 	
 	public IngredientWidget() {}
 			
-	public IngredientWidget(IngredientSpecification ingSpec, RecipeEdit recipeEdit, int month) {
+	public IngredientWidget(DataController cdo, Ingredient ingSpec, RecipeEdit recipeEdit, int month) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.ingSpec = ingSpec;
+		this.dco = dco;
+		this.ingredient = ingSpec;
 		this.recipeEdit = recipeEdit;
 		
 		amountBox.setAlignment(TextAlignment.RIGHT);
-		amountBox.setText(Integer.toString(ingSpec.getWeight()));
+		amountBox.setText(Integer.toString(ingSpec.getWeight().getAmount().intValue()));
 		amountBox.setWidth("36px");
 		
-		nameLabel.setText(ingSpec.getName());
+		nameLabel.setText(ingSpec.getProduct().getName(dco.getLocale()));
 		updateCO2Value();
 		
 		updateIcons();
@@ -56,7 +64,7 @@ public class IngredientWidget extends Composite {
 
 	
 	public void updateCO2Value() {
-		co2valueLabel.setText("" + ((int)ingSpec.getCalculatedCO2Value()) +"g");
+		co2valueLabel.setText("" + ((int)ingredient.getCalculatedCO2Value()) +"g");
 	}
 
 	
@@ -64,26 +72,25 @@ public class IngredientWidget extends Composite {
 			
 			// Saisonal
 			HTML seasonIcon = new HTML();
-			if(ingSpec.getCondition() != null && ingSpec.getCondition().symbol.equalsIgnoreCase("frisch") && ingSpec.getDistance() < 500000){
-				if(ingSpec.getStartSeason() != null && ingSpec.getStopSeason() != null){
+			if(ingredient.getCondition() != null && ingredient.getCondition().symbol.equalsIgnoreCase("frisch") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500){
+				Season season = ingredient.getProduct().getSeason();
+				if(season != null){
 
-					SeasonDate date = new SeasonDate(month,1);
-					SeasonDate dateStart = ingSpec.getStartSeason();		
-					SeasonDate dateStop =  ingSpec.getStopSeason();
+					SeasonDate date = new SeasonDateImpl(month,1);
 					
-					if( date.after(dateStart) && date.before(dateStop) ){
+					if( date.after(season.getBeginning()) && date.before(season.getEnd()) ){
 						seasonIcon.setHTML(seasonIcon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (!ingSpec.getCondition().symbol.equalsIgnoreCase("frisch") && !ingSpec.getProduction().symbol.equalsIgnoreCase("GH") && ingSpec.getDistance() < 500000) {
+					} else if (!ingredient.getCondition().symbol.equalsIgnoreCase("frisch") && !ingredient.getProduction().symbol.equalsIgnoreCase("GH") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500) {
 						seasonIcon.setHTML(seasonIcon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (ingSpec.getProduction().symbol.equalsIgnoreCase("GH")) {} 
+					} else if (ingredient.getProduction().symbol.equalsIgnoreCase("GH")) {} 
 			} 
 			
 			// rating
 			HTML ratingIcon = new HTML();
-			if(ingSpec.getCalculatedCO2Value()/ingSpec.getWeight() < .4){
+			if(ingredient.getProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < .4){
 				ratingIcon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
 		
-			} else if(ingSpec.getCalculatedCO2Value()/ingSpec.getWeight() < 1.2){
+			} else if(ingredient.getProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < 1.2){
 				ratingIcon.setHTML("<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 		
 			} else {
@@ -92,7 +99,7 @@ public class IngredientWidget extends Composite {
 
 			// BIO
 			HTML bioIcon = new HTML();
-			if(ingSpec.getProduction() != null && ingSpec.getProduction().symbol.equalsIgnoreCase("bio")){
+			if(ingredient.getProduction() != null && ingredient.getProduction().symbol.equalsIgnoreCase("bio")){
 				bioIcon.setHTML("<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
 			}
 
@@ -109,8 +116,8 @@ public class IngredientWidget extends Composite {
 	}
 	
 
-	public IngredientSpecification getIngredient() {
-		return this.ingSpec;
+	public Ingredient getIngredient() {
+		return this.ingredient;
 	}
 	
 	public HTML getDragHandle() {
@@ -134,7 +141,7 @@ public class IngredientWidget extends Composite {
 			if(!amountBox.getText().equalsIgnoreCase("")){
 				MengeZutatWert = amountBox.getText().trim();
 				try {
-					ingSpec.setWeight(Double.valueOf(MengeZutatWert).intValue());
+					ingredient.setWeight(new QuantityImpl(Double.valueOf(MengeZutatWert), Unit.GRAM));
 					updateCO2Value();
 				}
 				catch (NumberFormatException nfe) {

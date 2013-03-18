@@ -6,7 +6,7 @@ import java.util.List;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.shared.Distance;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 
@@ -97,7 +97,7 @@ public class DistancesDialog extends DialogBox{
 		mapsTable.removeAllRows();
 		
 		String processedLocation = distances.strProcessLocation(address);
-		if (processedLocation.equals("failed")) {
+		if (processedLocation == null) {
 			statusInfo.setText("Wir können diese Adresse nicht finden");
 			adressBox.selectAll();
 		}
@@ -107,12 +107,12 @@ public class DistancesDialog extends DialogBox{
 			List<String> extractions = new ArrayList<String>();
 			if (dco.getCurrentKitchen() != null ) {
 				for (Recipe recipe : dco.getCurrentKitchenRecipes()){
-					for (IngredientSpecification ingSpec : recipe.getIngredients())
+					for (Ingredient ingSpec : recipe.getIngredients())
 						extractions.add(ingSpec.getExtraction().symbol);
 				}
 			}
 			else {
-				for (IngredientSpecification ingSpec : dco.getEditRecipe().getIngredients())
+				for (Ingredient ingSpec : dco.getEditRecipe().getIngredients())
 					extractions.add(ingSpec.getExtraction().symbol);
 			}
 			

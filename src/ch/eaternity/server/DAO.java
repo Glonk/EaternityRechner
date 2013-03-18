@@ -4,25 +4,22 @@ package ch.eaternity.server;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Converter;
-
 import ch.eaternity.shared.Condition;
+import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Extraction;
+import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.Transportation;
 import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
 import ch.eaternity.shared.Staff;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Transportation;
 
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.users.User;
@@ -37,13 +34,13 @@ import com.googlecode.objectify.util.DAOBase;
 public class DAO extends DAOBase
 {
 	static {
-		ObjectifyService.register(Ingredient.class);
+		ObjectifyService.register(FoodProduct.class);
 		ObjectifyService.register(Extraction.class);
 		ObjectifyService.register(Condition.class);
 		ObjectifyService.register(Transportation.class);
 		ObjectifyService.register(ProductLabel.class);
 		ObjectifyService.register(RecipeComment.class);
-		ObjectifyService.register(IngredientSpecification.class);
+		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Recipe.class);
 		ObjectifyService.register(UserRecipeWrapper.class);
 		ObjectifyService.register(ImageBlob.class);
@@ -107,9 +104,9 @@ public class DAO extends DAOBase
 	}
 	
 	/** Your DAO can have your own useful methods */
-	public Long updateOrCreateIngredient(Ingredient ingredient)
+	public Long updateOrCreateIngredient(FoodProduct ingredient)
 	{
-		Ingredient found = ofy().find(Ingredient.class, ingredient.getId());
+		FoodProduct found = ofy().find(FoodProduct.class, ingredient.getId());
 
 		if (found == null)
 			ofy().put(ingredient);
@@ -120,59 +117,24 @@ public class DAO extends DAOBase
 		return ingredient.getId();
 	}
 	
-	public ArrayList<Ingredient> getAllIngredients()
+	public ArrayList<FoodProduct> getAllIngredients()
 	{
 		//        Objectify ofy = ObjectifyService.begin();
-		Query<Ingredient> found = ofy().query(Ingredient.class);
+		Query<FoodProduct> found = ofy().query(FoodProduct.class);
 
 
-		ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>(found.count());
+		ArrayList<FoodProduct> ingredients = new ArrayList<FoodProduct>(found.count());
 
-		QueryResultIterator<Ingredient> iterator = found.iterator();
+		QueryResultIterator<FoodProduct> iterator = found.iterator();
 		while (iterator.hasNext()) {
-			Ingredient ingredient = iterator.next();
+			FoodProduct ingredient = iterator.next();
 			ingredients.add(ingredient);
 		}
 
 		return ingredients;
 	}
 
-	public Boolean CreateIngredients(ArrayList<Ingredient> ingredients)
-	{
-		ofy().put(ingredients);
-
-
-		// and now update all the recipes, that got changed...
-
-		// get all recipes
-		Query<UserRecipeWrapper> found = ofy().query(UserRecipeWrapper.class);
-
-		//iterate over them
-		QueryResultIterator<UserRecipeWrapper> iterator = found.iterator();
-		while (iterator.hasNext()) {
-			UserRecipeWrapper recipe = iterator.next();
-
-			// for each recipe find all ingredients Specifications
-			for(IngredientSpecification ingSpec : recipe.getRecipe().getIngredients()){
-				for(Ingredient ingredient: ingredients){
-					if(ingSpec.getZutat_id().equals(ingredient.getId())){
-						ingSpec.setNormalCO2Value(ingredient.getCo2eValue());
-						break;
-					}
-				}
-
-			}
-			recipe.getRecipe().setCO2Value();
-			ofy().put(recipe);
-
-		}
-
-
-
-		return true;
-	}
-
-	public Boolean CreateIngredientSpecifications(ArrayList<IngredientSpecification> ingredientPecifications)
+	public Boolean CreateIngredientSpecifications(ArrayList<Ingredient> ingredientPecifications)
 	{
 		ofy().put(ingredientPecifications);
 		return true;
@@ -180,7 +142,7 @@ public class DAO extends DAOBase
 
 	public String getAllIngredientsXml() {
 		// TODO export...
-		ArrayList<Ingredient> ingredients = getAllIngredients();
+		ArrayList<FoodProduct> ingredients = getAllIngredients();
 		return null;
 	}
 

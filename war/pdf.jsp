@@ -6,7 +6,7 @@
 
 <%@ page import="ch.eaternity.server.DAO" %>
 <%@ page import="ch.eaternity.shared.Recipe" %>
-<%@ page import="ch.eaternity.shared.IngredientSpecification" %>
+<%@ page import="ch.eaternity.shared.Ingredient" %>
 <%@ page import="ch.eaternity.shared.Converter" %>
 <%@ page import="ch.eaternity.shared.RecipeComment" %>
 <%@ page import="ch.eaternity.shared.comparators.RezeptValueComparator" %>
@@ -96,7 +96,7 @@ if (user != null) {
 	int removeIndex = -1;
 	for(Recipe rezept2:adminRecipes){
 		if(rezept2.getId().equals(recipe.getId())){
-			removeIndex = adminRecipes.indexOf(rezept2);
+	removeIndex = adminRecipes.indexOf(rezept2);
 		}
 	}
 	if(removeIndex != -1){
@@ -121,8 +121,7 @@ if (user != null) {
 	</script>
 
 <%
-
-} else {
+	} else {
  if(tempIds != null){
 	rezeptePersonal = dao.getRecipeByIds(tempIds,true);
  } else {
@@ -131,8 +130,8 @@ if (user != null) {
 		DoItWithPermanentIds = false;
 	 } 
 	 if(kitchenId != null){
-			Long kitchenLongId = Long.parseLong(kitchenId);
-			rezeptePersonal = dao.getKitchenRecipes(kitchenLongId);
+	Long kitchenLongId = Long.parseLong(kitchenId);
+	rezeptePersonal = dao.getKitchenRecipes(kitchenLongId);
 		DoItWithPermanentIds = false;
 	 }
  }
@@ -165,10 +164,10 @@ if(rezeptePersonal.size() != 0){
 		counter++;
 		recipe.setCO2Value();
 		if(recipe.getCO2Value()>MaxValueRezept){
-			MaxValueRezept = recipe.getCO2Value();
+	MaxValueRezept = recipe.getCO2Value();
 		} 
 		if(recipe.getCO2Value()<MinValueRezept){
-			MinValueRezept = recipe.getCO2Value();
+	MinValueRezept = recipe.getCO2Value();
 		}
 	}
 	average = (average /counter) + extra;
@@ -187,7 +186,6 @@ if(rezeptePersonal.size() != 0){
 	median = ((lower + upper) / 2.0);
     }	    
 }
-		
 %>
 
 
@@ -750,12 +748,10 @@ idsToAdd = new Array();
 baseUrl = getBaseURL();
 
 
-<% 
-for(Recipe recipe: rezeptePersonal){
+<%for(Recipe recipe: rezeptePersonal){
 	long compute = recipe.getId() * iTimeStamp;
-	String code = Converter.toString(compute,34); 
-	%>
-idsToAdd['<%= code %>'] = true<%	}	%>
+	String code = Converter.toString(compute,34);%>
+idsToAdd['<%=code%>'] = true<%}%>
 
 arrayAdd(idsToAdd)
 }
@@ -843,14 +839,18 @@ function getBaseURL() {
 </div>
 
 <h1>Menu Optimierung</h1>
-<% if(DoItWithPermanentIds) { %>
+<%
+	if(DoItWithPermanentIds) {
+%>
 
 
 
 
 <a href="http://next.eaternityrechner.appspot.com/view.jsp?ids=93UJI,93UNM" title="menu_view" class="whatever hiddenOnPage" id="getPdf">Dieses Dokument für die markierten Menus als PDF herunterladen.</a>
 
-<% } // just do it simple %>
+<%
+	} // just do it simple
+%>
 
 
 <div  id="footer-left">
@@ -867,7 +867,9 @@ function getBaseURL() {
 
 <div class="content">
 
-<% if(DoItWithPermanentIds) { %>
+<%
+	if(DoItWithPermanentIds) {
+%>
 	
 
 
@@ -875,70 +877,58 @@ function getBaseURL() {
 <!-- Overview -->
 
 <%
-
-}
+	}
 
 
 boolean doIt = false;
 if(rezeptePersonal.size() != 0){
-			doIt = true;
+	doIt = true;
 }
 
 if(doIt){
-	
-	
-
 %>
 
 
 <!-- Statistiks -->
 
 <%
+	if(average > 0){
+
+	String total = "200";
+	String klimafriendly = formatter.format(200*2/5);
+	String length = formatter.format(average/(threshold)*200);
+	String formatted = formatter.format( average );
+
+	String moreOrLess = "";
+	String percent ="";
+	Integer position = 1;
+
+	if(average<=(threshold)){
+		percent = formatter.format( -((average-threshold)/(threshold))*100 );
 
 
 
+	if((climateFriendlyValue-average)<0){
+	//	percent = formatter.format( (-(climateFriendlyValue-average)/(climateFriendlyValue))*100 );
+		moreOrLess = "weniger";
+		position = 2;
+	} else {
+		percent = formatter.format( ((climateFriendlyValue-average)/(climateFriendlyValue))*100 );
+		moreOrLess = "weniger";
+	}
 
+	}
 
-			if(average > 0){
+	if(average>(threshold)){
+		position = 3;
+		length = "200";
+		total = formatter.format((threshold/average)*200);
+		klimafriendly = formatter.format((climateFriendlyValue/average)*200);
+		percent = formatter.format( ((average-threshold)/(threshold))*100 );
+		moreOrLess = "mehr";
 
-			String total = "200";
-			String klimafriendly = formatter.format(200*2/5);
-			String length = formatter.format(average/(threshold)*200);
-			String formatted = formatter.format( average );
-
-			String moreOrLess = "";
-			String percent ="";
-			Integer position = 1;
-
-			if(average<=(threshold)){
-				percent = formatter.format( -((average-threshold)/(threshold))*100 );
-
-
-
-			if((climateFriendlyValue-average)<0){
-			//	percent = formatter.format( (-(climateFriendlyValue-average)/(climateFriendlyValue))*100 );
-				moreOrLess = "weniger";
-				position = 2;
-			} else {
-				percent = formatter.format( ((climateFriendlyValue-average)/(climateFriendlyValue))*100 );
-				moreOrLess = "weniger";
-			}
-
-			}
-
-			if(average>(threshold)){
-				position = 3;
-				length = "200";
-				total = formatter.format((threshold/average)*200);
-				klimafriendly = formatter.format((climateFriendlyValue/average)*200);
-				percent = formatter.format( ((average-threshold)/(threshold))*100 );
-				moreOrLess = "mehr";
-
-			}
-
-
-
-			%>			
+	}
+%>			
 			<table style="font-weight: 300;font-size: 14pt; margin-top:4em" >
 						<!-- label of table -->
 
@@ -959,11 +949,17 @@ if(doIt){
 
 						 <td style="width:6em;text-align: right;padding:0em 1em 0em 1em;background:white;" ><span class="label-vergleich">Im Vergleich</span></td>
 						 <td class="left-border" style="text-align: left;padding-left:1em;background:white;">
-						 <% if (position<2){ %>
-						 Die Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% weniger</span> CO<sub>2</sub>* als die vergleichbaren klimafreundlichen Menus.
-						 <% }else{ %>
-						 Die Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%= percent %>% <%= moreOrLess %></span> CO<sub>2</sub>* als die vergleichbaren Menus im Durchschnitt.
-						 <% } %>
+						 <%
+						 	if (position<2){
+						 %>
+						 Die Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%=percent%>% weniger</span> CO<sub>2</sub>* als die vergleichbaren klimafreundlichen Menus.
+						 <%
+						 	}else{
+						 %>
+						 Die Menus verursachen <span style="font-size: 11pt;font-weight: 400;"><%=percent%>% <%=moreOrLess%></span> CO<sub>2</sub>* als die vergleichbaren Menus im Durchschnitt.
+						 <%
+ 	}
+ %>
 						 </td>
 
 						 <td style="width:11em">
@@ -983,57 +979,69 @@ if(doIt){
 
 							<table cellspacing="0" cellpadding="0" border="1" style="font-weight: 300;font-size: 11pt;margin:2.5em 2em 2em 2em;border:0px;">
 							<tr><td style="text-align:right;border-top: 0px;border-bottom: 0px;border-left: 0px;"></td><td style="border-top: 0px;border-bottom: 0px;border-right: 0px"></td></tr>
-							<% if (position==1){ %>
+							<%
+								if (position==1){
+							%>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
 								 	Die Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
-<!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
+								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%=length%>" />
+<!-- 								 	<%=formatted%> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
-							<% } %>
+							<%
+								}
+							%>
 								<tr height="28">
 								 <td style="text-align:right;vertical-align:top;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;width:8em;font-size: 9pt; line-height: 11px; ">
 								 	klimafreundliche Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="orange.png" alt="orange" height="15"  width="<%= klimafriendly %>" />
-<!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
+								 	<img class="bar" src="orange.png" alt="orange" height="15"  width="<%=klimafriendly%>" />
+<!-- 								 	<%=formatted%> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
-							<% if (position==2){ %>
+							<%
+								if (position==2){
+							%>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
 								 	Die Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
-<!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
+								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%=length%>" />
+<!-- 								 	<%=formatted%> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
-							<% } %>
+							<%
+								}
+							%>
 								<tr height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;font-size: 9pt;">
 								 	Alle Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="gray.png" alt="gray" height="15"  width="<%= total %>" />
-<!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
+								 	<img class="bar" src="gray.png" alt="gray" height="15"  width="<%=total%>" />
+<!-- 								 	<%=formatted%> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
-							<% if (position==3){ %>
+							<%
+								if (position==3){
+							%>
 								<tr  height="28">
 								 <td style="text-align:right;vertical-align:middle;border-top: 0px;border-bottom: 0px;border-left: 0px;padding-right:0.3em;white-space:nowrap;font-size: 11pt;font-weight: 600;text-transform: uppercase;">
 								 	Die Menus
 								 </td>
 								 <td style="border-top: 0px;border-bottom: 0px;border-right: 0px">
-								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%= length %>" />
-<!-- 								 	<%= formatted %> g CO<sub>2</sub>* -->
+								 	<img class="bar" src="green.png" alt="green" height="15"  width="<%=length%>" />
+<!-- 								 	<%=formatted%> g CO<sub>2</sub>* -->
 								 </td>
 								</tr>
-							<% } %>	
+							<%
+								}
+							%>	
 
 								<tr><td style="text-align:right;border-top: 0px;border-bottom: 0px;border-left: 0px"></td><td style="border-top: 0px;border-bottom: 0px;border-right: 0px"></td></tr>
 							</table>
@@ -1044,37 +1052,55 @@ if(doIt){
 								 	<table cellspacing="0" cellpadding="0" border="1" class="rounded" style="float:right;font-weight: 300;font-size: 11pt;margin:2em;padding:1em;">
 										<tr><td style="text-align:right;border:0px"></td><td style="border:0px"></td></tr>
 										<tr height="28">
-										<% if (position==1){ %>
+										<%
+											if (position==1){
+										%>
 										 <td style="border:0px; font-size: 11pt;font-weight: 600;white-space: nowrap;">
 										 	&#x25b6; GROSSARTIG <img class="smile" src="smiley8.png" style="float:none;padding-left:0.5em;margin-bottom:-7px;" alt="smiley" /><img class="smile" src="smiley8.png" style="float:none;margin-bottom:-7px;" alt="smiley" />										 
 										 	</td>
-										 <% } else { %>
+										 <%
+										 	} else {
+										 %>
 										 <td style="border:0px; color:gray;font-size: 9pt;">
 										 	Grossartig
 										 </td>
-										 <% } %>
+										 <%
+										 	}
+										 %>
 										</tr>
 										<tr height="28">
-										<% if (position==2){ %>
+										<%
+											if (position==2){
+										%>
 										 <td style="border:0px; font-size: 11pt;font-weight: 600;">
 										 	&#x25b6; GUT <img class="smile" src="smiley8.png" style="float:none;padding-left:0.5em;margin-bottom:-7px;" alt="smiley" />
 										 </td>
-										 <% } else { %>
+										 <%
+										 	} else {
+										 %>
 										 <td style="border:0px; color:gray;font-size: 9pt;">
 										 	Gut
 										 </td>
-										 <% } %>
+										 <%
+										 	}
+										 %>
 										</tr>
 										<tr height="28">
-										<% if (position==3){ %>
+										<%
+											if (position==3){
+										%>
 										 <td style="border:0px; font-size: 9pt;font-weight: 600;text-transform: uppercase;white-space: nowrap;padding-right:0.2em;">
 										 	&#x25b6; Unter Durchschnitt
 										 </td>
-										 <% } else { %>
+										 <%
+										 	} else {
+										 %>
 										 <td style="border:0px; color:gray;white-space: nowrap;font-size: 9pt;padding-right:1em;">
 										 	Unter Durchschnitt
 										 </td>
-										 <% } %>
+										 <%
+										 	}
+										 %>
 										</tr>
 										<tr><td style="text-align:right;border-top: 0px;border-bottom: 0px;border-left: 0px"></td><td style="border:0px"></td></tr>
 									</table>
@@ -1109,9 +1135,15 @@ if(doIt){
 
 						 </td>
 
-						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><% if(DoItWithPermanentIds) { %>
-	<a href="<%= BASEURL %>?pid="><img src="QR--CODE" width="42" height="42" /></a>
-							<% } else { %> <span style="color:red;font-size:9pt;"></span> <% } %>
+						 <td style="padding:0em 0em 0em 1em;text-align:right;border:0px;width:4em;" class="left-border"><%
+						 	if(DoItWithPermanentIds) {
+						 %>
+	<a href="<%=BASEURL%>?pid="><img src="QR--CODE" width="42" height="42" /></a>
+							<%
+								} else {
+							%> <span style="color:red;font-size:9pt;"></span> <%
+ 	}
+ %>
 						 </td>
 						</tr>
 
@@ -1131,12 +1163,8 @@ if(doIt){
 
 
 			<%
-		}	
-
-
-
-
-%>
+				}
+			%>
 
 
 
@@ -1154,10 +1182,9 @@ if(doIt){
 
 
 	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<!--  <%=Integer.toString(rezeptePersonal.size())%>  -->
 <%
-
-Collections.sort(rezeptePersonal,new RezeptValueComparator());
+	Collections.sort(rezeptePersonal,new RezeptValueComparator());
 
 Boolean notDoneFirst = true;
 Boolean notDoneSeccond = true;
@@ -1247,7 +1274,7 @@ for(Recipe recipe: rezeptePersonal){
 		
 		if(notDoneFirst){
 		notDoneFirst = false;
-		%>
+%>
 		
 		<tr>
 		<td class="table-header bottom-border">Grossartig</td>
@@ -1257,19 +1284,18 @@ for(Recipe recipe: rezeptePersonal){
 		</tr>
 		
 		<%
-		}
-		
-		}
-		if((recipeValue > climateFriendlyValue) && (recipeValue < threshold) &&  notDoneSeccond){ 
-			
-			smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
-			
-		if(notDoneSeccond){
-			notDoneSeccond = false;
-			out.print(klima);
-			klima = "";
-			
-			%>
+					}
+						
+						}
+						if((recipeValue > climateFriendlyValue) && (recipeValue < threshold) &&  notDoneSeccond){ 
+					
+					smilies = "<img class='smile' src='smiley8.png' alt='smiley' />";
+					
+						if(notDoneSeccond){
+					notDoneSeccond = false;
+					out.print(klima);
+					klima = "";
+				%>
 		
 
 		
@@ -1282,20 +1308,20 @@ for(Recipe recipe: rezeptePersonal){
 		
 		
 		<%
-	}
-	
-		}
-		if((recipeValue > threshold) && notDoneThird){ 
-			
-			smilies = "";
-			
-			if(notDoneThird){
-				notDoneThird = false;
-				out.print(klima);
-				out.print(herko);
-				klima = "";
-				herko = "";
-			%>
+							}
+							
+								}
+								if((recipeValue > threshold) && notDoneThird){ 
+							
+							smilies = "";
+							
+							if(notDoneThird){
+								notDoneThird = false;
+								out.print(klima);
+								out.print(herko);
+								klima = "";
+								herko = "";
+						%>
 		
 
 		
@@ -1310,43 +1336,45 @@ for(Recipe recipe: rezeptePersonal){
 		
 		
 		<%
-	}
-		
-		}
-
-	
-		
-		%>
+									}
+										
+										}
+								%>
 
 
-		<tr <%
-		int order = (rezeptePersonal.indexOf(recipe) - counterIterate ) % 2; 
-		if(order == 1) { %>
+		<tr <%int order = (rezeptePersonal.indexOf(recipe) - counterIterate ) % 2; 
+		if(order == 1) {%>
 		class="alternate"
-		<% }%> > 
+		<%}%> > 
 		<td class="menu-name">
-		<% if(DoItWithPermanentIds) { %><span class="hiddenOnPage" style="display:inline"><%= clear %></span><% } %><input type="checkbox" name="<%= code %>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%= code %>')">
-		<%= smilies %><%= recipe.getSymbol() %> - <%= dateString %>
+		<%
+			if(DoItWithPermanentIds) {
+		%><span class="hiddenOnPage" style="display:inline"><%=clear%></span><%
+			}
+		%><input type="checkbox" name="<%=code%>" checked="checked" class="hiddenOnPage" onclick="javascript:addRemoveMenu('<%=code%>')">
+		<%=smilies%><%=recipe.getSymbol()%> - <%=dateString%>
 		</td>
-		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%= length %>" /></td>
-		<td class="co2value" ><%= formatted %></td>
-		<td class="co2percent" ><%= percent %></td>
+		<td class="left-border"><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%=lengthExtra%>" /><img class="bar" src="green.png" alt="gray" height="11" width="<%=length%>" /></td>
+		<td class="co2value" ><%=formatted%></td>
+		<td class="co2percent" ><%=percent%></td>
 		</tr>
 
 
 		<%
+			}	
 
-}	
-
-out.print(klima);
-out.print(herko);
-
-%>
+		out.print(klima);
+		out.print(herko);
+		%>
 </table>
 
 <ul style="font-size:9pt;color:grey;">
-<li>Die Menus haben einen Durchschnitt von: <%= formatter.format(average) %> g CO<sub>2</sub>* (Median: <%= formatter.format(median) %> g CO<sub>2</sub>*) pro Person.</li>
-<% if(extra != 0) {%><li><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%= lengthExtra %>" /> Bei den Menüs wurde <%=extraFormat %> g CO<sub>2</sub>* für die Zubereitung hinzugerechnet.</li><% }%>
+<li>Die Menus haben einen Durchschnitt von: <%=formatter.format(average)%> g CO<sub>2</sub>* (Median: <%=formatter.format(median)%> g CO<sub>2</sub>*) pro Person.</li>
+<%
+	if(extra != 0) {
+%><li><img class="bar" src="light-gray.png" alt="gray" height="11" width="<%=lengthExtra%>" /> Bei den Menüs wurde <%=extraFormat%> g CO<sub>2</sub>* für die Zubereitung hinzugerechnet.</li><%
+	}
+%>
 </ul>
 </form>
 
@@ -1356,13 +1384,11 @@ out.print(herko);
 
 
 <%
-
-
-doIt = false;
+	doIt = false;
 if(rezeptePersonal.size() != 0){
 	for(Recipe recipe: rezeptePersonal){
 		if((recipe.getCO2Value()+extra) < climateFriendlyValue){
-			doIt = true;
+	doIt = true;
 		}
 	}
 }
@@ -1378,7 +1404,7 @@ if(doIt){
 </tr>
 	
 <tr>
-<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%= formatter.format( climateFriendlyValue ) %> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
+<td><p>Diese Rezepte befinden sich unter den besten 20 Prozent. Sie haben unter <%=formatter.format( climateFriendlyValue )%> g CO<sub>2</sub>* pro Person. <!--Es sind am Rezept keine weiteren Verbesserungen notwendig. Im Einzelfall kann es noch Unklarheiten geben.--></p></td>
 <td></td>
 </tr>
 
@@ -1394,25 +1420,21 @@ if(doIt){
 
 </table>
 	
-<!--  <%= Integer.toString(rezeptePersonal.size()) %>  -->
+<!--  <%=Integer.toString(rezeptePersonal.size())%>  -->
 <%
-
-
-for(Recipe recipe: rezeptePersonal){
+	for(Recipe recipe: rezeptePersonal){
 
 long compute = recipe.getId() * iTimeStamp;
 String code = Converter.toString(compute,34);
 
-			recipe.setCO2Value();
-			Double recipeValue = recipe.getCO2Value() + extra;
-			if(recipeValue < climateFriendlyValue){
-			
-			
-			String formatted = formatter.format( recipeValue );
-			String persons = Long.toString(recipe.getPersons());
-			
-			
-			%>
+	recipe.setCO2Value();
+	Double recipeValue = recipe.getCO2Value() + extra;
+	if(recipeValue < climateFriendlyValue){
+	
+	
+	String formatted = formatter.format( recipeValue );
+	String persons = Long.toString(recipe.getPersons());
+%>
 			
 			<table cellspacing="0" cellpadding="0" class="table listTable" >
 			<tr>
@@ -1424,28 +1446,28 @@ String code = Converter.toString(compute,34);
 			<td class="bottom-border">
 			<img class="smile" src="smiley8.png" alt="smiley" />
 			<img class="smile" src="smiley8.png" alt="smiley" />
-			<h3><%= recipe.getSymbol() %></h3>
+			<h3><%=recipe.getSymbol()%></h3>
 			</td>
 			<td class="left-border"></td>
 			</tr>
 
 			<tr>
-			<td><div class="amount"><%= formatted %> g CO<sub>2</sub>* total</div></td>
+			<td><div class="amount"><%=formatted%> g CO<sub>2</sub>* total</div></td>
 			<td class="left-border"><img class="bar" height="11"  src="gray.png" alt="gray" width="140" /></td>
 			</tr>
 			
 			<tr>
 			<td>
 			
-			<span class="subTitle"><%= recipe.getSubTitle() %></span>
+			<span class="subTitle"><%=recipe.getSubTitle()%></span>
 			
-			<span style="color:gray;">Zutaten für <%= persons %> Personen:</span><br />
+			<span style="color:gray;">Zutaten für <%=persons%> Personen:</span><br />
 
 			
 				<%
 								counter = 0;
-									for(IngredientSpecification ingredient: recipe.ingredients){
-									counter = counter + 1;
+														for(Ingredient ingredient: recipe.ingredients){
+														counter = counter + 1;
 							%><%
 								if(counter != 1){
 							%>, <%
@@ -1465,7 +1487,7 @@ String code = Converter.toString(compute,34);
 			
 				<%
 											if(recipe.comments != null){
-																				for(RecipeComment comment: recipe.comments){
+																												for(RecipeComment comment: recipe.comments){
 										%>
 				<tr>
 				<td>• <%=comment.symbol%><%
@@ -1482,7 +1504,7 @@ String code = Converter.toString(compute,34);
 
 				<%
 					}
-								}
+										}
 				%>
 				
 				<tr>
@@ -1587,8 +1609,8 @@ String code = Converter.toString(compute,34);
 			
 				<%
 								counter = 0;
-														for(IngredientSpecification ingredient: recipe.ingredients){
-														counter = counter + 1;
+																			for(Ingredient ingredient: recipe.ingredients){
+																			counter = counter + 1;
 							%><%
 								if(counter != 1){
 							%>, <%
@@ -1609,7 +1631,7 @@ String code = Converter.toString(compute,34);
 			
 			<%
 							if(recipe.comments != null){
-											for(RecipeComment comment: recipe.comments){
+															for(RecipeComment comment: recipe.comments){
 						%>
 			<tr>
 			<td>• <%=comment.symbol%><%
@@ -1626,7 +1648,7 @@ String code = Converter.toString(compute,34);
 
 			<%
 				}
-					}
+						}
 			%>
 			<tr>
 			<td></td>
@@ -1733,8 +1755,8 @@ String code = Converter.toString(compute,34);
 			
 				<%
 								counter = 0;
-														for(IngredientSpecification ingredient: recipe.ingredients){
-														counter = counter + 1;
+																			for(Ingredient ingredient: recipe.ingredients){
+																			counter = counter + 1;
 							%><%
 								if(counter != 1){
 							%>, <%

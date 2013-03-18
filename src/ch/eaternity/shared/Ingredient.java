@@ -1,207 +1,188 @@
+
 package ch.eaternity.shared;
 
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 import javax.persistence.Embedded;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+
+import org.eaticious.common.Quantity;
+import org.eaticious.common.Unit;
+
 
 import com.googlecode.objectify.annotation.Serialized;
 
-public class Ingredient implements Serializable{
+public class Ingredient  implements Serializable, Cloneable  {
 
-	private static final long serialVersionUID = -3996022378367823464L;
+	private static final long serialVersionUID = -2858311250621887438L;
 	
-    @Id private Long id;
-
-    private String symbol;
-    private String symbol_en;
-
-    private Integer co2eValue;
-    private Integer stdWeight; // in grams
-    
-    @Transient
-    private Boolean noAlternative;
-    private List<Long> alternativeIds = new ArrayList<Long>();
-
-	// currently related to Switzerland
-    private Boolean hasSeason;
-    @Embedded
-    private SeasonDate startSeason = new SeasonDate();
-    @Embedded
-    private SeasonDate stopSeason = new SeasonDate();
+	@Id private Long id;
 	
-    private List<String> tags = new ArrayList<String>();
-    
-    @Serialized
-    private Extraction stdExtraction;
-    @Serialized 
-    private List<Extraction> extractions = new ArrayList<Extraction>();
-    
-    @Embedded
-    private List<Condition> conditions = new ArrayList<Condition>();
-    @Embedded
-    private List<Production> productions  = new ArrayList<Production>();
-    @Embedded
-    private List<Transportation> transportations = new ArrayList<Transportation>();
-    
+    private FoodProduct foodproduct;
 
-    // ------------------- public Methods  ------------------- 
-    
-    // empty constructor necessary for GWT serialization
-	private Ingredient() {}
-    
-    public Ingredient(Long id)
-    {
-    	this.setId(id);
-    }
-
-    
-
-    
- // ------------------- getters and setters -------------------
-       
-	public Long getId() {
-		return id;
+	private Quantity weight;
+	private Date cookingDate;
+	private double cost; 
+	
+	@Serialized
+	private Extraction extraction;
+	@Embedded
+	private Condition condition;
+	@Embedded
+	private Production production;
+	@Embedded
+	private Transportation transportation;
+	
+	private Quantity distance;
+	
+	// --------------------------- public methods ---------------------------
+	
+	public Ingredient() {}
+	
+	// Copy Constructor
+	public Ingredient(Ingredient toClone) {
+		foodproduct = new FoodProduct(toClone.foodproduct);
+		weight = toClone.weight;
+		// inlcude Extraction, now just a shallow copy...
+		extraction = toClone.extraction;
+		cookingDate = (Date) toClone.cookingDate.clone();
+		condition = new Condition(toClone.condition);
+		production = new Production(toClone.production);
+		transportation = new Transportation(toClone.transportation);
+		distance = toClone.distance;
+		cost = toClone.cost;
+	}
+	
+	// Copy Constructor from Ingredient
+	public Ingredient(FoodProduct foodproduct) {
+		this.foodproduct = foodproduct;
+		if (foodproduct.getExtractions() != null)
+			extraction = new Extraction(foodproduct.getExtractions().get(0));
+		if (foodproduct.getConditions() != null)
+			condition = new Condition(foodproduct.getConditions().get(0));
+		if (foodproduct.getProductions() != null)
+			production = new Production(foodproduct.getProductions().get(0));
+		if (foodproduct.getTransportations() != null)
+			transportation = new Transportation(foodproduct.getTransportations().get(0));
+	}
+	
+	public void setExtraction(Extraction stdExtractionSymbol) {
+		this.extraction = stdExtractionSymbol;
+	}
+	
+	public FoodProduct getProduct() {
+		return foodproduct;
+	}
+	
+	public Extraction getExtraction() {
+		return extraction;
+	}
+	public void setCookingDate(Date cookingDate) {
+		this.cookingDate = cookingDate;
+	}
+	public Date getCookingDate() {
+		return cookingDate;
+	}
+	public void setCondition(Condition zustand) {
+		this.condition = zustand;
+	}
+	public Condition getCondition() {
+		return condition;
+	}
+	public void setProduction(Production produktion) {
+		this.production = produktion;
+	}
+	public Production getProduction() {
+		return production;
+	}
+	public void setTransportation(Transportation transportmittel) {
+		this.transportation = transportmittel;
+	}
+	public Transportation getTransportation() {
+		return transportation;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public Long getId() {
+		return id;
 	}
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+	public void setWeight(Quantity weight) {
+		this.weight = weight;
 	}
 
-	public String getSymbol_en() {
-		return symbol_en;
+	public Quantity getWeight() {
+		return weight;
 	}
 
-	public void setSymbol_en(String symbol_en) {
-		this.symbol_en = symbol_en;
+	public void setDistance(Quantity distance) {
+		this.distance = distance;
 	}
 
-	public Integer getCo2eValue() {
-		return co2eValue;
-	}
-
-	public void setCo2eValue(Integer co2eValue) {
-		this.co2eValue = co2eValue;
-	}
-
-	public Integer getStdWeight() {
-		return stdWeight;
-	}
-
-	public void setStdWeight(Integer stdWeight) {
-		this.stdWeight = stdWeight;
-	}
-
-	public Boolean getNoAlternative() {
-		return noAlternative;
-	}
-
-	public void setNoAlternative(Boolean noAlternative) {
-		this.noAlternative = noAlternative;
+	public Quantity getDistance() {
+		return distance;
 	}
 	
-    public List<Long> getAlternatives() {
-		return alternativeIds;
-	}
-
-	public void setAlternatives(List<Long> alternativeIds) {
-		this.alternativeIds = alternativeIds;
-	}
-
-	public Boolean getHasSeason() {
-		return hasSeason;
-	}
-
-	public void setHasSeason(Boolean hasSeason) {
-		this.hasSeason = hasSeason;
-	}
-
-	public SeasonDate getStartSeason() {
-		return startSeason;
-	}
-
-	public void setStartSeason(SeasonDate startSeason) {
-		this.startSeason = startSeason;
+	public int getKmDistanceRounded() {
+		int d = (int)(distance.convert(Unit.METER).getAmount()/10000);
+		if (d%10 >= 5)
+			d = d + 10;
+		int dist = ((int)(d/10))*100;
+		return dist;
 	}
 	
-	public void setStartSeason(String startSeason) {
-		this.startSeason.setDate(startSeason);
+	public double calculateCo2ValueNoFactors() {
+		return foodproduct.getCo2eValue().convert(Unit.GRAM).getAmount()*weight.getAmount();
 	}
 
-	public SeasonDate getStopSeason() {
-		return stopSeason;
-	}
 
-	public void setStopSeason(SeasonDate stopSeason) {
-		this.stopSeason = stopSeason;
+	public double getCalculatedCO2Value() {
+		// sum up all parts
+		return calculateCo2ValueNoFactors() + getConditionQuota() + getTransportationQuota() + getProductionQuota();
 	}
 	
-	public void setStopSeason(String stopSeason) {
-		this.stopSeason.setDate(stopSeason);
+	public double getConditionQuota() {
+		if(condition != null && condition.factor != null){
+			return condition.factor*weight.getAmount();
+		}
+		else
+			return 0.0;
+	}
+	
+	public double getTransportationQuota() {
+		if(transportation != null && transportation.factor != null){
+			if(distance.getAmount() != 0)
+				return transportation.factor*distance.getAmount()/1000000*weight.getAmount();
+			else
+				return 0.0;
+		} 
+		else
+			return 0.0;
+	}
+	
+	public double getProductionQuota() {
+		if(production != null && production.factor != null){
+			return production.factor*weight.getAmount();
+		}
+		else
+			return 0.0;
 	}
 
-	public List<String> getTags() {
-		return tags;
+	
+	// returns -1 if price is not set yet
+	public double getCost(){
+		return cost;
 	}
 
-	public void setTags(List<String> tags) {
-		this.tags = tags;
+	public void setCost(double cost)
+	{
+		this.cost = cost;
 	}
-
-	public Extraction getStdExtraction() {
-		return stdExtraction;
-	}
-
-	public void setStdExtraction(Extraction stdExtraction) {
-		this.stdExtraction = stdExtraction;
-	}
-
-	public List<Extraction> getExtractions() {
-		return extractions;
-	}
-
-	public void setExtractions(List<Extraction> extractions) {
-		this.extractions = extractions;
-	}
-
-	public List<Condition> getConditions() {
-		return conditions;
-	}
-
-	public void setConditions(List<Condition> conditions) {
-		this.conditions = conditions;
-	}
-
-	public List<Production> getProductions() {
-		return productions;
-	}
-
-	public void setProductions(List<Production> productions) {
-		this.productions = productions;
-	}
-
-	public List<Transportation> getTransportations() {
-		return transportations;
-	}
-
-	public void setTransportations(List<Transportation> transportations) {
-		this.transportations = transportations;
-	}
-
-
-
-
-    
 }
+
+
+

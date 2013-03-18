@@ -3,10 +3,15 @@ package ch.eaternity.client.ui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.IngredientSpecification;
+import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.Ingredient;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -60,16 +65,17 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	@UiField HTML CoherenceHTML;
 	
-	private IngredientSpecification ingSpec;
+	private Ingredient ingredient;
+	private FoodProduct product;
 	private RecipeEdit recipeEdit;
 	private DataController dco;
 	
-	private static final String calulateAnchor = "<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>";
+	private static final String calulationAnchor = "<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>";
 	
 	// ---------------------- public Methods -----------------------
 	
-	public IngredientSpecificationWidget(RecipeEdit recipeEdit, IngredientSpecification ingSpec, DataController dco) {
-		this.ingSpec = ingSpec;
+	public IngredientSpecificationWidget(RecipeEdit recipeEdit, Ingredient ingredient, DataController dco) {
+		this.ingredient = ingredient;
 		this.recipeEdit = recipeEdit;
 		this.dco = dco;
 		setFields();
@@ -86,7 +92,7 @@ public class IngredientSpecificationWidget extends Composite {
 		//old triggerHerkunftChange
 	}
 	
-	private void unknownExtractionSelected(){
+	private void switchToUnknownExtraction(){
 		int width = ExtractionList.getOffsetWidth();
 		ExtractionList.setVisible(false);
 		
@@ -94,59 +100,63 @@ public class IngredientSpecificationWidget extends Composite {
 		UnknownExtractionTextBox.setVisible(true);
 		UnknownExtractionTextBox.setText("");
 		
-		kmHTML.setHTML(calulateAnchor);
+		kmHTML.setHTML(calulationAnchor);
 		
 		UnknownExtractionTextBox.setFocus(true);
 	}
 	
-	private void dontAddExtraction() {
-			UnknownExtractionTextBox.setVisible(false);
-			ExtractionList.setSelectedIndex(i);
-			ExtractionList.setVisible(true);
-			ExtractionList.setFocus(true);
-			changeExtraction();
+
+	private void switchToKnownExtractions() {
+		changeExtraction();
+		UnknownExtractionTextBox.setVisible(false);
+		ExtractionList.setVisible(true);
+		ExtractionList.setFocus(true);
+	}
+	
+	private void updateExtractionList(Extraction selectedExtraction) {
+		int i = 0;
+		ExtractionList.clear();
+		// find the corresponding item in the ListBox
+		for (Extraction extraction : product.getExtractions()) {
+			ExtractionList.addItem(extraction.getName());
+			
+	  		if (extraction.getName().equals(selectedExtraction.getName())) 
+	  			ExtractionList.setSelectedIndex(i);
+	  		i++;
+		}
 	}
 	
 	private void processNewExtraction() {
   		String processedLocation= dco.getDist().strProcessLocation(UnknownExtractionTextBox.getText());
   		
   		if (processedLocation != null) {
-  			double distance = dco.getDist().getDistance(processedLocation, "");
-  			List<Extraction> extractions = new ArrayList<Extraction>();
+  			Quantity distance = dco.getDist().getDistance(processedLocation, dco.getCurrentLocation());
+  			ingredient.setDistance(distance);
+  			
+  			List<Extraction> extractions = product.getExtractions();
   			boolean foundInList = false;
   			
   			for (Extraction extraction : extractions) {
   				if (extraction.symbol.equals(processedLocation) ){
-	  		  		UnknownExtractionTextBox.setVisible(false);
-	  				ExtractionList.setSelectedIndex(i);
-	  				ExtractionList.setVisible(true);
-	  				ExtractionList.setFocus(true);
+  					updateExtractionList(extraction);
+  					switchToKnownExtractions();
   		  			foundInList = true;
   				}
-  			}
-  			
-  		  	for (int i = 0; i < ExtractionList.getItemCount(); i++) {
-  		  		if (ExtractionList.getValue(i).equals(processedLocation)) {
-	  		  		UnknownExtractionTextBox.setVisible(false);
-	  				ExtractionList.setSelectedIndex(i);
-	  				ExtractionList.setVisible(true);
-	  				ExtractionList.setFocus(true);
-  		  			foundInList = true;
-  		  		}
   			}	
 	     
   		  	//don't add new extraction in ingredients list if already exists
-	    	if (foundInList == false)
+	    	if (foundInList == false) {
+	    		Extraction extraction = new Extraction(processedLocation);
 	    		ExtractionList.insertItem(processedLocation, 0);
-	    		ingSpec.getIngredient().getExtractions().add(0, new Extraction(processedLocation));
-	    	  
-	    	changeExtraction();
+	    		product.getExtractions().add(0, extraction);
+	    		ingredient.setExtraction(extraction);
+	    	}
   		}
   		else {
   			kmHTML.setHTML("Adresse nicht auffindbar!");
 	    	  Timer t = new Timer() {
 	    		  public void run() {
-	    			  kmHTML.setHTML(calulateAnchor);
+	    			  kmHTML.setHTML(calulationAnchor);
 	    		  }
 	    	  };
 	    	  t.schedule(1000);
@@ -161,7 +171,7 @@ public class IngredientSpecificationWidget extends Composite {
 		int selected = ExtractionList.getSelectedIndex();
 		if(count-1 == selected){
 			// we have selected the "andere" item
-			unknownExtractionSelected();
+			switchToUnknownExtraction();
 			
 		} else {
 			changeExtraction();
@@ -180,7 +190,7 @@ public class IngredientSpecificationWidget extends Composite {
 				CostErrorLabel.setText("");
 				double cost = Double.parseDouble(text);
 				if (cost >= 0.0)
-					ingSpec.setCost(cost);
+					ingredient.setCost(cost);
 				else
 					CostErrorLabel.setText("Wert ungueltig");
 			}
