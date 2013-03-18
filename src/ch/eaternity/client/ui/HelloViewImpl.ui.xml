@@ -18,10 +18,18 @@
 	}
 	
 	.login {
-		margin-top:30px;
+		margin-top:10px;
 		margin-left: auto;
    		margin-right: auto;
    		width:80px;
+	}
+	
+	.apply {
+		margin-top:10px;
+		margin-bottom:20px;
+		margin-left: auto;
+   		margin-right: auto;
+   		width:200px;
 	}
 	.statusInfo {
 		margin-top:20px;
@@ -41,16 +49,17 @@
 		<g:HTMLPanel styleName='{style.main}'>
 			<g:Image ui:field='logoImage'></g:Image>
 			<g:HTML ui:field="WelcomeText" styleName='{style.welcomeText}'>Herzlich Willkommen!<br />
-			<br />
-			Der CO2-Rechner befindet sich in der Beta-Testphase. Bitte logen sie sich mit einem Google Account ein, um den Eaternity CO2-Rechner zu benutzen. Nur freigeschaltete Benutzer
-			erhalten Zugriff auf den Rechner. Für eine Freischaltung kann man sich mit <a class="link" href="https://docs.google.com/forms/d/1dxxJ7cEpgVajUtIETZ5dQv3Kf-eqiZF5EGeo0KkHXho">diesem</a> Formular bewerben.</g:HTML>
+				<br />
+				<p>Der CO2-Rechner befindet sich in der Beta-Testphase.</p>
+				<p>Momentan gewähren wir nur einer handvoll Beta-Tester Zugang. Du kannst dich mit folgendem Forumular als Beta-Tester bewerben: </p>
+			</g:HTML>
+			<g:Button ui:field='applyButton' styleName='{style.apply}'>Beta-Tester Bewerbung</g:Button>
 			
+			<g:HTML><p>Zugang ist derzeit nur mit einem zugelassenen Google Account möglich:</p></g:HTML>
 			<g:Button ui:field='loginButton' styleName='{style.login}'>Login</g:Button>
 			<!--  <g:HTMLPanel width='966px' styleName='{style.panel}' ui:field='framePanel'></g:HTMLPanel> -->
 			<g:HTML ui:field='statusInfo' styleName='{style.statusInfo}'></g:HTML>
 			<g:HTML>
-				<a class="link" href="/Anleitung_Rechner.pdf">Erste Schritte</a><br />
-				<a class="link" href='https://docs.google.com/document/d/1z2Mrc75hS0rCrGFKMjiSPmKCAq8iDXfHH-nhGXjpf7g/edit?usp=sharing' target='_blank'>FAQ zum Beta-Test</a>
 				<div style='margin-top:30px; font-style:italic;'>
 				<b>Disclaimer</b><br />
 				<p>Diese Web-Applikation und ihre Inhalte sind Eigentum von Eaternity. Die Inhalte der Web-Applikation sind dem gemäss urheberrechtlich geschützt. Es ist verboten die

@@ -76,6 +76,11 @@ public class HelloViewImpl extends SimpleLayoutPanel implements HelloView
 	public void onClick(ClickEvent event) {
 		Window.open(loginUrl, "_self", "");
 	}
+	
+	@UiHandler("applyButton")
+	public void onApplyClick(ClickEvent event) {
+		Window.open("https://docs.google.com/forms/d/1dxxJ7cEpgVajUtIETZ5dQv3Kf-eqiZF5EGeo0KkHXho", "_blank", "");
+	}
 
 	@Override
 	public void onResize() {
