@@ -13,20 +13,15 @@ import org.eaticious.common.SeasonImpl;
 import org.eaticious.common.SeasonType;
 import org.eaticious.common.Unit;
 
-
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.IngredientsLoadedEvent;
-import ch.eaternity.client.events.UpdateRecipeViewEvent;
-//import ch.eaternity.server.Ingredient;
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
-import ch.eaternity.shared.Transportation;
-import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Production;
-
+import ch.eaternity.shared.Transportation;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -36,8 +31,8 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -50,6 +45,7 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
+//import ch.eaternity.server.Ingredient;
 
 public class IngredientsDialog extends DialogBox{
 

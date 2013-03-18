@@ -25,19 +25,26 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 
-public class Distance implements Serializable {
+public class CountryDistance implements Serializable {
 	
 	private static final long serialVersionUID = 3172640409035191495L;
 	
 	// Home (to), From, Distance
-	private Map<String,Map<String,Quantity>> distMM;
+	private Map<String,Quantity> distanceMap;
+	private String homeLocation;
+	
 	private final static Geocoder geocoder = new Geocoder();
 	
 	// how many seconds to wait for the distance request call
 	Integer timeToWait = 1;
 	
-	public Distance() {
-		distMM = new HashMap<String,Map<String,Double>>();
+	private CountryDistance() {
+		distanceMap = new HashMap<String,Quantity>();
+	}
+	
+	public CountryDistance(String homelocation) {
+		this();
+		this.homeLocation = homelocation;
 	}
 	
 	/**
@@ -47,12 +54,7 @@ public class Distance implements Serializable {
 	 * @return null if distance doesnt exist
 	 */
 	public Quantity getDistance(String from, String to) {
-		Double dist = null;
-		HashMap<String,Double> toMap = (HashMap<String, Double>) distMM.get(to);
-		if (toMap != null) {
-			dist = toMap.get(from);
-		}
-		return new QuantityImpl(dist, Unit.METER);
+		return distanceMap.get(from);
 	}
 	
 	/**
@@ -91,10 +93,10 @@ public class Distance implements Serializable {
 			return processedLocation.get(0);
 	}
 	
-	
+	/*
 	public void writeDistances(String homeLocation, List<Ingredient> ingSpecs, final FlexTable mapsTable) {
 		double dist;
-		HashMap<String,Double> homeMap = (HashMap<String, Double>) distMM.get(homeLocation);
+		HashMap<String,Double> homeMap = (HashMap<String, Double>) distanceMap.get(homeLocation);
 		if (homeMap == null) {
 			homeMap = new HashMap<String,Double>();
 		}
@@ -102,21 +104,23 @@ public class Distance implements Serializable {
 			for (Ingredient ingSpec : ingSpecs) {
 				String from = ingSpec.getExtraction().symbol;
 				if (homeMap.containsKey(from)) {
-					ingSpec.setDistance(homeMap.get(from));
+					ingSpec.setDistance(new QuantityImpl(homeMap.get(from), Unit.METER));
 				}
 				else {
 					dist = requestDistance(from, homeLocation, mapsTable);
 					homeMap.put(from, dist);
-					ingSpec.setDistance(dist);
+					ingSpec.setDistance(new QuantityImpl(dist, Unit.METER));
 				}				
 			}
 		}
 	}
 	
+	*/
+	
 	public List<SingleDistance> calculateDistances(String homeLocation, List<String> froms, final FlexTable mapsTable) {
 		double dist;
 		List<SingleDistance> distances = new ArrayList<SingleDistance>();
-		HashMap<String,Double> homeMap = (HashMap<String, Double>) distMM.get(homeLocation);
+		HashMap<String,Double> homeMap = (HashMap<String, Double>) distanceMap.get(homeLocation);
 		if (homeMap == null) {
 			homeMap = new HashMap<String,Double>();
 		}
@@ -135,6 +139,13 @@ public class Distance implements Serializable {
 		return distances;
 	}
 	
+	/**
+	 * 
+	 * @param from
+	 * @param to
+	 * @param mapsTable
+	 * @return distance in meters
+	 */
 	public Double requestDistance(final String from, final String to, final FlexTable mapsTable) {
 		final List<Double> distance = new ArrayList<Double>();
 		

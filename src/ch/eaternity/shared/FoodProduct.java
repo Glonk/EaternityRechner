@@ -10,7 +10,6 @@ import org.eaticious.common.SeasonType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;

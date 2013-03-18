@@ -13,7 +13,6 @@
 //import ch.eaternity.shared.Transportation;
 //import ch.eaternity.shared.Production;
 //import ch.eaternity.shared.Recipe;
-//import ch.eaternity.shared.SeasonDate;
 //import ch.eaternity.shared.SingleDistance;
 //import ch.eaternity.shared.IngredientSpecification;
 //

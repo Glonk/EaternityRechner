@@ -17,7 +17,7 @@ import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.shared.ClientData;
-import ch.eaternity.shared.Distance;
+import ch.eaternity.shared.CountryDistance;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
@@ -553,7 +553,7 @@ public class DataController {
 		return cdata.getIngredientByID(id);
 	}
 
-	public Distance getDist() {
+	public CountryDistance getDist() {
 		return cdata.distances;
 	}
 

@@ -19,7 +19,7 @@ public class ClientData implements Serializable{
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	
 	public List<FoodProduct> ingredients;
-	public Distance distances;
+	public CountryDistance distances;
 	public List<Kitchen> kitchens;
 
 	public LoginInfo loginInfo;

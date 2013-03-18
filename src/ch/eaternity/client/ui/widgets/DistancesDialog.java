@@ -5,7 +5,7 @@ import java.util.List;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.shared.Distance;
+import ch.eaternity.shared.CountryDistance;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -46,7 +46,7 @@ public class DistancesDialog extends DialogBox{
 	
 	private RechnerActivity presenter;
 	private DataController dco;
-	private Distance distances;
+	private CountryDistance distances;
 	
 	// --------------- UiHandlers ----------------
 	

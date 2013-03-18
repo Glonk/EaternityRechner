@@ -134,11 +134,6 @@ public class DAO extends DAOBase
 		return ingredients;
 	}
 
-	public Boolean CreateIngredientSpecifications(ArrayList<Ingredient> ingredientPecifications)
-	{
-		ofy().put(ingredientPecifications);
-		return true;
-	}
 
 	public String getAllIngredientsXml() {
 		// TODO export...
