@@ -3,15 +3,12 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Embedded;
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
-
-import com.googlecode.objectify.annotation.Serialized;
-
-
-public class Kitchen implements Serializable, Cloneable{
+@Entity
+public class Kitchen implements Serializable {
  
 	private static final long serialVersionUID = 8711036976355728738L;
 
@@ -19,22 +16,25 @@ public class Kitchen implements Serializable, Cloneable{
     
 	private String symbol;
 
+	@Embed
 	private UploadedImage image;
 	
-	private String location;
+	// location is a valid Google Maps location (processLocation() returns true)
+	private String processedLocation;
 	
 	private String emailAddressOwner;
 	
-	private Boolean changed;
-	
-	@Serialized
-	private ArrayList<Device> devices = new ArrayList<Device>();
-	@Embedded
+	@Embed
+	private List<Device> devices = new ArrayList<Device>();
+	@Embed
 	private EnergyMix energyMix;
 	
-	@Serialized
-	private ArrayList<Staff> personal = new ArrayList<Staff>();
+	@Embed
+	private List<LoginInfo> personal = new ArrayList<LoginInfo>();
     
+	@Ignore
+	private Boolean changed;
+	
     /*
 	public Boolean openRequested;
 	public Boolean open;
@@ -75,11 +75,11 @@ public class Kitchen implements Serializable, Cloneable{
 	}
 
 	public String getLocation() {
-		return location;
+		return processedLocation;
 	}
 
 	public void setLocation(String location) {
-		this.location = location;
+		this.processedLocation = location;
 	}
 
 	public String getEmailAddressOwner() {
@@ -98,7 +98,7 @@ public class Kitchen implements Serializable, Cloneable{
 		this.changed = changed;
 	}
 
-	public ArrayList<Device> getDevices() {
+	public List<Device> getDevices() {
 		return devices;
 	}
 
@@ -114,11 +114,11 @@ public class Kitchen implements Serializable, Cloneable{
 		this.energyMix = energyMix;
 	}
 
-	public ArrayList<Staff> getPersonal() {
+	public List<LoginInfo> getPersonal() {
 		return personal;
 	}
 
-	public void setPersonal(ArrayList<Staff> personal) {
+	public void setPersonal(List<LoginInfo> personal) {
 		this.personal = personal;
 	}
 	

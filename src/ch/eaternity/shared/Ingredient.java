@@ -4,33 +4,35 @@ package ch.eaternity.shared;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Embedded;
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
-
-import com.googlecode.objectify.annotation.Serialized;
-
+@Entity
 public class Ingredient  implements Serializable, Cloneable  {
 
 	private static final long serialVersionUID = -2858311250621887438L;
 	
 	@Id private Long id;
 	
+	// possibly not storing it directly here, but via a key/ref relationship in appengine
+	// and loding it correctly when needed via @Load Ref<FoodProduct>
+	@Embed
     private FoodProduct foodproduct;
 
+    @Embed
 	private Quantity weight;
 	private Date cookingDate;
 	private double cost; 
 	
-	@Serialized
+	@Embed
 	private Extraction extraction;
-	@Embedded
+	@Embed
 	private Condition condition;
-	@Embedded
+	@Embed
 	private Production production;
-	@Embedded
+	@Embed
 	private Transportation transportation;
 	
+	@Embed
 	private Quantity distance;
 	
 	// --------------------------- public methods ---------------------------

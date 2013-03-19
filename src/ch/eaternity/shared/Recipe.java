@@ -6,22 +6,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Embedded;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import com.googlecode.objectify.condition.IfTrue;
+import com.googlecode.objectify.condition.IfFalse;
+import com.googlecode.objectify.annotation.*;
 
-import com.googlecode.objectify.annotation.Indexed;
-import com.googlecode.objectify.annotation.Serialized;
-
-
+@Entity
 public class Recipe implements Serializable, Cloneable{
  
 	private static final long serialVersionUID = -5888386800366492104L;
 		
 	private @Id Long id;
     
-	private Long directAncestorID;
+	private Long directAncestorId;
 	
+	@Index(IfFalse.class)
 	private boolean deleted;
 
 	private String symbol;
@@ -29,12 +27,12 @@ public class Recipe implements Serializable, Cloneable{
 	private String cookInstruction;
 	private UploadedImage image;
 	
-	@Indexed
+	@Index
 	private String emailAddressOwner;
-	@Indexed
-	private Long userID;
+	@Index
+	private Long userId;
 
-	@Embedded
+	@Embed
 	private EnergyMix energyMix;
 	
 	private String ShortUrl;
@@ -43,39 +41,41 @@ public class Recipe implements Serializable, Cloneable{
 	
 	private Long persons;
 	
+	@Embed
+	private List<RecipeComment> comments = new ArrayList<RecipeComment>();
+
+	@Embed
+	private List<Ingredient> ingredients = new ArrayList<Ingredient>();
+	
+	@Embed
+	private List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
+    
+	private Double CO2Value;
+	
+	@Index(IfTrue.class)
+	private Boolean publicationRequested;
+	
+	@Index
+	private Boolean published;
+	
 	private Date createDate;
 	private Date cookingDate;
 	private Long hits;
 	private Long popularity;
-	
-	@Transient
-	private Boolean selected;
-	
-	@Serialized
-	private List<RecipeComment> comments = new ArrayList<RecipeComment>();
-
-	@Serialized
-	private List<Ingredient> ingredients = new ArrayList<Ingredient>();
-	
-	@Serialized
-	private List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
-    
-	private Double CO2Value;
-	private Boolean openRequested;
-	private Boolean open;
 	private Boolean eaternitySelected;
 	private Boolean bio;
 	private Boolean regsas;
 
-	
+	@Ignore
+	private Boolean selected;
 
 	public Recipe() {
 		symbol = "Ihr Menu";
 		subTitle = "Menu Beschreibung";
 		cookInstruction = "Zubereitung";
 		deleted = false;
-		open = false;
-		openRequested = false;
+		published = false;
+		publicationRequested = false;
 		selected = false;
 		persons = 4L;
 		eaternitySelected = false;
@@ -86,7 +86,7 @@ public class Recipe implements Serializable, Cloneable{
 	public Recipe(Recipe toClone) {
 		// call standard constructor
 		this();
-		this.directAncestorID = toClone.id;
+		this.directAncestorId = toClone.id;
 		this.symbol = new String(toClone.symbol);
 		this.subTitle = new String(toClone.subTitle);
 		this.cookInstruction = new String(toClone.cookInstruction);
@@ -119,8 +119,8 @@ public class Recipe implements Serializable, Cloneable{
 		}
 		
 		this.CO2Value = new Double(toClone.CO2Value);
-		this.openRequested = new Boolean(toClone.openRequested);
-		this.open = new Boolean(toClone.open);
+		this.publicationRequested = new Boolean(toClone.publicationRequested);
+		this.published = new Boolean(toClone.published);
 		this.eaternitySelected = new Boolean(toClone.eaternitySelected);
 		this.bio = new Boolean(toClone.bio);
 		this.regsas = new Boolean(toClone.regsas);
@@ -176,12 +176,12 @@ public class Recipe implements Serializable, Cloneable{
 		this.id = id;
 	}
 
-	public Long getDirectAncestorID() {
-		return directAncestorID;
+	public Long getDirectAncestorId() {
+		return directAncestorId;
 	}
 
-	public void setDirectAncestorID(Long directAncestorID) {
-		this.directAncestorID = directAncestorID;
+	public void setDirectAncestorId(Long directAncestorID) {
+		this.directAncestorId = directAncestorID;
 	}
 
 	public String getSymbol() {
@@ -221,12 +221,12 @@ public class Recipe implements Serializable, Cloneable{
 	}
 	
 	
-	public Long getUserID() {
-		return userID;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setUserID(Long userID) {
-		this.userID = userID;
+	public void setUserId(Long userID) {
+		this.userId = userID;
 	}
 
 	public void setEmailAddressOwner(String emailAddressOwner) {
@@ -337,19 +337,19 @@ public class Recipe implements Serializable, Cloneable{
 
 
 	public Boolean getOpenRequested() {
-		return openRequested;
+		return publicationRequested;
 	}
 
 	public void setOpenRequested(Boolean openRequested) {
-		this.openRequested = openRequested;
+		this.publicationRequested = openRequested;
 	}
 
 	public Boolean getOpen() {
-		return open;
+		return published;
 	}
 
 	public void setOpen(Boolean open) {
-		this.open = open;
+		this.published = open;
 	}
 
 	public Boolean getEaternitySelected() {

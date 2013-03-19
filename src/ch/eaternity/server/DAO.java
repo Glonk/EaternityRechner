@@ -1,15 +1,13 @@
 package ch.eaternity.server;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Condition;
-import ch.eaternity.shared.Converter;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
@@ -19,20 +17,15 @@ import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
-import ch.eaternity.shared.Staff;
 import ch.eaternity.shared.Transportation;
 
-import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gwt.core.client.GWT;
 import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Query;
-import com.googlecode.objectify.util.DAOBase;
 
-public class DAO extends DAOBase
+public class DAO 
 {
 	static {
 		ObjectifyService.register(FoodProduct.class);
@@ -43,16 +36,11 @@ public class DAO extends DAOBase
 		ObjectifyService.register(RecipeComment.class);
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Recipe.class);
-		ObjectifyService.register(UserRecipeWrapper.class);
 		ObjectifyService.register(ImageBlob.class);
 		ObjectifyService.register(Kitchen.class);
-		ObjectifyService.register(Staff.class);
 		ObjectifyService.register(LoginInfo.class);
 		ObjectifyService.register(Commitment.class);
 		ObjectifyService.register(Quantity.class);
-		
-		//        ObjectifyService.register(DeviceSpecification.class);
-		//        ObjectifyService.register(Device.class);
 	}
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
@@ -65,7 +53,7 @@ public class DAO extends DAOBase
 
 		if (user != null) {
 			try {
-				loginInfo = ofy().get(LoginInfo.class, user.getUserId());
+				loginInfo = ofy().load().type(LoginInfo.class).id(user.getUserId()).get();
 			} catch (NotFoundException e) {
 				try {
 					loginInfo.setId(Long.parseLong(user.getUserId()));;
@@ -82,7 +70,7 @@ public class DAO extends DAOBase
 			loginInfo.setNickname(user.getNickname());
 			loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
 			loginInfo.setAdmin(userService.isUserAdmin());
-			ofy().put(loginInfo);
+			ofy().save().entity(loginInfo);
 		} else {
 			loginInfo.setLoggedIn(false);
 			loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
@@ -90,71 +78,255 @@ public class DAO extends DAOBase
 		return loginInfo;
 	}
 
-
-	public Long CreateImage(ImageBlob image)
+	// ------------------------ Ingredients -----------------------------------
+	
+	/**
+	 * Saves the products without returning id's
+	 * @param products
+	 * @return 
+	 */
+	public Boolean saveFoodProducts(List<FoodProduct> products)
 	{
-		ofy().put(image);
-		//        ImagesService imgS = ImagesServiceFactory.getImagesService();
-		//        String test = imgS.getServingUrl(image.getPicture());
-		// I propably want something like this: http://jeremyblythe.blogspot.com/
-		return image.getId();
-	}
-
-	public ImageBlob getImage(Long imageID)
-	{
-		return ofy().get(ImageBlob.class, imageID);
-
+		try {
+			ofy().save().entities(products);
+		}
+		catch (Exception e) { 
+			log.log(Level.SEVERE, e.getMessage());
+			return false; 
+		}
+			
+		return true;
 	}
 	
-	public Boolean CreateIngredients(List<FoodProduct> products)
+	/**
+	 * 
+	 * @param product
+	 * @return the auto generated id or null if not found or an exception occured
+	 */
+	public Long saveFoodProduct(FoodProduct product)
 	{
-		for (FoodProduct product : products)
-			ofy().put(product);
-		return null;
+		try {
+			ofy().save().entity(product).now();
+		}
+		catch (Exception e) { 
+			log.log(Level.SEVERE, e.getMessage());
+			return null; 
+		}
+		
+		return product.getId();
 	}
 	
-	/** Your DAO can have your own useful methods */
-	public Long updateOrCreateIngredient(FoodProduct ingredient)
+	/**
+	 * 
+	 * @return all the ingredients of the datastore or null if no ingredients exist or an exception occured
+	 */
+	public List<FoodProduct> getAllIngredients()
 	{
-		FoodProduct found = ofy().find(FoodProduct.class, ingredient.getId());
-
-		if (found == null)
-			ofy().put(ingredient);
-		else
-			ofy().delete(found);
-		ofy().put(ingredient);
-
-		return ingredient.getId();
+		List<FoodProduct> result = null;
+		try {
+			result = ofy().load().type(FoodProduct.class).list();
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage());
+		}
+		
+		return result;
 	}
 	
-	public ArrayList<FoodProduct> getAllIngredients()
-	{
-		//        Objectify ofy = ObjectifyService.begin();
-		Query<FoodProduct> found = ofy().query(FoodProduct.class);
+	// ------------------------ Recipe -----------------------------------
 
-
-		ArrayList<FoodProduct> ingredients = new ArrayList<FoodProduct>(found.count());
-
-		QueryResultIterator<FoodProduct> iterator = found.iterator();
-		while (iterator.hasNext()) {
-			FoodProduct ingredient = iterator.next();
-			ingredients.add(ingredient);
+		public Long saveRecipe(Recipe recipe){
+			try {
+				ofy().save().entity(recipe).now();
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return null;
+			} 
+			return recipe.getId();
+		}
+		
+		public Boolean deleteRecipe(Long id) {
+			try {
+				ofy().delete().type(Recipe.class).id(id);
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return false;
+			} 
+			
+			return true;
 		}
 
-		return ingredients;
+		/**
+		 * @return the recipe or null if not found or an exception occured
+		 */
+		public Recipe getRecipe(Long id){
+			Recipe recipe = null;
+			try {
+				ofy().load().type(Recipe.class).id(id);
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+			} 
+			
+			return recipe;
+		}
+
+		/**
+		 * @return the recipes which belong to the user with userId or null if not found or an exception occured
+		 */
+		public List<Recipe> getUserRecipes(Long userId){
+			try {
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("userId", userId).filter("deleted", false).list();
+				return recipes;
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return null;
+			} 
+		}
+
+		/**
+		 * @return the recipes which are requested for publication but not published yet. the need to be approved
+		 *  or null if not found or an exception occured
+		 */
+		public List<Recipe> getUnapprovedRecipes(){
+			try {
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
+				return recipes;
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return null;
+			} 
+		}
+		
+		/**
+		 * TODO To be specified in future, more concrete otherwise data load will get too big
+		 * @return all recipes stored in the database for admin purposes
+		 *  or null if not found or an exception occured
+		 */
+		public List<Recipe> getAllRecipes(){
+			try {
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("deleted", false).list();
+				return recipes;
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return null;
+			} 
+		}
+		
+		/**
+		 * @return the recipes which published, publicitly available
+		 *  or null if not found or an exception occured
+		 */
+		public List<Recipe> getPublicRecipes(){
+			try {
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
+				return recipes;
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return null;
+			} 
+		}
+		
+		/**
+		 * @return the recipes which are requested for publication but not published yet. the need to be approved
+		 *  or null if not found or an exception occured
+		 */
+		public List<Recipe> getKitchenRecipes(Long id){
+			try {
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", id).filter("deleted", false).list();
+				return recipes;
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getMessage());
+				return null;
+			} 
+		}
+		
+
+		public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
+			/*
+			String[] kitchenIds = kitchenIdsString.split(",");
+			//		Calendar rightNow = Calendar.getInstance();
+			//		long date = rightNow.get(Calendar.WEEK_OF_YEAR);
+
+			Date date = new Date();
+			int iTimeStamp = (int) (date.getTime() * .00003);
+
+			Calendar cal = Calendar.getInstance();
+			cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
+			Date dt = cal.getTime();
+			
+
+			List<Recipe> yourRecipes = new ArrayList<Recipe>();
+
+			for (String kitchenIdString : kitchenIds){
+				long code = 0L;
+				
+				try{
+					code = Converter.fromString(kitchenIdString, 34);
+				} catch(RuntimeException e){
+					GWT.log(e.getLocalizedMessage());
+				}
+
+				long computeId;
+				if(isCoded){
+					computeId = code / iTimeStamp;
+				} else {
+					computeId = code;
+				}
+
+				if(computeId != 0L){
+					UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
+					if(userRezept != null){
+						Recipe recipe = userRezept.getRecipe();
+						if(recipe.getCookingDate() == null){
+							recipe.setCookingDate(dt);
+						}
+						recipe.setId(userRezept.id);
+						if (recipe.isDeleted() == false)
+							yourRecipes.add(recipe);
+					}
+				}
+			}
+
+			return yourRecipes;
+			*/
+			return null;
+		}
+		
+
+
+	// ------------------------ Kitchen -----------------------------------
+	
+	/**
+	 * 
+	 * @param currentKitchen
+	 * @param userId
+	 * @return false if - datastore exception happend (see log for details)
+	 * 					- currentkitchen didn't wasn't in the list of the kitchens of the user
+	 */
+	public Boolean setCurrentKitchen(Long currentKitchen, Long userId) {
+		try {
+			LoginInfo loginInfo = ofy().load().type(LoginInfo.class).filter("userId", userId).first().get();
+			if (!loginInfo.setCurrentKitchen(currentKitchen))
+				return false;
+			ofy().save().entity(loginInfo);
+		} 
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage());
+			return false;
+		} 
+		return true;
 	}
-
-
-	public String getAllIngredientsXml() {
-		// TODO export...
-		ArrayList<FoodProduct> ingredients = getAllIngredients();
-		return null;
-	}
-
-
 
 	public Long saveKitchen(Kitchen kitchen){
-
+		/*
 		// here we need more logic
 		// got through the Users, find them in the Storage, add to each the key of this kitchen
 
@@ -199,17 +371,46 @@ public class DAO extends DAOBase
 
 		// save that kitchen again
 		ofy().put(kitchen);
-
+	
 		return kitchen.getId();
+		*/
+		return 0L;
 	}
 
-	public Kitchen getKitchen(Long KitchenID){
-		Kitchen kitchen = ofy().get(Kitchen.class,KitchenID);
+	/**
+	 * 
+	 * @param kitchenId
+	  * @return the kitchen or null if not found or an exception occured
+	 */
+	public Kitchen getKitchen(Long kitchenId) {
+		/*
+		Kitchen kitchen = null;
+		try {
+			kitchen = ofy().load().type(Kitchen.class).id(kitchenId).get();
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage());
+		} 
 		return kitchen;
+		*/
+		return null;
+	}
+	
+	public Boolean removeKitchen(Long kitchenId) {
+		try {
+			ofy().delete().type(Kitchen.class).id(kitchenId);
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage());
+			return false;
+		} 
+		//TODO remove id's from LoginInfo's, so that no error occurs if wrong id is setted
+		
+		return true;
 	}
 
 	public List<Kitchen> getYourKitchens(User user){
-
+		/*
 		List<Kitchen> yourKitchens = new ArrayList<Kitchen>();
 
 		// The Query itself is Iterable
@@ -238,11 +439,13 @@ public class DAO extends DAOBase
 		}
 
 		return yourKitchens;
+		*/
+		return null;
 
 	}
 
 	public List<Kitchen> adminGetKitchens(User user){
-
+		/*
 		List<Kitchen> adminKitchens = new ArrayList<Kitchen>();
 
 		// The Query itself is Iterable
@@ -255,11 +458,12 @@ public class DAO extends DAOBase
 		}
 
 		return adminKitchens;
-
+	*/
+		return null;
 	}
 
 	public List<Kitchen> getOpenKitchen(){
-
+		/*
 		List<Kitchen> openKitchens = new ArrayList<Kitchen>();
 
 		// The Query itself is Iterable
@@ -271,241 +475,35 @@ public class DAO extends DAOBase
 			openKitchens.add(kitchen);
 		}
 		return openKitchens;
-
+	*/
+		return null;
 	}
 
-
-	public Boolean saveRecipe(Recipe recipe){
-		ofy().put(recipe);
-		return true;
-	}
 	
-	public Boolean deleteRecipe(Long id) {
-		Recipe recipe = getRecipe(id);
-		recipe.setDeleted(true);	
-		ofy().put(recipe);
-		return true;
-	}
-
-	public Recipe getRecipe(Long recipeID){
-		Recipe userRezept = ofy().get(Recipe.class,recipeID);
-		return userRezept;
-	}
-
-	public List<Recipe> getUserRecipes(User user){
-
-		List<Recipe> yourRecipes = new ArrayList<Recipe>();
-
-		// The Query itself is Iterable
-		Query<Recipe> yourUserRecipes = ofy().query(Recipe.class).filter("userID", user.getUserId());
-		QueryResultIterator<Recipe> iterator = yourUserRecipes.iterator();
-
-		while (iterator.hasNext()) {
-			Recipe recipe = iterator.next();
-			if (recipe.isDeleted() == false)
-				yourRecipes.add(recipe);
-		}
-
-		return yourRecipes;
-	}
-
-	public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
-
-		String[] kitchenIds = kitchenIdsString.split(",");
-		//		Calendar rightNow = Calendar.getInstance();
-		//		long date = rightNow.get(Calendar.WEEK_OF_YEAR);
-
-		Date date = new Date();
-		int iTimeStamp = (int) (date.getTime() * .00003);
-
-		Calendar cal = Calendar.getInstance();
-		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
-		Date dt = cal.getTime();
-		
-
-		List<Recipe> yourRecipes = new ArrayList<Recipe>();
-
-		for (String kitchenIdString : kitchenIds){
-			long code = 0L;
-			
-			try{
-				code = Converter.fromString(kitchenIdString, 34);
-			} catch(RuntimeException e){
-				GWT.log(e.getLocalizedMessage());
-			}
-
-			long computeId;
-			if(isCoded){
-				computeId = code / iTimeStamp;
-			} else {
-				computeId = code;
-			}
-
-			if(computeId != 0L){
-				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
-				if(userRezept != null){
-					Recipe recipe = userRezept.getRecipe();
-					if(recipe.getCookingDate() == null){
-						recipe.setCookingDate(dt);
-					}
-					recipe.setId(userRezept.id);
-					if (recipe.isDeleted() == false)
-						yourRecipes.add(recipe);
-				}
-			}
-		}
-
-		return yourRecipes;
-
-	}
-
-	public List<Recipe> adminGetRecipe(User user){
-
-		List<Recipe> adminRecipes = new ArrayList<Recipe>();
-
-		// The Query itself is Iterable
-		Query<UserRecipeWrapper> yourUserRecipes = ofy().query(UserRecipeWrapper.class).filter("user !=", user);
-		QueryResultIterator<UserRecipeWrapper> iterator = yourUserRecipes.iterator();
-
-		while (iterator.hasNext()) {
-			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRecipe();
-			recipe.setId(userRezept.id);
-			if (recipe.isDeleted() == false)
-				adminRecipes.add(recipe);
-		}
-
-		return adminRecipes;
-
-	}
-
-	public List<Recipe> getOpenRecipe(){
-
-		List<Recipe> openRecipes = new ArrayList<Recipe>();
-
-		// The Query itself is Iterable
-		Query<UserRecipeWrapper> yourOpenRecipes = ofy().query(UserRecipeWrapper.class).filter("approvedOpen", true);
-		QueryResultIterator<UserRecipeWrapper> iterator = yourOpenRecipes.iterator();
-
-		while (iterator.hasNext()) {
-			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRecipe();
-			recipe.setId( userRezept.id);
-			if (recipe.isDeleted() == false)
-				openRecipes.add(recipe);
-		}
-
-		return openRecipes;
-
-	}
-
-	public List<Recipe> getKitchenRecipes(Long kitchenId) {
-
-		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-
-		// hack in a date, if there is none...
-		Calendar cal = Calendar.getInstance();
-		cal.set(2010, 0, 1); //year is as expected, month is zero based, date is as expected
-		Date dt = cal.getTime();
-		
-		Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
-		QueryResultIterator<UserRecipeWrapper> iterator = yourKitchenRecipes.iterator();
-
-		while (iterator.hasNext()) {
-			UserRecipeWrapper userRezept = iterator.next();
-			Recipe recipe = userRezept.getRecipe();
-			if(recipe.getCookingDate() == null){
-				recipe.setCookingDate(dt);
-				log.warning("no date set for recipe" + userRezept.getId().toString());
-				if(recipe.getCreateDate() == null){
-					
-					log.warning("also no createdate set for recipe" + userRezept.getId().toString());
-				} else {
-					recipe.setCookingDate(recipe.getCreateDate());
-				}
-			} else {
-				log.info("date was set: " + recipe.getCookingDate().toGMTString());
-			}
-			recipe.setId(userRezept.getId());
-			
-			if (recipe.isDeleted() == false)
-				kitchenRecipes.add(recipe);
-			
-		}
-
-
-		return kitchenRecipes;
-	}
-	
-	
-	
-	public List<Recipe> getKitchenRecipes(User user) {
-		//TODO why does this gets called twice on startup?
-
-		List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-
-		Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", user.getEmail());
-		QueryResultIterator<Staff> staffIterator = kitchenStaff.iterator();
-		while (staffIterator.hasNext()) {
-
-			Staff staffer = staffIterator.next();
-			//TODO some staffer still has a wrong kitchen id...
-			for (Long kitchenId:staffer.kitchensIds){
-
-				//	        		Kitchen kitchen = ofy().get(Kitchen.class,kitchenId);
-				//TODO this is obviously wrong, when we have more kitchens, per recipe ... is this the answer?: does it work?
-				//  http://code.google.com/p/objectify-appengine/wiki/IntroductionToObjectify#Multi-Value_Relationship
-				Query<UserRecipeWrapper> yourKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", kitchenId);
-				QueryResultIterator<UserRecipeWrapper> iterator = yourKitchenRecipes.iterator();
-
-				while (iterator.hasNext()) {
-					UserRecipeWrapper userRezept = iterator.next();
-					Recipe recipe = userRezept.getRecipe();
-					recipe.setId( userRezept.id);
-					if(!kitchenRecipes.contains(recipe)){
-						if (recipe.isDeleted() == false)
-							kitchenRecipes.add(recipe);
-					}
-				}
-
-
-			}
-
-		}
-
-		Query<Kitchen> yourKitchen = ofy().query(Kitchen.class).filter("emailAddressOwner", user.getEmail());
-		QueryResultIterator<Kitchen> kitchenIterator = yourKitchen.iterator();
-		while (kitchenIterator.hasNext()) {
-
-			Kitchen thisKitchen = kitchenIterator.next();
-			Query<UserRecipeWrapper> moreKitchenRecipes = ofy().query(UserRecipeWrapper.class).filter("kitchenIds", thisKitchen.getId());
-			QueryResultIterator<UserRecipeWrapper> iteratorMore = moreKitchenRecipes.iterator();
-
-			while (iteratorMore.hasNext()) {
-				UserRecipeWrapper userRezept = iteratorMore.next();
-				Recipe recipe = userRezept.getRecipe();
-				recipe.setId( userRezept.id);
-				if(!kitchenRecipes.contains(recipe)){
-					if (recipe.isDeleted() == false)
-					kitchenRecipes.add(recipe);
-				}
-			}
-		}	
-
-
-		// The Query itself is Iterable
-		//TODO add also the recipes, of the kitchens, of which you are the owner
-
-
-		return kitchenRecipes;
-	}
 
 	public Long saveCommitment(Commitment commitment) {
-		ofy().put(commitment);
+		ofy().save().entity(commitment);
 		return commitment.id;
 	}
+	
+	// ------------------------ Distances -----------------------------------
+	
 
+	// ------------------------ Images -----------------------------------
+	
+	public Long CreateImage(ImageBlob image)
+	{
+		ofy().save().entity(image).now();
+		//        ImagesService imgS = ImagesServiceFactory.getImagesService();
+		//        String test = imgS.getServingUrl(image.getPicture());
+		// I propably want something like this: http://jeremyblythe.blogspot.com/
+		return image.getId();
+	}
 
+	public ImageBlob getImage(Long imageID)
+	{
+		return ofy().load().type(ImageBlob.class).id(imageID).get();
+	}
 
 
 }

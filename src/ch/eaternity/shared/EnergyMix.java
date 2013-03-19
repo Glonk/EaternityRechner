@@ -5,15 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.Embedded;
-import javax.persistence.Id;
 
-import com.googlecode.objectify.annotation.Serialized;
+import com.googlecode.objectify.annotation.*;
 
 
 public class EnergyMix implements Serializable {

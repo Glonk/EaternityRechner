@@ -4,12 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Embedded;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import com.googlecode.objectify.annotation.*;
 
-import com.googlecode.objectify.annotation.Serialized;
-
+@Entity
 public class FoodProduct implements Serializable {
 
 	private static final long serialVersionUID = -3996022378367823464L;
@@ -19,27 +16,27 @@ public class FoodProduct implements Serializable {
     private String name;
     private String name_en;
 
-    @Embedded
+    @Embed
     private Quantity co2eValue;
-    @Embedded
+    @Embed
     private Quantity stdWeight;
     
-    @Transient
+    @Ignore
     private Boolean notASubstitute;
     private List<Long> substituteIds = new ArrayList<Long>();
 
-    @Embedded
+    @Embed
     private Season season;
 	
     private List<String> tags = new ArrayList<String>();
     
-    @Serialized 
+    @Embed
     private List<Extraction> extractions = new ArrayList<Extraction>();
-    @Embedded
+    @Embed
     private List<Condition> conditions = new ArrayList<Condition>();
-    @Embedded
+    @Embed
     private List<Production> productions  = new ArrayList<Production>();
-    @Embedded
+    @Embed
     private List<Transportation> transportations = new ArrayList<Transportation>();
     
 

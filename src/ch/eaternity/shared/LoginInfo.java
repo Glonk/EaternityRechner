@@ -3,36 +3,37 @@ package ch.eaternity.shared;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.annotation.*;
 
 
 public class LoginInfo implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8516034014140362835L;
 	
 	@Id private Long id;
 	
-	// standard values
 	private boolean loggedIn;
 	
-	@Transient
+	@Ignore
 	private String loginUrl;
-	@Transient
+	@Ignore
 	private String logoutUrl;
 	
 	private String emailAddress;
 	private String nickname;
-	private boolean admin;
+	private boolean isadmin;
+	
+	// saving the id form the Google User here
+	private Long userId;
 
+	//Probably in future like that:
+	// @Load private Ref<Kitchen> currentKitchenId;
 	private Long currentKitchenId;
 	private List<Long> kitchenIDs;
 
 	public LoginInfo() {
-		admin = false;
+		isadmin = false;
 		currentKitchenId = null;
 		loggedIn = false;
 	}
@@ -78,11 +79,11 @@ public class LoginInfo implements Serializable {
 	}
 
 	public void setAdmin(boolean admin) {
-		this.admin = admin;
+		this.isadmin = admin;
 	}
 
 	public boolean isAdmin() {
-		return this.admin;
+		return this.isadmin;
 	}
 
 	public boolean setCurrentKitchen(Long kitchenId) {
