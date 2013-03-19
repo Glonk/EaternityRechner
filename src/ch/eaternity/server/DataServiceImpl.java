@@ -30,8 +30,15 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.NotFoundException;
 
-//import org.apache.log4j.Logger; 
 
+/**
+ * This Object provides a bridge between the DataAccessObject DAO and the RPC environment.
+ * User rights permissions are controlled here, and also limiting amount of RPC calls in 
+ * integrating some into a single call
+ * 
+ * @author aurelianjaggi
+ *
+ */
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
 
 	/**
@@ -238,8 +245,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		DAO dao = new DAO();
 
-		for (FoodProduct product : products)
-			dao.updateOrCreateIngredient(product);
+		dao.CreateIngredients(products);
+		
 		return true;
 		
 	}

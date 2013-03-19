@@ -1,18 +1,8 @@
 package ch.eaternity.shared;
 
-import org.eaticious.common.Nutrient;
-import org.eaticious.common.Quantity;
-import org.eaticious.common.QuantityImpl;
-import org.eaticious.common.Season;
-import org.eaticious.common.SeasonDate;
-import org.eaticious.common.SeasonImpl;
-import org.eaticious.common.SeasonType;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.persistence.Embedded;
 import javax.persistence.Id;
@@ -29,13 +19,16 @@ public class FoodProduct implements Serializable {
     private String name;
     private String name_en;
 
+    @Embedded
     private Quantity co2eValue;
+    @Embedded
     private Quantity stdWeight;
     
     @Transient
     private Boolean notASubstitute;
     private List<Long> substituteIds = new ArrayList<Long>();
 
+    @Embedded
     private Season season;
 	
     private List<String> tags = new ArrayList<String>();
@@ -59,12 +52,12 @@ public class FoodProduct implements Serializable {
 	public FoodProduct(FoodProduct toClone) {
 		name = new String(toClone.name);
 		name_en = new String(toClone.name_en);
-		co2eValue = new QuantityImpl(toClone.co2eValue);
-		stdWeight = new QuantityImpl(toClone.stdWeight);
+		co2eValue = new Quantity(toClone.co2eValue);
+		stdWeight = new Quantity(toClone.stdWeight);
 		notASubstitute = toClone.notASubstitute;
 		for (Long id : toClone.substituteIds)
 			substituteIds.add(id);
-		season = new SeasonImpl(toClone.season);
+		season = new Season(toClone.season);
 		for (String tag : toClone.getTags()) 
 			tags.add(new String(tag));
 		for (Extraction extr : toClone.extractions)
@@ -159,17 +152,12 @@ public class FoodProduct implements Serializable {
 		this.transportations = transportations;
 	}
 
-	public String getName(Locale locale) {
-		if (locale == Locale.ENGLISH)
-			return name_en; 
-		else return name;
+	public String getName() {
+		return name;
 	}
 	
-	public void setName(String name, Locale locale) {
-		if (locale == Locale.ENGLISH)
-			this.name_en = name;
-		else 
-			this.name = name;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public Season getSeason() {
@@ -181,16 +169,7 @@ public class FoodProduct implements Serializable {
 	}
 	
 	public void setSeason(SeasonDate start, SeasonDate stop) {
-		season = new SeasonImpl(start,stop,SeasonType.MAIN_SEASON);
-	}
-
-
-	/**
-	 * not implemented yet
-	 */
-	public Map<Nutrient, Quantity> getNutritionData() {
-		// TODO Auto-generated method stub
-		return null;
+		season = new Season(start,stop,SeasonType.MAIN_SEASON);
 	}
 
 

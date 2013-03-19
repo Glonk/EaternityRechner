@@ -3,25 +3,13 @@ package ch.eaternity.client.ui.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
-import org.eaticious.common.QuantityImpl;
-import org.eaticious.common.Season;
-import org.eaticious.common.SeasonDate;
-import org.eaticious.common.SeasonDateImpl;
-import org.eaticious.common.SeasonImpl;
-import org.eaticious.common.SeasonType;
-import org.eaticious.common.Unit;
 
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.IngredientsLoadedEvent;
-import ch.eaternity.shared.Condition;
-import ch.eaternity.shared.Extraction;
-import ch.eaternity.shared.FoodProduct;
-import ch.eaternity.shared.Production;
-import ch.eaternity.shared.Transportation;
+import ch.eaternity.shared.*;
+
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -45,7 +33,6 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
-//import ch.eaternity.server.Ingredient;
 
 public class IngredientsDialog extends DialogBox{
 
@@ -120,13 +107,13 @@ public class IngredientsDialog extends DialogBox{
 					// symbol
 //					Window.alert("Zutat Name : "  + ((Node) symbol.item(0)).getNodeValue());
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name");
-					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1, Locale.GERMAN );
+					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1 );
 					else isValidIng = false;
 					
 					// CO2eWert		
 					tmpNodeVal1 = getTagContent(zutatElmnt, "CO2eq_Wert");
 					//Window.alert("CO2eWert : "  + Math.round(Float.parseFloat( nodeValue )*1000));
-					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( new QuantityImpl(Double.parseDouble( tmpNodeVal1 )*1000, Unit.KILOGRAM) );
+					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( new Quantity(Double.parseDouble( tmpNodeVal1 )*1000, Unit.KILOGRAM) );
 					else isValidIng = false;
 					
 					
@@ -150,8 +137,8 @@ public class IngredientsDialog extends DialogBox{
 					
 					// std mengeGramm
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
-					if (tmpNodeVal1 != null) newIngredient.setStdWeight(new QuantityImpl(Double.parseDouble( tmpNodeVal1 ), Unit.GRAM));
-					else newIngredient.setStdWeight(new QuantityImpl(100.0, Unit.GRAM));
+					if (tmpNodeVal1 != null) newIngredient.setStdWeight(new Quantity(Double.parseDouble( tmpNodeVal1 ), Unit.GRAM));
+					else newIngredient.setStdWeight(new Quantity(100.0, Unit.GRAM));
 				
 					
 					//Conditions
@@ -179,7 +166,7 @@ public class IngredientsDialog extends DialogBox{
 					}
 					else {
 						isValidIng = false;
-						Window.alert("Problem with:"+ newIngredient.getName(Locale.GERMAN));
+						Window.alert("Problem with:"+ newIngredient.getName());
 					}
 					
 					// Tags oder Labels
@@ -253,10 +240,10 @@ public class IngredientsDialog extends DialogBox{
 					tmpNodeVal2 = getTagContent(zutatElmnt, "saison_stop");
 						
 					if (tmpNodeVal1 != null && tmpNodeVal1 != null)	{
-						SeasonDate startDate = new SeasonDateImpl();
-						SeasonDate stopDate = new SeasonDateImpl();
+						SeasonDate startDate = new SeasonDate();
+						SeasonDate stopDate = new SeasonDate();
 						if (startDate.setDate(tmpNodeVal1) && stopDate.setDate(tmpNodeVal2)) 
-							season = new SeasonImpl(startDate, stopDate, SeasonType.MAIN_SEASON);
+							season = new Season(startDate, stopDate, SeasonType.MAIN_SEASON);
 					}
 					
 						
@@ -280,7 +267,7 @@ public class IngredientsDialog extends DialogBox{
 					
 					// symbol english
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name_Englisch");
-					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1.trim(), Locale.ENGLISH );
+					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1.trim() );
 					//else isValidIng = false;
 
 					// all elements are properly parsed add ingredient
@@ -299,7 +286,7 @@ public class IngredientsDialog extends DialogBox{
 				String invalid_ingredients_names = "";
 				for (FoodProduct ing : invalid_ingredients)
 				{
-					invalid_ingredients_names = invalid_ingredients_names + ing.getName(Locale.GERMAN) + "\n";
+					invalid_ingredients_names = invalid_ingredients_names + ing.getName() + "\n";
 				}
 				Window.alert(
 					amValidIngs + " valid ingredients in xml.\n" + 

@@ -223,7 +223,7 @@ public class RecipeEdit extends Composite {
 				new LoadedDataEventHandler() {
 					@Override
 					public void onLoadedData(LoadedDataEvent event) {
-						loadRecipe(recipeId);
+						//loadRecipe(recipeId);
 					}
 				});
 		presenter.getEventBus().addHandler(AlertEvent.TYPE,

@@ -1,21 +1,14 @@
 package ch.eaternity.shared.comparators;
 
 import java.util.Comparator;
-import java.util.Locale;
 
 import ch.eaternity.shared.FoodProduct;
 
 public class NameComparator implements Comparator<FoodProduct> {
 	
-	Locale locale;
-	
-	public NameComparator(Locale locale) {
-		this.locale = locale;
-	}
-	
 	public int compare(FoodProduct z1, FoodProduct z2) {
-		String o1 = z1.getName(locale);
-		String o2 = z2.getName(locale);
+		String o1 = z1.getName();
+		String o2 = z2.getName();
 		if(o1 instanceof String && o2 instanceof String) {
 			String s1 = (String)o1;
 			String s2 = (String)o2;

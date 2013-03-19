@@ -5,13 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eaticious.common.Quantity;
-import org.eaticious.common.QuantityImpl;
-import org.eaticious.common.Season;
-import org.eaticious.common.SeasonDate;
-import org.eaticious.common.SeasonDateImpl;
-import org.eaticious.common.Unit;
-
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.LoadedDataEvent;
@@ -20,7 +13,13 @@ import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.Quantity;
+import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.Season;
+import ch.eaternity.shared.SeasonDate;
+import ch.eaternity.shared.SeasonDate;
+import ch.eaternity.shared.Unit;
 import ch.eaternity.shared.comparators.NameComparator;
 import ch.eaternity.shared.comparators.ValueComparator;
 
@@ -363,8 +362,8 @@ public class SearchIngredients extends Composite {
 				//			    chain.addComparator(new NameComparator());
 				//			    chain.addComparator(new NumberComparator()
 				
-				Collections.sort(foundIngredients, new NameComparator(dco.getLocale()));
-				Collections.sort(foundAlternativeIngredients, new NameComparator(dco.getLocale()));
+				Collections.sort(foundIngredients, new NameComparator());
+				Collections.sort(foundAlternativeIngredients, new NameComparator());
 			}
 
 			}
@@ -431,7 +430,7 @@ public class SearchIngredients extends Composite {
 	
 			Season season = ingredient.getSeason();
 			if(season != null){
-				SeasonDate date = new SeasonDateImpl(dco.getCurrentMonth(),1);
+				SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
 				
 				if( date.after(season.getBeginning()) && date.before(season.getEnd()) ){
 					htmlString = htmlString+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>";
@@ -439,10 +438,10 @@ public class SearchIngredients extends Composite {
 			}
 	
 			if(ingredient.isNotASubstitute()){
-				htmlString = htmlString+"<div class='ingText'>"+ingredient.getName(dco.getLocale())+"</div>";
+				htmlString = htmlString+"<div class='ingText'>"+ingredient.getName()+"</div>";
 			
 			} else {
-				htmlString = htmlString+"(alt): " +ingredient.getName(dco.getLocale());
+				htmlString = htmlString+"(alt): " +ingredient.getName();
 			}
 			
 			icon.setHTML(htmlString +"<div class='putRight'>ca "+Double.toString( ingredient.getCo2eValue().getAmount()/10) + " g*</div>");
@@ -567,7 +566,7 @@ public class SearchIngredients extends Composite {
 			
 			Quantity weigth = null;
 			if (grams != 0)
-				weigth = new QuantityImpl((double)grams,Unit.GRAM);
+				weigth = new Quantity((double)grams,Unit.GRAM);
 			dco.addIngredientToMenu(item, weigth);
 	
 			t.schedule(200);

@@ -16,6 +16,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.ProductLabel;
+import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeComment;
 import ch.eaternity.shared.Staff;
@@ -48,6 +49,8 @@ public class DAO extends DAOBase
 		ObjectifyService.register(Staff.class);
 		ObjectifyService.register(LoginInfo.class);
 		ObjectifyService.register(Commitment.class);
+		ObjectifyService.register(Quantity.class);
+		
 		//        ObjectifyService.register(DeviceSpecification.class);
 		//        ObjectifyService.register(Device.class);
 	}
@@ -101,6 +104,13 @@ public class DAO extends DAOBase
 	{
 		return ofy().get(ImageBlob.class, imageID);
 
+	}
+	
+	public Boolean CreateIngredients(List<FoodProduct> products)
+	{
+		for (FoodProduct product : products)
+			ofy().put(product);
+		return null;
 	}
 	
 	/** Your DAO can have your own useful methods */

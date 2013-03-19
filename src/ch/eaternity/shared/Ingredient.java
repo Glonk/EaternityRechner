@@ -7,9 +7,6 @@ import java.util.Date;
 import javax.persistence.Embedded;
 import javax.persistence.Id;
 
-import org.eaticious.common.Quantity;
-import org.eaticious.common.Unit;
-
 
 import com.googlecode.objectify.annotation.Serialized;
 

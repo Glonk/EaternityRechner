@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eaticious.common.Quantity;
-import org.eaticious.common.QuantityImpl;
-import org.eaticious.common.Unit;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.maps.client.MapWidget;
@@ -118,9 +114,10 @@ public class CountryDistance implements Serializable {
 	*/
 	
 	public List<SingleDistance> calculateDistances(String homeLocation, List<String> froms, final FlexTable mapsTable) {
+		/*
 		double dist;
 		List<SingleDistance> distances = new ArrayList<SingleDistance>();
-		HashMap<String,Double> homeMap = (HashMap<String, Double>) distanceMap.get(homeLocation);
+		HashMap<String,Quantity> homeMap = (HashMap<String, Quantity>) distanceMap.get(homeLocation);
 		if (homeMap == null) {
 			homeMap = new HashMap<String,Double>();
 		}
@@ -137,6 +134,7 @@ public class CountryDistance implements Serializable {
 			}
 		}
 		return distances;
+		*/ return null;
 	}
 	
 	/**

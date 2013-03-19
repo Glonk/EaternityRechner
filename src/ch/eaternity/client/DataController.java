@@ -3,9 +3,7 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-import org.eaticious.common.Quantity;
 
 import ch.eaternity.client.events.AlertEvent;
 import ch.eaternity.client.events.CollectionsChangedEvent;
@@ -23,6 +21,7 @@ import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.NotLoggedInException;
+import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Util.RecipeScope;
@@ -333,14 +332,14 @@ public class DataController {
 		
 		if(searchString.trim().length() != 0){
 
-			String[] searches = searchString.split(" ");
+ 			String[] searches = searchString.split(" ");
 
 			// consider strings with whitespaces, seek for each string individually
 			for(String search : searches)
 			{
 				// TODO this search algorithm is extremely slow, make faster
 				for(FoodProduct product : cdata.ingredients){
-					if( search.trim().length() <= product.getName(cdata.locale).length() &&  product.getName(cdata.locale).substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
+					if( search.trim().length() <= product.getName().length() &&  product.getName().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
 						if(!ingredients.contains(product)){
 							product.setNotASubstitute(true);
 							ingredients.add(product);
@@ -401,7 +400,7 @@ public class DataController {
 					for(Ingredient ZutatImRezept : recipeIngredients ){
 						if(ZutatImRezept != null){
 							for(String search2 : searches){
-								if( search2.trim().length() <= ZutatImRezept.getProduct().getName(cdata.locale).length() &&  ZutatImRezept.getProduct().getName(cdata.locale).substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
+								if( search2.trim().length() <= ZutatImRezept.getProduct().getName().length() &&  ZutatImRezept.getProduct().getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
 									i++;
 								}
 							}
@@ -575,9 +574,6 @@ public class DataController {
 
 	public String getCurrentLocation() {
 		return cdata.currentLocation;
-	}
-	public Locale getLocale() {
-		return cdata.locale;
 	}
 
 	public void clearEditRecipe() {

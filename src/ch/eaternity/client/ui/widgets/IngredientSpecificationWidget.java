@@ -1,31 +1,20 @@
 package ch.eaternity.client.ui.widgets;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import org.eaticious.common.Quantity;
-import org.eaticious.common.QuantityImpl;
-import org.eaticious.common.Unit;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.Quantity;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.maps.client.geocode.Geocoder;
-import com.google.gwt.maps.client.geocode.LocationCallback;
-import com.google.gwt.maps.client.geocode.Placemark;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
