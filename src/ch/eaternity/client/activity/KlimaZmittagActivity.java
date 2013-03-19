@@ -47,7 +47,7 @@ public class KlimaZmittagActivity extends AbstractActivity implements
 		containerWidget.setWidget(klimaZmittagView.asWidget());
 		
 	
-		dataRpcService.getOpenRecipe(new AsyncCallback<List<Recipe>>() {
+		dataRpcService.getPublicRecipes(new AsyncCallback<List<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}

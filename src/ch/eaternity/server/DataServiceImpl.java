@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 
 import ch.eaternity.client.DataService;
 import ch.eaternity.shared.ClientData;
@@ -28,7 +25,6 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.googlecode.objectify.NotFoundException;
 
 
 /**
@@ -36,7 +32,7 @@ import com.googlecode.objectify.NotFoundException;
  * User rights permissions are controlled here, and also limiting amount of RPC calls in 
  * integrating some into a single call
  * 
- * @author aurelianjaggi
+ * @author aurelian jaggi, manuel klarmann
  *
  */
 public class DataServiceImpl extends RemoteServiceServlet implements DataService {
@@ -47,13 +43,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	private static final long serialVersionUID = -6050252880920260705L;
 
 	private static final Logger Log = Logger.getLogger(DataServiceImpl.class.getName());
-	private static final PersistenceManagerFactory PMF =
-		JDOHelper.getPersistenceManagerFactory("transactions-optional");
-
 
 	
+	// ------------------------ Kitchen -----------------------------------
+	
 	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
-//		checkLoggedIn();
+		checkLoggedIn();
 		UserService userService = UserServiceFactory.getUserService();
 		if(userService.getCurrentUser() == null){
 			throw new NotLoggedInException("Not logged in.");
@@ -69,16 +64,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 
 		return dao.saveKitchen(kitchen);
-//		ofy().put(kitchen);
-
-
 	}
 	
 	
 	public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException {
-		checkLoggedIn();
-		DAO dao = new DAO();
-		dao.ofy().delete(Kitchen.class,kitchenId);
+		// TODO implement
 		return true;
 	}
 	
@@ -101,69 +91,58 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 	}
 	
+	public Boolean setCurrentKitchen(Long id) throws NotLoggedInException {
+		checkLoggedIn();
+		DAO dao = new DAO();
+		return dao.setCurrentKitchen(id, getUserId());
+	}
+	
 
-		
-
-	 
+	// ------------------------ Recipes -----------------------------------
+	
 	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException {
 		checkLoggedIn();
-		
 		DAO dao = new DAO();
-		
-		dao.saveRecipe(recipe);
-
-		return recipe.getId();
+		return dao.saveRecipe(recipe);
 	}
 
-	// TODO approve and disapprove Recipe
-	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException {
+	public Boolean approveRecipe(Long id, Boolean approve) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		Recipe userRezept =  dao.getRecipe(rezeptId);
-		userRezept.setOpen(approve);
-		dao.saveRecipe(userRezept);
-		return true;
+		return dao.approveRecipe(id, approve);
 	}
  
 	public Boolean deleteRecipe(Long recipeId) throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		dao.deleteRecipe(recipeId);
-		return true;
+		return dao.deleteRecipe(recipeId);
 	}
 
 
-	public List<Recipe> getOpenRecipe() {
-		
+	public List<Recipe> getPublicRecipes() {
 		DAO dao = new DAO();
-		List<Recipe> openRecipes = new ArrayList<Recipe>();
-		openRecipes = dao.getOpenRecipe();
-		return openRecipes;	
+		return dao.getPublicRecipes();
 	}
 
-	public List<Recipe> getYourRezepte() throws NotLoggedInException {
+	public List<Recipe> getUserRecipes() throws NotLoggedInException {
 		checkLoggedIn();
 		DAO dao = new DAO();
-		List<Recipe> yourRecipes = new ArrayList<Recipe>();
-		yourRecipes = dao.getUserRecipes(getUser());
-		return yourRecipes;	
+		return dao.getUserRecipes(getUserId());
 	}
 	
-	public List<Recipe> getAdminRezepte() throws NotLoggedInException{
-		UserService userService = UserServiceFactory.getUserService();
-		List<Recipe> adminRecipes = new ArrayList<Recipe>();
-		if(userService.getCurrentUser() != null){
-			if(userService.isUserAdmin()){
-				DAO dao = new DAO();
-				adminRecipes = dao.adminGetRecipe(userService.getCurrentUser());
-			}
+	/**
+	 * just allowed for Admins
+	 */
+	public List<Recipe> getAllRecipes() throws NotLoggedInException{
+		if (checkAdmin()) {
+			DAO dao = new DAO();
+			return dao.getAllRecipes();
 		}
-		return adminRecipes;
-		
+		else
+			return null;
 	}
 
 	public ClientData getData(String requestUri) throws NotLoggedInException {
-		
 		DAO dao = new DAO();
 		ClientData data = new ClientData();
 		
@@ -175,14 +154,16 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		//TODO get Distances
 		
 		if (getUser() != null) {
-			data.userRecipes = dao.getUserRecipes(getUser());
-			data.publicRecipes = dao.getOpenRecipe();
-			data.kitchenRecipes = dao.getKitchenRecipes(getUser()); 
+			data.userRecipes = dao.getUserRecipes(getUserId());
+			data.publicRecipes = dao.getPublicRecipes();
+			
+			if (data.loginInfo.getCurrentKitchen() != null)
+				data.currentKitchenRecipes = dao.getKitchenRecipes(getUserId()); 
 
 			data.kitchens = dao.getYourKitchens(getUser());
 			
 			if (data.loginInfo.isAdmin()) {
-				data.publicRecipes.addAll(getAdminRezepte());
+				data.publicRecipes.addAll(getAllRecipes());
 				
 				// remove double entries
 				for(Recipe recipe: data.userRecipes){
@@ -204,81 +185,67 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 
 		else {
 			data.kitchens = dao.getOpenKitchen();
-
 		}
 		
 		return data;
 	}
 
+	/**
+	 * 
+	 * @throws NotLoggedInException
+	 */
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 			throw new NotLoggedInException("Not logged in.");
 		}
+	}
+	
+	private boolean checkAdmin() {
+		UserService userService = UserServiceFactory.getUserService();
+		return userService.isUserAdmin();
 	}
 
 	private User getUser() {
 		UserService userService = UserServiceFactory.getUserService();
 		return userService.getCurrentUser();
 	}
-
-	static PersistenceManager getPersistenceManager() {
-		return PMF.getPersistenceManager();
+	
+	private Long getUserId() {
+		Long id = null;
+		try {
+			id = Long.parseLong(getUser().getUserId());
+		}
+		catch (NumberFormatException nfe) {
+			Log.log(Level.SEVERE, nfe.getMessage());
+		}
+		return id;
 	}
 
 
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException {
-		PersistenceManager pm = getPersistenceManager();
-
-		try {
-			for(SingleDistance singleDistance : distances){
-				pm.makePersistent(singleDistance);
-			}
-			
-		} finally {
-			pm.close();
-		}
-		return distances.size();
+		// TODO implement
+		return 0;
 	}
 	
 	public Boolean persistIngredients(ArrayList<FoodProduct> products)  throws NotLoggedInException
 	{
-		
 		DAO dao = new DAO();
-
-		dao.CreateIngredients(products);
-		
-		return true;
-		
+		return dao.saveFoodProducts(products);
 	}
 	
 	public String getIngredientsXml()
 	{
-		DAO dao = new DAO();
-		return dao.getAllIngredientsXml();
-	}
-
-	public Boolean setCurrentKitchen(Long lastKitchen) throws NotLoggedInException {
-		DAO dao = new DAO();
-		try {
-			LoginInfo loginInfo = dao.ofy().get(LoginInfo.class, getUser().getUserId());
-			if (!loginInfo.setCurrentKitchen(lastKitchen))
-				return false;
-			dao.ofy().put(loginInfo);
-		} catch (NotFoundException e) {
-			return false;
-		} 
-		return true;
+		return null;
 	}
 	
-	
 
-	// not used anymore de
+	// not used anymore
 	public LoginInfo login(String requestUri) {
-
 		DAO dao = new DAO();
 		return dao.getLoginInfo(requestUri);
-
-	  }
+	}
+	
+	// ----------------------- Images ---------------------------------
 	
 	public String getBlobstoreUploadUrl() {
 		BlobstoreService blobstoreService = BlobstoreServiceFactory

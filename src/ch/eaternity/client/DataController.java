@@ -275,7 +275,7 @@ public class DataController {
 	
 	// reload will do it...
 	public void approveRecipe(final Recipe recipe, final Boolean approve) {
-		dataRpcService.approveRezept(recipe.getId(), approve,new AsyncCallback<Boolean>() {
+		dataRpcService.approveRecipe(recipe.getId(), approve,new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}

@@ -3,37 +3,23 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+import com.googlecode.objectify.annotation.*;
 
-@PersistenceCapable
+@Entity
 public class SingleDistance implements Serializable {
 
-	/** 
-	 * 
-	 */
 	private static final long serialVersionUID = 3172640409035191698L;
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    @Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
-    private String id;
+
+    @Id private String id;
      
-	@Persistent
 	private Double distance;
 	
-	@Persistent
 	private String from;
 	
-	@Persistent
 	private String to;
 	
-	@Persistent
 	private Boolean road;
-	
-	@Persistent
+
 	private Boolean triedRoad;
 	
 	public SingleDistance() {}

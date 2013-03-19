@@ -37,6 +37,8 @@ public class Recipe implements Serializable, Cloneable{
 	
 	private String ShortUrl;
 	// no List, just in one Kitchen
+	
+	@Index
 	private Long kitchenId; // empty is no kitchen...
 	
 	private Long persons;

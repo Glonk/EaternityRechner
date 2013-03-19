@@ -2,11 +2,9 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
-public class ProductLabel implements Serializable, Cloneable{
+public class ProductLabel implements Serializable{
 
 	/**
 	 * 

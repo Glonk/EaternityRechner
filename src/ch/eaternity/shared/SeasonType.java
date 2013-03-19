@@ -9,6 +9,8 @@ public enum SeasonType {
 	// DISCUSS Aurelian: we need also the information that a product doens't have season dependencies. best way here?
 	// DISCUSS Might be good enough to define MAIN_SEASON over the whole year? What is the difference between
 	// OUT_OF_SEASON and NO_SEASON? Does NO_SEASON mean that it is always in season?
-	MAIN_SEASON, OUT_OF_SEASON, NO_SEASON
-
+	MAIN_SEASON, OUT_OF_SEASON, NO_SEASON;
+	
+	private SeasonType() {}
+	
 }

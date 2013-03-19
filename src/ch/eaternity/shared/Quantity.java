@@ -1,6 +1,6 @@
 package ch.eaternity.shared;
 
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
 public class Quantity {
 	

@@ -1,12 +1,12 @@
 package ch.eaternity.server;
 
 
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
 
-
+@Entity
 public class ImageBlob{
 
 

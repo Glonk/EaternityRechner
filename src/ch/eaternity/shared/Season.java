@@ -1,6 +1,6 @@
 package ch.eaternity.shared;
 
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
 public class Season {
 	
@@ -8,10 +8,11 @@ public class Season {
 
 	@Id
 	private Long id;
-	
+	@Embed
 	private SeasonDate start;
+	@Embed
 	private SeasonDate stop;
-	
+	@Embed
 	private SeasonType seasonType;
 	
 	/**

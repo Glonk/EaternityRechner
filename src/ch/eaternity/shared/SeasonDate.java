@@ -1,7 +1,8 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
 /*
  * Represents a start and ending date of a season
@@ -9,7 +10,7 @@ import javax.persistence.Id;
  * day: 1 is first of month, 31 possibly last
  * 
  */
-public class SeasonDate{
+public class SeasonDate implements Serializable {
 	
 	private static final long serialVersionUID = -2858234034518875678L;
 	

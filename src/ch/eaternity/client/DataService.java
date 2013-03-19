@@ -23,10 +23,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface DataService extends RemoteService {
 	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean deleteRecipe(Long rezeptId) throws NotLoggedInException;
-	public List<Recipe> getYourRezepte() throws NotLoggedInException;
-	public List<Recipe> getOpenRecipe();
-	public List<Recipe> getAdminRezepte() throws NotLoggedInException;
-	public Boolean approveRezept(Long rezeptId, Boolean approve) throws NotLoggedInException;
+	public List<Recipe> getUserRecipes() throws NotLoggedInException;
+	public List<Recipe> getPublicRecipes();
+	public List<Recipe> getAllRecipes() throws NotLoggedInException;
+	public Boolean approveRecipe(Long rezeptId, Boolean approve) throws NotLoggedInException;
 
 	public ClientData getData(String requestUri) throws NotLoggedInException;
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException;

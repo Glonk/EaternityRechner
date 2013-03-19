@@ -1,14 +1,9 @@
 package ch.eaternity.shared;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
-import javax.persistence.Embedded;
-import javax.persistence.Id;
-import javax.persistence.Transient;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.googlecode.objectify.annotation.*;
 import com.googlecode.objectify.Key;
 
 public class Extraction implements Serializable,Cloneable{

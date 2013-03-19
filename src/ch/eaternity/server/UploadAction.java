@@ -5,8 +5,6 @@ import gwtupload.server.exceptions.UploadActionException;
 import gwtupload.server.gae.AppEngineUploadAction; 
 import java.io.InputStream; 
 import java.util.List; 
-import javax.jdo.PersistenceManager; 
-import javax.jdo.Transaction; 
 import javax.servlet.http.HttpServletRequest; 
 import org.apache.commons.fileupload.FileItem; 
 import org.apache.commons.io.IOUtils; 

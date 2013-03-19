@@ -20,10 +20,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface DataServiceAsync {
 	public void saveRecipe(Recipe recipe, AsyncCallback<Long> async);
 	public void deleteRecipe(Long rezeptId, AsyncCallback<Boolean> async);
-	public void getYourRezepte(AsyncCallback<List<Recipe>> async);
-	public void getOpenRecipe(AsyncCallback<List<Recipe>> async);
-	public void getAdminRezepte(AsyncCallback<List<Recipe>> asyncCallback);
-	public void approveRezept(Long id, Boolean approve,
+	public void getUserRecipes(AsyncCallback<List<Recipe>> async);
+	public void getPublicRecipes(AsyncCallback<List<Recipe>> async);
+	public void getAllRecipes(AsyncCallback<List<Recipe>> asyncCallback);
+	public void approveRecipe(Long id, Boolean approve,
 			AsyncCallback<Boolean> asyncCallback);
 
 	public void getData(String requestUri, AsyncCallback<ClientData> async);

@@ -7,17 +7,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ch.eaternity.shared.Commitment;
-import ch.eaternity.shared.Condition;
-import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
 import ch.eaternity.shared.ProductLabel;
-import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.RecipeComment;
-import ch.eaternity.shared.Transportation;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -29,18 +24,13 @@ public class DAO
 {
 	static {
 		ObjectifyService.register(FoodProduct.class);
-		ObjectifyService.register(Extraction.class);
-		ObjectifyService.register(Condition.class);
-		ObjectifyService.register(Transportation.class);
 		ObjectifyService.register(ProductLabel.class);
-		ObjectifyService.register(RecipeComment.class);
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Recipe.class);
 		ObjectifyService.register(ImageBlob.class);
 		ObjectifyService.register(Kitchen.class);
 		ObjectifyService.register(LoginInfo.class);
 		ObjectifyService.register(Commitment.class);
-		ObjectifyService.register(Quantity.class);
 	}
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
@@ -300,6 +290,10 @@ public class DAO
 			return null;
 		}
 		
+		public Boolean approveRecipe(Long id, Boolean approve) {
+			// TODO Auto-generated method stub
+			return true;
+		}
 
 
 	// ------------------------ Kitchen -----------------------------------
@@ -504,6 +498,8 @@ public class DAO
 	{
 		return ofy().load().type(ImageBlob.class).id(imageID).get();
 	}
+
+
 
 
 }

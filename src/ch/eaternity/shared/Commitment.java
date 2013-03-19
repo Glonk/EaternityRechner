@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
-public class Commitment implements Serializable, Cloneable {
+@Entity
+public class Commitment implements Serializable {
 
 	/**
 	 * 
@@ -18,6 +19,8 @@ public class Commitment implements Serializable, Cloneable {
 	public Long id;
     
 	public List<Date> dates;
+	
+	@Serialize
 	public  List<Recipe> recipes = new ArrayList<Recipe>();
 	
 	public String email;

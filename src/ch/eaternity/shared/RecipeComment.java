@@ -3,9 +3,9 @@ package ch.eaternity.shared;
 
 import java.io.Serializable;
 
-import javax.persistence.Id;
+import com.googlecode.objectify.annotation.*;
 
-public class RecipeComment implements Serializable, Cloneable{
+public class RecipeComment implements Serializable {
 
 	/**
 	 * 
