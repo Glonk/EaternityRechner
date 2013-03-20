@@ -11,7 +11,7 @@ import com.googlecode.objectify.condition.IfFalse;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class Recipe implements Serializable, Cloneable{
+public class Recipe implements Serializable {
  
 	private static final long serialVersionUID = -5888386800366492104L;
 		
@@ -51,8 +51,7 @@ public class Recipe implements Serializable, Cloneable{
 	
 	@Embed
 	private List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
-    
-	private Double CO2Value;
+   
 	
 	@Index(IfTrue.class)
 	private Boolean publicationRequested;
@@ -81,7 +80,6 @@ public class Recipe implements Serializable, Cloneable{
 		selected = false;
 		persons = 4L;
 		eaternitySelected = false;
-		setCO2Value();
 	}
 	
 	// clone Constructor
@@ -120,13 +118,11 @@ public class Recipe implements Serializable, Cloneable{
 			deviceSpecifications.add(new DeviceSpecification(com));
 		}
 		
-		this.CO2Value = new Double(toClone.CO2Value);
 		this.publicationRequested = new Boolean(toClone.publicationRequested);
 		this.published = new Boolean(toClone.published);
 		this.eaternitySelected = new Boolean(toClone.eaternitySelected);
 		this.bio = new Boolean(toClone.bio);
 		this.regsas = new Boolean(toClone.regsas);
-		setCO2Value();
 	}
 
 	public void addIngredient(Ingredient ingSpec) {
@@ -143,20 +139,6 @@ public class Recipe implements Serializable, Cloneable{
 		this.ingredients.remove(removedIndex);
 	}
 
-
-	public void setCO2Value() {
-		double sum = getDeviceCo2Value();
-		
-		for ( Ingredient zutatSpec : ingredients){
-			sum += zutatSpec.getCalculatedCO2Value();
-		}
-		if(persons != null && persons != 0){
-			CO2Value = sum/persons;
-		} else {
-			CO2Value = sum;
-		}
-		
-	}
 
 	public double getDeviceCo2Value() {
 		double sum = 0;
@@ -332,9 +314,17 @@ public class Recipe implements Serializable, Cloneable{
 		this.deviceSpecifications = deviceSpecifications;
 	}
 
+	//TODO change to quantity
 	public Double getCO2Value() {
-		setCO2Value();
-		return CO2Value;
+		double value = getDeviceCo2Value();
+		
+		for ( Ingredient zutatSpec : ingredients){
+			value += zutatSpec.getCalculatedCO2Value();
+		}
+		if(persons != null && persons != 0)
+			value = value/persons;
+
+		return value;
 	}
 
 

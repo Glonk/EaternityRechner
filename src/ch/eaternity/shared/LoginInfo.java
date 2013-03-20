@@ -6,7 +6,7 @@ import java.util.List;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.*;
 
-
+@Entity
 public class LoginInfo implements Serializable {
 
 	private static final long serialVersionUID = 8516034014140362835L;

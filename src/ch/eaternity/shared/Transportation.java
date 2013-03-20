@@ -9,13 +9,11 @@ public class Transportation implements Serializable {
 	private static final long serialVersionUID = -5971128872903171922L;
 	
 	@Id Long id;
-    public String symbol;
-	public Double factor;
+
+	private String symbol;
+	private Double factor;
     
-    private Transportation()
-    {
-    	
-    }
+    private Transportation() {}
     
     public Transportation(Transportation toClone) {
 		symbol = new String(toClone.symbol);
@@ -29,5 +27,21 @@ public class Transportation implements Serializable {
     public Transportation(String symbol, Double factor) {
     	this.symbol = symbol;
     	this.factor = factor;
+	}
+    
+    public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+
+	public Double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(Double factor) {
+		this.factor = factor;
 	}
 }

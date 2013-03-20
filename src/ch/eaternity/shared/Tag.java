@@ -1,6 +1,6 @@
 package ch.eaternity.shared;
 
-
+import com.googlecode.objectify.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,13 +11,12 @@ import java.util.Date;
  * @author Ikai Lan
  * 
  */
+@Entity
 public class Tag implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2520592772189891266L;
 
+	@Id private Long id;
 	String photoKey;
 
 	/**
@@ -31,6 +30,8 @@ public class Tag implements Serializable {
 
 	Long x;
 	Long y;
+	
+	public Tag() {}
 
 	public String getPhotoKey() {
 		return photoKey;

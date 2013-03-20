@@ -145,17 +145,17 @@ public class Ingredient  implements Serializable, Cloneable  {
 	}
 	
 	public double getConditionQuota() {
-		if(condition != null && condition.factor != null){
-			return condition.factor*weight.getAmount();
+		if(condition != null && condition.getFactor() != null){
+			return condition.getFactor()*weight.getAmount();
 		}
 		else
 			return 0.0;
 	}
 	
 	public double getTransportationQuota() {
-		if(transportation != null && transportation.factor != null){
+		if(transportation != null && transportation.getFactor() != null){
 			if(distance.getAmount() != 0)
-				return transportation.factor*distance.getAmount()/1000000*weight.getAmount();
+				return transportation.getFactor()*distance.getAmount()/1000000*weight.getAmount();
 			else
 				return 0.0;
 		} 
@@ -164,8 +164,8 @@ public class Ingredient  implements Serializable, Cloneable  {
 	}
 	
 	public double getProductionQuota() {
-		if(production != null && production.factor != null){
-			return production.factor*weight.getAmount();
+		if(production != null && production.getFactor() != null){
+			return production.getFactor()*weight.getAmount();
 		}
 		else
 			return 0.0;

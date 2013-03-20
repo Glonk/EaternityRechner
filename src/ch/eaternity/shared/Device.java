@@ -10,38 +10,28 @@ import com.googlecode.objectify.annotation.*;
 
 public class Device implements Serializable {
 
-	/** 
-	 * 
-	 */
 	private static final long serialVersionUID = 3172640409035191698L;
 
 	@Id Long id;
      
-	 
 	public Double kWConsumption;
-	
 	 
 	public String deviceName;
-	
 	 
 	public String deviceSpec;
-	
 	 
 	public Long stdDuration;
 	
-	@Embed
-	public Long[] durations;
+	public List<Long> durations;
 	
 
-	public Device() {
+	public Device() {}
 
-	}
-
-	public Device(String deviceName,String deviceSpec, Double kWConsumption,Long[]  list, Long stdDuration) {
+	public Device(String deviceName,String deviceSpec, Double kWConsumption,List<Long> durations, Long stdDuration) {
 		this.deviceName = deviceName;
 		this.deviceSpec = deviceSpec;
 		this.kWConsumption = kWConsumption;
-		this.durations = list;
+		this.durations = durations;
 		this.stdDuration =stdDuration;
 	}
 

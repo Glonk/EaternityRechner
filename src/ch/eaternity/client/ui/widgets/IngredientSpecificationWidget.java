@@ -3,11 +3,19 @@ package ch.eaternity.client.ui.widgets;
 import java.util.List;
 
 import ch.eaternity.client.DataController;
+import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.ui.RecipeEdit;
+import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Quantity;
+import ch.eaternity.shared.SeasonDate;
+import ch.eaternity.shared.Transportation;
+import ch.eaternity.shared.Unit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -34,6 +42,7 @@ public class IngredientSpecificationWidget extends Composite {
 	@UiField Label NameLabel;
 	@UiField Button closeButton;
 	@UiField Label SeasonLabel;
+	@UiField HTML SeasonHTML;
 	
 	@UiField Label ExtractionLabel;
 	@UiField ListBox ExtractionList;
@@ -63,11 +72,20 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	// ---------------------- public Methods -----------------------
 	
-	public IngredientSpecificationWidget(RecipeEdit recipeEdit, Ingredient ingredient, DataController dco) {
+	public IngredientSpecificationWidget(RecipeEdit recipeEdit, Ingredient ingredient, RechnerActivity presenter) {
 		this.ingredient = ingredient;
 		this.recipeEdit = recipeEdit;
-		this.dco = dco;
+		this.dco = presenter.getDCO();
 		setFields();
+		
+		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
+				new MonthChangedEventHandler() {
+					@Override
+					public void onEvent(MonthChangedEvent event) {
+						updateSeasonCoherency();
+					}
+				});
+		
 	}
 	
 	// ---------------------- private Methods -----------------------
@@ -75,6 +93,18 @@ public class IngredientSpecificationWidget extends Composite {
 	private void setFields() {
 		UnknownExtractionTextBox.setVisible(false);
 		
+		for (Extraction extraction : product.getExtractions()) {
+			ExtractionList.addItem(extraction.getName());
+		}
+		for (Transportation transport : product.getTransportations()) {
+			TransportationList.addItem(transport.getSymbol());
+		}
+		for (Production production : product.getProductions()) {
+			ProductionList.addItem(production.getSymbol());
+		}
+		for (Condition condition : product.getConditions()) {
+			ConditionList.addItem(condition.getSymbol());
+		}
 	}
 	
 	private void changeExtraction() {
@@ -152,6 +182,36 @@ public class IngredientSpecificationWidget extends Composite {
   		}		
 	}
 	
+	private void updateSeasonCoherency() {
+		if (product.getSeason() != null) {
+			String seasonText = "von " + product.getSeason().getBeginning().toMonthString() + " bis " + product.getSeason().getEnd().toMonthString();
+			
+			SeasonDate begin = product.getSeason().getBeginning();
+			SeasonDate end = product.getSeason().getEnd();
+			SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
+			
+			if( date.after(begin) && date.before(end)) {
+				seasonText.concat("<br />Diese Zutat ist saisonal");
+				CoherenceHTML.setText("Angaben sind kohärent. <br /> Es ist möglich die Zutat frisch und lokal zu beziehen.");
+			}
+			else {
+				seasonText.concat("<br />Diese Zutat ist nicht saisonal");
+				if (ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 100 
+						&& !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH")
+						&& ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch")) {
+					CoherenceHTML.setText("Angaben sind unvollständig. <br >" +
+							"Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
+				}
+				
+			}
+		}
+		else {
+			SeasonLabel.setVisible(false);
+			SeasonHTML.setVisible(false);
+			CoherenceHTML.setVisible(false);
+		}		
+	}
+	
 	// ---------------------- UI Handlers ----------------------
 	
 	@UiHandler("ExtractionList")
@@ -165,7 +225,29 @@ public class IngredientSpecificationWidget extends Composite {
 		} else {
 			changeExtraction();
 		}
+		recipeEdit.updateIngredientValue(ingredient);
 	}
+	
+	@UiHandler("TransportationList")
+	public void onTransportationChange(ChangeEvent event) {
+		ingredient.setTransportation(product.getTransportation(TransportationList.getItemText(TransportationList.getSelectedIndex())));
+		recipeEdit.updateIngredientValue(ingredient);
+	}
+	
+	@UiHandler("ProductionList")
+	public void onProductionChange(ChangeEvent event) {
+		ingredient.setProduction(product.getProduction(ProductionList.getItemText(ProductionList.getSelectedIndex())));
+		recipeEdit.updateIngredientValue(ingredient);
+		updateSeasonCoherency();
+	}
+	
+	@UiHandler("ConditionList")
+	public void onConditionChange(ChangeEvent event) {
+		ingredient.setCondition(product.getCondition(ConditionList.getItemText(ConditionList.getSelectedIndex())));
+		recipeEdit.updateIngredientValue(ingredient);
+		updateSeasonCoherency();
+	}
+
 	
 	@UiHandler("CostTextBox")
 	public void onBlur(BlurEvent event) {

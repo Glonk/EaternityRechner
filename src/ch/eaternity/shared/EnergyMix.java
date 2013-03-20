@@ -11,18 +11,14 @@ import com.googlecode.objectify.annotation.*;
 
 public class EnergyMix implements Serializable {
 
-	/** 
-	 * 
-	 */
 	private static final long serialVersionUID = 3172640409035191698L;
 
 	@Id String id;
-     
-	 
+
 	public Double Co2PerKWh;
 	
-	 
 	public String Name;
+	
 	
 	
 	public EnergyMix(EnergyMix toClone) {
@@ -30,9 +26,7 @@ public class EnergyMix implements Serializable {
 		this.Name = new String(toClone.Name);
 	}
 
-	public EnergyMix() {
-
-	}
+	public EnergyMix() {}
 
 	public EnergyMix(String Name,Double Co2PerKWh) {
 		this.Name = Name;

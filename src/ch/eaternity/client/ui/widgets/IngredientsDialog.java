@@ -155,8 +155,7 @@ public class IngredientsDialog extends DialogBox{
 							for(int i=0; i<cond_ar1.length;i++) {
 								cond_ar1[i] = cond_ar1[i].trim();
 								cond_ar2[i] = cond_ar2[i].trim();
-								Condition tmpCond = new Condition(cond_ar1[i]);
-								tmpCond.factor = Double.parseDouble(cond_ar2[i]);
+								Condition tmpCond = new Condition(cond_ar1[i], Double.parseDouble(cond_ar2[i]));
 								newConditions.add(tmpCond);
 							}
 						}
@@ -196,8 +195,7 @@ public class IngredientsDialog extends DialogBox{
 							for(int i=0; i<prod_ar1.length;i++) {
 								prod_ar1[i] = prod_ar1[i].trim();
 								prod_ar2[i] = prod_ar2[i].trim();
-								Production tmpProd = new Production(prod_ar1[i]);
-								tmpProd.factor = Double.parseDouble(prod_ar2[i]);
+								Production tmpProd = new Production(prod_ar1[i], Double.parseDouble(prod_ar2[i]));
 								newProductions.add(tmpProd);
 							}
 						}
@@ -222,8 +220,7 @@ public class IngredientsDialog extends DialogBox{
 							for(int i=0; i<trans_ar1.length;i++) {
 								trans_ar1[i] = trans_ar1[i].trim();
 								trans_ar2[i] = trans_ar2[i].trim();
-								Transportation tmpTrans = new Transportation(trans_ar1[i]);
-								tmpTrans.factor = Double.parseDouble(trans_ar2[i]);
+								Transportation tmpTrans = new Transportation(trans_ar1[i], Double.parseDouble(trans_ar2[i]));
 								newTransportations.add(tmpTrans);
 							}
 						}

@@ -5,23 +5,27 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.googlecode.objectify.annotation.*;
 
+@Entity
 public class UploadedImage implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 588767248962315221L;
 	public static final String SERVING_URL = "servingUrl";
 	public static final String CREATED_AT = "createdAt";
 	public static final String OWNER_ID = "ownerId";
 
+	@Id private Long id;
+	
 	String key;
 	String servingUrl;
 	Date createdAt;
 	String ownerId; // Refers to the User that uploaded this
 
+	@Embed
 	List<Tag> tags;
+	
+	public UploadedImage() {}
 
 	public String getKey() {
 		return key;

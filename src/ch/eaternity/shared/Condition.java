@@ -4,32 +4,44 @@ import java.io.Serializable;
 
 import com.googlecode.objectify.annotation.*;
 
-@Entity
 public class Condition implements Serializable {
 
-	private static final long serialVersionUID = -6977365500555091257L;
+	private static final long serialVersionUID = -5971128872903171922L;
 	
 	@Id Long id;
-	
-	public String symbol;
-	public Double factor;
-	
-	private Condition()
-	{
-		
-	}
-	
-	public Condition(Condition toClone) {
+
+	private String symbol;
+	private Double factor;
+    
+    private Condition() {}
+    
+    public Condition(Condition toClone) {
 		symbol = new String(toClone.symbol);
 		factor = new Double(toClone.factor);
 	}
-	
+
     public Condition(String symbol) {
-		this.symbol = symbol;
+    	this.symbol = symbol;
 	}
     
     public Condition(String symbol, Double factor) {
     	this.symbol = symbol;
     	this.factor = factor;
+	}
+    
+    public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+
+	public Double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(Double factor) {
+		this.factor = factor;
 	}
 }

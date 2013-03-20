@@ -1,35 +1,28 @@
 package ch.eaternity.server;
 
 
+import java.io.Serializable;
+
 import com.googlecode.objectify.annotation.*;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
 
 @Entity
-public class ImageBlob{
+public class ImageBlob implements Serializable {
 
-
+	private static final long serialVersionUID = -2898723456687438L;
+	
 	@Id private Long id;
-	
-	
-//	private Date createDate;
-	
 	
 	private Blob picture;
 	
-	
 	private User uploader;
-	
 	
 	private String name;
 	
-	
-//	private String source;
 
-	public ImageBlob(){
-		
-	}
+	public ImageBlob(){}
 
 	public ImageBlob(String name, Blob picture) {
 		this.setPicture(picture);

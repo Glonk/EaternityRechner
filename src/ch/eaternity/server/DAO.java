@@ -11,7 +11,6 @@ import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.LoginInfo;
-import ch.eaternity.shared.ProductLabel;
 import ch.eaternity.shared.Recipe;
 
 import com.google.appengine.api.users.User;
@@ -24,7 +23,6 @@ public class DAO
 {
 	static {
 		ObjectifyService.register(FoodProduct.class);
-		ObjectifyService.register(ProductLabel.class);
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Recipe.class);
 		ObjectifyService.register(ImageBlob.class);
@@ -44,7 +42,8 @@ public class DAO
 		if (user != null) {
 			try {
 				loginInfo = ofy().load().type(LoginInfo.class).id(user.getUserId()).get();
-			} catch (NotFoundException e) {
+			} 
+			catch (Exception e) {
 				try {
 					loginInfo.setId(Long.parseLong(user.getUserId()));;
 				}
@@ -55,13 +54,18 @@ public class DAO
 				
 				loginInfo.setLoggedIn(true);
 			}
-			// reset everything in case it got changed...
+			
+			// if there exists no correspongin loginInfo to User, create a new one
+			if (loginInfo == null)
+				loginInfo = new LoginInfo();
+			// reset everything in case it got changed or if a new user is created
 			loginInfo.setEmailAddress(user.getEmail());
 			loginInfo.setNickname(user.getNickname());
 			loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
 			loginInfo.setAdmin(userService.isUserAdmin());
 			ofy().save().entity(loginInfo);
-		} else {
+		} 
+		else {
 			loginInfo.setLoggedIn(false);
 			loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
 		}

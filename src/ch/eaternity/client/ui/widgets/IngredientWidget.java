@@ -73,7 +73,7 @@ public class IngredientWidget extends Composite {
 			
 			// Saisonal
 			HTML seasonIcon = new HTML();
-			if(ingredient.getCondition() != null && ingredient.getCondition().symbol.equalsIgnoreCase("frisch") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500){
+			if(ingredient.getCondition() != null && ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500){
 				Season season = ingredient.getProduct().getSeason();
 				if(season != null){
 
@@ -81,9 +81,9 @@ public class IngredientWidget extends Composite {
 					
 					if( date.after(season.getBeginning()) && date.before(season.getEnd()) ){
 						seasonIcon.setHTML(seasonIcon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (!ingredient.getCondition().symbol.equalsIgnoreCase("frisch") && !ingredient.getProduction().symbol.equalsIgnoreCase("GH") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500) {
+					} else if (!ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch") && !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500) {
 						seasonIcon.setHTML(seasonIcon.getHTML()+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-					} else if (ingredient.getProduction().symbol.equalsIgnoreCase("GH")) {} 
+					} else if (ingredient.getProduction().getSymbol().equalsIgnoreCase("GH")) {} 
 			} 
 			
 			// rating
@@ -100,7 +100,7 @@ public class IngredientWidget extends Composite {
 
 			// BIO
 			HTML bioIcon = new HTML();
-			if(ingredient.getProduction() != null && ingredient.getProduction().symbol.equalsIgnoreCase("bio")){
+			if(ingredient.getProduction() != null && ingredient.getProduction().getSymbol().equalsIgnoreCase("bio")){
 				bioIcon.setHTML("<div class='extra-icon bio'><img src='pixel.png' height=1 width=20 /></div>");
 			}
 

@@ -12,7 +12,6 @@ public class Season {
 	private SeasonDate start;
 	@Embed
 	private SeasonDate stop;
-	@Embed
 	private SeasonType seasonType;
 	
 	/**

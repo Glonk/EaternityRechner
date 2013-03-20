@@ -30,13 +30,13 @@ public class FoodProduct implements Serializable {
 	
     private List<String> tags = new ArrayList<String>();
     
-    @Embed
+    @Serialize
     private List<Extraction> extractions = new ArrayList<Extraction>();
-    @Embed
+    @Serialize
     private List<Condition> conditions = new ArrayList<Condition>();
-    @Embed
+    @Serialize
     private List<Production> productions  = new ArrayList<Production>();
-    @Embed
+    @Serialize
     private List<Transportation> transportations = new ArrayList<Transportation>();
     
 
@@ -132,6 +132,19 @@ public class FoodProduct implements Serializable {
 	public void setConditions(List<Condition> conditions) {
 		this.conditions = conditions;
 	}
+	
+	/**
+	 * 
+	 * @param symbol
+	 * @return the searched condition, null if not found
+	 */
+	public Condition getCondition(String symbol) {
+		for (Condition cond : conditions) {
+			if (cond.getSymbol().equalsIgnoreCase(symbol))
+				return cond;
+		}
+		return null;
+	}
 
 	public List<Production> getProductions() {
 		return productions;
@@ -140,6 +153,19 @@ public class FoodProduct implements Serializable {
 	public void setProductions(List<Production> productions) {
 		this.productions = productions;
 	}
+	
+	/**
+	 * 
+	 * @param symbol
+	 * @return the searched production, null if not found
+	 */
+	public Production getProduction(String symbol) {
+		for (Production prod : productions) {
+			if (prod.getSymbol().equalsIgnoreCase(symbol))
+				return prod;
+		}
+		return null;
+	}
 
 	public List<Transportation> getTransportations() {
 		return transportations;
@@ -147,6 +173,19 @@ public class FoodProduct implements Serializable {
 
 	public void setTransportations(List<Transportation> transportations) {
 		this.transportations = transportations;
+	}
+	
+	/**
+	 * 
+	 * @param symbol
+	 * @return the searched transportation, null if not found
+	 */
+	public Transportation getTransportation(String symbol) {
+		for (Transportation trans : transportations) {
+			if (trans.getSymbol().equalsIgnoreCase(symbol))
+				return trans;
+		}
+		return null;
 	}
 
 	public String getName() {

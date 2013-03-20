@@ -41,32 +41,33 @@
 			<g:Button ui:field="closeButton">x</g:Button>
 		</g:HorizontalPanel>
 		
-		<g:Label ui:field="SeasonLabel" styleName='{style.SpecificationLabel}'></g:Label>
+		<g:Label ui:field="SeasonLabel" styleName='{style.SpecificationLabel}'>Saison</g:Label>
+		<g:HTML ui:field="SeasonHTML"></g:HTML>
 		
 		<g:HorizontalPanel>
-			<g:Label ui:field="ExtractionLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:Label ui:field="ExtractionLabel" styleName='{style.SpecificationLabel}'>Herkunft</g:Label>
 			<g:ListBox ui:field="ExtractionList" styleName='{style.SpecificationList}'></g:ListBox>
 			<g:TextBox ui:field="UnknownExtractionTextBox" styleName='{style.UnknownExtractionTextBox}'></g:TextBox>
 			<g:HTML ui:field="kmHTML" styleName='{style.kmHTML}'></g:HTML>
 		</g:HorizontalPanel>
 
 		<g:HorizontalPanel>
-			<g:Label ui:field="TransportationLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:Label ui:field="TransportationLabel" styleName='{style.SpecificationLabel}'>Transport</g:Label>
 			<g:ListBox ui:field="TransportationList" styleName='{style.SpecificationList}'></g:ListBox>
 		</g:HorizontalPanel>
 
 		<g:HorizontalPanel>
-			<g:Label ui:field="ProductionLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:Label ui:field="ProductionLabel" styleName='{style.SpecificationLabel}'>Herstellung</g:Label>
 			<g:ListBox ui:field="ProductionList" styleName='{style.SpecificationList}'></g:ListBox>
 		</g:HorizontalPanel>
 
 		<g:HorizontalPanel>
-			<g:Label ui:field="ConditionLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:Label ui:field="ConditionLabel" styleName='{style.SpecificationLabel}'>Zustand</g:Label>
 			<g:ListBox ui:field="ConditionList" styleName='{style.SpecificationList}'></g:ListBox>
 		</g:HorizontalPanel>
 		
 		<g:HorizontalPanel>
-			<g:Label ui:field="CostLabel" styleName='{style.SpecificationLabel}'></g:Label>
+			<g:Label ui:field="CostLabel" styleName='{style.SpecificationLabel}'>Kosten</g:Label>
 			<g:TextBox ui:field="CostTextBox" styleName='{style.CostTextBox}'></g:TextBox>
 			<g:Label ui:field="CurrencyLabel" styleName='{style.CurrencyLabel}'> CHF </g:Label>
 			<g:Label ui:field="CostErrorLabel" styleName='{style.CostErrorLabel}'></g:Label>

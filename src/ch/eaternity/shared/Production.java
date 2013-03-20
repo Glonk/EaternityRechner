@@ -4,27 +4,44 @@ import java.io.Serializable;
 
 import com.googlecode.objectify.annotation.*;
 
-public class Production implements Serializable{
+public class Production implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4042328283688002109L;
+	private static final long serialVersionUID = -5971128872903171922L;
+	
 	@Id Long id;
-	public String symbol;
-	public Double factor;
-	
-	private Production()
-	{
-		
-	}
-	
-	public Production(Production toClone) {
+
+	private String symbol;
+	private Double factor;
+    
+    private Production() {}
+    
+    public Production(Production toClone) {
 		symbol = new String(toClone.symbol);
 		factor = new Double(toClone.factor);
 	}
-	
+
     public Production(String symbol) {
+    	this.symbol = symbol;
+	}
+    
+    public Production(String symbol, Double factor) {
+    	this.symbol = symbol;
+    	this.factor = factor;
+	}
+    
+    public String getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(String symbol) {
 		this.symbol = symbol;
+	}
+
+	public Double getFactor() {
+		return factor;
+	}
+
+	public void setFactor(Double factor) {
+		this.factor = factor;
 	}
 }
