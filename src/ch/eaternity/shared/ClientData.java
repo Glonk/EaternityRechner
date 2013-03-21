@@ -1,6 +1,6 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import ch.eaternity.shared.Util.RecipeScope;
 
 
-public class ClientData implements Serializable{
+public class ClientData implements IsSerializable {
 
 	private static final long serialVersionUID = -8325524250818194857L;
 	
@@ -17,11 +17,13 @@ public class ClientData implements Serializable{
 	public List<Recipe> userRecipes = new ArrayList<Recipe>();
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	
+	// use HashMap instead ...
 	public List<FoodProduct> ingredients;
+	
 	public CountryDistance distances;
 	public List<Kitchen> kitchens;
 
-	public LoginInfo loginInfo;
+	public UserInfo userInfo;
 	
 	// probably into activity (state variables) ?
 	public Kitchen currentKitchen; 

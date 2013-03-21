@@ -11,7 +11,8 @@ import ch.eaternity.client.DataService;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.Pair;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -47,6 +48,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 	// ------------------------ Kitchen -----------------------------------
 	
+	/*
+	public ArrayList<String> getKitchenStrings(Long userId) {}
+	
+	or
+	
+	public HashSet<Pair<Long, String>> getKitchenStrings(Long userId) {}
+	
+	because we need the ids for matchin with currentKitchenId as well...
+	
+	*/
+	
+
+	
 	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
 		checkLoggedIn();
 		UserService userService = UserServiceFactory.getUserService();
@@ -54,14 +68,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			throw new NotLoggedInException("Not logged in.");
 		}
 		DAO dao = new DAO();
-
-		if(kitchen.getEmailAddressOwner() == null){
-			if(userService.getCurrentUser().getEmail() != null){
-				kitchen.setEmailAddressOwner(userService.getCurrentUser().getEmail() );
-			} else {
-				kitchen.setEmailAddressOwner(userService.getCurrentUser().getNickname());
-			}
-		}
 
 		return dao.saveKitchen(kitchen);
 	}
@@ -149,7 +155,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// load all ingredients
 		data.ingredients = dao.getAllIngredients();
 		
-		data.loginInfo = dao.getLoginInfo(requestUri);
+		data.userInfo = dao.getLoginInfo(requestUri);
 		
 		//TODO get Distances
 		
@@ -157,12 +163,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			data.userRecipes = dao.getUserRecipes(getUserId());
 			data.publicRecipes = dao.getPublicRecipes();
 			
-			if (data.loginInfo.getCurrentKitchen() != null)
+			if (data.userInfo.getCurrentKitchen() != null)
 				data.currentKitchenRecipes = dao.getKitchenRecipes(getUserId()); 
 
 			data.kitchens = dao.getYourKitchens(getUser());
 			
-			if (data.loginInfo.isAdmin()) {
+			if (data.userInfo.isAdmin()) {
 				data.publicRecipes.addAll(getAllRecipes());
 				
 				// remove double entries
@@ -240,7 +246,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 
 	// not used anymore
-	public LoginInfo login(String requestUri) {
+	public UserInfo login(String requestUri) {
 		DAO dao = new DAO();
 		return dao.getLoginInfo(requestUri);
 	}

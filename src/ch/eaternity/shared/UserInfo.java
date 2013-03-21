@@ -1,38 +1,37 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.List;
 
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class LoginInfo implements Serializable {
+public class UserInfo implements IsSerializable {
 
 	private static final long serialVersionUID = 8516034014140362835L;
 	
+	// the id is the same as the google user id fetched from User.getId()
 	@Id private Long id;
+
+	private Long currentKitchenId;
 	
-	private boolean loggedIn;
+	// many to many relationship stored in both object -> update properly!
+	private List<Long> kitchenIds;
 	
 	@Ignore
 	private String loginUrl;
 	@Ignore
 	private String logoutUrl;
 	
+	private boolean loggedIn;
+	
 	private String emailAddress;
 	private String nickname;
 	private boolean isadmin;
 	
-	// saving the id form the Google User here
-	private Long userId;
 
-	//Probably in future like that:
-	// @Load private Ref<Kitchen> currentKitchenId;
-	private Long currentKitchenId;
-	private List<Long> kitchenIDs;
-
-	public LoginInfo() {
+	public UserInfo() {
 		isadmin = false;
 		currentKitchenId = null;
 		loggedIn = false;
@@ -87,7 +86,7 @@ public class LoginInfo implements Serializable {
 	}
 
 	public boolean setCurrentKitchen(Long kitchenId) {
-		if (kitchenIDs.contains(kitchenId)) {
+		if (kitchenIds.contains(kitchenId)) {
 			this.currentKitchenId = kitchenId;
 			return true;
 		}
@@ -109,11 +108,11 @@ public class LoginInfo implements Serializable {
 	}
 
 	public List<Long> getKitchenIDs() {
-		return kitchenIDs;
+		return kitchenIds;
 	}
 
 	public void setKitchenIDs(List<Long> kitchenIDs) {
-		this.kitchenIDs = kitchenIDs;
+		this.kitchenIds = kitchenIDs;
 	}
 
 }

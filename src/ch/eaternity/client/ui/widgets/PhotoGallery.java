@@ -24,7 +24,7 @@ import ch.eaternity.client.events.GalleryUpdatedEventHandler;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.EaternityRechner;
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.UploadedImage;
 /*
 public class PhotoGallery extends Composite implements GalleryUpdatedEventHandler {

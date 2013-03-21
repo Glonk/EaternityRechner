@@ -1,23 +1,24 @@
 package ch.eaternity.shared;
 
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.condition.IfTrue;
 import com.googlecode.objectify.condition.IfFalse;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class Recipe implements Serializable {
+public class Recipe implements IsSerializable {
  
 	private static final long serialVersionUID = -5888386800366492104L;
 		
 	private @Id Long id;
     
-	private Long directAncestorId;
+	private Long ancestorId;
 	
 	@Index(IfFalse.class)
 	private boolean deleted;
@@ -28,35 +29,25 @@ public class Recipe implements Serializable {
 	private UploadedImage image;
 	
 	@Index
-	private String emailAddressOwner;
-	@Index
 	private Long userId;
-
-	@Embed
-	private EnergyMix energyMix;
-	
-	private String ShortUrl;
-	// no List, just in one Kitchen
-	
 	@Index
 	private Long kitchenId; // empty is no kitchen...
 	
-	private Long persons;
+	private String shortUrl;
+	
+	private Long servings;
 	
 	@Embed
 	private List<RecipeComment> comments = new ArrayList<RecipeComment>();
 
 	@Embed
 	private List<Ingredient> ingredients = new ArrayList<Ingredient>();
-	
-	@Embed
-	private List<DeviceSpecification> deviceSpecifications = new ArrayList<DeviceSpecification>();
    
 	
 	@Index(IfTrue.class)
 	private Boolean publicationRequested;
 	
-	@Index
+	@Index(IfTrue.class)
 	private Boolean published;
 	
 	private Date createDate;
@@ -78,7 +69,7 @@ public class Recipe implements Serializable {
 		published = false;
 		publicationRequested = false;
 		selected = false;
-		persons = 4L;
+		servings = 4L;
 		eaternitySelected = false;
 	}
 	
@@ -86,7 +77,7 @@ public class Recipe implements Serializable {
 	public Recipe(Recipe toClone) {
 		// call standard constructor
 		this();
-		this.directAncestorId = toClone.id;
+		this.ancestorId = toClone.id;
 		this.symbol = new String(toClone.symbol);
 		this.subTitle = new String(toClone.subTitle);
 		this.cookInstruction = new String(toClone.cookInstruction);
@@ -94,11 +85,10 @@ public class Recipe implements Serializable {
 		this.image = toClone.image;
 		
 		this.subTitle = new String(toClone.subTitle);
-		this.energyMix = new EnergyMix(toClone.energyMix);
-		this.ShortUrl = new String(toClone.ShortUrl);
+		this.shortUrl = new String(toClone.shortUrl);
 		this.kitchenId = toClone.kitchenId;
 			
-		this.persons = new Long(toClone.persons);
+		this.servings = new Long(toClone.servings);
 		this.createDate = (Date) toClone.createDate.clone();
 		this.cookingDate = (Date) toClone.cookingDate.clone();
 		this.hits = new Long(toClone.hits);
@@ -114,9 +104,6 @@ public class Recipe implements Serializable {
 			ingredients.add(new Ingredient(com));
 		}
 		
-		for (DeviceSpecification com : toClone.deviceSpecifications) {
-			deviceSpecifications.add(new DeviceSpecification(com));
-		}
 		
 		this.publicationRequested = new Boolean(toClone.publicationRequested);
 		this.published = new Boolean(toClone.published);
@@ -141,6 +128,7 @@ public class Recipe implements Serializable {
 
 
 	public double getDeviceCo2Value() {
+		/*
 		double sum = 0;
 		if(energyMix != null && deviceSpecifications != null && deviceSpecifications.size()>0 ){
 		for(DeviceSpecification device:deviceSpecifications){
@@ -148,7 +136,23 @@ public class Recipe implements Serializable {
 		}
 		}
 		return sum;
+		*/
+		return 0d;
 	}
+	
+	//TODO change to quantity
+	public Double getCO2Value() {
+		double value = getDeviceCo2Value();
+		
+		for ( Ingredient zutatSpec : ingredients){
+			value += zutatSpec.getCalculatedCO2Value();
+		}
+		if(servings != null && servings != 0)
+			value = value/servings;
+
+		return value;
+	}
+	
 
 	// ------------------- getters and setters --------------------
 	
@@ -160,12 +164,12 @@ public class Recipe implements Serializable {
 		this.id = id;
 	}
 
-	public Long getDirectAncestorId() {
-		return directAncestorId;
+	public Long getAncestorId() {
+		return ancestorId;
 	}
 
-	public void setDirectAncestorId(Long directAncestorID) {
-		this.directAncestorId = directAncestorID;
+	public void setAncestorId(Long directAncestorID) {
+		this.ancestorId = directAncestorID;
 	}
 
 	public String getSymbol() {
@@ -200,9 +204,6 @@ public class Recipe implements Serializable {
 		this.image = image;
 	}
 
-	public String getEmailAddressOwner() {
-		return emailAddressOwner;
-	}
 	
 	
 	public Long getUserId() {
@@ -213,24 +214,13 @@ public class Recipe implements Serializable {
 		this.userId = userID;
 	}
 
-	public void setEmailAddressOwner(String emailAddressOwner) {
-		this.emailAddressOwner = emailAddressOwner;
-	}
-
-	public EnergyMix getEnergyMix() {
-		return energyMix;
-	}
-
-	public void setEnergyMix(EnergyMix energyMix) {
-		this.energyMix = energyMix;
-	}
 
 	public String getShortUrl() {
-		return ShortUrl;
+		return shortUrl;
 	}
 
 	public void setShortUrl(String shortUrl) {
-		ShortUrl = shortUrl;
+		this.shortUrl = shortUrl;
 	}
 
 	public Long getKitchenId() {
@@ -242,11 +232,11 @@ public class Recipe implements Serializable {
 	}
 
 	public Long getPersons() {
-		return persons;
+		return servings;
 	}
 
 	public void setPersons(Long persons) {
-		this.persons = persons;
+		this.servings = persons;
 	}
 
 	public Date getCreateDate() {
@@ -305,29 +295,6 @@ public class Recipe implements Serializable {
 		this.ingredients = ingredients;
 	}
 
-	public List<DeviceSpecification> getDeviceSpecifications() {
-		return deviceSpecifications;
-	}
-
-	public void setDeviceSpecifications(
-			List<DeviceSpecification> deviceSpecifications) {
-		this.deviceSpecifications = deviceSpecifications;
-	}
-
-	//TODO change to quantity
-	public Double getCO2Value() {
-		double value = getDeviceCo2Value();
-		
-		for ( Ingredient zutatSpec : ingredients){
-			value += zutatSpec.getCalculatedCO2Value();
-		}
-		if(persons != null && persons != 0)
-			value = value/persons;
-
-		return value;
-	}
-
-
 	public Boolean getOpenRequested() {
 		return publicationRequested;
 	}
@@ -368,11 +335,7 @@ public class Recipe implements Serializable {
 		this.regsas = regsas;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
 
-	
 
 	public boolean isDeleted() {
 		return deleted;

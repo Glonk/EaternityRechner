@@ -31,7 +31,7 @@ import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 
@@ -69,7 +69,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 	VerticalPanel tagPanel;
 
 	protected UploadedImage uploadedImage;
-	LoginInfo loginInfo;
+	UserInfo loginInfo;
 
 	public ImageOverlay(UploadedImage uploadedImage) {
 		handlerManager = new HandlerManager(this);
@@ -243,7 +243,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 		return handlerManager.addHandler(GalleryUpdatedEvent.TYPE, handler);
 	}
 
-	public void setLoginInfo(LoginInfo loginInfo) {
+	public void setLoginInfo(UserInfo loginInfo) {
 		this.loginInfo = loginInfo;
 	}
 

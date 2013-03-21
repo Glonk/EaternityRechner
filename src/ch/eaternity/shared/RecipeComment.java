@@ -1,11 +1,11 @@
 package ch.eaternity.shared;
 
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.*;
 
-public class RecipeComment implements Serializable {
+public class RecipeComment implements IsSerializable {
 
 	/**
 	 * 

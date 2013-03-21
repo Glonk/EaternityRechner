@@ -1,6 +1,6 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class Commitment implements Serializable {
+public class Commitment implements IsSerializable {
 
 	/**
 	 * 

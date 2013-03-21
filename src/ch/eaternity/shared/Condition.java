@@ -1,10 +1,10 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.*;
 
-public class Condition implements Serializable {
+public class Condition implements IsSerializable {
 
 	private static final long serialVersionUID = -5971128872903171922L;
 	

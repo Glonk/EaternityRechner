@@ -1,7 +1,7 @@
 package ch.eaternity.shared;
 
 import com.googlecode.objectify.annotation.*;
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.Date;
 
 /**
@@ -12,7 +12,7 @@ import java.util.Date;
  * 
  */
 @Entity
-public class Tag implements Serializable {
+public class Tag implements IsSerializable {
 
 	private static final long serialVersionUID = -2520592772189891266L;
 

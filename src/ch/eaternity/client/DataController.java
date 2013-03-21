@@ -19,7 +19,7 @@ import ch.eaternity.shared.CountryDistance;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
@@ -72,9 +72,9 @@ public class DataController {
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
-				if (cdata.loginInfo != null && cdata.loginInfo.getCurrentKitchen() != null)
+				if (cdata.userInfo != null && cdata.userInfo.getCurrentKitchen() != null)
 				{
-					cdata.currentKitchen = cdata.getKitchenByID(cdata.loginInfo.getCurrentKitchen());
+					cdata.currentKitchen = cdata.getKitchenByID(cdata.userInfo.getCurrentKitchen());
 					if (cdata.currentKitchen == null)
 						kitchenLoaded = false;
 				}
@@ -91,8 +91,8 @@ public class DataController {
 				cdata.currentMonth = date.getMonth() + 1;
 				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));
 				
-				if (cdata.loginInfo != null)
-					eventBus.fireEvent(new LoginChangedEvent(cdata.loginInfo));
+				if (cdata.userInfo != null)
+					eventBus.fireEvent(new LoginChangedEvent(cdata.userInfo));
 				
 				eventBus.fireEvent(new LoadedDataEvent());
 			}
@@ -119,9 +119,8 @@ public class DataController {
 		if (cdata.currentKitchen != null)
 			recipe.setKitchenId(cdata.currentKitchen.getId());
 		
-		if (cdata.loginInfo != null) {
-			recipe.setEmailAddressOwner(cdata.loginInfo.getEmailAddress());
-			recipe.setUserId(cdata.loginInfo.getId());
+		if (cdata.userInfo != null) {
+			recipe.setUserId(cdata.userInfo.getId());
 		}
 		
 		recipe.setPopularity(0L);
@@ -244,13 +243,13 @@ public class DataController {
 		if (kitchen == null) {
 			cdata.currentKitchen = null;
 			cdata.currentKitchenRecipes = null;
-			cdata.loginInfo.setCurrentKitchen(null);
+			cdata.userInfo.setCurrentKitchen(null);
 			
 			eventBus.fireEvent(new KitchenChangedEvent(-1L));
 		}
 		else {
 			cdata.currentKitchen = kitchen;
-			cdata.loginInfo.setCurrentKitchen(kitchen.getId());
+			cdata.userInfo.setCurrentKitchen(kitchen.getId());
 			for (Recipe recipe : cdata.kitchenRecipes) {
 				if (recipe.getKitchenId() == kitchen.getId());
 					cdata.currentKitchenRecipes.add(recipe);
@@ -518,7 +517,7 @@ public class DataController {
 	private void handleError(Throwable error) {
 		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
 		if (error instanceof NotLoggedInException) {
-			Window.Location.replace(cdata.loginInfo.getLogoutUrl());
+			Window.Location.replace(cdata.userInfo.getLogoutUrl());
 		}
 	}
 	
@@ -560,8 +559,8 @@ public class DataController {
 		return cdata.kitchens;
 	}
 
-	public LoginInfo getLoginInfo() {
-		return cdata.loginInfo;
+	public UserInfo getLoginInfo() {
+		return cdata.userInfo;
 	}
 
 	public Kitchen getCurrentKitchen() {

@@ -9,7 +9,7 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Kitchen;
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
@@ -39,7 +39,7 @@ public interface DataServiceAsync {
 	public void setCurrentKitchen(Long i, AsyncCallback<Boolean> asyncCallback);
 	
 	// login
-	public void login(String requestUri, AsyncCallback<LoginInfo> async);
+	public void login(String requestUri, AsyncCallback<UserInfo> async);
 	
 	//blob images
 	public void getBlobstoreUploadUrl(AsyncCallback<String> callback);

@@ -1,13 +1,19 @@
 
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.Date;
+
 
 import com.googlecode.objectify.annotation.*;
 
+/**
+ * Since this class is embedded in recipe, it must not contain Collections of any type. otherwise serialize...
+ * @author aurelianjaggi
+ *
+ */
 @Entity
-public class Ingredient  implements Serializable, Cloneable  {
+public class Ingredient  implements IsSerializable {
 
 	private static final long serialVersionUID = -2858311250621887438L;
 	
@@ -15,25 +21,26 @@ public class Ingredient  implements Serializable, Cloneable  {
 	
 	// possibly not storing it directly here, but via a key/ref relationship in appengine
 	// and loding it correctly when needed via @Load Ref<FoodProduct>
-	@Embed
+	@Ignore
     private FoodProduct foodproduct;
 
-    @Embed
+	private Long productId;
+	
+	// optionally if speed is to slow, needs to be created when stored, not possible client-side
+	//@Load private Ref<FoodProduct> productRef;
+	
 	private Quantity weight;
 	private Date cookingDate;
 	private double cost; 
-	
-	@Embed
+
 	private Extraction extraction;
-	@Embed
-	private Condition condition;
-	@Embed
-	private Production production;
-	@Embed
-	private Transportation transportation;
-	
-	@Embed
+	// need to include home as well...?
 	private Quantity distance;
+		
+	private Transportation transportation;
+	private Production production;
+	private Condition condition;
+	
 	
 	// --------------------------- public methods ---------------------------
 	

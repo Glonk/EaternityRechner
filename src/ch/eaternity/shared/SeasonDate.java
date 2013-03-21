@@ -1,6 +1,6 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.Date;
 import com.googlecode.objectify.annotation.*;
 
@@ -10,7 +10,7 @@ import com.googlecode.objectify.annotation.*;
  * day: 1 is first of month, 31 possibly last
  * 
  */
-public class SeasonDate implements Serializable {
+public class SeasonDate implements IsSerializable {
 	
 	private static final long serialVersionUID = -2858234034518875678L;
 	

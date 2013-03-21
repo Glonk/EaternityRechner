@@ -1,12 +1,12 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 
 import com.googlecode.objectify.annotation.*;
 import com.googlecode.objectify.Key;
 
-public class Extraction implements Serializable,Cloneable{
+public class Extraction implements IsSerializable {
 	
 
 	/**

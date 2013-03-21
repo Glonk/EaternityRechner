@@ -10,7 +10,7 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
 
 import com.google.appengine.api.users.User;
@@ -27,21 +27,21 @@ public class DAO
 		ObjectifyService.register(Recipe.class);
 		ObjectifyService.register(ImageBlob.class);
 		ObjectifyService.register(Kitchen.class);
-		ObjectifyService.register(LoginInfo.class);
+		ObjectifyService.register(UserInfo.class);
 		ObjectifyService.register(Commitment.class);
 	}
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
 	
 	
-	public LoginInfo getLoginInfo(String requestUri) {
+	public UserInfo getLoginInfo(String requestUri) {
 		UserService userService = UserServiceFactory.getUserService();
-		LoginInfo loginInfo = new LoginInfo();
+		UserInfo loginInfo = new UserInfo();
 		User user = userService.getCurrentUser();
 
 		if (user != null) {
 			try {
-				loginInfo = ofy().load().type(LoginInfo.class).id(user.getUserId()).get();
+				loginInfo = ofy().load().type(UserInfo.class).id(user.getUserId()).get();
 			} 
 			catch (Exception e) {
 				try {
@@ -57,7 +57,7 @@ public class DAO
 			
 			// if there exists no correspongin loginInfo to User, create a new one
 			if (loginInfo == null)
-				loginInfo = new LoginInfo();
+				loginInfo = new UserInfo();
 			// reset everything in case it got changed or if a new user is created
 			loginInfo.setEmailAddress(user.getEmail());
 			loginInfo.setNickname(user.getNickname());
@@ -163,6 +163,13 @@ public class DAO
 			catch (Exception e) {
 				log.log(Level.SEVERE, e.getMessage());
 			} 
+			
+			// Testing Code
+			for (Ingredient ing : recipe.getIngredients()) {
+				FoodProduct product = ofy().load().type(FoodProduct.class).id(ing.getId()).get();
+			}
+			
+			
 			
 			return recipe;
 		}
@@ -311,7 +318,7 @@ public class DAO
 	 */
 	public Boolean setCurrentKitchen(Long currentKitchen, Long userId) {
 		try {
-			LoginInfo loginInfo = ofy().load().type(LoginInfo.class).filter("userId", userId).first().get();
+			UserInfo loginInfo = ofy().load().type(UserInfo.class).filter("userId", userId).first().get();
 			if (!loginInfo.setCurrentKitchen(currentKitchen))
 				return false;
 			ofy().save().entity(loginInfo);

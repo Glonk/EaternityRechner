@@ -1,15 +1,15 @@
 package ch.eaternity.client.events;
 
-import ch.eaternity.shared.LoginInfo;
+import ch.eaternity.shared.UserInfo;
 
 import com.google.gwt.event.shared.GwtEvent;
 
 public class LoginChangedEvent extends GwtEvent<LoginChangedEventHandler> {
   public static Type<LoginChangedEventHandler> TYPE = new Type<LoginChangedEventHandler>();
   
-  public LoginInfo loginInfo;
+  public UserInfo loginInfo;
   
-  public LoginChangedEvent(LoginInfo loginInfo) {
+  public LoginChangedEvent(UserInfo loginInfo) {
 	  this.loginInfo = loginInfo;
   }
   

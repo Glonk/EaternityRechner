@@ -1,13 +1,13 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class FoodProduct implements Serializable {
+public class FoodProduct implements IsSerializable {
 
 	private static final long serialVersionUID = -3996022378367823464L;
 	
@@ -15,7 +15,10 @@ public class FoodProduct implements Serializable {
 
     private String name;
     private String name_en;
+    
+    private List<String> synonyms = new ArrayList<String>();
 
+    // probably change to double, take standard measures?
     @Embed
     private Quantity co2eValue;
     @Embed
@@ -217,12 +220,12 @@ public class FoodProduct implements Serializable {
 		return null;
 	}
 
-	/**
-	 * not implemented yet
-	 */
-	public String getSynonyms() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getSynonyms() {
+		return synonyms;
+	}
+
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
 

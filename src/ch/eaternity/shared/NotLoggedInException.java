@@ -1,13 +1,13 @@
 package ch.eaternity.shared;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class NotLoggedInException extends Exception implements Serializable {
+public class NotLoggedInException extends Exception implements IsSerializable {
 
   /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 234987662346234L;
 
 public NotLoggedInException() {
     super();
