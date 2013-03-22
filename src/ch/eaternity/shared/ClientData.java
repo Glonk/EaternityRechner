@@ -18,10 +18,10 @@ public class ClientData implements IsSerializable {
 	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
 	
 	// use HashMap instead ...
-	public List<FoodProduct> ingredients;
+	public List<FoodProduct> ingredients = new ArrayList<FoodProduct>();
 	
 	public CountryDistance distances;
-	public List<Kitchen> kitchens;
+	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
 
 	public UserInfo userInfo;
 	

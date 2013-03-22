@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.*;
 
-public class RecipeComment implements IsSerializable {
+public class SavingPotential implements IsSerializable {
 
 	/**
 	 * 
@@ -17,18 +17,18 @@ public class RecipeComment implements IsSerializable {
 	public String symbol;
     public int amount;
     
-    public RecipeComment(RecipeComment toClone)
+    public SavingPotential(SavingPotential toClone)
     {
     	symbol = new String(toClone.symbol);
     	amount = toClone.amount;
     }
     
-    private RecipeComment()
+    private SavingPotential()
     {
     	
     }
     
-    public RecipeComment(String symbol) {
+    public SavingPotential(String symbol) {
 		this.symbol = symbol;
 	}
 

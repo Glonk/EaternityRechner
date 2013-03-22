@@ -124,7 +124,10 @@ public class DAO
 			log.log(Level.SEVERE, e.getMessage());
 		}
 		
-		return result;
+		if (result instanceof FoodProduct)
+			return result;
+		else
+			return null;
 	}
 	
 	// ------------------------ Recipe -----------------------------------

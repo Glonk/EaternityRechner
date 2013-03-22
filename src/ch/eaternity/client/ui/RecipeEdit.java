@@ -31,7 +31,7 @@ import ch.eaternity.client.ui.widgets.UploadPhoto;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.RecipeComment;
+import ch.eaternity.shared.SavingPotential;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
@@ -581,8 +581,8 @@ public class RecipeEdit extends Composite {
 	}
 
 		private void initializeCommentingField() {
-			if (recipe.getComments() != null) {
-				numberofComments = recipe.getComments().size();
+			if (recipe.getSavingPotentials() != null) {
+				numberofComments = recipe.getSavingPotentials().size();
 						
 				final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
 				addCommentButton.addClickHandler(new ClickHandler() {
@@ -597,14 +597,14 @@ public class RecipeEdit extends Composite {
 				});
 				
 				for (int i = 0; i < numberofComments; i++) {
-					fillCommentBoxes(recipe.getComments().get(i),i);
+					fillCommentBoxes(recipe.getSavingPotentials().get(i),i);
 				}
 				
 				commentTable.setWidget(numberofComments ,1,addCommentButton);
 			}
 		}
 		
-		private void fillCommentBoxes(RecipeComment recipeComment, int thisRow) {
+		private void fillCommentBoxes(SavingPotential recipeComment, int thisRow) {
 			final Anchor removeRowButton = new Anchor("x");
 			removeRowButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
@@ -649,11 +649,11 @@ public class RecipeEdit extends Composite {
 
 		
 		private void updateComments() {
-			recipe.getComments().clear();
+			recipe.getSavingPotentials().clear();
 			for (int i = 0; i < commentTable.getRowCount()-1; i++) {
 				TextBox readBox = (TextBox) commentTable.getWidget(i, 1);
 				if(readBox.getText() != ""){
-					RecipeComment recipeComment = new RecipeComment(readBox.getText());
+					SavingPotential recipeComment = new SavingPotential(readBox.getText());
 					try{
 						TextBox readAmountBox = (TextBox) commentTable.getWidget(i, 2);
 						recipeComment.amount = Integer.parseInt(readAmountBox.getText());
@@ -661,7 +661,7 @@ public class RecipeEdit extends Composite {
 						recipeComment.amount = 0;
 					} catch (NumberFormatException error2) {}
 					
-					recipe.getComments().add(recipeComment);
+					recipe.getSavingPotentials().add(recipeComment);
 				}	
 			}
 			changeSaveStatus(false);

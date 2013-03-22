@@ -38,7 +38,7 @@ public class Recipe implements IsSerializable {
 	private Long servings;
 	
 	@Embed
-	private List<RecipeComment> comments = new ArrayList<RecipeComment>();
+	private List<SavingPotential> savingPotentials = new ArrayList<SavingPotential>();
 
 	@Embed
 	private List<Ingredient> ingredients = new ArrayList<Ingredient>();
@@ -96,8 +96,8 @@ public class Recipe implements IsSerializable {
 		
 		this.selected = new Boolean(toClone.selected);
 		
-		for (RecipeComment com : toClone.comments) {
-			comments.add(new RecipeComment(com));
+		for (SavingPotential com : toClone.savingPotentials) {
+			savingPotentials.add(new SavingPotential(com));
 		}
 		
 		for (Ingredient com : toClone.ingredients) {
@@ -279,12 +279,12 @@ public class Recipe implements IsSerializable {
 		this.selected = selected;
 	}
 
-	public List<RecipeComment> getComments() {
-		return comments;
+	public List<SavingPotential> getSavingPotentials() {
+		return savingPotentials;
 	}
 
-	public void setComments(List<RecipeComment> comments) {
-		this.comments = comments;
+	public void setSavingPotentials(List<SavingPotential> savingPotentials) {
+		this.savingPotentials = savingPotentials;
 	}
 
 	public List<Ingredient> getIngredients() {

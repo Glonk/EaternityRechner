@@ -14,9 +14,6 @@ public class SeasonDate implements IsSerializable {
 	
 	private static final long serialVersionUID = -2858234034518875678L;
 	
-	@Id
-	private Long id;
-	
 	public int month;
 	public int day;
 

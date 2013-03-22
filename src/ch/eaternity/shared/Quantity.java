@@ -1,13 +1,10 @@
 package ch.eaternity.shared;
 
-import com.googlecode.objectify.annotation.*;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class Quantity {
+public class Quantity implements IsSerializable {
 	
 	private static final long serialVersionUID = -2234968030318875678L;
-	
-	@Id
-	private Long id;
 	
 	private Unit unit;
 	private Double amount;
@@ -54,5 +51,4 @@ public class Quantity {
 	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
-
 }
