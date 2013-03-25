@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Quantity implements IsSerializable {
 	
-	private static final long serialVersionUID = -2234968030318875678L;
+	private static final long serialVersionUID = -223499873645235678L;
 	
 	private Unit unit;
 	private Double amount;

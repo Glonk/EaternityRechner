@@ -1,17 +1,21 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.annotation.*;
 
-public class Season {
+public class Season implements Serializable {
 	
 	private static final long serialVersionUID = -2858323468921887438L;
 
-	@Id
-	private Long id;
+	@Id private Long id;
+	
 	@Embed
 	private SeasonDate start;
 	@Embed
 	private SeasonDate stop;
+	
 	private SeasonType seasonType;
 	
 	/**

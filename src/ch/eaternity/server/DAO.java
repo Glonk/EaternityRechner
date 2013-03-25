@@ -2,6 +2,7 @@ package ch.eaternity.server;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import ch.eaternity.shared.Recipe;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
 
@@ -33,43 +35,48 @@ public class DAO
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
 	
-	
+	/**
+	 * 
+	 * @param requestUri
+	 * @return never null
+	 */
 	public UserInfo getLoginInfo(String requestUri) {
 		UserService userService = UserServiceFactory.getUserService();
-		UserInfo loginInfo = new UserInfo();
+		UserInfo userInfo = new UserInfo();
 		User user = userService.getCurrentUser();
 
 		if (user != null) {
 			try {
-				loginInfo = ofy().load().type(UserInfo.class).id(user.getUserId()).get();
+				userInfo = ofy().load().type(UserInfo.class).id(user.getUserId()).get();
 			} 
-			catch (Exception e) {
+			catch (Exception e) {}
+			
+			// if there exists no correspongin loginInfo to User, create a new one (first time login)
+			if (userInfo == null) {
+				userInfo = new UserInfo();
 				try {
-					loginInfo.setId(Long.parseLong(user.getUserId()));;
+					userInfo.setId(Long.parseLong(user.getUserId()));;
 				}
 				catch (NumberFormatException nfe) {
-					loginInfo.setLoggedIn(false);
-					loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
+					userInfo.setLoggedIn(false);
+					userInfo.setLoginUrl(userService.createLoginURL(requestUri));
 				}
 				
-				loginInfo.setLoggedIn(true);
+				userInfo.setLoggedIn(true);
 			}
 			
-			// if there exists no correspongin loginInfo to User, create a new one
-			if (loginInfo == null)
-				loginInfo = new UserInfo();
 			// reset everything in case it got changed or if a new user is created
-			loginInfo.setEmailAddress(user.getEmail());
-			loginInfo.setNickname(user.getNickname());
-			loginInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
-			loginInfo.setAdmin(userService.isUserAdmin());
-			ofy().save().entity(loginInfo);
+			userInfo.setEmailAddress(user.getEmail());
+			userInfo.setNickname(user.getNickname());
+			userInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
+			userInfo.setAdmin(userService.isUserAdmin());
+			ofy().save().entity(userInfo);
 		} 
 		else {
-			loginInfo.setLoggedIn(false);
-			loginInfo.setLoginUrl(userService.createLoginURL(requestUri));
+			userInfo.setLoggedIn(false);
+			userInfo.setLoginUrl(userService.createLoginURL(requestUri));
 		}
-		return loginInfo;
+		return userInfo;
 	}
 
 	// ------------------------ Ingredients -----------------------------------
@@ -85,7 +92,7 @@ public class DAO
 			ofy().save().entities(products);
 		}
 		catch (Exception e) { 
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			return false; 
 		}
 			
@@ -103,7 +110,7 @@ public class DAO
 			ofy().save().entity(product).now();
 		}
 		catch (Exception e) { 
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + e.getMessage());
 			return null; 
 		}
 		
@@ -112,22 +119,22 @@ public class DAO
 	
 	/**
 	 * 
-	 * @return all the ingredients of the datastore or null if no ingredients exist or an exception occured
+	 * @return all the ingredients of the datastore or null an exception occured
 	 */
 	public List<FoodProduct> getAllIngredients()
 	{
-		List<FoodProduct> result = null;
+		List<FoodProduct> result = new ArrayList<FoodProduct>();
 		try {
-			result = ofy().load().type(FoodProduct.class).list();
+			Iterable<Key<FoodProduct>> keys = ofy().load().type(FoodProduct.class).keys();
+			for (Key<FoodProduct> key : keys)
+				result.add(ofy().load().key(key).get());
 		}
 		catch (Exception e) {
 			log.log(Level.SEVERE, e.getMessage());
+			return null;
 		}
 		
-		if (result instanceof FoodProduct)
-			return result;
-		else
-			return null;
+		return result;
 	}
 	
 	// ------------------------ Recipe -----------------------------------

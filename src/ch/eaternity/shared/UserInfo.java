@@ -24,11 +24,11 @@ public class UserInfo implements IsSerializable {
 	@Ignore
 	private String logoutUrl;
 	
-	private boolean loggedIn;
-	
 	private String emailAddress;
 	private String nickname;
+	
 	private boolean isadmin;
+	private boolean loggedIn;
 	
 
 	public UserInfo() {

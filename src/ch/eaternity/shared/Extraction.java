@@ -1,18 +1,16 @@
 package ch.eaternity.shared;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.*;
 import com.googlecode.objectify.Key;
 
-public class Extraction implements IsSerializable {
+@Entity
+public class Extraction implements Serializable {
 	
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3996022378367844877L;
+	private static final long serialVersionUID = -3876465978367844877L;
 
 	@Id Long id;
     

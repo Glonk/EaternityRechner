@@ -264,7 +264,7 @@ public class IngredientsDialog extends DialogBox{
 					
 					// symbol english
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Zutat_Name_Englisch");
-					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1.trim() );
+					if (tmpNodeVal1 != null) newIngredient.setName_En( tmpNodeVal1.trim() );
 					//else isValidIng = false;
 
 					// all elements are properly parsed add ingredient
@@ -306,7 +306,7 @@ public class IngredientsDialog extends DialogBox{
 	private void persistIngredients(ArrayList<FoodProduct> ingredients) {
 		ingredientsService.persistIngredients(ingredients, new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
-				Window.alert(error.getMessage());
+				Window.alert("Persisting FoodProducts failed! \nError Message: \n \n" + error.getMessage());
 			}
 			public void onSuccess(Boolean success) {
 				if(success){

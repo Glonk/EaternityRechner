@@ -1,15 +1,18 @@
 package ch.eaternity.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.googlecode.objectify.annotation.*;
 
 @Entity
+@Cache
 public class FoodProduct implements IsSerializable {
 
-	private static final long serialVersionUID = -3996022378367823464L;
+	private static final long serialVersionUID = -3996987374367823464L;
 	
     @Id private Long id;
 
@@ -196,6 +199,14 @@ public class FoodProduct implements IsSerializable {
 	}
 	
 	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName_En() {
+		return name;
+	}
+	
+	public void setName_En(String name) {
 		this.name = name;
 	}
 	
