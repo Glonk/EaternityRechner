@@ -8,6 +8,7 @@ import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
@@ -30,6 +31,9 @@ public interface DataServiceAsync {
 	public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
 	public void persistIngredients(ArrayList<FoodProduct> ingredients,
 			AsyncCallback<Boolean> asyncCallback);
+	
+	public void getFoodProductInfos(Integer month, AsyncCallback<ArrayList<FoodProductInfo>> asyncCallback);
+	public void getFoodProduct(Long productId, AsyncCallback<FoodProduct> asyncCallback);
 
 	public void addKitchen(Kitchen kitchen, AsyncCallback<Long> async);
 	public void removeKitchen(Long kitchenId, AsyncCallback<Boolean> async);

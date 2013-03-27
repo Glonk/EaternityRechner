@@ -2,8 +2,8 @@
 package ch.eaternity.client.ui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
@@ -11,17 +11,13 @@ import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
+import ch.eaternity.client.ui.cells.ProductCell;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.FoodProduct;
-import ch.eaternity.shared.Quantity;
+import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.Season;
-import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Unit;
-import ch.eaternity.shared.comparators.NameComparator;
-import ch.eaternity.shared.comparators.ValueComparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,17 +28,23 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.cellview.client.AbstractHasData;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RowCountChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * 
@@ -57,6 +59,7 @@ public class SearchIngredients extends Composite {
 	
 	@UiField HTMLPanel panelSouth;
 	@UiField HTMLPanel legendPanel;
+	
 	
 	@UiField Anchor legendAnchor;
 	@UiField Anchor legendAnchorClose;
@@ -73,11 +76,11 @@ public class SearchIngredients extends Composite {
 	@UiField HTML SearchLabel;
 	@UiField public static SuggestBox SearchInput;
 	
+	@UiField ScrollPanel ingredientDisplayWidget;
+	
 	// Display Results in:
 	@UiField DockLayoutPanel displayResultsPanel;
-	
-	// Search results Tables
-	@UiField static FlexTable table;
+
 
 	// CSS reference for the alternating row coloring
 	@UiField static MarkingStyle markingStyle;
@@ -122,16 +125,16 @@ public class SearchIngredients extends Composite {
 	private RechnerActivity presenter;
 	private DataController dco;
 	
-	public List<FoodProduct> foundIngredients = new ArrayList<FoodProduct>();
-	public List<FoodProduct> foundAlternativeIngredients = new ArrayList<FoodProduct>();
+	// Create a data provider.
+    ListDataProvider<FoodProductInfo> productDataProvider = new ListDataProvider<FoodProductInfo>();
+    
+	public List<FoodProductInfo> foundProducts  = new ArrayList<FoodProductInfo>();
+	public List<FoodProductInfo> foundAlternativeProducts  = new ArrayList<FoodProductInfo>();
 	
 	public String searchString = "";
 		
 	// choose this sorting method
 	static int sortMethod = 1;
-	
-	private Listener listener;
-	private ListenerMeals listenerMeals;
 	
 	// CSS of rows
 	static int markedRow = 0;
@@ -142,11 +145,9 @@ public class SearchIngredients extends Composite {
 	public SearchIngredients() {
 		
 		initWidget(uiBinder.createAndBindUi(this));
-		// I want this to span the screen
 		
 		// we have to wait till the database is loaded:
 		SearchInput.setText("wird geladen...");
-		
 		SearchInput.setFocus(true);
 
 		initToolTips();
@@ -166,7 +167,7 @@ public class SearchIngredients extends Composite {
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {
 			@Override
 			public void onEvent(MonthChangedEvent event) {
-				displayResults();
+				//displayResults();
 			}
 		});
 	}
@@ -179,11 +180,47 @@ public class SearchIngredients extends Composite {
 		if(dco.dataLoaded())
 			updateResults("");
 		
-
-		
 		initTable(); // just the size
 		this.setHeight("720px");
+		
+		// Create a cell to render each value in the list.
+	    ProductCell productCell = new ProductCell();
+	    
+	    // Create a CellList that uses the cell.
+	    CellList<FoodProductInfo> cellList = new CellList<FoodProductInfo>(productCell);
+	    
+	    setupOnePageList(cellList);
+	    
+	    cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+
+	    // Add a selection model to handle user selection.
+	    final SingleSelectionModel<FoodProductInfo> selectionModel = new SingleSelectionModel<FoodProductInfo>();
+	    cellList.setSelectionModel(selectionModel);
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		FoodProductInfo selected = selectionModel.getSelectedObject();
+		        if (selected != null) {
+		        	addFoodProduct(selected);
+		        }
+	    	}
+	    });
+	    
+	    // Connect the list to the data provider.
+	    productDataProvider.addDataDisplay(cellList);
+
+	    // Add it to the display panel.
+	    ingredientDisplayWidget.setWidget(cellList);
+	    
 		bind();
+	}
+	
+	public static void setupOnePageList(final AbstractHasData<?> cellTable) {
+	    cellTable.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
+	        @Override
+	        public void onRowCountChange(RowCountChangeEvent event) {
+	            cellTable.setVisibleRange(new Range(0, event.getNewRowCount()));
+	        }
+	    });
 	}
 	
 	// ---------------------- UI Handlers ----------------------
@@ -192,14 +229,14 @@ public class SearchIngredients extends Composite {
 	void onCo2Clicked(ClickEvent event) {
 		sortMethod = 1;
 		sortResults(sortMethod);
-		displayResults();
+		//displayResults();
 	}
 
 	@UiHandler("alphOrder")
 	void onAlphClicked(ClickEvent event) {
 		sortMethod = 5;
 		sortResults(sortMethod);
-		displayResults();
+		//displayResults();
 	}
 	
 	// Handle search input
@@ -231,7 +268,7 @@ public class SearchIngredients extends Composite {
 			numEnterKeyPressed++;
 			if (numEnterKeyPressed % 2 == 0)
 			{
-				selectRow(markedRow);
+				//selectRow(markedRow);
 				SearchInput.setText("");
 				updateResults("");
 				markedRow = 0;
@@ -240,14 +277,14 @@ public class SearchIngredients extends Composite {
 		if(KeyCodes.KEY_DOWN == event.getNativeKeyCode())
 		{
 			numDownKeyPressed++;
-			if (numDownKeyPressed % 2 == 0)
-				changeMarkedRow(markedRow + 1);
+			if (numDownKeyPressed % 2 == 0);
+				//changeMarkedRow(markedRow + 1);
 		}
 		if(KeyCodes.KEY_UP == event.getNativeKeyCode())
 		{
 			numUpKeyPressed++;
-			if (numUpKeyPressed % 2 == 0)
-				changeMarkedRow(markedRow - 1);
+			if (numUpKeyPressed % 2 == 0);
+				//changeMarkedRow(markedRow - 1);
 		}
 	}
 
@@ -272,6 +309,7 @@ public class SearchIngredients extends Composite {
 
 	}
 
+	/*
 	@UiHandler("table")
 	void onTableClicked(ClickEvent event) {
 		// Select the row that was clicked (-1 to account for header row).
@@ -281,7 +319,7 @@ public class SearchIngredients extends Composite {
 			selectRow(row);
 		}
 	}
-
+*/
 	
 
 		// ---------------------------------------------------------------
@@ -295,20 +333,26 @@ public class SearchIngredients extends Composite {
 		public void updateResults(String searchString) {
 			SearchInput.setText(searchString);
 			
-			foundIngredients.clear();
-			foundAlternativeIngredients.clear();
+			foundProducts.clear();
+			foundAlternativeProducts.clear();
 			
+			// Add the data to the data provider, which automatically pushes it to the
+		    // widget.
+		    List<FoodProductInfo> productList = productDataProvider.getList(); 
+		    
+		    
 			// Get data from Data Controller
-			dco.searchIngredients(searchString, foundIngredients, foundAlternativeIngredients);
+			dco.searchIngredients(searchString, productList, foundAlternativeProducts);
 	
 			// Display Results
 			//TODO: Special Display for alternatives, now still done in displayIngredient
-			foundIngredients.addAll(foundAlternativeIngredients);
+			///foundIngredients.addAll(foundAlternativeIngredients);
 	
-			displayResults();
+			//displayResults();
 			
+		    /*
 			// Correct mark adjustements
-			int numOfIngredientsFound = foundIngredients.size();
+			int numOfIngredientsFound = foundProducts.size();
 			if (markedRow <= 0)
 				changeMarkedRow(0);
 			else if(markedRow >= numOfIngredientsFound)
@@ -318,7 +362,7 @@ public class SearchIngredients extends Composite {
 			
 			if (searchString.equals(""))
 				changeMarkedRow(0);
-			
+			*/
 		}
 		
 		/**
@@ -328,6 +372,7 @@ public class SearchIngredients extends Composite {
 		 *
 		*/
 		public void sortResults(int sortMethod) {
+			/*
 			this.sortMethod = sortMethod;
 			
 			switch(sortMethod){
@@ -367,15 +412,15 @@ public class SearchIngredients extends Composite {
 			}
 
 			}
+			*/
 		}
 		
 	
 		
 		// ----------------------------- private Methods -------------------------------------------
-		
+		/*
 		private void displayResults() {
-			//TODO this is the killer, this is to slow
-			table.removeAllRows();
+			
 			if(foundIngredients != null){
 				// display all noALternative Ingredients
 				for (final FoodProduct item : foundIngredients){
@@ -398,55 +443,18 @@ public class SearchIngredients extends Composite {
 							textALternatives.setHTML("alternativen:");
 							table.setWidget(row,0,textALternatives);
 							textlabeladded = true;
-						}*/
+						}
 						displayIngredient(item);
 					}
 				}
 			}
 		}
-		
+		*/
 		/**
 		 * the displaying functions for ingredients
 		 */
 		private void displayIngredient(final FoodProduct ingredient) {
-			int row = table.getRowCount();
-	
-			// this is the bottleneck, this is to slow, when executed 400times, so the html needs to pre-computed!
-			// I even think this has something todo with the dom - to display this large table
-			// one could try to store the big table of all ingredients as one big string, and just fill that in for the special case 
 			
-			HTML icon = new HTML();
-			String htmlString ="";
-			
-			if(ingredient.getCo2eValue().convert(Unit.GRAM).getAmount() < 400){
-				icon.setStyleName("base-icons");
-				htmlString = htmlString+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>";
-				htmlString = htmlString+"<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>";
-			} else	if(ingredient.getCo2eValue().convert(Unit.GRAM).getAmount() < 1200){
-				icon.setStyleName("base-icons");	
-				htmlString = htmlString+"<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>";
-	
-			}
-	
-			Season season = ingredient.getSeason();
-			if(season != null){
-				SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
-				
-				if( date.after(season.getBeginning()) && date.before(season.getEnd()) ){
-					htmlString = htmlString+"<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>";
-				} 
-			}
-	
-			if(ingredient.isNotASubstitute()){
-				htmlString = htmlString+"<div class='ingText'>"+ingredient.getName()+"</div>";
-			
-			} else {
-				htmlString = htmlString+"(alt): " +ingredient.getName();
-			}
-			
-			icon.setHTML(htmlString +"<div class='putRight'>ca "+Double.toString( ingredient.getCo2eValue().getAmount()/10) + " g*</div>");
-	
-			table.setWidget(row,0,icon);
 		}
 	
 		
@@ -511,9 +519,10 @@ public class SearchIngredients extends Composite {
 		}
 	
 		
-	
-		private void selectRow(final int row) {
-			FoodProduct item;
+		
+		private void addFoodProduct(FoodProductInfo product) {
+			
+			if (product == null) return;
 			
 			// get the grams from the input
 			// if 2 valid numbers exist, take the first valid one
@@ -529,87 +538,34 @@ public class SearchIngredients extends Composite {
 				    grams = x;
 				    break;
 				}
-				catch(NumberFormatException nFE) {
-				}
+				catch(NumberFormatException nFE) {}
 			}
-			
-			if (foundIngredients.size() < row){
-				return;
-			}
-			
-			if (row >= 0 && row < foundIngredients.size())
-			{
-				item = foundIngredients.get(row);
-			}
+	
+	
+			//styleRow(selectedRow, false);
+			//styleRow(row, true);
+	
 			/*
-			else if (row >= presenter.getDAO().foundIngredient.size() && row < numOfIngredientsFound)
-			{
-				item = presenter.getDAO().foundAlternativeIngredients.get(row - presenter.getDAO().foundIngredient.size());
-			}
-			*/
-			else return;
-	
-	
-	
-			if (item == null) {
-				return;
-			}
-	
-			styleRow(selectedRow, false);
-			styleRow(row, true);
-	
 			Timer t = new Timer() {
 				public void run() {
 					styleRow(row, false);
 				}
 			};
+			*/
 			
 			Quantity weigth = null;
 			if (grams != 0)
 				weigth = new Quantity((double)grams,Unit.GRAM);
-			dco.addIngredientToMenu(item, weigth);
+			dco.addIngredientToMenu(product, weigth);
 	
+			/*
 			t.schedule(200);
 			selectedRow = row;
 			markedRow = 0;
-	
-			if (listener != null) {
-				listener.onItemSelected(item);
-			}
+			*/
+
 		}
 		
-		private void changeMarkedRow(int row)
-		{
-			if (row >= 0 && row < foundIngredients.size())
-			{
-				styleMarkedRow(markedRow, false);
-				styleMarkedRow(row, true);
-				markedRow = row;
-			}
-			
-		}
-	
-		static void styleRow(int row, boolean selected) {
-			if (row != -1) {
-				String style = selectionStyle.selectedRow();
-	
-				if (selected) {
-					table.getRowFormatter().addStyleName(row, style);
-				} else {
-					table.getRowFormatter().removeStyleName(row, style);
-				}
-			}
-		}
-		
-		private void styleMarkedRow(int row, boolean marked) {
-			String style = markingStyle.markedRow();
-	
-			if (marked) {
-				table.getRowFormatter().addStyleName(row, style);
-			} else {
-				table.getRowFormatter().removeStyleName(row, style);
-			}
-		}
 
 }
 

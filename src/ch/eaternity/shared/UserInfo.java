@@ -27,8 +27,16 @@ public class UserInfo implements IsSerializable {
 	private String emailAddress;
 	private String nickname;
 	
+	private int currentMonth;
+	
+	/**
+	 * currentLocation is a valid Google Maps location (processed)
+	 */
+	private String currentLocation;
+	
 	private boolean isadmin;
 	private boolean loggedIn;
+	
 	
 
 	public UserInfo() {

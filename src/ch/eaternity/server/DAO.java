@@ -110,7 +110,7 @@ public class DAO
 			ofy().save().entity(product).now();
 		}
 		catch (Exception e) { 
-			log.log(Level.SEVERE, e.getCause() + e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			return null; 
 		}
 		
@@ -130,12 +130,27 @@ public class DAO
 				result.add(ofy().load().key(key).get());
 		}
 		catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			return null;
 		}
 		
 		return result;
 	}
+	
+	/**
+	 * @return the product or null if not found or an exception occured
+	 */
+	public FoodProduct getFoodProduct(Long id) {
+		FoodProduct product = null;
+		try {
+			product = ofy().load().type(FoodProduct.class).id(id).get();
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		} 
+		
+		return product;
+		}
 	
 	// ------------------------ Recipe -----------------------------------
 
@@ -144,7 +159,7 @@ public class DAO
 				ofy().save().entity(recipe).now();
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 			return recipe.getId();
@@ -155,7 +170,7 @@ public class DAO
 				ofy().delete().type(Recipe.class).id(id);
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return false;
 			} 
 			
@@ -171,7 +186,7 @@ public class DAO
 				ofy().load().type(Recipe.class).id(id);
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			} 
 			
 			// Testing Code
@@ -193,7 +208,7 @@ public class DAO
 				return recipes;
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
@@ -208,7 +223,7 @@ public class DAO
 				return recipes;
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
@@ -224,7 +239,7 @@ public class DAO
 				return recipes;
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
@@ -239,7 +254,7 @@ public class DAO
 				return recipes;
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
@@ -254,7 +269,7 @@ public class DAO
 				return recipes;
 			}
 			catch (Exception e) {
-				log.log(Level.SEVERE, e.getMessage());
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
@@ -334,7 +349,7 @@ public class DAO
 			ofy().save().entity(loginInfo);
 		} 
 		catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			return false;
 		} 
 		return true;
@@ -404,7 +419,7 @@ public class DAO
 			kitchen = ofy().load().type(Kitchen.class).id(kitchenId).get();
 		}
 		catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 		} 
 		return kitchen;
 		*/
@@ -416,7 +431,7 @@ public class DAO
 			ofy().delete().type(Kitchen.class).id(kitchenId);
 		}
 		catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			return false;
 		} 
 		//TODO remove id's from LoginInfo's, so that no error occurs if wrong id is setted

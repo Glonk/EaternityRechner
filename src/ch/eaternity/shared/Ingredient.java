@@ -44,10 +44,14 @@ public class Ingredient  implements IsSerializable {
 	
 	// --------------------------- public methods ---------------------------
 	
-	public Ingredient() {}
+	public Ingredient() {
+		distance = new Quantity(0.0D, Unit.KILOMETER);
+		weight = new Quantity(0.0D, Unit.GRAM);
+	}
 	
 	// Copy Constructor
 	public Ingredient(Ingredient toClone) {
+		this();
 		foodproduct = new FoodProduct(toClone.foodproduct);
 		weight = toClone.weight;
 		// inlcude Extraction, now just a shallow copy...
@@ -62,6 +66,7 @@ public class Ingredient  implements IsSerializable {
 	
 	// Copy Constructor from Ingredient
 	public Ingredient(FoodProduct foodproduct) {
+		this();
 		this.foodproduct = foodproduct;
 		if (foodproduct.getExtractions() != null)
 			extraction = new Extraction(foodproduct.getExtractions().get(0));
@@ -161,7 +166,7 @@ public class Ingredient  implements IsSerializable {
 	
 	public double getTransportationQuota() {
 		if(transportation != null && transportation.getFactor() != null){
-			if(distance.getAmount() != 0)
+			if(distance.getAmount() != null)
 				return transportation.getFactor()*distance.getAmount()/1000000*weight.getAmount();
 			else
 				return 0.0;

@@ -1,6 +1,8 @@
 package ch.eaternity.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ListDataProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,28 +15,36 @@ public class ClientData implements IsSerializable {
 
 	private static final long serialVersionUID = -8325524250818194857L;
 	
-	public List<Recipe> publicRecipes = new ArrayList<Recipe>();
-	public List<Recipe> userRecipes = new ArrayList<Recipe>();
-	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+	public List<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
 	
-	// use HashMap instead ...
-	public List<FoodProduct> ingredients = new ArrayList<FoodProduct>();
+	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
 	
 	public CountryDistance distances;
-	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
 
 	public UserInfo userInfo;
 	
 	// probably into activity (state variables) ?
 	public Kitchen currentKitchen; 
-	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
-	
+
 	public Recipe editRecipe;
-	public int currentMonth;
-	public String currentLocation;
+
 	public String searchstring;
 	
 	public RecipeScope recipeScope = RecipeScope.PUBLIC;
+	
+	
+	// TO REMOVE 
+	public List<Recipe> publicRecipes = new ArrayList<Recipe>();
+	public List<Recipe> userRecipes = new ArrayList<Recipe>();
+	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
+	
+	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
+	
+	// use HashMap instead ...
+	public List<FoodProduct> ingredients = new ArrayList<FoodProduct>();
+	
+	public int currentMonth;
+	public String currentLocation;
 	
 	public ClientData() {
 		

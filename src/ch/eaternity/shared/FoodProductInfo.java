@@ -1,6 +1,10 @@
 package ch.eaternity.shared;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.HasData;
 
 import com.googlecode.objectify.annotation.Id;
 
@@ -10,6 +14,10 @@ public class FoodProductInfo implements IsSerializable {
 	
 	@Id private Long id;
 	
+	private List<Long> substituteIds = new ArrayList<Long>();
+	
+	private Boolean notASubstitute;
+	
 	private String name;
 	
 	private Double co2eValue;
@@ -18,10 +26,16 @@ public class FoodProductInfo implements IsSerializable {
 
 	public FoodProductInfo() {}
 	
+	/**
+	 * The Constructor to create an lightweight Info out ouf a FoodProduct 
+	 * Take Care: inSeason is not setted here, set manually!
+	 * @param product
+	 */
 	public FoodProductInfo(FoodProduct product) {
 		this.id = product.getId();
 		this.name = product.getName();
 		this.co2eValue = product.getCo2eValue().convert(Unit.GRAM).getAmount();
+		this.substituteIds = product.getSubstitues();
 	}
 	
 	public Long getId() {
@@ -32,6 +46,23 @@ public class FoodProductInfo implements IsSerializable {
 		this.id = id;
 	}
 
+
+	public List<Long> getSubstituteIds() {
+		return substituteIds;
+	}
+
+	public void setSubstituteIds(List<Long> substituteIds) {
+		this.substituteIds = substituteIds;
+	}
+	
+	
+	public Boolean isNotASubstitute() {
+		return notASubstitute;
+	}
+	
+	public void setNotASubstitute(Boolean notASubstitute) {
+		this.notASubstitute = notASubstitute;
+	}
 
 	public String getName() {
 		return name;

@@ -14,11 +14,14 @@ import ch.eaternity.client.events.LocationChangedEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.ui.cells.ProductCell;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.CountryDistance;
 import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Unit;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Quantity;
@@ -213,22 +216,32 @@ public class DataController {
 		return cdata.editRecipe;
 	}
 	
-	public void addIngredientToMenu(FoodProduct ingredient, Quantity weight) {
+	public void addIngredientToMenu(FoodProductInfo product, final Quantity weight) {
 
-		Ingredient ingSpec = new Ingredient(ingredient);
-		if (weight == null) {
-			ingSpec.setWeight(ingredient.getStdWeight());
-		}
-		else
-			ingSpec.setWeight(weight);
-		//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
-		
-		if (cdata.editRecipe != null) {
-			cdata.editRecipe.addIngredient(ingSpec);
-			eventBus.fireEvent(new IngredientAddedEvent(ingSpec));
-		}
-		else
-			Window.alert("Edit Recipe is null");
+		dataRpcService.getFoodProduct(product.getId(), new AsyncCallback<FoodProduct>() {
+			public void onFailure(Throwable error) {
+				eventBus.fireEvent(new AlertEvent("Zutat konnte nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
+			}
+			public void onSuccess(FoodProduct product) {
+				Ingredient ingredient = new Ingredient(product);
+				if (weight == null) {
+					ingredient.setWeight(product.getStdWeight());
+				}
+				else{
+					ingredient.setWeight(weight);
+					//TODO implement right Distance fetch
+					//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
+					ingredient.setDistance(new Quantity(100.0, Unit.KILOMETER));
+				}
+				
+				if (cdata.editRecipe != null) {
+					cdata.editRecipe.addIngredient(ingredient);
+					eventBus.fireEvent(new IngredientAddedEvent(ingredient));
+				}
+				else
+					Window.alert("Edit Recipe is null");
+			}
+		});
 	}
 	
 	// probably other place?
@@ -322,11 +335,13 @@ public class DataController {
 	}
 	
 	
-	/*
+	/**
 	 * 
+	 * @param products the result of the search, list of ingredients
+	 * @param alternatives the alternatives of the ingredient if just one was found
 	 */
-	public void searchIngredients(String searchString, List<FoodProduct> ingredients, List<FoodProduct> alternatives) {
-		ingredients.clear();
+	public void searchIngredients(String searchString, List<FoodProductInfo> products, List<FoodProductInfo> alternatives) {
+		products.clear();
 		alternatives.clear();
 		
 		if(searchString.trim().length() != 0){
@@ -337,39 +352,38 @@ public class DataController {
 			for(String search : searches)
 			{
 				// TODO this search algorithm is extremely slow, make faster
-				for(FoodProduct product : cdata.ingredients){
+				for(FoodProductInfo product : cdata.productInfos){
 					if( search.trim().length() <= product.getName().length() &&  product.getName().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
-						if(!ingredients.contains(product)){
+						if(!products.contains(product)){
 							product.setNotASubstitute(true);
-							ingredients.add(product);
+							products.add(product);
 						}
 					}
 				}
 				// only look for alternatives, if there is only 1 result
-				if(ingredients.size() == 1){
-					for(FoodProduct zutat : ingredients){
-						if(zutat.getSubstitues() != null){
-							for(Long alternativen_id : zutat.getSubstitues()){
-								for(FoodProduct zutat2 : cdata.ingredients){
-									if(zutat2.getId().equals(alternativen_id)){
-										if(!alternatives.contains(zutat2)){
-											zutat2.setNotASubstitute(false);
-											alternatives.add(zutat2);
-										}
+				if(products.size() == 1){
+					FoodProductInfo product = products.get(0);
+					if(product.getSubstituteIds() != null){
+						for(Long alternativen_id : product.getSubstituteIds()){
+							for(FoodProductInfo zutat2 : cdata.productInfos){
+								if(zutat2.getId().equals(alternativen_id)){
+									if(!alternatives.contains(zutat2)){
+										zutat2.setNotASubstitute(false);
+										alternatives.add(zutat2);
 									}
 								}
 							}
 						}
-						break;
 					}
+
 				}
 			}
 		}
 		else {
 			// the search routine is also fast enough, the lag comes later
-			for(FoodProduct zutat : cdata.ingredients){
-				ingredients.add(zutat);
-				zutat.setNotASubstitute(true);
+			for(FoodProductInfo product : cdata.productInfos){
+				products.add(product);
+				product.setNotASubstitute(true);
 			}
 		}
 	}
@@ -587,6 +601,10 @@ public class DataController {
 		if (cdata.recipeScope == null) 
 			cdata.recipeScope = RecipeScope.PUBLIC;
 		return cdata.recipeScope;
+	}
+
+	public List<FoodProductInfo> getProductInfos() {
+		return cdata.productInfos;
 	}
 
 

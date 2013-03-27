@@ -27,12 +27,12 @@ public class FoodProduct implements IsSerializable {
     @Embed
     private Quantity stdWeight;
     
-    @Ignore
-    private Boolean notASubstitute;
     private List<Long> substituteIds = new ArrayList<Long>();
 
     @Embed
     private Season season;
+    
+    boolean seasonDependant;
 	
     private List<String> tags = new ArrayList<String>();
     
@@ -57,7 +57,6 @@ public class FoodProduct implements IsSerializable {
 		name_en = new String(toClone.name_en);
 		co2eValue = new Quantity(toClone.co2eValue);
 		stdWeight = new Quantity(toClone.stdWeight);
-		notASubstitute = toClone.notASubstitute;
 		for (Long id : toClone.substituteIds)
 			substituteIds.add(id);
 		season = new Season(toClone.season);
@@ -97,14 +96,6 @@ public class FoodProduct implements IsSerializable {
 
 	public void setStdWeight(Quantity stdWeight) {
 		this.stdWeight = stdWeight;
-	}
-
-	public Boolean isNotASubstitute() {
-		return notASubstitute;
-	}
-
-	public void setNotASubstitute(Boolean notASubstitute) {
-		this.notASubstitute = notASubstitute;
 	}
 	
     public List<Long> getSubstitues() {
@@ -237,6 +228,14 @@ public class FoodProduct implements IsSerializable {
 
 	public void setSynonyms(List<String> synonyms) {
 		this.synonyms = synonyms;
+	}
+
+	public boolean isSeasonDependant() {
+		return seasonDependant;
+	}
+
+	public void setSeasonDependant(boolean seasonDependant) {
+		this.seasonDependant = seasonDependant;
 	}
 
 

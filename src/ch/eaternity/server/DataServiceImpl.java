@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,7 +12,10 @@ import ch.eaternity.client.DataService;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Pair;
+import ch.eaternity.shared.Season;
+import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
@@ -25,6 +29,7 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -46,61 +51,48 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	private static final Logger Log = Logger.getLogger(DataServiceImpl.class.getName());
 
 	
-	// ------------------------ Kitchen -----------------------------------
 	
-	/*
-	public ArrayList<String> getKitchenStrings(Long userId) {}
+	 // ------------------------ Ingredients -----------------------------------
 	
-	or
-	
-	public HashSet<Pair<Long, String>> getKitchenStrings(Long userId) {}
-	
-	because we need the ids for matchin with currentKitchenId as well...
-	
-	*/
-	
-
-	
-	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
-		checkLoggedIn();
-		UserService userService = UserServiceFactory.getUserService();
-		if(userService.getCurrentUser() == null){
-			throw new NotLoggedInException("Not logged in.");
-		}
+	public ArrayList<FoodProductInfo> getFoodProductInfos(Integer month) {
 		DAO dao = new DAO();
-
-		return dao.saveKitchen(kitchen);
-	}
-	
-	
-	public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException {
-		// TODO implement
-		return true;
-	}
-	
-	public List<Kitchen> getYourKitchens() throws NotLoggedInException {
-		checkLoggedIn();
-		DAO dao = new DAO();
-		return dao.getYourKitchens(getUser());	
-	}
-	
-	public List<Kitchen> getAdminKitchens() throws NotLoggedInException{
-		UserService userService = UserServiceFactory.getUserService();
-		List<Kitchen> adminRecipes = new ArrayList<Kitchen>();
-		if(userService.getCurrentUser() != null){
-			if(userService.isUserAdmin()){
-				DAO dao = new DAO();
-				adminRecipes = dao.adminGetKitchens(userService.getCurrentUser());
-			}
-		}
-		return adminRecipes;
+		List<FoodProduct> foodProducts = dao.getAllIngredients();
+		ArrayList<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
 		
+		for (FoodProduct product : foodProducts) {
+			FoodProductInfo info = new FoodProductInfo(product);
+			
+			info.setInSeason(false);
+			Season season = product.getSeason();
+			if(product.isSeasonDependant() && season != null){
+				SeasonDate date = new SeasonDate(month,1);
+				if( date.after(season.getBeginning()) && date.before(season.getEnd()) )
+					info.setInSeason(true);
+			}
+			
+			productInfos.add(info);
+		}
+		
+		return productInfos;
 	}
 	
-	public Boolean setCurrentKitchen(Long id) throws NotLoggedInException {
-		checkLoggedIn();
+	public FoodProduct getFoodProduct(Long productId) {
 		DAO dao = new DAO();
-		return dao.setCurrentKitchen(id, getUserId());
+		FoodProduct product = dao.getFoodProduct(productId);
+		if (product == null)
+			throw new NoSuchElementException("Ingredient with id " + productId + "not found in database or error occured.");
+		return product;
+	}
+	
+	public Boolean persistIngredients(ArrayList<FoodProduct> products) 
+	{
+		DAO dao = new DAO();
+		return dao.saveFoodProducts(products);
+	}
+	
+	public String getIngredientsXml()
+	{
+		return null;
 	}
 	
 
@@ -155,6 +147,13 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		// load all ingredients
 		data.ingredients = dao.getAllIngredients();
 		
+		Date date = new Date();
+		
+		data.productInfos = getFoodProductInfos(date.getMonth() + 1);
+		
+		if (data.ingredients == null) 
+			data.ingredients = new ArrayList<FoodProduct>();
+		
 		data.userInfo = dao.getLoginInfo(requestUri);
 		
 		//TODO get Distances
@@ -196,6 +195,66 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return data;
 	}
 
+	// ------------------------ Kitchen -----------------------------------
+	
+		/*
+		public ArrayList<String> getKitchenStrings(Long userId) {}
+		
+		or
+		
+		public HashSet<Pair<Long, String>> getKitchenStrings(Long userId) {}
+		
+		because we need the ids for matchin with currentKitchenId as well...
+		
+		*/
+		
+
+		
+		public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
+			checkLoggedIn();
+			UserService userService = UserServiceFactory.getUserService();
+			if(userService.getCurrentUser() == null){
+				throw new NotLoggedInException("Not logged in.");
+			}
+			DAO dao = new DAO();
+
+			return dao.saveKitchen(kitchen);
+		}
+		
+		
+		public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException {
+			// TODO implement
+			return true;
+		}
+		
+		public List<Kitchen> getYourKitchens() throws NotLoggedInException {
+			checkLoggedIn();
+			DAO dao = new DAO();
+			return dao.getYourKitchens(getUser());	
+		}
+		
+		public List<Kitchen> getAdminKitchens() throws NotLoggedInException{
+			UserService userService = UserServiceFactory.getUserService();
+			List<Kitchen> adminRecipes = new ArrayList<Kitchen>();
+			if(userService.getCurrentUser() != null){
+				if(userService.isUserAdmin()){
+					DAO dao = new DAO();
+					adminRecipes = dao.adminGetKitchens(userService.getCurrentUser());
+				}
+			}
+			return adminRecipes;
+			
+		}
+		
+		public Boolean setCurrentKitchen(Long id) throws NotLoggedInException {
+			checkLoggedIn();
+			DAO dao = new DAO();
+			return dao.setCurrentKitchen(id, getUserId());
+		}
+		
+		
+		// ------------------------ Various -----------------------------------
+		
 	/**
 	 * 
 	 * @throws NotLoggedInException
@@ -231,17 +290,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException {
 		// TODO implement
 		return 0;
-	}
-	
-	public Boolean persistIngredients(ArrayList<FoodProduct> products)  throws NotLoggedInException
-	{
-		DAO dao = new DAO();
-		return dao.saveFoodProducts(products);
-	}
-	
-	public String getIngredientsXml()
-	{
-		return null;
 	}
 	
 

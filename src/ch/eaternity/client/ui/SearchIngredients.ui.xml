@@ -7,14 +7,8 @@
 	
 		.hundredpercent {
 	width:100%;
-
-
-	}
-	.big {
-	/* this is a HACK: without this the scrolling does not work */
-	height:602px;
-
-	}
+		}
+		
 		.searchLabel {
 			padding-left: 6px;
 		}
@@ -160,6 +154,9 @@
 			background: #fff;
 			margin-top: 1px;
 			border-top: solid #bbb 1px;
+			
+			/* this is a HACK: without this the scrolling does not work */
+			height:602px;
 		}
 		
 		.htmlbox {
@@ -234,11 +231,7 @@
 								<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor>
 							</p>
 					
-						<g:ScrollPanel styleName='{style.scroll}'>
-	      					<g:HTMLPanel styleName='{style.big}'>
-								<!-- Here is the Table for displaying the results of the ingredients -->
-	        					<g:FlexTable ui:field='table' styleName='{style.table}' cellSpacing='0' cellPadding='0'/>
-	        	       		</g:HTMLPanel>
+						<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'>
 	      				</g:ScrollPanel>
 				
 				  </g:HTMLPanel>
