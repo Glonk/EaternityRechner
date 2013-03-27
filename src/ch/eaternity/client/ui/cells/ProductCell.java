@@ -1,13 +1,14 @@
 package ch.eaternity.client.ui.cells;
 
-//import java.text.DecimalFormat;
 
 import ch.eaternity.shared.FoodProductInfo;
+import ch.eaternity.shared.Unit;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -49,7 +50,7 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
      */
    // private static ImgTemplate imgTemplate = GWT.create(ImgTemplate.class);
     
-    private static ProductTemplate productTemplate = GWT.create(ProductTemplate.class);
+    //private static ProductTemplate productTemplate = GWT.create(ProductTemplate.class);
 
     @Override
     public void render(Cell.Context context, FoodProductInfo productInfo, SafeHtmlBuilder sb) {
@@ -62,17 +63,33 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 	    return;
 	  }
 	  
-	 // DecimalFormat formatter = new DecimalFormat("##");
+	  NumberFormat formatter = NumberFormat.getFormat("##");
 	
 	  SafeHtml name = SafeHtmlUtils.fromTrustedString(productInfo.getName());
-	  SafeHtml co2value = SafeHtmlUtils.fromTrustedString(productInfo.getCo2eValue().toString());
+	  SafeHtml co2value = SafeHtmlUtils.fromTrustedString(formatter.format(productInfo.getCo2eValue()));
 	
-	  SafeHtml rendered = productTemplate.cell(name, co2value);
+	  //SafeHtml rendered = productTemplate.cell(name, co2value);
+	  
+	  sb.appendHtmlConstant("<div class='productInfo'><div style='width:100px; float:left;'>");
+	  sb.append(name);
+	  sb.appendHtmlConstant("</div>");
+	  
+	  sb.appendHtmlConstant("<div style='width:80px; float:left;'>");
+	  sb.append(co2value);
+	  sb.appendHtmlConstant("g</div>");
+	  
+	  if (productInfo.getCo2eValue() > 300)
+		  sb.appendHtmlConstant("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+	  
+	  if (productInfo.isInSeason()) 
+		  sb.appendHtmlConstant("<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
+	  sb.appendHtmlConstant("</div>");
+	
 	  
 	  //SafeStyles styles = SafeStylesUtils.forBorderStyle(BorderStyle.DOTTED);
 	  //SafeHtml rendered = imgTemplate.cell(styles, safeValue);
 	  
-	  sb.append(rendered);
+	  //sb.append(rendered);
     }
    
 }
