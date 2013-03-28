@@ -70,20 +70,22 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 	
 	  //SafeHtml rendered = productTemplate.cell(name, co2value);
 	  
-	  sb.appendHtmlConstant("<div class='productInfo'><div style='width:100px; float:left;'>");
+	  sb.appendHtmlConstant("<div class='productInfo'><table><tr><td width='150'>");
 	  sb.append(name);
-	  sb.appendHtmlConstant("</div>");
+	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<div style='width:80px; float:left;'>");
+	  sb.appendHtmlConstant("<td width='80'>");
 	  sb.append(co2value);
-	  sb.appendHtmlConstant("g</div>");
+	  sb.appendHtmlConstant("g</td>");
 	  
 	  if (productInfo.getCo2eValue() > 300)
-		  sb.appendHtmlConstant("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
+		  sb.appendHtmlConstant("<td><img src=url(ing_rating.png) /></td>");
+	  //<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>
 	  
 	  if (productInfo.isInSeason()) 
-		  sb.appendHtmlConstant("<div class='extra-icon regloc'><img src='pixel.png' height=1 width=20 /></div>");
-	  sb.appendHtmlConstant("</div>");
+		  sb.appendHtmlConstant("<td><img src='season.png' /></td>");
+	  
+	  sb.appendHtmlConstant("</tr></table></div>");
 	
 	  
 	  //SafeStyles styles = SafeStylesUtils.forBorderStyle(BorderStyle.DOTTED);

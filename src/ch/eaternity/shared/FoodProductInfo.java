@@ -20,6 +20,9 @@ public class FoodProductInfo implements IsSerializable {
 	
 	private String name;
 	
+	/**
+	 * The equivalent co2 value in [gram co2e / 100 g amount]
+	 */
 	private Double co2eValue;
 	
 	private boolean inSeason;
@@ -34,7 +37,8 @@ public class FoodProductInfo implements IsSerializable {
 	public FoodProductInfo(FoodProduct product) {
 		this.id = product.getId();
 		this.name = product.getName();
-		this.co2eValue = product.getCo2eValue().convert(Unit.GRAM).getAmount();
+		// kg / kg -> g / g same, multiplicate by 100 for getting [gram co2e / 100 g amount]
+		this.co2eValue = product.getCo2eValue().getAmount()*100;
 		this.substituteIds = product.getSubstitues();
 	}
 	

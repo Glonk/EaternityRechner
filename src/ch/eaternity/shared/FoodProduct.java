@@ -22,6 +22,7 @@ public class FoodProduct implements IsSerializable {
     private List<String> synonyms = new ArrayList<String>();
 
     // probably change to double, take standard measures?
+    // in Quantity.Unit / kg
     @Embed
     private Quantity co2eValue;
     @Embed
