@@ -11,6 +11,7 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
 
@@ -27,6 +28,7 @@ public class DAO
 		ObjectifyService.register(FoodProduct.class);
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Recipe.class);
+		//ObjectifyService.register(Quantity.class);
 		ObjectifyService.register(ImageBlob.class);
 		ObjectifyService.register(Kitchen.class);
 		ObjectifyService.register(UserInfo.class);

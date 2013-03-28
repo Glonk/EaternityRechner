@@ -109,8 +109,10 @@ public class RechnerActivity extends AbstractActivity {
      */
     @Override
     public String mayStop() {
-    	if (place instanceof RechnerRecipeEditPlace && !recipeEdit.isSaved())
-    		return "Rezept nocht nicht gespeichert. Trotzdem verlassen?";
+    	if (place instanceof RechnerRecipeEditPlace && !recipeEdit.isSaved()){
+    		recipeEdit.closeRecipeEdit();
+    		return null;
+    	}
         else
         	return null;
     }
@@ -130,7 +132,7 @@ public class RechnerActivity extends AbstractActivity {
 	 */
 	public void goTo(Place place) {
 		if (this.place instanceof RechnerRecipeEditPlace) {
-			recipeEdit.closeRecipeEdit();
+			//recipeEdit.closeRecipeEdit();
 		}
 		
 		placeController.goTo(place);

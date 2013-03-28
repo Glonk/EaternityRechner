@@ -29,6 +29,7 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util;
 import ch.eaternity.shared.Util.RecipeScope;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -70,7 +71,7 @@ public class DataController {
 				handleError(error);
 			}
 			public void onSuccess(ClientData data) {
-				// the data objects holds all the data
+				// the data objects holds all the data	
 				cdata = data;
 				
 				// Load currentKitchen via ID
@@ -152,12 +153,10 @@ public class DataController {
 						cdata.currentKitchenRecipes.add(recipe);
 					cdata.kitchenRecipes.add(recipe);
 				}
-				//TODO show status info that the recipe got saved...
-				// set place accordingly
+				eventBus.fireEvent(new UpdateRecipeViewEvent());
+				eventBus.fireEvent(new AlertEvent("Rezept gespeichert.", AlertType.INFO, AlertEvent.Destination.BOTH, 2000));
 			}
 		});
-		eventBus.fireEvent(new UpdateRecipeViewEvent());
-		eventBus.fireEvent(new AlertEvent("Rezept gespeichert.", AlertType.INFO, AlertEvent.Destination.EDIT, 2000));
 	}
 	
 	public void deleteRecipe(final Recipe recipe) {
@@ -184,7 +183,7 @@ public class DataController {
 	 */
 	public Recipe setEditRecipe(String idStr) {
 
-		if (idStr.equals(null) || idStr == null || idStr.equals("new")) {
+		if (idStr.equals("") || idStr == null || idStr.equals("new")) {
 			createRecipe();
 		}
 		else {
@@ -239,7 +238,7 @@ public class DataController {
 					eventBus.fireEvent(new IngredientAddedEvent(ingredient));
 				}
 				else
-					Window.alert("Edit Recipe is null");
+					eventBus.fireEvent(new AlertEvent("Rezept noch nicht geladen werden. Bitte Seite erneut laden.", AlertType.ERROR, AlertEvent.Destination.EDIT, 10000));
 			}
 		});
 	}
@@ -529,10 +528,11 @@ public class DataController {
 	}
 	
 	private void handleError(Throwable error) {
-		Window.alert(error.getMessage()  +" "+error.getLocalizedMessage());
 		if (error instanceof NotLoggedInException) {
-			Window.Location.replace(cdata.userInfo.getLogoutUrl());
+			Window.Location.replace(cdata.userInfo.getLoginUrl());
 		}
+		Log.error(error.getCause() + " EXCEPTION TYPE: " + error.getClass().toString());
+		eventBus.fireEvent(new AlertEvent("Schwerwiegender Fehler (siehe Log für Details). Bitte versuche es noch einmal.", AlertType.ERROR, AlertEvent.Destination.BOTH, 10000));
 	}
 	
 	

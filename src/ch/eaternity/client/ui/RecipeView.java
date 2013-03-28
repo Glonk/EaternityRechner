@@ -96,7 +96,7 @@ public class RecipeView extends Composite {
 				new AlertEventHandler() {
 					@Override
 					public void onEvent(final AlertEvent event) {
-						if (event.destination == AlertEvent.Destination.VIEW) {
+						if (event.destination == AlertEvent.Destination.VIEW || event.destination == AlertEvent.Destination.BOTH) {
 							alertPanel.insert(event.alert, 0);
 							
 							Timer t = new Timer() {

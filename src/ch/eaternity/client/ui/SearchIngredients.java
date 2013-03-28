@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -183,24 +184,35 @@ public class SearchIngredients extends Composite {
 		initTable(); // just the size
 		this.setHeight("720px");
 		
+		// initialize a key provider to refer to the same selection states
+		ProvidesKey<FoodProductInfo> keyProvider = new ProvidesKey<FoodProductInfo>() {
+		      public Object getKey(FoodProductInfo item) {
+		        // Always do a null check.
+		        return (item == null) ? null : item.getId();
+		      }
+		};
+		    
 		// Create a cell to render each value in the list.
 	    ProductCell productCell = new ProductCell();
 	    
 	    // Create a CellList that uses the cell.
-	    CellList<FoodProductInfo> cellList = new CellList<FoodProductInfo>(productCell);
+	    CellList<FoodProductInfo> cellList = new CellList<FoodProductInfo>(productCell, keyProvider);
 	    
 	    setupOnePageList(cellList);
 	    
 	    cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
+		
 	    // Add a selection model to handle user selection.
-	    final SingleSelectionModel<FoodProductInfo> selectionModel = new SingleSelectionModel<FoodProductInfo>();
+	    final SingleSelectionModel<FoodProductInfo> selectionModel = new SingleSelectionModel<FoodProductInfo>(keyProvider);
+	    
 	    cellList.setSelectionModel(selectionModel);
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	public void onSelectionChange(SelectionChangeEvent event) {
 	    		FoodProductInfo selected = selectionModel.getSelectedObject();
 		        if (selected != null) {
 		        	addFoodProduct(selected);
+		        	selectionModel.setSelected(selected, false);
 		        }
 	    	}
 	    });

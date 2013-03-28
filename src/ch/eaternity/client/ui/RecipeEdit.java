@@ -199,6 +199,7 @@ public class RecipeEdit extends Composite {
 					public void onEvent(IngredientAddedEvent event) {
 						if (recipe != null) {
 							addIngredient(event.ing);
+							changeSaveStatus(false);
 							updateIcons();
 						}
 					}
@@ -223,14 +224,15 @@ public class RecipeEdit extends Composite {
 				new LoadedDataEventHandler() {
 					@Override
 					public void onLoadedData(LoadedDataEvent event) {
-						//loadRecipe(recipeId);
+						loadRecipe(recipeId);
+						changeSaveStatus(true);
 					}
 				});
 		presenter.getEventBus().addHandler(AlertEvent.TYPE,
 				new AlertEventHandler() {
 					@Override
 					public void onEvent(final AlertEvent event) {
-						if (event.destination == AlertEvent.Destination.EDIT) {
+						if (event.destination == AlertEvent.Destination.EDIT || event.destination == AlertEvent.Destination.BOTH) {
 							alertPanel.insert(event.alert,0);
 							Timer t = new Timer() {
 								public void run() {
@@ -339,44 +341,6 @@ public class RecipeEdit extends Composite {
 			recipe.setSubTitle(rezeptDetails.getText());
 			changeSaveStatus(false);
 		}
-	}
-
-	@UiHandler("PreparationButton")
-	void onPrepareClicked(ClickEvent event) {
-		/*
-		 // we changed something -> so it isn't saved anymore
-		 saved = false;
-		 
-		 // what is this???
-		 if(selectedRow != -1 && infoDialogIsOpen){
-			 VerticalPanel verticalInfoPanel = (VerticalPanel)(addInfoPanel.getWidget(1));
-			 InfoZutatDialog infoDialog = (InfoZutatDialog)(verticalInfoPanel.getWidget(1));
-			 IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-			 recipe.ingredients.set(selectedRow , zutatSpec2);
-		 }
-		 
-		 // the selected row in the recipe is not highlighted anymore
-		 if (selectedRow != -1) {
-			 styleRow(selectedRow, false);
-		 }
-		 
-
-		// remove window
-		addInfoPanel.remove(1);
-		
-		// cooking instructions etc...
-		menuDecoInfo.setVisible(false);
-		
-		InfoPreparationDialog infoPrepare = new InfoPreparationDialog(MenuTable,recipe,SuggestTable,this);
-		VerticalPanel verticalDummy = new VerticalPanel();
-		verticalDummy.add(infoPrepare);
-		addInfoPanel.insert(verticalDummy, 1);
-		infoDialogIsOpen = true;
-		
-		// is this necessary... it should be only on change...
-		updateSuggestion();
-
-		*/
 	}
 	
 	
@@ -538,6 +502,7 @@ public class RecipeEdit extends Composite {
 			} 
 		}
 		updateCo2Value();
+		changeSaveStatus(false);
 	}
 	
 	public void updateIngredientValue(Ingredient ingSpec) {
@@ -689,7 +654,7 @@ public class RecipeEdit extends Composite {
 	public void selectRow(int row) {
 
 		// maybee into dialog?
-		changeSaveStatus(false);
+
 
 		if (selectedRow != -1 && infoDialogIsOpen) {
 
@@ -807,6 +772,7 @@ public class RecipeEdit extends Composite {
 			dlg.yesButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					dco.saveRecipe(recipe);
+					saved = true;
 					dlg.hide();
 				}
 			});

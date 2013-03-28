@@ -8,7 +8,7 @@ public class AlertEvent extends GwtEvent<AlertEventHandler> {
   public static Type<AlertEventHandler> TYPE = new Type<AlertEventHandler>();
   
   public enum Destination {
-	  VIEW, EDIT
+	  VIEW, EDIT, BOTH
   }
   public Alert alert;
   

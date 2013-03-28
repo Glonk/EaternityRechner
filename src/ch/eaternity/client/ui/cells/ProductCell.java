@@ -6,7 +6,10 @@ import ch.eaternity.shared.Unit;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safecss.shared.SafeStyles;
@@ -78,7 +81,7 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 	  sb.append(co2value);
 	  sb.appendHtmlConstant("g</td>");
 	  
-	  if (productInfo.getCo2eValue() > 300)
+	  if (productInfo.getCo2eValue() < 400)
 		  sb.appendHtmlConstant("<td><img src=url(ing_rating.png) /></td>");
 	  //<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>
 	  
@@ -93,5 +96,19 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 	  
 	  //sb.append(rendered);
     }
+    
+    // future: override for mouseOver effect, keyboardselection effect...
+    @Override
+    public void onBrowserEvent(Cell.Context context, Element parent, FoodProductInfo value, NativeEvent event, ValueUpdater<FoodProductInfo> valueUpdater) {
+    	 super.onBrowserEvent(context, parent, value, event, valueUpdater);
+    	 
+    	 // Handle the click event.
+         if ("onmoseover".equals(event.getType())) {
+           // Ignore clicks that occur outside of the outermost element.
+        
+         }
+    	 
+    }
+    
    
 }

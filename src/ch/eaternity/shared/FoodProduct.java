@@ -199,7 +199,7 @@ public class FoodProduct implements IsSerializable {
 	}
 	
 	public void setName_En(String name) {
-		this.name = name;
+		this.name_en = name;
 	}
 	
 	public Season getSeason() {

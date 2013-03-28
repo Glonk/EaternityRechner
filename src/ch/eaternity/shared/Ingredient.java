@@ -29,16 +29,20 @@ public class Ingredient  implements IsSerializable {
 	// optionally if speed is to slow, needs to be created when stored, not possible client-side
 	//@Load private Ref<FoodProduct> productRef;
 	
+	@Embed
 	private Quantity weight;
 	private Date cookingDate;
 	private double cost; 
-
+	@Embed
 	private Extraction extraction;
 	// need to include home as well...?
+	@Embed
 	private Quantity distance;
-		
+	@Embed
 	private Transportation transportation;
+	@Embed
 	private Production production;
+	@Embed
 	private Condition condition;
 	
 	
@@ -120,6 +124,22 @@ public class Ingredient  implements IsSerializable {
 
 	public Long getId() {
 		return id;
+	}
+
+	public FoodProduct getFoodproduct() {
+		return foodproduct;
+	}
+
+	public void setFoodproduct(FoodProduct foodproduct) {
+		this.foodproduct = foodproduct;
+	}
+
+	public Long getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Long productId) {
+		this.productId = productId;
 	}
 
 	public void setWeight(Quantity weight) {
