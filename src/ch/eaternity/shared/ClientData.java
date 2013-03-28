@@ -10,12 +10,20 @@ import java.util.TreeSet;
 
 import ch.eaternity.shared.Util.RecipeScope;
 
-
+/**
+ * No DataProviders from CellList inside here...
+ * @author aurelianjaggi
+ *
+ */
 public class ClientData implements IsSerializable {
 
 	private static final long serialVersionUID = -8325524250818194857L;
 	
 	public List<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
+	
+	public List<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
+	
+	
 	
 	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
 	
@@ -29,6 +37,8 @@ public class ClientData implements IsSerializable {
 	public Recipe editRecipe;
 
 	public String searchstring;
+	
+	public RecipeSearchRepresentation recipeSeachRepresentation = new RecipeSearchRepresentation();
 	
 	public RecipeScope recipeScope = RecipeScope.PUBLIC;
 	
@@ -66,14 +76,14 @@ public class ClientData implements IsSerializable {
 		if(this.publicRecipes != null){
 			for(Recipe recipe : this.publicRecipes){
 				if(recipe != null){
-					oracleIndex.add(recipe.getSymbol());
+					oracleIndex.add(recipe.getTitle());
 				}
 			}
 		}
 		if(this.userRecipes != null){
 			for(Recipe recipe  : this.userRecipes){
 				if(recipe != null){
-					oracleIndex.add(recipe.getSymbol());
+					oracleIndex.add(recipe.getTitle());
 				}
 			}
 		}

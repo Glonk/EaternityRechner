@@ -123,7 +123,7 @@ public class DAO
 	 * 
 	 * @return all the ingredients of the datastore or null an exception occured
 	 */
-	public List<FoodProduct> getAllIngredients()
+	public List<FoodProduct> getAllFoodProducts()
 	{
 		List<FoodProduct> result = new ArrayList<FoodProduct>();
 		try {
@@ -133,7 +133,7 @@ public class DAO
 		}
 		catch (Exception e) {
 			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
-			return null;
+			result = null;
 		}
 		
 		return result;
@@ -236,14 +236,26 @@ public class DAO
 		 *  or null if not found or an exception occured
 		 */
 		public List<Recipe> getAllRecipes(){
+			List<Recipe> result = new ArrayList<Recipe>();
 			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("deleted", false).list();
-				return recipes;
+				//result = ofy().load().type(Recipe.class).filter("deleted", false).list();
+				
+				Iterable<Key<Recipe>> keys = ofy().load().type(Recipe.class).filter("deleted", false).keys();
+				for (Key<Recipe> key : keys)
+					result.add(ofy().load().key(key).get());
+				
 			}
 			catch (Exception e) {
 				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
-				return null;
-			} 
+				result = new ArrayList<Recipe>();;
+			}
+			/*
+			if (!(result instanceof List<Recipe>)){
+				result = new ArrayList<Recipe>();
+				log.log(Level.WARNING, "getAllRecipes(): Proxy77 was returned, query failed! returning null.");
+			}*/
+			
+			return result;
 		}
 		
 		/**

@@ -168,7 +168,7 @@ position:relative;
 <g:HTMLPanel>
 	<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
 	<g:Button ui:field="addRecipeButton">neues Rezept</g:Button>
-	<g:FlexTable ui:field="recipeList"></g:FlexTable>
+	<g:SimplePanel ui:field="recipeDisplayWidget"></g:SimplePanel>
 	
 	<g:HorizontalPanel>
 		<g:Button ui:field="addToCollectionButton">zu Sammlung hinzufuegen</g:Button>

@@ -10,8 +10,13 @@ import ch.eaternity.client.events.AlertEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
+import ch.eaternity.client.ui.cells.ProductCell;
+import ch.eaternity.client.ui.cells.RecipeCell;
 import ch.eaternity.client.ui.widgets.RecipeWidget;
+import ch.eaternity.shared.FoodProductInfo;
+import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.Recipe;
+import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.github.gwtbootstrap.client.ui.Alert;
@@ -21,13 +26,23 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.AbstractHasData;
+import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RowCountChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * 
@@ -41,16 +56,18 @@ public class RecipeView extends Composite {
 	// ---------------------- User Interface Elements --------------
 	@UiField VerticalPanel alertPanel;
 	@UiField Button addRecipeButton;
-	@UiField FlexTable recipeList;
 	@UiField Button addToCollectionButton;
 	@UiField Button generateReportButton;
+	
+	@UiField SimplePanel recipeDisplayWidget;
 	
 	// ---------------------- Class Variables ----------------------
 	
 	private RechnerActivity presenter;
 	private DataController dco;
 	
-	private List<Recipe> recipes = new ArrayList<Recipe>();
+	// Create a data provider.
+    ListDataProvider<RecipeInfo> recipeDataProvider;
 	
 	// ---------------------- public Methods -----------------------
 	
@@ -59,11 +76,62 @@ public class RecipeView extends Composite {
 		
 	}
 	
-	public void setPresenter(RechnerActivity presenter) {
+	public void setPresenter(final RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
+		this.recipeDataProvider = dco.getRecipeDataProvider();
 		this.setHeight("1000px");
+		
+		// initialize a key provider to refer to the same selection states
+		ProvidesKey<RecipeInfo> keyProvider = new ProvidesKey<RecipeInfo>() {
+		      public Object getKey(RecipeInfo item) {
+		        // Always do a null check.
+		        return (item == null) ? null : item.getId();
+		      }
+		};
+		    
+		// Create a cell to render each value in the list.
+	    RecipeCell recipeCell = new RecipeCell();
+	    
+	    // Create a CellList that uses the cell.
+	    CellList<RecipeInfo> cellList = new CellList<RecipeInfo>(recipeCell, keyProvider);
+	    
+	    setupOnePageList(cellList);
+	    
+	    cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
+		
+	    // Add a selection model to handle user selection.
+	    final SingleSelectionModel<RecipeInfo> selectionModel = new SingleSelectionModel<RecipeInfo>(keyProvider);
+	    
+	    cellList.setSelectionModel(selectionModel);
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		RecipeInfo selected = selectionModel.getSelectedObject();
+		        if (selected != null) {
+		        	presenter.goTo(new RechnerRecipeEditPlace(selected.getId().toString()));
+		        	selectionModel.setSelected(selected, false);
+		        }
+	    	}
+	    });
+	    
+	    // Connect the list to the data provider.
+	    recipeDataProvider.addDataDisplay(cellList);
+	    
+	    recipeDataProvider.setList(dco.getRecipeInfos());
+	    
+	    // Add it to the display panel.
+	    recipeDisplayWidget.setWidget(cellList);
+		
 		bind();
+	}
+	
+	public static void setupOnePageList(final AbstractHasData<?> cellTable) {
+	    cellTable.addRowCountChangeHandler(new RowCountChangeEvent.Handler() {
+	        @Override
+	        public void onRowCountChange(RowCountChangeEvent event) {
+	            cellTable.setVisibleRange(new Range(0, event.getNewRowCount()));
+	        }
+	    });
 	}
 
 	
@@ -73,15 +141,6 @@ public class RecipeView extends Composite {
 		presenter.goTo(new RechnerRecipeEditPlace("new"));
 	}
 	
-	@UiHandler("recipeList")
-	void onRecipeClicked(ClickEvent event) {
-		Cell cell = recipeList.getCellForEvent(event);
-		if (cell != null) {
-			int row = cell.getRowIndex();
-			RecipeWidget recipeWidget = (RecipeWidget) recipeList.getWidget(row, 1);
-			presenter.goTo(new RechnerRecipeEditPlace(recipeWidget.getRecipeId().toString()));
-		}
-	}
 		
 	private void bind() {
 		//  Listen to the EventBus 
@@ -89,7 +148,7 @@ public class RecipeView extends Composite {
 				new UpdateRecipeViewEventHandler() {
 					@Override
 					public void onEvent(UpdateRecipeViewEvent event) {
-						updateList();
+						//updateList();
 					}
 				});
 		presenter.getEventBus().addHandler(AlertEvent.TYPE,
@@ -110,7 +169,7 @@ public class RecipeView extends Composite {
 					}
 				});
 	}
-	
+	/*
 	private void updateList() {
 		RecipeScope recipeScope = dco.getRecipeScope();
 		
@@ -145,7 +204,7 @@ public class RecipeView extends Composite {
 			row = row + 1;
 		}
 	}
-	
+	*/
 	// ---------------------- UI Handlers ----------------------
 	
 	

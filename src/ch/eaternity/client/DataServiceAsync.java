@@ -10,6 +10,8 @@ import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.RecipeInfo;
+import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
@@ -19,6 +21,10 @@ import ch.eaternity.shared.UploadedImage;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DataServiceAsync {
+	
+	public void getFoodProductInfos(Integer month, AsyncCallback<ArrayList<FoodProductInfo>> asyncCallback);
+	public void getFoodProduct(Long productId, AsyncCallback<FoodProduct> asyncCallback);
+	
 	public void saveRecipe(Recipe recipe, AsyncCallback<Long> async);
 	public void deleteRecipe(Long rezeptId, AsyncCallback<Boolean> async);
 	public void getUserRecipes(AsyncCallback<List<Recipe>> async);
@@ -26,14 +32,12 @@ public interface DataServiceAsync {
 	public void getAllRecipes(AsyncCallback<List<Recipe>> asyncCallback);
 	public void approveRecipe(Long id, Boolean approve,
 			AsyncCallback<Boolean> asyncCallback);
+	public void searchRecipes(RecipeSearchRepresentation search, AsyncCallback<ArrayList<RecipeInfo>> asyncCallback);
 
 	public void getData(String requestUri, AsyncCallback<ClientData> async);
 	public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
 	public void persistIngredients(ArrayList<FoodProduct> ingredients,
 			AsyncCallback<Boolean> asyncCallback);
-	
-	public void getFoodProductInfos(Integer month, AsyncCallback<ArrayList<FoodProductInfo>> asyncCallback);
-	public void getFoodProduct(Long productId, AsyncCallback<FoodProduct> asyncCallback);
 
 	public void addKitchen(Kitchen kitchen, AsyncCallback<Long> async);
 	public void removeKitchen(Long kitchenId, AsyncCallback<Boolean> async);
@@ -60,5 +64,6 @@ public interface DataServiceAsync {
 			AsyncCallback<String> callback);
 
 	void getTagsForImage(UploadedImage image, AsyncCallback<List<Tag>> callback);
+
 
 }

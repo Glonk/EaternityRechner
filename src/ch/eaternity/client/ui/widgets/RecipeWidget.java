@@ -45,7 +45,7 @@ public class RecipeWidget extends Composite {
 			recipeImage.setHTML("<img src='http://placehold.it/80x80' />");
 		}
 		
-		recipeTitle.setText(recipe.getSymbol());
+		recipeTitle.setText(recipe.getTitle());
 		recipeSubTitle.setText(recipe.getSubTitle());
 		recipeCo2Value.setText("" + recipe.getCO2Value());
 		

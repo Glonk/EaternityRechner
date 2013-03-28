@@ -7,6 +7,7 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
+@Cache
 public class UserInfo implements IsSerializable {
 
 	private static final long serialVersionUID = 8516034014140362835L;

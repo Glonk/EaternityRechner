@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import ch.eaternity.client.events.AlertEvent;
-import ch.eaternity.client.events.CollectionsChangedEvent;
 import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.LoadedDataEvent;
@@ -14,19 +12,7 @@ import ch.eaternity.client.events.LocationChangedEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
-import ch.eaternity.client.ui.cells.ProductCell;
-import ch.eaternity.shared.ClientData;
-import ch.eaternity.shared.CountryDistance;
-import ch.eaternity.shared.FoodProduct;
-import ch.eaternity.shared.FoodProductInfo;
-import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Kitchen;
-import ch.eaternity.shared.Unit;
-import ch.eaternity.shared.UserInfo;
-import ch.eaternity.shared.NotLoggedInException;
-import ch.eaternity.shared.Quantity;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.Util;
+import ch.eaternity.shared.*;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -35,6 +21,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.view.client.ListDataProvider;
 
 /**
  * Manages clientside data object, keeps it in sync with cloud and fires events
@@ -50,6 +37,8 @@ public class DataController {
 	// here is the database of all data pushed to....
 	private ClientData cdata = new ClientData();
 	private boolean dataLoaded = false;
+	
+	private ListDataProvider<RecipeInfo> recipeDataProvider = new ListDataProvider<RecipeInfo>();
 
 	// ---------------------- public Methods ----------------------
 	
@@ -73,6 +62,8 @@ public class DataController {
 			public void onSuccess(ClientData data) {
 				// the data objects holds all the data	
 				cdata = data;
+				
+				recipeDataProvider.setList(cdata.recipeInfos);
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
@@ -159,6 +150,26 @@ public class DataController {
 		});
 	}
 	
+	public void searchRecipes(RecipeSearchRepresentation search) {
+		dataRpcService.searchRecipes(search, new AsyncCallback<ArrayList<RecipeInfo>>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+
+			public void onSuccess(ArrayList<RecipeInfo> recipeInfos) {
+				if (recipeInfos != null){
+					cdata.recipeInfos.clear();
+					cdata.recipeInfos.addAll(recipeInfos);
+					recipeDataProvider.setList(cdata.recipeInfos);
+				}
+			}
+		});
+	}
+	
+	public void getRecipe(RecipeInfo recipeInfo) {
+		
+	}
+	
 	public void deleteRecipe(final Recipe recipe) {
 		dataRpcService.deleteRecipe(recipe.getId(), new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
@@ -183,7 +194,7 @@ public class DataController {
 	 */
 	public Recipe setEditRecipe(String idStr) {
 
-		if (idStr.equals("") || idStr == null || idStr.equals("new")) {
+		if (idStr == null || (idStr != null && (idStr.equals("") || idStr.equals("new")))) {
 			createRecipe();
 		}
 		else {
@@ -387,6 +398,7 @@ public class DataController {
 		}
 	}
 	
+	
 	private List<Recipe> searchRecipe(String searchString, List<Recipe> recipes) {
 		List<Recipe> result = new ArrayList<Recipe>();
 		String[] searches = searchString.split(" ");
@@ -394,12 +406,12 @@ public class DataController {
 		if(searchString.trim().length() != 0){
 			for(Recipe recipe : recipes){
 				// search by Name
-				if( getLevenshteinDistance(recipe.getSymbol(),searchString) < 5){
+				if( getLevenshteinDistance(recipe.getTitle(),searchString) < 5){
 					result.add(recipe);
 				}
 				
 				// idea: it also splits up the recipes names by whitespaces
-				for(String snippet : recipe.getSymbol().split(" ")){
+				for(String snippet : recipe.getTitle().split(" ")){
 				if( getLevenshteinDistance(snippet,searchString) < 2){
 					result.add(recipe);
 					}
@@ -527,6 +539,23 @@ public class DataController {
 		return p[n];
 	}
 	
+	public void changeRecipeScope(RecipeScope recipeScope) {
+		cdata.recipeScope = recipeScope;
+		cdata.recipeSeachRepresentation.setScope(recipeScope);
+		searchRecipes(cdata.recipeSeachRepresentation);
+		// probably here load the recipes with the string
+	}
+	
+	
+	
+	public RecipeScope getRecipeScope() {
+		if (cdata.recipeScope == null) 
+			cdata.recipeScope = RecipeScope.PUBLIC;
+		return cdata.recipeScope;
+	}
+	
+	
+	
 	private void handleError(Throwable error) {
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(cdata.userInfo.getLoginUrl());
@@ -551,6 +580,10 @@ public class DataController {
 
 	public List<Recipe> getCurrentKitchenRecipes() {
 		return cdata.currentKitchenRecipes;
+	}
+	
+	public List<RecipeInfo> getRecipeInfos() {
+		return cdata.recipeInfos;
 	}
 
 	public Recipe getEditRecipe() {
@@ -594,17 +627,18 @@ public class DataController {
 	}
 
 	
-	public void setRecipeScope(RecipeScope recipeScope) {
-		cdata.recipeScope = recipeScope;
-	}
-	public RecipeScope getRecipeScope() {
-		if (cdata.recipeScope == null) 
-			cdata.recipeScope = RecipeScope.PUBLIC;
-		return cdata.recipeScope;
-	}
+
 
 	public List<FoodProductInfo> getProductInfos() {
 		return cdata.productInfos;
+	}
+
+	public ListDataProvider<RecipeInfo> getRecipeDataProvider() {
+		return recipeDataProvider;
+	}
+
+	public void setRecipeDataProvider(ListDataProvider<RecipeInfo> recipeDataProvider) {
+		this.recipeDataProvider = recipeDataProvider;
 	}
 
 

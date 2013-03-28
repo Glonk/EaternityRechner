@@ -88,7 +88,7 @@ public class RechnerActivity extends AbstractActivity {
 			searchPanel.setWidget(searchRecipes);
 			
 			RecipeScope recipeScope = ((RechnerRecipeViewPlace) place).getRecipeScope();
-			dco.setRecipeScope(recipeScope);
+			dco.changeRecipeScope(recipeScope);
 			
 			eventBus.fireEvent(new UpdateRecipeViewEvent());
 		}

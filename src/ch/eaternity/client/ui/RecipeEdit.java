@@ -256,7 +256,7 @@ public class RecipeEdit extends Composite {
 	
 	public void updateParameters() {
 		changeSaveStatus(false);
-		RezeptName.setText(recipe.getSymbol());
+		RezeptName.setText(recipe.getTitle());
 		rezeptDetails.setText(recipe.getSubTitle());
 		amountPersons.setText(recipe.getPersons().toString());
 		
@@ -322,7 +322,7 @@ public class RecipeEdit extends Composite {
 	@UiHandler("RezeptName")
 	void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
-			recipe.setSymbol(RezeptName.getText());
+			recipe.setTitle(RezeptName.getText());
 			changeSaveStatus(false);
 		}
 	}
@@ -765,7 +765,7 @@ public class RecipeEdit extends Composite {
 
 	public void closeRecipeEdit() {
 		if (!saved && dco.getLoginInfo().isLoggedIn()) {
-			String saveText = recipe.getSymbol() + " ist noch nicht gespeichert!";
+			String saveText = recipe.getTitle() + " ist noch nicht gespeichert!";
 			final ConfirmDialog dlg = new ConfirmDialog(saveText);
 			dlg.statusLabel.setText("Speichern?");
 

@@ -14,6 +14,8 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Pair;
+import ch.eaternity.shared.RecipeInfo;
+import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.Season;
 import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.UserInfo;
@@ -56,7 +58,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 	public ArrayList<FoodProductInfo> getFoodProductInfos(Integer month) {
 		DAO dao = new DAO();
-		List<FoodProduct> foodProducts = dao.getAllIngredients();
+		List<FoodProduct> foodProducts = dao.getAllFoodProducts();
 		ArrayList<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
 		
 		for (FoodProduct product : foodProducts) {
@@ -116,6 +118,18 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return dao.deleteRecipe(recipeId);
 	}
 
+	public ArrayList<RecipeInfo> searchRecipes(RecipeSearchRepresentation search) {
+		DAO dao = new DAO();
+		ArrayList<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
+		
+		ArrayList<Recipe> recipes = (ArrayList<Recipe>) dao.getAllRecipes();
+		
+		for (Recipe recipe : recipes) {
+			recipeInfos.add(new RecipeInfo(recipe));
+		}
+		
+		return recipeInfos;
+	}
 
 	public List<Recipe> getPublicRecipes() {
 		DAO dao = new DAO();
@@ -145,7 +159,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		ClientData data = new ClientData();
 		
 		// load all ingredients
-		data.ingredients = dao.getAllIngredients();
+		data.ingredients = dao.getAllFoodProducts();
 		
 		Date date = new Date();
 		

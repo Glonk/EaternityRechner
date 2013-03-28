@@ -23,10 +23,12 @@ public class Recipe implements IsSerializable {
 	@Index(IfFalse.class)
 	private boolean deleted;
 
-	private String symbol;
+	private String title;
 	private String subTitle;
 	private String cookInstruction;
 	private UploadedImage image;
+	
+	private Double cachedCO2Value;
 	
 	@Index
 	private Long userId;
@@ -62,9 +64,10 @@ public class Recipe implements IsSerializable {
 	private Boolean selected;
 
 	public Recipe() {
-		symbol = "Ihr Menu";
+		title = "Ihr Menu";
 		subTitle = "Menu Beschreibung";
 		cookInstruction = "Zubereitung";
+		cachedCO2Value = 0.0D;
 		deleted = false;
 		published = false;
 		publicationRequested = false;
@@ -78,7 +81,7 @@ public class Recipe implements IsSerializable {
 		// call standard constructor
 		this();
 		this.ancestorId = toClone.id;
-		this.symbol = new String(toClone.symbol);
+		this.title = new String(toClone.title);
 		this.subTitle = new String(toClone.subTitle);
 		this.cookInstruction = new String(toClone.cookInstruction);
 		//not propper yet:
@@ -149,8 +152,12 @@ public class Recipe implements IsSerializable {
 		}
 		if(servings != null && servings != 0)
 			value = value/servings;
-
+		cachedCO2Value = value;
 		return value;
+	}
+	
+	public Double getCachedCO2Value() {
+		return cachedCO2Value;
 	}
 	
 
@@ -172,12 +179,12 @@ public class Recipe implements IsSerializable {
 		this.ancestorId = directAncestorID;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+	public void setTitle(String symbol) {
+		this.title = symbol;
 	}
 
 	public String getSubTitle() {
