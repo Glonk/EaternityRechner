@@ -1,8 +1,10 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class NotLoggedInException extends Exception implements IsSerializable {
+public class NotLoggedInException extends Exception implements Serializable {
 
   /**
 	 * 

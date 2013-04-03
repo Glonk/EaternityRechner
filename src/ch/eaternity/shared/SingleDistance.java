@@ -1,12 +1,14 @@
 package ch.eaternity.shared;
 
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class SingleDistance implements IsSerializable {
+public class SingleDistance implements Serializable {
 
 	private static final long serialVersionUID = 3172640409035191698L;
 

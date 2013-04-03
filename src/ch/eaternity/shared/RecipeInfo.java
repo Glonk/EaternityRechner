@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.Id;
 
-public class RecipeInfo implements IsSerializable {
+public class RecipeInfo implements Serializable {
 	
 	private static final long serialVersionUID = -28298734672427438L;
 	

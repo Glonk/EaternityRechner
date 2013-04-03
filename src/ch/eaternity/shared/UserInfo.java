@@ -1,6 +1,8 @@
 package ch.eaternity.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.List;
 
 import com.googlecode.objectify.Ref;
@@ -8,7 +10,7 @@ import com.googlecode.objectify.annotation.*;
 
 @Entity
 @Cache
-public class UserInfo implements IsSerializable {
+public class UserInfo implements Serializable {
 
 	private static final long serialVersionUID = 8516034014140362835L;
 	

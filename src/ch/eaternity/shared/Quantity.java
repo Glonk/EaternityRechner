@@ -1,8 +1,10 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class Quantity implements IsSerializable {
+public class Quantity implements Serializable {
 	
 	private static final long serialVersionUID = -2232345677325678L;
 	

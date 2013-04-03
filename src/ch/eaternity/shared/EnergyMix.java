@@ -1,13 +1,15 @@
 package ch.eaternity.shared;
 
 
+import java.io.Serializable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 
 import com.googlecode.objectify.annotation.*;
 
 
-public class EnergyMix implements IsSerializable {
+public class EnergyMix implements Serializable {
 
 	private static final long serialVersionUID = 3172640409035191698L;
 

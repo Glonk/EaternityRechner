@@ -1,6 +1,8 @@
 package ch.eaternity.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 
-public class CountryDistance implements IsSerializable {
+public class CountryDistance implements Serializable {
 	
 	private static final long serialVersionUID = 3172640409035191495L;
 	

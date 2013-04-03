@@ -10,7 +10,7 @@ import com.googlecode.objectify.annotation.*;
 
 @Entity
 @Cache
-public class FoodProduct implements IsSerializable {
+public class FoodProduct implements Serializable {
 
 	private static final long serialVersionUID = -3996987374367823464L;
 	
@@ -33,7 +33,7 @@ public class FoodProduct implements IsSerializable {
     @Embed
     private Season season;
     
-    boolean seasonDependant;
+    private boolean seasonDependant;
 	
     private List<String> tags = new ArrayList<String>();
     

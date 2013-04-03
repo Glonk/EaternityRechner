@@ -1,5 +1,6 @@
 package ch.eaternity.shared;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import com.google.gwt.view.client.HasData;
 
 import com.googlecode.objectify.annotation.Id;
 
-public class FoodProductInfo implements IsSerializable {
+public class FoodProductInfo implements Serializable {
 	
 	private static final long serialVersionUID = -285831234679327438L;
 	

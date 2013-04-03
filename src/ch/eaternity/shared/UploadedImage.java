@@ -2,13 +2,15 @@ package ch.eaternity.shared;
 
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class UploadedImage implements IsSerializable {
+public class UploadedImage implements Serializable {
 
 	private static final long serialVersionUID = 588767248962315221L;
 	public static final String SERVING_URL = "servingUrl";

@@ -3,6 +3,7 @@ package ch.eaternity.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ListDataProvider;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,14 +16,13 @@ import ch.eaternity.shared.Util.RecipeScope;
  * @author aurelianjaggi
  *
  */
-public class ClientData implements IsSerializable {
+public class ClientData implements Serializable {
 
 	private static final long serialVersionUID = -8325524250818194857L;
 	
 	public List<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
 	
 	public List<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
-	
 	
 	
 	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
@@ -35,8 +35,6 @@ public class ClientData implements IsSerializable {
 	public Kitchen currentKitchen; 
 
 	public Recipe editRecipe;
-
-	public String searchstring;
 	
 	public RecipeSearchRepresentation recipeSeachRepresentation = new RecipeSearchRepresentation();
 	

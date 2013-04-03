@@ -2,13 +2,15 @@ package ch.eaternity.shared;
 
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class Kitchen implements IsSerializable {
+public class Kitchen implements Serializable {
  
 	private static final long serialVersionUID = 8711036976355728738L;
 

@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.googlecode.objectify.annotation.*;
 
-public class Transportation implements IsSerializable, Serializable {
+public class Transportation implements Serializable {
 
 	private static final long serialVersionUID = -5971128872903171922L;
 	

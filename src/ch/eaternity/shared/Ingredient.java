@@ -2,6 +2,8 @@
 package ch.eaternity.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -13,7 +15,7 @@ import com.googlecode.objectify.annotation.*;
  *
  */
 @Entity
-public class Ingredient  implements IsSerializable {
+public class Ingredient  implements Serializable {
 
 	private static final long serialVersionUID = -2858311250621887438L;
 	

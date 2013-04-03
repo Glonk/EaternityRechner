@@ -2,6 +2,8 @@ package ch.eaternity.shared;
 
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +14,7 @@ import com.googlecode.objectify.condition.IfFalse;
 import com.googlecode.objectify.annotation.*;
 
 @Entity
-public class Recipe implements IsSerializable {
+public class Recipe implements Serializable {
  
 	private static final long serialVersionUID = -5888386800366492104L;
 		
