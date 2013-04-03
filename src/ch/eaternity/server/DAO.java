@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,14 +43,16 @@ public class DAO
 	 * @param requestUri
 	 * @return never null
 	 */
-	public UserInfo getLoginInfo(String requestUri) {
+	public UserInfo getUserInfo(String requestUri) {
 		UserService userService = UserServiceFactory.getUserService();
 		UserInfo userInfo = new UserInfo();
 		User user = userService.getCurrentUser();
-
+		//String userId = user.getUserId();
+		Long userId = 1L;
+		
 		if (user != null) {
 			try {
-				userInfo = ofy().load().type(UserInfo.class).id(user.getUserId()).get();
+				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
 			} 
 			catch (Exception e) {}
 			
@@ -57,7 +60,8 @@ public class DAO
 			if (userInfo == null) {
 				userInfo = new UserInfo();
 				try {
-					userInfo.setId(Long.parseLong(user.getUserId()));;
+					//userInfo.setId(Long.parseLong(userId));;
+					userInfo.setId(userId);
 				}
 				catch (NumberFormatException nfe) {
 					userInfo.setLoggedIn(false);
@@ -77,6 +81,26 @@ public class DAO
 		else {
 			userInfo.setLoggedIn(false);
 			userInfo.setLoginUrl(userService.createLoginURL(requestUri));
+		}
+		return userInfo;
+	}
+	
+	/**
+	 * 
+	 * @return null if not found
+	 */
+	public UserInfo getUserInfo() {
+		UserService userService = UserServiceFactory.getUserService();
+		UserInfo userInfo = null;
+		User user = userService.getCurrentUser();
+		//String userId = user.getUserId();
+ 		Long userId = 1L;
+
+		if (user != null) {
+			try {
+				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
+			} 
+			catch (Exception e) {}
 		}
 		return userInfo;
 	}
@@ -185,18 +209,29 @@ public class DAO
 		public Recipe getRecipe(Long id){
 			Recipe recipe = null;
 			try {
-				ofy().load().type(Recipe.class).id(id);
+				recipe = ofy().load().type(Recipe.class).id(id).get();
 			}
 			catch (Exception e) {
 				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 			} 
 			
-			// Testing Code
-			for (Ingredient ing : recipe.getIngredients()) {
-				FoodProduct product = ofy().load().type(FoodProduct.class).id(ing.getId()).get();
+			// Load the foodproducts into the list of ingredients (the're ignored during persistance)
+			if (recipe != null) {
+				FoodProduct tempProduct;
+				for (Ingredient ing : recipe.getIngredients()) {
+					if (ing != null) {
+						tempProduct = getFoodProduct(ing.getProductId());
+						if (tempProduct != null)
+							ing.setFoodProduct(tempProduct);
+						else {
+							String msg = "getRecipe: corresponding FoodProduct from Ingredient couldn't get loaded.";
+							log.log(Level.SEVERE, msg);
+							throw new NoSuchElementException(msg);
+						}
+					}
+					
+				}
 			}
-			
-			
 			
 			return recipe;
 		}

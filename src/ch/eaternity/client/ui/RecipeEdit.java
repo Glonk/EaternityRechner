@@ -21,6 +21,8 @@ import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
+import ch.eaternity.client.events.RecipeLoadedEvent;
+import ch.eaternity.client.events.RecipeLoadedEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.ConfirmDialog;
@@ -169,6 +171,7 @@ public class RecipeEdit extends Composite {
 	
 	public RecipeEdit() {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.setVisible(false);
 		
 	    tableRowDragController = new FlexTableRowDragController(dragArea);
 	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
@@ -220,11 +223,13 @@ public class RecipeEdit extends Composite {
 							updateLoginSpecificParameters();
 					}
 				});
-		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE,
-				new LoadedDataEventHandler() {
+		presenter.getEventBus().addHandler(RecipeLoadedEvent.TYPE,
+				new RecipeLoadedEventHandler() {
 					@Override
-					public void onLoadedData(LoadedDataEvent event) {
-						loadRecipe(recipeId);
+					public void onEvent(RecipeLoadedEvent event) {
+						recipe = event.recipe;
+						setVisible(true);
+						updateParameters();
 						changeSaveStatus(true);
 					}
 				});
@@ -457,20 +462,6 @@ public class RecipeEdit extends Composite {
 	private void changeSaveStatus(boolean saved) {
 		this.saved = saved;
 		saveButton.setEnabled(!saved);
-	}
-
-	public void setRecipeId(String id) {
-		this.recipeId = id;
-		
-		// if data is already loaded load recipe, otherwise wait for the LoadedDataEvent
-		if (dco.dataLoaded())
-			loadRecipe(id);
-	}
-
-	public void loadRecipe(String id) {
-		
-		this.recipe = dco.setEditRecipe(id);
-		updateParameters();
 	}
 	
 	public void removeIngredient(IngredientWidget ingWidget) {
@@ -764,7 +755,7 @@ public class RecipeEdit extends Composite {
 
 
 	public void closeRecipeEdit() {
-		if (!saved && dco.getLoginInfo().isLoggedIn()) {
+		if (!saved && dco.getLoginInfo().isLoggedIn() && recipe != null) {
 			String saveText = recipe.getTitle() + " ist noch nicht gespeichert!";
 			final ConfirmDialog dlg = new ConfirmDialog(saveText);
 			dlg.statusLabel.setText("Speichern?");

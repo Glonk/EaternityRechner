@@ -21,8 +21,6 @@ public class Ingredient  implements Serializable {
 	
 	@Id private Long id;
 	
-	// possibly not storing it directly here, but via a key/ref relationship in appengine
-	// and loding it correctly when needed via @Load Ref<FoodProduct>
 	@Ignore
     private FoodProduct foodproduct;
 
@@ -58,6 +56,7 @@ public class Ingredient  implements Serializable {
 	// Copy Constructor
 	public Ingredient(Ingredient toClone) {
 		this();
+		productId = new Long(toClone.id);
 		foodproduct = new FoodProduct(toClone.foodproduct);
 		weight = toClone.weight;
 		// inlcude Extraction, now just a shallow copy...
@@ -74,6 +73,9 @@ public class Ingredient  implements Serializable {
 	public Ingredient(FoodProduct foodproduct) {
 		this();
 		this.foodproduct = foodproduct;
+		this.productId = foodproduct.getId();
+		
+		//TODO change to correct standard values
 		if (foodproduct.getExtractions() != null)
 			extraction = new Extraction(foodproduct.getExtractions().get(0));
 		if (foodproduct.getConditions() != null)
@@ -88,8 +90,12 @@ public class Ingredient  implements Serializable {
 		this.extraction = stdExtractionSymbol;
 	}
 	
-	public FoodProduct getProduct() {
+	public FoodProduct getFoodProduct() {
 		return foodproduct;
+	}
+	
+	public void setFoodProduct(FoodProduct foodproduct) {
+		this.foodproduct = foodproduct;
 	}
 	
 	public Extraction getExtraction() {
@@ -126,14 +132,6 @@ public class Ingredient  implements Serializable {
 
 	public Long getId() {
 		return id;
-	}
-
-	public FoodProduct getFoodproduct() {
-		return foodproduct;
-	}
-
-	public void setFoodproduct(FoodProduct foodproduct) {
-		this.foodproduct = foodproduct;
 	}
 
 	public Long getProductId() {

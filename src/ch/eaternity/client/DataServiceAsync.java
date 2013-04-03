@@ -10,6 +10,7 @@ import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.UserInfo;
@@ -25,6 +26,7 @@ public interface DataServiceAsync {
 	public void getFoodProductInfos(Integer month, AsyncCallback<ArrayList<FoodProductInfo>> asyncCallback);
 	public void getFoodProduct(Long productId, AsyncCallback<FoodProduct> asyncCallback);
 	
+	public void getRecipe(Long id, AsyncCallback<Recipe> async);
 	public void saveRecipe(Recipe recipe, AsyncCallback<Long> async);
 	public void deleteRecipe(Long rezeptId, AsyncCallback<Boolean> async);
 	public void getUserRecipes(AsyncCallback<List<Recipe>> async);

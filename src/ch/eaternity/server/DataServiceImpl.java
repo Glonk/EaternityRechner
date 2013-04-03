@@ -3,8 +3,10 @@ package ch.eaternity.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,7 @@ import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -99,6 +102,27 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 
 	// ------------------------ Recipes -----------------------------------
+	/**
+	 * @throws NotLoggedInException if the User doesn't own this recipe
+	 * @return The recipe with @param id
+	 */
+	@Override
+	public Recipe getRecipe(Long id) throws NotLoggedInException {
+		DAO dao = new DAO();
+		
+		Recipe recipe = dao.getRecipe(id);
+		UserInfo userInfo = dao.getUserInfo();
+		 
+		if (userInfo != null) {
+			if (!userInfo.getId().equals(recipe.getUserId()))
+				throw new NotLoggedInException("User " + userInfo.getNickname() + " doesn't own this recipe.");
+		}
+		else if (recipe.getOpen());
+		else
+			throw new NotLoggedInException();
+		
+		return recipe;
+	}
 	
 	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException {
 		checkLoggedIn();
@@ -168,7 +192,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if (data.ingredients == null) 
 			data.ingredients = new ArrayList<FoodProduct>();
 		
-		data.userInfo = dao.getLoginInfo(requestUri);
+		data.userInfo = dao.getUserInfo(requestUri);
+		
+		data.recipeInfos = searchRecipes(new RecipeSearchRepresentation("", RecipeScope.PUBLIC));
 		
 		//TODO get Distances
 		/*
@@ -310,7 +336,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	// not used anymore
 	public UserInfo login(String requestUri) {
 		DAO dao = new DAO();
-		return dao.getLoginInfo(requestUri);
+		return dao.getUserInfo(requestUri);
 	}
 	
 	// ----------------------- Images ---------------------------------
@@ -386,6 +412,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		return dao.saveCommitment(commitment);
 	}
+
+
 	
 	
 }

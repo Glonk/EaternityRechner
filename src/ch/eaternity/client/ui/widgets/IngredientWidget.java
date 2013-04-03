@@ -57,7 +57,7 @@ public class IngredientWidget extends Composite {
 		amountBox.setText(Integer.toString(ingSpec.getWeight().getAmount().intValue()));
 		amountBox.setWidth("36px");
 		
-		nameLabel.setText(ingSpec.getProduct().getName());
+		nameLabel.setText(ingSpec.getFoodProduct().getName());
 		updateCO2Value();
 		
 		updateIcons();
@@ -74,7 +74,7 @@ public class IngredientWidget extends Composite {
 			// Saisonal
 			HTML seasonIcon = new HTML();
 			if(ingredient.getCondition() != null && ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch") && ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 500){
-				Season season = ingredient.getProduct().getSeason();
+				Season season = ingredient.getFoodProduct().getSeason();
 				if(season != null){
 
 					SeasonDate date = new SeasonDate(month,1);
@@ -88,10 +88,10 @@ public class IngredientWidget extends Composite {
 			
 			// rating
 			HTML ratingIcon = new HTML();
-			if(ingredient.getProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < .4){
+			if(ingredient.getFoodProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < .4){
 				ratingIcon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
 		
-			} else if(ingredient.getProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < 1.2){
+			} else if(ingredient.getFoodProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < 1.2){
 				ratingIcon.setHTML("<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 		
 			} else {

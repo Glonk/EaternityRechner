@@ -3,6 +3,7 @@ package ch.eaternity.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import ch.eaternity.client.events.AlertEvent;
 import ch.eaternity.client.events.IngredientAddedEvent;
@@ -11,6 +12,7 @@ import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LocationChangedEvent;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.RecipeLoadedEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.shared.*;
 import ch.eaternity.shared.Util.RecipeScope;
@@ -63,7 +65,7 @@ public class DataController {
 				// the data objects holds all the data	
 				cdata = data;
 				
-				recipeDataProvider.setList(cdata.recipeInfos);
+				//recipeDataProvider.setList(cdata.recipeInfos);
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
@@ -122,6 +124,7 @@ public class DataController {
 		recipe.setHits(0L);
 		
 		cdata.editRecipe = recipe;
+		eventBus.fireEvent(new RecipeLoadedEvent(recipe)); 
 	}
 	
 	
@@ -190,40 +193,44 @@ public class DataController {
 	/**
 	 * After call to this function, editRecipe is != null for sure
 	 * @param id
-	 * @return editRecipe with id was found and propperly loaded, false if new recipe was created
 	 */
-	public Recipe setEditRecipe(String idStr) {
+	public void setEditRecipe(String idStr) {
 
 		if (idStr == null || (idStr != null && (idStr.equals("") || idStr.equals("new")))) {
 			createRecipe();
 		}
 		else {
-			boolean found = false;
 			try {
-				Long id = Long.parseLong(idStr);
+				final Long id = Long.parseLong(idStr);
 
-				Recipe editRecipe = cdata.getUserRecipeByID(id);
-				if (editRecipe != null) {
-					found = true;
-					cdata.editRecipe = editRecipe;
-				}
-				else {
-					editRecipe = cdata.getKitchenRecipeByID(id);
-					if (editRecipe != null){
-						found = true;
-						cdata.editRecipe = editRecipe;
-						changeKitchen(editRecipe.getKitchenId());
-					}	
-				}
+				dataRpcService.getRecipe(id, new AsyncCallback<Recipe>() {
+					public void onFailure(Throwable error) {
+						createRecipe();
+						
+						if (error instanceof NotLoggedInException)
+							eventBus.fireEvent(new AlertEvent("Das Rezept mit ID " + id + " ist dem aktuellen User nicht zugeordnet. Neues Rezept erstellt.", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
+						else if (error instanceof NoSuchElementException)
+							eventBus.fireEvent(new AlertEvent("Nicht alle Zutaten vom Rezept konnten geladen werden. Neues Rezept erstellt. ", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
+						
+						else
+							eventBus.fireEvent(new AlertEvent("Rezept mit ID " + id + " konnte nicht geladen werden. Neues Rezept erstellt.", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
+					}
+					public void onSuccess(Recipe recipe) {
+						if (recipe != null) {
+							cdata.editRecipe = recipe;
+							
+							eventBus.fireEvent(new RecipeLoadedEvent(recipe)); 
+							
+							if (recipe.getKitchenId() != null)
+								changeKitchen(recipe.getKitchenId());
+						}
+					}
+				});
 			}
-			catch (NumberFormatException nfe) {}
-			
-			if (!found) {
-				createRecipe();
-				eventBus.fireEvent(new AlertEvent("Rezept mit ID " + idStr + " nicht gefunden. Neues Rezept erstellt.", AlertType.INFO, AlertEvent.Destination.EDIT, 10000));
+			catch (NumberFormatException nfe) {
+				eventBus.fireEvent(new AlertEvent("Rezept mit ID " + idStr + " nicht gefunden. Neues Rezept erstellt.", AlertType.INFO, AlertEvent.Destination.EDIT, 6000));
 			}
 		}
-		return cdata.editRecipe;
 	}
 	
 	public void addIngredientToMenu(FoodProductInfo product, final Quantity weight) {
@@ -424,7 +431,7 @@ public class DataController {
 					for(Ingredient ZutatImRezept : recipeIngredients ){
 						if(ZutatImRezept != null){
 							for(String search2 : searches){
-								if( search2.trim().length() <= ZutatImRezept.getProduct().getName().length() &&  ZutatImRezept.getProduct().getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
+								if( search2.trim().length() <= ZutatImRezept.getFoodProduct().getName().length() &&  ZutatImRezept.getFoodProduct().getName().substring(0, search2.trim().length()).compareToIgnoreCase(search2) == 0){
 									i++;
 								}
 							}

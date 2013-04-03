@@ -94,7 +94,7 @@ public class RechnerActivity extends AbstractActivity {
 		}
 		else if (place instanceof RechnerRecipeEditPlace) {
 			recipePanel.setWidget(recipeEdit);
-			recipeEdit.setRecipeId(((RechnerRecipeEditPlace) place).getID());
+			dco.setEditRecipe(((RechnerRecipeEditPlace) place).getID());
 			searchPanel.setWidget(searchIngredients);
 		}
 		
