@@ -219,7 +219,8 @@ public class SearchIngredients extends Composite {
 	    
 	    // Connect the list to the data provider.
 	    productDataProvider.addDataDisplay(cellList);
-
+	     
+	    
 	    // Add it to the display panel.
 	    ingredientDisplayWidget.setWidget(cellList);
 	    

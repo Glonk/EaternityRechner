@@ -24,7 +24,6 @@ public class ClientData implements Serializable {
 	
 	public List<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
 	
-	
 	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
 	
 	public CountryDistance distances;
@@ -52,42 +51,10 @@ public class ClientData implements Serializable {
 	public List<FoodProduct> ingredients = new ArrayList<FoodProduct>();
 	
 	public int currentMonth;
-	public String currentLocation;
+	public String currentLocation = "";
 	
-	public ClientData() {
-		
-	}
+	public ClientData() {}
 	
-	public Set<String> getOrcaleIndex() {
-
-		Set<String> oracleIndex = new TreeSet<String>();
-
-		oracleIndex.add("all");
-
-		if(this.ingredients != null){
-			for(FoodProduct zutat : this.ingredients){
-				if(zutat != null){
-					oracleIndex.add(zutat.getName());
-				}
-			}
-		}
-		if(this.publicRecipes != null){
-			for(Recipe recipe : this.publicRecipes){
-				if(recipe != null){
-					oracleIndex.add(recipe.getTitle());
-				}
-			}
-		}
-		if(this.userRecipes != null){
-			for(Recipe recipe  : this.userRecipes){
-				if(recipe != null){
-					oracleIndex.add(recipe.getTitle());
-				}
-			}
-		}
-
-		return oracleIndex;
-	}
 	
 	public FoodProduct getIngredientByID(long id){
 		for(FoodProduct zutat : ingredients){
@@ -108,21 +75,13 @@ public class ClientData implements Serializable {
 		return null;
 	}
 	
-	public Recipe getUserRecipeByID(long id) {
-		for(Recipe userRecipe : userRecipes){
-			if (userRecipe.getId() != null && id == userRecipe.getId()){
-				return userRecipe;
-			}
-		}
-		return null;
-	}
-	
-	public Recipe getKitchenRecipeByID(long id) {
-		for(Recipe recipe : kitchenRecipes){
-			if (recipe.getId() == id){
+	public RecipeInfo getRecipeById(long id) {
+		for(RecipeInfo recipe : recipeInfos){
+			if (recipe.getId() != null && id == recipe.getId()){
 				return recipe;
 			}
 		}
 		return null;
 	}
+	
 }

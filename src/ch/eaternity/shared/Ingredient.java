@@ -167,10 +167,14 @@ public class Ingredient  implements Serializable {
 	}
 	
 	public double calculateCo2ValueNoFactors() {
-		return foodproduct.getCo2eValue().convert(Unit.GRAM).getAmount()*weight.getAmount();
+		return foodproduct.getCo2eValue()*weight.convert(Unit.GRAM).getAmount();
 	}
 
 
+	/**
+	 * 
+	 * @return co2e value in [g CO2 / g]
+	 */
 	public double getCalculatedCO2Value() {
 		// sum up all parts
 		return calculateCo2ValueNoFactors() + getConditionQuota() + getTransportationQuota() + getProductionQuota();

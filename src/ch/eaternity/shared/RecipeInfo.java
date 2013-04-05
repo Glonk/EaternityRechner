@@ -25,6 +25,10 @@ public class RecipeInfo implements Serializable {
 	private RecipeInfo() {}
 	
 	public RecipeInfo(Recipe recipe) {
+		update(recipe);
+	}
+	
+	public void update(Recipe recipe) {
 		this.id = recipe.getId();
 		this.title = recipe.getTitle();
 		this.subTitle = recipe.getSubTitle();

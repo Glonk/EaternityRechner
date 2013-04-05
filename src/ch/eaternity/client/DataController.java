@@ -5,15 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import ch.eaternity.client.events.AlertEvent;
-import ch.eaternity.client.events.IngredientAddedEvent;
-import ch.eaternity.client.events.KitchenChangedEvent;
-import ch.eaternity.client.events.LoadedDataEvent;
-import ch.eaternity.client.events.LocationChangedEvent;
-import ch.eaternity.client.events.LoginChangedEvent;
-import ch.eaternity.client.events.MonthChangedEvent;
-import ch.eaternity.client.events.RecipeLoadedEvent;
-import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.events.*;
 import ch.eaternity.shared.*;
 import ch.eaternity.shared.Util.RecipeScope;
 
@@ -57,8 +49,10 @@ public class DataController {
 	}
 	
 	public void loadData() {
+		eventBus.fireEvent(new SpinnerEvent(true, "Daten werden geladen"));
 		dataRpcService.getData(GWT.getHostPageBaseURL(), new AsyncCallback<ClientData>() {
 			public void onFailure(Throwable error) {
+				eventBus.fireEvent(new SpinnerEvent(false));
 				handleError(error);
 			}
 			public void onSuccess(ClientData data) {
@@ -91,6 +85,7 @@ public class DataController {
 				if (cdata.userInfo != null)
 					eventBus.fireEvent(new LoginChangedEvent(cdata.userInfo));
 				
+				eventBus.fireEvent(new SpinnerEvent(false));
 				eventBus.fireEvent(new LoadedDataEvent());
 			}
 			
@@ -130,24 +125,37 @@ public class DataController {
 	
 	
 	public void saveRecipe(final Recipe recipe) { 
+		eventBus.fireEvent(new SpinnerEvent(true, "speichern"));
 		dataRpcService.saveRecipe(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
+				eventBus.fireEvent(new SpinnerEvent(false));
 			}
 
 			public void onSuccess(Long id) {
+				eventBus.fireEvent(new SpinnerEvent(false));
+							
 				recipe.setId(id);
-				if (recipe.getKitchenId() == null) {
-					if (cdata.getUserRecipeByID(id) == null) {
-						cdata.userRecipes.add(recipe);
+				RecipeInfo recipeInfo = cdata.getRecipeById(recipe.getId());
+
+				if (recipeInfo != null) {
+					//cdata.recipeInfos.remove(recipeInfo);
+					recipeInfo.update(recipe);
+				}
+				else
+				{
+					if (recipe.getKitchenId() != null && cdata.recipeScope == RecipeScope.KITCHEN && recipe.getKitchenId().equals(cdata.currentKitchen.getId())) {
+						cdata.recipeInfos.add(new RecipeInfo(recipe));
+					}
+					else if (recipe.getKitchenId() == null && cdata.recipeScope == RecipeScope.USER) {
+						cdata.recipeInfos.add(new RecipeInfo(recipe));
+					}
+					else if (recipe.getOpen() && cdata.recipeScope == RecipeScope.PUBLIC) {
+						cdata.recipeInfos.add(new RecipeInfo(recipe));
 					}
 				}
-				else{
-					if (recipe.getKitchenId() == cdata.currentKitchen.getId())
-						cdata.currentKitchenRecipes.add(recipe);
-					cdata.kitchenRecipes.add(recipe);
-				}
-				eventBus.fireEvent(new UpdateRecipeViewEvent());
+				//TODO change refresh() (something isnt working with refresh if list.add is used)
+				recipeDataProvider.setList(cdata.recipeInfos);
 				eventBus.fireEvent(new AlertEvent("Rezept gespeichert.", AlertType.INFO, AlertEvent.Destination.BOTH, 2000));
 			}
 		});
@@ -169,23 +177,19 @@ public class DataController {
 		});
 	}
 	
-	public void getRecipe(RecipeInfo recipeInfo) {
-		
-	}
-	
-	public void deleteRecipe(final Recipe recipe) {
-		dataRpcService.deleteRecipe(recipe.getId(), new AsyncCallback<Boolean>() {
+	public void deleteRecipe(final Long recipeId) {
+		eventBus.fireEvent(new SpinnerEvent(true, "löschen"));
+		dataRpcService.deleteRecipe(recipeId, new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
+				eventBus.fireEvent(new SpinnerEvent(false));
 			}
 			public void onSuccess(Boolean ignore) {
-				cdata.userRecipes.remove(recipe);
-				cdata.publicRecipes.remove(recipe);
-				cdata.kitchenRecipes.remove(recipe);
-				cdata.currentKitchenRecipes.remove(recipe);
-				if (cdata.editRecipe == recipe)
+				eventBus.fireEvent(new SpinnerEvent(false));
+				cdata.recipeInfos.remove(cdata.getRecipeById(recipeId));
+				recipeDataProvider.refresh();
+				if (cdata.editRecipe.getId().equals(recipeId))
 					cdata.editRecipe = null;
-				eventBus.fireEvent(new UpdateRecipeViewEvent());
 			}
 		});
 	}
@@ -195,18 +199,18 @@ public class DataController {
 	 * @param id
 	 */
 	public void setEditRecipe(String idStr) {
-
+		
 		if (idStr == null || (idStr != null && (idStr.equals("") || idStr.equals("new")))) {
 			createRecipe();
 		}
 		else {
 			try {
 				final Long id = Long.parseLong(idStr);
-
+				eventBus.fireEvent(new SpinnerEvent(true, "Rezept laden"));
 				dataRpcService.getRecipe(id, new AsyncCallback<Recipe>() {
 					public void onFailure(Throwable error) {
 						createRecipe();
-						
+						eventBus.fireEvent(new SpinnerEvent(false));
 						if (error instanceof NotLoggedInException)
 							eventBus.fireEvent(new AlertEvent("Das Rezept mit ID " + id + " ist dem aktuellen User nicht zugeordnet. Neues Rezept erstellt.", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
 						else if (error instanceof NoSuchElementException)
@@ -216,6 +220,7 @@ public class DataController {
 							eventBus.fireEvent(new AlertEvent("Rezept mit ID " + id + " konnte nicht geladen werden. Neues Rezept erstellt.", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
 					}
 					public void onSuccess(Recipe recipe) {
+						eventBus.fireEvent(new SpinnerEvent(false));
 						if (recipe != null) {
 							cdata.editRecipe = recipe;
 							
@@ -547,10 +552,12 @@ public class DataController {
 	}
 	
 	public void changeRecipeScope(RecipeScope recipeScope) {
-		cdata.recipeScope = recipeScope;
-		cdata.recipeSeachRepresentation.setScope(recipeScope);
-		searchRecipes(cdata.recipeSeachRepresentation);
-		// probably here load the recipes with the string
+		
+		if (cdata.recipeScope != recipeScope) {
+			cdata.recipeScope = recipeScope;
+			cdata.recipeSeachRepresentation.setScope(recipeScope);
+			searchRecipes(cdata.recipeSeachRepresentation);
+		}
 	}
 	
 	

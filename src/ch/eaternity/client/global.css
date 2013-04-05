@@ -14,6 +14,10 @@ a:link, a:visited, a:hover, a:active {
   color: #000;
 }
 
+.alternate {
+	background-color:gray !important;
+}
+
 .big-add{
 	height: 40px;
 	width: 200px;

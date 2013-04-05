@@ -39,7 +39,7 @@ public class FoodProductInfo implements Serializable {
 		this.id = product.getId();
 		this.name = product.getName();
 		// kg / kg -> g / g same, multiplicate by 100 for getting [gram co2e / 100 g amount]
-		this.co2eValue = product.getCo2eValue().getAmount()*100;
+		this.co2eValue = product.getCo2eValue()*100;
 		this.substituteIds = product.getSubstitues();
 	}
 	
@@ -77,6 +77,9 @@ public class FoodProductInfo implements Serializable {
 		this.name = name;
 	}
 
+	/**
+	 * The equivalent co2 value in [gram co2e / 100 g amount]
+	 */
 	public Double getCo2eValue() {
 		return co2eValue;
 	}

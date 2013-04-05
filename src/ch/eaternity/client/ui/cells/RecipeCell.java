@@ -1,5 +1,6 @@
 package ch.eaternity.client.ui.cells;
 
+import ch.eaternity.client.DataController;
 import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.Unit;
 
@@ -8,6 +9,7 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -47,6 +49,12 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 		@SafeHtmlTemplates.Template("<div class=\"productInfo\">{0}&nbsp;&nbsp;&nbsp;{1}</div>")
 		SafeHtml cell(SafeHtml name, SafeHtml value);
 	}
+	
+	private DataController dco;
+	
+	public RecipeCell(DataController dco) {
+		this.dco = dco;
+	}
 
 	/**
 	 * Create a singleton instance of the templates used to render the cell.
@@ -84,24 +92,58 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.append(image);
 	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<td width='250'><span style='font-size:20px; font-weight:bold;'>");
+	  sb.appendHtmlConstant("<td width='450'><span style='font-size:20px; font-weight:bold;'>");
 	  sb.append(title);
 	  sb.appendHtmlConstant("</span><br /><span style='font-size:14px;'>");
 	  sb.append(subtitle);
 	  sb.appendHtmlConstant("</span></td>");
 	  
-	  
 	  sb.appendHtmlConstant("<td width='40'>");
-	  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
+	  if (recipeInfo.getCo2eValue() < 700) {
+		  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
+	  }
+	  else if (recipeInfo.getCo2eValue() > 700 && recipeInfo.getCo2eValue() < 1500) {
+		  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
+	  }
+	  else {
+		  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
+	  }
 	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<td width='60'><span style='font-size:30px; font-weight:bold;'>");
+	  sb.appendHtmlConstant("<td width='140'><span style='font-size:30px; font-weight:bold;'>");
 	  sb.append(co2value);
-	  sb.appendHtmlConstant("</span>  g/p.P.</td>");
+	  sb.appendHtmlConstant("</span>&nbsp;&nbsp;&nbsp;g/p.P.</td>");
+	  
+	  sb.appendHtmlConstant("<td width='20'>");
+	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='delete.png' /></a>");
+	  sb.appendHtmlConstant("</td>");
 	  
 	  sb.appendHtmlConstant("</tr></table></div>");
 	
     }
+	
+	/**
+	 * handle the delete click
+	 * @param context
+	 * @param parent
+	 * @param value
+	 * @param event
+	 * @param valueUpdater
+	 */
+	@Override
+	public void onBrowserEvent(Context context, Element parent, RecipeInfo value, NativeEvent event,
+	        ValueUpdater<RecipeInfo> valueUpdater) {
+	    super.onBrowserEvent(context, parent, value, event, valueUpdater);
+	    if ("click".equals(event.getType())) {
+	        EventTarget eventTarget = event.getEventTarget();
+	        if (!Element.is(eventTarget)) {
+	            return;
+	        }
+	        if (parent.getElementsByTagName("a").getItem(0).isOrHasChild(Element.as(eventTarget))) {
+	            dco.deleteRecipe(value.getId());
+	        }
+	    }
+	}
 
 
 }

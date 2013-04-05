@@ -47,6 +47,7 @@ public class RechnerActivity extends AbstractActivity {
 	
 	// Used to obtain views, eventBus, placeController
 	// Alternatively, could be injected via GIN
+	// just loaded once for both places (RecipeView, RecipeEdit)
 	public RechnerActivity(Place place, ClientFactory factory) {		
 		this.clientFactory = factory;
 		this.dataRpcService = factory.getDataServiceRPC();
@@ -76,6 +77,8 @@ public class RechnerActivity extends AbstractActivity {
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
 		this.container = container;
 		
+		
+				
 		// now load the data (just once...)
 		if (!dco.dataLoaded())
 			dco.loadData();
@@ -131,10 +134,6 @@ public class RechnerActivity extends AbstractActivity {
 	 * Navigate to a new Place in the browser
 	 */
 	public void goTo(Place place) {
-		if (this.place instanceof RechnerRecipeEditPlace) {
-			//recipeEdit.closeRecipeEdit();
-		}
-		
 		placeController.goTo(place);
 	}
 	

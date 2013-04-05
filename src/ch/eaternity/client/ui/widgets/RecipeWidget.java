@@ -62,7 +62,7 @@ public class RecipeWidget extends Composite {
 	
 	@UiHandler("deleteButton")
 	public void onDeleteClicked(ClickEvent event) {
-		dco.deleteRecipe(recipe);
+		dco.deleteRecipe(recipe.getId());
 	}
 	
 	public Long getRecipeId() {

@@ -91,7 +91,7 @@ public class RecipeView extends Composite {
 		};
 		    
 		// Create a cell to render each value in the list.
-	    RecipeCell recipeCell = new RecipeCell();
+	    RecipeCell recipeCell = new RecipeCell(dco);
 	    
 	    // Create a CellList that uses the cell.
 	    CellList<RecipeInfo> cellList = new CellList<RecipeInfo>(recipeCell, keyProvider);

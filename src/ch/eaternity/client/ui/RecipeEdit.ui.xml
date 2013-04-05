@@ -244,6 +244,16 @@
 		.codeImage {
 			height:150px;
 		}
+		
+		.co2value {
+			text-align:right;
+		}
+		
+		.co2valueLabel {
+			font-size:40px;
+			font-weight:bold;
+			
+		}
 	</ui:style>
 
 	<ui:style field='selectionStyleRow'
@@ -259,7 +269,13 @@
 				background: #FEE6C6;
 			}
 	</ui:style>
-		
+	
+	<ui:style field='textErrorStyle'
+		type='ch.eaternity.client.ui.RecipeEdit.TextErrorStyle'>
+			.redTextError {
+				color: red !important;
+			}
+	</ui:style>
 		
 		<g:AbsolutePanel ui:field="dragArea">
 			<g:VerticalPanel styleName='{style.rezeptDecoration}'>
@@ -282,8 +298,11 @@
 					</g:VerticalPanel>
 
 					<!-- CO2 Value -->
-					<g:Label ui:field="co2valueLabel">0</g:Label>
-					<g:Label>g/p.P.</g:Label>
+					<g:HorizontalPanel styleName='{style.co2value}'>
+						<g:Image ui:field="co2Image"></g:Image>
+						<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
+						<g:Label>&nbsp;&nbsp;&nbsp;g/p.P.</g:Label>
+					</g:HorizontalPanel>
 				</g:HorizontalPanel>
 
 				<!-- image and description here? any particular design choices -->

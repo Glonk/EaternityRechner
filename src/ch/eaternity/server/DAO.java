@@ -47,6 +47,7 @@ public class DAO
 		UserService userService = UserServiceFactory.getUserService();
 		UserInfo userInfo = new UserInfo();
 		User user = userService.getCurrentUser();
+		//TODO remove Hack before deployement
 		//String userId = user.getUserId();
 		Long userId = 1L;
 		
@@ -56,7 +57,7 @@ public class DAO
 			} 
 			catch (Exception e) {}
 			
-			// if there exists no correspongin loginInfo to User, create a new one (first time login)
+			// if there exists no corresponding loginInfo to User, create a new one (first time login)
 			if (userInfo == null) {
 				userInfo = new UserInfo();
 				try {
@@ -93,6 +94,7 @@ public class DAO
 		UserService userService = UserServiceFactory.getUserService();
 		UserInfo userInfo = null;
 		User user = userService.getCurrentUser();
+		//TODO remove Hack before deployement
 		//String userId = user.getUserId();
  		Long userId = 1L;
 

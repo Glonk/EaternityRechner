@@ -86,6 +86,7 @@ public class RecipeEdit extends Composite {
 	@UiField TextBox RezeptName;
 	@UiField TextBox rezeptDetails;
 	@UiField Label co2valueLabel;
+	@UiField Image co2Image;
 	
 	@UiField HTML codeImage;
 	@UiField HorizontalPanel imageWidgetPanel;
@@ -117,8 +118,9 @@ public class RecipeEdit extends Composite {
 	@UiField Button saveButton;
 	@UiField Button deleteButton;
 	
-	@UiField SelectionStyleRow selectionStyleRow;
-	@UiField EvenStyleRow evenStyleRow;
+	@UiField static SelectionStyleRow selectionStyleRow;
+	@UiField static EvenStyleRow evenStyleRow;
+	@UiField static TextErrorStyle textErrorStyle;
 	
 	
 	// ---------------------- Class Variables ----------------------
@@ -160,6 +162,9 @@ public class RecipeEdit extends Composite {
 	}
 	interface EvenStyleRow extends CssResource {
 		String evenRow();
+	}
+	interface TextErrorStyle extends CssResource {
+		String redTextError();
 	}
 	
 	public void setListener(Listener listener) {
@@ -314,12 +319,9 @@ public class RecipeEdit extends Composite {
 		}
 	}
 	
-	private void updateCo2Value() {
-		double co2value = 0l;
-		for (Ingredient ingSpec : recipe.getIngredients()) {
-			co2value = co2value + ingSpec.getCalculatedCO2Value();
-		}
-		co2valueLabel.setText("" + ((int)co2value));
+	public void updateCo2Value() {
+		co2valueLabel.setText("" + (recipe.getCO2Value().intValue()));
+		co2Image.setUrl("/images/rating_bars.png");
 	}
 
 	// ---------------------- UI Handlers ----------------------
@@ -359,29 +361,35 @@ public class RecipeEdit extends Composite {
 		}
 	}
 	
+	
 	@UiHandler("amountPersons")
 	void onKeyUp(KeyUpEvent event) {
-		int keyCode = event.getNativeKeyCode();
-		if ((Character.isDigit((char) keyCode)) 
-				|| (keyCode == KeyCodes.KEY_BACKSPACE)
-				|| (keyCode == KeyCodes.KEY_DELETE) ) {
-			Long persons = 1l;
-			recipe.setPersons(persons);
-			if(!amountPersons.getText().isEmpty()){
-				persons = Long.parseLong(amountPersons.getText().trim());
-				if(persons > 0){
-					recipe.setPersons(persons);
-					changeSaveStatus(false);
-				} else {
-//					amountPersons.setText("1");
-				}
-			} else {
-//				amountPersons.setText("1");
+		String errorStyle = textErrorStyle.redTextError();
+		String text = amountPersons.getText();
+		Long persons = 4L;
+		boolean success = false;
+		
+		try { 
+			if ("".equals(text)) {
+				amountPersons.removeStyleName(errorStyle);
 			}
-			
-			
-		} else {
-			amountPersons.cancelKey();
+			else {
+				persons = Long.parseLong(amountPersons.getText().trim());
+				if (persons > 0) {
+					success = true;
+					amountPersons.removeStyleName(errorStyle);
+				}
+			}
+		}
+		catch (IllegalArgumentException IAE) {}
+		
+		if (success) {
+			recipe.setPersons(persons);
+			updateCo2Value();
+			changeSaveStatus(false);
+		}
+		else {
+			amountPersons.addStyleName(errorStyle);
 		}
 	}
 
@@ -407,7 +415,7 @@ public class RecipeEdit extends Composite {
 	public void onDeleteClicked(ClickEvent event) {
 		saved = true;
 		if (dco.getLoginInfo().isLoggedIn())
-			dco.deleteRecipe(recipe);
+			dco.deleteRecipe(recipe.getId());
 		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
 	}
 	
@@ -439,7 +447,7 @@ public class RecipeEdit extends Composite {
 				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
 				date = fmt.parseStrict(text);	
 				recipeDateError.setHTML("");
-				}
+			}
 		}
 		catch (IllegalArgumentException IAE) {
 			if(!"TT/MM/JJ".equals(text))
@@ -755,6 +763,8 @@ public class RecipeEdit extends Composite {
 
 
 	public void closeRecipeEdit() {
+		
+		/*
 		if (!saved && dco.getLoginInfo().isLoggedIn() && recipe != null) {
 			String saveText = recipe.getTitle() + " ist noch nicht gespeichert!";
 			final ConfirmDialog dlg = new ConfirmDialog(saveText);
@@ -775,6 +785,12 @@ public class RecipeEdit extends Composite {
 
 			dlg.show();
 			dlg.center();
+		}
+		*/
+		
+		if (!saved && dco.getLoginInfo().isLoggedIn() && recipe != null) {
+			dco.saveRecipe(recipe);
+			saved = true;
 		}
 		
 		dco.clearEditRecipe();

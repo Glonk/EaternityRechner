@@ -65,7 +65,9 @@ public class IngredientWidget extends Composite {
 
 	
 	public void updateCO2Value() {
+		//TODO also update RecipeEdit CO2 value
 		co2valueLabel.setText("" + ((int)ingredient.getCalculatedCO2Value()) +"g");
+		recipeEdit.updateCo2Value();
 	}
 
 	
@@ -88,10 +90,10 @@ public class IngredientWidget extends Composite {
 			
 			// rating
 			HTML ratingIcon = new HTML();
-			if(ingredient.getFoodProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < .4){
+			if(ingredient.getFoodProduct().getCo2eValue() < .4){
 				ratingIcon.setHTML("<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>");
 		
-			} else if(ingredient.getFoodProduct().getCo2eValue().convert(Unit.KILOGRAM).getAmount() < 1.2){
+			} else if(ingredient.getFoodProduct().getCo2eValue() < 1.2){
 				ratingIcon.setHTML("<div class='extra-icon smiley2'><img src='pixel.png' height=1 width=20 /></div>");
 		
 			} else {

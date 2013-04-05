@@ -8,6 +8,8 @@ import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
+import ch.eaternity.client.events.SpinnerEvent;
+import ch.eaternity.client.events.SpinnerEventHandler;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
@@ -27,6 +29,8 @@ import com.google.gwt.user.client.ui.Anchor;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,6 +47,10 @@ public class TopPanel extends Composite {
 	  @UiField Anchor signInLink;
 	  @UiField Anchor ingredientLink;
 	  @UiField ListBox Monate;
+	  
+	  @UiField HorizontalPanel spinnerPanel;
+	  @UiField HTML spinnerHTML;
+	  @UiField Label spinnerLabel;
 	  
 	  @UiField Button userRecipesButton;
 	  @UiField Button kitchenRecipesButton;
@@ -70,6 +78,10 @@ public class TopPanel extends Composite {
 		signOutLink.setVisible(false);
 		userRecipesButton.setVisible(false);
 		kitchenRecipesButton.setVisible(false);
+		
+		spinnerPanel.setVisible(false);
+		spinnerHTML.setHTML("<img src='spinner_small.gif' />");
+		spinnerLabel.setText("loading ...");
 
 		Monate.addItem("Januar");
 		Monate.addItem("Februar");
@@ -106,14 +118,23 @@ public class TopPanel extends Composite {
 						}
 					}
 				});
+		
 		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE,
 				new KitchenChangedEventHandler() {
 					@Override
 					public void onKitchenChanged(KitchenChangedEvent event) {
 						kitchenRecipesButton.setText(dco.getCurrentKitchen().getSymbol());
-						}
 					}
-				);
+				});
+		
+		presenter.getEventBus().addHandler(SpinnerEvent.TYPE,
+				new SpinnerEventHandler() {
+					@Override
+					public void onEvent(SpinnerEvent event) {
+						spinnerLabel.setText("  " + event.action + "");
+						spinnerPanel.setVisible(event.spinning);
+					}
+				});
 
 		presenter.getEventBus().addHandler(LoginChangedEvent.TYPE,
 				new LoginChangedEventHandler() {

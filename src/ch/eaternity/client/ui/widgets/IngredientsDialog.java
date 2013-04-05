@@ -113,7 +113,7 @@ public class IngredientsDialog extends DialogBox{
 					// CO2eWert		
 					tmpNodeVal1 = getTagContent(zutatElmnt, "CO2eq_Wert");
 					//Window.alert("CO2eWert : "  + Math.round(Float.parseFloat( nodeValue )*1000));
-					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( new Quantity(Double.parseDouble( tmpNodeVal1 ), Unit.KILOGRAM) );
+					if (tmpNodeVal1 != null) newIngredient.setCo2eValue( Double.parseDouble( tmpNodeVal1 ) );
 					else isValidIng = false;
 					
 					

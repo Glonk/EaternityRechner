@@ -21,10 +21,10 @@ public class FoodProduct implements Serializable {
     
     private List<String> synonyms = new ArrayList<String>();
 
-    // probably change to double, take standard measures?
-    // in Quantity.Unit / kg
-    @Embed
-    private Quantity co2eValue;
+    /**
+     *  in kg / kg or g / g (the same ...)
+    */
+    private Double co2eValue;
     @Embed
     private Quantity stdWeight;
     
@@ -56,7 +56,7 @@ public class FoodProduct implements Serializable {
 	public FoodProduct(FoodProduct toClone) {
 		name = new String(toClone.name);
 		name_en = new String(toClone.name_en);
-		co2eValue = new Quantity(toClone.co2eValue);
+		co2eValue = new Double(toClone.co2eValue);
 		stdWeight = new Quantity(toClone.stdWeight);
 		for (Long id : toClone.substituteIds)
 			substituteIds.add(id);
@@ -83,11 +83,11 @@ public class FoodProduct implements Serializable {
 		this.id = id;
 	}
 
-	public Quantity getCo2eValue() {
+	public Double getCo2eValue() {
 		return co2eValue;
 	}
 
-	public void setCo2eValue(Quantity co2eValue) {
+	public void setCo2eValue(Double co2eValue) {
 		this.co2eValue = co2eValue;
 	}
 

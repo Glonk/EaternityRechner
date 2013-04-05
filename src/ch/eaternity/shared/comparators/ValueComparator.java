@@ -8,9 +8,9 @@ import ch.eaternity.shared.Unit;
 
 public class ValueComparator implements Comparator<FoodProduct> {
 	  public int compare(FoodProduct z1, FoodProduct z2) {
-		  Quantity o1 = z1.getCo2eValue();
-		  Quantity o2 = z2.getCo2eValue();
+		  Double o1 = z1.getCo2eValue();
+		  Double o2 = z2.getCo2eValue();
 		  
-	    return -Double.valueOf(o2.convert(Unit.GRAM).getAmount()).compareTo(Double.valueOf(o1.convert(Unit.GRAM).getAmount()));
+	    return -Double.valueOf(o2).compareTo(Double.valueOf(o1));
 	  }
 	}
