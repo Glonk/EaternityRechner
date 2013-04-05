@@ -133,7 +133,7 @@ public class DataController {
 			}
 
 			public void onSuccess(Long id) {
-				eventBus.fireEvent(new SpinnerEvent(false));
+				eventBus.fireEvent(new SpinnerEvent(false, "Rezept gespeichert"));
 							
 				recipe.setId(id);
 				RecipeInfo recipeInfo = cdata.getRecipeById(recipe.getId());
@@ -155,8 +155,9 @@ public class DataController {
 					}
 				}
 				//TODO change refresh() (something isnt working with refresh if list.add is used)
-				recipeDataProvider.setList(cdata.recipeInfos);
-				eventBus.fireEvent(new AlertEvent("Rezept gespeichert.", AlertType.INFO, AlertEvent.Destination.BOTH, 2000));
+				recipeDataProvider.flush();
+				//recipeDataProvider.setList(cdata.recipeInfos);
+				//eventBus.fireEvent(new AlertEvent("Rezept gespeichert.", AlertType.INFO, AlertEvent.Destination.BOTH, 2000));
 			}
 		});
 	}
@@ -187,9 +188,8 @@ public class DataController {
 			public void onSuccess(Boolean ignore) {
 				eventBus.fireEvent(new SpinnerEvent(false));
 				cdata.recipeInfos.remove(cdata.getRecipeById(recipeId));
-				recipeDataProvider.refresh();
-				if (cdata.editRecipe.getId().equals(recipeId))
-					cdata.editRecipe = null;
+				recipeDataProvider.flush();
+				//recipeDataProvider.setList(cdata.recipeInfos);
 			}
 		});
 	}
@@ -345,7 +345,7 @@ public class DataController {
 			for (Recipe recipe : cdata.currentKitchenRecipes)
 				ingSpecs.addAll(recipe.getIngredients());
 		}
-		else
+		else if (cdata.editRecipe != null)
 			ingSpecs.addAll(cdata.editRecipe.getIngredients());
 		
 		for (Ingredient ingSpec : ingSpecs) {

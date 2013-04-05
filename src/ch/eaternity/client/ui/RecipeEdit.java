@@ -34,6 +34,7 @@ import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SavingPotential;
+import ch.eaternity.shared.Util;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
@@ -321,7 +322,7 @@ public class RecipeEdit extends Composite {
 	
 	public void updateCo2Value() {
 		co2valueLabel.setText("" + (recipe.getCO2Value().intValue()));
-		co2Image.setUrl("/images/rating_bars.png");
+		co2Image.setUrl(Util.getRecipeRatingBarUrl(recipe.getCO2Value()));
 	}
 
 	// ---------------------- UI Handlers ----------------------

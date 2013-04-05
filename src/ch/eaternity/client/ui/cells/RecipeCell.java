@@ -1,8 +1,11 @@
 package ch.eaternity.client.ui.cells;
 
 import ch.eaternity.client.DataController;
+import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.Unit;
+import ch.eaternity.shared.Util;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -51,9 +54,13 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	}
 	
 	private DataController dco;
+	private RechnerActivity presenter;
 	
-	public RecipeCell(DataController dco) {
-		this.dco = dco;
+	public RecipeCell(RechnerActivity presenter) {
+		super("click");
+		this.presenter = presenter;
+		this.dco = presenter.getDCO();
+		// tell AbstractCell which events to forward to RecipeCell
 	}
 
 	/**
@@ -99,15 +106,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.appendHtmlConstant("</span></td>");
 	  
 	  sb.appendHtmlConstant("<td width='40'>");
-	  if (recipeInfo.getCo2eValue() < 700) {
-		  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
-	  }
-	  else if (recipeInfo.getCo2eValue() > 700 && recipeInfo.getCo2eValue() < 1500) {
-		  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
-	  }
-	  else {
-		  sb.appendHtmlConstant("<img src='/images/rating_bars.png' />");
-	  }
+	  sb.appendHtmlConstant("<img src='" + Util.getRecipeRatingBarUrl(recipeInfo.getCo2eValue()) + "' />");
 	  sb.appendHtmlConstant("</td>");
 	  
 	  sb.appendHtmlConstant("<td width='140'><span style='font-size:30px; font-weight:bold;'>");
@@ -141,6 +140,9 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	        }
 	        if (parent.getElementsByTagName("a").getItem(0).isOrHasChild(Element.as(eventTarget))) {
 	            dco.deleteRecipe(value.getId());
+	        }
+	        else {
+	        	presenter.goTo(new RechnerRecipeEditPlace(value.getId().toString()));
 	        }
 	    }
 	}

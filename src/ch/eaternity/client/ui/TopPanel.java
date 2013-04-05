@@ -131,8 +131,20 @@ public class TopPanel extends Composite {
 				new SpinnerEventHandler() {
 					@Override
 					public void onEvent(SpinnerEvent event) {
-						spinnerLabel.setText("  " + event.action + "");
-						spinnerPanel.setVisible(event.spinning);
+						if (event.spinning) {
+							spinnerLabel.setText("  " + event.action + "");
+							spinnerHTML.setVisible(true);
+							spinnerPanel.setVisible(true);
+						}
+						else if (!event.spinning && event.action != null) {
+							spinnerLabel.setText("  " + event.action + "");
+							spinnerHTML.setVisible(false);
+							spinnerPanel.setVisible(true);
+						}
+						else {
+							spinnerPanel.setVisible(false);
+						}
+							
 					}
 				});
 

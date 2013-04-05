@@ -91,7 +91,7 @@ public class RecipeView extends Composite {
 		};
 		    
 		// Create a cell to render each value in the list.
-	    RecipeCell recipeCell = new RecipeCell(dco);
+	    RecipeCell recipeCell = new RecipeCell(presenter);
 	    
 	    // Create a CellList that uses the cell.
 	    CellList<RecipeInfo> cellList = new CellList<RecipeInfo>(recipeCell, keyProvider);
@@ -108,7 +108,7 @@ public class RecipeView extends Composite {
 	    	public void onSelectionChange(SelectionChangeEvent event) {
 	    		RecipeInfo selected = selectionModel.getSelectedObject();
 		        if (selected != null) {
-		        	presenter.goTo(new RechnerRecipeEditPlace(selected.getId().toString()));
+		        	//presenter.goTo(new RechnerRecipeEditPlace(selected.getId().toString()));
 		        	selectionModel.setSelected(selected, false);
 		        }
 	    	}

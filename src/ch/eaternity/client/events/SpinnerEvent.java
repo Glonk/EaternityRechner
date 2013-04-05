@@ -12,7 +12,7 @@ public class SpinnerEvent extends GwtEvent<SpinnerEventHandler> {
   
   public Boolean spinning;
   
-  public String action = "";
+  public String action;
   
   public SpinnerEvent(Boolean spinning) {
 	  this.spinning = spinning;
