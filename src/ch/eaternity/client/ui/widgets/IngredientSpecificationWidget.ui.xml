@@ -4,16 +4,29 @@
 
 
 
-  <ui:style>
-	.NameLabel {}
+	<ui:style>
+  	.box {
+		margin:0px 0px 20px 20px;
+		padding: 15px;
+		background-color: #F0F4C2;
+	}	
+	
+	.NameLabel {
+		font-size:16px;
+		font-weight:bold;
+	
+	}
 	
 	.SpecificationLabel {
-		width: 150px;
+		width: 80px;
+		margin-bottom:10px;
+		vertical-align:middle;
 
 	}
 	
-	.style.SpecificationList {
-		width: 100px;
+	.SpecificationList {
+		width: 140px;
+		margin-bottom:10px;
 	}
 	
 	.UnknownExtractionTextBox {}
@@ -32,8 +45,9 @@
 	
 	.CoherenceHTML{}
   </ui:style>
-
-	<g:VerticalPanel>
+  
+<g:HTMLPanel styleName='{style.box}'>
+	<g:VerticalPanel >
 		
 	
 		<g:HorizontalPanel>
@@ -75,4 +89,5 @@
 		
 		<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
 	</g:VerticalPanel>
+	</g:HTMLPanel>
 </ui:UiBinder>

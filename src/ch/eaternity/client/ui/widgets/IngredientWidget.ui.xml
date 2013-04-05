@@ -18,8 +18,8 @@
 	<g:HorizontalPanel>
 		<g:HTML ui:field="dragHandle"><div class='dragMe'><img src='pixel.png' width='10' height='20' /></div></g:HTML>
 		<g:TextBox ui:field="amountBox" styleName='{style.amountBox}'>100</g:TextBox>
-		<g:Label>g</g:Label>
-		<g:Label ui:field="nameLabel" width='170px'></g:Label>
+		<g:Label> g</g:Label>
+		<g:Label ui:field="nameLabel" width='140px'></g:Label>
 		<g:HTMLPanel ui:field="iconsPanel" width='60px'></g:HTMLPanel>
 		<g:HTMLPanel ui:field="ratingPanel" width='30px'></g:HTMLPanel>
 		<g:Label ui:field="co2valueLabel" styleName='{style.co2label}'></g:Label>

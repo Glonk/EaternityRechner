@@ -70,11 +70,19 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	private static final String calulationAnchor = "<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>";
 	
+	private boolean presenterSetted = false;
+	
 	// ---------------------- public Methods -----------------------
 	
-	public IngredientSpecificationWidget(RecipeEdit recipeEdit, Ingredient ingredient, RechnerActivity presenter) {
+	public IngredientSpecificationWidget() {
+		 initWidget(uiBinder.createAndBindUi(this));
+		 this.setVisible(false);
+	}
+	
+	public void setPresenter(RechnerActivity presenter, Ingredient ingredient) {
 		this.ingredient = ingredient;
-		this.recipeEdit = recipeEdit;
+		this.product = ingredient.getFoodProduct();
+		this.recipeEdit = presenter.getRecipeEdit();
 		this.dco = presenter.getDCO();
 		setFields();
 		
@@ -85,7 +93,20 @@ public class IngredientSpecificationWidget extends Composite {
 						updateSeasonCoherency();
 					}
 				});
+		presenterSetted = true;
 		
+	}
+	
+	
+	
+	public void setIngredient(Ingredient ingredient) {
+		this.ingredient = ingredient;
+		this.product = ingredient.getFoodProduct();
+		setFields();
+	}
+	
+	public boolean isPresenterSetted(){
+		return presenterSetted;
 	}
 	
 	// ---------------------- private Methods -----------------------
@@ -93,15 +114,21 @@ public class IngredientSpecificationWidget extends Composite {
 	private void setFields() {
 		UnknownExtractionTextBox.setVisible(false);
 		
+		NameLabel.setText(product.getName());
+		
+		ExtractionList.clear();
 		for (Extraction extraction : product.getExtractions()) {
 			ExtractionList.addItem(extraction.getName());
 		}
+		TransportationList.clear();
 		for (Transportation transport : product.getTransportations()) {
 			TransportationList.addItem(transport.getSymbol());
 		}
+		ProductionList.clear();
 		for (Production production : product.getProductions()) {
 			ProductionList.addItem(production.getSymbol());
 		}
+		ConditionList.clear();
 		for (Condition condition : product.getConditions()) {
 			ConditionList.addItem(condition.getSymbol());
 		}
@@ -213,6 +240,12 @@ public class IngredientSpecificationWidget extends Composite {
 	}
 	
 	// ---------------------- UI Handlers ----------------------
+	
+	@UiHandler("closeButton") 
+	public void onCloseClick(ClickEvent event) {
+		this.setVisible(false);
+	}
+	
 	
 	@UiHandler("ExtractionList")
 	public void onExtractionChange(ChangeEvent event) {

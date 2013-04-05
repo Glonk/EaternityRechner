@@ -1,111 +1,42 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
 	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 	<ui:style>
-		.indikator {
-			background: #fff;
-			clear: both;
-		}
-		
-		.prepare {
-			float: right;
-			margin-top: -4px;
-			margin-right: 24px;
-			color: black;
-			text-decoration: underline;
-			cursor: pointer;
-			cursor: hand;
-		}
-		
-		.statusInfo {
-			color: #fff;
-			margin: 0px 0px 0px 4px;
-			font-size: 0.9em;
-			display: inline;
-		}
-		
-		.detailText {
-			margin: 0px 10px 0px 10px;
-		}
-		
-		.closeButton {
-			display: inline;
-		}
-		
-		.floatRight {
-			float: right;
-			display: inline;
-		}
-		
-		.savePanel {
-			padding: 3px;
-			display: block;
-			width: 740px;
-			clear: both;
-			text-align: right;
-			margin-top: -20px;
-		}
-		
-		.inline {
-			display: inline;
-		}
-		
-		.inline2 {
-			display: inline;
-			width: 380px;
-			background: #ccc;
-			float: left;
-		}
-		
-		.hideOverflow { /* overflow:hidden; */
-			padding-top: 10px;
-			vertical-align: top;
-		}
-		
-		.rezeptDecoration {
+	
+		.wholePanel {
 			width: 750px;
-			padding: 7px;
+			padding: 15px;
 		}
 		
-		.cookingInstr {
-			margin-left: 6px;
-			height: 114px;
-			width: 200px;
-			/* display:inline; */
-			margin-top: 0px;
-			margin-bottom: 0px;
-			resize: none;
-			background: #F7A959;
-			border: 1px solid #323533;
-		}
+		.floatRight{
+		float:right;
+		display:inline;
+		}	
 		
-		.menuDecoPanel {
-			width: 340px;
-		}
-		
-		.rezeptNameTop {
-			width: 220px;
-			padding-left: 5px;
-			margin-right: 6px;
-			font-size: 14px;
+		.recipeTitle {
+			width: 300px;
+			font-size: 24px;
 			font-weight: bold;
-			height: 22px;
 			text-align: left;
 		}
 		
-		.rezeptNameTop2 {
-			width: 355px;
-			padding-left: 4px;
-			margin-left: 1px;
+		.recipeSubTitle {
+			width: 300px;
 			font-size: 14px;
-			font-weight: bold;
-			height: 20px;
 			text-align: left;
-			border: 0px;
-			color: white;
-			background: #323533;
+		}
+		
+		.codeImage {
+	
+		}
+		
+		.personsHTML { /* margin-right:10px; */
+			width: 120px;
+			text-align: right;
+			display: inline;
 		}
 		
 		.recipePersonsBox {
@@ -116,69 +47,37 @@
 			text-align: right;
 			width: 1.4em;
 		}
+
 		
-		.rezeptSubTitleTop {
-			float: left;
-			width: 220px;
-			padding-left: 6px;
-			margin-right: 25px;
-			font-size: 13px;
-			height: 14px;
-			text-align: left;
+		.co2value {
+			text-align:right;
 		}
 		
-		.rezeptSubTitleTop2 {
-			height: 18px;
-			width: 238px;
-			padding-left: 4px;
-			margin-bottom: 30px;
-			font-size: 13px;
-			background: #F7A959;
-			text-align: left;
-			border: 0px;
+		.co2valueLabel {
+			font-size:40px;
+			font-weight:bold;
+			margin:0px 20px 0px 20px;
+			
 		}
 		
-		.closeButton {
-			margin-top: -14px;
+		.ingredientPanel {
+			margin-top:30px;
 		}
 		
-		.recipeTitle {
-			background: #323533;
-			color: #fff;
-			width: 360px;
-			margin-left: 10px;
+		.ingredientList {
+			width: 3px;
+			cursor: pointer;
+			cursor: hand;
 		}
 		
-		.recipePersons { /* margin-right:10px; */
-			width: 120px;
-			text-align: right;
-			display: inline;
+		.ingSpecWidget {
+			width:320px;
 		}
 		
-		.recipeSmallDetail {
-			margin-left: 10px;
-			height: 10px;
-			background: none;
-		}
-		
-		.SavePanel {
-			float: left;
-			clear: both;
-		}
-		
-		.SuggestTable {
-			float: left;
-			clear: both;
-			text-align: left;
-			background: #323533;
-			color: #fff;
-		}
-		
-		.CommentTable {
-			float: left;
-			clear: both;
-			text-align: left;
-			border: 1px;
+		.makePublic {
+			margin-left:100px;
+			text-align:center;
+			vertical-align: middle;
 		}
 		
 		.rezeptDateField {
@@ -193,81 +92,40 @@
 			margin-left: 10px;
 		}
 		
-		.MenuTableWrapper {
-			background: #F9C88C;
-			margin: 15px 15px 0px 10px;
+		.cookingInstr {
+			background-color: #F0F4C2;
+			height: 114px;
+			width:100%;
+			margin-top: 0px;
+			margin-bottom: 0px;
+			resize: none;
 		}
 		
-		.MenuTable {
-			width: 360px;
-			cursor: pointer;
-			cursor: hand;
+		.CommentTable {
+			float: left;
+			clear: both;
+			text-align: left;
+			border: 1px;
 		}
 		
-		.MenuTable tr {
-			
+		.gwt-TextBox {
+		  border: none !important;
 		}
+
 		
-		.gwt-Button {
-			margin: -1px -1px 0px 0px;
-			padding: 2px 5px 3px 5px;
-			text-decoration: none;
-			/* cursor: pointer;
-																						cursor: hand;*/
-			cursor: default;
-			font-size: 11px;
-			color: #000;
-			background: url("hborder.png") repeat-x 0px -27px;
-			border: 1px solid #787878;
-			/* border-bottom: 1px solid #a0a0a0;*/
-			border-radius: 4px;
-			-moz-border-radius: 4px;
-		}
-		
-		.gwt-Button:active { /* border: 1px inset #fff; */
-			border: 1px solid #787878;
-			background: url("hborder.png") repeat-x 0px -1455px;
-		}
-		
-		.gwt-Button:hover {
-			border-color: #787878;
-		}
-		
-		.gwt-Button[disabled] {
-			cursor: default;
-			color: #888;
-		}
-		
-		.gwt-Button[disabled]:hover {
-			border: 1px outset #ccc;
-		}
-		.codeImage {
-			height:150px;
-		}
-		
-		.co2value {
-			text-align:right;
-		}
-		
-		.co2valueLabel {
-			font-size:40px;
-			font-weight:bold;
-			margin:0px 20px 0px 20px;
-			
-		}
 	</ui:style>
 
 	<ui:style field='selectionStyleRow'
 		type='ch.eaternity.client.ui.RecipeEdit.SelectionStyleRow'>
 			.selectedRow td {
-				background: #fff;
+				background: #f0f4c2;
 			}
 		</ui:style>
 
 	<ui:style field='evenStyleRow'
 		type='ch.eaternity.client.ui.RecipeEdit.EvenStyleRow'>
 			.evenRow {
-				background: #FEE6C6;
+				background: #efefef;
 			}
 	</ui:style>
 	
@@ -278,8 +136,8 @@
 			}
 	</ui:style>
 		
-		<g:AbsolutePanel ui:field="dragArea">
-			<g:VerticalPanel styleName='{style.rezeptDecoration}'>
+		<g:AbsolutePanel ui:field="dragArea" styleName='{style.wholePanel}'>
+			<g:VerticalPanel>
 				<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
 				
 				<!-- Close Recipe Button -->
@@ -290,13 +148,10 @@
 				<g:HorizontalPanel>
 					<g:VerticalPanel>
 						<!-- title of the recipe -->
-						<g:TextBox ui:field="RezeptName" styleName='{style.rezeptNameTop2}'>Ihr Menu</g:TextBox>
+						<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
 
 						<!-- sub-title of the recipe -->
-						<g:HTMLPanel styleName='{style.recipeSmallDetail}'>
-							<g:TextBox ui:field="rezeptDetails" styleName='{style.rezeptSubTitleTop2}'>Menu
-								Beschreibung</g:TextBox>
-						</g:HTMLPanel>
+						<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
 					</g:VerticalPanel>
 
 					<!-- CO2 Value -->
@@ -312,44 +167,35 @@
 				<g:HorizontalPanel ui:field='imageWidgetPanel'></g:HorizontalPanel>
 
 				<g:HorizontalPanel>
-					<g:HTMLPanel styleName='{style.recipePersons}'>
+					<g:HTMLPanel styleName='{style.personsHTML}'>
 						für
-						<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'>4</g:TextBox>
+						<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
 						Personen
 					</g:HTMLPanel>
-					<g:CheckBox ui:field="makePublic">veroeffentlichen</g:CheckBox>
+					<g:CheckBox ui:field="makePublic" styleName='{style.makePublic}'></g:CheckBox>
 				</g:HorizontalPanel>
 
 				<!-- Cooking Date -->
-				<g:HorizontalPanel>
+				<g:HorizontalPanel styleName="{style.ingredientPanel}">
 					<g:HTML>Datum: </g:HTML>
-					<g:TextBox ui:field="recipeDate" styleName="{style.rezeptDateField}">TT/MM/JJ</g:TextBox>
-					<g:HTML ui:field="recipeDateError" styleName="{style.recipeDateError}"></g:HTML>
+					<g:TextBox ui:field="recipeDate" styleName='{style.rezeptDateField}'>TT/MM/JJ</g:TextBox>
+					<g:HTML ui:field="recipeDateError" styleName='{style.recipeDateError}'></g:HTML>
 				</g:HorizontalPanel>
 
-				<g:HorizontalPanel styleName='{style.hideOverflow}' ui:field='addInfoPanel'>
 
-					<!-- ingredients list -->
-					<g:VerticalPanel ui:field='MenuTableWrapper'
-						styleName='{style.MenuTableWrapper}'>
-						<g:HTMLPanel>
-							<img src='tabs-bg.png' height='88px' width='1px' style='float:left;' />
-							<g:FlexTable ui:field='MenuTable' styleName='{style.MenuTable}'
-								cellSpacing='0' cellPadding='0' />
-						</g:HTMLPanel>
-						<g:FlexTable ui:field='SuggestTable' styleName='{style.SuggestTable}'
-							cellSpacing='0' cellPadding='0' />
-					</g:VerticalPanel>
-
+				<!-- Ingredients List, Specification WIdget-->
+				<g:HorizontalPanel>
+					<g:FlexTable ui:field='ingredientList' styleName='{style.ingredientList}' cellSpacing='0' cellPadding='0' />
+					<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
 				</g:HorizontalPanel>
-				<g:Label>Kochanleitung:</g:Label>
+				
+				
+				<g:Label>Zubereitung:</g:Label>
 				<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea>
 
 				<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
 					cellSpacing='2' cellPadding='2' />
 					
-				<g:Anchor styleName='{style.prepare}' ui:field="PreparationButton"
-					text="Zubereitung hinzufügen" />
 					
 				<g:CheckBox ui:field="preparationFactor">Zubereitungsfaktor hinzufuegen</g:CheckBox>
 				
@@ -357,7 +203,6 @@
 					<g:Label>In Sammlungen:</g:Label>
 					<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
 				</g:HorizontalPanel>
-				<g:HTML ui:field="bottomIndikator" styleName='{style.indikator}'></g:HTML>
 				
 				<g:FlowPanel>
 					<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>

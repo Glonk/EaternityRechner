@@ -146,4 +146,8 @@ public class RechnerActivity extends AbstractActivity {
 		return this.eventBus;
 	}
 	
+	public RecipeEdit getRecipeEdit() {
+		return recipeEdit;
+	}
+	
 }

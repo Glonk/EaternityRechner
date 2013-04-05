@@ -28,6 +28,7 @@ import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.ConfirmDialog;
 import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
 import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
+import ch.eaternity.client.ui.widgets.IngredientSpecificationWidget;
 import ch.eaternity.client.ui.widgets.IngredientWidget;
 import ch.eaternity.client.ui.widgets.UploadPhoto;
 import ch.eaternity.shared.FoodProduct;
@@ -97,20 +98,14 @@ public class RecipeEdit extends Composite {
 	@UiField TextBox recipeDate;
 	@UiField HTML recipeDateError;
 	
-	@UiField HorizontalPanel addInfoPanel;
-	
-	@UiField FlexTable SuggestTable;
 	@UiField FlexTable commentTable;
 	
-	@UiField Anchor PreparationButton;
 	@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
 	
-	
-	@UiField VerticalPanel MenuTableWrapper;
-	@UiField FlexTable MenuTable;
+	@UiField FlexTable ingredientList;
+	@UiField IngredientSpecificationWidget ingSpecWidget;
 	@UiField FlowPanel collectionPanel;
-	@UiField HTML bottomIndikator;
 	
 	@UiField Button newRecipeButton;
 	@UiField Button generatePDFButton;
@@ -131,27 +126,16 @@ public class RecipeEdit extends Composite {
 	
 	private FlowPanel panelImages = new FlowPanel();
 	private UploadPhoto uploadWidget;
-	private HandlerRegistration imagePopUpHandler = null;
-	private static int overlap = 0;
-	
-	private HTML htmlCooking;
-	private Boolean askForLess;
-	private Boolean askForLess2;
-	private Image showImageRezept = new Image();
-	private Anchor bildEntfernen;
-	private HandlerRegistration showImageHandler = null;
+
 	private FlexTableRowDragController tableRowDragController = null;
 	private FlexTableRowDropController flexTableRowDropController = null;
 	
 	private boolean saved = false;
-	private boolean infoDialogIsOpen = false;
 	
 	private int numberofComments = 0;
 	
-	private Listener listener;
 	private int selectedRow = 0;
 	private Recipe recipe;
-	private String recipeId;
 	
 	
 	public interface Listener {
@@ -168,10 +152,6 @@ public class RecipeEdit extends Composite {
 		String redTextError();
 	}
 	
-	public void setListener(Listener listener) {
-		this.listener = listener;
-	}
-	
 	
 	// ---------------------- public Methods -----------------------
 	
@@ -180,7 +160,7 @@ public class RecipeEdit extends Composite {
 		this.setVisible(false);
 		
 	    tableRowDragController = new FlexTableRowDragController(dragArea);
-	    flexTableRowDropController = new FlexTableRowDropController(MenuTable,this);
+	    flexTableRowDropController = new FlexTableRowDropController(ingredientList,this);
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
 	    saveButton.setEnabled(false);
@@ -189,13 +169,15 @@ public class RecipeEdit extends Composite {
 		duplicateButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		
+		makePublic.setText("veröffentlichen");
+		
 		// Image
 		uploadWidget = new UploadPhoto(this);
 		uploadWidget.setStyleName("notInline");	
 		imageWidgetPanel.insert(uploadWidget,0);
 		imageWidgetPanel.setVisible(false);
 	    
-	    MenuTable.getColumnFormatter().setWidth(0, "300px");
+	    ingredientList.getColumnFormatter().setWidth(0, "300px");
 	}
 	
 	
@@ -234,6 +216,7 @@ public class RecipeEdit extends Composite {
 					@Override
 					public void onEvent(RecipeLoadedEvent event) {
 						recipe = event.recipe;
+						ingSpecWidget.setVisible(false);
 						setVisible(true);
 						updateParameters();
 						changeSaveStatus(true);
@@ -283,10 +266,7 @@ public class RecipeEdit extends Composite {
 		{
 			recipeDate.setText(dtf.format(date));
 		}
-		
-	    if(dco.getCurrentKitchen() == null){
-	    	PreparationButton.setVisible(false);
-	    }
+
 		
 	    // Cooking instruction
 	    String cookingInstructions = recipe.getCookInstruction();
@@ -328,7 +308,7 @@ public class RecipeEdit extends Composite {
 	// ---------------------- UI Handlers ----------------------
 	
 	@UiHandler("RezeptName")
-	void onEdit(KeyUpEvent event) {
+	public void onEdit(KeyUpEvent event) {
 		if(RezeptName.getText() != ""){
 			recipe.setTitle(RezeptName.getText());
 			changeSaveStatus(false);
@@ -336,7 +316,7 @@ public class RecipeEdit extends Composite {
 	}
 	
 	@UiHandler("cookingInstr")
-	void onEditCook(KeyUpEvent event) {
+	public void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
 			recipe.setCookInstruction(cookingInstr.getText());
 			changeSaveStatus(false);
@@ -344,7 +324,7 @@ public class RecipeEdit extends Composite {
 	}
 
 	@UiHandler("rezeptDetails")
-	void onEditSub(KeyUpEvent event) {
+	public void onEditSub(KeyUpEvent event) {
 		if(rezeptDetails.getText() != ""){
 			recipe.setSubTitle(rezeptDetails.getText());
 			changeSaveStatus(false);
@@ -352,19 +332,31 @@ public class RecipeEdit extends Composite {
 	}
 	
 	
-	@UiHandler("MenuTable")
-	void onClick(ClickEvent event) {
+	@UiHandler("ingredientList")
+	public void onClick(ClickEvent event) {
 		// Select the row that was clicked (-1 to account for header row).
-		Cell cell = MenuTable.getCellForEvent(event);
+		Cell cell = ingredientList.getCellForEvent(event);
 		if (cell != null) {
 			int row = cell.getRowIndex();
-			//selectRow(row);
+			IngredientWidget ingWidget = (IngredientWidget)ingredientList.getWidget(row,0);
+			
+			if (!ingSpecWidget.isPresenterSetted()){
+				ingSpecWidget.setPresenter(presenter, ingWidget.getIngredient());
+			}
+			else{
+				ingSpecWidget.setIngredient(ingWidget.getIngredient());
+			}
+			ingSpecWidget.setVisible(true);
+
+			styleRow(selectedRow, false);
+			styleRow(row, true);
+			selectedRow = row;
 		}
 	}
 	
 	
 	@UiHandler("amountPersons")
-	void onKeyUp(KeyUpEvent event) {
+	public void onKeyUp(KeyUpEvent event) {
 		String errorStyle = textErrorStyle.redTextError();
 		String text = amountPersons.getText();
 		Long persons = 4L;
@@ -393,6 +385,37 @@ public class RecipeEdit extends Composite {
 			amountPersons.addStyleName(errorStyle);
 		}
 	}
+	
+	private Date getDate() {
+		String text = recipeDate.getText();
+		Date date = null;
+		try { 
+			if ("".equals(text)) {}
+			else {
+				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
+				date = fmt.parseStrict(text);	
+				recipeDateError.setHTML("");
+			}
+		}
+		catch (IllegalArgumentException IAE) {
+			if(!"TT/MM/JJ".equals(text))
+				recipeDateError.setHTML("'" + text + "' is not a propper formated Date.");
+			else
+				recipeDateError.setHTML("");
+			//recipeDate.setText("");
+			//recipeDate.setCursorPos(0);
+		}
+		return date;
+	}
+	
+	@UiHandler("recipeDate")
+	public void onBlur(BlurEvent event)  {
+		Date date = getDate();
+		if (date != null) {
+			dco.getEditRecipe().setCookingDate(date);
+			changeSaveStatus(false);
+		}
+	}
 
 	
 	@UiHandler("saveButton")
@@ -402,7 +425,7 @@ public class RecipeEdit extends Composite {
 	}
 	
 	@UiHandler("closeRecipe")
-	void onCloseClicked(ClickEvent event) {
+	public void onCloseClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
 	}
 	
@@ -430,36 +453,8 @@ public class RecipeEdit extends Composite {
 		presenter.goTo(new RechnerRecipeEditPlace("new"));
 	}
 
-	@UiHandler("recipeDate")
-	void onBlur(BlurEvent event)  {
-		Date date = getDate();
-		if (date != null) {
-			dco.getEditRecipe().setCookingDate(date);
-			changeSaveStatus(false);
-		}
-	}
+
 	
-	private Date getDate() {
-		String text = recipeDate.getText();
-		Date date = null;
-		try { 
-			if ("".equals(text)) {}
-			else {
-				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
-				date = fmt.parseStrict(text);	
-				recipeDateError.setHTML("");
-			}
-		}
-		catch (IllegalArgumentException IAE) {
-			if(!"TT/MM/JJ".equals(text))
-				recipeDateError.setHTML("'" + text + "' is not a propper formated Date.");
-			else
-				recipeDateError.setHTML("");
-			//recipeDate.setText("");
-			//recipeDate.setCursorPos(0);
-		}
-		return date;
-	}
 	
 	/**
 	 * @return true if recipe has changed since last save, false otherwise
@@ -475,7 +470,7 @@ public class RecipeEdit extends Composite {
 	
 	public void removeIngredient(IngredientWidget ingWidget) {
 		recipe.removeIngredient(ingWidget.getIngredient());
-		MenuTable.remove(ingWidget);
+		ingredientList.remove(ingWidget);
 		
 		// does this work to prevent the error? which error?
 		// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
@@ -495,10 +490,10 @@ public class RecipeEdit extends Composite {
 		
 		// set the colors in the right order...
 		String style = evenStyleRow.evenRow();
-		for(Integer rowIndex = 0; rowIndex<MenuTable.getRowCount(); rowIndex++){
-			MenuTable.getRowFormatter().removeStyleName(rowIndex, style);
+		for(Integer rowIndex = 0; rowIndex<ingredientList.getRowCount(); rowIndex++){
+			ingredientList.getRowFormatter().removeStyleName(rowIndex, style);
 			if ((rowIndex % 2) == 1) {
-				MenuTable.getRowFormatter().addStyleName(rowIndex, style);
+				ingredientList.getRowFormatter().addStyleName(rowIndex, style);
 			} 
 		}
 		updateCo2Value();
@@ -506,13 +501,13 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void updateIngredientValue(Ingredient ingSpec) {
-		((IngredientWidget)MenuTable.getWidget(selectedRow,0)).updateCO2Value();
+		((IngredientWidget)ingredientList.getWidget(selectedRow,0)).updateCO2Value();
 		updateCo2Value();
 	}
 	
 	
 	public void updateIngredients() {
-		MenuTable.clear();
+		ingredientList.clear();
 		for (Ingredient ingSpec : recipe.getIngredients()) {
 			addIngredient(ingSpec);
 		}
@@ -520,9 +515,9 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void addIngredient(Ingredient ingSpec) {
-		int row = MenuTable.getRowCount();
+		int row = ingredientList.getRowCount();
 		IngredientWidget ingWidget = new IngredientWidget(dco, ingSpec,this, dco.getCurrentMonth());
-		MenuTable.setWidget(row, 0, ingWidget);
+		ingredientList.setWidget(row, 0, ingWidget);
 		
 		// drag Handler
 		tableRowDragController.makeDraggable(ingWidget,ingWidget.getDragHandle());
@@ -530,7 +525,7 @@ public class RecipeEdit extends Composite {
 		//Alternate Coloring
 		if ((row % 2) == 1) {
 			String style = evenStyleRow.evenRow();
-			MenuTable.getRowFormatter().addStyleName(row, style);
+			ingredientList.getRowFormatter().addStyleName(row, style);
 		}
 		updateCo2Value();
 	}
@@ -539,7 +534,7 @@ public class RecipeEdit extends Composite {
 	// ---------------------- private Methods ---------------------
 
 	private void updateIcons() {
-		Iterator<Widget> it = MenuTable.iterator();
+		Iterator<Widget> it = ingredientList.iterator();
 		while (it.hasNext()) {
 			((IngredientWidget)it.next()).updateIcons();
 		}
@@ -650,65 +645,15 @@ public class RecipeEdit extends Composite {
 		}
 
 		
-	
-	public void selectRow(int row) {
-
-		// maybee into dialog?
-
-
-		if (selectedRow != -1 && infoDialogIsOpen) {
-
-			VerticalPanel verticalInfoPanel = (VerticalPanel) (addInfoPanel.getWidget(1));
-			//InfoZutatDialog infoDialog = (InfoZutatDialog) (verticalInfoPanel.getWidget(0));
-
-			//IngredientSpecification zutatSpec2 = infoDialog.getZutatSpec();
-
-			//recipe.getIngredients().set(selectedRow, zutatSpec2);
-		}
-
-		Ingredient zutatSpec = recipe.getIngredients().get(row);
-
-		if (zutatSpec == null) {
-			return;
-		}
-
-		FoodProduct zutat = dco.getIngredientByID(zutatSpec.getId());
-
-		//openSpecificationDialog(zutatSpec, zutat, (TextBox) MenuTable.getWidget(row, 1), MenuTable, row);
-
-		styleRow(selectedRow, false);
-		styleRow(row, true);
-		selectedRow = row;
-
-		if (listener != null) {
-			listener.onItemSelected(zutatSpec);
-		}
-	}
-
-/*
-	private void openSpecificationDialog(IngredientSpecification zutatSpec, Ingredient zutat, TextBox amount, FlexTable MenuTable, int selectedRow) {
-		// if another one was already open
-		if (infoDialogIsOpen) {
-			addInfoPanel.remove(1);
-		} else {
-			infoDialogIsOpen = true;
-		}
-
-		InfoZutatDialog infoZutat = new InfoZutatDialog(zutatSpec, zutat, amount, MenuTable, selectedRow, recipe, SuggestTable, this);
-		infoZutat.setPresenter(presenter);
-		addInfoPanel.insert(infoZutat, 1);
-	}
-		*/
-		
 
 	void styleRow(int row, boolean selected) {
 		if (row != -1) {
 			String style = selectionStyleRow.selectedRow();
 
 			if (selected) {
-				MenuTable.getRowFormatter().addStyleName(row, style);
+				ingredientList.getRowFormatter().addStyleName(row, style);
 			} else {
-				MenuTable.getRowFormatter().removeStyleName(row, style);
+				ingredientList.getRowFormatter().removeStyleName(row, style);
 			}
 		}
 	}
