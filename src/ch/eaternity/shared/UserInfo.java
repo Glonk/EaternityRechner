@@ -12,14 +12,15 @@ import com.googlecode.objectify.annotation.*;
 @Cache
 public class UserInfo implements Serializable {
 
-	private static final long serialVersionUID = 8516034014140362835L;
+	private static final long serialVersionUID = 3457245750362835L;
 	
 	// the id is the same as the google user id fetched from User.getId()
 	@Id private Long id;
 
-	private Long currentKitchenId;
+	private Long currentKitchenId = null;
 	
 	// many to many relationship stored in both object -> update properly!
+	@Embed
 	private List<Long> kitchenIds;
 	
 	@Ignore
@@ -30,6 +31,7 @@ public class UserInfo implements Serializable {
 	private String emailAddress;
 	private String nickname;
 	
+	// probably date??
 	private int currentMonth;
 	
 	/**
@@ -37,16 +39,12 @@ public class UserInfo implements Serializable {
 	 */
 	private String currentLocation;
 	
-	private boolean isadmin;
-	private boolean loggedIn;
-	
+	private boolean isadmin = false;
+	private boolean loggedIn = false;
+	private boolean enabled = true;
 	
 
-	public UserInfo() {
-		isadmin = false;
-		currentKitchenId = null;
-		loggedIn = false;
-	}
+	public UserInfo() {}
 	
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -124,6 +122,30 @@ public class UserInfo implements Serializable {
 
 	public void setKitchenIDs(List<Long> kitchenIDs) {
 		this.kitchenIds = kitchenIDs;
+	}
+
+	public int getCurrentMonth() {
+		return currentMonth;
+	}
+
+	public void setCurrentMonth(int currentMonth) {
+		this.currentMonth = currentMonth;
+	}
+
+	public String getCurrentLocation() {
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(String currentLocation) {
+		this.currentLocation = currentLocation;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 }

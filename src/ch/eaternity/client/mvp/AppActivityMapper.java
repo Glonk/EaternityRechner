@@ -2,11 +2,11 @@ package ch.eaternity.client.mvp;
 
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.activity.GoodbyeActivity;
-import ch.eaternity.client.activity.HelloActivity;
+import ch.eaternity.client.activity.LoginActivity;
 import ch.eaternity.client.activity.KlimaZmittagActivity;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.place.GoodbyePlace;
-import ch.eaternity.client.place.HelloPlace;
+import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.client.place.KlimaZmittagPlace;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
@@ -41,11 +41,11 @@ public class AppActivityMapper implements ActivityMapper {
 	@Override
 	public Activity getActivity(Place place) {
 		
-		Log.info("Place called: " + place);
+		//Log.info("Place called: " + place);
 		
 		// This is begging for GIN
-		if (place instanceof HelloPlace)
-			return new HelloActivity((HelloPlace) place, clientFactory);
+		if (place instanceof LoginPlace)
+			return new LoginActivity((LoginPlace) place, clientFactory);
 		
 		else if (place instanceof RechnerRecipeViewPlace) {
 			if (rechnerActivity == null) 

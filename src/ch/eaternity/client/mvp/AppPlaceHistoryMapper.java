@@ -1,7 +1,7 @@
 package ch.eaternity.client.mvp;
 
 import ch.eaternity.client.place.GoodbyePlace;
-import ch.eaternity.client.place.HelloPlace;
+import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.client.place.KlimaZmittagPlace;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
@@ -15,6 +15,6 @@ import com.google.gwt.place.shared.WithTokenizers;
  * annotation or by extending PlaceHistoryMapperWithFactory and creating a
  * separate TokenizerFactory.
  */
-@WithTokenizers( { HelloPlace.Tokenizer.class,RechnerRecipeViewPlace.Tokenizer.class,RechnerRecipeEditPlace.Tokenizer.class, GoodbyePlace.Tokenizer.class, KlimaZmittagPlace.Tokenizer.class })
+@WithTokenizers( { LoginPlace.Tokenizer.class,RechnerRecipeViewPlace.Tokenizer.class,RechnerRecipeEditPlace.Tokenizer.class, GoodbyePlace.Tokenizer.class, KlimaZmittagPlace.Tokenizer.class })
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 }

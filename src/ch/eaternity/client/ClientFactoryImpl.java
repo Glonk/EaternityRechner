@@ -2,10 +2,9 @@ package ch.eaternity.client;
 
 import ch.eaternity.client.ui.GoodbyeView;
 import ch.eaternity.client.ui.GoodbyeViewImpl;
-import ch.eaternity.client.ui.HelloView;
-import ch.eaternity.client.ui.HelloViewImpl;
 import ch.eaternity.client.ui.KlimaZmittagView;
 import ch.eaternity.client.ui.KlimaZmittagViewImpl;
+import ch.eaternity.client.ui.LoginView;
 import ch.eaternity.client.ui.MenuPreviewView;
 import ch.eaternity.client.ui.RechnerView;
 
@@ -18,7 +17,7 @@ public class ClientFactoryImpl implements ClientFactory
 {
 	private final EventBus eventBus = new SimpleEventBus();
 	private final PlaceController placeController = new PlaceController(eventBus);
-	private final HelloView helloView = new HelloViewImpl();
+	private final LoginView helloView = new LoginView();
 	private final KlimaZmittagView klimaZmittagView = new KlimaZmittagViewImpl();
 	private final RechnerView RechnerView = new RechnerView();
 	private final GoodbyeView goodbyeView = new GoodbyeViewImpl();
@@ -34,7 +33,7 @@ public class ClientFactoryImpl implements ClientFactory
 	}
 
 	@Override
-	public HelloView getHelloView()
+	public LoginView getLoginView()
 	{
 		return helloView;
 	}

@@ -4,7 +4,6 @@ package ch.eaternity.client.ui;
 import java.util.Iterator;
 import java.util.List;
 
-import ch.eaternity.client.ui.HelloView.Presenter;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.Recipe;
 

@@ -49,7 +49,7 @@ public interface DataServiceAsync {
 	public void setCurrentKitchen(Long i, AsyncCallback<Boolean> asyncCallback);
 	
 	// login
-	public void login(String requestUri, AsyncCallback<UserInfo> async);
+	public void getUserInfo(String requestUri, AsyncCallback<UserInfo> async);
 	
 	//blob images
 	public void getBlobstoreUploadUrl(AsyncCallback<String> callback);

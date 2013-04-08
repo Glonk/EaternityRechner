@@ -4,6 +4,7 @@ import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
+import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.RechnerView;
@@ -11,13 +12,16 @@ import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.client.ui.RecipeView;
 import ch.eaternity.client.ui.SearchIngredients;
 import ch.eaternity.client.ui.SearchRecipes;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -59,6 +63,7 @@ public class RechnerActivity extends AbstractActivity {
 		this.place = place;
 		
 		rechnerView.setPresenter(this);
+		rechnerView.setVisible(false);
 		
 		recipeEdit = new RecipeEdit();
 		recipeEdit.setPresenter(this);
@@ -69,6 +74,7 @@ public class RechnerActivity extends AbstractActivity {
 		searchIngredients.setPresenter(this);
 		searchRecipes = new SearchRecipes();
 		searchRecipes.setPresenter(this);
+		
 	}
 
 	
@@ -77,11 +83,28 @@ public class RechnerActivity extends AbstractActivity {
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
 		this.container = container;
 		
-		
-				
-		// now load the data (just once...)
-		if (!dco.dataLoaded())
-			dco.loadData();
+		if (!dco.dataLoaded()) {
+			dataRpcService.getUserInfo(GWT.getHostPageBaseURL(), new AsyncCallback<UserInfo>() {
+				public void onFailure(Throwable error) {
+						goTo(new LoginPlace(""));
+					}
+	
+				public void onSuccess(final UserInfo userInfo) {
+					if (userInfo.isLoggedIn() && userInfo.isEnabled()) {
+						// now load the data (just once...)
+						rechnerView.setVisible(true);
+						dco.loadData();
+						dco.setUserInfo(userInfo);
+					}
+					else {
+						goTo(new LoginPlace(""));
+					}
+				}
+			});
+		}
+		else {
+			rechnerView.setVisible(true);
+		}
 	
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
@@ -122,7 +145,7 @@ public class RechnerActivity extends AbstractActivity {
     
     @Override
     public void onStop() {
-    	Window.alert("Stop now");
+    	//Window.alert("Stop now");
     }
 	
 	public void setPlace(Place place) {

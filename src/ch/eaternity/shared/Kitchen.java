@@ -84,11 +84,11 @@ public class Kitchen implements Serializable {
 		this.image = image;
 	}
 
-	public String getLocation() {
+	public String getProcessedLocation() {
 		return processedLocation;
 	}
 
-	public void setLocation(String location) {
+	public void setProcessedLocation(String location) {
 		this.processedLocation = location;
 	}
 
@@ -117,12 +117,28 @@ public class Kitchen implements Serializable {
 		this.energyMix = energyMix;
 	}
 
-	public List<UserInfo> getPersonal() {
+	public List<UserInfo> getUserInfos() {
 		return userInfos;
 	}
 
-	public void setPersonal(List<UserInfo> personal) {
+	public void setUserInfos(List<UserInfo> personal) {
 		this.userInfos = personal;
+	}
+
+	public List<Long> getUserIds() {
+		return userIds;
+	}
+
+	public void setUserIds(List<Long> userIds) {
+		this.userIds = userIds;
+	}
+
+	public List<Pair<String, String>> getUnmatchedUsers() {
+		return unmatchedUsers;
+	}
+
+	public void setUnmatchedUsers(List<Pair<String, String>> unmatchedUsers) {
+		this.unmatchedUsers = unmatchedUsers;
 	}
 	
 

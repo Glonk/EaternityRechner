@@ -12,7 +12,6 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
-import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
 
@@ -20,7 +19,6 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
 
 public class DAO 
@@ -29,7 +27,6 @@ public class DAO
 		ObjectifyService.register(FoodProduct.class);
 		ObjectifyService.register(Ingredient.class);
 		ObjectifyService.register(Recipe.class);
-		//ObjectifyService.register(Quantity.class);
 		ObjectifyService.register(ImageBlob.class);
 		ObjectifyService.register(Kitchen.class);
 		ObjectifyService.register(UserInfo.class);
@@ -37,6 +34,8 @@ public class DAO
 	}
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
+	
+	public DAO() {}
 	
 	/**
 	 * 
@@ -54,6 +53,7 @@ public class DAO
 		if (user != null) {
 			try {
 				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
+				userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 			} 
 			catch (Exception e) {}
 			
@@ -101,12 +101,44 @@ public class DAO
 		if (user != null) {
 			try {
 				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
+				userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 			} 
 			catch (Exception e) {}
 		}
 		return userInfo;
 	}
 
+	/**
+	 * 
+	 * @return A List of all userids registrated in any kitchen
+	 */
+	public List<Long> getAllKitchenUsers() {
+		List<Kitchen> kitchens = new ArrayList<Kitchen>();
+		List<Long> userIds = new ArrayList<Long>();
+		
+		try {
+			
+			Iterable<Key<Kitchen>> keys = ofy().load().type(Kitchen.class).keys();
+			for (Key<Kitchen> key : keys)
+				kitchens.add(ofy().load().key(key).get());
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			kitchens = new ArrayList<Kitchen>();;
+		}
+		
+		for (Kitchen kitchen : kitchens) {
+			userIds.addAll(kitchen.getUserIds());
+		}
+		
+		return userIds;
+	}
+	
+	private Boolean isUserEnabled(Long userId) {
+		List<Long> kitchenUserIds = getAllKitchenUsers();
+		return kitchenUserIds.contains(userId);
+	}
+	
 	// ------------------------ Ingredients -----------------------------------
 	
 	/**
@@ -585,6 +617,10 @@ public class DAO
 	{
 		return ofy().load().type(ImageBlob.class).id(imageID).get();
 	}
+
+
+
+
 
 
 

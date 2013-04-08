@@ -56,10 +56,9 @@ public class DataController {
 				handleError(error);
 			}
 			public void onSuccess(ClientData data) {
-				// the data objects holds all the data	
-				cdata = data;
 				
-				//recipeDataProvider.setList(cdata.recipeInfos);
+				cdata.kitchens = data.kitchens;
+				
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
@@ -80,10 +79,7 @@ public class DataController {
 				// Load current Month or Kitchen Month
 				Date date = new Date();
 				cdata.currentMonth = date.getMonth() + 1;
-				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));
-				
-				if (cdata.userInfo != null)
-					eventBus.fireEvent(new LoginChangedEvent(cdata.userInfo));
+				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));			
 				
 				eventBus.fireEvent(new SpinnerEvent(false));
 				eventBus.fireEvent(new LoadedDataEvent());
@@ -568,6 +564,10 @@ public class DataController {
 		return cdata.recipeScope;
 	}
 	
+	public void setUserInfo(UserInfo userInfo) {
+		cdata.userInfo = userInfo;
+		eventBus.fireEvent(new LoginChangedEvent(cdata.userInfo));
+	}
 	
 	
 	private void handleError(Throwable error) {
@@ -654,6 +654,8 @@ public class DataController {
 	public void setRecipeDataProvider(ListDataProvider<RecipeInfo> recipeDataProvider) {
 		this.recipeDataProvider = recipeDataProvider;
 	}
+
+
 
 
 

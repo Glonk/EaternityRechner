@@ -49,7 +49,7 @@ public interface DataService extends RemoteService {
 	public Boolean setCurrentKitchen(Long i) throws NotLoggedInException;
 
 	// login
-	public UserInfo login(String requestUri);
+	public UserInfo getUserInfo(String requestUri);
 	
 	public Long addCommitment(Commitment commitment) throws NotLoggedInException, IOException;
 	

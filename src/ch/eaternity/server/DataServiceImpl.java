@@ -334,9 +334,19 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 
 	// not used anymore
-	public UserInfo login(String requestUri) {
+	public UserInfo getUserInfo(String requestUri) {
 		DAO dao = new DAO();
 		return dao.getUserInfo(requestUri);
+	}
+	
+	public Boolean isUserEnabled() {
+		DAO dao = new DAO();
+		UserInfo userInfo = dao.getUserInfo();
+		
+		List<Long> kitchenUserIds = dao.getAllKitchenUsers();
+		
+		//return kitchenUserIds.contains(userInfo.getId());
+		return true;
 	}
 	
 	// ----------------------- Images ---------------------------------

@@ -1,0 +1,73 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+			 xmlns:g="urn:import:com.google.gwt.user.client.ui"
+			  xmlns:rechner='urn:import:ch.eaternity.client'>
+	<ui:style>
+	.background {
+		background-color: #f1f1f1;
+
+	}
+	.main {
+		width:500px;
+		padding:30px;
+		margin-top: 100px;
+		margin-left: auto;
+   		margin-right: auto;
+		background-color:white;
+		border: 1px solid #ff6b00;
+	}
+
+	.login {
+		margin-top:10px;
+		margin-left: auto;
+   		margin-right: auto;
+   		width:80px;
+	}
+
+	.apply {
+		margin-top:10px;
+		margin-bottom:20px;
+		margin-left: auto;
+   		margin-right: auto;
+   		width:200px;
+	}
+	.statusInfo {
+		margin-top:20px;
+		margin-bottom:20px;
+		color:#8A4B08;
+	}
+	.welcomeText {
+		margin-top:30px;
+	}
+
+	a.link {
+		color: #0E5396; text-decoration: none;
+	}
+	</ui:style>
+
+	<g:AbsolutePanel styleName='{style.background}'>
+		<g:HTMLPanel styleName='{style.main}'>
+			<g:Image ui:field='logoImage'></g:Image>
+			<g:HTML ui:field="WelcomeText" styleName='{style.welcomeText}'>Herzlich Willkommen!<br />
+				<br />
+				<p>Der CO2-Rechner befindet sich in der Beta-Testphase.</p>
+				<p>Momentan gewähren wir nur einer handvoll Beta-Tester Zugang. Du kannst dich mit folgendem Forumular als Beta-Tester bewerben: </p>
+			</g:HTML>
+			<g:Button ui:field='applyButton' styleName='{style.apply}'>Beta-Tester Bewerbung</g:Button>
+
+			<g:HTML><p>Zugang ist derzeit nur mit einem zugelassenen Google Account möglich:</p></g:HTML>
+			<g:Button ui:field='loginButton' styleName='{style.login}'>Login</g:Button>
+			<!--  <g:HTMLPanel width='966px' styleName='{style.panel}' ui:field='framePanel'></g:HTMLPanel> -->
+			<g:HTML ui:field='statusInfo' styleName='{style.statusInfo}'></g:HTML>
+			<g:HTML>
+				<div style='margin-top:30px; font-style:italic;'>
+				<b>Disclaimer</b><br />
+				<p>Diese Web-Applikation und ihre Inhalte sind Eigentum von Eaternity. Die Inhalte der Web-Applikation sind dem gemäss urheberrechtlich geschützt. Es ist verboten die
+	CO2-Datenbank oder Teile von ihr zu veröffentlichen, zu kopieren, zu speichern oder für gewerbliche Zwecke zu nutzen ohne vorherige schriftliche Zustimmung von Eaternity. Die CO2-Datenbank 
+	wird mit größter Sorgfalt erstellt. Eaternity übernimmt jedoch keine Gewähr für die Vollständigkeit und/oder Richtigkeit der veröffentlichten Daten.</p>
+				</div>
+			</g:HTML>
+
+		</g:HTMLPanel>
+	</g:AbsolutePanel>
+</ui:UiBinder>
