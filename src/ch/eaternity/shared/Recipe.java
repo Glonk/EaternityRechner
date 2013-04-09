@@ -33,7 +33,7 @@ public class Recipe implements Serializable {
 	private Double cachedCO2Value;
 	
 	@Index
-	private Long userId;
+	private String userId;
 	@Index
 	private Long kitchenId; // empty is no kitchen...
 	
@@ -215,11 +215,11 @@ public class Recipe implements Serializable {
 
 	
 	
-	public Long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userID) {
+	public void setUserId(String userID) {
 		this.userId = userID;
 	}
 

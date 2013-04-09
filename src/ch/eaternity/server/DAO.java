@@ -37,29 +37,23 @@ public class DAO
 		UserService userService = UserServiceFactory.getUserService();
 		UserInfo userInfo = new UserInfo();
 		User user = userService.getCurrentUser();
-		//TODO remove Hack before deployement
+		//TODO remove User Id Hack before deployement
 		//String userId = user.getUserId();
-		Long userId = 1L;
+		String userId = "1";
 		
 		if (user != null) {
 			try {
 				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
 				userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 			} 
-			catch (Exception e) {}
+			catch (Throwable e) {
+				handleException(e);
+			}
 			
 			// if there exists no corresponding loginInfo to User, create a new one (first time login)
 			if (userInfo == null) {
 				userInfo = new UserInfo();
-				try {
-					//userInfo.setId(Long.parseLong(userId));;
-					userInfo.setId(userId);
-				}
-				catch (NumberFormatException nfe) {
-					userInfo.setLoggedIn(false);
-					userInfo.setLoginUrl(userService.createLoginURL(requestUri));
-				}
-				
+				userInfo.setId(userId);
 				userInfo.setLoggedIn(true);
 			}
 			
@@ -87,14 +81,16 @@ public class DAO
 		User user = userService.getCurrentUser();
 		//TODO remove Hack before deployement
 		//String userId = user.getUserId();
- 		Long userId = 1L;
+		String userId = "1";
 
 		if (user != null) {
 			try {
 				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
 				userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 			} 
-			catch (Exception e) {}
+			catch (Throwable e) {
+				handleException(e);
+			}
 		}
 		return userInfo;
 	}
@@ -103,9 +99,9 @@ public class DAO
 	 * 
 	 * @return A List of all userids registrated in any kitchen
 	 */
-	public List<Long> getAllKitchenUsers() {
+	public List<String> getAllKitchenUsers() {
 		List<Kitchen> kitchens = new ArrayList<Kitchen>();
-		List<Long> userIds = new ArrayList<Long>();
+		List<String> userIds = new ArrayList<String>();
 		
 		try {
 			
@@ -113,9 +109,9 @@ public class DAO
 			for (Key<Kitchen> key : keys)
 				kitchens.add(ofy().load().key(key).get());
 		}
-		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
-			kitchens = new ArrayList<Kitchen>();;
+		catch (Throwable e) {
+			handleException(e);
+			kitchens = new ArrayList<Kitchen>();
 		}
 		
 		for (Kitchen kitchen : kitchens) {
@@ -130,8 +126,8 @@ public class DAO
 		return true;
 	}
 	
-	private Boolean isUserEnabled(Long userId) {
-		List<Long> kitchenUserIds = getAllKitchenUsers();
+	private Boolean isUserEnabled(String userId) {
+		List<String> kitchenUserIds = getAllKitchenUsers();
 		// TODO remove comments for just allowing kitchen Users to access calculator
 		//return kitchenUserIds.contains(userId);
 		return true;
@@ -149,8 +145,8 @@ public class DAO
 		try {
 			ofy().save().entities(products);
 		}
-		catch (Exception e) { 
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) { 
+			handleException(e);
 			return false; 
 		}
 			
@@ -167,8 +163,8 @@ public class DAO
 		try {
 			ofy().save().entity(product).now();
 		}
-		catch (Exception e) { 
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) { 
+			handleException(e);
 			return null; 
 		}
 		
@@ -187,8 +183,8 @@ public class DAO
 			for (Key<FoodProduct> key : keys)
 				result.add(ofy().load().key(key).get());
 		}
-		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) {
+			handleException(e);
 			result = null;
 		}
 		
@@ -203,8 +199,8 @@ public class DAO
 		try {
 			product = ofy().load().type(FoodProduct.class).id(id).get();
 		}
-		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) {
+			handleException(e);
 		} 
 		
 		return product;
@@ -216,8 +212,8 @@ public class DAO
 			try {
 				ofy().save().entity(recipe).now();
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				return null;
 			} 
 			return recipe.getId();
@@ -227,8 +223,8 @@ public class DAO
 			try {
 				ofy().delete().type(Recipe.class).id(id);
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				return false;
 			} 
 			
@@ -238,13 +234,13 @@ public class DAO
 		/**
 		 * @return the recipe or null if not found or an exception occured
 		 */
-		public Recipe getRecipe(Long id){
+		public Recipe getRecipe(Long recipeId){
 			Recipe recipe = null;
 			try {
-				recipe = ofy().load().type(Recipe.class).id(id).get();
+				recipe = ofy().load().type(Recipe.class).id(recipeId).get();
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 			} 
 			
 			// Load the foodproducts into the list of ingredients (the're ignored during persistance)
@@ -271,15 +267,15 @@ public class DAO
 		/**
 		 * @return the recipes which belong to the user with userId or null if not found or an exception occured
 		 */
-		public ArrayList<Recipe> getUserRecipes(Long userId){
+		public ArrayList<Recipe> getUserRecipes(String userId){
 			try {
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("userId", userId).filter("deleted", false).list();
 				// Do that to avoid ResultProxy to be returned. Convert into propper List
 				ArrayList<Recipe> copy = new ArrayList<Recipe>(recipes);
 				return new ArrayList<Recipe>(recipes);
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				return null;
 			} 
 		}
@@ -293,8 +289,8 @@ public class DAO
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", kitchenId).filter("deleted", false).list();
 				return new ArrayList<Recipe>(recipes);
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				return null;
 			} 
 		}
@@ -308,8 +304,8 @@ public class DAO
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
 				return new ArrayList<Recipe>(recipes);
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				return null;
 			} 
 		}
@@ -330,8 +326,8 @@ public class DAO
 					result.add(ofy().load().key(key).get());
 				
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				result = new ArrayList<Recipe>();;
 			}
 			
@@ -349,8 +345,8 @@ public class DAO
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
 				return new ArrayList<Recipe>(recipes);
 			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			catch (Throwable e) {
+				handleException(e);
 				return null;
 			} 
 		}
@@ -423,15 +419,15 @@ public class DAO
 	 * @return false if - datastore exception happend (see log for details)
 	 * 					- currentkitchen didn't wasn't in the list of the kitchens of the user
 	 */
-	public Boolean setCurrentKitchen(Long currentKitchen, Long userId) {
+	public Boolean setCurrentKitchen(Long currentKitchen, String userId) {
 		try {
 			UserInfo loginInfo = ofy().load().type(UserInfo.class).filter("userId", userId).first().get();
 			if (!loginInfo.setCurrentKitchen(currentKitchen))
 				return false;
 			ofy().save().entity(loginInfo);
 		} 
-		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) {
+			handleException(e);
 			return false;
 		} 
 		return true;
@@ -512,8 +508,8 @@ public class DAO
 		try {
 			ofy().delete().type(Kitchen.class).id(kitchenId);
 		}
-		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) {
+			handleException(e);
 			return false;
 		} 
 		//TODO remove id's from LoginInfo's, so that no error occurs if wrong id is setted
@@ -631,15 +627,17 @@ public class DAO
 			ofy().delete().keys(userkeys);
 		
 		}
-		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+		catch (Throwable e) {
+			handleException(e);
 			return false;
 		} 
-		return true;
-			
+		return true;	
 	}
 
-
+	private void handleException(Throwable error) {
+		if (error != null)
+			log.log(Level.SEVERE, error.getClass().toString() + " throws " +  error.getMessage());
+	}
 
 
 

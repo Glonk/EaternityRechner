@@ -23,7 +23,7 @@ public class Kitchen implements Serializable {
 	/**
 	 *  many to many relationship stored in both object -> update properly!
 	 */
-	private List<Long> userIds = new ArrayList<Long>();
+	private List<String> userIds = new ArrayList<String>();
 	
 	/**
 	 *  here the user with not UserInfo yet are stored, converted as soon as they registrate
@@ -125,11 +125,11 @@ public class Kitchen implements Serializable {
 		this.userInfos = personal;
 	}
 
-	public List<Long> getUserIds() {
+	public List<String> getUserIds() {
 		return userIds;
 	}
 
-	public void setUserIds(List<Long> userIds) {
+	public void setUserIds(List<String> userIds) {
 		this.userIds = userIds;
 	}
 

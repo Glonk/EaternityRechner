@@ -15,7 +15,7 @@ public class UserInfo implements Serializable {
 	private static final long serialVersionUID = 3457245750362835L;
 	
 	// the id is the same as the google user id fetched from User.getId()
-	@Id private Long id;
+	@Id private String id;
 
 	private Long currentKitchenId = null;
 	
@@ -40,7 +40,7 @@ public class UserInfo implements Serializable {
 	
 	private boolean isadmin = false;
 	private boolean loggedIn = false;
-	private boolean enabled = true;
+	private boolean enabled = false;
 	
 
 	public UserInfo() {}
@@ -107,11 +107,11 @@ public class UserInfo implements Serializable {
 	}
 
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 

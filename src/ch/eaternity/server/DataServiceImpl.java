@@ -302,15 +302,8 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return userService.getCurrentUser();
 	}
 	
-	private Long getUserId() {
-		Long id = null;
-		try {
-			id = Long.parseLong(getUser().getUserId());
-		}
-		catch (NumberFormatException nfe) {
-			Log.log(Level.SEVERE, nfe.getMessage() + " EXCEPTION TYPE: " + nfe.getClass().toString());
-		}
-		return id;
+	private String getUserId() {
+		return getUser().getUserId();
 	}
 
 
@@ -330,7 +323,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		UserInfo userInfo = dao.getUserInfo();
 		
-		List<Long> kitchenUserIds = dao.getAllKitchenUsers();
+		List<String> kitchenUserIds = dao.getAllKitchenUsers();
 		
 		//return kitchenUserIds.contains(userInfo.getId());
 		return true;
