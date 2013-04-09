@@ -20,7 +20,6 @@ public class UserInfo implements Serializable {
 	private Long currentKitchenId = null;
 	
 	// many to many relationship stored in both object -> update properly!
-	@Embed
 	private List<Long> kitchenIds;
 	
 	@Ignore

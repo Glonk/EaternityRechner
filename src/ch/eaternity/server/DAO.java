@@ -1,6 +1,7 @@
 package ch.eaternity.server;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
+//import static com.googlecode.objectify.ObjectifyService.ofy;
+import static ch.eaternity.server.OfyService.ofy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +20,9 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.ObjectifyService;
 
 public class DAO 
 {
-	static {
-		ObjectifyService.register(FoodProduct.class);
-		ObjectifyService.register(Ingredient.class);
-		ObjectifyService.register(Recipe.class);
-		ObjectifyService.register(ImageBlob.class);
-		ObjectifyService.register(Kitchen.class);
-		ObjectifyService.register(UserInfo.class);
-		ObjectifyService.register(Commitment.class);
-	}
 
 	private static final Logger log = Logger.getLogger(DAO.class.getName());
 	
