@@ -127,7 +127,9 @@ public class DAO
 	
 	private Boolean isUserEnabled(Long userId) {
 		List<Long> kitchenUserIds = getAllKitchenUsers();
-		return kitchenUserIds.contains(userId);
+		// TODO remove comments for just allowing kitchen Users to access calculator
+		//return kitchenUserIds.contains(userId);
+		return true;
 	}
 	
 	// ------------------------ Ingredients -----------------------------------
@@ -203,7 +205,7 @@ public class DAO
 		return product;
 		}
 	
-	// ------------------------ Recipe -----------------------------------
+	// ------------------------ Recipes -----------------------------------
 
 		public Long saveRecipe(Recipe recipe){
 			try {
@@ -513,7 +515,7 @@ public class DAO
 		return true;
 	}
 
-	public List<Kitchen> getYourKitchens(User user){
+	public List<Kitchen> getUserKitchens(User user){
 		/*
 		List<Kitchen> yourKitchens = new ArrayList<Kitchen>();
 

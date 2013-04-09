@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ch.eaternity.client.DataService;
+import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
@@ -27,6 +28,7 @@ import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Util.RecipePlace;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -178,60 +180,32 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			return null;
 	}
 
-	public ClientData getData(String requestUri) throws NotLoggedInException {
+	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) throws NotLoggedInException {
+		
+		//TODO Refactor with Transactions for parallelism, not serialized access to dao and so fort
+		
 		DAO dao = new DAO();
 		ClientData data = new ClientData();
 		
-		// load all ingredients
-		data.ingredients = dao.getAllFoodProducts();
-		
-		Date date = new Date();
-		
-		data.productInfos = getFoodProductInfos(date.getMonth() + 1);
-		
-		if (data.ingredients == null) 
-			data.ingredients = new ArrayList<FoodProduct>();
+		// ------ RecipePlace independant -------
+		data.kitchens = dao.getUserKitchens(getUser());
 		
 		data.userInfo = dao.getUserInfo(requestUri);
 		
-		data.recipeInfos = searchRecipes(new RecipeSearchRepresentation("", RecipeScope.PUBLIC));
 		
-		//TODO get Distances
-		/*
-		if (getUser() != null) {
-			data.userRecipes = dao.getUserRecipes(getUserId());
-			data.publicRecipes = dao.getPublicRecipes();
-			
-			if (data.userInfo.getCurrentKitchen() != null)
-				data.currentKitchenRecipes = dao.getKitchenRecipes(getUserId()); 
-
-			data.kitchens = dao.getYourKitchens(getUser());
-			
-			if (data.userInfo.isAdmin()) {
-				data.publicRecipes.addAll(getAllRecipes());
-				
-				// remove double entries
-				for(Recipe recipe: data.userRecipes){
-					int removeIndex = -1;
-					for(Recipe rezept2 : data.publicRecipes){
-						if(rezept2.getId().equals(recipe.getId()))
-							removeIndex = data.publicRecipes.indexOf(rezept2);
-					}
-					if(removeIndex != -1)
-						data.publicRecipes.remove(removeIndex);
-				}
-				data.kitchens = getAdminKitchens();
-
-			}
-			else {
-				data.kitchens = dao.getYourKitchens(getUser());
-			}
+		// ------ RecipePlace View -------
+		if (recipePlace == RecipePlace.VIEW) {
+			data.recipeInfos = searchRecipes(recipeSeachRepresentation);
 		}
-
-		else {
-			data.kitchens = dao.getOpenKitchen();
+		
+		// ------ RecipePlace EDIT -------
+		if (recipePlace == RecipePlace.EDIT) {
+			//TODO Remove Date, substitute with correct
+			Date date = new Date();
+			data.productInfos = getFoodProductInfos(date.getMonth() + 1);
+			
+			//TODO get Distances
 		}
-		*/
 		return data;
 	}
 
@@ -270,7 +244,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		public List<Kitchen> getYourKitchens() throws NotLoggedInException {
 			checkLoggedIn();
 			DAO dao = new DAO();
-			return dao.getYourKitchens(getUser());	
+			return dao.getUserKitchens(getUser());	
 		}
 		
 		public List<Kitchen> getAdminKitchens() throws NotLoggedInException{

@@ -161,7 +161,7 @@ public class SearchIngredients extends Composite {
 		//  Listen to the EventBus 
 		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE, new LoadedDataEventHandler() {
 			@Override
-			public void onLoadedData(LoadedDataEvent event) {
+			public void onEvent(LoadedDataEvent event) {
 				updateResults("");
 			}
 		});
@@ -178,7 +178,7 @@ public class SearchIngredients extends Composite {
 		this.dco = presenter.getDCO();
 		
 		// this makes switching views (places) very slow... if it get's build each time again
-		if(dco.dataLoaded())
+		if(dco.editDataLoaded())
 			updateResults("");
 		
 		initTable(); // just the size

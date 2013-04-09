@@ -24,7 +24,7 @@ public class LoadedDataEvent extends GwtEvent<LoadedDataEventHandler> {
 
 	@Override
 	protected void dispatch(LoadedDataEventHandler handler) {
-		handler.onLoadedData(this);
+		handler.onEvent(this);
 	}
 
 }

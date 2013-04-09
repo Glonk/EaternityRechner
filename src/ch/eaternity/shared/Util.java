@@ -5,6 +5,10 @@ public class Util {
 	static public enum RecipeScope {
 		PUBLIC, KITCHEN, USER
 	}
+	
+	static public enum RecipePlace {
+		VIEW, EDIT
+	}
 
 	/**
 	 * 

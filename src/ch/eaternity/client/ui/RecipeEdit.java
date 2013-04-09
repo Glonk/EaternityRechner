@@ -271,7 +271,9 @@ public class RecipeEdit extends Composite {
 	    // Cooking instruction
 	    String cookingInstructions = recipe.getCookInstruction();
 	    if(dco.getLoginInfo() != null && !dco.getLoginInfo().isLoggedIn() || dco.getLoginInfo() == null){
-	    	presenter.getEventBus().fireEvent(new AlertEvent("Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.", AlertType.INFO, AlertEvent.Destination.EDIT));
+	    	//TODO enabled that, place somewhere else? gives problem because loginInfo is not yet available...
+	    	// now not of concerns because all users need to login 
+	    	//presenter.getEventBus().fireEvent(new AlertEvent("Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.", AlertType.INFO, AlertEvent.Destination.EDIT));
     	}
 		cookingInstr.setText(cookingInstructions);
 		
@@ -734,7 +736,7 @@ public class RecipeEdit extends Composite {
 		}
 		*/
 		
-		if (!saved && dco.getLoginInfo().isLoggedIn() && recipe != null) {
+		if (!saved && dco.getLoginInfo() != null && dco.getLoginInfo().isLoggedIn() && recipe != null) {
 			dco.saveRecipe(recipe);
 			saved = true;
 		}

@@ -18,6 +18,7 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
+import ch.eaternity.shared.Util.RecipePlace;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -36,7 +37,7 @@ public interface DataServiceAsync {
 			AsyncCallback<Boolean> asyncCallback);
 	public void searchRecipes(RecipeSearchRepresentation search, AsyncCallback<ArrayList<RecipeInfo>> asyncCallback);
 
-	public void getData(String requestUri, AsyncCallback<ClientData> async);
+	public void getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation, AsyncCallback<ClientData> async);
 	public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
 	public void persistIngredients(ArrayList<FoodProduct> ingredients,
 			AsyncCallback<Boolean> asyncCallback);

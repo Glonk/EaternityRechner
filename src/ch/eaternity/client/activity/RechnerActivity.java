@@ -3,6 +3,10 @@ package ch.eaternity.client.activity;
 import ch.eaternity.client.ClientFactory;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.events.IngredientAddedEvent;
+import ch.eaternity.client.events.IngredientAddedEventHandler;
+import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
@@ -12,7 +16,9 @@ import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.client.ui.RecipeView;
 import ch.eaternity.client.ui.SearchIngredients;
 import ch.eaternity.client.ui.SearchRecipes;
+import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.UserInfo;
+import ch.eaternity.shared.Util.RecipePlace;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -74,7 +80,7 @@ public class RechnerActivity extends AbstractActivity {
 		searchIngredients.setPresenter(this);
 		searchRecipes = new SearchRecipes();
 		searchRecipes.setPresenter(this);
-		
+	
 	}
 
 	
@@ -83,28 +89,7 @@ public class RechnerActivity extends AbstractActivity {
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
 		this.container = container;
 		
-		if (!dco.dataLoaded()) {
-			dataRpcService.getUserInfo(GWT.getHostPageBaseURL(), new AsyncCallback<UserInfo>() {
-				public void onFailure(Throwable error) {
-						goTo(new LoginPlace(""));
-					}
-	
-				public void onSuccess(final UserInfo userInfo) {
-					if (userInfo.isLoggedIn() && userInfo.isEnabled()) {
-						// now load the data (just once...)
-						rechnerView.setVisible(true);
-						dco.loadData();
-						dco.setUserInfo(userInfo);
-					}
-					else {
-						goTo(new LoginPlace(""));
-					}
-				}
-			});
-		}
-		else {
-			rechnerView.setVisible(true);
-		}
+		rechnerView.setVisible(true);
 	
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
@@ -114,13 +99,24 @@ public class RechnerActivity extends AbstractActivity {
 			searchPanel.setWidget(searchRecipes);
 			
 			RecipeScope recipeScope = ((RechnerRecipeViewPlace) place).getRecipeScope();
-			dco.changeRecipeScope(recipeScope);
+			
+			if (!dco.viewDataLoaded())
+				dco.loadData(RecipePlace.VIEW, new RecipeSearchRepresentation("",recipeScope));
+			else	
+				dco.changeRecipeScope(recipeScope);
 			
 			eventBus.fireEvent(new UpdateRecipeViewEvent());
 		}
 		else if (place instanceof RechnerRecipeEditPlace) {
 			recipePanel.setWidget(recipeEdit);
+			
+			if (!dco.editDataLoaded())
+				dco.loadData(RecipePlace.EDIT, new RecipeSearchRepresentation("",null));	
+			
+			//TODO this call could be integrated in loadData, but then create two loadData functions:
+			// loadViewData, loadEditData
 			dco.setEditRecipe(((RechnerRecipeEditPlace) place).getID());
+				
 			searchPanel.setWidget(searchIngredients);
 		}
 		

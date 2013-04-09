@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import ch.eaternity.client.events.*;
+import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.shared.*;
+import ch.eaternity.shared.Util.RecipePlace;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -30,7 +32,8 @@ public class DataController {
 	
 	// here is the database of all data pushed to....
 	private ClientData cdata = new ClientData();
-	private boolean dataLoaded = false;
+	private boolean viewDataLoaded = false;
+	private boolean editDataLoaded = false;
 	
 	private ListDataProvider<RecipeInfo> recipeDataProvider = new ListDataProvider<RecipeInfo>();
 
@@ -44,21 +47,41 @@ public class DataController {
 		this.eventBus = factory.getEventBus();
 	}
 	
-	public boolean dataLoaded() {
-		return dataLoaded;
+	public boolean viewDataLoaded() {
+		return viewDataLoaded;
 	}
+
+	public boolean editDataLoaded() {
+		return editDataLoaded;
+	}
+
+	/**
+	 * This method loads the necessary data in one request, depending on recipePlace
+	 * Maximum loads is two: first time RecipeView gets started, second time RecipeEdit gets started
+	 * RecipeScop is setted independently via RechnerActivity, not to be taken care here
+	 * 
+	 * @param recipePlace
+	 * @param recipeSeachRepresentation
+	 */
 	
-	public void loadData() {
+	public void loadData(final RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) {
 		eventBus.fireEvent(new SpinnerEvent(true, "Daten werden geladen"));
-		dataRpcService.getData(GWT.getHostPageBaseURL(), new AsyncCallback<ClientData>() {
+		dataRpcService.getData(GWT.getHostPageBaseURL(),recipePlace, recipeSeachRepresentation, new AsyncCallback<ClientData>() {
 			public void onFailure(Throwable error) {
 				eventBus.fireEvent(new SpinnerEvent(false));
-				handleError(error);
+				eventBus.fireEvent(new AlertEvent("Daten konnten nicht geladen werden. Bitte versuche es noch einmal.", AlertType.ERROR, AlertEvent.Destination.BOTH, 10000));
 			}
 			public void onSuccess(ClientData data) {
 				
-				cdata.kitchens = data.kitchens;
+				// ------ RecipePlace independant -------
+				if (data.userInfo.isLoggedIn() && data.userInfo.isEnabled()) {
+					setUserInfo(data.userInfo);
+				}
+				else {
+					clientFactory.getPlaceController().goTo(new LoginPlace(""));
+				}	
 				
+				cdata.kitchens = data.kitchens;
 				
 				// Load currentKitchen via ID
 				boolean kitchenLoaded = true;
@@ -75,18 +98,30 @@ public class DataController {
 					changeKitchen(cdata.currentKitchen.getId());
 				}
 				
-				
+				// ------ RecipePlace View -------
+				if (recipePlace == RecipePlace.VIEW) {
+					addRecipeInfos(data.recipeInfos); 
+					viewDataLoaded = true;
+				}
+				// ------ RecipePlace EDIT -------
+				if (recipePlace == RecipePlace.EDIT) {
+					cdata.productInfos = data.productInfos;
+					editDataLoaded = true;
+					//TODO add Distances to cdata here
+				}
+			
+						
 				// Load current Month or Kitchen Month
 				Date date = new Date();
 				cdata.currentMonth = date.getMonth() + 1;
 				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));			
 				
 				eventBus.fireEvent(new SpinnerEvent(false));
+				//TODO probably not necessary, remove
 				eventBus.fireEvent(new LoadedDataEvent());
 			}
 			
 		});
-		dataLoaded = true;
 	}
 	
 	// --------------------- Methods accessed by SubViews --------------------- 
@@ -109,6 +144,7 @@ public class DataController {
 		
 		if (cdata.userInfo != null) {
 			recipe.setUserId(cdata.userInfo.getId());
+			Log.info("EditRecipe created with userInfo == null, thus no id added");
 		}
 		
 		recipe.setPopularity(0L);
@@ -122,6 +158,9 @@ public class DataController {
 	
 	public void saveRecipe(final Recipe recipe) { 
 		eventBus.fireEvent(new SpinnerEvent(true, "speichern"));
+		if (recipe.getUserId() == null)
+			recipe.setUserId(cdata.userInfo.getId());
+		
 		dataRpcService.saveRecipe(recipe, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -166,12 +205,16 @@ public class DataController {
 
 			public void onSuccess(ArrayList<RecipeInfo> recipeInfos) {
 				if (recipeInfos != null){
-					cdata.recipeInfos.clear();
-					cdata.recipeInfos.addAll(recipeInfos);
-					recipeDataProvider.setList(cdata.recipeInfos);
+					addRecipeInfos(recipeInfos);
 				}
 			}
 		});
+	}
+	
+	public void addRecipeInfos(List<RecipeInfo> recipeInfos) {
+		cdata.recipeInfos.clear();
+		cdata.recipeInfos.addAll(recipeInfos);
+		recipeDataProvider.setList(cdata.recipeInfos);
 	}
 	
 	public void deleteRecipe(final Long recipeId) {
@@ -350,6 +393,29 @@ public class DataController {
 			
 		
 		eventBus.fireEvent(new LocationChangedEvent(cdata.currentLocation));
+	}
+	
+	public void changeRecipeScope(RecipeScope recipeScope) {
+		
+		if (cdata.recipeScope != recipeScope) {
+			cdata.recipeScope = recipeScope;
+			cdata.recipeSeachRepresentation.setScope(recipeScope);
+			if (viewDataLoaded)
+				searchRecipes(cdata.recipeSeachRepresentation);
+		}
+	}
+	
+	
+	
+	public RecipeScope getRecipeScope() {
+		if (cdata.recipeScope == null) 
+			cdata.recipeScope = RecipeScope.PUBLIC;
+		return cdata.recipeScope;
+	}
+	
+	public void setUserInfo(UserInfo userInfo) {
+		cdata.userInfo = userInfo;
+		eventBus.fireEvent(new LoginChangedEvent(cdata.userInfo));
 	}
 	
 	
@@ -547,27 +613,7 @@ public class DataController {
 		return p[n];
 	}
 	
-	public void changeRecipeScope(RecipeScope recipeScope) {
-		
-		if (cdata.recipeScope != recipeScope) {
-			cdata.recipeScope = recipeScope;
-			cdata.recipeSeachRepresentation.setScope(recipeScope);
-			searchRecipes(cdata.recipeSeachRepresentation);
-		}
-	}
-	
-	
-	
-	public RecipeScope getRecipeScope() {
-		if (cdata.recipeScope == null) 
-			cdata.recipeScope = RecipeScope.PUBLIC;
-		return cdata.recipeScope;
-	}
-	
-	public void setUserInfo(UserInfo userInfo) {
-		cdata.userInfo = userInfo;
-		eventBus.fireEvent(new LoginChangedEvent(cdata.userInfo));
-	}
+
 	
 	
 	private void handleError(Throwable error) {
@@ -640,9 +686,6 @@ public class DataController {
 		cdata.editRecipe = null;
 	}
 
-	
-
-
 	public List<FoodProductInfo> getProductInfos() {
 		return cdata.productInfos;
 	}
@@ -654,6 +697,7 @@ public class DataController {
 	public void setRecipeDataProvider(ListDataProvider<RecipeInfo> recipeDataProvider) {
 		this.recipeDataProvider = recipeDataProvider;
 	}
+
 
 
 

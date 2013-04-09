@@ -17,6 +17,7 @@ import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Util.RecipePlace;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -39,7 +40,7 @@ public interface DataService extends RemoteService {
 	public ArrayList<RecipeInfo> searchRecipes(RecipeSearchRepresentation search);
 	
 	
-	public ClientData getData(String requestUri) throws NotLoggedInException;
+	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) throws NotLoggedInException;
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException;
 
 	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException;
