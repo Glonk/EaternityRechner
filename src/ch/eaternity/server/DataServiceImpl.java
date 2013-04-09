@@ -41,9 +41,11 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
 /**
- * This Object provides a bridge between the DataAccessObject DAO and the RPC environment.
+ * This Class provides a bridge between the DataAccessObject DAO and the RPC environment.
  * User rights permissions are controlled here, and also limiting amount of RPC calls in 
  * integrating some into a single call
+ * 
+ * This Class also makes all the User authorisation & Control, dao isnot responsible for that
  * 
  * @author aurelian jaggi, manuel klarmann
  *
@@ -119,7 +121,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			if (!userInfo.getId().equals(recipe.getUserId()))
 				throw new NotLoggedInException("User " + userInfo.getNickname() + " doesn't own this recipe.");
 		}
-		else if (recipe.getOpen());
+		else if (recipe.isPublished());
 		else
 			throw new NotLoggedInException();
 		
@@ -303,7 +305,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 	
 	private String getUserId() {
-		return getUser().getUserId();
+		//TODO remove User Id Hack before deployement
+		//return getUser().getUserId();
+		return new String("1");
 	}
 
 

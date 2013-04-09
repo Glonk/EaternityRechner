@@ -185,7 +185,7 @@ public class DataController {
 					else if (recipe.getKitchenId() == null && cdata.recipeScope == RecipeScope.USER) {
 						cdata.recipeInfos.add(new RecipeInfo(recipe));
 					}
-					else if (recipe.getOpen() && cdata.recipeScope == RecipeScope.PUBLIC) {
+					else if (recipe.isPublished() && cdata.recipeScope == RecipeScope.PUBLIC) {
 						cdata.recipeInfos.add(new RecipeInfo(recipe));
 					}
 				}

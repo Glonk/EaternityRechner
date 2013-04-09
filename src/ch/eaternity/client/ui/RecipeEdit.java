@@ -277,7 +277,7 @@ public class RecipeEdit extends Composite {
     	}
 		cookingInstr.setText(cookingInstructions);
 		
-		if (recipe.getOpen() == true)
+		if (recipe.isPublished() == true)
 			publishButton.setText("Veröffentlichung rückgängig");
 		else
 			publishButton.setText("veröffentlichen");
@@ -447,7 +447,7 @@ public class RecipeEdit extends Composite {
 	
 	@UiHandler("publishButton")
 	public void onPublishClicked(ClickEvent event) {
-		recipe.setOpen(!recipe.getOpen());
+		recipe.setPublished(!recipe.isPublished());
 		updateParameters();
 		//dco.approveRecipe(recipe, true);
 	}

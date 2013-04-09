@@ -44,7 +44,6 @@ public class DAO
 		if (user != null) {
 			try {
 				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
-				userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 			} 
 			catch (Throwable e) {
 				handleException(e);
@@ -62,6 +61,7 @@ public class DAO
 			userInfo.setNickname(user.getNickname());
 			userInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
 			userInfo.setAdmin(userService.isUserAdmin());
+			userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 			ofy().save().entity(userInfo);
 		} 
 		else {
@@ -126,6 +126,11 @@ public class DAO
 		return true;
 	}
 	
+	/**
+	 * Iterates through all kitchens, collecting all user Ids, determining if a user is contained within a kitchen
+	 * @param userId
+	 * @return true if user is contained in any kitchen
+	 */
 	private Boolean isUserEnabled(String userId) {
 		List<String> kitchenUserIds = getAllKitchenUsers();
 		// TODO remove comments for just allowing kitchen Users to access calculator
@@ -271,7 +276,6 @@ public class DAO
 			try {
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("userId", userId).filter("deleted", false).list();
 				// Do that to avoid ResultProxy to be returned. Convert into propper List
-				ArrayList<Recipe> copy = new ArrayList<Recipe>(recipes);
 				return new ArrayList<Recipe>(recipes);
 			}
 			catch (Throwable e) {

@@ -304,19 +304,19 @@ public class Recipe implements Serializable {
 		this.ingredients = ingredients;
 	}
 
-	public Boolean getOpenRequested() {
+	public Boolean isPublicationRequested() {
 		return publicationRequested;
 	}
 
-	public void setOpenRequested(Boolean openRequested) {
+	public void setPublicationRequested(Boolean openRequested) {
 		this.publicationRequested = openRequested;
 	}
 
-	public Boolean getOpen() {
+	public Boolean isPublished() {
 		return published;
 	}
 
-	public void setOpen(Boolean open) {
+	public void setPublished(Boolean open) {
 		this.published = open;
 	}
 
