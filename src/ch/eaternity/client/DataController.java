@@ -698,6 +698,20 @@ public class DataController {
 		this.recipeDataProvider = recipeDataProvider;
 	}
 
+	public void clearDatabase() {
+		dataRpcService.clearDatabase(new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new AlertEvent("Datenbank löschen fehlgeschlagen.", AlertType.ERROR, AlertEvent.Destination.BOTH, 2000));
+			}
+			@Override
+			public void onSuccess(Boolean success) {
+				eventBus.fireEvent(new AlertEvent("Datenbank gelöscht.", AlertType.ERROR, AlertEvent.Destination.BOTH, 2000));
+			}
+			
+		});
+	}
+
 
 
 

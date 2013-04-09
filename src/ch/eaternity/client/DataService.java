@@ -26,6 +26,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
+	
 	public ArrayList<FoodProductInfo> getFoodProductInfos(Integer month);
 	public FoodProduct getFoodProduct(Long productId);
 	public Boolean persistIngredients(ArrayList<FoodProduct> ingredients) throws NotLoggedInException;
@@ -62,5 +63,5 @@ public interface DataService extends RemoteService {
 	public String tagImage(Tag tag);
 	public List<Tag> getTagsForImage(UploadedImage image);
 
-
+	public Boolean clearDatabase();
 }

@@ -447,7 +447,9 @@ public class RecipeEdit extends Composite {
 	
 	@UiHandler("publishButton")
 	public void onPublishClicked(ClickEvent event) {
-		dco.approveRecipe(recipe, true);
+		recipe.setOpen(!recipe.getOpen());
+		updateParameters();
+		//dco.approveRecipe(recipe, true);
 	}
 
 	@UiHandler("newRecipeButton")

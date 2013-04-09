@@ -57,16 +57,16 @@ public interface DataServiceAsync {
 	
 	public void addCommitment(Commitment commitment, AsyncCallback<Long> async);
 
-	void get(String key, AsyncCallback<UploadedImage> callback);
+	public void get(String key, AsyncCallback<UploadedImage> callback);
 
-	void getRecentlyUploaded(AsyncCallback<List<UploadedImage>> callback);
+	public void getRecentlyUploaded(AsyncCallback<List<UploadedImage>> callback);
 
-	void deleteImage(String key, AsyncCallback<Void> callback);
+	public void deleteImage(String key, AsyncCallback<Void> callback);
 
-	void tagImage(Tag tag,
+	public void tagImage(Tag tag,
 			AsyncCallback<String> callback);
 
-	void getTagsForImage(UploadedImage image, AsyncCallback<List<Tag>> callback);
+	public void getTagsForImage(UploadedImage image, AsyncCallback<List<Tag>> callback);
 
-
+	public void clearDatabase(AsyncCallback<Boolean> callback);
 }

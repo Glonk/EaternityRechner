@@ -125,6 +125,11 @@ public class DAO
 		return userIds;
 	}
 	
+	public Boolean saveUserInfo(UserInfo userInfo) {
+		// TODO implement that
+		return true;
+	}
+	
 	private Boolean isUserEnabled(Long userId) {
 		List<Long> kitchenUserIds = getAllKitchenUsers();
 		// TODO remove comments for just allowing kitchen Users to access calculator
@@ -266,31 +271,49 @@ public class DAO
 		/**
 		 * @return the recipes which belong to the user with userId or null if not found or an exception occured
 		 */
-		public List<Recipe> getUserRecipes(Long userId){
+		public ArrayList<Recipe> getUserRecipes(Long userId){
 			try {
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("userId", userId).filter("deleted", false).list();
-				return recipes;
+				// Do that to avoid ResultProxy to be returned. Convert into propper List
+				ArrayList<Recipe> copy = new ArrayList<Recipe>(recipes);
+				return new ArrayList<Recipe>(recipes);
 			}
 			catch (Exception e) {
 				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
-
+		
 		/**
-		 * @return the recipes which are requested for publication but not published yet. the need to be approved
+		 * @return all recipes belonging to kitchen with @param kitchenId 
 		 *  or null if not found or an exception occured
 		 */
-		public List<Recipe> getUnapprovedRecipes(){
+		public List<Recipe> getKitchenRecipes(Long kitchenId){
 			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
-				return recipes;
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", kitchenId).filter("deleted", false).list();
+				return new ArrayList<Recipe>(recipes);
 			}
 			catch (Exception e) {
 				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
+		
+		/**
+		 * @return the recipes which published, publicitly available
+		 *  or null if not found or an exception occured
+		 */
+		public List<Recipe> getPublicRecipes(){
+			try {
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
+				return new ArrayList<Recipe>(recipes);
+			}
+			catch (Exception e) {
+				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+				return null;
+			} 
+		}
+		
 		
 		/**
 		 * TODO To be specified in future, more concrete otherwise data load will get too big
@@ -311,44 +334,27 @@ public class DAO
 				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				result = new ArrayList<Recipe>();;
 			}
-			/*
-			if (!(result instanceof List<Recipe>)){
-				result = new ArrayList<Recipe>();
-				log.log(Level.WARNING, "getAllRecipes(): Proxy77 was returned, query failed! returning null.");
-			}*/
 			
 			return result;
 		}
 		
-		/**
-		 * @return the recipes which published, publicitly available
-		 *  or null if not found or an exception occured
-		 */
-		public List<Recipe> getPublicRecipes(){
-			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
-				return recipes;
-			}
-			catch (Exception e) {
-				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
-				return null;
-			} 
-		}
-		
+
+
 		/**
 		 * @return the recipes which are requested for publication but not published yet. the need to be approved
 		 *  or null if not found or an exception occured
 		 */
-		public List<Recipe> getKitchenRecipes(Long id){
+		public List<Recipe> getUnapprovedRecipes(){
 			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", id).filter("deleted", false).list();
-				return recipes;
+				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
+				return new ArrayList<Recipe>(recipes);
 			}
 			catch (Exception e) {
 				log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
 				return null;
 			} 
 		}
+
 		
 
 		public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
@@ -612,6 +618,26 @@ public class DAO
 	}
 
 
+	public Boolean clearDatabase() {
+		try {
+			Iterable<Key<FoodProduct>> productkeys = ofy().load().type(FoodProduct.class).keys();
+			Iterable<Key<Recipe>> recipekeys = ofy().load().type(Recipe.class).keys();
+			Iterable<Key<Kitchen>> kitchenkeys = ofy().load().type(Kitchen.class).keys();
+			Iterable<Key<UserInfo>> userkeys = ofy().load().type(UserInfo.class).keys();
+			
+			ofy().delete().keys(productkeys);
+			ofy().delete().keys(recipekeys);
+			ofy().delete().keys(kitchenkeys);
+			ofy().delete().keys(userkeys);
+		
+		}
+		catch (Exception e) {
+			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			return false;
+		} 
+		return true;
+			
+	}
 
 
 

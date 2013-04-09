@@ -56,7 +56,7 @@
 		<div class="{style.statusDiv}">
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
-					<g:Anchor href='javascript:;' ui:field='ingredientLink'>Zutaten Konsole</g:Anchor>
+					<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
 
 					<g:HTML ui:field='calHTML' styleName="{style.inline}"><img src="calendar.png" height='24' /></g:HTML>
 					<g:ListBox ui:field="Monate" />

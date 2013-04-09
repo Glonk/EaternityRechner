@@ -24,6 +24,7 @@ import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 
@@ -32,6 +33,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -42,21 +45,21 @@ public class TopPanel extends Composite {
 	interface Binder extends UiBinder<Widget, TopPanel> {}
 	private static final Binder binder = GWT.create(Binder.class);
 
-
-	  @UiField Anchor signOutLink;
-	  @UiField Anchor signInLink;
-	  @UiField Anchor ingredientLink;
-	  @UiField ListBox Monate;
+	@UiField MenuBar adminMenuBar;
+	
+	@UiField Anchor signOutLink;
+	@UiField Anchor signInLink;
+	@UiField ListBox Monate;
 	  
-	  @UiField HorizontalPanel spinnerPanel;
-	  @UiField HTML spinnerHTML;
-	  @UiField Label spinnerLabel;
+	@UiField HorizontalPanel spinnerPanel;
+	@UiField HTML spinnerHTML;
+	@UiField Label spinnerLabel;
 	  
-	  @UiField Button userRecipesButton;
-	  @UiField Button kitchenRecipesButton;
-	  @UiField Button publicRecipesButton;
+	@UiField Button userRecipesButton;
+	@UiField Button kitchenRecipesButton;
+	@UiField Button publicRecipesButton;
 	 
-	  @UiField HTML calHTML;
+	@UiField HTML calHTML;
 
 
 	private DataController dco;
@@ -73,7 +76,7 @@ public class TopPanel extends Composite {
 	public TopPanel() {
 		initWidget(binder.createAndBindUi(this));
 		
-		ingredientLink.setVisible(false);
+		adminMenuBar.setVisible(false);
 		signInLink.setVisible(false);
 		signOutLink.setVisible(false);
 		userRecipesButton.setVisible(false);
@@ -102,7 +105,24 @@ public class TopPanel extends Composite {
 		calHTML.addMouseListener(new TooltipListener(
 				"Der Monat in dem Sie kochen.",
 				5000 /* timeout in milliseconds */, "toolTipDown", -130, 10));
-
+		
+		MenuBar adminMenu = new MenuBar(true);
+		
+		adminMenu.addItem(new MenuItem("Zutaten hinzufügen", new Command() {
+			public void execute() {
+				IngredientsDialog dlg = new IngredientsDialog(presenter);
+				dlg.show();
+				dlg.center();
+			}
+		}));
+		
+		adminMenu.addItem(new MenuItem("Datenbank löschen", new Command() {
+			public void execute() {
+				presenter.getDCO().clearDatabase();
+			}
+		}));
+		
+		adminMenuBar.addItem("Admin Menü", adminMenu);
 		
 	}
 
@@ -163,11 +183,12 @@ public class TopPanel extends Composite {
 							
 							userRecipesButton.setVisible(true);
 							
-							if (event.loginInfo.isAdmin())
-								ingredientLink.setVisible(true);
-							else
-								ingredientLink.setVisible(false);
-							
+							if (event.loginInfo.isAdmin()) {
+								adminMenuBar.setVisible(true);
+							}
+							else {
+								adminMenuBar.setVisible(true);
+							}
 						} else {
 							// TODO sign out without reload of rechner...
 							signInLink.setHref(dco.getLoginInfo().getLoginUrl());
@@ -176,7 +197,7 @@ public class TopPanel extends Composite {
 
 							kitchenRecipesButton.setVisible(false);			
 							userRecipesButton.setVisible(false);
-							ingredientLink.setVisible(false);
+							adminMenuBar.setVisible(false);
 						}
 					}
 				});
@@ -194,13 +215,6 @@ public class TopPanel extends Composite {
 		}	
 	}
 	
-
-	@UiHandler("ingredientLink")
-	public void onIngredientLinkClicked(ClickEvent event) {
-		IngredientsDialog dlg = new IngredientsDialog(presenter);
-		dlg.show();
-		dlg.center();
-	}
 
 	@UiHandler("Monate")
 	void onChange(ChangeEvent event) {

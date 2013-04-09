@@ -148,7 +148,20 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		ArrayList<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
 		
-		ArrayList<Recipe> recipes = (ArrayList<Recipe>) dao.getAllRecipes();
+		ArrayList<Recipe> recipes = new ArrayList<Recipe>();
+		switch (search.getScope()) {
+		case PUBLIC: 
+			recipes = (ArrayList<Recipe>) dao.getPublicRecipes(); 
+			break;
+		case USER: 
+			recipes = dao.getUserRecipes(getUserId()); 
+			break;
+		case KITCHEN: 
+			for (Long kitchenId : search.getKitchenIds())
+				recipes.addAll((ArrayList<Recipe>) dao.getKitchenRecipes(kitchenId)); 
+			break;
+		}
+	
 		
 		for (Recipe recipe : recipes) {
 			recipeInfos.add(new RecipeInfo(recipe));
@@ -295,7 +308,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			id = Long.parseLong(getUser().getUserId());
 		}
 		catch (NumberFormatException nfe) {
-			Log.log(Level.SEVERE, nfe.getMessage());
+			Log.log(Level.SEVERE, nfe.getMessage() + " EXCEPTION TYPE: " + nfe.getClass().toString());
 		}
 		return id;
 	}
@@ -395,6 +408,12 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			throws NotLoggedInException, IOException {
 		DAO dao = new DAO();
 		return dao.saveCommitment(commitment);
+	}
+	
+	public Boolean clearDatabase() {
+		DAO dao = new DAO();
+		
+		return dao.clearDatabase();
 	}
 
 
