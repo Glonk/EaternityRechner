@@ -81,7 +81,7 @@ public class UploadPhoto extends Composite implements HasHandlers {
 									public void onSuccess(final UploadedImage result) {
 										
 										editRecipeView.getRecipe().setImage(result);
-									    editRecipeView.setImageUrl(result.getServingUrl()+"=s150-c");
+									    editRecipeView.setImageUrl(result.getServingUrl());
 									    	//editRecipeView.bildEntfernen.setVisible(true);
 									    	//editRecipeView.uploadWidget.setVisible(false);
 									    

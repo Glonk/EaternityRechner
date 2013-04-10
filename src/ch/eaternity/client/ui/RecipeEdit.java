@@ -94,7 +94,6 @@ public class RecipeEdit extends Composite {
 	@UiField HorizontalPanel imageWidgetPanel;
 	
 	@UiField TextBox amountPersons;
-	@UiField CheckBox makePublic;
 	@UiField TextBox recipeDate;
 	@UiField HTML recipeDateError;
 	
@@ -168,8 +167,6 @@ public class RecipeEdit extends Composite {
 		publishButton.setEnabled(false);
 		duplicateButton.setEnabled(false);
 		saveButton.setEnabled(false);
-		
-		makePublic.setText("veröffentlichen");
 		
 		// Image
 		uploadWidget = new UploadPhoto(this);
@@ -684,7 +681,7 @@ public class RecipeEdit extends Composite {
 	*/
 	
 	public void setImageUrl(String url) {
-		codeImage.setHTML("<img src='" + url + "=s120-c' />");
+		codeImage.setHTML("<img src='" + url);
 	}
 
 	// here comes the Image Uploader:

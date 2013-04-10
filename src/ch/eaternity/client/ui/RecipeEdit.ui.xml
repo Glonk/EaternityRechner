@@ -74,11 +74,7 @@
 			width:320px;
 		}
 		
-		.makePublic {
-			margin-left:100px;
-			text-align:center;
-			vertical-align: middle;
-		}
+
 		
 		.rezeptDateField {
 			padding-left: 4px;
@@ -172,7 +168,6 @@
 						<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
 						Personen
 					</g:HTMLPanel>
-					<g:CheckBox ui:field="makePublic" styleName='{style.makePublic}'></g:CheckBox>
 				</g:HorizontalPanel>
 
 				<!-- Cooking Date -->
