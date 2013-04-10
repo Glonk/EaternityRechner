@@ -80,10 +80,8 @@ public class RechnerActivity extends AbstractActivity {
 		searchIngredients.setPresenter(this);
 		searchRecipes = new SearchRecipes();
 		searchRecipes.setPresenter(this);
-	
 	}
 
-	
 	
 	@Override
 	public void start(AcceptsOneWidget container, EventBus eventBus) {

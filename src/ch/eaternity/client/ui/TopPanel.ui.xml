@@ -72,8 +72,9 @@
 						<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
 					</g:HorizontalPanel>
 					<b:Button ui:field="userRecipesButton">Meine Rezepte</b:Button>
-					<b:Button ui:field="kitchenRecipesButton">Kuechen</b:Button>
-					<b:Button ui:field="publicRecipesButton">Offentliche Rezepte</b:Button>
+					<b:Button ui:field="kitchenRecipesButton">Küchen</b:Button>
+					<b:Button ui:field="publicRecipesButton">Öffentliche Rezepte</b:Button>
+					<g:MenuBar ui:field='recipesMenuBar'></g:MenuBar>
 				</g:HorizontalPanel>
 			
 			</g:VerticalPanel>

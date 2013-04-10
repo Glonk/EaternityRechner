@@ -51,6 +51,7 @@ public interface DataServiceAsync {
 	
 	// login
 	public void getUserInfo(String requestUri, AsyncCallback<UserInfo> async);
+	public void saveUserInfo(UserInfo userInfo, AsyncCallback<Boolean> async);
 	
 	//blob images
 	public void getBlobstoreUploadUrl(AsyncCallback<String> callback);

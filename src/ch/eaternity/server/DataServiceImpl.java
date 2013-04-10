@@ -323,6 +323,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return dao.getUserInfo(requestUri);
 	}
 	
+	public Boolean saveUserInfo(UserInfo userInfo) {
+		DAO dao = new DAO();
+		return dao.saveUserInfo(userInfo);
+	}
+	
 	public Boolean isUserEnabled() {
 		DAO dao = new DAO();
 		UserInfo userInfo = dao.getUserInfo();

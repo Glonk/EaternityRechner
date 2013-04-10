@@ -11,6 +11,10 @@ public class RechnerRecipeViewPlace extends Place{
 	// used to indicate if we are in userrecipes, kitchenrecipes, public recipes...
 	private RecipeScope recipeScope;
 	
+	/**
+	 * 
+	 * @param recipeScopeStr The Scope of the recipe view, must origin of Enum RecipeScope.toString() method
+	 */
 	public RechnerRecipeViewPlace(String recipeScopeStr)
 	{
 		if (recipeScopeStr.equals("USER")) 

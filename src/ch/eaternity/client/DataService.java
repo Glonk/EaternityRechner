@@ -52,6 +52,7 @@ public interface DataService extends RemoteService {
 
 	// login
 	public UserInfo getUserInfo(String requestUri);
+	public Boolean saveUserInfo(UserInfo userInfo);
 	
 	public Long addCommitment(Commitment commitment) throws NotLoggedInException, IOException;
 	

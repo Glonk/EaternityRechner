@@ -122,7 +122,13 @@ public class DAO
 	}
 	
 	public Boolean saveUserInfo(UserInfo userInfo) {
-		// TODO implement that
+		try {
+			ofy().save().entity(userInfo).now();
+		}
+		catch (Throwable e) {
+			handleException(e);
+			return false;
+		} 
 		return true;
 	}
 	

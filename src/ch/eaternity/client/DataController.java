@@ -95,7 +95,7 @@ public class DataController {
 					kitchenLoaded = false;
 				
 				if (kitchenLoaded) {
-					changeKitchen(cdata.currentKitchen.getId());
+					changeCurrentKitchen(cdata.currentKitchen);
 				}
 				
 				// ------ RecipePlace View -------
@@ -266,7 +266,7 @@ public class DataController {
 							eventBus.fireEvent(new RecipeLoadedEvent(recipe)); 
 							
 							if (recipe.getKitchenId() != null)
-								changeKitchen(recipe.getKitchenId());
+								changeCurrentKitchen(cdata.getKitchenByID(recipe.getKitchenId()));
 						}
 					}
 				});
@@ -311,28 +311,20 @@ public class DataController {
 		eventBus.fireEvent(new MonthChangedEvent(month));
 	}
 	
-	public void changeKitchen(Long kitchenId) {
-		Kitchen kitchen = cdata.getKitchenByID(kitchenId);
+	public void changeCurrentKitchen(Kitchen kitchen) {
 		// maybee kitchen = null not necessary...
 		if (kitchen == null) {
 			cdata.currentKitchen = null;
-			cdata.currentKitchenRecipes = null;
 			cdata.userInfo.setCurrentKitchen(null);
-			
 			eventBus.fireEvent(new KitchenChangedEvent(-1L));
 		}
 		else {
 			cdata.currentKitchen = kitchen;
 			cdata.userInfo.setCurrentKitchen(kitchen.getId());
-			for (Recipe recipe : cdata.kitchenRecipes) {
-				if (recipe.getKitchenId() == kitchen.getId());
-					cdata.currentKitchenRecipes.add(recipe);
-			}
 			eventBus.fireEvent(new KitchenChangedEvent(kitchen.getId()));
 		}
 		
-		
-		dataRpcService.setCurrentKitchen(kitchen.getId(), new AsyncCallback<Boolean>() {
+		dataRpcService.saveUserInfo(cdata.userInfo, new AsyncCallback<Boolean>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}

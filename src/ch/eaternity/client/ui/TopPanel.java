@@ -1,6 +1,7 @@
 package ch.eaternity.client.ui;
 
 import java.util.Date;
+import java.util.List;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
@@ -13,6 +14,7 @@ import ch.eaternity.client.events.SpinnerEventHandler;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
+import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -46,6 +48,7 @@ public class TopPanel extends Composite {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField MenuBar adminMenuBar;
+	@UiField MenuBar recipesMenuBar;
 	
 	@UiField Anchor signOutLink;
 	@UiField Anchor signInLink;
@@ -64,6 +67,9 @@ public class TopPanel extends Composite {
 
 	private DataController dco;
 	private RechnerActivity presenter;
+	
+	MenuBar kitchenMenu = new MenuBar(true);
+	
 	
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
@@ -106,6 +112,50 @@ public class TopPanel extends Composite {
 				"Der Monat in dem Sie kochen.",
 				5000 /* timeout in milliseconds */, "toolTipDown", -130, 10));
 		
+		
+	}
+	
+	private void updateKitchenMenu() {
+		kitchenMenu.clearItems();
+		
+		List<Kitchen> kitchens = dco.getKitchens();
+		Kitchen currentKitchen = dco.getCurrentKitchen();
+		
+		if (kitchens.size() > 0) {
+			
+			// put current Kitchen on beginning of list
+			if (currentKitchen != null) {
+				kitchens.remove(currentKitchen);
+				kitchens.add(0,currentKitchen);
+			}
+			
+			for (final Kitchen kitchen : kitchens) {
+				kitchenMenu.addItem(new MenuItem(kitchen.getSymbol(), new Command() {
+					public void execute() {
+						dco.changeCurrentKitchen(kitchen);
+						presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
+					}
+				}));
+			}
+		}
+		else {
+			kitchenMenu.setVisible(false);
+		}
+		
+		if (dco.getLoginInfo() != null && dco.getLoginInfo().isAdmin()) {
+			kitchenMenu.addItem(new MenuItem("Küchen bearbeiten", new Command() {
+				public void execute() {
+					//KitchenDialog kDlg = new KitchenDialog(clientLocation.getText(),superDisplay); 
+					//kDlg.setPresenter(presenter);
+				}
+			}));
+		}
+		
+		
+	}
+
+	private void bind() {
+		// ------------- Admin Menu ----------------
 		MenuBar adminMenu = new MenuBar(true);
 		
 		adminMenu.addItem(new MenuItem("Zutaten hinzufügen", new Command() {
@@ -118,15 +168,18 @@ public class TopPanel extends Composite {
 		
 		adminMenu.addItem(new MenuItem("Datenbank löschen", new Command() {
 			public void execute() {
-				presenter.getDCO().clearDatabase();
+				dco.clearDatabase();
 			}
 		}));
 		
 		adminMenuBar.addItem("Admin Menü", adminMenu);
 		
-	}
-
-	private void bind() {
+		// ------------- Kitchen Menu ----------------
+		updateKitchenMenu();
+		
+		recipesMenuBar.addItem("Küchen", kitchenMenu);
+		
+		
 		// ---------------- Listen to the EventBus ----------------
 		presenter.getEventBus().addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
@@ -144,7 +197,9 @@ public class TopPanel extends Composite {
 					@Override
 					public void onKitchenChanged(KitchenChangedEvent event) {
 						kitchenRecipesButton.setText(dco.getCurrentKitchen().getSymbol());
+						updateKitchenMenu();
 					}
+
 				});
 		
 		presenter.getEventBus().addHandler(SpinnerEvent.TYPE,
@@ -187,7 +242,7 @@ public class TopPanel extends Composite {
 								adminMenuBar.setVisible(true);
 							}
 							else {
-								adminMenuBar.setVisible(true);
+								adminMenuBar.setVisible(false);
 							}
 						} else {
 							// TODO sign out without reload of rechner...
@@ -225,14 +280,20 @@ public class TopPanel extends Composite {
 	@UiHandler("userRecipesButton")
 	public void onUserClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.USER.toString()));
+		dco.changeCurrentKitchen(null);
 	}
+	/*
 	@UiHandler("kitchenRecipesButton")
 	public void onKitchenClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
+		dco.changeCurrentKitchen(null);
 	}
+	*/
+	
 	@UiHandler("publicRecipesButton")
 	public void onRecipesClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.PUBLIC.toString()));
+		dco.changeCurrentKitchen(null);
 	}
 
 }
