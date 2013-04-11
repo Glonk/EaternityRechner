@@ -106,10 +106,12 @@ public class DistancesDialog extends DialogBox{
 			locationLabel.setText("Sie befinden sich in der Mitte von: ");
 			List<String> extractions = new ArrayList<String>();
 			if (dco.getCurrentKitchen() != null ) {
+				/*
 				for (Recipe recipe : dco.getCurrentKitchenRecipes()){
 					for (Ingredient ingSpec : recipe.getIngredients())
 						extractions.add(ingSpec.getExtraction().symbol);
 				}
+				*/
 			}
 			else {
 				for (Ingredient ingSpec : dco.getEditRecipe().getIngredients())

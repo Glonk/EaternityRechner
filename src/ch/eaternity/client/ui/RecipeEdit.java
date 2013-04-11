@@ -267,7 +267,7 @@ public class RecipeEdit extends Composite {
 		
 	    // Cooking instruction
 	    String cookingInstructions = recipe.getCookInstruction();
-	    if(dco.getLoginInfo() != null && !dco.getLoginInfo().isLoggedIn() || dco.getLoginInfo() == null){
+	    if(dco.getUserInfo() != null && !dco.getUserInfo().isLoggedIn() || dco.getUserInfo() == null){
 	    	//TODO enabled that, place somewhere else? gives problem because loginInfo is not yet available...
 	    	// now not of concerns because all users need to login 
 	    	//presenter.getEventBus().fireEvent(new AlertEvent("Sie sind nicht angemeldet. Alle Änderungen am Rezept können nicht gespeichert werden.", AlertType.INFO, AlertEvent.Destination.EDIT));
@@ -286,7 +286,7 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void updateLoginSpecificParameters() {
-		if (dco.getLoginInfo() != null && dco.getLoginInfo().isLoggedIn()) {
+		if (dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn()) {
 			codeImage.setHTML("<img src='http://placehold.it/120x120' />");
 			initializeCommentingField();
 			
@@ -437,7 +437,7 @@ public class RecipeEdit extends Composite {
 	@UiHandler("deleteButton") 
 	public void onDeleteClicked(ClickEvent event) {
 		saved = true;
-		if (dco.getLoginInfo().isLoggedIn())
+		if (dco.getUserInfo().isLoggedIn())
 			dco.deleteRecipe(recipe.getId());
 		presenter.goTo(new RechnerRecipeViewPlace(dco.getRecipeScope().toString()));
 	}
@@ -735,7 +735,7 @@ public class RecipeEdit extends Composite {
 		}
 		*/
 		
-		if (!saved && dco.getLoginInfo() != null && dco.getLoginInfo().isLoggedIn() && recipe != null) {
+		if (!saved && dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn() && recipe != null) {
 			dco.saveRecipe(recipe);
 			saved = true;
 		}

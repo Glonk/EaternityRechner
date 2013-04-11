@@ -3,6 +3,7 @@ package ch.eaternity.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.googlecode.objectify.Ref;
@@ -20,7 +21,7 @@ public class UserInfo implements Serializable {
 	private Long currentKitchenId = null;
 	
 	// many to many relationship stored in both object -> update properly!
-	private List<Long> kitchenIds;
+	private List<Long> kitchenIds = new ArrayList<Long>();
 	
 	@Ignore
 	private String loginUrl;
@@ -31,7 +32,7 @@ public class UserInfo implements Serializable {
 	private String nickname;
 	
 	// probably date??
-	private int currentMonth;
+	private Integer currentMonth;
 	
 	/**
 	 * currentLocation is a valid Google Maps location (processed)
@@ -123,11 +124,11 @@ public class UserInfo implements Serializable {
 		this.kitchenIds = kitchenIDs;
 	}
 
-	public int getCurrentMonth() {
+	public Integer getCurrentMonth() {
 		return currentMonth;
 	}
 
-	public void setCurrentMonth(int currentMonth) {
+	public void setCurrentMonth(Integer currentMonth) {
 		this.currentMonth = currentMonth;
 	}
 

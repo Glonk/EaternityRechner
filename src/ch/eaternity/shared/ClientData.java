@@ -39,31 +39,7 @@ public class ClientData implements Serializable {
 	
 	public RecipeScope recipeScope = RecipeScope.PUBLIC;
 	
-	
-	// TO REMOVE 
-	public List<Recipe> publicRecipes = new ArrayList<Recipe>();
-	public List<Recipe> userRecipes = new ArrayList<Recipe>();
-	public List<Recipe> kitchenRecipes = new ArrayList<Recipe>();
-	
-	public List<Recipe> currentKitchenRecipes = new ArrayList<Recipe>();
-	
-	// use HashMap instead ...
-	public List<FoodProduct> ingredients = new ArrayList<FoodProduct>();
-	
-	public int currentMonth;
-	public String currentLocation = "";
-	
 	public ClientData() {}
-	
-	
-	public FoodProduct getIngredientByID(long id){
-		for(FoodProduct zutat : ingredients){
-			if (zutat.getId() == id){
-				return zutat;
-			}
-		}
-		return null;
-	}
 	
 	
 	public Kitchen getKitchenByID(long id){

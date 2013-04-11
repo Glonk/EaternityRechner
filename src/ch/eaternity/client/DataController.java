@@ -113,8 +113,9 @@ public class DataController {
 						
 				// Load current Month or Kitchen Month
 				Date date = new Date();
-				cdata.currentMonth = date.getMonth() + 1;
-				eventBus.fireEvent(new MonthChangedEvent(cdata.currentMonth));			
+				//TODO change with correct loaded month
+				cdata.userInfo.setCurrentMonth(date.getMonth() + 1);
+				eventBus.fireEvent(new MonthChangedEvent(cdata.userInfo.getCurrentMonth()));			
 				
 				eventBus.fireEvent(new SpinnerEvent(false));
 				//TODO probably not necessary, remove
@@ -307,7 +308,7 @@ public class DataController {
 	
 	// probably other place?
 	public void changeMonth(int month) {
-		cdata.currentMonth = month;
+		cdata.userInfo.setCurrentMonth(month);
 		eventBus.fireEvent(new MonthChangedEvent(month));
 	}
 	
@@ -349,18 +350,6 @@ public class DataController {
 			}
 		});
 	}
-	// Select the KitchenRecipes
-	// Always call updateResults after for propper loading!
-	public void changeKitchenRecipes(Long id) {
-		cdata.currentKitchenRecipes.clear();
-		for(Recipe recipe : cdata.kitchenRecipes){
-			if(id.equals(recipe.getKitchenId()))
-			{
-				cdata.currentKitchenRecipes.add(recipe);
-			}
-		}
-		cdata.currentKitchen = cdata.getKitchenByID(id);
-	}
 	
 	/**
 	 * make sure you fetched all distances before!! otherwise not all ingredients will be updated
@@ -368,23 +357,9 @@ public class DataController {
 	 */
 
 	public void changeCurrentLocation(String processedLocation) {
-		cdata.currentLocation = processedLocation;
+		cdata.userInfo.setCurrentLocation(processedLocation);	
 		
-		// Iterate over all IngredientSpecificatino of Kitchen Recipes or editRecipe
-		List<Ingredient> ingSpecs = new ArrayList<Ingredient>();
-		if (cdata.currentKitchen != null ) {
-			for (Recipe recipe : cdata.currentKitchenRecipes)
-				ingSpecs.addAll(recipe.getIngredients());
-		}
-		else if (cdata.editRecipe != null)
-			ingSpecs.addAll(cdata.editRecipe.getIngredients());
-		
-		for (Ingredient ingSpec : ingSpecs) {
-				ingSpec.setDistance(cdata.distances.getDistance(processedLocation, ingSpec.getExtraction().symbol));
-		}		
-			
-		
-		eventBus.fireEvent(new LocationChangedEvent(cdata.currentLocation));
+		eventBus.fireEvent(new LocationChangedEvent(cdata.userInfo.getCurrentLocation()));
 	}
 	
 	public void changeRecipeScope(RecipeScope recipeScope) {
@@ -506,19 +481,6 @@ public class DataController {
 		}
 		return result;
 	}
-	
-	public List<Recipe> searchUserRecipes(String searchString) {
-		return searchRecipe(searchString, cdata.userRecipes);
-	}
-	
-	public List<Recipe> searchKitchenRecipes(String searchString) {
-		return searchRecipe(searchString, cdata.currentKitchenRecipes);
-	}
-	
-	public List<Recipe> searchPublicRecipes(String searchString) {
-		return searchRecipe(searchString, cdata.publicRecipes);
-	}
-	
 
 
 
@@ -618,21 +580,7 @@ public class DataController {
 	
 	
 	// ----------------- Getters -----------------------------
-	public List<Recipe> getPublicRecipes() {
-		return cdata.publicRecipes;
-	}
-
-	public List<Recipe> getUserRecipes() {
-		return cdata.userRecipes;
-	}
-
-	public List<Recipe> getKitchenRecipes() {
-		return cdata.kitchenRecipes;
-	}
-
-	public List<Recipe> getCurrentKitchenRecipes() {
-		return cdata.currentKitchenRecipes;
-	}
+	
 	
 	public List<RecipeInfo> getRecipeInfos() {
 		return cdata.recipeInfos;
@@ -642,13 +590,6 @@ public class DataController {
 		return cdata.editRecipe;
 	}
 
-	public List<FoodProduct> getIngredients() {
-		return cdata.ingredients;
-	}
-	
-	public FoodProduct getIngredientByID(long id) {
-		return cdata.getIngredientByID(id);
-	}
 
 	public CountryDistance getDist() {
 		return cdata.distances;
@@ -658,7 +599,7 @@ public class DataController {
 		return cdata.kitchens;
 	}
 
-	public UserInfo getLoginInfo() {
+	public UserInfo getUserInfo() {
 		return cdata.userInfo;
 	}
 
@@ -667,11 +608,11 @@ public class DataController {
 	}
 
 	public int getCurrentMonth() {
-		return cdata.currentMonth;
+		return cdata.userInfo.getCurrentMonth();
 	}
 
 	public String getCurrentLocation() {
-		return cdata.currentLocation;
+		return cdata.userInfo.getCurrentLocation();
 	}
 
 	public void clearEditRecipe() {

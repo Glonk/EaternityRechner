@@ -80,6 +80,8 @@ public class RechnerActivity extends AbstractActivity {
 		searchIngredients.setPresenter(this);
 		searchRecipes = new SearchRecipes();
 		searchRecipes.setPresenter(this);
+		
+		rechnerView.getTopPanel().setPresenter(this);
 	}
 
 	
@@ -119,7 +121,7 @@ public class RechnerActivity extends AbstractActivity {
 		}
 		
 		// set presenter again (lost because of new place...
-		rechnerView.getTopPanel().setPresenter(this);
+		//rechnerView.getTopPanel().setPresenter(this);
 		
 		container.setWidget(rechnerView);
 	}

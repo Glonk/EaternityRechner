@@ -121,7 +121,7 @@ public class TopPanel extends Composite {
 		List<Kitchen> kitchens = dco.getKitchens();
 		Kitchen currentKitchen = dco.getCurrentKitchen();
 		
-		if (kitchens.size() > 0) {
+		if (kitchens != null && kitchens.size() > 0) {
 			
 			// put current Kitchen on beginning of list
 			if (currentKitchen != null) {
@@ -142,7 +142,7 @@ public class TopPanel extends Composite {
 			kitchenMenu.setVisible(false);
 		}
 		
-		if (dco.getLoginInfo() != null && dco.getLoginInfo().isAdmin()) {
+		if (dco.getUserInfo() != null && dco.getUserInfo().isAdmin()) {
 			kitchenMenu.addItem(new MenuItem("Küchen bearbeiten", new Command() {
 				public void execute() {
 					//KitchenDialog kDlg = new KitchenDialog(clientLocation.getText(),superDisplay); 
@@ -196,7 +196,6 @@ public class TopPanel extends Composite {
 				new KitchenChangedEventHandler() {
 					@Override
 					public void onKitchenChanged(KitchenChangedEvent event) {
-						kitchenRecipesButton.setText(dco.getCurrentKitchen().getSymbol());
 						updateKitchenMenu();
 					}
 
@@ -227,8 +226,8 @@ public class TopPanel extends Composite {
 				new LoginChangedEventHandler() {
 					@Override
 					public void onEvent(LoginChangedEvent event) {
-						if (dco.getLoginInfo().isLoggedIn()) {
-							signOutLink.setHref(dco.getLoginInfo()
+						if (dco.getUserInfo().isLoggedIn()) {
+							signOutLink.setHref(dco.getUserInfo()
 									.getLogoutUrl());
 							signInLink.setVisible(false);
 							signOutLink.setVisible(true);
@@ -246,7 +245,7 @@ public class TopPanel extends Composite {
 							}
 						} else {
 							// TODO sign out without reload of rechner...
-							signInLink.setHref(dco.getLoginInfo().getLoginUrl());
+							signInLink.setHref(dco.getUserInfo().getLoginUrl());
 							signInLink.setVisible(true);
 							signOutLink.setVisible(false);
 
