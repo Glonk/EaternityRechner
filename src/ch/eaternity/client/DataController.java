@@ -334,9 +334,9 @@ public class DataController {
 	
 	}
 	
-	public void saveKitchen() {}
+	public void saveKitchen(Kitchen kitchen) {}
 	
-	public void deleteKitchen() {}
+	public void deleteKitchen(Kitchen kitchen) {}
 
 	
 	// reload will do it...

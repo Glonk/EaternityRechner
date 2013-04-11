@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -27,14 +28,14 @@ public class Device implements Serializable {
 	public List<Long> durations;
 	
 
-	public Device() {}
-
-	public Device(String deviceName,String deviceSpec, Double kWConsumption,List<Long> durations, Long stdDuration) {
-		this.deviceName = deviceName;
-		this.deviceSpec = deviceSpec;
-		this.kWConsumption = kWConsumption;
-		this.durations = durations;
-		this.stdDuration =stdDuration;
+	public Device() {
+		Long[] longList ={1l,5l,10l,20l};
+		
+		this.deviceName = "";
+		this.deviceSpec = "";
+		this.kWConsumption = 0.0;
+		this.durations = Arrays.asList(longList);
+		this.stdDuration = 10L;
 	}
 
 	public void setId(Long id) {
@@ -45,9 +46,5 @@ public class Device implements Serializable {
 		return id;
 	}
 
-
-	
-
-	  
 
 }

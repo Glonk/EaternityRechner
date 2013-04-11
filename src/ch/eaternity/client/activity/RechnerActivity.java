@@ -160,6 +160,10 @@ public class RechnerActivity extends AbstractActivity {
 		return dco;
 	}
 	
+	public DataServiceAsync getDataService() {
+		return this.dataRpcService;
+	}
+	
 	
 	public EventBus getEventBus() {
 		return this.eventBus;

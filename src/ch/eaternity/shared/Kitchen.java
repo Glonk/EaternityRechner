@@ -46,18 +46,16 @@ public class Kitchen implements Serializable {
 	@Serialize // because it has a collection inside...
 	private List<Device> devices = new ArrayList<Device>();
 	@Embed
-	private EnergyMix energyMix;
+	private EnergyMix energyMix = new EnergyMix();
     
 	@Ignore
 	private Boolean changed;
 	
 
 	public Kitchen() {
-
-	}
-
-	public Kitchen(String symbol) {
-		this.symbol = symbol;
+		symbol = "Neue Küche";
+		energyMix = new EnergyMix("ewz.naturpower",0.01345);
+		changed = false;
 	}
 
 	public Long getId() {

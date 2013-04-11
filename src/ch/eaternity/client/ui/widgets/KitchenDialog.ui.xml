@@ -46,101 +46,86 @@
 		
 		
   </ui:style>
+  
+  <ui:style field='textErrorStyle'
+		type='ch.eaternity.client.ui.widgets.KitchenDialog.TextErrorStyle'>
+			.redTextError {
+				color: red !important;
+			}
+	</ui:style>
 
 	<g:HTMLPanel width='680px' styleName='{style.panel}'>
-		Hier kann man die anderen Küchen auswählen, wenn man andere hat. Sowie auch den Rechner als Privatperson nutzen.
-		Admin hat Zugriff auf alle Küchen, und kann entsprechend Emailadressen hinzufügen, für Leute die dann diese Küche immer als 
-		standart Einstellung zu sehen bekommen. 
-		
-		
-				<g:HTMLPanel ui:field='kitchen'>
-					<g:Anchor href='javascript:;' ui:field='newKitchen'>neue Küche</g:Anchor>
-					<g:ListBox ui:field="kitchens" />
-					
-					
-				</g:HTMLPanel>
-		
-		
-			Add Picture/Logo
-			<br />
-		<hr />
-		<g:ScrollPanel ui:field="scrollPanel">
-		<g:HTMLPanel>
 	
-		<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
-		<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
-		<br />
-		<g:InlineLabel ui:field='locationLabel' >Ort der Küche: </g:InlineLabel>
-		<g:Button ui:field="locationButton" text="Adresse ändern" />
-		<g:Label ui:field='kitchenId' ></g:Label>
-		<br /><br />
-		<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
-		<g:TextBox ui:field="energyMix">Name des Angebots</g:TextBox> verursacht  
-		<g:TextBox ui:field="energyMixco2">0.013</g:TextBox> kg CO2-Äq. / kWh.
-		<br /><br />
-		
-<!-- 		<g:Button ui:field="commitButton">Check Input</g:Button> -->
-		
-		<!--  <g:CheckBox ui:field="makePublic">Geräte öffentlich einsehbar</g:CheckBox>  -->
-		
-		  <table cellspacing='0' cellpadding='0' style='width:100%;'>
-      <tr>
-        <td
-          valign='top'>
-          <c:CellTable
-            addStyleNames='{style.cellTable}'
-            pageSize='15'
-            ui:field='devidesCellTable' />
-        </td>
-      </tr>
-      <tr>
-        <td
-          align='center'>
-<!--           <c:SimplePager -->
-<!--             ui:field='pager' /> -->
-        </td>
-      </tr>
-    </table>
-		
-		
-		<g:FlexTable ui:field="deviceTable"></g:FlexTable>
-		<g:Button styleName='{style.buttonDevice}' ui:field="addDevice">Gerät hinzufügen</g:Button>
-		<br />
-		Diese Personen können die Küche auswählen:
-		
-		
-		 <table cellspacing='0' cellpadding='0' style='width:100%;'>
-      <tr>
-        <td
-          valign='top'>
-          <c:CellTable
-            addStyleNames='{style.cellTable}'
-            pageSize='15'
-            ui:field='personsCellTable' />
-        </td>
-      </tr>
-      <tr>
-        <td
-          align='center'>
-<!--           <c:SimplePager -->
-<!--             ui:field='pager' /> -->
-        </td>
-      </tr>
-    </table>
-		
-		<g:FlexTable ui:field="personTable"></g:FlexTable>
-		<g:VerticalPanel>
-			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
-			<g:Button styleName='{style.buttonDelete}' ui:field="deleteKitchen">Küche löschen</g:Button>
-		</g:VerticalPanel>
-		</g:HTMLPanel>
-		</g:ScrollPanel>
+		<g:ListBox ui:field="kitchenList" />
+	
 		<hr />
-		<g:Anchor href='javascript:;' ui:field='leaveKitchen'>Den eaternity Rechner nicht kommerziell benutzen (privat)</g:Anchor>
-		<div class='{style.buttons}'>
-			<g:Button text='Küche speichern und betreten' ui:field='executeButton' />
-		</div>
+		
+		<g:ScrollPanel ui:field="scrollPanel">
+			<g:HTMLPanel>
+		
+			<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
+			<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
+			<br />
+			<g:InlineLabel ui:field='locationLabel' >Ort der Küche: </g:InlineLabel>
+			<g:Button ui:field="locationButton" text="Adresse ändern" />
+			<g:Label ui:field='kitchenId' ></g:Label>
+			<br /><br />
+			<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
+			<g:TextBox ui:field="energyMixName">Name des Angebots</g:TextBox> verursacht  
+			<g:TextBox ui:field="energyMixCO2">0.013</g:TextBox> kg CO2-Äq. / kWh.
+			<br /><br />
+	
+			<table cellspacing='0' cellpadding='0' style='width:100%;'>
+				<tr>
+					<td valign='top'>
+						<c:CellTable addStyleNames='{style.cellTable}' pageSize='15'
+							ui:field='devidesCellTable' />
+					</td>
+				</tr>
+				<tr>
+					<td align='center'>
+						<!-- <c:SimplePager -->
+						<!-- ui:field='pager' /> -->
+					</td>
+				</tr>
+			</table>
+			
+			
+			<g:FlexTable ui:field="deviceTable"></g:FlexTable>
+			<g:Button styleName='{style.buttonDevice}' ui:field="addDevice">Gerät hinzufügen</g:Button>
+			<br />
+			
+			Diese Personen können die Küche betreten:
+			<table cellspacing='0' cellpadding='0' style='width:100%;'>
+		      <tr>
+		        <td
+		          valign='top'>
+		          <c:CellTable
+		            addStyleNames='{style.cellTable}'
+		            pageSize='15'
+		            ui:field='personsCellTable' />
+		        </td>
+		      </tr>
+		      <tr>
+		        <td
+		          align='center'>
+		<!--           <c:SimplePager -->
+		<!--             ui:field='pager' /> -->
+		        </td>
+		      </tr>
+		    </table>
+			
+			<g:FlexTable ui:field="personTable"></g:FlexTable>
+			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
+			
+			</g:HTMLPanel>
+		</g:ScrollPanel>
+		
+		<hr />
+		<g:Button text='Küche löschen' ui:field='deleteKitchenButton' />
+		<g:Button text='Neue Küche erstellen' ui:field='newKitchenButton' />
+		<g:Button text='Küchen speichern verlassen' ui:field='exitButton' />
 	</g:HTMLPanel>
 	
-	
+
 </ui:UiBinder>
