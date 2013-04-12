@@ -558,7 +558,7 @@ public class DAO
 
 		return yourKitchens;
 		*/
-		return null;
+		return new ArrayList<Kitchen>();
 
 	}
 

@@ -90,7 +90,7 @@ public class TopPanel extends Composite {
 		kitchenRecipesButton.setVisible(false);
 		
 		spinnerPanel.setVisible(false);
-		spinnerHTML.setHTML("<img src='spinner_small.gif' />");
+		spinnerHTML.setHTML("<img src='images/spinner_small.gif' />");
 		spinnerLabel.setText("loading ...");
 
 		Monate.addItem("Januar");
@@ -139,9 +139,6 @@ public class TopPanel extends Composite {
 				}));
 			}
 		}
-		else {
-			kitchenMenu.setVisible(false);
-		}
 		
 		if (dco.getUserInfo() != null && dco.getUserInfo().isAdmin()) {
 			kitchenMenu.addItem(new MenuItem("Küchen bearbeiten", new Command() {
@@ -176,7 +173,7 @@ public class TopPanel extends Composite {
 		adminMenuBar.addItem("Admin Menü", adminMenu);
 		
 		// ------------- Kitchen Menu ----------------
-		updateKitchenMenu();
+		
 		
 		recipesMenuBar.addItem("Küchen", kitchenMenu);
 		
@@ -227,6 +224,7 @@ public class TopPanel extends Composite {
 				new LoginChangedEventHandler() {
 					@Override
 					public void onEvent(LoginChangedEvent event) {
+						updateKitchenMenu();
 						if (dco.getUserInfo().isLoggedIn()) {
 							signOutLink.setHref(dco.getUserInfo()
 									.getLogoutUrl());

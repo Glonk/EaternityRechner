@@ -87,7 +87,7 @@ public class KitchenDialog extends DialogBox{
 	// ---------------  public Methods--------------- 
 	
 	public KitchenDialog() {
-		currentLocation = dco.getCurrentLocation();
+		setWidget(binder.createAndBindUi(this));
 	}
 	
 	public void setPresenter(RechnerActivity presenter){
@@ -104,15 +104,23 @@ public class KitchenDialog extends DialogBox{
 		}
 
 		userKitchens = dco.getKitchens();
-		if (userKitchens.size() < 2)
-			kitchenNameTextBox.setVisible(false);
 		
 		currentKitchen = dco.getCurrentKitchen();
-		currentLocation = currentKitchen.getProcessedLocation();
-		devices = currentKitchen.getDevices();
-		kitchenStaff = currentKitchen.getUserInfos();
-
-		updateParameters();
+		if (currentKitchen != null) {
+			currentLocation = currentKitchen.getProcessedLocation();
+			devices = currentKitchen.getDevices();
+			kitchenStaff = currentKitchen.getUserInfos();
+			updateKitchenParameters();
+		}
+		else if (userKitchens.size() > 0) {
+			currentKitchen = userKitchens.get(0);
+			updateKitchenParameters();
+		}
+		else {
+			currentLocation = dco.getCurrentLocation();
+			scrollPanel.setVisible(false);
+		}
+		
 		updateKitchenList();
 		
 		//initCellTable();
@@ -120,7 +128,7 @@ public class KitchenDialog extends DialogBox{
 		openDialog();
 	}
 	
-	private void updateParameters() {
+	private void updateKitchenParameters() {
 		changeKitchenName(currentKitchen.getSymbol());
 		
 		locationLabel.setText("Ort der Kueche: " + currentLocation);
@@ -139,7 +147,6 @@ public class KitchenDialog extends DialogBox{
 	}
 	
 	private void openDialog() {
-		setWidget(binder.createAndBindUi(this));
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		show();
@@ -152,6 +159,7 @@ public class KitchenDialog extends DialogBox{
 		for (Kitchen kitchen : userKitchens) {
 			kitchenList.addItem(kitchen.getSymbol());
 		}
+		// TODO select the current kitchen ...
 	}
 	
 	private void changeKitchenName(String name) {
@@ -336,7 +344,7 @@ public class KitchenDialog extends DialogBox{
 
 
 	private void switchKitchen() {
-		updateParameters();
+		updateKitchenParameters();
 		
 //		/*
 //		devices = currentKitchen.getDevices;
