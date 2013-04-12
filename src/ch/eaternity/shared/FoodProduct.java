@@ -55,7 +55,7 @@ public class FoodProduct implements Serializable {
     
     // empty constructor necessary for GWT serialization
 	public FoodProduct() {
-		stdWeight = new QuantityImpl(Unit.GRAM);
+		stdWeight = new QuantityImpl(100.0, Unit.GRAM);
 	}    
 
 	// Copy Constructor

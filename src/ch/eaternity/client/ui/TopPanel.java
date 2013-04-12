@@ -13,6 +13,7 @@ import ch.eaternity.client.events.SpinnerEvent;
 import ch.eaternity.client.events.SpinnerEventHandler;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
+import ch.eaternity.client.ui.widgets.KitchenDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Util.RecipeScope;
@@ -145,8 +146,8 @@ public class TopPanel extends Composite {
 		if (dco.getUserInfo() != null && dco.getUserInfo().isAdmin()) {
 			kitchenMenu.addItem(new MenuItem("Küchen bearbeiten", new Command() {
 				public void execute() {
-					//KitchenDialog kDlg = new KitchenDialog(clientLocation.getText(),superDisplay); 
-					//kDlg.setPresenter(presenter);
+					KitchenDialog kDlg = new KitchenDialog(); 
+					kDlg.setPresenter(presenter);
 				}
 			}));
 		}

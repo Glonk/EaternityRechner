@@ -1,306 +1,280 @@
-//package ch.eaternity.client.ui.widgets;
-//
-//
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//
-//import ch.eaternity.client.DataController;
-//import ch.eaternity.client.DataService;
-//import ch.eaternity.client.DataServiceAsync;
-//import ch.eaternity.client.activity.RechnerActivity;
-//import ch.eaternity.client.ui.RecipeEdit.TextErrorStyle;
-//import ch.eaternity.shared.Device;
-//import ch.eaternity.shared.EnergyMix;
-//import ch.eaternity.shared.SingleDistance;
-//import ch.eaternity.shared.UserInfo;
-//import ch.eaternity.shared.Kitchen;
-//
-//import com.google.gwt.cell.client.AbstractEditableCell;
-//import com.google.gwt.cell.client.ButtonCell;
-//import com.google.gwt.cell.client.Cell;
-//import com.google.gwt.cell.client.EditTextCell;
-//import com.google.gwt.cell.client.FieldUpdater;
-//import com.google.gwt.core.client.GWT;
-//import com.google.gwt.event.dom.client.ChangeEvent;
-//import com.google.gwt.event.dom.client.ClickEvent;
-//import com.google.gwt.event.dom.client.KeyUpEvent;
-//import com.google.gwt.resources.client.CssResource;
-//import com.google.gwt.uibinder.client.UiBinder;
-//import com.google.gwt.uibinder.client.UiField;
-//import com.google.gwt.uibinder.client.UiHandler;
-//import com.google.gwt.user.cellview.client.CellTable;
-//import com.google.gwt.user.cellview.client.Column;
-//import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-//import com.google.gwt.user.client.Window;
-//import com.google.gwt.user.client.rpc.AsyncCallback;
-//import com.google.gwt.user.client.ui.Anchor;
-//import com.google.gwt.user.client.ui.Button;
-//import com.google.gwt.user.client.ui.DialogBox;
-//import com.google.gwt.user.client.ui.FlexTable;
-//import com.google.gwt.user.client.ui.HTMLPanel;
-//import com.google.gwt.user.client.ui.InlineLabel;
-//import com.google.gwt.user.client.ui.Label;
-//import com.google.gwt.user.client.ui.ListBox;
-//import com.google.gwt.user.client.ui.ScrollPanel;
-//import com.google.gwt.user.client.ui.TextBox;
-//import com.google.gwt.user.client.ui.Widget;
-//import com.google.gwt.view.client.SelectionChangeEvent;
-//import com.google.gwt.view.client.SingleSelectionModel;
-//import com.sun.corba.se.pept.transport.ContactInfo;
-//
-//
-//public class KitchenDialog<T> extends DialogBox{
-//	interface Binder extends UiBinder<Widget, KitchenDialog> { }
-//	private static final Binder binder = GWT.create(Binder.class);
-//
-//	private final DataServiceAsync dataService;
-//	
-//	@UiField ScrollPanel scrollPanel;
-//	@UiField static ListBox kitchenList;
-//	
-//	@UiField TextBox kitchenNameTextBox;
-//	@UiField Label kitchenId;
-//	
-//	@UiField InlineLabel locationLabel;
-//	@UiField Button locationButton;
-//	
-//	@UiField static CellTable<Device> devidesCellTable  = new CellTable<Device>();
-//	@UiField Button addDevice;
-//	
-//	@UiField static CellTable<UserInfo> personsCellTable  = new CellTable<UserInfo>();
-//	@UiField Button addPerson;
-//	
-//	@UiField static TextBox energyMixName;
-//	@UiField static TextBox energyMixCO2;
-//
-//	@UiField Button newKitchenButton;
-//	@UiField Button deleteKitchenButton;
-//	@UiField Button exitButton;
-//	
-//	@UiField static TextErrorStyle textErrorStyle;
-//	
-//	private RechnerActivity presenter;
-//	private DataController dco;
-//	
-//	private static List<Device> devices = Arrays.asList(new Device());
-//	private static List<UserInfo> kitchenStaff = Arrays.asList(new UserInfo("Name","email"));
-//	
-//	/**
-//	 * The current location setted in outside of any kitchen - for adding new kitchen
-//	 */
-//	String currentLocation;
-//	String kitchenName;
-//	
-//	List<Kitchen> userKitchens;
-//	Kitchen currentKitchen;
-//
-//	private UserInfo userInfo;
-//	
-//	interface TextErrorStyle extends CssResource {
-//		String redTextError();
-//	}
-//	
-//	
-//	// ---------------  public Methods--------------- 
-//	
-//	public KitchenDialog() {
-//		currentLocation = dco.getCurrentLocation();
-//	}
-//	
-//	public void setPresenter(RechnerActivity presenter){
-//		this.presenter = presenter;
-//		this.dco = presenter.getDCO();
-//		this.dataService = presenter.getDataService();
-//		this.userInfo = dco.getUserInfo();
-//		
-//		if (userInfo.isAdmin()) {
-//			newKitchenButton.setVisible(true);
-//		}
-//		else {
-//			newKitchenButton.setVisible(true);
-//		}
-//
-//		userKitchens = dco.getKitchens();
-//		if (userKitchens.size() < 2)
-//			kitchenNameTextBox.setVisible(false);
-//		
-//		currentKitchen = dco.getCurrentKitchen();
-//		currentLocation = currentKitchen.getProcessedLocation();
-//		devices = currentKitchen.getDevices();
-//		kitchenStaff = currentKitchen.getUserInfos();
-//
-//		updateParameters();
-//		updateKitchenList();
-//		
-//		initCellTable();
-//		
-//		openDialog();
-//	}
-//	
-//	private void updateParameters() {
-//		changeKitchenName(currentKitchen.getSymbol());
-//		
-//		locationLabel.setText("Ort der Kueche: " + currentLocation);
-//		
-//		if (currentKitchen.getId() != null)
-//				kitchenId.setText("Id: " + currentKitchen.getId());
-//		 else
-//			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
-//
-//		if (currentKitchen.getEnergyMix() != null)
-//		{
-//			energyMixName.setText(currentKitchen.getEnergyMix().Name);
-//			energyMixCO2.setText(currentKitchen.getEnergyMix().Co2PerKWh.toString());
-//		}
-//		
-//	}
-//	
-//	private void openDialog() {
-//		setWidget(binder.createAndBindUi(this));
-//		setAnimationEnabled(true);
-//		setGlassEnabled(true);
-//		show();
-//		scrollPanel.setHeight("420px");
-//		center();	
-//	}
-//	
-//	private void updateKitchenList() {
-//		kitchenList.clear();
-//		for (Kitchen kitchen : userKitchens) {
-//			kitchenList.addItem(kitchen.getSymbol());
-//		}
-//	}
-//	
-//	private void changeKitchenName(String name) {
-//		  setText(name);
-//		  kitchenList.setItemText(kitchenList.getSelectedIndex(), this.kitchenName);
-//		  currentKitchen.setSymbol(name);
-//	}
-//	
-//	// -------------------------- UI Handlers ---------------------------
-//
-//	@UiHandler("kitchenList")
-//	void onKitchenChange(ChangeEvent event) {
-//		currentKitchen = userKitchens.get(kitchenList.getSelectedIndex());
-//		switchKitchen();
-//	}
-//
-//	@UiHandler("addDevice")
-//	void onAddDevicePress(ClickEvent event) {
-//		devices.add(new Device());
-//		devidesCellTable.setRowCount(devices.size(), true);
-//		devidesCellTable.setRowData(0, devices);
-//
-//	}
-//
-//	@UiHandler("addPerson")
-//	void onAddPersonPress(ClickEvent event) {
-//		kitchenStaff.add(new UserInfo("Name", "Email"));
-//		personsCellTable.setRowCount(kitchenStaff.size(), true);
-//		personsCellTable.setRowData(0, kitchenStaff);
-//	}
-//	  
-//	  @UiHandler("locationButton")
-//	  void onClick(ClickEvent event) {
-//		  DistancesDialog ddlg = new DistancesDialog(); 
-//		  ddlg.setPresenter(presenter);
-//	  }
-//		  
-//	
-//	@UiHandler("kitchenNameTextBox")
-//	void onNameChange(KeyUpEvent event) {
-//		if (kitchenNameTextBox.getText().length() > 1) {
-//			changeKitchenName(kitchenNameTextBox.getText());
-//		}
-//	}
-//
-//	@UiHandler("energyMixName")
-//	void onEnergyMixChange(KeyUpEvent event) {
-//		if (energyMixName.getText().length() > 1) {
-//			currentKitchen.getEnergyMix().Name = energyMixName.getText();
-//		}
-//	}
-//
-//	@UiHandler("energyMixCO2")
-//	void onEnergyMixco2Change(KeyUpEvent event) {
-//		String errorStyle = textErrorStyle.redTextError();
-//		Double energyMix = 0.0;
-//		String text = energyMixCO2.getText();
-//		boolean success = false;
-//
-//		try {
-//			if ("".equals(text)) {
-//				energyMixCO2.removeStyleName(errorStyle);
-//			} 
-//			else {
-//				energyMix = Double.parseDouble(energyMixCO2.getText().trim());
-//				if (energyMix > 0) {
-//					success = true;
-//					energyMixCO2.removeStyleName(errorStyle);
-//				}
-//			}
-//		} 
-//		catch (Exception e) {}
-//
-//		if (success) {
-//			currentKitchen.getEnergyMix().Co2PerKWh = energyMix;
-//		} 
-//		else {
-//			energyMixCO2.addStyleName(errorStyle);
-//		}
-//	}
-//
-//	  
-//	  @UiHandler("newKitchenButton")
-//	  public void onNewKitchenClick(ClickEvent event) {
-//		  currentKitchen = new Kitchen();
-//		  currentKitchen.setProcessedLocation(currentLocation);
-//		  userKitchens.add(currentKitchen);
-//		  kitchenList.addItem(currentKitchen.getSymbol());
-//		  kitchenList.setSelectedIndex(kitchenList.getItemCount()-1);
-//		  switchKitchen();
-//	  }
-//
-//	  
-//		@UiHandler("exitButton")
-//		void onOkayClicked(ClickEvent event) {
-//			dco.changeCurrentKitchen(currentKitchen);
-//		    saveAndCloseDialog();
-//		}
-//		
-//	  
-//		//REFACTOR: call deleteKitchen in DataController
-//	  @UiHandler("deleteKitchenButton")
-//	  void onDeleteKitchenPress(ClickEvent event) {
-//		  dco.deleteKitchen(currentKitchen);
-//	  }
-//	
-//	
-//	private void addKitchenNamesToList(List<Kitchen> availableKitchens) {
-//		for(Kitchen kitchen : availableKitchens){
-//			if(kitchen != null){
-//				kitchenList.addItem(kitchen.getSymbol(),Integer.toString(availableKitchens.indexOf(kitchen))); // +kitchen.location  kitchen.id.toString()+ kitchen.getSymbol() 
-//			}
-//		}
-//	}
-//
-//
-//	public void saveLastKitchen(final Long id) {
-//		dataService.setCurrentKitchen(id, new AsyncCallback<Boolean>() {
-//			@Override
-//			public void onFailure(Throwable error) {
-//				Window.alert("Fehler : "+ error.getMessage());
-//			}
-//			@Override
-//			public void onSuccess(Boolean okay) {
-//				dco.getLoginInfo().setCurrentKitchen(id);
-//			}
-//		});
-//	}
-//
+package ch.eaternity.client.ui.widgets;
+
+
+import java.util.Arrays;
+import java.util.List;
+
+import ch.eaternity.client.DataController;
+import ch.eaternity.client.DataServiceAsync;
+import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.shared.Device;
+import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.UserInfo;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+
+public class KitchenDialog extends DialogBox{
+	interface Binder extends UiBinder<Widget, KitchenDialog> { }
+	private static final Binder binder = GWT.create(Binder.class);
+
+	private DataServiceAsync dataService;
+	
+	@UiField ScrollPanel scrollPanel;
+	@UiField static ListBox kitchenList;
+	
+	@UiField TextBox kitchenNameTextBox;
+	@UiField Label kitchenId;
+	
+	@UiField InlineLabel locationLabel;
+	@UiField Button locationButton;
+	
+	@UiField static CellTable<Device> devidesCellTable  = new CellTable<Device>();
+	@UiField Button addDevice;
+	
+	@UiField static CellTable<UserInfo> personsCellTable  = new CellTable<UserInfo>();
+	@UiField Button addPerson;
+	
+	@UiField static TextBox energyMixName;
+	@UiField static TextBox energyMixCO2;
+
+	@UiField Button newKitchenButton;
+	@UiField Button deleteKitchenButton;
+	@UiField Button exitButton;
+	
+	@UiField static TextErrorStyle textErrorStyle;
+	
+	private RechnerActivity presenter;
+	private DataController dco;
+	
+	private static List<Device> devices = Arrays.asList(new Device());
+	private static List<UserInfo> kitchenStaff; // = Arrays.asList(new UserInfo("Name","email"));
+	
+	/**
+	 * The current location setted in outside of any kitchen - for adding new kitchen
+	 */
+	String currentLocation;
+	String kitchenName;
+	
+	List<Kitchen> userKitchens;
+	Kitchen currentKitchen;
+
+	private UserInfo userInfo;
+	
+	interface TextErrorStyle extends CssResource {
+		String redTextError();
+	}
+	
+	
+	// ---------------  public Methods--------------- 
+	
+	public KitchenDialog() {
+		currentLocation = dco.getCurrentLocation();
+	}
+	
+	public void setPresenter(RechnerActivity presenter){
+		this.presenter = presenter;
+		this.dco = presenter.getDCO();
+		this.dataService = presenter.getDataService();
+		this.userInfo = dco.getUserInfo();
+		
+		if (userInfo.isAdmin()) {
+			newKitchenButton.setVisible(true);
+		}
+		else {
+			newKitchenButton.setVisible(true);
+		}
+
+		userKitchens = dco.getKitchens();
+		if (userKitchens.size() < 2)
+			kitchenNameTextBox.setVisible(false);
+		
+		currentKitchen = dco.getCurrentKitchen();
+		currentLocation = currentKitchen.getProcessedLocation();
+		devices = currentKitchen.getDevices();
+		kitchenStaff = currentKitchen.getUserInfos();
+
+		updateParameters();
+		updateKitchenList();
+		
+		//initCellTable();
+		
+		openDialog();
+	}
+	
+	private void updateParameters() {
+		changeKitchenName(currentKitchen.getSymbol());
+		
+		locationLabel.setText("Ort der Kueche: " + currentLocation);
+		
+		if (currentKitchen.getId() != null)
+				kitchenId.setText("Id: " + currentKitchen.getId());
+		 else
+			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
+
+		if (currentKitchen.getEnergyMix() != null)
+		{
+			energyMixName.setText(currentKitchen.getEnergyMix().Name);
+			energyMixCO2.setText(currentKitchen.getEnergyMix().Co2PerKWh.toString());
+		}
+		
+	}
+	
+	private void openDialog() {
+		setWidget(binder.createAndBindUi(this));
+		setAnimationEnabled(true);
+		setGlassEnabled(true);
+		show();
+		scrollPanel.setHeight("420px");
+		center();	
+	}
+	
+	private void updateKitchenList() {
+		kitchenList.clear();
+		for (Kitchen kitchen : userKitchens) {
+			kitchenList.addItem(kitchen.getSymbol());
+		}
+	}
+	
+	private void changeKitchenName(String name) {
+		  setText(name);
+		  kitchenList.setItemText(kitchenList.getSelectedIndex(), this.kitchenName);
+		  currentKitchen.setSymbol(name);
+	}
+	
+	// -------------------------- UI Handlers ---------------------------
+
+	@UiHandler("kitchenList")
+	void onKitchenChange(ChangeEvent event) {
+		currentKitchen = userKitchens.get(kitchenList.getSelectedIndex());
+		switchKitchen();
+	}
+
+	@UiHandler("addDevice")
+	void onAddDevicePress(ClickEvent event) {
+		devices.add(new Device());
+		devidesCellTable.setRowCount(devices.size(), true);
+		devidesCellTable.setRowData(0, devices);
+
+	}
+
+	@UiHandler("addPerson")
+	void onAddPersonPress(ClickEvent event) {
+		//kitchenStaff.add(new UserInfo("Name", "Email"));
+		personsCellTable.setRowCount(kitchenStaff.size(), true);
+		personsCellTable.setRowData(0, kitchenStaff);
+	}
+	  
+	  @UiHandler("locationButton")
+	  void onClick(ClickEvent event) {
+		  DistancesDialog ddlg = new DistancesDialog(); 
+		  ddlg.setPresenter(presenter);
+	  }
+		  
+	
+	@UiHandler("kitchenNameTextBox")
+	void onNameChange(KeyUpEvent event) {
+		if (kitchenNameTextBox.getText().length() > 1) {
+			changeKitchenName(kitchenNameTextBox.getText());
+		}
+	}
+
+	@UiHandler("energyMixName")
+	void onEnergyMixChange(KeyUpEvent event) {
+		if (energyMixName.getText().length() > 1) {
+			currentKitchen.getEnergyMix().Name = energyMixName.getText();
+		}
+	}
+
+	@UiHandler("energyMixCO2")
+	void onEnergyMixco2Change(KeyUpEvent event) {
+		String errorStyle = textErrorStyle.redTextError();
+		Double energyMix = 0.0;
+		String text = energyMixCO2.getText();
+		boolean success = false;
+
+		try {
+			if ("".equals(text)) {
+				energyMixCO2.removeStyleName(errorStyle);
+			} 
+			else {
+				energyMix = Double.parseDouble(energyMixCO2.getText().trim());
+				if (energyMix > 0) {
+					success = true;
+					energyMixCO2.removeStyleName(errorStyle);
+				}
+			}
+		} 
+		catch (Exception e) {}
+
+		if (success) {
+			currentKitchen.getEnergyMix().Co2PerKWh = energyMix;
+		} 
+		else {
+			energyMixCO2.addStyleName(errorStyle);
+		}
+	}
+
+	  
+	  @UiHandler("newKitchenButton")
+	  public void onNewKitchenClick(ClickEvent event) {
+		  currentKitchen = new Kitchen();
+		  currentKitchen.setProcessedLocation(currentLocation);
+		  userKitchens.add(currentKitchen);
+		  kitchenList.addItem(currentKitchen.getSymbol());
+		  kitchenList.setSelectedIndex(kitchenList.getItemCount()-1);
+		  switchKitchen();
+	  }
+
+	  
+		@UiHandler("exitButton")
+		void onOkayClicked(ClickEvent event) {
+			dco.changeCurrentKitchen(currentKitchen);
+		    saveAndCloseDialog();
+		}
+		
+	  
+		//REFACTOR: call deleteKitchen in DataController
+	  @UiHandler("deleteKitchenButton")
+	  void onDeleteKitchenPress(ClickEvent event) {
+		  dco.deleteKitchen(currentKitchen);
+	  }
+
+
+
+	public void saveLastKitchen(final Long id) {
+		dataService.setCurrentKitchen(id, new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable error) {
+				Window.alert("Fehler : "+ error.getMessage());
+			}
+			@Override
+			public void onSuccess(Boolean okay) {
+				dco.getUserInfo().setCurrentKitchen(id);
+			}
+		});
+	}
+
 //	//REFACTOR: just call DataController saveKitchen
-//	private void saveAndCloseDialog() {
+	private void saveAndCloseDialog() {
 //		for (PendingChange<?> pendingChange : pendingChanges) {
 //	          pendingChange.commit();
 //	        }
@@ -358,13 +332,14 @@
 //		}	
 //		
 //		hide();
-//	}
-//
-//
-//	private void switchKitchen() {
-//		updateParameters();
-//		
-//		devices = currentKitchen.devices;
+	}
+
+
+	private void switchKitchen() {
+		updateParameters();
+		
+//		/*
+//		devices = currentKitchen.getDevices;
 //		devidesCellTable.setRowCount(devices.size(), true);
 //		devidesCellTable.setRowData(0, devices);
 //		devidesCellTable.redraw();
@@ -374,13 +349,10 @@
 //		personsCellTable.setRowCount(kitchenStaff.size(), true);
 //		personsCellTable.setRowData(0, kitchenStaff);
 //		personsCellTable.redraw();
-//
-//		// the rest: energy mix, and location
-//		currentLocation = currentKitchen.location;
-//		locationLabel.setText("Ort der Kueche: " + currentLocation);
-//	}
-//	
-//
+//		 */
+	}
+	
+}
 //
 //	private void initCellTable() {
 //		devidesCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
