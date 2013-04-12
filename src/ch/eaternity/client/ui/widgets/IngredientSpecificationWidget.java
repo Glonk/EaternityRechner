@@ -2,6 +2,10 @@ package ch.eaternity.client.ui.widgets;
 
 import java.util.List;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.MonthChangedEvent;
@@ -12,10 +16,9 @@ import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Production;
-import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Transportation;
-import ch.eaternity.shared.Unit;
+
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;

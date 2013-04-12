@@ -20,7 +20,7 @@
   <inherits name="com.google.gwt.xml.XML" />
   <!-- inherits name="com.google.api.gwt.ApiCore" /-->
   
-  <!--  <inherits name='org.eaticious.common' /> -->
+  <inherits name='org.eaticious.common' />
 
   <inherits name="com.google.web.bindery.requestfactory.RequestFactory" />
   <inherits name="com.googlecode.objectify.Objectify" />
@@ -34,6 +34,7 @@
   
   <!-- HERE we plan of including the Twitter Bootstrap code -->
   <inherits name='com.github.gwtbootstrap.Bootstrap' />
+  
   
   <!-- HERE we plan ahead of including the GWTP code -->
   <!-- <inherits name='com.gwtplatform.dispatch.Dispatch' />
@@ -112,8 +113,5 @@
   	<when-type-is class="ch.eaternity.client.ClientFactory"/>
   </replace-with>
  
-  
-<script src="http://maps.google.com/maps?gwt=1&amp;hl=de&amp;file=api&amp;v=2.x&amp;language=de&amp;key=ABQIAAAA_TAXZfK0ept-1T1kCGZ_KhQHoFlT9PIXrSR8WWAf7BHR3_RspBTltHkibQqKHgjNjc8YXMRwvDhtjg" />
 
-  
 </module>

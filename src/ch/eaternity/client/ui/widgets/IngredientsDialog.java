@@ -4,6 +4,9 @@ package ch.eaternity.client.ui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.activity.RechnerActivity;
@@ -137,8 +140,8 @@ public class IngredientsDialog extends DialogBox{
 					
 					// std mengeGramm
 					tmpNodeVal1 = getTagContent(zutatElmnt, "Std_Menge");
-					if (tmpNodeVal1 != null) newIngredient.setStdWeight(new Quantity(Double.parseDouble( tmpNodeVal1 ), Unit.GRAM));
-					else newIngredient.setStdWeight(new Quantity(100.0, Unit.GRAM));
+					if (tmpNodeVal1 != null) newIngredient.setStdWeight(new QuantityImpl(Double.parseDouble( tmpNodeVal1 ), Unit.GRAM));
+					else newIngredient.setStdWeight(new QuantityImpl(100.0, Unit.GRAM));
 				
 					
 					//Conditions

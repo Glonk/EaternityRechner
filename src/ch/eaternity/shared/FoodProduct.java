@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+
 import com.googlecode.objectify.annotation.*;
 
 @Entity
@@ -57,7 +60,7 @@ public class FoodProduct implements Serializable {
 		name = new String(toClone.name);
 		name_en = new String(toClone.name_en);
 		co2eValue = new Double(toClone.co2eValue);
-		stdWeight = new Quantity(toClone.stdWeight);
+		stdWeight = new QuantityImpl(toClone.stdWeight);
 		for (Long id : toClone.substituteIds)
 			substituteIds.add(id);
 		season = new Season(toClone.season);

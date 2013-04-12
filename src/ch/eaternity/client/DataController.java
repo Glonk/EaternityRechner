@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.events.*;
 import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.shared.*;
@@ -293,7 +297,7 @@ public class DataController {
 					ingredient.setWeight(weight);
 					//TODO implement right Distance fetch
 					//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
-					ingredient.setDistance(new Quantity(100.0, Unit.KILOMETER));
+					ingredient.setDistance(new QuantityImpl(100.0, Unit.KILOMETER));
 				}
 				
 				if (cdata.editRecipe != null) {

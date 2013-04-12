@@ -2,14 +2,14 @@ package ch.eaternity.client.ui.widgets;
 
 
 
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Season;
 import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.Unit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -144,7 +144,7 @@ public class IngredientWidget extends Composite {
 			if(!amountBox.getText().equalsIgnoreCase("")){
 				MengeZutatWert = amountBox.getText().trim();
 				try {
-					ingredient.setWeight(new Quantity(Double.valueOf(MengeZutatWert), Unit.GRAM));
+					ingredient.setWeight(new QuantityImpl(Double.valueOf(MengeZutatWert), Unit.GRAM));
 					updateCO2Value();
 				}
 				catch (NumberFormatException nfe) {

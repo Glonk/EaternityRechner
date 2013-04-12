@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.LoadedDataEvent;
@@ -15,9 +18,8 @@ import ch.eaternity.client.ui.cells.ProductCell;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.FoodProductInfo;
-import ch.eaternity.shared.Quantity;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.Unit;
+
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -566,9 +568,9 @@ public class SearchIngredients extends Composite {
 			};
 			*/
 			
-			Quantity weigth = null;
+			QuantityImpl weigth = null;
 			if (grams != 0)
-				weigth = new Quantity((double)grams,Unit.GRAM);
+				weigth = new QuantityImpl((double)grams, Unit.GRAM);
 			dco.addIngredientToMenu(product, weigth);
 	
 			/*

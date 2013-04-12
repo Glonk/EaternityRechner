@@ -6,6 +6,10 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
+
 
 import com.googlecode.objectify.annotation.*;
 
@@ -49,8 +53,8 @@ public class Ingredient  implements Serializable {
 	// --------------------------- public methods ---------------------------
 	
 	public Ingredient() {
-		distance = new Quantity(0.0D, Unit.KILOMETER);
-		weight = new Quantity(0.0D, Unit.GRAM);
+		distance = new QuantityImpl(0.0, Unit.KILOMETER);
+		weight = new QuantityImpl(0.0, Unit.GRAM);
 	}
 	
 	// Copy Constructor
