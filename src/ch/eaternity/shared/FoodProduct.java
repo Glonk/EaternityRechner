@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eaticious.common.Quantity;
 import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
 
 import com.googlecode.objectify.annotation.*;
 
@@ -29,7 +30,7 @@ public class FoodProduct implements Serializable {
     */
     private Double co2eValue;
     @Embed
-    private Quantity stdWeight;
+    private QuantityImpl stdWeight;
     
     private List<Long> substituteIds = new ArrayList<Long>();
 
@@ -53,10 +54,13 @@ public class FoodProduct implements Serializable {
     // ------------------- public Methods  ------------------- 
     
     // empty constructor necessary for GWT serialization
-	public FoodProduct() {}    
+	public FoodProduct() {
+		stdWeight = new QuantityImpl(Unit.GRAM);
+	}    
 
 	// Copy Constructor
 	public FoodProduct(FoodProduct toClone) {
+		this();
 		name = new String(toClone.name);
 		name_en = new String(toClone.name_en);
 		co2eValue = new Double(toClone.co2eValue);
@@ -94,11 +98,11 @@ public class FoodProduct implements Serializable {
 		this.co2eValue = co2eValue;
 	}
 
-	public Quantity getStdWeight() {
+	public QuantityImpl getStdWeight() {
 		return stdWeight;
 	}
 
-	public void setStdWeight(Quantity stdWeight) {
+	public void setStdWeight(QuantityImpl stdWeight) {
 		this.stdWeight = stdWeight;
 	}
 	

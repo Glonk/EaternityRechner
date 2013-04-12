@@ -146,6 +146,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return dao.deleteRecipe(recipeId);
 	}
 
+	/**
+	 * @return always a valid (non null) list of recipes
+	 */
 	public ArrayList<RecipeInfo> searchRecipes(RecipeSearchRepresentation search) {
 		DAO dao = new DAO();
 		ArrayList<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
@@ -163,13 +166,15 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 				recipes.addAll((ArrayList<Recipe>) dao.getKitchenRecipes(kitchenId)); 
 			break;
 		}
-	
 		
-		for (Recipe recipe : recipes) {
-			recipeInfos.add(new RecipeInfo(recipe));
+		if (recipes != null) {
+			for (Recipe recipe : recipes) {
+				recipeInfos.add(new RecipeInfo(recipe));
+			}
+			return recipeInfos;
 		}
-		
-		return recipeInfos;
+		else
+			return new ArrayList<RecipeInfo>();	
 	}
 
 	public List<Recipe> getPublicRecipes() {

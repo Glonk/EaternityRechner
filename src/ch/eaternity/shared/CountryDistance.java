@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eaticious.common.Quantity;
+import org.eaticious.common.QuantityImpl;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -30,7 +31,7 @@ public class CountryDistance implements Serializable {
 	private static final long serialVersionUID = 3172640409035191495L;
 	
 	// Home (to), From, Distance
-	private Map<String,Quantity> distanceMap;
+	private Map<String,QuantityImpl> distanceMap;
 	private String homeLocation;
 	
 	private final static Geocoder geocoder = new Geocoder();
@@ -39,7 +40,7 @@ public class CountryDistance implements Serializable {
 	Integer timeToWait = 1;
 	
 	private CountryDistance() {
-		distanceMap = new HashMap<String,Quantity>();
+		distanceMap = new HashMap<String,QuantityImpl>();
 	}
 	
 	public CountryDistance(String homelocation) {
@@ -53,7 +54,7 @@ public class CountryDistance implements Serializable {
 	 * @param to
 	 * @return null if distance doesnt exist
 	 */
-	public Quantity getDistance(String from, String to) {
+	public QuantityImpl getDistance(String from, String to) {
 		return distanceMap.get(from);
 	}
 	

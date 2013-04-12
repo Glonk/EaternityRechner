@@ -1,8 +1,6 @@
 
 package ch.eaternity.shared;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -33,15 +31,15 @@ public class Ingredient  implements Serializable {
 	// optionally if speed is to slow, needs to be created when stored, not possible client-side
 	//@Load private Ref<FoodProduct> productRef;
 	
-	@Embed
-	private Quantity weight;
+	@Serialize
+	private QuantityImpl weight;
 	private Date cookingDate;
 	private double cost; 
 	@Embed
 	private Extraction extraction;
 	// need to include home as well...?
 	@Embed
-	private Quantity distance;
+	private QuantityImpl distance;
 	@Embed
 	private Transportation transportation;
 	@Embed
@@ -146,19 +144,19 @@ public class Ingredient  implements Serializable {
 		this.productId = productId;
 	}
 
-	public void setWeight(Quantity weight) {
+	public void setWeight(QuantityImpl weight) {
 		this.weight = weight;
 	}
 
-	public Quantity getWeight() {
+	public QuantityImpl getWeight() {
 		return weight;
 	}
 
-	public void setDistance(Quantity distance) {
+	public void setDistance(QuantityImpl distance) {
 		this.distance = distance;
 	}
 
-	public Quantity getDistance() {
+	public QuantityImpl getDistance() {
 		return distance;
 	}
 	

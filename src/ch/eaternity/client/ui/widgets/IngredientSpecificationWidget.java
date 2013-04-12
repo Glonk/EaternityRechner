@@ -179,7 +179,7 @@ public class IngredientSpecificationWidget extends Composite {
   		String processedLocation= dco.getDist().strProcessLocation(UnknownExtractionTextBox.getText());
   		
   		if (processedLocation != null) {
-  			Quantity distance = dco.getDist().getDistance(processedLocation, dco.getCurrentLocation());
+  			QuantityImpl distance = dco.getDist().getDistance(processedLocation, dco.getCurrentLocation());
   			ingredient.setDistance(distance);
   			
   			List<Extraction> extractions = product.getExtractions();

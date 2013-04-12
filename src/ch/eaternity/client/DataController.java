@@ -282,7 +282,7 @@ public class DataController {
 		}
 	}
 	
-	public void addIngredientToMenu(FoodProductInfo product, final Quantity weight) {
+	public void addIngredientToMenu(FoodProductInfo product, final QuantityImpl weight) {
 
 		dataRpcService.getFoodProduct(product.getId(), new AsyncCallback<FoodProduct>() {
 			public void onFailure(Throwable error) {
