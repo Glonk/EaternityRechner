@@ -16,7 +16,7 @@ public class Kitchen implements Serializable {
 
 	@Id private Long id;
 	
-	// Load that on loading the whole kitchen
+	// Load that on loading the whole kitchen - necessary?
 	@Ignore
 	private List<UserInfo> userInfos = new ArrayList<UserInfo>();
 	
@@ -29,7 +29,7 @@ public class Kitchen implements Serializable {
 	 *  here the user with not UserInfo yet are stored, converted as soon as they registrate
 	 *  <Name, mailadress>
 	 */
-	private List<Pair<String, String>> unmatchedUsers;
+	private List<Pair<String, String>> userStrings = new ArrayList<Pair<String, String>>();
 	
 	/**
 	 * Name of the kitchen
@@ -55,7 +55,7 @@ public class Kitchen implements Serializable {
 	public Kitchen() {
 		symbol = "Neue Küche";
 		energyMix = new EnergyMix("ewz.naturpower",0.01345);
-		changed = false;
+		changed = true;
 	}
 
 	public Long getId() {
@@ -91,7 +91,7 @@ public class Kitchen implements Serializable {
 	}
 
 
-	public Boolean getChanged() {
+	public Boolean hasChanged() {
 		return changed;
 	}
 
@@ -132,11 +132,11 @@ public class Kitchen implements Serializable {
 	}
 
 	public List<Pair<String, String>> getUnmatchedUsers() {
-		return unmatchedUsers;
+		return userStrings;
 	}
 
 	public void setUnmatchedUsers(List<Pair<String, String>> unmatchedUsers) {
-		this.unmatchedUsers = unmatchedUsers;
+		this.userStrings = unmatchedUsers;
 	}
 	
 

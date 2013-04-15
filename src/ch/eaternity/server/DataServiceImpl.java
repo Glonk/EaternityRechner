@@ -176,28 +176,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		else
 			return new ArrayList<RecipeInfo>();	
 	}
-
-	public List<Recipe> getPublicRecipes() {
-		DAO dao = new DAO();
-		return dao.getPublicRecipes();
-	}
-
-	public List<Recipe> getUserRecipes() throws NotLoggedInException {
-		checkLoggedIn();
-		DAO dao = new DAO();
-		return dao.getUserRecipes(getUserId());
-	}
 	
-	/**
-	 * just allowed for Admins
-	 */
-	public List<Recipe> getAllRecipes() throws NotLoggedInException{
+	public ArrayList<Recipe> getAllRecipes() throws NotLoggedInException {
 		if (checkAdmin()) {
 			DAO dao = new DAO();
 			return dao.getAllRecipes();
-		}
+		} 
 		else
-			return null;
+			return new ArrayList<Recipe>();
 	}
 
 	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) throws NotLoggedInException {
@@ -208,7 +194,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		ClientData data = new ClientData();
 		
 		// ------ RecipePlace independant -------
-		data.kitchens = dao.getUserKitchens(getUser());
+		data.kitchens = dao.getUserKitchens(getUserId());
 		
 		data.userInfo = dao.getUserInfo(requestUri);
 		
@@ -230,61 +216,35 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 	// ------------------------ Kitchen -----------------------------------
-	
-		/*
-		public ArrayList<String> getKitchenStrings(Long userId) {}
 		
-		or
-		
-		public HashSet<Pair<Long, String>> getKitchenStrings(Long userId) {}
-		
-		because we need the ids for matchin with currentKitchenId as well...
-		
-		*/
-		
-
-		
-		public Long addKitchen(Kitchen kitchen) throws NotLoggedInException {
+		public Long saveKitchen(Kitchen kitchen) throws NotLoggedInException {
 			checkLoggedIn();
-			UserService userService = UserServiceFactory.getUserService();
-			if(userService.getCurrentUser() == null){
-				throw new NotLoggedInException("Not logged in.");
-			}
 			DAO dao = new DAO();
-
 			return dao.saveKitchen(kitchen);
 		}
 		
 		
-		public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException {
-			// TODO implement
-			return true;
+		public Boolean deleteKitchen(Long kitchenId) throws NotLoggedInException {
+			DAO dao = new DAO();
+			return dao.deleteKitchen(kitchenId);
 		}
 		
-		public List<Kitchen> getYourKitchens() throws NotLoggedInException {
+		public ArrayList<Kitchen> getUserKitchens() throws NotLoggedInException {
 			checkLoggedIn();
 			DAO dao = new DAO();
-			return dao.getUserKitchens(getUser());	
+			return dao.getUserKitchens(getUserId());	
 		}
 		
-		public List<Kitchen> getAdminKitchens() throws NotLoggedInException{
-			UserService userService = UserServiceFactory.getUserService();
-			List<Kitchen> adminRecipes = new ArrayList<Kitchen>();
-			if(userService.getCurrentUser() != null){
-				if(userService.isUserAdmin()){
-					DAO dao = new DAO();
-					adminRecipes = dao.adminGetKitchens(userService.getCurrentUser());
-				}
+		public ArrayList<Kitchen> getAdminKitchens() throws NotLoggedInException{
+			ArrayList<Kitchen> adminKitchens = new ArrayList<Kitchen>();
+			if(checkAdmin()){
+				DAO dao = new DAO();
+				adminKitchens = dao.getAdminKitchens();
 			}
-			return adminRecipes;
+			return adminKitchens;
 			
 		}
-		
-		public Boolean setCurrentKitchen(Long id) throws NotLoggedInException {
-			checkLoggedIn();
-			DAO dao = new DAO();
-			return dao.setCurrentKitchen(id, getUserId());
-		}
+
 		
 		
 		// ------------------------ Various -----------------------------------
@@ -359,9 +319,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 	@Override
-	public List<UploadedImage> getRecentlyUploaded() {
+	public ArrayList<UploadedImage> getRecentlyUploaded() {
 		UploadedImageDao dao = new UploadedImageDao();
-		List<UploadedImage> images = dao.getRecent(); 
+		ArrayList<UploadedImage> images = dao.getRecent(); 
 		return images;
 	}
 
@@ -391,9 +351,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 	@Override
-	public List<Tag> getTagsForImage(UploadedImage image) {
+	public ArrayList<Tag> getTagsForImage(UploadedImage image) {
 		TagDao dao = new TagDao();
-		List<Tag> tags = dao.getForImage(image);
+		ArrayList<Tag> tags = dao.getForImage(image);
 		return tags;
 	}
 	

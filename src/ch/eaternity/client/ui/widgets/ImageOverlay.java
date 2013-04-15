@@ -1,5 +1,6 @@
 package ch.eaternity.client.ui.widgets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -93,7 +94,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 
 		// Now let's fetch the tags
 		imageService.getTagsForImage(uploadedImage,
-				new AsyncCallback<List<Tag>>() {
+				new AsyncCallback<ArrayList<Tag>>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -103,7 +104,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 					}
 
 					@Override
-					public void onSuccess(List<Tag> result) {
+					public void onSuccess(ArrayList<Tag> result) {
 						// TODO Auto-generated method stub
 						for (Tag tag : result) {
 							tagPanel.add(new HTMLPanel(tag.getBody()));

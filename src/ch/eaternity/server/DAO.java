@@ -13,6 +13,7 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.Pair;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
 
@@ -99,9 +100,9 @@ public class DAO
 	 * 
 	 * @return A List of all userids registrated in any kitchen
 	 */
-	public List<String> getAllKitchenUsers() {
+	public ArrayList<String> getAllKitchenUsers() {
 		List<Kitchen> kitchens = new ArrayList<Kitchen>();
-		List<String> userIds = new ArrayList<String>();
+		ArrayList<String> userIds = new ArrayList<String>();
 		
 		try {
 			
@@ -186,9 +187,9 @@ public class DAO
 	 * 
 	 * @return all the ingredients of the datastore or null an exception occured
 	 */
-	public List<FoodProduct> getAllFoodProducts()
+	public ArrayList<FoodProduct> getAllFoodProducts()
 	{
-		List<FoodProduct> result = new ArrayList<FoodProduct>();
+		ArrayList<FoodProduct> result = new ArrayList<FoodProduct>();
 		try {
 			Iterable<Key<FoodProduct>> keys = ofy().load().type(FoodProduct.class).keys();
 			for (Key<FoodProduct> key : keys)
@@ -294,7 +295,7 @@ public class DAO
 		 * @return all recipes belonging to kitchen with @param kitchenId 
 		 *  or null if not found or an exception occured
 		 */
-		public List<Recipe> getKitchenRecipes(Long kitchenId){
+		public ArrayList<Recipe> getKitchenRecipes(Long kitchenId){
 			try {
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", kitchenId).filter("deleted", false).list();
 				return new ArrayList<Recipe>(recipes);
@@ -309,7 +310,7 @@ public class DAO
 		 * @return the recipes which published, publicitly available
 		 *  or null if not found or an exception occured
 		 */
-		public List<Recipe> getPublicRecipes(){
+		public ArrayList<Recipe> getPublicRecipes(){
 			try {
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
 				return new ArrayList<Recipe>(recipes);
@@ -326,8 +327,8 @@ public class DAO
 		 * @return all recipes stored in the database for admin purposes
 		 *  or null if not found or an exception occured
 		 */
-		public List<Recipe> getAllRecipes(){
-			List<Recipe> result = new ArrayList<Recipe>();
+		public ArrayList<Recipe> getAllRecipes(){
+			ArrayList<Recipe> result = new ArrayList<Recipe>();
 			try {
 				//result = ofy().load().type(Recipe.class).filter("deleted", false).list();
 				
@@ -350,7 +351,7 @@ public class DAO
 		 * @return the recipes which are requested for publication but not published yet. the need to be approved
 		 *  or null if not found or an exception occured
 		 */
-		public List<Recipe> getUnapprovedRecipes(){
+		public ArrayList<Recipe> getUnapprovedRecipes(){
 			try {
 				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
 				return new ArrayList<Recipe>(recipes);
@@ -363,7 +364,7 @@ public class DAO
 
 		
 
-		public List<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
+		public ArrayList<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
 			/*
 			String[] kitchenIds = kitchenIdsString.split(",");
 			//		Calendar rightNow = Calendar.getInstance();
@@ -420,79 +421,60 @@ public class DAO
 		}
 
 
-	// ------------------------ Kitchen -----------------------------------
+			// ------------------------ Kitchen -----------------------------------
 	
 	/**
-	 * 
-	 * @param currentKitchen
-	 * @param userId
-	 * @return false if - datastore exception happend (see log for details)
-	 * 					- currentkitchen didn't wasn't in the list of the kitchens of the user
+	 *  fetches all the UserInfos belonging to this kitchen
+	 * @param kitchen
+	 * @return an empty list if an error occured
 	 */
-	public Boolean setCurrentKitchen(Long currentKitchen, String userId) {
+	private ArrayList<UserInfo> getUserInfosFromKitchen(Kitchen kitchen) {
+		List<String> kitchenMailAdresses = new ArrayList<String>();
+		for (Pair<String,String> pair : kitchen.getUnmatchedUsers()) {
+			kitchenMailAdresses.add(pair.second());
+		}
+		List<UserInfo> kitchenUserInfos;
 		try {
-			UserInfo loginInfo = ofy().load().type(UserInfo.class).filter("userId", userId).first().get();
-			if (!loginInfo.setCurrentKitchen(currentKitchen))
-				return false;
-			ofy().save().entity(loginInfo);
-		} 
+			kitchenUserInfos = ofy().load().type(UserInfo.class).filter("emailAdress in", kitchenMailAdresses).list();
+			return new ArrayList<UserInfo>(kitchenUserInfos);
+		}
 		catch (Throwable e) {
 			handleException(e);
-			return false;
-		} 
-		return true;
+			return new ArrayList<UserInfo>();
+		}
 	}
 
 	public Long saveKitchen(Kitchen kitchen){
-		/*
-		// here we need more logic
-		// got through the Users, find them in the Storage, add to each the key of this kitchen
-
-		if(kitchen.getId() == null){
-			ofy().put(kitchen);
+		// save for getting the kitchen id
+		try {
+			ofy().save().entity(kitchen).now();
+		}
+		catch (Throwable e) {
+			handleException(e);
+		} 
+		
+		List<UserInfo> kitchenUserInfos = getUserInfosFromKitchen(kitchen);
+		
+		// Apply the many to many relationship
+		for (UserInfo userInfo : kitchenUserInfos) {
+			kitchen.getUserIds().clear();
+			kitchen.getUserIds().add(userInfo.getId());
+			/*
+			if (!userInfo.getKitchenIDs().contains(kitchen.getId()) {
+				saveUserInfo(userInfo);
+			}
+			*/
 		}
 
-		// here we add more logic... 
-		// creates References to correct Staff object
-		for(Staff staff : kitchen.getPersonal()){
-			Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", staff.userEmail);
-
-			QueryResultIterator<Staff> iterator = kitchenStaff.iterator();
-
-			boolean foundOne = false;
-			while (iterator.hasNext()) {
-				foundOne = true;
-				Staff staffer = iterator.next();
-				boolean doAdd = true;
-				for(Long aKitchenId:staffer.kitchensIds){
-					if(aKitchenId.compareTo(kitchen.getId()) == 0){
-						doAdd = false;
-						break;
-					}
-
-				}
-				if(doAdd){
-					staffer.kitchensIds.add(kitchen.getId());
-				}
-				staff = staffer;
-				ofy().put(staffer);
-			}
-
-			if(!foundOne){
-				// add a new one
-				staff.kitchensIds = new ArrayList<Long>(1);
-				staff.kitchensIds.add(kitchen.getId());
-				ofy().put(staff);
-			}
-
+		// now save again the relationships
+		try {
+			ofy().save().entity(kitchen).now();
 		}
-
-		// save that kitchen again
-		ofy().put(kitchen);
-	
+		catch (Throwable e) {
+			handleException(e);
+			return null;
+		} 
 		return kitchen.getId();
-		*/
-		return 0L;
 	}
 
 	/**
@@ -501,100 +483,80 @@ public class DAO
 	  * @return the kitchen or null if not found or an exception occured
 	 */
 	public Kitchen getKitchen(Long kitchenId) {
-		/*
+		
 		Kitchen kitchen = null;
 		try {
 			kitchen = ofy().load().type(Kitchen.class).id(kitchenId).get();
 		}
 		catch (Exception e) {
-			log.log(Level.SEVERE, e.getCause() + " EXCEPTION TYPE: " + e.getClass().toString());
+			handleException(e);
 		} 
 		return kitchen;
-		*/
-		return null;
 	}
 	
-	public Boolean removeKitchen(Long kitchenId) {
+	/**
+	 * 
+	 * @param kitchenId
+	 * @return false if kitchen could't be found or delete process failed
+	 */
+	public Boolean deleteKitchen(Long kitchenId) {
+		Kitchen kitchen = getKitchen(kitchenId);
+		if (kitchen != null) {
+			/*
+			List<UserInfo> kitchenUserInfos = getUserInfosFromKitchen(kitchen);
+			
+			// Apply the many to many relationship
+			
+			for (UserInfo userInfo : kitchenUserInfos) {
+				userInfo.getKitchenIDs().remove(kitchenId);
+				saveUserInfo(userInfo);
+			}
+			*/
+			
+			try {
+				ofy().delete().type(Kitchen.class).id(kitchenId);
+			}
+			catch (Throwable e) {
+				handleException(e);
+				return false;
+			} 
+			return true;
+		}
+		else return false;
+	}
+
+	/**
+	 * 
+	 * @param userId
+	 * @return never null, an empty list if an error occured
+	 */
+	public ArrayList<Kitchen> getUserKitchens(String userId){
 		try {
-			ofy().delete().type(Kitchen.class).id(kitchenId);
+			//DISCUSS could also be done via kitchenList of UserInfo
+			List<Kitchen> kitchens = ofy().load().type(Kitchen.class).filter("userIds", userId).list();
+			// Do that to avoid ResultProxy to be returned. Convert into propper List
+			return new ArrayList<Kitchen>(kitchens);
 		}
 		catch (Throwable e) {
 			handleException(e);
-			return false;
+			return new ArrayList<Kitchen>();
 		} 
-		//TODO remove id's from LoginInfo's, so that no error occurs if wrong id is setted
-		
-		return true;
 	}
 
-	public List<Kitchen> getUserKitchens(User user){
-		/*
-		List<Kitchen> yourKitchens = new ArrayList<Kitchen>();
-
-		// The Query itself is Iterable
-		Query<Kitchen> yourUserKitchens = ofy().query(Kitchen.class).filter("emailAddressOwner", user.getEmail());
-		QueryResultIterator<Kitchen> iterator = yourUserKitchens.iterator();
-
-		while (iterator.hasNext()) {
-			Kitchen kitchen = iterator.next();
-			yourKitchens.add(kitchen);
+	/**
+	 * 
+	 * @return all kitchen from the databaseor an empty list if failed
+	 */
+	public ArrayList<Kitchen> getAdminKitchens(){
+		try {
+			List<Kitchen> kitchens = ofy().load().type(Kitchen.class).list();
+			// Do that to avoid ResultProxy to be returned. Convert into propper List
+			return new ArrayList<Kitchen>(kitchens);
 		}
-
-		Query<Staff> kitchenStaff = ofy().query(Staff.class).filter("userEmail ==", user.getEmail());
-		QueryResultIterator<Staff> staffIterator = kitchenStaff.iterator();
-		while (staffIterator.hasNext()) {
-			Staff staffer = staffIterator.next();
-			for(Long getThisKitchen:staffer.kitchensIds){
-				try {
-					Kitchen newKitchen = ofy().get(Kitchen.class,getThisKitchen);
-					if(!yourKitchens.contains(newKitchen)){
-						yourKitchens.add(newKitchen);
-					}
-				} catch (NotFoundException e){
-
-				}
-			}
-		}
-
-		return yourKitchens;
-		*/
-		return new ArrayList<Kitchen>();
-
-	}
-
-	public List<Kitchen> adminGetKitchens(User user){
-		/*
-		List<Kitchen> adminKitchens = new ArrayList<Kitchen>();
-
-		// The Query itself is Iterable
-		Query<Kitchen> yourUserKitchens = ofy().query(Kitchen.class).filter("emailAddressOwner !=", user.getEmail());
-		QueryResultIterator<Kitchen> iterator = yourUserKitchens.iterator();
-
-		while (iterator.hasNext()) {
-			Kitchen kitchen = iterator.next();
-			adminKitchens.add(kitchen);
-		}
-
-		return adminKitchens;
-	*/
-		return null;
-	}
-
-	public List<Kitchen> getOpenKitchen(){
-		/*
-		List<Kitchen> openKitchens = new ArrayList<Kitchen>();
-
-		// The Query itself is Iterable
-		Query<Kitchen> yourOpenKitchens = ofy().query(Kitchen.class).filter("approvedOpen", true);
-		QueryResultIterator<Kitchen> iterator = yourOpenKitchens.iterator();
-
-		while (iterator.hasNext()) {
-			Kitchen kitchen = iterator.next();
-			openKitchens.add(kitchen);
-		}
-		return openKitchens;
-	*/
-		return null;
+		catch (Throwable e) {
+			handleException(e);
+			return new ArrayList<Kitchen>();
+		} 
 	}
 
 	

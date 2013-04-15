@@ -39,7 +39,7 @@ public class KitchenDialog extends DialogBox{
 	private DataServiceAsync dataService;
 	
 	@UiField ScrollPanel scrollPanel;
-	@UiField static ListBox kitchenList;
+	@UiField ListBox kitchenList;
 	
 	@UiField TextBox kitchenNameTextBox;
 	@UiField Label kitchenId;
@@ -76,7 +76,7 @@ public class KitchenDialog extends DialogBox{
 	
 	List<Kitchen> userKitchens;
 	Kitchen currentKitchen;
-
+	
 	private UserInfo userInfo;
 	
 	interface TextErrorStyle extends CssResource {
@@ -104,24 +104,28 @@ public class KitchenDialog extends DialogBox{
 		}
 
 		userKitchens = dco.getKitchens();
-		
+		 
 		currentKitchen = dco.getCurrentKitchen();
 		if (currentKitchen != null) {
 			currentLocation = currentKitchen.getProcessedLocation();
 			devices = currentKitchen.getDevices();
 			kitchenStaff = currentKitchen.getUserInfos();
+			updateKitchenList();
 			updateKitchenParameters();
+			changeKitchenName(currentKitchen.getSymbol());
 		}
 		else if (userKitchens.size() > 0) {
 			currentKitchen = userKitchens.get(0);
+			updateKitchenList();
 			updateKitchenParameters();
+			changeKitchenName(currentKitchen.getSymbol());
 		}
 		else {
 			currentLocation = dco.getCurrentLocation();
 			scrollPanel.setVisible(false);
 		}
 		
-		updateKitchenList();
+		
 		
 		//initCellTable();
 		
@@ -129,20 +133,23 @@ public class KitchenDialog extends DialogBox{
 	}
 	
 	private void updateKitchenParameters() {
-		changeKitchenName(currentKitchen.getSymbol());
 		
-		locationLabel.setText("Ort der Kueche: " + currentLocation);
+		if (currentKitchen != null){
+			scrollPanel.setVisible(true);
 		
-		if (currentKitchen.getId() != null)
-				kitchenId.setText("Id: " + currentKitchen.getId());
-		 else
-			  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
-
-		if (currentKitchen.getEnergyMix() != null)
-		{
-			energyMixName.setText(currentKitchen.getEnergyMix().Name);
-			energyMixCO2.setText(currentKitchen.getEnergyMix().Co2PerKWh.toString());
-		}
+			locationLabel.setText("Ort der Kueche: " + currentLocation);
+			
+			if (currentKitchen.getId() != null)
+					kitchenId.setText("Id: " + currentKitchen.getId());
+			 else
+				  kitchenId.setText("Id: nicht gesetzt. Zuerst Speichern.");
+	
+			if (currentKitchen.getEnergyMix() != null)
+			{
+				energyMixName.setText(currentKitchen.getEnergyMix().Name);
+				energyMixCO2.setText(currentKitchen.getEnergyMix().Co2PerKWh.toString());
+			}
+	}
 		
 	}
 	
@@ -159,12 +166,17 @@ public class KitchenDialog extends DialogBox{
 		for (Kitchen kitchen : userKitchens) {
 			kitchenList.addItem(kitchen.getSymbol());
 		}
-		// TODO select the current kitchen ...
+		kitchenList.setSelectedIndex(userKitchens.indexOf(currentKitchen));
 	}
 	
+	/**
+	 * updateKitchenList must be called before to ensure correct selection index
+	 * @param name
+	 */
 	private void changeKitchenName(String name) {
-		  setText(name);
-		  kitchenList.setItemText(kitchenList.getSelectedIndex(), this.kitchenName);
+		  setText(name);  
+		  kitchenList.setItemText(kitchenList.getSelectedIndex(), name);
+		  kitchenNameTextBox.setText(name);
 		  currentKitchen.setSymbol(name);
 	}
 	
@@ -181,7 +193,7 @@ public class KitchenDialog extends DialogBox{
 		devices.add(new Device());
 		devidesCellTable.setRowCount(devices.size(), true);
 		devidesCellTable.setRowData(0, devices);
-
+		currentKitchen.setChanged(true);
 	}
 
 	@UiHandler("addPerson")
@@ -189,6 +201,7 @@ public class KitchenDialog extends DialogBox{
 		//kitchenStaff.add(new UserInfo("Name", "Email"));
 		personsCellTable.setRowCount(kitchenStaff.size(), true);
 		personsCellTable.setRowData(0, kitchenStaff);
+		currentKitchen.setChanged(true);
 	}
 	  
 	  @UiHandler("locationButton")
@@ -200,9 +213,8 @@ public class KitchenDialog extends DialogBox{
 	
 	@UiHandler("kitchenNameTextBox")
 	void onNameChange(KeyUpEvent event) {
-		if (kitchenNameTextBox.getText().length() > 1) {
-			changeKitchenName(kitchenNameTextBox.getText());
-		}
+		changeKitchenName(kitchenNameTextBox.getText());
+		currentKitchen.setChanged(true);
 	}
 
 	@UiHandler("energyMixName")
@@ -210,6 +222,7 @@ public class KitchenDialog extends DialogBox{
 		if (energyMixName.getText().length() > 1) {
 			currentKitchen.getEnergyMix().Name = energyMixName.getText();
 		}
+		currentKitchen.setChanged(true);
 	}
 
 	@UiHandler("energyMixCO2")
@@ -235,6 +248,7 @@ public class KitchenDialog extends DialogBox{
 
 		if (success) {
 			currentKitchen.getEnergyMix().Co2PerKWh = energyMix;
+			currentKitchen.setChanged(true);
 		} 
 		else {
 			energyMixCO2.addStyleName(errorStyle);
@@ -247,8 +261,6 @@ public class KitchenDialog extends DialogBox{
 		  currentKitchen = new Kitchen();
 		  currentKitchen.setProcessedLocation(currentLocation);
 		  userKitchens.add(currentKitchen);
-		  kitchenList.addItem(currentKitchen.getSymbol());
-		  kitchenList.setSelectedIndex(kitchenList.getItemCount()-1);
 		  switchKitchen();
 	  }
 
@@ -267,22 +279,13 @@ public class KitchenDialog extends DialogBox{
 	  }
 
 
-
-	public void saveLastKitchen(final Long id) {
-		dataService.setCurrentKitchen(id, new AsyncCallback<Boolean>() {
-			@Override
-			public void onFailure(Throwable error) {
-				Window.alert("Fehler : "+ error.getMessage());
-			}
-			@Override
-			public void onSuccess(Boolean okay) {
-				dco.getUserInfo().setCurrentKitchen(id);
-			}
-		});
-	}
-
-//	//REFACTOR: just call DataController saveKitchen
 	private void saveAndCloseDialog() {
+		
+		for (Kitchen kitchen : userKitchens) {
+			if (kitchen.hasChanged())
+				dco.saveKitchen(kitchen);
+		}
+		
 //		for (PendingChange<?> pendingChange : pendingChanges) {
 //	          pendingChange.commit();
 //	        }
@@ -339,12 +342,14 @@ public class KitchenDialog extends DialogBox{
 //			}
 //		}	
 //		
-//		hide();
+		hide();
 	}
 
 
 	private void switchKitchen() {
+		updateKitchenList();
 		updateKitchenParameters();
+		changeKitchenName(currentKitchen.getSymbol());
 		
 //		/*
 //		devices = currentKitchen.getDevices;

@@ -30,9 +30,7 @@ public interface DataServiceAsync {
 	public void getRecipe(Long id, AsyncCallback<Recipe> async);
 	public void saveRecipe(Recipe recipe, AsyncCallback<Long> async);
 	public void deleteRecipe(Long rezeptId, AsyncCallback<Boolean> async);
-	public void getUserRecipes(AsyncCallback<List<Recipe>> async);
-	public void getPublicRecipes(AsyncCallback<List<Recipe>> async);
-	public void getAllRecipes(AsyncCallback<List<Recipe>> asyncCallback);
+	public void getAllRecipes(AsyncCallback<ArrayList<Recipe>> asyncCallback);
 	public void approveRecipe(Long id, Boolean approve,
 			AsyncCallback<Boolean> asyncCallback);
 	public void searchRecipes(RecipeSearchRepresentation search, AsyncCallback<ArrayList<RecipeInfo>> asyncCallback);
@@ -42,12 +40,10 @@ public interface DataServiceAsync {
 	public void persistIngredients(ArrayList<FoodProduct> ingredients,
 			AsyncCallback<Boolean> asyncCallback);
 
-	public void addKitchen(Kitchen kitchen, AsyncCallback<Long> async);
-	public void removeKitchen(Long kitchenId, AsyncCallback<Boolean> async);
-	public void getYourKitchens(AsyncCallback<List<Kitchen>> async);
-	public void getAdminKitchens(AsyncCallback<List<Kitchen>> asyncCallback);
-
-	public void setCurrentKitchen(Long i, AsyncCallback<Boolean> asyncCallback);
+	public void saveKitchen(Kitchen kitchen, AsyncCallback<Long> async);
+	public void deleteKitchen(Long kitchenId, AsyncCallback<Boolean> async);
+	public void getUserKitchens(AsyncCallback<ArrayList<Kitchen>> async);
+	public void getAdminKitchens(AsyncCallback<ArrayList<Kitchen>> asyncCallback);
 	
 	// login
 	public void getUserInfo(String requestUri, AsyncCallback<UserInfo> async);
@@ -60,14 +56,14 @@ public interface DataServiceAsync {
 
 	public void get(String key, AsyncCallback<UploadedImage> callback);
 
-	public void getRecentlyUploaded(AsyncCallback<List<UploadedImage>> callback);
+	public void getRecentlyUploaded(AsyncCallback<ArrayList<UploadedImage>> callback);
 
 	public void deleteImage(String key, AsyncCallback<Void> callback);
 
 	public void tagImage(Tag tag,
 			AsyncCallback<String> callback);
 
-	public void getTagsForImage(UploadedImage image, AsyncCallback<List<Tag>> callback);
+	public void getTagsForImage(UploadedImage image, AsyncCallback<ArrayList<Tag>> callback);
 
 	public void clearDatabase(AsyncCallback<Boolean> callback);
 }

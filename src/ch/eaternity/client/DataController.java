@@ -338,9 +338,27 @@ public class DataController {
 	
 	}
 	
-	public void saveKitchen(Kitchen kitchen) {}
+	public void saveKitchen(final Kitchen kitchen) {
+		dataRpcService.saveKitchen(kitchen, new AsyncCallback<Long>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Long kitchenId) {
+				kitchen.setId(kitchenId);
+				
+			}
+		});
+	}
 	
-	public void deleteKitchen(Kitchen kitchen) {}
+	public void deleteKitchen(Kitchen kitchen) {
+		dataRpcService.deleteKitchen(kitchen.getId(), new AsyncCallback<Boolean>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Boolean success) {
+			}
+		});
+	}
 
 	
 	// reload will do it...

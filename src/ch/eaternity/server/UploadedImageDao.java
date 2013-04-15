@@ -39,7 +39,7 @@ public class UploadedImageDao {
 
 	}
 
-	public List<UploadedImage> getRecent() {
+	public ArrayList<UploadedImage> getRecent() {
 		Query query = new Query("UploadedImage");
 		query.addSort(UploadedImage.CREATED_AT, SortDirection.DESCENDING);
 		FetchOptions options = FetchOptions.Builder.withLimit(25);

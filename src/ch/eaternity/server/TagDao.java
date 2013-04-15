@@ -45,11 +45,11 @@ public class TagDao {
 		return encodedKey;
 	}
 	
-	public List<Tag> getForImage(UploadedImage image) {
+	public ArrayList<Tag> getForImage(UploadedImage image) {
 		Query query = new Query(Tag.class.getSimpleName());
 		query.addFilter("photoKey", FilterOperator.EQUAL, image.getKey());
 		
-		List<Tag> results = new ArrayList<Tag>();
+		ArrayList<Tag> results = new ArrayList<Tag>();
 		
 		for(Entity entity : datastore.prepare(query).asIterable(FetchOptions.Builder.withDefaults())) {
 			Tag tag = new Tag();

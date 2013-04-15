@@ -34,9 +34,7 @@ public interface DataService extends RemoteService {
 	public Recipe getRecipe(Long id) throws NotLoggedInException;
 	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean deleteRecipe(Long rezeptId) throws NotLoggedInException;
-	public List<Recipe> getUserRecipes() throws NotLoggedInException;
-	public List<Recipe> getPublicRecipes();
-	public List<Recipe> getAllRecipes() throws NotLoggedInException;
+	public ArrayList<Recipe> getAllRecipes() throws NotLoggedInException;
 	public Boolean approveRecipe(Long rezeptId, Boolean approve) throws NotLoggedInException;
 	public ArrayList<RecipeInfo> searchRecipes(RecipeSearchRepresentation search);
 	
@@ -44,11 +42,10 @@ public interface DataService extends RemoteService {
 	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) throws NotLoggedInException;
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException;
 
-	public Long addKitchen(Kitchen kitchen) throws NotLoggedInException;
-	public Boolean removeKitchen(Long kitchenId) throws NotLoggedInException;
-	public List<Kitchen> getYourKitchens() throws NotLoggedInException;
-	public List<Kitchen> getAdminKitchens() throws NotLoggedInException;
-	public Boolean setCurrentKitchen(Long i) throws NotLoggedInException;
+	public Long saveKitchen(Kitchen kitchen) throws NotLoggedInException;
+	public Boolean deleteKitchen(Long kitchenId) throws NotLoggedInException;
+	public ArrayList<Kitchen> getUserKitchens() throws NotLoggedInException;
+	public ArrayList<Kitchen> getAdminKitchens() throws NotLoggedInException;
 
 	// login
 	public UserInfo getUserInfo(String requestUri);
@@ -59,10 +56,10 @@ public interface DataService extends RemoteService {
 	// blob images
 	public String getBlobstoreUploadUrl();
 	public UploadedImage get(String key);
-	public List<UploadedImage> getRecentlyUploaded();
+	public ArrayList<UploadedImage> getRecentlyUploaded();
 	public void deleteImage(String key);
 	public String tagImage(Tag tag);
-	public List<Tag> getTagsForImage(UploadedImage image);
+	public ArrayList<Tag> getTagsForImage(UploadedImage image);
 
 	public Boolean clearDatabase();
 }

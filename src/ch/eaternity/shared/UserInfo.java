@@ -21,6 +21,7 @@ public class UserInfo implements Serializable {
 	private Long currentKitchenId = null;
 	
 	// many to many relationship stored in both object -> update properly!
+	// at the moment not used in fetching the kitchens...
 	private List<Long> kitchenIds = new ArrayList<Long>();
 	
 	@Ignore

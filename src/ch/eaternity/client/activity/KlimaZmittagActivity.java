@@ -1,5 +1,6 @@
 package ch.eaternity.client.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -46,15 +47,16 @@ public class KlimaZmittagActivity extends AbstractActivity implements
 		klimaZmittagView.setPresenter(this);
 		containerWidget.setWidget(klimaZmittagView.asWidget());
 		
-	
-		dataRpcService.getPublicRecipes(new AsyncCallback<List<Recipe>>() {
+		/*
+		dataRpcService.getPublicRecipes(new AsyncCallback<ArrayList<Recipe>>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
-			public void onSuccess(List<Recipe> recipes) {
+			public void onSuccess(ArrayList<Recipe> recipes) {
 				klimaZmittagView.populateRecipes(recipes);
 			}
 		});
+		*/
 		
 
 		
