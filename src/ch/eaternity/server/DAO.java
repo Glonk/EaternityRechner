@@ -43,12 +43,8 @@ public class DAO
 		String userId = "1";
 		
 		if (user != null) {
-			try {
-				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
-			} 
-			catch (Throwable e) {
-				handleException(e);
-			}
+			userInfo = ofy().load().type(UserInfo.class).id(userId).get();
+
 			
 			// if there exists no corresponding loginInfo to User, create a new one (first time login)
 			if (userInfo == null) {
@@ -85,20 +81,15 @@ public class DAO
 		String userId = "1";
 
 		if (user != null) {
-			try {
-				userInfo = ofy().load().type(UserInfo.class).id(userId).get();
-				userInfo.setEnabled(isUserEnabled(userInfo.getId()));
-			} 
-			catch (Throwable e) {
-				handleException(e);
-			}
+			userInfo = ofy().load().type(UserInfo.class).id(userId).get();
+			userInfo.setEnabled(isUserEnabled(userInfo.getId()));
 		}
 		return userInfo;
 	}
 
 	/**
-	 * 
-	 * @return A List of all userids registrated in any kitchen
+	 * Handles Exceptions,
+	 * @return A List of all userids registrated in any kitchen or empty list if an exception occured
 	 */
 	public ArrayList<String> getAllKitchenUsers() {
 		List<Kitchen> kitchens = new ArrayList<Kitchen>();
@@ -123,13 +114,8 @@ public class DAO
 	}
 	
 	public Boolean saveUserInfo(UserInfo userInfo) {
-		try {
-			ofy().save().entity(userInfo).now();
-		}
-		catch (Throwable e) {
-			handleException(e);
-			return false;
-		} 
+		ofy().save().entity(userInfo).now();
+
 		return true;
 	}
 	
@@ -154,274 +140,195 @@ public class DAO
 	 */
 	public Boolean saveFoodProducts(List<FoodProduct> products)
 	{
-		try {
-			ofy().save().entities(products);
-		}
-		catch (Throwable e) { 
-			handleException(e);
-			return false; 
-		}
-			
+		ofy().save().entities(products);
+
 		return true;
 	}
 	
 	/**
 	 * 
 	 * @param product
-	 * @return the auto generated id or null if not found or an exception occured
+	 * @return the auto generated id or null if not found
 	 */
 	public Long saveFoodProduct(FoodProduct product)
 	{
-		try {
-			ofy().save().entity(product).now();
-		}
-		catch (Throwable e) { 
-			handleException(e);
-			return null; 
-		}
+		ofy().save().entity(product).now();
 		
 		return product.getId();
 	}
 	
 	/**
 	 * 
-	 * @return all the ingredients of the datastore or null an exception occured
+	 * @return all the ingredients of the datastore, never null
 	 */
 	public ArrayList<FoodProduct> getAllFoodProducts()
 	{
 		ArrayList<FoodProduct> result = new ArrayList<FoodProduct>();
-		try {
-			Iterable<Key<FoodProduct>> keys = ofy().load().type(FoodProduct.class).keys();
-			for (Key<FoodProduct> key : keys)
-				result.add(ofy().load().key(key).get());
-		}
-		catch (Throwable e) {
-			handleException(e);
-			result = null;
-		}
+		Iterable<Key<FoodProduct>> keys = ofy().load().type(FoodProduct.class).keys();
+		for (Key<FoodProduct> key : keys)
+			result.add(ofy().load().key(key).get());
 		
 		return result;
 	}
 	
 	/**
-	 * @return the product or null if not found or an exception occured
+	 * @return the product or null if not found
 	 */
 	public FoodProduct getFoodProduct(Long id) {
-		FoodProduct product = null;
-		try {
-			product = ofy().load().type(FoodProduct.class).id(id).get();
-		}
-		catch (Throwable e) {
-			handleException(e);
-		} 
+		FoodProduct product = ofy().load().type(FoodProduct.class).id(id).get();
 		
 		return product;
-		}
+	}
 	
 	// ------------------------ Recipes -----------------------------------
 
-		public Long saveRecipe(Recipe recipe){
-			try {
-				ofy().save().entity(recipe).now();
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return null;
-			} 
-			return recipe.getId();
-		}
+	public Long saveRecipe(Recipe recipe){
+		ofy().save().entity(recipe).now();
+		return recipe.getId();
+	}
+	
+	public Boolean deleteRecipe(Long id) {
+		ofy().delete().type(Recipe.class).id(id);
+		return true;
+	}
+
+	/**
+	 * @return the recipe or null if not found
+	 */
+	public Recipe getRecipe(Long recipeId) throws NoSuchElementException
+	{
+		Recipe recipe = ofy().load().type(Recipe.class).id(recipeId).get();
 		
-		public Boolean deleteRecipe(Long id) {
-			try {
-				ofy().delete().type(Recipe.class).id(id);
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return false;
-			} 
-			
-			return true;
-		}
-
-		/**
-		 * @return the recipe or null if not found or an exception occured
-		 */
-		public Recipe getRecipe(Long recipeId){
-			Recipe recipe = null;
-			try {
-				recipe = ofy().load().type(Recipe.class).id(recipeId).get();
-			}
-			catch (Throwable e) {
-				handleException(e);
-			} 
-			
-			// Load the foodproducts into the list of ingredients (the're ignored during persistance)
-			if (recipe != null) {
-				FoodProduct tempProduct;
-				for (Ingredient ing : recipe.getIngredients()) {
-					if (ing != null) {
-						tempProduct = getFoodProduct(ing.getProductId());
-						if (tempProduct != null)
-							ing.setFoodProduct(tempProduct);
-						else {
-							String msg = "getRecipe: corresponding FoodProduct from Ingredient couldn't get loaded.";
-							log.log(Level.SEVERE, msg);
-							throw new NoSuchElementException(msg);
-						}
-					}
-					
-				}
-			}
-			
-			return recipe;
-		}
-
-		/**
-		 * @return the recipes which belong to the user with userId or null if not found or an exception occured
-		 */
-		public ArrayList<Recipe> getUserRecipes(String userId){
-			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("userId", userId).filter("deleted", false).list();
-				// Do that to avoid ResultProxy to be returned. Convert into propper List
-				return new ArrayList<Recipe>(recipes);
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return null;
-			} 
-		}
-		
-		/**
-		 * @return all recipes belonging to kitchen with @param kitchenId 
-		 *  or null if not found or an exception occured
-		 */
-		public ArrayList<Recipe> getKitchenRecipes(Long kitchenId){
-			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", kitchenId).filter("deleted", false).list();
-				return new ArrayList<Recipe>(recipes);
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return null;
-			} 
-		}
-		
-		/**
-		 * @return the recipes which published, publicitly available
-		 *  or null if not found or an exception occured
-		 */
-		public ArrayList<Recipe> getPublicRecipes(){
-			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
-				return new ArrayList<Recipe>(recipes);
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return null;
-			} 
-		}
-		
-		
-		/**
-		 * TODO To be specified in future, more concrete otherwise data load will get too big
-		 * @return all recipes stored in the database for admin purposes
-		 *  or null if not found or an exception occured
-		 */
-		public ArrayList<Recipe> getAllRecipes(){
-			ArrayList<Recipe> result = new ArrayList<Recipe>();
-			try {
-				//result = ofy().load().type(Recipe.class).filter("deleted", false).list();
-				
-				Iterable<Key<Recipe>> keys = ofy().load().type(Recipe.class).filter("deleted", false).keys();
-				for (Key<Recipe> key : keys)
-					result.add(ofy().load().key(key).get());
-				
-			}
-			catch (Throwable e) {
-				handleException(e);
-				result = new ArrayList<Recipe>();;
-			}
-			
-			return result;
-		}
-		
-
-
-		/**
-		 * @return the recipes which are requested for publication but not published yet. the need to be approved
-		 *  or null if not found or an exception occured
-		 */
-		public ArrayList<Recipe> getUnapprovedRecipes(){
-			try {
-				List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
-				return new ArrayList<Recipe>(recipes);
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return null;
-			} 
-		}
-
-		
-
-		public ArrayList<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
-			/*
-			String[] kitchenIds = kitchenIdsString.split(",");
-			//		Calendar rightNow = Calendar.getInstance();
-			//		long date = rightNow.get(Calendar.WEEK_OF_YEAR);
-
-			Date date = new Date();
-			int iTimeStamp = (int) (date.getTime() * .00003);
-
-			Calendar cal = Calendar.getInstance();
-			cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
-			Date dt = cal.getTime();
-			
-
-			List<Recipe> yourRecipes = new ArrayList<Recipe>();
-
-			for (String kitchenIdString : kitchenIds){
-				long code = 0L;
-				
-				try{
-					code = Converter.fromString(kitchenIdString, 34);
-				} catch(RuntimeException e){
-					GWT.log(e.getLocalizedMessage());
-				}
-
-				long computeId;
-				if(isCoded){
-					computeId = code / iTimeStamp;
-				} else {
-					computeId = code;
-				}
-
-				if(computeId != 0L){
-					UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
-					if(userRezept != null){
-						Recipe recipe = userRezept.getRecipe();
-						if(recipe.getCookingDate() == null){
-							recipe.setCookingDate(dt);
-						}
-						recipe.setId(userRezept.id);
-						if (recipe.isDeleted() == false)
-							yourRecipes.add(recipe);
+		// Load the foodproducts into the list of ingredients (the're ignored during persistance)
+		if (recipe != null) {
+			FoodProduct tempProduct;
+			for (Ingredient ing : recipe.getIngredients()) {
+				if (ing != null) {
+					tempProduct = getFoodProduct(ing.getProductId());
+					if (tempProduct != null)
+						ing.setFoodProduct(tempProduct);
+					else {
+						String msg = "getRecipe: corresponding FoodProduct from Ingredient couldn't get loaded.";
+						log.log(Level.SEVERE, msg);
+						throw new NoSuchElementException(msg);
 					}
 				}
+				
 			}
-
-			return yourRecipes;
-			*/
-			return null;
 		}
 		
-		public Boolean approveRecipe(Long id, Boolean approve) {
-			// TODO Auto-generated method stub
-			return true;
+		return recipe;
+	}
+
+	/**
+	 * @return the recipes which belong to the user with userId or null if not found
+	 */
+	public ArrayList<Recipe> getUserRecipes(String userId){
+		List<Recipe> recipes = ofy().load().type(Recipe.class).filter("userId", userId).filter("deleted", false).list();
+		// Do that to avoid ResultProxy to be returned. Convert into propper List
+		return new ArrayList<Recipe>(recipes);
+	}
+	
+	/**
+	 * @return all recipes belonging to kitchen with @param kitchenId 
+	 *  or null if not found
+	 */
+	public ArrayList<Recipe> getKitchenRecipes(Long kitchenId){
+		List<Recipe> recipes = ofy().load().type(Recipe.class).filter("kitchenId", kitchenId).filter("deleted", false).list();
+		return new ArrayList<Recipe>(recipes); 
+	}
+	
+	/**
+	 * @return the recipes which published, publicitly available
+	 *  or null if not found
+	 */
+	public ArrayList<Recipe> getPublicRecipes(){
+		List<Recipe> recipes = ofy().load().type(Recipe.class).filter("published", true).filter("deleted", false).list();
+		return new ArrayList<Recipe>(recipes);
+	}
+	
+	
+	/**
+	 * TODO To be specified in future, more concrete otherwise data load will get too big
+	 * @return all recipes stored in the database for admin purposes
+	 *  
+	 */
+	public ArrayList<Recipe> getAllRecipes(){
+		ArrayList<Recipe> result = new ArrayList<Recipe>();
+		
+		Iterable<Key<Recipe>> keys = ofy().load().type(Recipe.class).filter("deleted", false).keys();
+		for (Key<Recipe> key : keys)
+			result.add(ofy().load().key(key).get());
+		
+		return result;
+	}
+	
+
+
+	/**
+	 * @return the recipes which are requested for publication but not published yet. the need to be approved
+	 *  or null if not found
+	 */
+	public ArrayList<Recipe> getUnapprovedRecipes(){
+		List<Recipe> recipes = ofy().load().type(Recipe.class).filter("publicationRequested", true).filter("published", false).filter("deleted", false).list();
+		return new ArrayList<Recipe>(recipes);
+	}
+
+	
+
+	public ArrayList<Recipe> getRecipeByIds(String kitchenIdsString, Boolean isCoded){
+		/*
+		String[] kitchenIds = kitchenIdsString.split(",");
+		//		Calendar rightNow = Calendar.getInstance();
+		//		long date = rightNow.get(Calendar.WEEK_OF_YEAR);
+
+		Date date = new Date();
+		int iTimeStamp = (int) (date.getTime() * .00003);
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(2012, 0, 1); //year is as expected, month is zero based, date is as expected
+		Date dt = cal.getTime();
+		
+
+		List<Recipe> yourRecipes = new ArrayList<Recipe>();
+
+		for (String kitchenIdString : kitchenIds){
+			long code = 0L;
+			
+			try{
+				code = Converter.fromString(kitchenIdString, 34);
+			} catch(RuntimeException e){
+				GWT.log(e.getLocalizedMessage());
+			}
+
+			long computeId;
+			if(isCoded){
+				computeId = code / iTimeStamp;
+			} else {
+				computeId = code;
+			}
+
+			if(computeId != 0L){
+				UserRecipeWrapper userRezept = ofy().find(UserRecipeWrapper.class, computeId);
+				if(userRezept != null){
+					Recipe recipe = userRezept.getRecipe();
+					if(recipe.getCookingDate() == null){
+						recipe.setCookingDate(dt);
+					}
+					recipe.setId(userRezept.id);
+					if (recipe.isDeleted() == false)
+						yourRecipes.add(recipe);
+				}
+			}
 		}
 
+		return yourRecipes;
+		*/
+		return null;
+	}
 
-			// ------------------------ Kitchen -----------------------------------
+
+	// ------------------------ Kitchen -----------------------------------
 	
 	/**
 	 *  fetches all the UserInfos belonging to this kitchen
@@ -446,12 +353,7 @@ public class DAO
 
 	public Long saveKitchen(Kitchen kitchen){
 		// save for getting the kitchen id
-		try {
-			ofy().save().entity(kitchen).now();
-		}
-		catch (Throwable e) {
-			handleException(e);
-		} 
+		ofy().save().entity(kitchen).now();
 		
 		List<UserInfo> kitchenUserInfos = getUserInfosFromKitchen(kitchen);
 		
@@ -467,37 +369,25 @@ public class DAO
 		}
 
 		// now save again the relationships
-		try {
-			ofy().save().entity(kitchen).now();
-		}
-		catch (Throwable e) {
-			handleException(e);
-			return null;
-		} 
+		ofy().save().entity(kitchen).now();
+
 		return kitchen.getId();
 	}
 
 	/**
 	 * 
 	 * @param kitchenId
-	  * @return the kitchen or null if not found or an exception occured
+	  * @return the kitchen or null if not found
 	 */
 	public Kitchen getKitchen(Long kitchenId) {
-		
-		Kitchen kitchen = null;
-		try {
-			kitchen = ofy().load().type(Kitchen.class).id(kitchenId).get();
-		}
-		catch (Exception e) {
-			handleException(e);
-		} 
+		Kitchen kitchen = ofy().load().type(Kitchen.class).id(kitchenId).get();
 		return kitchen;
 	}
 	
 	/**
 	 * 
 	 * @param kitchenId
-	 * @return false if kitchen could't be found or delete process failed
+	 * @return false if kitchen could't be found (many to many update failed
 	 */
 	public Boolean deleteKitchen(Long kitchenId) {
 		Kitchen kitchen = getKitchen(kitchenId);
@@ -513,13 +403,8 @@ public class DAO
 			}
 			*/
 			
-			try {
-				ofy().delete().type(Kitchen.class).id(kitchenId);
-			}
-			catch (Throwable e) {
-				handleException(e);
-				return false;
-			} 
+			ofy().delete().type(Kitchen.class).id(kitchenId);
+
 			return true;
 		}
 		else return false;
@@ -531,16 +416,10 @@ public class DAO
 	 * @return never null, an empty list if an error occured
 	 */
 	public ArrayList<Kitchen> getUserKitchens(String userId){
-		try {
-			//DISCUSS could also be done via kitchenList of UserInfo
-			List<Kitchen> kitchens = ofy().load().type(Kitchen.class).filter("userIds", userId).list();
-			// Do that to avoid ResultProxy to be returned. Convert into propper List
-			return new ArrayList<Kitchen>(kitchens);
-		}
-		catch (Throwable e) {
-			handleException(e);
-			return new ArrayList<Kitchen>();
-		} 
+		//DISCUSS could also be done via kitchenList of UserInfo
+		List<Kitchen> kitchens = ofy().load().type(Kitchen.class).filter("userIds", userId).list();
+		// Do that to avoid ResultProxy to be returned. Convert into propper List
+		return new ArrayList<Kitchen>(kitchens);
 	}
 
 	/**
@@ -548,15 +427,9 @@ public class DAO
 	 * @return all kitchen from the databaseor an empty list if failed
 	 */
 	public ArrayList<Kitchen> getAdminKitchens(){
-		try {
-			List<Kitchen> kitchens = ofy().load().type(Kitchen.class).list();
-			// Do that to avoid ResultProxy to be returned. Convert into propper List
-			return new ArrayList<Kitchen>(kitchens);
-		}
-		catch (Throwable e) {
-			handleException(e);
-			return new ArrayList<Kitchen>();
-		} 
+		List<Kitchen> kitchens = ofy().load().type(Kitchen.class).list();
+		// Do that to avoid ResultProxy to be returned. Convert into propper List
+		return new ArrayList<Kitchen>(kitchens);
 	}
 
 	

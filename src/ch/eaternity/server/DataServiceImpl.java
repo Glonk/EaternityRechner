@@ -115,15 +115,11 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		
 		Recipe recipe = dao.getRecipe(id);
-		UserInfo userInfo = dao.getUserInfo();
-		 
-		if (userInfo != null) {
-			if (!userInfo.getId().equals(recipe.getUserId()))
-				throw new NotLoggedInException("User " + userInfo.getNickname() + " doesn't own this recipe.");
+		if (recipe != null) {
+			if (!recipe.getUserId().equals(getUserId()))
+				throw new UnsupportedOperationException("User with Id " + getUserId() + " doesn't own this recipe.");
 		}
-		else if (recipe.isPublished());
-		else
-			throw new NotLoggedInException();
+		//TODO add loading recipe possible if published
 		
 		return recipe;
 	}
@@ -132,12 +128,6 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		checkLoggedIn();
 		DAO dao = new DAO();
 		return dao.saveRecipe(recipe);
-	}
-
-	public Boolean approveRecipe(Long id, Boolean approve) throws NotLoggedInException {
-		checkLoggedIn();
-		DAO dao = new DAO();
-		return dao.approveRecipe(id, approve);
 	}
  
 	public Boolean deleteRecipe(Long recipeId) throws NotLoggedInException {
@@ -194,7 +184,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		ClientData data = new ClientData();
 		
 		// ------ RecipePlace independant -------
-		data.kitchens = dao.getUserKitchens(getUserId());
+		if (checkAdmin())
+			data.kitchens = dao.getAdminKitchens();
+		else
+			data.kitchens = dao.getUserKitchens(getUserId());
 		
 		data.userInfo = dao.getUserInfo(requestUri);
 		
