@@ -49,6 +49,13 @@
 	}
 
   </ui:style>
+  
+  <ui:style field='selectedRecipeScopeStyle'
+		type='ch.eaternity.client.ui.TopPanel.SelectedRecipeScopeStyle'>
+			.selectedRecipeScopeMarking{
+				background-color: #A7B424; !important;
+			}
+	</ui:style>
 
 
 	<g:HTMLPanel>
@@ -71,9 +78,11 @@
 						<g:HTML ui:field="spinnerHTML"></g:HTML>
 						<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
 					</g:HorizontalPanel>
+					<!--  
 					<b:Button ui:field="userRecipesButton">Meine Rezepte</b:Button>
 					<b:Button ui:field="kitchenRecipesButton">Küchen</b:Button>
 					<b:Button ui:field="publicRecipesButton">Öffentliche Rezepte</b:Button>
+					-->
 					<g:MenuBar ui:field='recipesMenuBar'></g:MenuBar>
 				</g:HorizontalPanel>
 			

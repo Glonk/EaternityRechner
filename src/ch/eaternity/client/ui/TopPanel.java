@@ -7,11 +7,14 @@ import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.KitchenChangedEvent;
 import ch.eaternity.client.events.KitchenChangedEventHandler;
+import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.SpinnerEvent;
 import ch.eaternity.client.events.SpinnerEventHandler;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
+import ch.eaternity.client.ui.RecipeEdit.TextErrorStyle;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.KitchenDialog;
 import ch.eaternity.client.ui.widgets.TooltipListener;
@@ -24,6 +27,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.place.shared.PlaceChangeEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -59,26 +63,25 @@ public class TopPanel extends Composite {
 	@UiField HTML spinnerHTML;
 	@UiField Label spinnerLabel;
 	  
+	/*
 	@UiField Button userRecipesButton;
 	@UiField Button kitchenRecipesButton;
 	@UiField Button publicRecipesButton;
-	 
+	 */
 	@UiField HTML calHTML;
 
+	@UiField static SelectedRecipeScopeStyle selectedRecipeScopeStyle;
+	
+	interface SelectedRecipeScopeStyle extends CssResource {
+		String selectedRecipeScopeMarking();
+	}
 
 	private DataController dco;
 	private RechnerActivity presenter;
 	
-	MenuBar kitchenMenu = new MenuBar(true);
-	
-	
-	public void setPresenter(RechnerActivity presenter) {
-		this.presenter = presenter;
-		this.dco = presenter.getDCO();
-		bind();
-		RecipeScope recipeScope = dco.getRecipeScope();
-		colorRecipeScope(recipeScope);
-	}
+	private MenuItem userMenu;
+	private MenuBar kitchenMenu = new MenuBar(true);
+	private MenuItem publicMenu;
 
 	public TopPanel() {
 		initWidget(binder.createAndBindUi(this));
@@ -86,12 +89,13 @@ public class TopPanel extends Composite {
 		adminMenuBar.setVisible(false);
 		signInLink.setVisible(false);
 		signOutLink.setVisible(false);
-		userRecipesButton.setVisible(false);
-		kitchenRecipesButton.setVisible(false);
 		
 		spinnerPanel.setVisible(false);
 		spinnerHTML.setHTML("<img src='images/spinner_small.gif' />");
 		spinnerLabel.setText("loading ...");
+		
+		kitchenMenu.setVisible(false);
+		kitchenMenu.setAutoOpen(true);
 
 		Monate.addItem("Januar");
 		Monate.addItem("Februar");
@@ -112,13 +116,19 @@ public class TopPanel extends Composite {
 		calHTML.addMouseListener(new TooltipListener(
 				"Der Monat in dem Sie kochen.",
 				5000 /* timeout in milliseconds */, "toolTipDown", -130, 10));
-		
-		
 	}
 	
-	private void updateKitchenMenu() {
+	public void setPresenter(RechnerActivity presenter) {
+		this.presenter = presenter;
+		this.dco = presenter.getDCO();
+		bind();
+		RecipeScope recipeScope = dco.getRecipeScope();
+		colorRecipeScope(recipeScope);
+	}
+	
+	private void updateRecipesMenu() {
 		kitchenMenu.clearItems();
-		
+		kitchenMenu.setVisible(false);
 		List<Kitchen> kitchens = dco.getKitchens();
 		Kitchen currentKitchen = dco.getCurrentKitchen();
 		
@@ -128,6 +138,7 @@ public class TopPanel extends Composite {
 			if (currentKitchen != null) {
 				kitchens.remove(currentKitchen);
 				kitchens.add(0,currentKitchen);
+				
 			}
 			
 			for (final Kitchen kitchen : kitchens) {
@@ -138,6 +149,7 @@ public class TopPanel extends Composite {
 					}
 				}));
 			}
+			kitchenMenu.setVisible(true);
 		}
 		
 		if (dco.getUserInfo() != null && dco.getUserInfo().isAdmin()) {
@@ -147,8 +159,16 @@ public class TopPanel extends Composite {
 					kDlg.setPresenter(presenter);
 				}
 			}));
+			kitchenMenu.setVisible(true);
 		}
 		
+		recipesMenuBar.clearItems();
+		recipesMenuBar.addItem(userMenu);
+		if (currentKitchen != null)
+			recipesMenuBar.addItem(currentKitchen.getSymbol(), kitchenMenu);
+		else
+			recipesMenuBar.addItem("Küchen", kitchenMenu);
+		recipesMenuBar.addItem(publicMenu);
 		
 	}
 
@@ -172,10 +192,27 @@ public class TopPanel extends Composite {
 		
 		adminMenuBar.addItem("Admin Menü", adminMenu);
 		
+	
+		
 		// ------------- Kitchen Menu ----------------
 		
+		userMenu = new MenuItem("Meine Rezepte", new Command() {
+			public void execute() {
+				dco.changeCurrentKitchen(null);
+				presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.USER.toString()));
+			}
+		});
 		
-		recipesMenuBar.addItem("Küchen", kitchenMenu);
+		publicMenu = new MenuItem("Öffentliche Rezepte", new Command() {
+			public void execute() {
+				dco.changeCurrentKitchen(null);
+				presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.PUBLIC.toString()));
+			}
+		});
+		
+		userMenu.setVisible(false);
+		
+		updateRecipesMenu();
 		
 		
 		// ---------------- Listen to the EventBus ----------------
@@ -190,11 +227,19 @@ public class TopPanel extends Composite {
 					}
 				});
 		
+		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE,
+				new LoadedDataEventHandler() {
+					@Override
+					public void onEvent(LoadedDataEvent event) {
+						updateRecipesMenu();
+					}
+				});
+		
 		presenter.getEventBus().addHandler(KitchenChangedEvent.TYPE,
 				new KitchenChangedEventHandler() {
 					@Override
 					public void onKitchenChanged(KitchenChangedEvent event) {
-						updateKitchenMenu();
+						updateRecipesMenu();
 					}
 
 				});
@@ -224,17 +269,13 @@ public class TopPanel extends Composite {
 				new LoginChangedEventHandler() {
 					@Override
 					public void onEvent(LoginChangedEvent event) {
-						updateKitchenMenu();
+						updateRecipesMenu();
 						if (dco.getUserInfo().isLoggedIn()) {
-							signOutLink.setHref(dco.getUserInfo()
-									.getLogoutUrl());
+							signOutLink.setHref(dco.getUserInfo().getLogoutUrl());
 							signInLink.setVisible(false);
 							signOutLink.setVisible(true);
-
-							if (dco.getKitchens() != null)
-								kitchenRecipesButton.setVisible(true);	
-							
-							userRecipesButton.setVisible(true);
+						
+							userMenu.setVisible(true);
 							
 							if (event.loginInfo.isAdmin()) {
 								adminMenuBar.setVisible(true);
@@ -248,8 +289,8 @@ public class TopPanel extends Composite {
 							signInLink.setVisible(true);
 							signOutLink.setVisible(false);
 
-							kitchenRecipesButton.setVisible(false);			
-							userRecipesButton.setVisible(false);
+							userMenu.setVisible(false);
+							kitchenMenu.setVisible(false);
 							adminMenuBar.setVisible(false);
 						}
 					}
@@ -257,6 +298,18 @@ public class TopPanel extends Composite {
 	}
 	
 	private void colorRecipeScope(RecipeScope recipeScope) {
+		String selectedRecipeScopeMarking = selectedRecipeScopeStyle.selectedRecipeScopeMarking();
+		userMenu.removeStyleName(selectedRecipeScopeMarking);
+		kitchenMenu.removeStyleName(selectedRecipeScopeMarking);
+		publicMenu.removeStyleName(selectedRecipeScopeMarking);
+		
+		switch (recipeScope) {
+			case USER: userMenu.addStyleName(selectedRecipeScopeMarking); break;
+			case KITCHEN: kitchenMenu.addStyleName(selectedRecipeScopeMarking);break;
+			case PUBLIC: publicMenu.addStyleName(selectedRecipeScopeMarking);break;
+		}	
+		
+		/*
 		userRecipesButton.setType(ButtonType.DEFAULT);
 		kitchenRecipesButton.setType(ButtonType.DEFAULT);
 		publicRecipesButton.setType(ButtonType.DEFAULT);
@@ -266,6 +319,7 @@ public class TopPanel extends Composite {
 			case KITCHEN: kitchenRecipesButton.setType(ButtonType.PRIMARY);break;
 			case PUBLIC: publicRecipesButton.setType(ButtonType.PRIMARY);break;
 		}	
+		*/
 	}
 	
 
@@ -274,24 +328,24 @@ public class TopPanel extends Composite {
 		dco.changeMonth(Monate.getSelectedIndex());
 	}
 	
-	
+	/*
 	@UiHandler("userRecipesButton")
 	public void onUserClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.USER.toString()));
 		dco.changeCurrentKitchen(null);
 	}
-	/*
+	
 	@UiHandler("kitchenRecipesButton")
 	public void onKitchenClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
 		dco.changeCurrentKitchen(null);
 	}
-	*/
+	
 	
 	@UiHandler("publicRecipesButton")
 	public void onRecipesClicked(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.PUBLIC.toString()));
 		dco.changeCurrentKitchen(null);
 	}
-
+	*/
 }

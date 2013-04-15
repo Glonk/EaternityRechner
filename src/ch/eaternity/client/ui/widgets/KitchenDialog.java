@@ -7,14 +7,19 @@ import java.util.List;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.LoadedDataEvent;
+import ch.eaternity.client.events.LoadedDataEventHandler;
+import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.shared.Device;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.UserInfo;
+import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -94,7 +99,7 @@ public class KitchenDialog extends DialogBox{
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		this.dataService = presenter.getDataService();
-		this.userInfo = dco.getUserInfo();
+		this.userInfo = dco.getUserInfo();		
 		
 		if (userInfo.isAdmin()) {
 			newKitchenButton.setVisible(true);
@@ -285,6 +290,8 @@ public class KitchenDialog extends DialogBox{
 			if (kitchen.hasChanged())
 				dco.saveKitchen(kitchen);
 		}
+		if (currentKitchen != null)
+			dco.changeCurrentKitchen(currentKitchen);
 		
 //		for (PendingChange<?> pendingChange : pendingChanges) {
 //	          pendingChange.commit();
