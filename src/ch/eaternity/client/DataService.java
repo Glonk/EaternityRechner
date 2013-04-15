@@ -35,7 +35,6 @@ public interface DataService extends RemoteService {
 	public Long saveRecipe(Recipe recipe) throws NotLoggedInException, IOException;
 	public Boolean deleteRecipe(Long rezeptId) throws NotLoggedInException;
 	public ArrayList<Recipe> getAllRecipes() throws NotLoggedInException;
-	public Boolean approveRecipe(Long rezeptId, Boolean approve) throws NotLoggedInException;
 	public ArrayList<RecipeInfo> searchRecipes(RecipeSearchRepresentation search);
 	
 	

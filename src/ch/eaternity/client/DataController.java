@@ -345,7 +345,7 @@ public class DataController {
 			}
 			public void onSuccess(Long kitchenId) {
 				kitchen.setId(kitchenId);
-				
+				eventBus.fireEvent(new KitchenChangedEvent(cdata.currentKitchen.getId()));
 			}
 		});
 	}
@@ -362,12 +362,14 @@ public class DataController {
 
 	
 	// reload will do it...
-	public void approveRecipe(final Recipe recipe, final Boolean approve) {
-		dataRpcService.approveRecipe(recipe.getId(), approve,new AsyncCallback<Boolean>() {
+	public void publish(final Recipe recipe, final Boolean publish) {
+		recipe.setPublished(publish);
+		dataRpcService.saveRecipe(recipe,new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
+				recipe.setPublished(false);
 				handleError(error);
 			}
-			public void onSuccess(Boolean ignore) {
+			public void onSuccess(Long id) {
 				eventBus.fireEvent(new AlertEvent("Rezept veröffentlicht. Bitte Seite erneut laden um das Rezept in den öffentlichen Rezepten zu sehen.", AlertType.INFO, AlertEvent.Destination.EDIT)); 
 			}
 		});

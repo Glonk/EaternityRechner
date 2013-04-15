@@ -31,8 +31,6 @@ public interface DataServiceAsync {
 	public void saveRecipe(Recipe recipe, AsyncCallback<Long> async);
 	public void deleteRecipe(Long rezeptId, AsyncCallback<Boolean> async);
 	public void getAllRecipes(AsyncCallback<ArrayList<Recipe>> asyncCallback);
-	public void approveRecipe(Long id, Boolean approve,
-			AsyncCallback<Boolean> asyncCallback);
 	public void searchRecipes(RecipeSearchRepresentation search, AsyncCallback<ArrayList<RecipeInfo>> asyncCallback);
 
 	public void getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation, AsyncCallback<ClientData> async);
