@@ -3,40 +3,33 @@ package ch.eaternity.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ch.eaternity.client.DataService;
-import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.shared.ClientData;
 import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.FoodProductInfo;
-import ch.eaternity.shared.Pair;
+import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.NotLoggedInException;
+import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.Season;
 import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.UserInfo;
-import ch.eaternity.shared.NotLoggedInException;
-import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SingleDistance;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
-import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Util.RecipePlace;
-import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -150,10 +143,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			break;
 		case USER: 
 			recipes = dao.getUserRecipes(getUserId()); 
+			for (int i=0;i<recipes.size();i++) {
+				Recipe recipe = recipes.get(i);
+				if (recipe.getKitchenId() != null)
+					recipes.remove(i);
+			}
 			break;
 		case KITCHEN: 
-			for (Long kitchenId : search.getKitchenIds())
-				recipes.addAll((ArrayList<Recipe>) dao.getKitchenRecipes(kitchenId)); 
+			recipes = dao.getKitchenRecipes(search.getKitchenId()); 
 			break;
 		}
 		

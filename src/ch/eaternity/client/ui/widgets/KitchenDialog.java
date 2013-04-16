@@ -240,52 +240,55 @@ public class KitchenDialog extends DialogBox{
 		try {
 			if ("".equals(text)) {
 				energyMixCO2.removeStyleName(errorStyle);
-			} 
-			else {
+			} else {
 				energyMix = Double.parseDouble(energyMixCO2.getText().trim());
 				if (energyMix > 0) {
 					success = true;
 					energyMixCO2.removeStyleName(errorStyle);
 				}
 			}
-		} 
-		catch (Exception e) {}
+		} catch (Exception e) {
+		}
 
 		if (success) {
 			currentKitchen.getEnergyMix().Co2PerKWh = energyMix;
 			currentKitchen.setChanged(true);
-		} 
-		else {
+		} else {
 			energyMixCO2.addStyleName(errorStyle);
 		}
 	}
 
-	  
-	  @UiHandler("newKitchenButton")
-	  public void onNewKitchenClick(ClickEvent event) {
-		  currentKitchen = new Kitchen();
-		  currentKitchen.setProcessedLocation(currentLocation);
-		  userKitchens.add(currentKitchen);
-		  switchKitchen();
-	  }
+	@UiHandler("newKitchenButton")
+	public void onNewKitchenClick(ClickEvent event) {
+		currentKitchen = new Kitchen();
+		currentKitchen.setProcessedLocation(currentLocation);
+		userKitchens.add(currentKitchen);
+		switchKitchen();
+	}
 
-	  
-		@UiHandler("exitButton")
-		void onOkayClicked(ClickEvent event) {
-			dco.changeCurrentKitchen(currentKitchen);
-		    saveAndCloseDialog();
-		}
-		
-	  
-		//REFACTOR: call deleteKitchen in DataController
-	  @UiHandler("deleteKitchenButton")
-	  void onDeleteKitchenPress(ClickEvent event) {
-		  dco.deleteKitchen(currentKitchen);
-	  }
+	@UiHandler("exitButton")
+	void onOkayClicked(ClickEvent event) {
+		dco.changeCurrentKitchen(currentKitchen);
+		saveAndCloseDialog();
+	}
 
+	// REFACTOR: call deleteKitchen in DataController
+	@UiHandler("deleteKitchenButton")
+	public void onDeleteKitchenPress(ClickEvent event) {
+		dco.deleteKitchen(currentKitchen);
+		userKitchens.remove(currentKitchen);
+		if (userKitchens.size() > 0)
+			currentKitchen = userKitchens.get(0);
+		else
+			scrollPanel.setVisible(false);
+			
+		updateKitchenList();
+		updateKitchenParameters();
+		changeKitchenName(currentKitchen.getSymbol());
+	}
 
 	private void saveAndCloseDialog() {
-		
+
 		for (Kitchen kitchen : userKitchens) {
 			if (kitchen.hasChanged())
 				dco.saveKitchen(kitchen);

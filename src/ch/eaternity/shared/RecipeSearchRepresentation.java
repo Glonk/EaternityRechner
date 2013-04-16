@@ -38,7 +38,7 @@ public class RecipeSearchRepresentation implements Serializable {
 	/**
 	 * usually just one, maybee more
 	 */
-	private List<Long> kitchenIds = new ArrayList<Long>();
+	private Long kitchenId;
 
 	// ---------------------- Public Methods  ---------------------
 	
@@ -76,12 +76,12 @@ public class RecipeSearchRepresentation implements Serializable {
 		this.scope = scope;
 	}
 
-	public List<Long> getKitchenIds() {
-		return kitchenIds;
+	public Long getKitchenId() {
+		return kitchenId;
 	}
 
-	public void setKitchenIds(List<Long> kitchenIds) {
-		this.kitchenIds = kitchenIds;
+	public void setKitchenId(Long kitchenId) {
+		this.kitchenId = kitchenId;
 	}
 	
 	

@@ -326,6 +326,8 @@ public class DataController {
 		else {
 			cdata.currentKitchen = kitchen;
 			cdata.userInfo.setCurrentKitchen(kitchen.getId());
+			cdata.recipeSeachRepresentation.setKitchenId(kitchen.getId());
+			
 			eventBus.fireEvent(new KitchenChangedEvent(kitchen.getId()));
 		}
 		
@@ -387,8 +389,8 @@ public class DataController {
 	}
 	
 	public void changeRecipeScope(RecipeScope recipeScope) {
-		
-		if (cdata.recipeScope != recipeScope) {
+		//TODO now kitchen recipes get always loaded, just load them when necessary...
+		if (cdata.recipeScope != recipeScope || recipeScope == RecipeScope.KITCHEN) {
 			cdata.recipeScope = recipeScope;
 			cdata.recipeSeachRepresentation.setScope(recipeScope);
 			if (viewDataLoaded)
