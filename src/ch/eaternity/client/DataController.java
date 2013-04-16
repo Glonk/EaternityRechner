@@ -80,50 +80,50 @@ public class DataController {
 				// ------ RecipePlace independant -------
 				if (data.userInfo.isLoggedIn() && data.userInfo.isEnabled()) {
 					setUserInfo(data.userInfo);
+				
+					cdata.kitchens = data.kitchens;
+					
+					// Load currentKitchen via ID
+					boolean kitchenLoaded = true;
+					if (cdata.userInfo.getCurrentKitchen() != null)
+					{
+						cdata.currentKitchen = cdata.getKitchenByID(cdata.userInfo.getCurrentKitchen());
+						if (cdata.currentKitchen == null)
+							kitchenLoaded = false;
+					}
+					else
+						kitchenLoaded = false;
+					
+					if (kitchenLoaded) {
+						changeCurrentKitchen(cdata.currentKitchen);
+					}
+					
+					// ------ RecipePlace View -------
+					if (recipePlace == RecipePlace.VIEW) {
+						addRecipeInfos(data.recipeInfos); 
+						viewDataLoaded = true;
+					}
+					// ------ RecipePlace EDIT -------
+					if (recipePlace == RecipePlace.EDIT) {
+						cdata.productInfos = data.productInfos;
+						editDataLoaded = true;
+						//TODO add Distances to cdata here
+					}
+				
+							
+					// Load current Month or Kitchen Month
+					Date date = new Date();
+					//TODO change with correct loaded month
+					cdata.userInfo.setCurrentMonth(date.getMonth() + 1);
+					eventBus.fireEvent(new MonthChangedEvent(cdata.userInfo.getCurrentMonth()));			
+					
+					eventBus.fireEvent(new SpinnerEvent(false));
+					//TODO probably not necessary, remove
+					eventBus.fireEvent(new LoadedDataEvent());
 				}
 				else {
 					clientFactory.getPlaceController().goTo(new LoginPlace(""));
-				}	
-				
-				cdata.kitchens = data.kitchens;
-				
-				// Load currentKitchen via ID
-				boolean kitchenLoaded = true;
-				if (cdata.userInfo != null && cdata.userInfo.getCurrentKitchen() != null)
-				{
-					cdata.currentKitchen = cdata.getKitchenByID(cdata.userInfo.getCurrentKitchen());
-					if (cdata.currentKitchen == null)
-						kitchenLoaded = false;
 				}
-				else
-					kitchenLoaded = false;
-				
-				if (kitchenLoaded) {
-					changeCurrentKitchen(cdata.currentKitchen);
-				}
-				
-				// ------ RecipePlace View -------
-				if (recipePlace == RecipePlace.VIEW) {
-					addRecipeInfos(data.recipeInfos); 
-					viewDataLoaded = true;
-				}
-				// ------ RecipePlace EDIT -------
-				if (recipePlace == RecipePlace.EDIT) {
-					cdata.productInfos = data.productInfos;
-					editDataLoaded = true;
-					//TODO add Distances to cdata here
-				}
-			
-						
-				// Load current Month or Kitchen Month
-				Date date = new Date();
-				//TODO change with correct loaded month
-				cdata.userInfo.setCurrentMonth(date.getMonth() + 1);
-				eventBus.fireEvent(new MonthChangedEvent(cdata.userInfo.getCurrentMonth()));			
-				
-				eventBus.fireEvent(new SpinnerEvent(false));
-				//TODO probably not necessary, remove
-				eventBus.fireEvent(new LoadedDataEvent());
 			}
 			
 		});

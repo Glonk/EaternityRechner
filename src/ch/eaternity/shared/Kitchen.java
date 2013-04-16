@@ -1,8 +1,5 @@
 package ch.eaternity.shared;
 
-
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,19 +13,20 @@ public class Kitchen implements Serializable {
 
 	@Id private Long id;
 	
-	// Load that on loading the whole kitchen - necessary?
-	@Ignore
-	private List<UserInfo> userInfos = new ArrayList<UserInfo>();
-	
-	/**
-	 *  many to many relationship stored in both object -> update properly!
-	 */
-	private List<String> userIds = new ArrayList<String>();
+//	// Load that on loading the whole kitchen - necessary?
+//	@Ignore
+//	private List<UserInfo> userInfos = new ArrayList<UserInfo>();
+//	
+//	/**
+//	 *  many to many relationship stored in both object -> update properly!
+//	 */
+//	private List<String> userIds = new ArrayList<String>();
 	
 	/**
 	 *  here the users with name and email, not having a UserInfo yet are stored, converted as soon as they login first time
 	 */
 	@Embed
+	@Index
 	private List<KitchenUser> kitchenUsers = new ArrayList<KitchenUser>();
 	
 	/**
@@ -114,7 +112,7 @@ public class Kitchen implements Serializable {
 	public void setEnergyMix(EnergyMix energyMix) {
 		this.energyMix = energyMix;
 	}
-
+/*
 	public List<UserInfo> getUserInfos() {
 		return userInfos;
 	}
@@ -130,7 +128,8 @@ public class Kitchen implements Serializable {
 	public void setUserIds(List<String> userIds) {
 		this.userIds = userIds;
 	}
-
+*/
+	
 	/**
 	 *  @return the users with name and email, not having a UserInfo yet are stored, converted as soon as they login first time
 	 */

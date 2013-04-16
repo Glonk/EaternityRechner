@@ -142,7 +142,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			recipes = (ArrayList<Recipe>) dao.getPublicRecipes(); 
 			break;
 		case USER: 
-			recipes = dao.getUserRecipes(getUserId()); 
+			try {
+				recipes = dao.getUserRecipes(getUserId()); 
+			} catch (NotLoggedInException nle) {}
+			
 			for (int i=0;i<recipes.size();i++) {
 				Recipe recipe = recipes.get(i);
 				if (recipe.getKitchenId() != null)
@@ -185,7 +188,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			if (checkAdmin())
 				data.kitchens = dao.getAdminKitchens();
 			else
-				data.kitchens = dao.getUserKitchens(getUserId());
+				data.kitchens = dao.getUserKitchens(getUserEmail());
 		}
 		catch (NotLoggedInException nle) {}
 
@@ -225,7 +228,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		public ArrayList<Kitchen> getUserKitchens() throws NotLoggedInException {
 			checkLoggedIn();
 			DAO dao = new DAO();
-			return dao.getUserKitchens(getUserId());	
+			return dao.getUserKitchens(getUserEmail());	
 		}
 		
 		public ArrayList<Kitchen> getAdminKitchens() throws NotLoggedInException{
@@ -247,9 +250,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	 * @throws NotLoggedInException
 	 */
 	private void checkLoggedIn() throws NotLoggedInException {
-		if (getUser() == null) {
-			throw new NotLoggedInException("Not logged in.");
-		}
+		getUser();
 	}
 	
 	private boolean checkAdmin() throws NotLoggedInException {
@@ -262,15 +263,24 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 	}
 
-	private User getUser() {
+	private User getUser() throws NotLoggedInException {
 		UserService userService = UserServiceFactory.getUserService();
-		return userService.getCurrentUser();
+		User user = userService.getCurrentUser();
+		if (user != null)
+			return user;
+		else
+			throw new NotLoggedInException("Not logged in.");
 	}
 	
-	private String getUserId() {
+	private String getUserId() throws NotLoggedInException {
 		//TODO remove User Id Hack before deployement
+		// checkLoggedIn()
 		//return getUser().getUserId();
 		return new String("1");
+	}
+	
+	private String getUserEmail() throws NotLoggedInException {
+		return getUser().getEmail();
 	}
 
 
@@ -295,7 +305,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		UserInfo userInfo = dao.getUserInfo();
 		
-		List<String> kitchenUserIds = dao.getAllKitchenUsers();
+		List<String> kitchenUserIds = dao.getAllKitchenUserMails();
 		
 		//return kitchenUserIds.contains(userInfo.getId());
 		return true;

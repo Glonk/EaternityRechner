@@ -92,9 +92,9 @@ public class DAO
 	 * Handles Exceptions,
 	 * @return A List of all userids registrated in any kitchen or empty list if an exception occured
 	 */
-	public ArrayList<String> getAllKitchenUsers() {
+	public ArrayList<String> getAllKitchenUserMails() {
 		List<Kitchen> kitchens = new ArrayList<Kitchen>();
-		ArrayList<String> userIds = new ArrayList<String>();
+		ArrayList<String> userMails = new ArrayList<String>();
 		
 		try {
 			
@@ -108,10 +108,11 @@ public class DAO
 		}
 		
 		for (Kitchen kitchen : kitchens) {
-			userIds.addAll(kitchen.getUserIds());
+			for (KitchenUser kitchenUser : kitchen.getKitchenUsers())
+			userMails.add(kitchenUser.getEmailAddress());
 		}
 		
-		return userIds;
+		return userMails;
 	}
 	
 	public Boolean saveUserInfo(UserInfo userInfo) {
@@ -126,7 +127,7 @@ public class DAO
 	 * @return true if user is contained in any kitchen
 	 */
 	private Boolean isUserEnabled(String userId) {
-		List<String> kitchenUserIds = getAllKitchenUsers();
+		List<String> kitchenUserMails = getAllKitchenUserMails();
 		// TODO remove comments for just allowing kitchen Users to access calculator
 		//return kitchenUserIds.contains(userId);
 		return true;
@@ -358,21 +359,21 @@ public class DAO
 
 	public Long saveKitchen(Kitchen kitchen){
 		// save for getting the kitchen id
-		ofy().save().entity(kitchen).now();
-		
+		// ofy().save().entity(kitchen).now();
+		/*
 		List<UserInfo> kitchenUserInfos = getUserInfosFromKitchen(kitchen);
 		
 		// Apply the many to many relationship
 		for (UserInfo userInfo : kitchenUserInfos) {
 			kitchen.getUserIds().clear();
 			kitchen.getUserIds().add(userInfo.getId());
-			/*
+			
 			if (!userInfo.getKitchenIDs().contains(kitchen.getId()) {
 				saveUserInfo(userInfo);
 			}
-			*/
+			
 		}
-
+		 */
 		// now save again the relationships
 		ofy().save().entity(kitchen).now();
 
@@ -420,9 +421,9 @@ public class DAO
 	 * @param userId
 	 * @return never null, an empty list if an error occured
 	 */
-	public ArrayList<Kitchen> getUserKitchens(String userId){
+	public ArrayList<Kitchen> getUserKitchens(String userMail){
 		//DISCUSS could also be done via kitchenList of UserInfo
-		List<Kitchen> kitchens = ofy().load().type(Kitchen.class).filter("userIds", userId).list();
+		List<Kitchen> kitchens = ofy().load().type(Kitchen.class).filter("kitchenUsers.emailAddress", userMail).list();
 		// Do that to avoid ResultProxy to be returned. Convert into propper List
 		return new ArrayList<Kitchen>(kitchens);
 	}
