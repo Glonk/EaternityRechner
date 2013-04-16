@@ -13,6 +13,7 @@ import ch.eaternity.shared.Commitment;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.KitchenUser;
 import ch.eaternity.shared.Pair;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
@@ -337,18 +338,22 @@ public class DAO
 	 */
 	private ArrayList<UserInfo> getUserInfosFromKitchen(Kitchen kitchen) {
 		List<String> kitchenMailAdresses = new ArrayList<String>();
-		for (Pair<String,String> pair : kitchen.getUnmatchedUsers()) {
-			kitchenMailAdresses.add(pair.second());
+		for (KitchenUser kitchenUser : kitchen.getKitchenUsers()) {
+			kitchenMailAdresses.add(kitchenUser.getEmailAddress());
 		}
 		List<UserInfo> kitchenUserInfos;
-		try {
-			kitchenUserInfos = ofy().load().type(UserInfo.class).filter("emailAdress in", kitchenMailAdresses).list();
-			return new ArrayList<UserInfo>(kitchenUserInfos);
+		if (kitchenMailAdresses.size() > 0) {
+			try {
+				kitchenUserInfos = ofy().load().type(UserInfo.class).filter("emailAdress in", kitchenMailAdresses).list();
+				return new ArrayList<UserInfo>(kitchenUserInfos);
+			}
+			catch (Throwable e) {
+				handleException(e);
+				return new ArrayList<UserInfo>();
+			}
 		}
-		catch (Throwable e) {
-			handleException(e);
+		else
 			return new ArrayList<UserInfo>();
-		}
 	}
 
 	public Long saveKitchen(Kitchen kitchen){

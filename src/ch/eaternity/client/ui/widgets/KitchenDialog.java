@@ -1,32 +1,29 @@
 package ch.eaternity.client.ui.widgets;
 
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.eaternity.client.DataController;
-import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.client.events.LoadedDataEvent;
-import ch.eaternity.client.events.LoadedDataEventHandler;
-import ch.eaternity.client.place.RechnerRecipeViewPlace;
-import ch.eaternity.shared.Device;
 import ch.eaternity.shared.Kitchen;
+import ch.eaternity.shared.KitchenUser;
 import ch.eaternity.shared.UserInfo;
-import ch.eaternity.shared.Util.RecipeScope;
 
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -35,13 +32,24 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
 
 
 public class KitchenDialog extends DialogBox{
 	interface Binder extends UiBinder<Widget, KitchenDialog> { }
 	private static final Binder binder = GWT.create(Binder.class);
-
-	private DataServiceAsync dataService;
+	
+	/**
+	 * The key provider that allows us to identify Contacts even if a field
+	 * changes. We identify contacts by their unique ID.
+	 */
+	private final ProvidesKey<KitchenUser> KEY_PROVIDER = new ProvidesKey<KitchenUser>() {
+		@Override
+		public Object getKey(KitchenUser item) {
+			return (item == null) ? null : item.getId();
+		}
+	};
 	
 	@UiField ScrollPanel scrollPanel;
 	@UiField ListBox kitchenList;
@@ -51,15 +59,16 @@ public class KitchenDialog extends DialogBox{
 	
 	@UiField InlineLabel locationLabel;
 	@UiField Button locationButton;
-	
+	/*
 	@UiField static CellTable<Device> devidesCellTable  = new CellTable<Device>();
 	@UiField Button addDevice;
+	*/
 	
-	@UiField static CellTable<UserInfo> personsCellTable  = new CellTable<UserInfo>();
+	@UiField CellTable<KitchenUser> usersCellTable = new CellTable<KitchenUser>(KEY_PROVIDER);
 	@UiField Button addPerson;
 	
-	@UiField static TextBox energyMixName;
-	@UiField static TextBox energyMixCO2;
+	@UiField TextBox energyMixName;
+	@UiField TextBox energyMixCO2;
 
 	@UiField Button newKitchenButton;
 	@UiField Button deleteKitchenButton;
@@ -67,60 +76,63 @@ public class KitchenDialog extends DialogBox{
 	
 	@UiField static TextErrorStyle textErrorStyle;
 	
+	interface TextErrorStyle extends CssResource {
+		String redTextError();
+	}
+	
 	private RechnerActivity presenter;
 	private DataController dco;
 	
-	private static List<Device> devices = Arrays.asList(new Device());
-	private static List<UserInfo> kitchenStaff; // = Arrays.asList(new UserInfo("Name","email"));
+	//private static List<Device> devices = Arrays.asList(new Device());
+	private List<KitchenUser> kitchenStaff = new ArrayList<KitchenUser>();// = Arrays.asList(new KitchenUser("Name","email"));
+	
+	private ListDataProvider<KitchenUser> usersDataProvider = new ListDataProvider<KitchenUser>();
 	
 	/**
 	 * The current location setted in outside of any kitchen - for adding new kitchen
 	 */
-	String currentLocation;
-	String kitchenName;
+	private String currentLocation;
 	
-	List<Kitchen> userKitchens;
-	Kitchen currentKitchen;
+	private List<Kitchen> userKitchens;
+	private Kitchen currentKitchen;
 	
 	private UserInfo userInfo;
-	
-	interface TextErrorStyle extends CssResource {
-		String redTextError();
-	}
 	
 	
 	// ---------------  public Methods--------------- 
 	
 	public KitchenDialog() {
-		setWidget(binder.createAndBindUi(this));
+		
 	}
 	
 	public void setPresenter(RechnerActivity presenter){
+		setWidget(binder.createAndBindUi(this));
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.dataService = presenter.getDataService();
 		this.userInfo = dco.getUserInfo();		
 		
-		if (userInfo.isAdmin()) {
+		kitchenStaff.add(new KitchenUser("Aurelian", "auja@gmx.ch"));
+		kitchenStaff.add(new KitchenUser("Jorim", "joirm@gmx.ch"));
+		kitchenStaff.add(new KitchenUser("Test", "test@gmx.ch"));
+		
+		if (userInfo.isAdmin()) 
 			newKitchenButton.setVisible(true);
-		}
-		else {
+		else
 			newKitchenButton.setVisible(true);
-		}
 
 		userKitchens = dco.getKitchens();
 		 
 		currentKitchen = dco.getCurrentKitchen();
 		if (currentKitchen != null) {
-			currentLocation = currentKitchen.getProcessedLocation();
-			devices = currentKitchen.getDevices();
-			kitchenStaff = currentKitchen.getUserInfos();
+			//currentLocation = currentKitchen.getProcessedLocation();
+			usersDataProvider.setList(currentKitchen.getKitchenUsers());
 			updateKitchenList();
 			updateKitchenParameters();
 			changeKitchenName(currentKitchen.getSymbol());
 		}
-		else if (userKitchens.size() > 0) {
+		else if (userKitchens.size () > 0) {
 			currentKitchen = userKitchens.get(0);
+			usersDataProvider.setList(currentKitchen.getKitchenUsers());
 			updateKitchenList();
 			updateKitchenParameters();
 			changeKitchenName(currentKitchen.getSymbol());
@@ -129,10 +141,7 @@ public class KitchenDialog extends DialogBox{
 			currentLocation = dco.getCurrentLocation();
 			scrollPanel.setVisible(false);
 		}
-		
-		
-		
-		//initCellTable();
+		initPersonCellTable();
 		
 		openDialog();
 	}
@@ -192,7 +201,7 @@ public class KitchenDialog extends DialogBox{
 		currentKitchen = userKitchens.get(kitchenList.getSelectedIndex());
 		switchKitchen();
 	}
-
+	/*
 	@UiHandler("addDevice")
 	void onAddDevicePress(ClickEvent event) {
 		devices.add(new Device());
@@ -200,22 +209,21 @@ public class KitchenDialog extends DialogBox{
 		devidesCellTable.setRowData(0, devices);
 		currentKitchen.setChanged(true);
 	}
+	*/
 
 	@UiHandler("addPerson")
 	void onAddPersonPress(ClickEvent event) {
-		//kitchenStaff.add(new UserInfo("Name", "Email"));
-		personsCellTable.setRowCount(kitchenStaff.size(), true);
-		personsCellTable.setRowData(0, kitchenStaff);
+		currentKitchen.getKitchenUsers().add(new KitchenUser("Name", "Email"));
+		usersDataProvider.refresh();
 		currentKitchen.setChanged(true);
 	}
-	  
-	  @UiHandler("locationButton")
-	  void onClick(ClickEvent event) {
-		  DistancesDialog ddlg = new DistancesDialog(); 
-		  ddlg.setPresenter(presenter);
-	  }
-		  
-	
+
+	@UiHandler("locationButton")
+	void onClick(ClickEvent event) {
+		DistancesDialog ddlg = new DistancesDialog();
+		ddlg.setPresenter(presenter);
+	}
+
 	@UiHandler("kitchenNameTextBox")
 	void onNameChange(KeyUpEvent event) {
 		changeKitchenName(kitchenNameTextBox.getText());
@@ -296,83 +304,82 @@ public class KitchenDialog extends DialogBox{
 		if (currentKitchen != null)
 			dco.changeCurrentKitchen(currentKitchen);
 		
-//		for (PendingChange<?> pendingChange : pendingChanges) {
-//	          pendingChange.commit();
-//	        }
-//        pendingChanges.clear();
-//		
-//        for (PendingPersonChange<?> pendingPersonChange : pendingPersonChanges) {
-//        	pendingPersonChange.commit();
-//	        }
-//        pendingPersonChanges.clear();
-//        
-//		
-//		// this shoots to many rpc calls... (one should be enough)
-//		// shouldn't shoot any, if there is no change...
-//		// which exactly for this purpose the requestFactory in GWT 2.1 was developed...
-//		if(dco.getCurrentKitchen() != null){
-//			// this is a hacK:
-//			dco.getCurrentKitchen().hasChanged = false;
-//			
-//			dataService.addKitchen(dco.getCurrentKitchen(), new AsyncCallback<Long>() {
-//				@Override
-//				public void onFailure(Throwable error) {
-//					Window.alert("Fehler : "+ error.getMessage());
-//				}
-//				@Override
-//				public void onSuccess(Long kitchenID) {
-//					// this adds a new kitchen, yet must not be the selected one:
-//					presenter.getDCO().changeKitchenRecipes(kitchenID);
-//	//				Search.clientData.kitchens.add(kitchen);
-//	//				kitchens.addItem(kitchen.getSymbol());
-//					saveLastKitchen(kitchenID);
-//					
-//				}
-//			});
-//		}
-//		
-//		// The other kitchens need also to be saved...
-//		
-//		for(final Kitchen kitchen: userKitchens){
-//			// save all kitchens at once
-//			if(kitchen != null && kitchen.hasChanged){ // has changed still needs to be set false	
-//				dataService.addKitchen(kitchen, new AsyncCallback<Long>() {
-//					@Override
-//					public void onFailure(Throwable error) {
-//						Window.alert("Fehler : "+ error.getMessage());
-//					}
-//					@Override
-//					public void onSuccess(Long kitchenID) {
-//						// this adds a new kitchen, yet must not be the selected one:
-//						kitchen.id = kitchenID;
-//		//				Search.clientData.kitchens.add(kitchen);
-//		//				kitchens.addItem(kitchen.getSymbol());
-//					}
-//				});
-//			}
-//		}	
-//		
 		hide();
 	}
 
-
+	/**
+	 * set the current kitchen before calling this method accordingly. this changes all the parameters
+	 * 
+	 */
 	private void switchKitchen() {
 		updateKitchenList();
 		updateKitchenParameters();
 		changeKitchenName(currentKitchen.getSymbol());
+
+		usersDataProvider.setList(currentKitchen.getKitchenUsers());
+	}
+
+	public void initPersonCellTable() {
 		
-//		/*
-//		devices = currentKitchen.getDevices;
-//		devidesCellTable.setRowCount(devices.size(), true);
-//		devidesCellTable.setRowData(0, devices);
-//		devidesCellTable.redraw();
-//
-//		// also persons
-//		kitchenStaff = currentKitchen.personal;
-//		personsCellTable.setRowCount(kitchenStaff.size(), true);
-//		personsCellTable.setRowData(0, kitchenStaff);
-//		personsCellTable.redraw();
-//		 */
+		usersCellTable.setWidth("70%", true);
+		usersCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		Column<KitchenUser, String> nameColumn = new Column<KitchenUser, String>(new TextInputCell()) {
+			@Override
+			public String getValue(KitchenUser kitchenUser) {
+				return kitchenUser.getNickname();
+			}
+		};
+
+		Column<KitchenUser, String> mailColumn = new Column<KitchenUser, String>(new TextInputCell()) {
+			@Override
+			public String getValue(KitchenUser kitchenUser) {
+				return kitchenUser.getEmailAddress();
+			}
+		};
+		
+		ActionCell.Delegate<KitchenUser> actionDelegate = new ActionCell.Delegate<KitchenUser>() {
+			@Override
+			public void execute(KitchenUser kitchenUser) {
+				for (int i = 0; i < currentKitchen.getKitchenUsers().size(); i++) {
+					KitchenUser iterateUser = currentKitchen.getKitchenUsers().get(i);
+					if (iterateUser == kitchenUser)
+						currentKitchen.getKitchenUsers().remove(i);
+				}
+				// currentKitchen.getKitchenUsers().remove(kitchenUser);
+				//usersDataProvider.setList(currentKitchen.getKitchenUsers());
+				usersDataProvider.refresh();
+				usersCellTable.redraw();
+			}
+		};
+		
+		Column<KitchenUser, KitchenUser> removeColumn = new Column<KitchenUser, KitchenUser>(new ActionCell<KitchenUser>("x", actionDelegate)) {
+			@Override
+			public KitchenUser getValue(KitchenUser kitchenUser) {
+				return kitchenUser;
+			}
+		};;
+
+		// Add a field updater to be notified when the user enters a new name.
+		nameColumn.setFieldUpdater(new FieldUpdater<KitchenUser, String>() {
+			@Override
+			public void update(int index, KitchenUser kitchenUser, String value) {
+				kitchenUser.setNickname(value);
+			}
+		});
+
+		mailColumn.setFieldUpdater(new FieldUpdater<KitchenUser, String>() {
+			@Override
+			public void update(int index, KitchenUser kitchenUser, String value) {
+				kitchenUser.setEmailAddress(value);
+			}
+		});
+
+		usersCellTable.addColumn(nameColumn, "Name");
+		usersCellTable.addColumn(mailColumn, "Email Adresse");
+		usersCellTable.addColumn(removeColumn, "entfernen");
+
+		usersDataProvider.addDataDisplay(usersCellTable);
 	}
 	
 }

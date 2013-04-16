@@ -7,6 +7,10 @@ import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.IngredientAddedEventHandler;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoadedDataEventHandler;
+import ch.eaternity.client.events.LoginChangedEvent;
+import ch.eaternity.client.events.LoginChangedEventHandler;
+import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
@@ -88,8 +92,6 @@ public class RechnerActivity extends AbstractActivity {
 	@Override
 	public void start(AcceptsOneWidget container, EventBus eventBus) {
 		this.container = container;
-		
-		rechnerView.setVisible(true);
 	
 		SimplePanel searchPanel = rechnerView.getSearchPanel();
 		SimplePanel recipePanel = rechnerView.getRecipePanel();
@@ -124,6 +126,14 @@ public class RechnerActivity extends AbstractActivity {
 		//rechnerView.getTopPanel().setPresenter(this);
 		
 		container.setWidget(rechnerView);
+		
+		eventBus.addHandler(LoginChangedEvent.TYPE, new LoginChangedEventHandler() {
+			@Override
+			public void onEvent(LoginChangedEvent event) {
+				if (dco.getUserInfo().isLoggedIn())
+					rechnerView.setVisible(true);
+			}
+		});
 	}
 	
     /**

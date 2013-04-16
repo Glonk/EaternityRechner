@@ -38,7 +38,7 @@ public interface DataService extends RemoteService {
 	public ArrayList<RecipeInfo> searchRecipes(RecipeSearchRepresentation search);
 	
 	
-	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) throws NotLoggedInException;
+	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation);
 	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException;
 
 	public Long saveKitchen(Kitchen kitchen) throws NotLoggedInException;

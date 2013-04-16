@@ -28,7 +28,7 @@
 		.buttonPerson {
 		float: right;
 		margin-right:15px;
-		text-align: right;
+		text-align: left;
 		}
 		
 		.buttonDevice {
@@ -42,6 +42,10 @@
 			margin-right:15px;
 			text-align: right;
 			color:red;
+		}
+		
+		.TextBox {
+			width:150px;
 		}
 		
 		
@@ -74,49 +78,17 @@
 			<g:TextBox ui:field="energyMixName">Name des Angebots</g:TextBox> verursacht  
 			<g:TextBox ui:field="energyMixCO2">0.013</g:TextBox> kg CO2-Äq. / kWh.
 			<br /><br />
-	
-			<table cellspacing='0' cellpadding='0' style='width:100%;'>
-				<tr>
-					<td valign='top'>
-						<c:CellTable addStyleNames='{style.cellTable}' pageSize='15'
-							ui:field='devidesCellTable' />
-					</td>
-				</tr>
-				<tr>
-					<td align='center'>
-						<!-- <c:SimplePager -->
-						<!-- ui:field='pager' /> -->
-					</td>
-				</tr>
-			</table>
-			
-			
-			<g:FlexTable ui:field="deviceTable"></g:FlexTable>
-			<g:Button styleName='{style.buttonDevice}' ui:field="addDevice">Gerät hinzufügen</g:Button>
-			<br />
-			
+
+			<!-- Devices, not used at the moment <c:CellTable addStyleNames='{style.cellTable}' 
+			pageSize='15' ui:field='devidesCellTable' /> <g:FlexTable ui:field="deviceTable"></g:FlexTable> 
+			<g:Button styleName='{style.buttonDevice}' ui:field="addDevice">Gerät hinzufügen</g:Button> 
+			<br /> -->
 			Diese Personen können die Küche betreten:
-			<table cellspacing='0' cellpadding='0' style='width:100%;'>
-		      <tr>
-		        <td
-		          valign='top'>
-		          <c:CellTable
-		            addStyleNames='{style.cellTable}'
-		            pageSize='15'
-		            ui:field='personsCellTable' />
-		        </td>
-		      </tr>
-		      <tr>
-		        <td
-		          align='center'>
-		<!--           <c:SimplePager -->
-		<!--             ui:field='pager' /> -->
-		        </td>
-		      </tr>
-		    </table>
-			
-			<g:FlexTable ui:field="personTable"></g:FlexTable>
-			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person hinzufügen</g:Button>
+			<c:CellTable addStyleNames='{style.cellTable}' pageSize='15' ui:field='usersCellTable' />
+
+		
+			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person
+				hinzufügen</g:Button>
 			
 			</g:HTMLPanel>
 		</g:ScrollPanel>

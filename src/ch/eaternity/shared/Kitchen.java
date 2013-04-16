@@ -26,10 +26,10 @@ public class Kitchen implements Serializable {
 	private List<String> userIds = new ArrayList<String>();
 	
 	/**
-	 *  here the user with not UserInfo yet are stored, converted as soon as they registrate
-	 *  <Name, mailadress>
+	 *  here the users with name and email, not having a UserInfo yet are stored, converted as soon as they login first time
 	 */
-	private List<Pair<String, String>> userStrings = new ArrayList<Pair<String, String>>();
+	@Embed
+	private List<KitchenUser> kitchenUsers = new ArrayList<KitchenUser>();
 	
 	/**
 	 * Name of the kitchen
@@ -131,12 +131,15 @@ public class Kitchen implements Serializable {
 		this.userIds = userIds;
 	}
 
-	public List<Pair<String, String>> getUnmatchedUsers() {
-		return userStrings;
+	/**
+	 *  @return the users with name and email, not having a UserInfo yet are stored, converted as soon as they login first time
+	 */
+	public List<KitchenUser> getKitchenUsers() {
+		return kitchenUsers;
 	}
 
-	public void setUnmatchedUsers(List<Pair<String, String>> unmatchedUsers) {
-		this.userStrings = unmatchedUsers;
+	public void setKitchenUsers(List<KitchenUser> unmatchedUsers) {
+		this.kitchenUsers = unmatchedUsers;
 	}
 	
 

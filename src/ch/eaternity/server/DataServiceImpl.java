@@ -173,7 +173,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			return new ArrayList<Recipe>();
 	}
 
-	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) throws NotLoggedInException {
+	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) {
 		
 		//TODO Refactor with Transactions for parallelism, not serialized access to dao and so fort
 		
@@ -181,11 +181,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		ClientData data = new ClientData();
 		
 		// ------ RecipePlace independant -------
-		if (checkAdmin())
-			data.kitchens = dao.getAdminKitchens();
-		else
-			data.kitchens = dao.getUserKitchens(getUserId());
-		
+		try {
+			if (checkAdmin())
+				data.kitchens = dao.getAdminKitchens();
+			else
+				data.kitchens = dao.getUserKitchens(getUserId());
+		}
+		catch (NotLoggedInException nle) {}
+
 		data.userInfo = dao.getUserInfo(requestUri);
 		
 		
@@ -249,9 +252,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		}
 	}
 	
-	private boolean checkAdmin() {
+	private boolean checkAdmin() throws NotLoggedInException {
 		UserService userService = UserServiceFactory.getUserService();
-		return userService.isUserAdmin();
+		try {
+			return userService.isUserAdmin();
+		}
+		catch (IllegalStateException ise) {
+			throw new NotLoggedInException("Not logged in.");
+		}
 	}
 
 	private User getUser() {
