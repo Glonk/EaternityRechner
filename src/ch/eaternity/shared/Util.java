@@ -9,6 +9,10 @@ public class Util {
 	static public enum RecipePlace {
 		VIEW, EDIT
 	}
+	
+	static public enum SortMethod {
+		CO2VALUE, SEASON, ALPHABETIC, NONE;
+	}
 
 	/**
 	 * 

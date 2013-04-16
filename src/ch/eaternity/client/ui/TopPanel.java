@@ -135,11 +135,11 @@ public class TopPanel extends Composite {
 		if (kitchens != null && kitchens.size() > 0) {
 			
 			// put current Kitchen on beginning of list
+			/*
 			if (currentKitchen != null) {
 				kitchens.remove(currentKitchen);
 				kitchens.add(0,currentKitchen);
-				
-			}
+			} */
 			
 			for (final Kitchen kitchen : kitchens) {
 				kitchenMenu.addItem(new MenuItem(kitchen.getSymbol(), new Command() {

@@ -3,10 +3,11 @@ package ch.eaternity.shared.comparators;
 import java.util.Comparator;
 
 import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.FoodProductInfo;
 
-public class NameComparator implements Comparator<FoodProduct> {
+public class ProductNameComparator implements Comparator<FoodProductInfo> {
 	
-	public int compare(FoodProduct z1, FoodProduct z2) {
+	public int compare(FoodProductInfo z1, FoodProductInfo z2) {
 		String o1 = z1.getName();
 		String o2 = z2.getName();
 		if(o1 instanceof String && o2 instanceof String) {

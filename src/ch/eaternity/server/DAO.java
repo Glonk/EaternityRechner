@@ -410,6 +410,13 @@ public class DAO
 				saveUserInfo(userInfo);
 			}
 			*/
+			// remove kitchen id's of recipes so that they appear in User Recipes again, not getting deleted
+			List<Recipe> kitchenRecipes = getKitchenRecipes(kitchenId);
+			
+			for (Recipe recipe : kitchenRecipes) {
+				recipe.setKitchenId(null);
+			}
+			ofy().save().entities(kitchenRecipes);
 			
 			ofy().delete().type(Kitchen.class).id(kitchenId);
 
