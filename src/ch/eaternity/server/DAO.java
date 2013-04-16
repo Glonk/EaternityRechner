@@ -59,7 +59,9 @@ public class DAO
 			userInfo.setNickname(user.getNickname());
 			userInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
 			userInfo.setAdmin(userService.isUserAdmin());
-			userInfo.setEnabled(isUserEnabled(userInfo.getId()));
+			userInfo.setEnabled(isUserEnabled(user.getEmail()));
+			if (userService.isUserAdmin())
+				userInfo.setEnabled(true);
 			ofy().save().entity(userInfo);
 		} 
 		else {
@@ -83,7 +85,9 @@ public class DAO
 
 		if (user != null) {
 			userInfo = ofy().load().type(UserInfo.class).id(userId).get();
-			userInfo.setEnabled(isUserEnabled(userInfo.getId()));
+			userInfo.setEnabled(isUserEnabled(user.getEmail()));
+			if (userService.isUserAdmin())
+				userInfo.setEnabled(true);
 		}
 		return userInfo;
 	}
@@ -122,15 +126,13 @@ public class DAO
 	}
 	
 	/**
-	 * Iterates through all kitchens, collecting all user Ids, determining if a user is contained within a kitchen
-	 * @param userId
+	 * Iterates through all kitchens, collecting all user Mails, determining if a userMail is contained within a kitchen
+	 * @param userMail
 	 * @return true if user is contained in any kitchen
 	 */
-	private Boolean isUserEnabled(String userId) {
+	private Boolean isUserEnabled(String userMail) {
 		List<String> kitchenUserMails = getAllKitchenUserMails();
-		// TODO remove comments for just allowing kitchen Users to access calculator
-		//return kitchenUserIds.contains(userId);
-		return true;
+		return kitchenUserMails.contains(userMail);
 	}
 	
 	// ------------------------ Ingredients -----------------------------------
