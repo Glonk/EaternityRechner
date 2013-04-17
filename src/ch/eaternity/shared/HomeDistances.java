@@ -40,7 +40,7 @@ public class HomeDistances implements Serializable {
 	@Index
 	private String homeLocation;
 	
-	private Geocoder geocoder = new Geocoder();
+	private final static Geocoder geocoder = new Geocoder();
 	
 	// how many seconds to wait for the distance request call
 	private static Integer timeToWait = 1;
@@ -61,7 +61,12 @@ public class HomeDistances implements Serializable {
 	 * @return the requested route, null if from or to where invalid parameters or request failed
 	 */
 	public Route getRoute(String from, String to) {
-		Route route = distancesMap.get(from);
+		if (to.equals(homeLocation)) {
+			Route route = distancesMap.get(from);
+			return route;
+		}
+		else return null;
+		/*
 		if (route == null) {
 			Double distance = requestAirDistance(from, to);
 			if (distance == null) return null;
@@ -72,6 +77,7 @@ public class HomeDistances implements Serializable {
 			}
 		}
 		return route; 
+		*/
 	}	
 	
 	/**
@@ -96,8 +102,7 @@ public class HomeDistances implements Serializable {
 	public Placemark processLocation(final String location) {
 		final List<Placemark> processedLocation = new ArrayList<Placemark>();
 		geocoder.setBaseCountryCode("ch");
-		geocoder.getLocations(location, new LocationCallback() {
-			 
+		geocoder.getLocations(location, new LocationCallback() { 
 			public void onFailure(int statusCode) {}
 			public void onSuccess(JsArray<Placemark> locations) {
 				processedLocation.add(locations.get(0));
@@ -117,7 +122,8 @@ public class HomeDistances implements Serializable {
 	 * @param mapsTable
 	 * @return distance in meters or null if invalid arguments
 	 */
-	private Double requestAirDistance(String from, String to) {
+	private Double requestAirDistance(final String from, final String to) {
+		
 		final Placemark fromPlace = processLocation(from);
 		final Placemark toPlace = processLocation(to);
 		Double distance;

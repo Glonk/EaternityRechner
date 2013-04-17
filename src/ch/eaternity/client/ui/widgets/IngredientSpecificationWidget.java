@@ -98,7 +98,7 @@ public class IngredientSpecificationWidget extends Composite {
 		this.product = ingredient.getFoodProduct();
 		this.recipeEdit = presenter.getRecipeEdit();
 		this.dco = presenter.getDCO();
-		this.homeDistances = homeDistances;
+		this.homeDistances = dco.getHomeDistances(verifiedRecipeLocation);
 		this.verifiedRecipeLocation = verifiedRecipeLocation;
 		setFields();
 		
@@ -112,9 +112,10 @@ public class IngredientSpecificationWidget extends Composite {
 		presenterSetted = true;
 	}
 	
-	public void setIngredient(Ingredient ingredient) {
+	public void setIngredient(Ingredient ingredient, String verifiedRecipeLocation) {
 		this.ingredient = ingredient;
 		this.product = ingredient.getFoodProduct();
+		this.verifiedRecipeLocation =  verifiedRecipeLocation;
 		setFields();
 	}
 	
@@ -183,6 +184,7 @@ public class IngredientSpecificationWidget extends Composite {
 	  			ExtractionList.setSelectedIndex(i);
 	  		i++;
 		}
+		ExtractionList.addItem("andere ... ");
 	}
 	
 	/**
@@ -190,46 +192,65 @@ public class IngredientSpecificationWidget extends Composite {
 	 * @param extractionString
 	 */
 	private void processExtraction(String extractionString) {
-		geocoder.getLocations(extractionString, new LocationCallback() { 
-			public void onFailure(int statusCode) {}
-			public void onSuccess(JsArray<Placemark> locations) {
-				String verifiedFromLocation = locations.get(0).getAddress();
-
-		  		if (verifiedFromLocation != null) {
-		  			Route route = dco.getHomeDistances(verifiedRecipeLocation).getRoute(verifiedFromLocation, dco.getVerifiedUserLocation());
-		  			ingredient.setRoute(route);
-		  			
-		  			List<Extraction> extractions = product.getExtractions();
-		  			boolean foundInList = false;
-		  			
-		  			for (Extraction extraction : extractions) {
-		  				if (extraction.symbol.equals(verifiedFromLocation) ){
-		  					updateExtractionList(extraction);
-		  					switchToKnownExtractions();
-		  		  			foundInList = true;
-		  				}
-		  			}	
-			     
-		  		  	//don't add new extraction in ingredients list if already exists
-			    	if (foundInList == false) {
-			    		Extraction extraction = new Extraction(verifiedFromLocation);
-			    		ExtractionList.insertItem(verifiedFromLocation, 0);
-			    		product.getExtractions().add(0, extraction);
-			    		ingredient.setExtraction(extraction);
-			    	}
-		  		}
-		  		else {
-		  			kmHTML.setHTML("Adresse nicht auffindbar!");
-			    	  Timer t = new Timer() {
-			    		  public void run() {
-			    			  kmHTML.setHTML(calulationAnchor);
-			    		  }
-			    	  };
-			    	  t.schedule(1500);
-			    	  switchToUnknownExtraction();
-		  		}		
-			}
-		});
+		
+		Route route = homeDistances.getRoute(extractionString, verifiedRecipeLocation);
+		
+		if (route == null) {
+			geocoder.getLocations(extractionString, new LocationCallback() { 
+				public void onFailure(int statusCode) {
+					adressNotFound();
+				}
+				public void onSuccess(JsArray<Placemark> locations) {
+					final Placemark fromPlace = locations.get(0);
+					
+					geocoder.getLocations(dco.getVerifiedUserLocation(), new LocationCallback() { 
+						public void onFailure(int statusCode) {
+							adressNotFound();
+						}
+						public void onSuccess(JsArray<Placemark> locations) {
+							Placemark toPlace = locations.get(0);
+							String verifiedFromLocation = fromPlace.getAddress();
+							
+							Double distance = toPlace.getPoint().distanceFrom(fromPlace.getPoint());
+	
+							Route newRoute = new Route(verifiedFromLocation, verifiedRecipeLocation, new QuantityImpl(distance, Unit.METER));
+				  			
+				  			ingredient.setRoute(newRoute);
+				  			
+				  			List<Extraction> extractions = product.getExtractions();
+				  			boolean foundInList = false;
+				  			
+				  			for (Extraction extraction : extractions) {
+				  				if (extraction.symbol.equals(verifiedFromLocation) ){
+				  					updateExtractionList(extraction);
+				  					switchToKnownExtractions();
+				  		  			foundInList = true;
+				  				}
+				  			}	
+					     
+				  		  	//don't add new extraction in ingredients list if already exists
+					    	if (foundInList == false) {
+					    		Extraction extraction = new Extraction(verifiedFromLocation);
+					    		ExtractionList.insertItem(verifiedFromLocation, 0);
+					    		product.getExtractions().add(0, extraction);
+					    		ingredient.setExtraction(extraction);
+					    	}		
+						}
+					});
+				}
+			});
+		}
+	}
+		
+	private void adressNotFound() {
+		kmHTML.setHTML("Adresse nicht auffindbar!");
+    	  Timer t = new Timer() {
+    		  public void run() {
+    			  kmHTML.setHTML(calulationAnchor);
+    		  }
+    	  };
+    	  t.schedule(1500);
+    	  switchToUnknownExtraction();
 	}
 	
 	

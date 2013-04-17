@@ -160,7 +160,7 @@ public class Ingredient  implements Serializable {
 	}
 	
 	public int getKmDistanceRounded() {
-		int d = (int)(route.getDistanceKM().getAmount()/10000);
+		int d = (int)(route.getDistanceKM().getAmount()/10);
 		if (d%10 >= 5)
 			d = d + 10;
 		int dist = ((int)(d/10))*100;

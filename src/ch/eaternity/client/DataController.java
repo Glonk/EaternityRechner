@@ -144,13 +144,17 @@ public class DataController {
 	private void setRecipeParameters(Recipe recipe) {
 		recipe.setCreateDate(new Date());
 		
-		if (cdata.currentKitchen != null)
+		if (cdata.currentKitchen != null) {
 			recipe.setKitchenId(cdata.currentKitchen.getId());
+			recipe.setVerifiedLocation(cdata.currentKitchen.getVerifiedLocation());
+		}
 		
 		if (cdata.userInfo != null) {
 			recipe.setUserId(cdata.userInfo.getId());
-			Log.info("EditRecipe created with userInfo == null, thus no id added");
+			recipe.setVerifiedLocation(cdata.userInfo.getVerifiedLocation());
 		}
+		else
+			Log.info("EditRecipe created with userInfo == null, thus no id added");
 		
 		recipe.setPopularity(0L);
 		recipe.setHits(0L);

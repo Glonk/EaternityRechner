@@ -45,7 +45,10 @@ public class UserInfo implements Serializable {
 	private boolean enabled = false;
 	
 
-	public UserInfo() {}
+	public UserInfo() {
+		this.verifiedLocation = "Zürich, Schweiz";
+		this.currentMonth = 6;
+	}
 	
 	public boolean isLoggedIn() {
 		return loggedIn;

@@ -60,6 +60,7 @@ public class DAO
 			userInfo.setLogoutUrl(userService.createLogoutURL(requestUri));
 			userInfo.setAdmin(userService.isUserAdmin());
 			userInfo.setEnabled(isUserEnabled(user.getEmail()));
+			userInfo.setVerifiedLocation("Zürich, Schweiz");
 			if (userService.isUserAdmin())
 				userInfo.setEnabled(true);
 			ofy().save().entity(userInfo);
