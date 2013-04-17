@@ -28,6 +28,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-14.0-rc1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-gwt-14.0-rc1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-bootstrap-2.0.4.0.jar"/>
-	<classpathentry kind="lib" path="/Users/aurelianjaggi/Documents/workspace/EaternityRechner/war/WEB-INF/lib/eaticious-1.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/eaticious-1.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
