@@ -38,7 +38,7 @@ public class Kitchen implements Serializable {
 	private UploadedImage image;
 	
 	// location is a valid Google Maps location (processLocation() returns true)
-	private String processedLocation;
+	private String verifiedLocation;
 	
 	
 	@Serialize // because it has a collection inside...
@@ -80,12 +80,12 @@ public class Kitchen implements Serializable {
 		this.image = image;
 	}
 
-	public String getProcessedLocation() {
-		return processedLocation;
+	public String getVerifiedLocation() {
+		return verifiedLocation;
 	}
 
-	public void setProcessedLocation(String location) {
-		this.processedLocation = location;
+	public void setVerifiedLocation(String verifiedLocation) {
+		this.verifiedLocation = verifiedLocation;
 	}
 
 

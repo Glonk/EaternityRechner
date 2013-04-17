@@ -383,9 +383,9 @@ public class DataController {
 	 */
 
 	public void changeCurrentLocation(String processedLocation) {
-		cdata.userInfo.setCurrentLocation(processedLocation);	
+		cdata.userInfo.setVerifiedLocation(processedLocation);	
 		
-		eventBus.fireEvent(new LocationChangedEvent(cdata.userInfo.getCurrentLocation()));
+		eventBus.fireEvent(new LocationChangedEvent(cdata.userInfo.getVerifiedLocation()));
 	}
 	
 	public void changeRecipeScope(RecipeScope recipeScope) {
@@ -638,7 +638,7 @@ public class DataController {
 	}
 
 	public String getCurrentLocation() {
-		return cdata.userInfo.getCurrentLocation();
+		return cdata.userInfo.getVerifiedLocation();
 	}
 
 	public void clearEditRecipe() {

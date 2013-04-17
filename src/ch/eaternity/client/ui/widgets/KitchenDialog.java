@@ -272,7 +272,7 @@ public class KitchenDialog extends DialogBox{
 	@UiHandler("newKitchenButton")
 	public void onNewKitchenClick(ClickEvent event) {
 		currentKitchen = new Kitchen();
-		currentKitchen.setProcessedLocation(currentLocation);
+		currentKitchen.setVerifiedLocation(currentLocation);
 		userKitchens.add(currentKitchen);
 		switchKitchen();
 	}

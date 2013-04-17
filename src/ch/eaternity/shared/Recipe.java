@@ -37,6 +37,7 @@ public class Recipe implements Serializable {
 	@Index
 	private Long kitchenId; // empty is no kitchen...
 	
+	private String verifiedLocation;
 	private String shortUrl;
 	
 	private Long servings;
@@ -238,6 +239,14 @@ public class Recipe implements Serializable {
 
 	public void setKitchenId(Long kitchenId) {
 		this.kitchenId = kitchenId;
+	}
+
+	public String getVerifiedLocation() {
+		return verifiedLocation;
+	}
+
+	public void setVerifiedLocation(String verifiedLocation) {
+		this.verifiedLocation = verifiedLocation;
 	}
 
 	public Long getPersons() {

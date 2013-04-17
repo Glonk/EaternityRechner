@@ -38,7 +38,7 @@ public class UserInfo implements Serializable {
 	/**
 	 * currentLocation is a valid Google Maps location (processed)
 	 */
-	private String currentLocation;
+	private String verifiedLocation;
 	
 	private boolean isadmin = false;
 	private boolean loggedIn = false;
@@ -133,12 +133,12 @@ public class UserInfo implements Serializable {
 		this.currentMonth = currentMonth;
 	}
 
-	public String getCurrentLocation() {
-		return currentLocation;
+	public String getVerifiedLocation() {
+		return verifiedLocation;
 	}
 
-	public void setCurrentLocation(String currentLocation) {
-		this.currentLocation = currentLocation;
+	public void setVerifiedLocation(String verifiedLocation) {
+		this.verifiedLocation = verifiedLocation;
 	}
 
 	public boolean isEnabled() {
