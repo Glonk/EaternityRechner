@@ -13,7 +13,7 @@ import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Route;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.Kitchen;
@@ -39,7 +39,7 @@ public interface DataService extends RemoteService {
 	
 	
 	public ClientData getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation);
-	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException;
+	public int addDistances(ArrayList<Route> distances) throws NotLoggedInException;
 
 	public Long saveKitchen(Kitchen kitchen) throws NotLoggedInException;
 	public Boolean deleteKitchen(Long kitchenId) throws NotLoggedInException;

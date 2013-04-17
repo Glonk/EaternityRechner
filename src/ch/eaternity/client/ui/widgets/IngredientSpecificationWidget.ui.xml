@@ -25,7 +25,7 @@
 	}
 	
 	.SpecificationList {
-		width: 140px;
+		width: 200px;
 		margin-bottom:10px;
 	}
 	
@@ -60,9 +60,13 @@
 		
 		<g:HorizontalPanel>
 			<g:Label ui:field="ExtractionLabel" styleName='{style.SpecificationLabel}'>Herkunft</g:Label>
-			<g:ListBox ui:field="ExtractionList" styleName='{style.SpecificationList}'></g:ListBox>
-			<g:TextBox ui:field="UnknownExtractionTextBox" styleName='{style.UnknownExtractionTextBox}'></g:TextBox>
-			<g:HTML ui:field="kmHTML" styleName='{style.kmHTML}'></g:HTML>
+			<g:VerticalPanel >
+				<g:ListBox ui:field="ExtractionList" styleName='{style.SpecificationList}'></g:ListBox>
+				<g:HorizontalPanel>
+					<g:TextBox ui:field="UnknownExtractionTextBox" styleName='{style.UnknownExtractionTextBox}'></g:TextBox>
+					<g:HTML ui:field="kmHTML" styleName='{style.kmHTML}'></g:HTML>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
 		</g:HorizontalPanel>
 
 		<g:HorizontalPanel>

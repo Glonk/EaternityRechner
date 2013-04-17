@@ -15,7 +15,7 @@ import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Route;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.Util.RecipePlace;
@@ -34,7 +34,7 @@ public interface DataServiceAsync {
 	public void searchRecipes(RecipeSearchRepresentation search, AsyncCallback<ArrayList<RecipeInfo>> asyncCallback);
 
 	public void getData(String requestUri, RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation, AsyncCallback<ClientData> async);
-	public void addDistances(ArrayList<SingleDistance> distances,AsyncCallback<Integer> asyncCallback);
+	public void addDistances(ArrayList<Route> distances,AsyncCallback<Integer> asyncCallback);
 	public void persistIngredients(ArrayList<FoodProduct> ingredients,
 			AsyncCallback<Boolean> asyncCallback);
 

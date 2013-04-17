@@ -1,19 +1,18 @@
 package ch.eaternity.shared;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eaticious.common.Quantity;
 import org.eaticious.common.QuantityImpl;
+import org.eaticious.common.Unit;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.maps.client.MapWidget;
+import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.geocode.DirectionQueryOptions;
 import com.google.gwt.maps.client.geocode.DirectionResults;
 import com.google.gwt.maps.client.geocode.Directions;
@@ -25,38 +24,55 @@ import com.google.gwt.maps.client.geocode.Placemark;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.googlecode.objectify.annotation.*;
 
-public class CountryDistance implements Serializable {
+@Entity
+public class HomeDistances implements Serializable {
 	
 	private static final long serialVersionUID = 3172640409035191495L;
 	
+	@Id private Long id;
+	
 	// Home (to), From, Distance
-	private Map<String,QuantityImpl> distanceMap;
+	@Serialize
+	private Map<String, Route> distancesMap;
+	
+	@Index
 	private String homeLocation;
 	
-	private final static Geocoder geocoder = new Geocoder();
+	private Geocoder geocoder = new Geocoder();
 	
 	// how many seconds to wait for the distance request call
-	Integer timeToWait = 1;
+	private static Integer timeToWait = 1;
 	
-	private CountryDistance() {
-		distanceMap = new HashMap<String,QuantityImpl>();
+	private HomeDistances() {
+		distancesMap = new HashMap<String, Route>();
 	}
 	
-	public CountryDistance(String homelocation) {
+	public HomeDistances(String homelocation) {
 		this();
 		this.homeLocation = homelocation;
 	}
 	
 	/**
-	 * This method doesnt make an RPC call, just searches the current distances data
-	 * @param from
-	 * @param to
-	 * @return null if distance doesnt exist
+	 * This method searches the current HomeDistances data or makes an RPC call if not in available data
+	 * @param from must be a verified location 
+	 * @param to must be a verified location
+	 * @return the requested route, null if from or to where invalid parameters or request failed
 	 */
-	public QuantityImpl getDistance(String from, String to) {
-		return distanceMap.get(from);
-	}
+	public Route getRoute(String from, String to) {
+		Route route = distancesMap.get(from);
+		if (route == null) {
+			Double distance = requestAirDistance(from, to);
+			if (distance == null) return null;
+			else {
+				route = new Route(from, to, new QuantityImpl(distance, Unit.METER));
+				distancesMap.put(from, route);
+
+			}
+		}
+		return route; 
+	}	
 	
 	/**
 	 * Checks weather location can be found in Google Maps
@@ -94,6 +110,25 @@ public class CountryDistance implements Serializable {
 			return processedLocation.get(0);
 	}
 	
+	/**
+	 * 
+	 * @param from
+	 * @param to
+	 * @param mapsTable
+	 * @return distance in meters or null if invalid arguments
+	 */
+	private Double requestAirDistance(String from, String to) {
+		final Placemark fromPlace = processLocation(from);
+		final Placemark toPlace = processLocation(to);
+		Double distance;
+		if (fromPlace != null && toPlace != null) {
+			distance = toPlace.getPoint().distanceFrom(fromPlace.getPoint());
+			return distance;
+		}
+		else
+			return null;
+	}
+	
 	/*
 	public void writeDistances(String homeLocation, List<Ingredient> ingSpecs, final FlexTable mapsTable) {
 		double dist;
@@ -118,7 +153,7 @@ public class CountryDistance implements Serializable {
 	
 	*/
 	
-	public List<SingleDistance> calculateDistances(String homeLocation, List<String> froms, final FlexTable mapsTable) {
+	public List<Route> calculateDistances(String homeLocation, List<String> froms, final FlexTable mapsTable) {
 		/*
 		double dist;
 		List<SingleDistance> distances = new ArrayList<SingleDistance>();
@@ -141,6 +176,8 @@ public class CountryDistance implements Serializable {
 		return distances;
 		*/ return null;
 	}
+	
+
 	
 	/**
 	 * 

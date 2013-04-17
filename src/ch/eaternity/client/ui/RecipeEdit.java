@@ -340,7 +340,7 @@ public class RecipeEdit extends Composite {
 			IngredientWidget ingWidget = (IngredientWidget)ingredientList.getWidget(row,0);
 			
 			if (!ingSpecWidget.isPresenterSetted()){
-				ingSpecWidget.setPresenter(presenter, ingWidget.getIngredient());
+				ingSpecWidget.setPresenter(presenter, ingWidget.getIngredient(), recipe.getVerifiedLocation());
 			}
 			else{
 				ingSpecWidget.setIngredient(ingWidget.getIngredient());

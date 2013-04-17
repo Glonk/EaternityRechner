@@ -5,10 +5,10 @@ import java.util.List;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.shared.CountryDistance;
+import ch.eaternity.shared.HomeDistances;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Route;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -42,11 +42,11 @@ public class DistancesDialog extends DialogBox{
 	@UiField InlineLabel locationLabel;
 
 	private String currentLocation;
-	private List<SingleDistance> allDistances = new ArrayList<SingleDistance>();
+	private List<Route> allDistances = new ArrayList<Route>();
 	
 	private RechnerActivity presenter;
 	private DataController dco;
-	private CountryDistance distances;
+	private HomeDistances distances;
 	
 	// --------------- UiHandlers ----------------
 	
@@ -70,14 +70,14 @@ public class DistancesDialog extends DialogBox{
 	public void setPresenter(RechnerActivity presenter){
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.distances = dco.getDist();
+	//	this.distances = dco.getHomeDistances();
 		
 		executeButton.setEnabled(false);
 		
-		if (dco.getCurrentLocation() == null) 
+		if (dco.getVerifiedUserLocation() == null) 
 			locationLabel.setText("Bitte geben Sie hier Ihre Adresse ein");
 		else
-			adressBox.setText(dco.getCurrentLocation());
+			adressBox.setText(dco.getVerifiedUserLocation());
 		openDialog(); 	
 	}
 
@@ -149,16 +149,18 @@ public class DistancesDialog extends DialogBox{
 
 
 	private void showTable() {
+		/*
 		summaryTable.removeAllRows();
-		for(SingleDistance singleDistance : allDistances){
-			String to = singleDistance.getTo();
-			String formatted = NumberFormat.getFormat("##").format( singleDistance.getDistance()/100000 );
+		for(Route route : allDistances){
+			String to = route.getTo();
+			String formatted = NumberFormat.getFormat("##").format( route.getDistance()/100000 );
 			if(formatted.contentEquals("0")){
 				summaryTable.setText(summaryTable.getRowCount(), 0, "nach " + to +" : ca. " + formatted + "km");
 			}else{
 				summaryTable.setText(summaryTable.getRowCount(), 0, "nach " + to +" : ca. " + formatted + "00km");
 			}
 		}
+		*/
 	}
 
 }

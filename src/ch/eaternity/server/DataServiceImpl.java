@@ -19,7 +19,7 @@ import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.RecipeSearchRepresentation;
 import ch.eaternity.shared.Season;
 import ch.eaternity.shared.SeasonDate;
-import ch.eaternity.shared.SingleDistance;
+import ch.eaternity.shared.Route;
 import ch.eaternity.shared.Tag;
 import ch.eaternity.shared.UploadedImage;
 import ch.eaternity.shared.UserInfo;
@@ -284,7 +284,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 
 
-	public int addDistances(ArrayList<SingleDistance> distances) throws NotLoggedInException {
+	public int addDistances(ArrayList<Route> distances) throws NotLoggedInException {
 		// TODO implement
 		return 0;
 	}

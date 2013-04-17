@@ -141,7 +141,7 @@ public class KitchenDialog extends DialogBox{
 			changeKitchenName(currentKitchen.getSymbol());
 		}
 		else {
-			currentLocation = dco.getCurrentLocation();
+			currentLocation = dco.getVerifiedUserLocation();
 			scrollPanel.setVisible(false);
 		}
 		initPersonCellTable();

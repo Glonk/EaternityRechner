@@ -28,18 +28,17 @@ public class Ingredient  implements Serializable {
 
 	private Long productId;
 	
-	// optionally if speed is to slow, needs to be created when stored, not possible client-side
-	//@Load private Ref<FoodProduct> productRef;
-	
 	@Serialize
 	private QuantityImpl weight;
 	private Date cookingDate;
 	private double cost; 
+	
 	@Embed
 	private Extraction extraction;
 	// need to include home as well...?
 	@Embed
-	private QuantityImpl distance;
+	private Route route;
+
 	@Embed
 	private Transportation transportation;
 	@Embed
@@ -51,7 +50,7 @@ public class Ingredient  implements Serializable {
 	// --------------------------- public methods ---------------------------
 	
 	public Ingredient() {
-		distance = new QuantityImpl(0.0, Unit.KILOMETER);
+		route = new Route();
 		weight = new QuantityImpl(0.0, Unit.GRAM);
 	}
 	
@@ -67,7 +66,7 @@ public class Ingredient  implements Serializable {
 		condition = new Condition(toClone.condition);
 		production = new Production(toClone.production);
 		transportation = new Transportation(toClone.transportation);
-		distance = toClone.distance;
+		route = toClone.route;
 		cost = toClone.cost;
 	}
 	
@@ -152,16 +151,16 @@ public class Ingredient  implements Serializable {
 		return weight;
 	}
 
-	public void setDistance(QuantityImpl distance) {
-		this.distance = distance;
+	public void setRoute(Route route) {
+		this.route = route;
 	}
 
-	public QuantityImpl getDistance() {
-		return distance;
+	public Route getRoute() {
+		return route;
 	}
 	
 	public int getKmDistanceRounded() {
-		int d = (int)(distance.convert(Unit.METER).getAmount()/10000);
+		int d = (int)(route.getDistanceKM().getAmount()/10000);
 		if (d%10 >= 5)
 			d = d + 10;
 		int dist = ((int)(d/10))*100;
@@ -192,8 +191,8 @@ public class Ingredient  implements Serializable {
 	
 	public double getTransportationQuota() {
 		if(transportation != null && transportation.getFactor() != null){
-			if(distance.getAmount() != null)
-				return transportation.getFactor()*distance.getAmount()/1000000*weight.getAmount();
+			if(route.getDistanceKM() != null)
+				return transportation.getFactor()*route.getDistanceKM().getAmount()/1000000*weight.getAmount();
 			else
 				return 0.0;
 		} 

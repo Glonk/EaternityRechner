@@ -295,9 +295,8 @@ public class DataController {
 				}
 				else{
 					ingredient.setWeight(weight);
-					//TODO implement right Distance fetch
-					//ingSpec.setDistance(cdata.distances.getDistance(ingSpec.getExtraction().symbol, cdata.currentLocation));
-					ingredient.setDistance(new QuantityImpl(100.0, Unit.KILOMETER));
+					HomeDistances homeDistances = getHomeDistances(getVerifiedUserLocation());
+					ingredient.setRoute(homeDistances.getRoute(ingredient.getExtraction().symbol, getVerifiedUserLocation()));
 				}
 				
 				if (cdata.editRecipe != null) {
@@ -617,8 +616,13 @@ public class DataController {
 	}
 
 
-	public CountryDistance getDist() {
-		return cdata.distances;
+	public HomeDistances getHomeDistances(String verifiedHome) {
+		HomeDistances homeDistances = cdata.homeDistancesMap.get(verifiedHome);
+		if (homeDistances == null) {
+			homeDistances = new HomeDistances(verifiedHome);
+			cdata.homeDistancesMap.put(verifiedHome, homeDistances);
+		}
+		return homeDistances;
 	}
 
 	public List<Kitchen> getKitchens() {
@@ -637,7 +641,7 @@ public class DataController {
 		return cdata.userInfo.getCurrentMonth();
 	}
 
-	public String getCurrentLocation() {
+	public String getVerifiedUserLocation() {
 		return cdata.userInfo.getVerifiedLocation();
 	}
 

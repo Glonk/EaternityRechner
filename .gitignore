@@ -1,0 +1,12 @@
+/war/eaternity
+/war/jsupload
+/war/WEB-INF/lib
+/war/WEB-INF/lib_other
+/war/WEB-INF/deploy
+/war/WEB-INF/appengine-generated
+/war/WEB-INF/classes
+/database
+.*	
+/src/ch/eaternity/EaternityRechner.gwt.xml
+gwt-unitCache
+

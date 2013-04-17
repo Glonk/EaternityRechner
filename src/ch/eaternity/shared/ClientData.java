@@ -5,7 +5,9 @@ import com.google.gwt.view.client.ListDataProvider;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,7 +28,7 @@ public class ClientData implements Serializable {
 	
 	public List<Kitchen> kitchens = new ArrayList<Kitchen>();
 	
-	public CountryDistance distances;
+	public Map<String, HomeDistances> homeDistancesMap  = new HashMap<String, HomeDistances>();
 
 	public UserInfo userInfo;
 	
@@ -39,7 +41,8 @@ public class ClientData implements Serializable {
 	
 	public RecipeScope recipeScope = RecipeScope.PUBLIC;
 	
-	public ClientData() {}
+	public ClientData() {
+	}
 	
 	
 	public Kitchen getKitchenByID(long id){

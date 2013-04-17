@@ -1,5 +1,6 @@
 package ch.eaternity.client.ui.widgets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eaticious.common.Quantity;
@@ -14,18 +15,24 @@ import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.HomeDistances;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Production;
+import ch.eaternity.shared.Route;
 import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Transportation;
 
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.maps.client.geocode.Geocoder;
+import com.google.gwt.maps.client.geocode.LocationCallback;
+import com.google.gwt.maps.client.geocode.Placemark;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -70,6 +77,9 @@ public class IngredientSpecificationWidget extends Composite {
 	private FoodProduct product;
 	private RecipeEdit recipeEdit;
 	private DataController dco;
+	private HomeDistances homeDistances;
+	private final static Geocoder geocoder = new Geocoder();
+	private String verifiedRecipeLocation = "";
 	
 	private static final String calulationAnchor = "<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>";
 	
@@ -79,14 +89,17 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	public IngredientSpecificationWidget() {
 		 initWidget(uiBinder.createAndBindUi(this));
+		 geocoder.setBaseCountryCode("ch");
 		 this.setVisible(false);
 	}
 	
-	public void setPresenter(RechnerActivity presenter, Ingredient ingredient) {
+	public void setPresenter(RechnerActivity presenter, Ingredient ingredient, String verifiedRecipeLocation) {
 		this.ingredient = ingredient;
 		this.product = ingredient.getFoodProduct();
 		this.recipeEdit = presenter.getRecipeEdit();
 		this.dco = presenter.getDCO();
+		this.homeDistances = homeDistances;
+		this.verifiedRecipeLocation = verifiedRecipeLocation;
 		setFields();
 		
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
@@ -97,10 +110,7 @@ public class IngredientSpecificationWidget extends Composite {
 					}
 				});
 		presenterSetted = true;
-		
 	}
-	
-	
 	
 	public void setIngredient(Ingredient ingredient) {
 		this.ingredient = ingredient;
@@ -123,6 +133,8 @@ public class IngredientSpecificationWidget extends Composite {
 		for (Extraction extraction : product.getExtractions()) {
 			ExtractionList.addItem(extraction.getName());
 		}
+		ExtractionList.addItem("andere ... ");
+		
 		TransportationList.clear();
 		for (Transportation transport : product.getTransportations()) {
 			TransportationList.addItem(transport.getSymbol());
@@ -136,11 +148,7 @@ public class IngredientSpecificationWidget extends Composite {
 			ConditionList.addItem(condition.getSymbol());
 		}
 	}
-	
-	private void changeExtraction() {
-		//old triggerHerkunftChange
-	}
-	
+
 	private void switchToUnknownExtraction(){
 		int width = ExtractionList.getOffsetWidth();
 		ExtractionList.setVisible(false);
@@ -154,9 +162,11 @@ public class IngredientSpecificationWidget extends Composite {
 		UnknownExtractionTextBox.setFocus(true);
 	}
 	
-
+	/**
+	 * processExtraction must be called before so that distance is setted in ingredient
+	 */
 	private void switchToKnownExtractions() {
-		changeExtraction();
+		kmHTML.setHTML("ca. " + ingredient.getKmDistanceRounded() + "km");
 		UnknownExtractionTextBox.setVisible(false);
 		ExtractionList.setVisible(true);
 		ExtractionList.setFocus(true);
@@ -175,42 +185,53 @@ public class IngredientSpecificationWidget extends Composite {
 		}
 	}
 	
-	private void processNewExtraction() {
-  		String processedLocation= dco.getDist().strProcessLocation(UnknownExtractionTextBox.getText());
-  		
-  		if (processedLocation != null) {
-  			QuantityImpl distance = dco.getDist().getDistance(processedLocation, dco.getCurrentLocation());
-  			ingredient.setDistance(distance);
-  			
-  			List<Extraction> extractions = product.getExtractions();
-  			boolean foundInList = false;
-  			
-  			for (Extraction extraction : extractions) {
-  				if (extraction.symbol.equals(processedLocation) ){
-  					updateExtractionList(extraction);
-  					switchToKnownExtractions();
-  		  			foundInList = true;
-  				}
-  			}	
-	     
-  		  	//don't add new extraction in ingredients list if already exists
-	    	if (foundInList == false) {
-	    		Extraction extraction = new Extraction(processedLocation);
-	    		ExtractionList.insertItem(processedLocation, 0);
-	    		product.getExtractions().add(0, extraction);
-	    		ingredient.setExtraction(extraction);
-	    	}
-  		}
-  		else {
-  			kmHTML.setHTML("Adresse nicht auffindbar!");
-	    	  Timer t = new Timer() {
-	    		  public void run() {
-	    			  kmHTML.setHTML(calulationAnchor);
-	    		  }
-	    	  };
-	    	  t.schedule(1000);
-  		}		
+	/**
+	 * switches to known extraction automatically if successfull processed
+	 * @param extractionString
+	 */
+	private void processExtraction(String extractionString) {
+		geocoder.getLocations(extractionString, new LocationCallback() { 
+			public void onFailure(int statusCode) {}
+			public void onSuccess(JsArray<Placemark> locations) {
+				String verifiedFromLocation = locations.get(0).getAddress();
+
+		  		if (verifiedFromLocation != null) {
+		  			Route route = dco.getHomeDistances(verifiedRecipeLocation).getRoute(verifiedFromLocation, dco.getVerifiedUserLocation());
+		  			ingredient.setRoute(route);
+		  			
+		  			List<Extraction> extractions = product.getExtractions();
+		  			boolean foundInList = false;
+		  			
+		  			for (Extraction extraction : extractions) {
+		  				if (extraction.symbol.equals(verifiedFromLocation) ){
+		  					updateExtractionList(extraction);
+		  					switchToKnownExtractions();
+		  		  			foundInList = true;
+		  				}
+		  			}	
+			     
+		  		  	//don't add new extraction in ingredients list if already exists
+			    	if (foundInList == false) {
+			    		Extraction extraction = new Extraction(verifiedFromLocation);
+			    		ExtractionList.insertItem(verifiedFromLocation, 0);
+			    		product.getExtractions().add(0, extraction);
+			    		ingredient.setExtraction(extraction);
+			    	}
+		  		}
+		  		else {
+		  			kmHTML.setHTML("Adresse nicht auffindbar!");
+			    	  Timer t = new Timer() {
+			    		  public void run() {
+			    			  kmHTML.setHTML(calulationAnchor);
+			    		  }
+			    	  };
+			    	  t.schedule(1500);
+			    	  switchToUnknownExtraction();
+		  		}		
+			}
+		});
 	}
+	
 	
 	private void updateSeasonCoherency() {
 		if (product.getSeason() != null) {
@@ -226,7 +247,7 @@ public class IngredientSpecificationWidget extends Composite {
 			}
 			else {
 				seasonText.concat("<br />Diese Zutat ist nicht saisonal");
-				if (ingredient.getDistance().convert(Unit.KILOMETER).getAmount() < 100 
+				if (ingredient.getRoute().getDistanceKM().getAmount() < 100 
 						&& !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH")
 						&& ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch")) {
 					CoherenceHTML.setText("Angaben sind unvollständig. <br >" +
@@ -257,11 +278,11 @@ public class IngredientSpecificationWidget extends Composite {
 		if(count-1 == selected){
 			// we have selected the "andere" item
 			switchToUnknownExtraction();
-			
-		} else {
-			changeExtraction();
+		} 
+		else {
+			processExtraction(ExtractionList.getItemText(selected));
+			recipeEdit.updateIngredientValue(ingredient);
 		}
-		recipeEdit.updateIngredientValue(ingredient);
 	}
 	
 	@UiHandler("TransportationList")
@@ -310,13 +331,13 @@ public class IngredientSpecificationWidget extends Composite {
 	@UiHandler("UnknownExtractionTextBox")
 	public void onKeyDown(KeyDownEvent event) {
 		if(KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
-			processNewExtraction();
+			processExtraction(UnknownExtractionTextBox.getText());
 		}
 	}
 	
 	@UiHandler("kmHTML")
 	public void onClick(ClickEvent event) {
-		processNewExtraction();
+		processExtraction(UnknownExtractionTextBox.getText());
 	}
 	
 	
