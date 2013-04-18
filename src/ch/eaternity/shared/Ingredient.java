@@ -36,7 +36,7 @@ public class Ingredient  implements Serializable {
 	@Embed
 	private Extraction extraction;
 	// need to include home as well...?
-	@Embed
+	@Serialize
 	private Route route;
 
 	@Embed

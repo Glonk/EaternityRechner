@@ -28,6 +28,8 @@ public class Recipe implements Serializable {
 	private String title;
 	private String subTitle;
 	private String cookInstruction;
+	
+	@Embed
 	private UploadedImage image;
 	
 	// needed for loading the RecipeInfo without having access to all the foodproducts
@@ -147,14 +149,20 @@ public class Recipe implements Serializable {
 		return 0d;
 	}
 	
-	//TODO change to quantity
 	public Double getCO2Value() {
-		double value = getDeviceCo2Value();
+		Double value = getDeviceCo2Value();
 		
 		for ( Ingredient zutatSpec : ingredients){
 			value += zutatSpec.getCalculatedCO2Value();
 		}
-		if(servings != null && servings != 0)
+		return value;
+	}
+	
+	//TODO change to quantity
+	public Double getCO2ValuePerServing() {
+		Double value = getCO2Value();
+		
+		if(servings != null && servings > 0)
 			value = value/servings;
 		cachedCO2Value = value;
 		return value;

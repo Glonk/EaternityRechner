@@ -80,7 +80,7 @@ public class ImageOverlay extends Composite implements HasHandlers {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		image.setUrl(uploadedImage.getServingUrl() + "=s640");
+		image.setUrl(uploadedImage.getUrl() + "=s640");
 		timestamp.setText("Created at:" + uploadedImage.getCreatedAt());
 
 //		if (loginInfo.isLoggedIn()

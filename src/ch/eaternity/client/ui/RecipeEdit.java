@@ -30,7 +30,7 @@ import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
 import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
 import ch.eaternity.client.ui.widgets.IngredientSpecificationWidget;
 import ch.eaternity.client.ui.widgets.IngredientWidget;
-import ch.eaternity.client.ui.widgets.UploadPhoto;
+import ch.eaternity.client.ui.widgets.UploadPhotoWidget;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
@@ -66,6 +66,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -90,8 +91,9 @@ public class RecipeEdit extends Composite {
 	@UiField Label co2valueLabel;
 	@UiField Image co2Image;
 	
-	@UiField HTML codeImage;
-	@UiField HorizontalPanel imageWidgetPanel;
+	@UiField Image recipeImage;
+	@UiField Image deleteImage;
+	@UiField SimplePanel imageUploadWidgetPanel;
 	
 	@UiField TextBox amountPersons;
 	@UiField TextBox recipeDate;
@@ -99,12 +101,13 @@ public class RecipeEdit extends Composite {
 	
 	@UiField FlexTable commentTable;
 	
-	@UiField CheckBox preparationFactor;
+	//@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
 	
 	@UiField FlexTable ingredientList;
 	@UiField IngredientSpecificationWidget ingSpecWidget;
-	@UiField FlowPanel collectionPanel;
+	//@UiField FlowPanel collectionPanel;
+	@UiField Label sumCO2Label;
 	
 	@UiField Button newRecipeButton;
 	@UiField Button generatePDFButton;
@@ -124,7 +127,7 @@ public class RecipeEdit extends Composite {
 	private DataController dco;
 	
 	private FlowPanel panelImages = new FlowPanel();
-	private UploadPhoto uploadWidget;
+	private UploadPhotoWidget uploadWidget;
 
 	private FlexTableRowDragController tableRowDragController = null;
 	private FlexTableRowDropController flexTableRowDropController = null;
@@ -163,21 +166,31 @@ public class RecipeEdit extends Composite {
 	    tableRowDragController.registerDropController(flexTableRowDropController);
 
 	    saveButton.setEnabled(false);
+	    generatePDFButton.setVisible(false);
 		generatePDFButton.setEnabled(false);
 		publishButton.setEnabled(false);
 		duplicateButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		
-		// Image
-		uploadWidget = new UploadPhoto(this);
-		uploadWidget.setStyleName("notInline");	
-		imageWidgetPanel.insert(uploadWidget,0);
-		imageWidgetPanel.setVisible(false);
+		imageUploadWidgetPanel.setVisible(false);
+		
+		deleteImage.setUrl("/images/delete.png");
 	    
 	    ingredientList.getColumnFormatter().setWidth(0, "300px");
 	}
 	
-	
+	public void setPresenter(RechnerActivity presenter) {
+		this.presenter = presenter;
+		this.dco = presenter.getDCO();
+		this.setHeight("1600px");
+		
+		// Image
+		uploadWidget = new UploadPhotoWidget(this, presenter);
+		uploadWidget.setStyleName("notInline");	
+		imageUploadWidgetPanel.setWidget(uploadWidget);
+		
+		bind();
+	}
 
 	private void bind() {
 		// Listen to the EventBus 
@@ -237,13 +250,7 @@ public class RecipeEdit extends Composite {
 				});
 	}
 	
-	public void setPresenter(RechnerActivity presenter) {
-		this.presenter = presenter;
-		this.dco = presenter.getDCO();
-		this.setHeight("1600px");
-		
-		bind();
-	}
+
 	
 	public void updateParameters() {
 		changeSaveStatus(false);
@@ -253,7 +260,7 @@ public class RecipeEdit extends Composite {
 		
 		// Image
 		if(recipe.getImage() !=null){
-			codeImage.setHTML("<img src='" + recipe.getImage().getServingUrl() + "=s120-c' />");
+			setImageUrl(recipe.getImage().getUrl(), false);
 		}
 		
 		//Date
@@ -287,10 +294,10 @@ public class RecipeEdit extends Composite {
 	
 	public void updateLoginSpecificParameters() {
 		if (dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn()) {
-			codeImage.setHTML("<img src='http://placehold.it/120x120' />");
+			setImageUrl("http://placehold.it/120x120", true);
 			initializeCommentingField();
 			
-			imageWidgetPanel.setVisible(true);
+			imageUploadWidgetPanel.setVisible(true);
 			
 			generatePDFButton.setEnabled(true);
 			publishButton.setEnabled(true);
@@ -300,8 +307,9 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void updateCo2Value() {
-		co2valueLabel.setText("" + (recipe.getCO2Value().intValue()));
-		co2Image.setUrl(Util.getRecipeRatingBarUrl(recipe.getCO2Value()));
+		co2valueLabel.setText("" + (recipe.getCO2ValuePerServing().intValue()));
+		co2Image.setUrl(Util.getRecipeRatingBarUrl(recipe.getCO2ValuePerServing()));
+		sumCO2Label.setText("" + (recipe.getCO2Value().intValue()) + "g");
 	}
 
 	// ---------------------- UI Handlers ----------------------
@@ -314,6 +322,14 @@ public class RecipeEdit extends Composite {
 		}
 	}
 	
+	@UiHandler("rezeptDetails")
+	public void onEditSub(KeyUpEvent event) {
+		if(rezeptDetails.getText() != ""){
+			recipe.setSubTitle(rezeptDetails.getText());
+			changeSaveStatus(false);
+		}
+	}
+	
 	@UiHandler("cookingInstr")
 	public void onEditCook(KeyUpEvent event) {
 		if(cookingInstr.getText() != ""){
@@ -322,12 +338,12 @@ public class RecipeEdit extends Composite {
 		}
 	}
 
-	@UiHandler("rezeptDetails")
-	public void onEditSub(KeyUpEvent event) {
-		if(rezeptDetails.getText() != ""){
-			recipe.setSubTitle(rezeptDetails.getText());
-			changeSaveStatus(false);
-		}
+
+	@UiHandler("deleteImage")
+	public void onDeleteClick(ClickEvent event) {
+		recipe.setImage(null);
+		setImageUrl("http://placehold.it/120x120", true);
+		imageUploadWidgetPanel.setVisible(true);
 	}
 	
 	
@@ -472,22 +488,7 @@ public class RecipeEdit extends Composite {
 	public void removeIngredient(IngredientWidget ingWidget) {
 		recipe.removeIngredient(ingWidget.getIngredient());
 		ingredientList.remove(ingWidget);
-		
-		// does this work to prevent the error? which error?
-		// if ingredientsDialog is open, yet item gets removed... remove also IngredientsDialog
-		/*
-		styleRow(removedIndex, false);
-		
-		if(selectedRow == removedIndex){
-			if(addInfoPanel.getWidgetCount() ==2){
-				addInfoPanel.remove(1);
-			}
-		} else {
-			if(selectedRow > removedIndex){
-				selectedRow = selectedRow-1;
-				selectRow(selectedRow);
-			}
-		}*/
+		ingSpecWidget.setVisible(false);
 		
 		// set the colors in the right order...
 		String style = evenStyleRow.evenRow();
@@ -681,29 +682,11 @@ public class RecipeEdit extends Composite {
 	}
 	*/
 	
-	public void setImageUrl(String url) {
-		codeImage.setHTML("<img src='" + url);
+	public void setImageUrl(String url, boolean imageWidgetVisible) {
+		//recipeImage.setUrl(url);
+		uploadWidget.setVisible(imageWidgetVisible);
+		recipeImage.setUrlAndVisibleRect(url,0,0,670,230);
 	}
-
-	// here comes the Image Uploader:
-	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
-		public void onFinish(IUploader uploader) {
-			if (uploader.getStatus() == Status.SUCCESS) {
-
-				GWT.log("Successfully uploaded image: " + uploader.fileUrl(), null);
-				new PreloadedImage(uploader.fileUrl(), showImage);
-
-			}
-		}
-	};
-
-	// Attach an image to the pictures viewer
-	OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
-		public void onLoad(PreloadedImage image) {
-			image.setWidth("125px");
-			panelImages.add(image);
-		}
-	};
 
 	public Recipe getRecipe() {
 		return this.recipe;
@@ -711,30 +694,6 @@ public class RecipeEdit extends Composite {
 
 
 	public void closeRecipeEdit() {
-		
-		/*
-		if (!saved && dco.getLoginInfo().isLoggedIn() && recipe != null) {
-			String saveText = recipe.getTitle() + " ist noch nicht gespeichert!";
-			final ConfirmDialog dlg = new ConfirmDialog(saveText);
-			dlg.statusLabel.setText("Speichern?");
-
-			dlg.yesButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					dco.saveRecipe(recipe);
-					saved = true;
-					dlg.hide();
-				}
-			});
-			dlg.noButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					dlg.hide();
-				}
-			});
-
-			dlg.show();
-			dlg.center();
-		}
-		*/
 		
 		if (!saved && dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn() && recipe != null) {
 			dco.saveRecipe(recipe);

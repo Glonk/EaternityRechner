@@ -37,11 +37,11 @@ public class UploadedImage implements Serializable {
 		this.key = key;
 	}
 
-	public String getServingUrl() {
+	public String getUrl() {
 		return servingUrl;
 	}
 
-	public void setServingUrl(String servingUrl) {
+	public void setUrl(String servingUrl) {
 		this.servingUrl = servingUrl;
 	}
 

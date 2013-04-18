@@ -1,9 +1,11 @@
 package ch.eaternity.client.ui.widgets;
 
 
+import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -20,47 +22,50 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.AlertEvent;
 import ch.eaternity.client.events.GalleryUpdatedEvent;
 import ch.eaternity.client.events.GalleryUpdatedEventHandler;
+import ch.eaternity.client.events.SpinnerEvent;
 import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.client.DataService;
 import ch.eaternity.client.DataServiceAsync;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.UploadedImage;
 
-public class UploadPhoto extends Composite implements HasHandlers {
+public class UploadPhotoWidget extends Composite implements HasHandlers {
 
 	private static UploadPhotoUiBinder uiBinder = GWT.create(UploadPhotoUiBinder.class);
-	interface UploadPhotoUiBinder extends UiBinder<Widget, UploadPhoto> {}
+	interface UploadPhotoUiBinder extends UiBinder<Widget, UploadPhotoWidget> {}
 
 	@UiField Button uploadButton;
 	@UiField FormPanel uploadForm;
 	@UiField FileUpload uploadField;
 	
 	private Recipe recipe;
-	private DataServiceAsync userImageService = GWT.create(DataService.class);
-	private HandlerManager handlerManager;
+	private DataServiceAsync dataService;
+	private EventBus eventBus;
 
-	public UploadPhoto(final RecipeEdit editRecipeView) {
-		handlerManager = new HandlerManager(this);
-		
-		this.recipe = editRecipeView.getRecipe();
+	public UploadPhotoWidget(final RecipeEdit editRecipeView, RechnerActivity presenter) {
+		eventBus = presenter.getEventBus();
+		dataService = presenter.getDataService();
+		recipe = editRecipeView.getRecipe();
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		uploadButton.setText("hochladen");
 		uploadButton.setText("Loading...");
 		uploadButton.setEnabled(false);
 
 		uploadField.setName("image");
 
 		startNewBlobstoreSession();
-
-		uploadForm
-				.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-
+		
+		eventBus.fireEvent(new SpinnerEvent(true, "Bild wird hochgeladen ... "));
+		uploadForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 					@Override
 					public void onSubmitComplete(SubmitCompleteEvent event) {
+						eventBus.fireEvent(new SpinnerEvent(false, "Bild hochgeladen"));
 						uploadForm.reset();
 						startNewBlobstoreSession();
 
@@ -68,39 +73,33 @@ public class UploadPhoto extends Composite implements HasHandlers {
 						
 						if(key != null){
 
-						userImageService.get(key,
+						dataService.get(key,
 								new AsyncCallback<UploadedImage>() {
-
 									@Override
-									public void onFailure(Throwable caught) {
-										// TODO Auto-generated method stub
-
+									public void onFailure(Throwable caught) {									
+										eventBus.fireEvent(new AlertEvent("Fehler: Bild konnte nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.BOTH, 10000));
 									}
 
 									@Override
 									public void onSuccess(final UploadedImage result) {
 										
 										editRecipeView.getRecipe().setImage(result);
-									    editRecipeView.setImageUrl(result.getServingUrl());
-									    	//editRecipeView.bildEntfernen.setVisible(true);
-									    	//editRecipeView.uploadWidget.setVisible(false);
-									    
-										
-										ImageOverlay overlay = new ImageOverlay(result);
+									    editRecipeView.setImageUrl(result.getUrl(), false);
+										//ImageOverlay overlay = new ImageOverlay(result);
 										fireEvent(new GalleryUpdatedEvent());
 
 										// TODO: Add something here that says,
 										// hey, upload succeeded
-
+										/*
 										final PopupPanel imagePopup = new PopupPanel(true);
 										imagePopup.setAnimationEnabled(true);
 										imagePopup.setWidget(overlay);
-//										imagePopup.setGlassEnabled(true);
+										imagePopup.setGlassEnabled(true);
 										imagePopup.setAutoHideEnabled(true);
 
 										imagePopup.center();
 										imagePopup.setPopupPosition(10, 10);
-
+										 */
 									}
 								});
 						} else {
@@ -113,9 +112,10 @@ public class UploadPhoto extends Composite implements HasHandlers {
 	
 				});
 	}
+	
 
 	private void startNewBlobstoreSession() {
-		userImageService.getBlobstoreUploadUrl(new AsyncCallback<String>() {
+		dataService.getBlobstoreUploadUrl(new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
@@ -144,11 +144,11 @@ public class UploadPhoto extends Composite implements HasHandlers {
 
 	@Override
 	public void fireEvent(GwtEvent<?> event) {
-		handlerManager.fireEvent(event);
+		eventBus.fireEvent(event);
 	}
 
 	public HandlerRegistration addGalleryUpdatedEventHandler(
 			GalleryUpdatedEventHandler handler) {
-		return handlerManager.addHandler(GalleryUpdatedEvent.TYPE, handler);
+		return eventBus.addHandler(GalleryUpdatedEvent.TYPE, handler);
 	}
 }

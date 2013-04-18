@@ -85,7 +85,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  SafeHtml image;
 	
 	  if(recipeInfo.getImage() !=null){
-		  	image = SafeHtmlUtils.fromTrustedString("<img src='" + recipeInfo.getImage().getServingUrl() + "=s80-c' />");
+		  	image = SafeHtmlUtils.fromTrustedString("<img width='80' height='80' src='" + recipeInfo.getImage().getUrl() + "' />");
 		} else {
 			image = SafeHtmlUtils.fromTrustedString("<img src='http://placehold.it/80x80' />");
 	}
@@ -109,7 +109,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.appendHtmlConstant("</span>&nbsp;&nbsp;&nbsp;g/p.P.</td>");
 	  
 	  sb.appendHtmlConstant("<td width='20'>");
-	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='delete.png' /></a>");
+	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='/images/delete.png' /></a>");
 	  sb.appendHtmlConstant("</td>");
 	  
 	  sb.appendHtmlConstant("</tr></table></div>");

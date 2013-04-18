@@ -40,19 +40,19 @@ public class RecipeWidget extends Composite {
 		this.dco = dco;
 		
 		if(recipe.getImage() !=null){
-			recipeImage.setHTML("<img src='" + recipe.getImage().getServingUrl() + "=s80-c' />");
+			recipeImage.setHTML("<img src='" + recipe.getImage().getUrl() + "=s80-c' />");
 		} else {
 			recipeImage.setHTML("<img src='http://placehold.it/80x80' />");
 		}
 		
 		recipeTitle.setText(recipe.getTitle());
 		recipeSubTitle.setText(recipe.getSubTitle());
-		recipeCo2Value.setText("" + recipe.getCO2Value());
+		recipeCo2Value.setText("" + recipe.getCO2ValuePerServing());
 		
-		if (recipe.getCO2Value() < 700) {
+		if (recipe.getCO2ValuePerServing() < 700) {
 			recipeRating.setHTML("<img src='/images/rating_bars.png' />");
 		}
-		else if (recipe.getCO2Value() > 700 && recipe.getCO2Value() < 1500) {
+		else if (recipe.getCO2ValuePerServing() > 700 && recipe.getCO2ValuePerServing() < 1500) {
 			recipeRating.setHTML("<img src='/images/rating_bars.png' />");
 		}
 		else {

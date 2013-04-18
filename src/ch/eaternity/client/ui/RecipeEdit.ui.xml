@@ -29,14 +29,18 @@
 			text-align: left;
 		}
 		
-		.codeImage {
-	
+		.recipeImage {
+		}
+		
+		.imageUploadWidgetPanel {
+			margin-left:100px;
 		}
 		
 		.personsHTML { /* margin-right:10px; */
 			width: 120px;
 			text-align: right;
 			display: inline;
+			margin-right:150px;
 		}
 		
 		.recipePersonsBox {
@@ -47,7 +51,6 @@
 			text-align: right;
 			width: 1.4em;
 		}
-
 		
 		.co2value {
 			text-align:right;
@@ -70,6 +73,10 @@
 			cursor: hand;
 		}
 		
+		.sumNameLabel {
+			margin-right:200px;
+		}
+		
 		.ingSpecWidget {
 			width:320px;
 		}
@@ -81,6 +88,7 @@
 			background: #F9C88C;
 			text-align: left;
 			border: 0px;
+			width:70px;
 		}
 		
 		.recipeDateError {
@@ -159,8 +167,12 @@
 				</g:HorizontalPanel>
 
 				<!-- image and description here? any particular design choices -->
-				<g:HTML ui:field='codeImage' styleName='{style.codeImage}'></g:HTML>
-				<g:HorizontalPanel ui:field='imageWidgetPanel'></g:HorizontalPanel>
+				<g:HorizontalPanel>
+					<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
+					<g:Image ui:field='deleteImage'></g:Image>
+				</g:HorizontalPanel>
+				
+				<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
 
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName='{style.personsHTML}'>
@@ -168,22 +180,23 @@
 						<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
 						Personen
 					</g:HTMLPanel>
+					<!-- Cooking Date -->
+					<g:HorizontalPanel>
+						<g:HTML>Datum: </g:HTML>
+						<g:TextBox ui:field="recipeDate" styleName='{style.rezeptDateField}'>TT/MM/JJ</g:TextBox>
+						<g:HTML ui:field="recipeDateError" styleName='{style.recipeDateError}'></g:HTML>
+					</g:HorizontalPanel>
 				</g:HorizontalPanel>
-
-				<!-- Cooking Date -->
-				<g:HorizontalPanel styleName="{style.ingredientPanel}">
-					<g:HTML>Datum: </g:HTML>
-					<g:TextBox ui:field="recipeDate" styleName='{style.rezeptDateField}'>TT/MM/JJ</g:TextBox>
-					<g:HTML ui:field="recipeDateError" styleName='{style.recipeDateError}'></g:HTML>
-				</g:HorizontalPanel>
-
 
 				<!-- Ingredients List, Specification WIdget-->
-				<g:HorizontalPanel>
+				<g:HorizontalPanel styleName='{style.ingredientPanel}'>
 					<g:FlexTable ui:field='ingredientList' styleName='{style.ingredientList}' cellSpacing='0' cellPadding='0' />
 					<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
 				</g:HorizontalPanel>
-				
+				<g:HorizontalPanel>
+					<g:Label ui:field='sumNameLabel' styleName='{style.sumNameLabel}' >Summe</g:Label>
+					<g:Label ui:field='sumCO2Label'>0g</g:Label>
+				</g:HorizontalPanel>
 				
 				<g:Label>Zubereitung:</g:Label>
 				<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea>
@@ -191,13 +204,14 @@
 				<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
 					cellSpacing='2' cellPadding='2' />
 					
-					
+				<!--  
 				<g:CheckBox ui:field="preparationFactor">Zubereitungsfaktor hinzufuegen</g:CheckBox>
 				
 				<g:HorizontalPanel>
 					<g:Label>In Sammlungen:</g:Label>
 					<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
 				</g:HorizontalPanel>
+				-->
 				
 				<g:FlowPanel>
 					<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>

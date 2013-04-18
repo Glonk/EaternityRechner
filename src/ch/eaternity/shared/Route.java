@@ -13,7 +13,8 @@ public class Route implements Serializable {
 	private static final long serialVersionUID = 3172640409035191698L;
 
     @Id private Long id;
-     
+   
+    @Serialize
 	private QuantityImpl distance;
 	
 	private String from;
