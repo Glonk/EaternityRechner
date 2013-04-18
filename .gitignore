@@ -7,6 +7,5 @@
 /war/WEB-INF/classes
 /database
 .*	
-/src/ch/eaternity/Eaternity.gwt.xml
 gwt-unitCache
-
+src/ch/eaternity/Eaternity.gwt.xml
