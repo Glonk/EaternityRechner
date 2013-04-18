@@ -1,7 +1,9 @@
 package ch.eaternity.client.ui.cells;
 
 
+import ch.eaternity.client.resources.Resources;
 import ch.eaternity.shared.FoodProductInfo;
+import ch.eaternity.shared.Util;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -76,12 +78,10 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 	  sb.append(co2value);
 	  sb.appendHtmlConstant("g</td>");
 	  
-	  if (productInfo.getCo2eValue() < 400)
-		  sb.appendHtmlConstant("<td><img src=url(ing_rating.png) /></td>");
-	  //<div class='extra-icon smiley1'><img src='pixel.png' height=1 width=20 /></div>
+	  sb.appendHtmlConstant("<td width='40'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></td>");
 	  
 	  if (productInfo.isInSeason()) 
-		  sb.appendHtmlConstant("<td><img src='season.png' /></td>");
+		  sb.appendHtmlConstant("<td><img src='" + Resources.INSTANCE.season().getURL() + "'  /></td>");
 	  
 	  sb.appendHtmlConstant("</tr></table></div>");
 	

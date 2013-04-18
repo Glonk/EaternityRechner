@@ -204,7 +204,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		if (recipePlace == RecipePlace.EDIT) {
 			//TODO Remove Date, substitute with correct
 			Date date = new Date();
-			data.productInfos = getFoodProductInfos(date.getMonth() + 1);
+			data.productInfos = getFoodProductInfos(date.getMonth());
 			
 			//TODO get Distances
 		}

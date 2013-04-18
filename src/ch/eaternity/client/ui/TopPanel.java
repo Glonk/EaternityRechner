@@ -14,6 +14,7 @@ import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.SpinnerEvent;
 import ch.eaternity.client.events.SpinnerEventHandler;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
+import ch.eaternity.client.resources.Resources;
 import ch.eaternity.client.ui.RecipeEdit.TextErrorStyle;
 import ch.eaternity.client.ui.widgets.IngredientsDialog;
 import ch.eaternity.client.ui.widgets.KitchenDialog;
@@ -38,6 +39,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -55,9 +57,8 @@ public class TopPanel extends Composite {
 	@UiField MenuBar adminMenuBar;
 	@UiField MenuBar recipesMenuBar;
 	
-	@UiField Anchor signOutLink;
-	@UiField Anchor signInLink;
 	@UiField ListBox Monate;
+	@UiField Image signOutImage;
 	  
 	@UiField HorizontalPanel spinnerPanel;
 	@UiField HTML spinnerHTML;
@@ -68,7 +69,6 @@ public class TopPanel extends Composite {
 	@UiField Button kitchenRecipesButton;
 	@UiField Button publicRecipesButton;
 	 */
-	@UiField HTML calHTML;
 
 	@UiField static SelectedRecipeScopeStyle selectedRecipeScopeStyle;
 	
@@ -87,8 +87,7 @@ public class TopPanel extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		
 		adminMenuBar.setVisible(false);
-		signInLink.setVisible(false);
-		signOutLink.setVisible(false);
+		signOutImage.setUrl(Resources.INSTANCE.logout().getURL());
 		
 		spinnerPanel.setVisible(false);
 		spinnerHTML.setHTML("<img src='images/spinner_small.gif' />");
@@ -113,9 +112,6 @@ public class TopPanel extends Composite {
 		Date date = new Date();
 		Monate.setSelectedIndex(date.getMonth());
 
-		calHTML.addMouseListener(new TooltipListener(
-				"Der Monat in dem Sie kochen.",
-				5000 /* timeout in milliseconds */, "toolTipDown", -130, 10));
 	}
 	
 	public void setPresenter(RechnerActivity presenter) {
@@ -271,9 +267,8 @@ public class TopPanel extends Composite {
 					public void onEvent(LoginChangedEvent event) {
 						updateRecipesMenu();
 						if (dco.getUserInfo().isLoggedIn()) {
-							signOutLink.setHref(dco.getUserInfo().getLogoutUrl());
-							signInLink.setVisible(false);
-							signOutLink.setVisible(true);
+							//.setHref(dco.getUserInfo().getLogoutUrl());
+
 						
 							userMenu.setVisible(true);
 							
@@ -284,10 +279,6 @@ public class TopPanel extends Composite {
 								adminMenuBar.setVisible(false);
 							}
 						} else {
-							// TODO sign out without reload of rechner...
-							signInLink.setHref(dco.getUserInfo().getLoginUrl());
-							signInLink.setVisible(true);
-							signOutLink.setVisible(false);
 
 							userMenu.setVisible(false);
 							kitchenMenu.setVisible(false);

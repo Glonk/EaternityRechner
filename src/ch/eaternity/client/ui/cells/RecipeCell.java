@@ -85,7 +85,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  SafeHtml image;
 	
 	  if(recipeInfo.getImage() !=null){
-		  	image = SafeHtmlUtils.fromTrustedString("<img width='80' height='80' src='" + recipeInfo.getImage().getUrl() + "' />");
+		  	image = SafeHtmlUtils.fromTrustedString("<img style='max-width:80px; max-height:80px;' src='" + recipeInfo.getImage().getUrl() + "' />");
 		} else {
 			image = SafeHtmlUtils.fromTrustedString("<img src='http://placehold.it/80x80' />");
 	}

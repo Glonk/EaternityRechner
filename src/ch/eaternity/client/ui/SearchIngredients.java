@@ -121,7 +121,8 @@ public class SearchIngredients extends Composite {
 	
 	// Create a data provider.
 	private ListDataProvider<FoodProductInfo> productDataProvider = new ListDataProvider<FoodProductInfo>();
-    
+    private CellList<FoodProductInfo> cellList;
+	
     private List<FoodProductInfo> foundProducts  = new ArrayList<FoodProductInfo>();
 	private List<FoodProductInfo> foundAlternativeProducts  = new ArrayList<FoodProductInfo>();
 	
@@ -171,7 +172,7 @@ public class SearchIngredients extends Composite {
 	    ProductCell productCell = new ProductCell();
 	    
 	    // Create a CellList that uses the cell.
-	    CellList<FoodProductInfo> cellList = new CellList<FoodProductInfo>(productCell, keyProvider);
+	    cellList = new CellList<FoodProductInfo>(productCell, keyProvider);
 	    
 	    setupOnePageList(cellList);
 	    
@@ -194,7 +195,7 @@ public class SearchIngredients extends Composite {
 	    
 	    // Connect the list to the data provider.
 	    productDataProvider.addDataDisplay(cellList);
-	     
+	    cellList.redraw();
 	    
 	    // Add it to the display panel.
 	    ingredientDisplayWidget.setWidget(cellList);
@@ -207,13 +208,15 @@ public class SearchIngredients extends Composite {
 		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE, new LoadedDataEventHandler() {
 			@Override
 			public void onEvent(LoadedDataEvent event) {
+				sortResults(SortMethod.ALPHABETIC, false);
 				updateResults("");
 			}
 		});
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {
 			@Override
 			public void onEvent(MonthChangedEvent event) {
-				//displayResults();
+				if (cellList != null)
+					cellList.redraw();
 			}
 		});
 	}

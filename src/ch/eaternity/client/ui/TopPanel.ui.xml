@@ -57,6 +57,7 @@
 			}
 	</ui:style>
 
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 
 	<g:HTMLPanel>
 		
@@ -65,12 +66,11 @@
 				<g:HorizontalPanel>
 					<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
 
-					<g:HTML ui:field='calHTML' styleName="{style.inline}"><img src="calendar.png" height='24' /></g:HTML>
+					<g:Image resource='{res.calendar}'></g:Image>
 					<g:ListBox ui:field="Monate" />
 	
-					<g:HTML><a href="mailto:info@eaternity.ch"> Kontakt </a></g:HTML>
-					<g:Anchor href='javascript:;' ui:field='signOutLink'> Abmelden </g:Anchor>
-					<g:Anchor href='javascript:;' ui:field='signInLink'> Anmelden </g:Anchor>
+					<g:Image resource='{res.contact}'></g:Image>
+					<g:Image ui:field='signOutImage'></g:Image>
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel>

@@ -4,6 +4,7 @@ package ch.eaternity.client;
 import ch.eaternity.client.mvp.AppActivityMapper;
 import ch.eaternity.client.mvp.AppPlaceHistoryMapper;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
+import ch.eaternity.client.resources.Resources;
 import ch.eaternity.client.ui.widgets.SimpleWidgetPanel;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -32,14 +33,11 @@ public class EaternityRechner implements EntryPoint {
 
 	private Place defaultEntryPlace = new RechnerRecipeViewPlace("PUBLIC");
 	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
-	
-
 	interface GlobalResources extends ClientBundle {
-		@NotStrict
-		@Source("global.css")
-		CssResource css();
-	}
-
+			@NotStrict
+			@Source("global.css")
+			CssResource css();
+		}
 	
 	   /**
 	   * This field gets compiled out when <code>log_level=OFF</code>, or any <code>log_level</code>
@@ -97,8 +95,9 @@ public class EaternityRechner implements EntryPoint {
 		PlaceController placeController = clientFactory.getPlaceController();
 		
 		// Inject global styles.
+		Resources.INSTANCE.globalCss().ensureInjected();
 		GWT.<GlobalResources>create(GlobalResources.class).css().ensureInjected();
-
+		
 		// Start ActivityManager for the main widget with our ActivityMapper
 		ActivityMapper activityMapper = new AppActivityMapper(clientFactory);
 		ActivityManager activityManager = new ActivityManager(activityMapper, eventBus);

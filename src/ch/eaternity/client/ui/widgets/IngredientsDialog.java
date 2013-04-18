@@ -239,12 +239,18 @@ public class IngredientsDialog extends DialogBox{
 					tmpNodeVal1 = getTagContent(zutatElmnt, "saison_start");
 					tmpNodeVal2 = getTagContent(zutatElmnt, "saison_stop");
 						
-					if (tmpNodeVal1 != null && tmpNodeVal1 != null)	{
+					if (tmpNodeVal1 != null && tmpNodeVal1 != null && !tmpNodeVal1.equals("") && !tmpNodeVal2.equals(""))	{
 						SeasonDate startDate = new SeasonDate();
 						SeasonDate stopDate = new SeasonDate();
-						if (startDate.setDate(tmpNodeVal1) && stopDate.setDate(tmpNodeVal2)) 
+						if (startDate.setDate(tmpNodeVal1) && stopDate.setDate(tmpNodeVal2)) {
 							season = new Season(startDate, stopDate, SeasonType.MAIN_SEASON);
+							newIngredient.setSeason(season);
+							newIngredient.setSeasonDependant(true);
+						}
+						else isValidIng = false;
 					}
+					else 
+						newIngredient.setSeasonDependant(false);
 					
 						
 					// Extractions (Herkunft)
