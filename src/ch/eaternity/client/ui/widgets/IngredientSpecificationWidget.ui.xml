@@ -26,7 +26,6 @@
 	
 	.SpecificationList {
 		width: 200px;
-		margin-bottom:10px;
 	}
 	
 	.UnknownExtractionTextBox {}
@@ -36,6 +35,7 @@
 
 	.CostTextBox {
 		width: 60px;
+		margin-right:5px;
 	}
 
 	
@@ -45,6 +45,13 @@
 	
 	.CoherenceHTML{}
   </ui:style>
+  
+  <ui:style field='ingSpecWidgetStyles'
+		type='ch.eaternity.client.ui.widgets.IngredientSpecificationWidget.IngSpecWidgetStyles'>
+			.redTextError {
+				color: red !important;
+			}
+	</ui:style>
   
 <g:HTMLPanel styleName='{style.box}'>
 	<g:VerticalPanel >
@@ -62,10 +69,8 @@
 			<g:Label ui:field="ExtractionLabel" styleName='{style.SpecificationLabel}'>Herkunft</g:Label>
 			<g:VerticalPanel >
 				<g:ListBox ui:field="ExtractionList" styleName='{style.SpecificationList}'></g:ListBox>
-				<g:HorizontalPanel>
-					<g:TextBox ui:field="UnknownExtractionTextBox" styleName='{style.UnknownExtractionTextBox}'></g:TextBox>
-					<g:HTML ui:field="kmHTML" styleName='{style.kmHTML}'></g:HTML>
-				</g:HorizontalPanel>
+				<g:TextBox ui:field="UnknownExtractionTextBox" styleName='{style.UnknownExtractionTextBox}'></g:TextBox>
+				<g:HTML ui:field="kmHTML" styleName='{style.kmHTML}'></g:HTML>
 			</g:VerticalPanel>
 		</g:HorizontalPanel>
 

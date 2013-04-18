@@ -52,6 +52,7 @@ public class Ingredient  implements Serializable {
 	public Ingredient() {
 		route = new Route();
 		weight = new QuantityImpl(0.0, Unit.GRAM);
+		cost = 0.0;
 	}
 	
 	// Copy Constructor
@@ -192,7 +193,7 @@ public class Ingredient  implements Serializable {
 	public double getTransportationQuota() {
 		if(transportation != null && transportation.getFactor() != null){
 			if(route.getDistanceKM() != null)
-				return transportation.getFactor()*route.getDistanceKM().getAmount()/1000000*weight.getAmount();
+				return transportation.getFactor()*route.getDistanceKM().getAmount()*weight.convert(Unit.KILOGRAM).getAmount();
 			else
 				return 0.0;
 		} 

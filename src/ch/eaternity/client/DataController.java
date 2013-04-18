@@ -12,6 +12,7 @@ import org.eaticious.common.Unit;
 import ch.eaternity.client.events.*;
 import ch.eaternity.client.place.LoginPlace;
 import ch.eaternity.shared.*;
+import ch.eaternity.shared.HomeDistances.RequestCallback;
 import ch.eaternity.shared.Util.RecipePlace;
 import ch.eaternity.shared.Util.RecipeScope;
 
@@ -293,22 +294,27 @@ public class DataController {
 				eventBus.fireEvent(new AlertEvent("Zutat konnte nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.EDIT)); 
 			}
 			public void onSuccess(FoodProduct product) {
-				Ingredient ingredient = new Ingredient(product);
+				final Ingredient ingredient = new Ingredient(product);
 				if (weight == null) {
 					ingredient.setWeight(product.getStdWeight());
 				}
 				else{
 					ingredient.setWeight(weight);
-					HomeDistances homeDistances = getHomeDistances(getVerifiedUserLocation());
-					ingredient.setRoute(homeDistances.getRoute(ingredient.getExtraction().symbol, getVerifiedUserLocation()));
 				}
 				
-				if (cdata.editRecipe != null) {
-					cdata.editRecipe.addIngredient(ingredient);
-					eventBus.fireEvent(new IngredientAddedEvent(ingredient));
-				}
-				else
-					eventBus.fireEvent(new AlertEvent("Rezept noch nicht geladen werden. Bitte Seite erneut laden.", AlertType.ERROR, AlertEvent.Destination.EDIT, 10000));
+				HomeDistances homeDistances = getHomeDistances(getVerifiedUserLocation());
+				homeDistances.getRoute(ingredient.getExtraction().symbol, getVerifiedUserLocation(), new RequestCallback() {
+					public void onFailure() {} //TODO what to do on failure here?} 
+					public void onCallback(Route route) {
+						ingredient.setRoute(route);
+						if (cdata.editRecipe != null) {
+							cdata.editRecipe.addIngredient(ingredient);
+							eventBus.fireEvent(new IngredientAddedEvent(ingredient));
+						}
+						else
+							eventBus.fireEvent(new AlertEvent("Rezept noch nicht geladen werden. Bitte Seite erneut laden.", AlertType.ERROR, AlertEvent.Destination.EDIT, 10000));
+					}
+				});
 			}
 		});
 	}

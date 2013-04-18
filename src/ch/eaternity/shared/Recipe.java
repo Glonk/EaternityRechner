@@ -30,6 +30,7 @@ public class Recipe implements Serializable {
 	private String cookInstruction;
 	private UploadedImage image;
 	
+	// needed for loading the RecipeInfo without having access to all the foodproducts
 	private Double cachedCO2Value;
 	
 	@Index

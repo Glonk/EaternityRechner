@@ -29,6 +29,16 @@ import com.googlecode.objectify.annotation.*;
 @Entity
 public class HomeDistances implements Serializable {
 	
+	/**
+	 * used to handle the asynchronous request
+	 * @author aurelianjaggi
+	 *
+	 */
+	public interface RequestCallback {
+		public void onCallback(Route route);
+		public void onFailure();
+	}
+	
 	private static final long serialVersionUID = 3172640409035191495L;
 	
 	@Id private Long id;
@@ -60,24 +70,40 @@ public class HomeDistances implements Serializable {
 	 * @param to must be a verified location
 	 * @return the requested route, null if from or to where invalid parameters or request failed
 	 */
-	public Route getRoute(String from, String to) {
+	public void getRoute(final String from, final String to, final RequestCallback requestCallback) {
 		if (to.equals(homeLocation)) {
 			Route route = distancesMap.get(from);
-			return route;
-		}
-		else return null;
-		/*
-		if (route == null) {
-			Double distance = requestAirDistance(from, to);
-			if (distance == null) return null;
+			
+			if (route == null) {
+				geocoder.getLocations(from, new LocationCallback() { 
+					public void onFailure(int statusCode) {
+						requestCallback.onFailure();
+					}
+					public void onSuccess(JsArray<Placemark> locations) {
+						final Placemark fromPlace = locations.get(0);
+						
+						geocoder.getLocations(to, new LocationCallback() { 
+							public void onFailure(int statusCode) {
+								requestCallback.onFailure();
+							}
+							public void onSuccess(JsArray<Placemark> locations) {
+								Placemark toPlace = locations.get(0);
+								String verifiedFromLocation = fromPlace.getAddress();
+								
+								Double distance = toPlace.getPoint().distanceFrom(fromPlace.getPoint());
+		
+								Route newRoute = new Route(verifiedFromLocation, to, new QuantityImpl(distance, Unit.METER));
+								
+								requestCallback.onCallback(newRoute);
+							}
+						});
+					}
+				});
+			}
 			else {
-				route = new Route(from, to, new QuantityImpl(distance, Unit.METER));
-				distancesMap.put(from, route);
-
+				requestCallback.onCallback(route);
 			}
 		}
-		return route; 
-		*/
 	}	
 	
 	/**

@@ -129,6 +129,28 @@ public class FoodProduct implements Serializable {
 	public void setExtractions(List<Extraction> extractions) {
 		this.extractions = extractions;
 	}
+	/**
+	 * adds @param extractionString to beginning of list, doesn't create new one if already exists
+	 * @param extractionString verified location
+	 * @return added extraction
+	 */
+	public Extraction addExtraction(String extractionString) {
+		Extraction extraction = null;
+			
+		// check weather extraction already exists in product extraction list
+		for (Extraction incrExtraction : extractions) {
+			if (incrExtraction.symbol.equals(extractionString) ){
+	  			extraction = incrExtraction;
+			}
+		}	
+     
+		//don't add new extraction in ingredients list if already exists
+    	if (extraction == null) {
+    		extraction = new Extraction(extractionString);
+    		extractions.add(0, extraction);
+    	}
+    	return extraction;
+	}
 
 	public List<Condition> getConditions() {
 		return conditions;

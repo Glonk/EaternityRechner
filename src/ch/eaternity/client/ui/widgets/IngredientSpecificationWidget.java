@@ -21,6 +21,7 @@ import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Route;
 import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Transportation;
+import ch.eaternity.shared.HomeDistances.RequestCallback;
 
 
 import com.google.gwt.core.client.GWT;
@@ -33,6 +34,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.maps.client.geocode.Geocoder;
 import com.google.gwt.maps.client.geocode.LocationCallback;
 import com.google.gwt.maps.client.geocode.Placemark;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -72,6 +74,8 @@ public class IngredientSpecificationWidget extends Composite {
 	@UiField Label CostErrorLabel;
 	
 	@UiField HTML CoherenceHTML;
+	@UiField static IngSpecWidgetStyles ingSpecWidgetStyles;
+	
 	
 	private Ingredient ingredient;
 	private FoodProduct product;
@@ -84,6 +88,10 @@ public class IngredientSpecificationWidget extends Composite {
 	private static final String calulationAnchor = "<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>";
 	
 	private boolean presenterSetted = false;
+	
+	interface IngSpecWidgetStyles extends CssResource {
+		String redTextError();
+	}
 	
 	// ---------------------- public Methods -----------------------
 	
@@ -130,11 +138,8 @@ public class IngredientSpecificationWidget extends Composite {
 		
 		NameLabel.setText(product.getName());
 		
-		ExtractionList.clear();
-		for (Extraction extraction : product.getExtractions()) {
-			ExtractionList.addItem(extraction.getName());
-		}
-		ExtractionList.addItem("andere ... ");
+		if (product.getExtractions().size() > 0)
+			processExtraction(product.getExtractions().get(0).symbol);
 		
 		TransportationList.clear();
 		for (Transportation transport : product.getTransportations()) {
@@ -154,7 +159,7 @@ public class IngredientSpecificationWidget extends Composite {
 		int width = ExtractionList.getOffsetWidth();
 		ExtractionList.setVisible(false);
 		
-		UnknownExtractionTextBox.setWidth(Integer.toString(width)+"px");
+		UnknownExtractionTextBox.setWidth("200px");//Integer.toString(width)+"px");
 		UnknownExtractionTextBox.setVisible(true);
 		UnknownExtractionTextBox.setText("");
 		
@@ -193,64 +198,31 @@ public class IngredientSpecificationWidget extends Composite {
 	 */
 	private void processExtraction(String extractionString) {
 		
-		Route route = homeDistances.getRoute(extractionString, verifiedRecipeLocation);
-		
-		if (route == null) {
-			geocoder.getLocations(extractionString, new LocationCallback() { 
-				public void onFailure(int statusCode) {
-					adressNotFound();
-				}
-				public void onSuccess(JsArray<Placemark> locations) {
-					final Placemark fromPlace = locations.get(0);
-					
-					geocoder.getLocations(dco.getVerifiedUserLocation(), new LocationCallback() { 
-						public void onFailure(int statusCode) {
-							adressNotFound();
-						}
-						public void onSuccess(JsArray<Placemark> locations) {
-							Placemark toPlace = locations.get(0);
-							String verifiedFromLocation = fromPlace.getAddress();
-							
-							Double distance = toPlace.getPoint().distanceFrom(fromPlace.getPoint());
-	
-							Route newRoute = new Route(verifiedFromLocation, verifiedRecipeLocation, new QuantityImpl(distance, Unit.METER));
-				  			
-				  			ingredient.setRoute(newRoute);
-				  			
-				  			List<Extraction> extractions = product.getExtractions();
-				  			boolean foundInList = false;
-				  			
-				  			for (Extraction extraction : extractions) {
-				  				if (extraction.symbol.equals(verifiedFromLocation) ){
-				  					updateExtractionList(extraction);
-				  					switchToKnownExtractions();
-				  		  			foundInList = true;
-				  				}
-				  			}	
-					     
-				  		  	//don't add new extraction in ingredients list if already exists
-					    	if (foundInList == false) {
-					    		Extraction extraction = new Extraction(verifiedFromLocation);
-					    		ExtractionList.insertItem(verifiedFromLocation, 0);
-					    		product.getExtractions().add(0, extraction);
-					    		ingredient.setExtraction(extraction);
-					    	}		
-						}
-					});
-				}
-			});
-		}
+		homeDistances.getRoute(extractionString, verifiedRecipeLocation, new RequestCallback() {
+			public void onFailure() {
+				adressNotFound();
+			}
+			public void onCallback(Route route) {
+				ingredient.setRoute(route);
+	  			recipeEdit.updateIngredientValue(ingredient);
+	  			
+	  			Extraction extraction = product.addExtraction(route.getFrom());				  					  			
+		    	updateExtractionList(extraction);					    
+		    	ingredient.setExtraction(extraction);
+		    	
+				switchToKnownExtractions();
+			}
+		});
 	}
 		
 	private void adressNotFound() {
-		kmHTML.setHTML("Adresse nicht auffindbar!");
+		kmHTML.setHTML("Adresse nicht gefunden!");
     	  Timer t = new Timer() {
     		  public void run() {
     			  kmHTML.setHTML(calulationAnchor);
     		  }
     	  };
-    	  t.schedule(1500);
-    	  switchToUnknownExtraction();
+    	  t.schedule(2000);
 	}
 	
 	
@@ -302,7 +274,6 @@ public class IngredientSpecificationWidget extends Composite {
 		} 
 		else {
 			processExtraction(ExtractionList.getItemText(selected));
-			recipeEdit.updateIngredientValue(ingredient);
 		}
 	}
 	
@@ -328,24 +299,31 @@ public class IngredientSpecificationWidget extends Composite {
 
 	
 	@UiHandler("CostTextBox")
-	public void onBlur(BlurEvent event) {
+	public void onKeyUp(BlurEvent event) {
+		String errorStyle = ingSpecWidgetStyles.redTextError();
 		String text = CostTextBox.getText();
+		Double cost = 0.0;
+		boolean success = false;
+		
 		try { 
-			if ("".equals(text)) {}
+			if ("".equals(text))
+				CostTextBox.removeStyleName(errorStyle);
 			else {
-				//DecimalFormat df = new DecimalFormat();
-				//df.setMaximumFractionDigits(2);
-				//zutatSpec.setCost(df.parse(text).doubleValue());
-				CostErrorLabel.setText("");
-				double cost = Double.parseDouble(text);
-				if (cost >= 0.0)
-					ingredient.setCost(cost);
-				else
-					CostErrorLabel.setText("Wert ungueltig");
+				cost = Double.parseDouble(text.trim());
+				if (cost > 0.0) {
+					success = true;
+					CostTextBox.removeStyleName(errorStyle);
+				}
 			}
 		}
-		catch (NumberFormatException nfe) {
-			CostErrorLabel.setText("Wert ungueltig");
+		catch (IllegalArgumentException IAE) {}
+		
+		if (success) {
+			ingredient.setCost(cost);
+			recipeEdit.updateIngredientValue(ingredient);
+		}
+		else {
+			CostTextBox.addStyleName(errorStyle);
 		}
 	}
 	

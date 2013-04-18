@@ -504,6 +504,7 @@ public class RecipeEdit extends Composite {
 	public void updateIngredientValue(Ingredient ingSpec) {
 		((IngredientWidget)ingredientList.getWidget(selectedRow,0)).updateCO2Value();
 		updateCo2Value();
+		changeSaveStatus(false);
 	}
 	
 	
