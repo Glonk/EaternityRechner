@@ -215,8 +215,8 @@ public class SearchIngredients extends Composite {
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {
 			@Override
 			public void onEvent(MonthChangedEvent event) {
-				if (cellList != null)
-					cellList.redraw();
+				updateResults(SearchInput.getText().trim());
+				sortResults(lastSortMethod, false);
 			}
 		});
 	}

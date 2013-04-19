@@ -320,8 +320,18 @@ public class DataController {
 	}
 	
 	// probably other place?
-	public void changeMonth(int month) {
+	public void changeMonth(final int month) {
 		cdata.userInfo.setCurrentMonth(month);
+		
+		// Extra call for every month change - could be more efficient
+		dataRpcService.getFoodProductInfos(month, new AsyncCallback<ArrayList<FoodProductInfo>>() {
+				public void onFailure(Throwable error) {
+					eventBus.fireEvent(new AlertEvent("Zutaten konnten nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.BOTH)); 
+				}
+				public void onSuccess(ArrayList<FoodProductInfo> productInfos) {
+					cdata.productInfos = productInfos;
+				}
+			});
 		eventBus.fireEvent(new MonthChangedEvent(month));
 	}
 	
@@ -648,7 +658,10 @@ public class DataController {
 	}
 
 	public int getCurrentMonth() {
-		return cdata.userInfo.getCurrentMonth();
+		if (cdata.userInfo != null)
+			return cdata.userInfo.getCurrentMonth();
+		else
+			return 1;
 	}
 
 	public String getVerifiedUserLocation() {
