@@ -1,6 +1,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:mail='urn:import:ch.eaternity.client'>
+  xmlns:mail='urn:import:ch.eaternity.client'
+  xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 
 
@@ -26,6 +27,7 @@
 	
 	.SpecificationList {
 		width: 200px;
+		margin-bottom:8px;
 	}
 	
 	.UnknownExtractionTextBox {}
@@ -43,7 +45,9 @@
 	
 	.CostErrorLabel {}
 	
-	.CoherenceHTML{}
+	.CoherenceHTML{
+		border-top:1px solid gray;
+	}
   </ui:style>
   
   <ui:style field='ingSpecWidgetStyles'
@@ -52,6 +56,8 @@
 				color: red !important;
 			}
 	</ui:style>
+	
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
   
 <g:HTMLPanel styleName='{style.box}'>
 	<g:VerticalPanel >
@@ -59,11 +65,13 @@
 	
 		<g:HorizontalPanel>
 			<g:Label ui:field="NameLabel" styleName='{style.NameLabel}'></g:Label>
-			<g:Button ui:field="closeButton">x</g:Button>
+			<b:Close ui:field="closeButton"></b:Close>
 		</g:HorizontalPanel>
 		
-		<g:Label ui:field="SeasonLabel" styleName='{style.SpecificationLabel}'>Saison</g:Label>
-		<g:HTML ui:field="SeasonHTML"></g:HTML>
+		<g:HorizontalPanel>
+			<g:Label ui:field="SeasonLabel" styleName='{style.SpecificationLabel}'>Saison</g:Label>
+			<g:HTML ui:field="SeasonHTML" styleName='{style.SpecificationList}'></g:HTML>
+		</g:HorizontalPanel>
 		
 		<g:HorizontalPanel>
 			<g:Label ui:field="ExtractionLabel" styleName='{style.SpecificationLabel}'>Herkunft</g:Label>
@@ -96,7 +104,9 @@
 			<g:Label ui:field="CostErrorLabel" styleName='{style.CostErrorLabel}'></g:Label>
 		</g:HorizontalPanel>
 		
+		<g:Image ui:field='questionImage' resource='{res.questionMark}'></g:Image>
 		<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
+		
 	</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

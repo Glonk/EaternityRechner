@@ -14,16 +14,18 @@
 
 	}
 	
-	.statusDiv {
-	text-align:right;
-	padding:6px 8px 8px 10px;
-	/*
-	background:#fff;
-	 background: url("header_rechner.jpg") no-repeat 0px 0px; 
-	border-bottom: 2.5px solid #bbb;
-	*/
-	height:58px;
-	vertical-align:bottom;
+	.gwt-Image { 
+		margin-left:20px;
+	}
+	
+	.gwt-Image img:hover { 
+		cursor: pointer;
+	}
+	
+
+	.iconsPanel {
+		margin-bottom:30px;
+		text-align:rigth;
 	}
 
 	.inline {
@@ -60,34 +62,39 @@
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 
 	<g:HTMLPanel>
-		
-		<div class="{style.statusDiv}">
-			<g:VerticalPanel>
-				<g:HorizontalPanel>
+		<b:Column size="2">
+			<g:HTMLPanel>
+				<a href="http://www.eaternity.ch">
+				<img class="logo" src="http://dl.dropbox.com/u/1214503/eaternity-assets/images/generic/logo-eaternity-small_04-11-2010.png" />
+				</a>
+			</g:HTMLPanel>
+		</b:Column>
+		<b:Column size="7" offset="3">
+			<b:Row>
+				<b:Column size="2">
 					<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
-
-					<g:Image resource='{res.calendar}'></g:Image>
-					<g:ListBox ui:field="Monate" />
+				</b:Column>
+				<b:Column size="4" offset="1" styleName="{style.iconsPanel}">
+					<b:Tooltip text='Der Monat in dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}'></g:Image></b:Tooltip>
+					<g:ListBox width='100' ui:field="monthListBox" />
 	
-					<g:Image resource='{res.contact}'></g:Image>
-					<g:Image ui:field='signOutImage'></g:Image>
-				</g:HorizontalPanel>
-				
-				<g:HorizontalPanel>
-					<g:HorizontalPanel ui:field="spinnerPanel" styleName="{style.spinnerPanel}">
+					<b:Tooltip text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}'></g:Image></b:Tooltip>
+					<b:Tooltip text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}'></g:Image></b:Tooltip>
+				</b:Column>
+			</b:Row>
+			<b:Row>	
+				<b:Column size="2"  ui:field='spinnerColumn'>
+					<g:HorizontalPanel>
 						<g:HTML ui:field="spinnerHTML"></g:HTML>
 						<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
 					</g:HorizontalPanel>
-					<!--  
-					<b:Button ui:field="userRecipesButton">Meine Rezepte</b:Button>
-					<b:Button ui:field="kitchenRecipesButton">Küchen</b:Button>
-					<b:Button ui:field="publicRecipesButton">Öffentliche Rezepte</b:Button>
-					-->
+				</b:Column>
+				<b:Column size="5">
 					<g:MenuBar ui:field='recipesMenuBar'></g:MenuBar>
-				</g:HorizontalPanel>
+				</b:Column>
 			
-			</g:VerticalPanel>
-		</div>
+			</b:Row>
+		</b:Column>
 		
 	</g:HTMLPanel>
 </ui:UiBinder>

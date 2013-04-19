@@ -144,6 +144,7 @@ public class DataController {
 	
 	private void setRecipeParameters(Recipe recipe) {
 		recipe.setCreateDate(new Date());
+		recipe.setCookingDate(new Date());
 		
 		if (cdata.currentKitchen != null) {
 			recipe.setKitchenId(cdata.currentKitchen.getId());

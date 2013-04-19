@@ -205,14 +205,6 @@ public class RecipeEdit extends Composite {
 						}
 					}
 				});
-		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
-				new MonthChangedEventHandler() {
-					@Override
-					public void onEvent(MonthChangedEvent event) {
-						if (recipe != null)
-							updateIcons();
-					}
-				});
 		presenter.getEventBus().addHandler(LoginChangedEvent.TYPE,
 				new LoginChangedEventHandler() {
 					@Override

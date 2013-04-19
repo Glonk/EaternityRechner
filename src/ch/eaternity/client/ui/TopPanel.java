@@ -23,6 +23,7 @@ import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Util.RecipeScope;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -57,10 +58,12 @@ public class TopPanel extends Composite {
 	@UiField MenuBar adminMenuBar;
 	@UiField MenuBar recipesMenuBar;
 	
-	@UiField ListBox Monate;
+	@UiField Image calendarImage;
+	@UiField ListBox monthListBox;
+	@UiField Image contactImage;
 	@UiField Image signOutImage;
 	  
-	@UiField HorizontalPanel spinnerPanel;
+	@UiField Column spinnerColumn;
 	@UiField HTML spinnerHTML;
 	@UiField Label spinnerLabel;
 	  
@@ -82,35 +85,38 @@ public class TopPanel extends Composite {
 	private MenuItem userMenu;
 	private MenuBar kitchenMenu = new MenuBar(true);
 	private MenuItem publicMenu;
+	
+	private String logoutUrl;
 
 	public TopPanel() {
 		initWidget(binder.createAndBindUi(this));
 		
 		adminMenuBar.setVisible(false);
-		signOutImage.setUrl(Resources.INSTANCE.logout().getURL());
 		
-		spinnerPanel.setVisible(false);
+		spinnerColumn.setVisible(false);
 		spinnerHTML.setHTML("<img src='images/spinner_small.gif' />");
 		spinnerLabel.setText("loading ...");
 		
 		kitchenMenu.setVisible(false);
 		kitchenMenu.setAutoOpen(true);
 
-		Monate.addItem("Januar");
-		Monate.addItem("Februar");
-		Monate.addItem("März");
-		Monate.addItem("April");
-		Monate.addItem("Mai");
-		Monate.addItem("Juni");
-		Monate.addItem("Juli");
-		Monate.addItem("August");
-		Monate.addItem("September");
-		Monate.addItem("Oktober");
-		Monate.addItem("November");
-		Monate.addItem("Dezember");
+		monthListBox.setVisible(false);
+		monthListBox.addItem("Januar");
+		monthListBox.addItem("Februar");
+		monthListBox.addItem("März");
+		monthListBox.addItem("April");
+		monthListBox.addItem("Mai");
+		monthListBox.addItem("Juni");
+		monthListBox.addItem("Juli");
+		monthListBox.addItem("August");
+		monthListBox.addItem("September");
+		monthListBox.addItem("Oktober");
+		monthListBox.addItem("November");
+		monthListBox.addItem("Dezember");
 
 		Date date = new Date();
-		Monate.setSelectedIndex(date.getMonth());
+		monthListBox.setSelectedIndex(date.getMonth());
+		
 
 	}
 	
@@ -247,15 +253,15 @@ public class TopPanel extends Composite {
 						if (event.spinning) {
 							spinnerLabel.setText("  " + event.action + "");
 							spinnerHTML.setVisible(true);
-							spinnerPanel.setVisible(true);
+							spinnerColumn.setVisible(true);
 						}
 						else if (!event.spinning && event.action != null) {
 							spinnerLabel.setText("  " + event.action + "");
 							spinnerHTML.setVisible(false);
-							spinnerPanel.setVisible(true);
+							spinnerColumn.setVisible(true);
 						}
 						else {
-							spinnerPanel.setVisible(false);
+							spinnerColumn.setVisible(false);
 						}
 							
 					}
@@ -267,11 +273,9 @@ public class TopPanel extends Composite {
 					public void onEvent(LoginChangedEvent event) {
 						updateRecipesMenu();
 						if (dco.getUserInfo().isLoggedIn()) {
-							//.setHref(dco.getUserInfo().getLogoutUrl());
-
-						
+							logoutUrl = dco.getUserInfo().getLogoutUrl();
+		
 							userMenu.setVisible(true);
-							
 							if (event.loginInfo.isAdmin()) {
 								adminMenuBar.setVisible(true);
 							}
@@ -279,7 +283,6 @@ public class TopPanel extends Composite {
 								adminMenuBar.setVisible(false);
 							}
 						} else {
-
 							userMenu.setVisible(false);
 							kitchenMenu.setVisible(false);
 							adminMenuBar.setVisible(false);
@@ -299,44 +302,27 @@ public class TopPanel extends Composite {
 			case KITCHEN: kitchenMenu.addStyleName(selectedRecipeScopeMarking);break;
 			case PUBLIC: publicMenu.addStyleName(selectedRecipeScopeMarking);break;
 		}	
-		
-		/*
-		userRecipesButton.setType(ButtonType.DEFAULT);
-		kitchenRecipesButton.setType(ButtonType.DEFAULT);
-		publicRecipesButton.setType(ButtonType.DEFAULT);
-		
-		switch (recipeScope) {
-			case USER: userRecipesButton.setType(ButtonType.PRIMARY); break;
-			case KITCHEN: kitchenRecipesButton.setType(ButtonType.PRIMARY);break;
-			case PUBLIC: publicRecipesButton.setType(ButtonType.PRIMARY);break;
-		}	
-		*/
+	}
+	@UiHandler("calendarImage")
+	public void onCalendarClick(ClickEvent event) {
+		monthListBox.setVisible(!monthListBox.isVisible());
+	}
+	
+	@UiHandler("contactImage")
+	public void onContactClick(ClickEvent event) {
+		Window.open("mailto:info@eaternity.ch", "_blank", "");
+	}
+	
+	@UiHandler("signOutImage")
+	public void onLogoutClick(ClickEvent event) {
+		if (logoutUrl != null)
+			Window.open(logoutUrl, "_self", ""); 
 	}
 	
 
-	@UiHandler("Monate")
+	@UiHandler("monthListBox")
 	void onChange(ChangeEvent event) {
-		dco.changeMonth(Monate.getSelectedIndex());
+		monthListBox.setVisible(false);
+		dco.changeMonth(monthListBox.getSelectedIndex());
 	}
-	
-	/*
-	@UiHandler("userRecipesButton")
-	public void onUserClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.USER.toString()));
-		dco.changeCurrentKitchen(null);
-	}
-	
-	@UiHandler("kitchenRecipesButton")
-	public void onKitchenClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
-		dco.changeCurrentKitchen(null);
-	}
-	
-	
-	@UiHandler("publicRecipesButton")
-	public void onRecipesClicked(ClickEvent event) {
-		presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.PUBLIC.toString()));
-		dco.changeCurrentKitchen(null);
-	}
-	*/
 }

@@ -159,6 +159,7 @@ public class SearchIngredients extends Composite {
 			updateResults("");
 		
 		this.setHeight("720px");
+		panelSouth.setVisible(false);
 		
 		// initialize a key provider to refer to the same selection states
 		ProvidesKey<FoodProductInfo> keyProvider = new ProvidesKey<FoodProductInfo>() {

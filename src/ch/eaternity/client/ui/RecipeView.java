@@ -80,7 +80,10 @@ public class RecipeView extends Composite {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		this.recipeDataProvider = dco.getRecipeDataProvider();
+		
 		this.setHeight("1000px");
+		addToCollectionButton.setVisible(false);
+		generateReportButton.setVisible(false);
 		
 		// initialize a key provider to refer to the same selection states
 		ProvidesKey<RecipeInfo> keyProvider = new ProvidesKey<RecipeInfo>() {

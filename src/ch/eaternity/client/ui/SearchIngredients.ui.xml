@@ -225,7 +225,7 @@
 				<g:center>
 					<g:HTMLPanel>
 							<p style='white-space: nowrap; overflow:hidden;'>
-								<g:Anchor href='javascript:;' ui:field='saisonOrder'>S</g:Anchor>
+								<g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor>
 								<g:Anchor href='javascript:;' ui:field='alphOrder'>Zutat</g:Anchor>
 								&nbsp;
 								<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor>
@@ -286,6 +286,8 @@
 						</div>
 					</g:HTMLPanel>
 				</g:south>
+		
+				
 			</g:DockLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>

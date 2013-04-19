@@ -40,62 +40,27 @@
 
 	<g:ScrollPanel ui:field='workspace'>
       <g:HTMLPanel>
-
-		<header>
 		<b:Container>
-		
 			<b:Row>
-				<b:Column size="3">
+			    <rechner:TopPanel ui:field='topPanel' />
+			</b:Row>
+			<g:HTMLPanel>
+				<div class="page content-start"><!-- website design code / bootstrap -->
+				<b:Row>
+					<b:Column size="4" >
 					<g:HTMLPanel>
-					<a href="http://www.eaternity.ch">
-					<img class="logo" src="http://dl.dropbox.com/u/1214503/eaternity-assets/images/generic/logo-eaternity-small_04-11-2010.png" />
-					</a>
+						<g:HTMLPanel ui:field='sidebar' styleName='{style.sidebar}'>
+								<g:SimplePanel ui:field='searchPanel' />
+						</g:HTMLPanel>
 					</g:HTMLPanel>
-				</b:Column>
-				<b:Column size="9">
-				<g:HTMLPanel>
-				<br /><br />
-				</g:HTMLPanel>
-				</b:Column>
-			</b:Row>
-
-			<b:Row>
-			    <b:Column size="9" offset="3">
-			    	<rechner:TopPanel ui:field='topPanel' />
-				</b:Column>
-			</b:Row>
-		
-		</b:Container><!-- container -->
-		</header>
-		
-		<b:Container>
-		<g:HTMLPanel>
-			<div class="page content-start"><!-- website design code / bootstrap -->
-			
-				
-
-				
-			
-			<b:Row>
-				<b:Column size="4" >
-				<g:HTMLPanel>
-					<g:HTMLPanel ui:field='sidebar' styleName='{style.sidebar}'>
-						
-							<g:SimplePanel ui:field='searchPanel' />
-				
-					</g:HTMLPanel>
-					<br />
-				</g:HTMLPanel>
-				</b:Column>
-				<b:Column size="8">
-					<g:SimplePanel ui:field='recipePanel' />
-				</b:Column>
-			</b:Row>
-		
-		
-			</div>
+					</b:Column>
+					<b:Column size="8">
+						<g:SimplePanel ui:field='recipePanel' />
+					</b:Column>
+				</b:Row>
+				</div>
 			</g:HTMLPanel>
-		</b:Container>
+			</b:Container>
 		</g:HTMLPanel>
 	</g:ScrollPanel>
 

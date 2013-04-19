@@ -24,6 +24,7 @@ import ch.eaternity.shared.Transportation;
 import ch.eaternity.shared.HomeDistances.RequestCallback;
 
 
+import com.github.gwtbootstrap.client.ui.Close;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -52,7 +53,7 @@ public class IngredientSpecificationWidget extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	@UiField Label NameLabel;
-	@UiField Button closeButton;
+	@UiField Close closeButton;
 	@UiField Label SeasonLabel;
 	@UiField HTML SeasonHTML;
 	
@@ -109,14 +110,8 @@ public class IngredientSpecificationWidget extends Composite {
 		this.homeDistances = dco.getHomeDistances(verifiedRecipeLocation);
 		this.verifiedRecipeLocation = verifiedRecipeLocation;
 		setFields();
+		updateSeasonCoherency();
 		
-		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
-				new MonthChangedEventHandler() {
-					@Override
-					public void onEvent(MonthChangedEvent event) {
-						updateSeasonCoherency();
-					}
-				});
 		presenterSetted = true;
 	}
 	
@@ -125,6 +120,7 @@ public class IngredientSpecificationWidget extends Composite {
 		this.product = ingredient.getFoodProduct();
 		this.verifiedRecipeLocation =  verifiedRecipeLocation;
 		setFields();
+		updateSeasonCoherency();
 	}
 	
 	public boolean isPresenterSetted(){
@@ -227,27 +223,32 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	
 	private void updateSeasonCoherency() {
-		if (product.getSeason() != null) {
-			String seasonText = "von " + product.getSeason().getBeginning().toMonthString() + " bis " + product.getSeason().getEnd().toMonthString();
+		if (product.isSeasonDependant()) {
+			String seasonText = "von <strong>" + product.getSeason().getBeginning().toMonthString() + "</strong> bis <strong>" + product.getSeason().getEnd().toMonthString() + "</strong>";
 			
 			SeasonDate begin = product.getSeason().getBeginning();
 			SeasonDate end = product.getSeason().getEnd();
-			SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
+			SeasonDate date = new SeasonDate(recipeEdit.getRecipe().getCookingDate());
 			
 			if( date.after(begin) && date.before(end)) {
 				seasonText.concat("<br />Diese Zutat ist saisonal");
-				CoherenceHTML.setText("Angaben sind kohärent. <br /> Es ist möglich die Zutat frisch und lokal zu beziehen.");
+				CoherenceHTML.setHTML("Angaben sind kohärent. <br /> Es ist möglich die Zutat frisch und lokal zu beziehen.");
 			}
 			else {
 				seasonText.concat("<br />Diese Zutat ist nicht saisonal");
 				if (ingredient.getRoute().getDistanceKM().getAmount() < 100 
 						&& !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH")
 						&& ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch")) {
-					CoherenceHTML.setText("Angaben sind unvollständig. <br >" +
+					CoherenceHTML.setHTML("Angaben sind unvollständig. <br >" +
 							"Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
 				}
-				
 			}
+			
+			SeasonHTML.setHTML(seasonText);
+			
+			SeasonLabel.setVisible(true);
+			SeasonHTML.setVisible(true);
+			CoherenceHTML.setVisible(true);
 		}
 		else {
 			SeasonLabel.setVisible(false);

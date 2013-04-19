@@ -41,6 +41,9 @@ public interface Resources extends ClientBundle {
 	
 	@Source("top_logout.png")
 	public ImageResource logout();
+	
+	@Source("question_mark.png")
+	public ImageResource questionMark();
 
 	
 }
