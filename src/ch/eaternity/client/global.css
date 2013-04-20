@@ -1,11 +1,7 @@
 body, table {
   font-size: small;
 }
-body {
-  font-family: Helvetica, Arial, sans-serif;
-  color: #000;
-  background: #fff;
-}
+
 
 hr {
 	border:solid #F48F28 1px;
@@ -529,10 +525,6 @@ ul.rating li.five a:hover {background-position:0 -160px}
 
 
 
-html {
-  background-color: #eee;
-}
-
 ul {
 	list-style-type: none;
 	margin-left: 0px;
@@ -571,7 +563,7 @@ content: "✯ ";
 
 
 body { 
-background: #fff url(images/background.jpg) 0 0 repeat;
+background: #eee url(images/bg-float.png) 0 0 repeat;
 font-family: "Open Sans", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
 /*color: #333;*/
 color: #4D2E00;
@@ -849,7 +841,7 @@ header {
 
 	padding-bottom: 645px; padding-top: 30px; margin-bottom:-620px;
   /* background: url(images/cut3.png) repeat-x ;*/
-  background: url(images/background_falling.png) no-repeat;
+  background: url(images/background_calcs2.png) no-repeat;
   background-position:80% 0%;
   margin-left:20px; margin-right:20px;
 

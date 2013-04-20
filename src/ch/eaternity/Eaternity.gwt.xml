@@ -80,7 +80,7 @@
 	
   <!-- This will give us shorter obfuscated CSS class names. We guarantee
        that there will be no class names that will conflict with /M.+/ -->
-  <set-configuration-property name="CssResource.obfuscationPrefix" value="M" />
+  <set-configuration-property name="CssResource.obfuscationPrefix" value="Eat-" />
   
   <set-property name="compiler.stackMode" value="emulated" />
 

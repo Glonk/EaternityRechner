@@ -62,11 +62,12 @@
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 
 	<g:HTMLPanel>
+		<header>
 		<b:Column size="2">
 			<g:HTMLPanel>
-				<a href="http://www.eaternity.ch">
-				<img class="logo" src="http://dl.dropbox.com/u/1214503/eaternity-assets/images/generic/logo-eaternity-small_04-11-2010.png" />
-				</a>
+
+				<img class="logo" src="images/logo-eaternity-small_04-11-2010.png" />
+
 			</g:HTMLPanel>
 		</b:Column>
 		<b:Column size="7" offset="3">
@@ -95,6 +96,6 @@
 			
 			</b:Row>
 		</b:Column>
-		
+		</header>
 	</g:HTMLPanel>
 </ui:UiBinder>
