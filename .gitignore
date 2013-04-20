@@ -6,6 +6,12 @@
 /war/WEB-INF/appengine-generated
 /war/WEB-INF/classes
 /database
-.*	
-gwt-unitCache
-src/ch/eaternity/Eaternity.gwt.xml
+/gwt-unitCache
+/src/ch/eaternity/Eaternity.gwt.xml
+*~
+*.lock
+*.swp
+*.out
+.gwt/.gwt-log
+.DS_Store
+
