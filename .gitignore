@@ -7,7 +7,6 @@
 /war/WEB-INF/classes
 /database
 /gwt-unitCache
-/src/ch/eaternity/Eaternity.gwt.xml
 *~
 *.lock
 *.swp
