@@ -182,7 +182,7 @@ public class RecipeEdit extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.setHeight("1600px");
+		this.setHeight("1000px");
 		
 		// Image
 		uploadWidget = new UploadPhotoWidget(this, presenter);

@@ -81,7 +81,8 @@ public class RecipeView extends Composite {
 		this.dco = presenter.getDCO();
 		this.recipeDataProvider = dco.getRecipeDataProvider();
 		
-		this.setHeight("1000px");
+		// this shoud be in css
+		this.setHeight("600px");
 		addToCollectionButton.setVisible(false);
 		generateReportButton.setVisible(false);
 		
