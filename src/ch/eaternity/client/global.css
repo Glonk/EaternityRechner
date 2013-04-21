@@ -839,11 +839,13 @@ padding:0px;
 
 header { 
 
-  padding-top: 30px; margin-bottom:-1px;
+ /* this is for the background image */
+  padding-bottom: 1005px; padding-top: 30px; margin-bottom:-1006px;
+/*  padding-right:400px;margin-right:-400px; we have to fix the image another way */
   /* background: url(images/cut3.png) repeat-x ;*/
   background: url(images/background_calcs2.png) no-repeat;
   background-position:80% 0%;
-
+  
 
   min-height:80px;
 }
