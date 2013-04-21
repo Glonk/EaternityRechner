@@ -9,6 +9,11 @@
 
 
 	<ui:style>
+	.logo {
+	padding-left:20px;margin-right:-20px
+
+	}
+	
 	.adminDiv {
 	float:right;
 
@@ -24,7 +29,7 @@
 	
 
 	.iconsPanel {
-		margin-bottom:30px;
+		margin-bottom:50px; 
 		text-align:rigth;
 	}
 
@@ -47,7 +52,11 @@
 	
 	.spinnerLabel {
 		color:darkgray;
-		margin-left:10px;
+		/* margin-left:10px; */
+	}
+	.recipePlace {
+		margin-right:-20px;
+
 	}
 
   </ui:style>
@@ -63,39 +72,43 @@
 
 	<g:HTMLPanel>
 		<header>
-		<b:Column size="2">
-			<g:HTMLPanel>
-
-				<img class="logo" src="images/logo-eaternity-small_04-11-2010.png" />
-
-			</g:HTMLPanel>
-		</b:Column>
-		<b:Column size="7" offset="3">
 			<b:Row>
 				<b:Column size="2">
-					<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
+					<g:HTMLPanel styleName="{style.logo}">
+		
+						<img class="logo" src="images/logo-eaternity-small_04-11-2010.png" />
+		
+					</g:HTMLPanel>
 				</b:Column>
-				<b:Column size="4" offset="1" styleName="{style.iconsPanel}">
-					<b:Tooltip text='Der Monat in dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}'></g:Image></b:Tooltip>
-					<g:ListBox width='100' ui:field="monthListBox" />
-	
-					<b:Tooltip text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}'></g:Image></b:Tooltip>
-					<b:Tooltip text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}'></g:Image></b:Tooltip>
-				</b:Column>
-			</b:Row>
-			<b:Row>	
-				<b:Column size="2"  ui:field='spinnerColumn'>
-					<g:HorizontalPanel>
-						<g:HTML ui:field="spinnerHTML"></g:HTML>
-						<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
-					</g:HorizontalPanel>
-				</b:Column>
-				<b:Column size="5">
-					<g:MenuBar ui:field='recipesMenuBar'></g:MenuBar>
-				</b:Column>
+				<b:Column size="7" offset="3">
+					<b:Row>
+						<b:Column size="2" offset="4">
+							<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
+						</b:Column>
+						<b:Column size="4" offset="1" styleName="{style.iconsPanel}">
+							<b:Tooltip text='Der Monat in dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}'></g:Image></b:Tooltip>
+							<g:ListBox width='100' ui:field="monthListBox" />
 			
+							<b:Tooltip text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}'></g:Image></b:Tooltip>
+							<b:Tooltip text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}'></g:Image></b:Tooltip>
+						</b:Column>
+					</b:Row>
+					<b:Row>	
+						<b:Column size="3"  offset="4" ui:field='spinnerColumn'>
+							<g:HorizontalPanel>
+								<g:HTML ui:field="spinnerHTML"></g:HTML>
+								<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
+							</g:HorizontalPanel>
+						</b:Column>
+					</b:Row>
+					<b:Row>
+						<b:Column size="5" offset="2" styleName="{style.recipePlace}">
+							<g:MenuBar ui:field='recipesMenuBar' ></g:MenuBar>
+						</b:Column>
+					
+					</b:Row>
+				</b:Column>
 			</b:Row>
-		</b:Column>
 		</header>
 	</g:HTMLPanel>
 </ui:UiBinder>

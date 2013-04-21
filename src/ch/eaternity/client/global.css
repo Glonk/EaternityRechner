@@ -839,11 +839,11 @@ padding:0px;
 
 header { 
 
-	padding-bottom: 645px; padding-top: 30px; margin-bottom:-620px;
+  padding-top: 30px; margin-bottom:-1px;
   /* background: url(images/cut3.png) repeat-x ;*/
   background: url(images/background_calcs2.png) no-repeat;
   background-position:80% 0%;
-  margin-left:20px; margin-right:20px;
+
 
   min-height:80px;
 }

@@ -61,12 +61,12 @@
       <g:HTMLPanel>
       	
 		<b:Container>
-			<b:Row>
+			
 				<!-- Top Content -->
 				
-			    <rechner:TopPanel ui:field='topPanel' />
+			<rechner:TopPanel ui:field='topPanel' />
 			    
-			</b:Row>
+			
 			<g:HTMLPanel>
 				<div class="page content-start"><!-- website design code / bootstrap -->
 				
