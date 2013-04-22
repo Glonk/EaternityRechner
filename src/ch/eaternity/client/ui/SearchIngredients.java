@@ -158,7 +158,7 @@ public class SearchIngredients extends Composite {
 		if(dco.editDataLoaded())
 			updateResults("");
 		
-		this.setHeight("720px");
+		this.setHeight("520px");
 		panelSouth.setVisible(false);
 		
 		// initialize a key provider to refer to the same selection states

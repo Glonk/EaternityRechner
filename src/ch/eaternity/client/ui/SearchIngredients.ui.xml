@@ -156,7 +156,7 @@
 			border-top: solid #bbb 1px;
 			
 			/* this is a HACK: without this the scrolling does not work */
-			height:602px;
+			height:402px;
 		}
 		
 		.htmlbox {
