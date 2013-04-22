@@ -13,7 +13,10 @@
 	padding-left:20px;margin-right:-20px
 
 	}
-	
+	.spinnerHeight {
+	  height:30px;
+
+	}
 	.adminDiv {
 	float:right;
 
@@ -29,7 +32,7 @@
 	
 
 	.iconsPanel {
-		margin-bottom:50px; 
+		margin-bottom:20px; 
 		text-align:rigth;
 	}
 
@@ -94,8 +97,8 @@
 						</b:Column>
 					</b:Row>
 					<b:Row>	
-						<b:Column size="3"  offset="4" ui:field='spinnerColumn'>
-							<g:HorizontalPanel>
+						<b:Column size="3"  offset="4" styleName="{style.spinnerHeight}">
+							<g:HorizontalPanel ui:field='spinnerColumn'>
 								<g:HTML ui:field="spinnerHTML"></g:HTML>
 								<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
 							</g:HorizontalPanel>

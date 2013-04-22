@@ -63,7 +63,7 @@ public class TopPanel extends Composite {
 	@UiField Image contactImage;
 	@UiField Image signOutImage;
 	  
-	@UiField Column spinnerColumn;
+	@UiField HorizontalPanel spinnerColumn;
 	@UiField HTML spinnerHTML;
 	@UiField Label spinnerLabel;
 	  

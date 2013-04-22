@@ -96,23 +96,7 @@
 					
 					<b:Column size="4"  >
 						<g:HTML>
-						<a href="/archive.html"><h3>Seitenübersicht</h3></a>
-						<p>
-							<a href="/infos/#organisation">Organisation</a><br />
-							<a href="/blog/">Blog</a><br />
-							<a href="/recipes/#nice2">Rezepte</a><br />
-							<!-- a href="/#">Spenden  &rarr;</a><br /-->
-							<br />
-							<a href="/infos/#referenzen">Referenzen und Förderer</a><br />
-							<br />
-							<a href="/infos/#newsmedia">Presse</a><br />
-							<a href="/infos/#material">Material</a><br />
-							<!--a href="/#">Quellen?</a><br /-->
-							<br />
-							
-						</p>
-	
-						<h3><!-- <img src="http://dl.dropbox.com/u/1214503/eaternity-assets/images/generic/cc_icon_small.png" /> --> &copy; &nbsp;2013 Eaternity</h3>
+						<h3>&copy; &nbsp;2013 Eaternity</h3>
 						<p></p>
 						<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.de">Creative Commons Namensnennung - Weitergabe unter gleichen Bedingungen 3.0 Unported Lizenz</a></p>
 						<p><a href="/legal">Haftbarkeit &amp; Rechtshinweise</a></p>
@@ -121,18 +105,6 @@
 					
 					<b:Column size="3" >
 						<g:HTML>
-						<h3>International</h3>
-						<p>
-						<a href="/index.html#googtrans(en)" >English</a> /
-						<a href="/index.html#googtrans(fr)" >Francais</a> /
-						<a href="/index.html#googtrans(it)" >Italiano</a>
-						<!-- div id="google_translate_element"></div -->
-						
-						</p>
-						<br />
-	
-						<!--h5>Newsletter</h5>
-						<p>Signup</p-->
 	
 						<h3>Anschrift</h3>
 						
