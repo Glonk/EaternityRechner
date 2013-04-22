@@ -42,8 +42,10 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -78,9 +80,8 @@ public class SearchIngredients extends Composite {
 	@UiField Image imageBio;
 	
 	// Search Panel (Box and Button)
-	@UiField DockLayoutPanel SearchBox;
-	@UiField HTML SearchLabel;
-	@UiField public static SuggestBox SearchInput;
+	@UiField Label SearchLabel;
+	@UiField TextBox SearchInput;
 	
 	@UiField ScrollPanel ingredientDisplayWidget;
 	

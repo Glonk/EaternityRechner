@@ -209,12 +209,15 @@ public class DataController {
 	}
 	
 	public void searchRecipes(RecipeSearchRepresentation search) {
+		eventBus.fireEvent(new SpinnerEvent(true, "Rezepte suchen"));
 		dataRpcService.searchRecipes(search, new AsyncCallback<ArrayList<RecipeInfo>>() {
 			public void onFailure(Throwable error) {
+				eventBus.fireEvent(new SpinnerEvent(false));
 				handleError(error);
 			}
 
 			public void onSuccess(ArrayList<RecipeInfo> recipeInfos) {
+				eventBus.fireEvent(new SpinnerEvent(false));
 				if (recipeInfos != null){
 					addRecipeInfos(recipeInfos);
 				}

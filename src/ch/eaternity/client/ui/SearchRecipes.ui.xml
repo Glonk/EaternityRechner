@@ -1,18 +1,36 @@
 <ui:UiBinder
   xmlns:ui='urn:ui:com.google.gwt.uibinder'
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:rechner='urn:import:ch.eaternity.client.ui.widgets'>
+  xmlns:rechner='urn:import:ch.eaternity.client.ui.widgets'
+  xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
   
 <ui:style>
 
+.searchbox {
+	background: #a7b424;
+	color: white;
+	padding:15px;
+}
 
+.searchLabel {
+	font-size:14px;
+	margin-bottom:10px;
+}
 
+.searchTextBox {
+	width:250px;	
+}
 
 </ui:style>
 
+<g:HTMLPanel styleName='{style.searchbox}'>
 
-<g:VerticalPanel>
-	<g:Label>Ich bin SerachRecipes</g:Label>
-</g:VerticalPanel>
+		<g:Label styleName='{style.searchLabel}'>REZEPTSUCHE</g:Label>
+
+		<g:TextBox ui:field='searchTextBox' styleName='{style.searchTextBox}'></g:TextBox>
+
+		<b:Button ui:field='searchButton'>suchen</b:Button>
+
+</g:HTMLPanel>
 
 </ui:UiBinder>

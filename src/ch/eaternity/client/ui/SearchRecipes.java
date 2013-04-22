@@ -6,14 +6,18 @@ import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
+import ch.eaternity.shared.RecipeSearchRepresentation;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -27,6 +31,8 @@ public class SearchRecipes extends Composite {
 	
 	// ---------------------- User Interface Elements --------------
 
+	@UiField TextBox searchTextBox;
+	@UiField Button searchButton;
 	
 	// ---------------------- Class Variables ----------------------
 	
@@ -54,19 +60,33 @@ public class SearchRecipes extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.setHeight("720px");
 		bind();
 	}
 	
 	// ---------------------- UI Handlers ----------------------
 
+	@UiHandler("searchButton")
+	public void onSearchClick(ClickEvent event) {
+		search();
+	}
 	
-	/**
-	 * @return true if recipe has changed since last save, false otherwise
-	 */
+	@UiHandler("searchTextBox")
+	public void onKeyDown(KeyDownEvent event) {
+		if(KeyCodes.KEY_ENTER == event.getNativeKeyCode())
+		{
+			search();
+		}
+	}
 
 	
 	// ---------------------- private Methods ----------------------
+
+	private void search() {
+		RecipeSearchRepresentation recipeSearchRep = new RecipeSearchRepresentation(searchTextBox.getText(), dco.getRecipeScope());
+		if (dco.getCurrentKitchen() != null)
+			recipeSearchRep.setKitchenId(dco.getCurrentKitchen().getId());
+		dco.searchRecipes(recipeSearchRep);
+	}
 	
 }
 

@@ -10,7 +10,8 @@
 		}
 		
 		.searchLabel {
-			padding-left: 6px;
+
+			font-size:14px;
 		}
 		
 		.scrollLittle {
@@ -82,20 +83,16 @@
 			background: #fff;
 		}
 		
-		.searcher { /*
-				  	border-top: 1.5px solid #bbb;
-				  	border-right: 1.5px solid #bbb; 
-				  	*/
+		.searchBox { 
 			background: #a7b424;
-			color: #555;
-			margin-top: 24px;
-			
+			color: white;
+			padding:15px;
+			width:100%;
 		}
 		
-		.spacer {
-			margin: 8px;
-			padding-left: 4px;
-			width:80%;
+		.searchTextBox {
+			margin-left: 10px;
+			width:100%;
 		}
 		
 		.sortThing {
@@ -203,19 +200,12 @@
 	<g:DockLayoutPanel unit='EM'>
 
 		<g:north size='5'>
-	
-					<g:DockLayoutPanel ui:field="SearchBox" styleName='{style.searcher}'
-						unit='EM'>
-						<g:west size='4'>
-							<g:HTML ui:field="SearchLabel" styleName='{style.searchLabel}'>
-								<p>Suche:</p>
-							</g:HTML>
-						</g:west>
-						<g:center>
-							<g:SuggestBox styleName='{style.spacer}' ui:field="SearchInput" />
-						</g:center>
-					</g:DockLayoutPanel>
-	
+			<g:HTMLPanel styleName='{style.searchBox}'>
+				<g:HorizontalPanel >
+					<g:Label ui:field="SearchLabel" styleName='{style.searchLabel}'>SUCHE ZUTAT:</g:Label>
+					<g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" />
+				</g:HorizontalPanel>
+			</g:HTMLPanel>
 		</g:north>
 
 		<g:center>

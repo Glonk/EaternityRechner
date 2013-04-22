@@ -3,6 +3,7 @@ package ch.eaternity.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
@@ -136,6 +137,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		DAO dao = new DAO();
 		ArrayList<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
 		
+		// fetch all recipes in the recipeScope
 		ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 		switch (search.getScope()) {
 		case PUBLIC: 
@@ -155,6 +157,23 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		case KITCHEN: 
 			recipes = dao.getKitchenRecipes(search.getKitchenId()); 
 			break;
+		}
+		
+		// search the recipes via string
+		String[] searchStrings = search.getText().split(" ");
+
+		Iterator<Recipe> iterator = recipes.iterator();
+		while(iterator.hasNext()) {
+		
+			Recipe recipe = iterator.next();
+			
+			// the whitespace is an AND operator
+			for(int i = 0; i < searchStrings.length; i++) {
+				String partSearchString = searchStrings[i].toLowerCase();
+				
+				if (!recipe.getTitle().toLowerCase().contains(partSearchString) && !recipe.getSubTitle().toLowerCase().contains(partSearchString))
+					iterator.remove();
+			}
 		}
 		
 		if (recipes != null) {

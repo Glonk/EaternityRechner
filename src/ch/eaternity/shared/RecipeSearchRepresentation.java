@@ -21,11 +21,11 @@ public class RecipeSearchRepresentation implements Serializable {
 	// ---------------------- What to search for ---------------------
 	
 	private List<Long> productIds = new ArrayList<Long>();
-	
+		
 	/**
 	 * search in title and subtitle and probably comments?
 	 */
-	private List<String> text = new ArrayList<String>();
+	private String text = new String();
 	
 	// Category
 	
@@ -48,7 +48,7 @@ public class RecipeSearchRepresentation implements Serializable {
 	
 	public RecipeSearchRepresentation(String text, RecipeScope scope) {
 		this();
-		this.text.add(text);
+		this.text = text;
 		this.scope = scope;
 	}
 	
@@ -60,11 +60,11 @@ public class RecipeSearchRepresentation implements Serializable {
 		this.productIds = productIds;
 	}
 
-	public List<String> getText() {
+	public String getText() {
 		return text;
 	}
 
-	public void setText(List<String> text) {
+	public void setText(String text) {
 		this.text = text;
 	}
 
