@@ -2,6 +2,9 @@ package ch.eaternity.client.ui;
 
 import ch.eaternity.client.activity.LoginActivity;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Image;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.place.shared.Place;
@@ -9,10 +12,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,21 +27,27 @@ public class LoginView extends SimpleLayoutPanel
 	//@UiField HTMLPanel framePanel;
 	@UiField HTML statusInfo;
 	@UiField Button loginButton;
-	@UiField Image logoImage;
-
+	// @UiField Modal modal;
 	private LoginActivity presenter;
 	private String name;
 	private Frame frame;
 	private String loginUrl;
 
 
+
 	public LoginView()
 	{
 		setWidget(uiBinder.createAndBindUi(this));
-		logoImage.setUrl("/images/logo-eaternity.png");
-		logoImage.setSize("300px", "131px");
-
 		this.setVisible(false);
+		
+		/* The Login Info could be a Modal box, so disappearing and showing the calc would be fancy (toggle on loading complete)
+		modal.setVisible(false);
+		modal.setBackdrop(null);
+		modal.setAnimation(true);
+		modal.toggle();
+		*/
+		
+		
 	}
 
 	/*

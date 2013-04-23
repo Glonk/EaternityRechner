@@ -72,11 +72,14 @@
 				
 				<b:Row>
 					<b:Column size="4"  >
+					<!-- Use Affix to make stuff sticky via gwtbootstrap javascript -->
+					<!--  <b:Affix>  -->
 						<g:HTMLPanel styleName='{style.sticky}'>
 							<g:HTMLPanel ui:field='sidebar' styleName='{style.sidebar}'>
 								<g:SimplePanel ui:field='searchPanel' />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
+					<!-- </b:Affix>  -->
 					</b:Column>
 					<b:Column size="8">
 						<g:SimplePanel ui:field='recipePanel' />
