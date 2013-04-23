@@ -17,6 +17,7 @@ import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.HomeDistances;
 import ch.eaternity.shared.Ingredient;
+import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Route;
 import ch.eaternity.shared.SeasonDate;
@@ -83,7 +84,7 @@ public class IngredientSpecificationWidget extends Composite {
 	private RecipeEdit recipeEdit;
 	private DataController dco;
 	private HomeDistances homeDistances;
-	private final static Geocoder geocoder = new Geocoder();
+	private static Geocoder geocoder;
 	private String verifiedRecipeLocation = "";
 	
 	private static final String calulationAnchor = "<a style='margin-left:3px;cursor:pointer;cursor:hand;'>berechnen</a>";
@@ -98,7 +99,13 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	public IngredientSpecificationWidget() {
 		 initWidget(uiBinder.createAndBindUi(this));
-		 geocoder.setBaseCountryCode("ch");
+		 try {
+			 // this is data/rpc construction code and shouldn't be in the ui widget 
+			 // (fallbacks need to be gracefully handled)
+			 geocoder = new Geocoder();
+			 geocoder.setBaseCountryCode("ch");
+		 } catch (Exception e) {}
+		 
 		 this.setVisible(false);
 	}
 	
