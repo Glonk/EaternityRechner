@@ -11,6 +11,7 @@
 			<attribute name="javadoc_location" value="jar:file:/Users/aurelianjaggi/Documents/workspace/EaternityRechner/war/WEB-INF/lib/objectify-4.0b1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-bootstrap-2.2.1.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-log-3.2.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.16.jar"/>
@@ -27,6 +28,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/eaticious-1.0.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-bootstrap-2.2.1.0.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

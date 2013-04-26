@@ -115,7 +115,7 @@ public class IngredientWidget extends Composite {
 	
 	@UiHandler("closeButton")
 	public void oncloseButtonPress(ClickEvent event) {	
-		recipeEdit.removeIngredient(this);
+		//recipeEdit.removeIngredient(this);
 	}
 	
 

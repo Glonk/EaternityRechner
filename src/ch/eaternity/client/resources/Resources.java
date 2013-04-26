@@ -23,6 +23,9 @@ public interface Resources extends ClientBundle {
 
 	@Source("saisonal.png")
 	public ImageResource season();
+	
+	@Source("regional.png")
+	public ImageResource region();
 
 	@Source("zutat-bewertung-1.png")
 	public ImageResource ingredientRatingBar1();
@@ -45,5 +48,12 @@ public interface Resources extends ClientBundle {
 	@Source("question_mark.png")
 	public ImageResource questionMark();
 
+	@Source("delete-large.png")
+	public ImageResource deleteLarge();
 	
+	@Source("delete-small.png")
+	public ImageResource deleteSmall();
+	
+	@Source("bio.png")
+	public ImageResource bio();
 }

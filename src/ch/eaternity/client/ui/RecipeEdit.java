@@ -1,13 +1,10 @@
 
 package ch.eaternity.client.ui;
 
-import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader;
-import gwtupload.client.PreloadedImage;
-import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
-
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
+
+import org.eaticious.common.QuantityImpl;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
@@ -15,32 +12,31 @@ import ch.eaternity.client.events.AlertEvent;
 import ch.eaternity.client.events.AlertEventHandler;
 import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.IngredientAddedEventHandler;
-import ch.eaternity.client.events.LoadedDataEvent;
-import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
-import ch.eaternity.client.events.MonthChangedEvent;
-import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.events.RecipeLoadedEvent;
 import ch.eaternity.client.events.RecipeLoadedEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
-import ch.eaternity.client.ui.widgets.ConfirmDialog;
-import ch.eaternity.client.ui.widgets.FlexTableRowDragController;
-import ch.eaternity.client.ui.widgets.FlexTableRowDropController;
+import ch.eaternity.client.resources.Resources;
+import ch.eaternity.client.ui.cells.ImageActionCell;
 import ch.eaternity.client.ui.widgets.IngredientSpecificationWidget;
-import ch.eaternity.client.ui.widgets.IngredientWidget;
 import ch.eaternity.client.ui.widgets.UploadPhotoWidget;
-import ch.eaternity.shared.FoodProduct;
+import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SavingPotential;
+import ch.eaternity.shared.Season;
+import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Util;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
-import com.github.gwtbootstrap.client.ui.Alert;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.ImageResourceCell;
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,22 +44,21 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -71,6 +66,10 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * 
@@ -80,6 +79,17 @@ import com.google.gwt.user.client.ui.Widget;
 public class RecipeEdit extends Composite {
 	interface Binder extends UiBinder<Widget, RecipeEdit> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
+	
+	/**
+	 * The key provider that allows us to identify Contacts even if a field
+	 * changes. We identify contacts by their unique ID.
+	 */
+	private final ProvidesKey<Ingredient> KEY_PROVIDER = new ProvidesKey<Ingredient>() {
+		@Override
+		public Object getKey(Ingredient ingredient) {
+			return (ingredient == null) ? null : ingredient.getId();
+		}
+	};
 	
 	// ---------------------- User Interface Elements --------------
 	@UiField AbsolutePanel dragArea;
@@ -104,7 +114,8 @@ public class RecipeEdit extends Composite {
 	//@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
 	
-	@UiField FlexTable ingredientList;
+	@UiField CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(KEY_PROVIDER);
+	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;
 	@UiField Label sumCO2Label;
@@ -126,18 +137,14 @@ public class RecipeEdit extends Composite {
 	private RechnerActivity presenter;
 	private DataController dco;
 	
-	private FlowPanel panelImages = new FlowPanel();
 	private UploadPhotoWidget uploadWidget;
-
-	private FlexTableRowDragController tableRowDragController = null;
-	private FlexTableRowDropController flexTableRowDropController = null;
+	private ListDataProvider<Ingredient> ingredientDataProvider = new ListDataProvider<Ingredient>();
 	
 	private boolean saved = false;
-	
 	private int numberofComments = 0;
-	
 	private int selectedRow = 0;
 	private Recipe recipe;
+	private List<Ingredient> ingredients;
 	
 	
 	public interface Listener {
@@ -161,10 +168,6 @@ public class RecipeEdit extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.setVisible(false);
 		
-	    tableRowDragController = new FlexTableRowDragController(dragArea);
-	    flexTableRowDropController = new FlexTableRowDropController(ingredientList,this);
-	    tableRowDragController.registerDropController(flexTableRowDropController);
-
 	    saveButton.setEnabled(false);
 	    generatePDFButton.setVisible(false);
 		generatePDFButton.setEnabled(false);
@@ -175,8 +178,8 @@ public class RecipeEdit extends Composite {
 		imageUploadWidgetPanel.setVisible(false);
 		
 		deleteImage.setUrl("/images/delete.png");
-	    
-	    ingredientList.getColumnFormatter().setWidth(0, "300px");
+	
+		initIngredientTable();
 	}
 	
 	public void setPresenter(RechnerActivity presenter) {
@@ -199,9 +202,9 @@ public class RecipeEdit extends Composite {
 					@Override
 					public void onEvent(IngredientAddedEvent event) {
 						if (recipe != null) {
-							addIngredient(event.ing);
+							ingredientDataProvider.refresh();
+							updateCo2Value();
 							changeSaveStatus(false);
-							updateIcons();
 						}
 					}
 				});
@@ -218,6 +221,7 @@ public class RecipeEdit extends Composite {
 					@Override
 					public void onEvent(RecipeLoadedEvent event) {
 						recipe = event.recipe;
+						ingredients = recipe.getIngredients();
 						ingSpecWidget.setVisible(false);
 						setVisible(true);
 						updateParameters();
@@ -303,6 +307,49 @@ public class RecipeEdit extends Composite {
 		co2Image.setUrl(Util.getRecipeRatingBarUrl(recipe.getCO2ValuePerServing()));
 		sumCO2Label.setText("" + (recipe.getCO2Value().intValue()) + "g");
 	}
+	
+	/**
+	 * @return true if recipe has changed since last save, false otherwise
+	 */
+	public boolean isSaved() {
+		return saved;
+	}
+	
+
+	
+	public void updateIngredientValue(Ingredient ingSpec) {
+		ingredientDataProvider.refresh();
+		updateCo2Value();
+		changeSaveStatus(false);
+	}
+	
+	
+	public void updateIngredients() {
+		ingredientDataProvider.setList(recipe.getIngredients());
+		updateCo2Value();
+	}
+
+	public void setImageUrl(String url, boolean imageWidgetVisible) {
+		//recipeImage.setUrl(url);
+		uploadWidget.setVisible(imageWidgetVisible);
+		recipeImage.setUrlAndVisibleRect(url,0,0,670,230);
+	}
+
+	public Recipe getRecipe() {
+		return this.recipe;
+	}
+
+
+	public void closeRecipeEdit() {
+		
+		if (!saved && dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn() && recipe != null) {
+			dco.saveRecipe(recipe);
+			saved = true;
+		}
+		
+		dco.clearEditRecipe();
+		
+	}
 
 	// ---------------------- UI Handlers ----------------------
 	
@@ -337,29 +384,7 @@ public class RecipeEdit extends Composite {
 		setImageUrl("http://placehold.it/120x120", true);
 		imageUploadWidgetPanel.setVisible(true);
 	}
-	
-	
-	@UiHandler("ingredientList")
-	public void onClick(ClickEvent event) {
-		// Select the row that was clicked (-1 to account for header row).
-		Cell cell = ingredientList.getCellForEvent(event);
-		if (cell != null) {
-			int row = cell.getRowIndex();
-			IngredientWidget ingWidget = (IngredientWidget)ingredientList.getWidget(row,0);
-			
-			if (!ingSpecWidget.isPresenterSetted()){
-				ingSpecWidget.setPresenter(presenter, ingWidget.getIngredient(), recipe.getVerifiedLocation());
-			}
-			else{
-				ingSpecWidget.setIngredient(ingWidget.getIngredient(), recipe.getVerifiedLocation());
-			}
-			ingSpecWidget.setVisible(true);
 
-			styleRow(selectedRow, false);
-			styleRow(row, true);
-			selectedRow = row;
-		}
-	}
 	
 	
 	@UiHandler("amountPersons")
@@ -462,197 +487,304 @@ public class RecipeEdit extends Composite {
 		presenter.goTo(new RechnerRecipeEditPlace("new"));
 	}
 
+	
+	// ---------------------- private Methods ---------------------
 
-	
-	
-	/**
-	 * @return true if recipe has changed since last save, false otherwise
-	 */
-	public boolean isSaved() {
-		return saved;
-	}
-	
+
 	private void changeSaveStatus(boolean saved) {
 		this.saved = saved;
 		saveButton.setEnabled(!saved);
 	}
 	
-	public void removeIngredient(IngredientWidget ingWidget) {
-		recipe.removeIngredient(ingWidget.getIngredient());
-		ingredientList.remove(ingWidget);
+	private void removeIngredient(Ingredient ingredient) {
+		for (int i = 0; i < ingredients.size(); i++) {
+			Ingredient ingredientIt = ingredients.get(i);
+			if (ingredientIt == ingredient)
+				ingredients.remove(i);
+		}
+
+		ingredientDataProvider.refresh();
+		ingredientCellTable.redraw();
+		
 		ingSpecWidget.setVisible(false);
 		
-		// set the colors in the right order...
-		String style = evenStyleRow.evenRow();
-		for(Integer rowIndex = 0; rowIndex<ingredientList.getRowCount(); rowIndex++){
-			ingredientList.getRowFormatter().removeStyleName(rowIndex, style);
-			if ((rowIndex % 2) == 1) {
-				ingredientList.getRowFormatter().addStyleName(rowIndex, style);
-			} 
-		}
 		updateCo2Value();
 		changeSaveStatus(false);
 	}
-	
-	public void updateIngredientValue(Ingredient ingSpec) {
-		((IngredientWidget)ingredientList.getWidget(selectedRow,0)).updateCO2Value();
-		updateCo2Value();
-		changeSaveStatus(false);
-	}
-	
-	
-	public void updateIngredients() {
-		ingredientList.clear();
-		for (Ingredient ingSpec : recipe.getIngredients()) {
-			addIngredient(ingSpec);
-		}
-		updateCo2Value();
-	}
-	
-	public void addIngredient(Ingredient ingSpec) {
-		int row = ingredientList.getRowCount();
-		IngredientWidget ingWidget = new IngredientWidget(dco, ingSpec,this, dco.getCurrentMonth());
-		ingredientList.setWidget(row, 0, ingWidget);
-		
-		// drag Handler
-		tableRowDragController.makeDraggable(ingWidget,ingWidget.getDragHandle());
-		
-		//Alternate Coloring
-		if ((row % 2) == 1) {
-			String style = evenStyleRow.evenRow();
-			ingredientList.getRowFormatter().addStyleName(row, style);
-		}
-		updateCo2Value();
-	}
 
 	
-	// ---------------------- private Methods ---------------------
-
-	private void updateIcons() {
-		Iterator<Widget> it = ingredientList.iterator();
-		while (it.hasNext()) {
-			((IngredientWidget)it.next()).updateIcons();
-		}
-	}
-
-		private void initializeCommentingField() {
-			if (recipe.getSavingPotentials() != null) {
-				numberofComments = recipe.getSavingPotentials().size();
-						
-				final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
-				addCommentButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-						commentTable.remove(addCommentButton);
-						fillCommentBoxes(null,numberofComments);
-						numberofComments = numberofComments +1;
-						commentTable.setWidget(numberofComments ,1,addCommentButton);
 	
-					}
 	
-				});
-				
-				for (int i = 0; i < numberofComments; i++) {
-					fillCommentBoxes(recipe.getSavingPotentials().get(i),i);
-				}
-				
-				commentTable.setWidget(numberofComments ,1,addCommentButton);
+	private void initIngredientTable() {
+		ingredientCellTable.setWidth("600px", true);
+		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		Column<Ingredient, String> weightInputColumn = new Column<Ingredient, String>(new TextInputCell()) {
+			@Override
+			public String getValue(Ingredient ingredient) {
+				return Integer.toString(ingredient.getWeight().getAmount().intValue());
 			}
+		};
+
+		Column<Ingredient, String> nameColumn = new Column<Ingredient, String>(new TextCell()) {
+			@Override
+			public String getValue(Ingredient ingredient) {
+				return " g     " + ingredient.getFoodProduct().getName();
+			}
+		};
+		
+		Column<Ingredient, ImageResource> bioColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Ingredient ingredient) {
+				if(ingredient.getProduction() != null && ingredient.getProduction().getSymbol().equalsIgnoreCase("bio")){
+					return Resources.INSTANCE.bio();
+				}
+				return null;
+			}
+		};
+		
+		Column<Ingredient, ImageResource> seasonColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Ingredient ingredient) {
+
+				Season season = ingredient.getFoodProduct().getSeason();
+				if(season != null){
+
+					SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
+					
+					if( !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH") && 
+						ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch") && 
+						date.after(season.getBeginning()) && date.before(season.getEnd()) )
+						return Resources.INSTANCE.season();
+					else return null;
+				}
+				else return null;
+			}
+		};
+		
+		Column<Ingredient, ImageResource> regionalColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Ingredient ingredient) {
+				if ( ingredient.getRoute().getDistanceKM().getAmount() < 100)
+					return Resources.INSTANCE.region();
+				else
+					return null;
+			}
+		};
+		
+		Column<Ingredient, ImageResource> ratingColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
+			@Override
+			public ImageResource getValue(Ingredient ingredient) {
+				if(ingredient.getFoodProduct().getCo2eValue() < .4)
+					return Resources.INSTANCE.ingredientRatingBar1();
+				else if(ingredient.getFoodProduct().getCo2eValue() < 1.2)
+					return Resources.INSTANCE.ingredientRatingBar2();
+				else 
+					return Resources.INSTANCE.ingredientRatingBar3();
+			}
+		};
+		
+		Column<Ingredient, String> co2Column = new Column<Ingredient, String>(new TextCell()) {
+			@Override
+			public String getValue(Ingredient ingredient) {
+				return ((int)ingredient.getCalculatedCO2Value()) +"g";
+			}
+		};
+		
+		
+		ImageActionCell.Delegate<Ingredient> actionDelegate = new ImageActionCell.Delegate<Ingredient>() {
+			@Override
+			public void execute(Ingredient ingredient) {
+				removeIngredient(ingredient);
+			}
+		};
+		
+		Column<Ingredient, Ingredient> removeColumn = new Column<Ingredient, Ingredient>(new ImageActionCell<Ingredient>(Resources.INSTANCE.deleteSmall(), actionDelegate)) {
+			@Override
+			public Ingredient getValue(Ingredient ingredient) {
+				return ingredient;
+			}
+		};
+
+		// Add a field updater to be notified when the user enters a new name.
+		weightInputColumn.setFieldUpdater(new FieldUpdater<Ingredient, String>() {
+			@Override
+			public void update(int index, Ingredient ingredient, String value) {
+				String errorStyle = textErrorStyle.redTextError();
+				Double grams = 0.0;
+				boolean success = false;
+				
+				try { 
+					if ("".equals(value)) {
+						//amountPersons.removeStyleName(errorStyle);
+					}
+					else {
+						grams = Double.parseDouble(value.trim());
+						if (grams > 0) {
+							success = true;
+							//amountPersons.removeStyleName(errorStyle);
+						}
+					}
+				}
+				catch (IllegalArgumentException IAE) {}
+				
+				if (success) {
+					ingredient.setWeight(new QuantityImpl(grams, org.eaticious.common.Unit.GRAM));
+					updateCo2Value();
+					changeSaveStatus(false);
+				}
+				else {
+					//amountPersons.addStyleName(errorStyle);
+				}
+			}
+		});
+		
+		// Add a selection model to handle user selection.
+	    final SingleSelectionModel<Ingredient> selectionModel = new SingleSelectionModel<Ingredient>(KEY_PROVIDER);
+	    
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		Ingredient selected = selectionModel.getSelectedObject();
+	    		if (selected != null) {
+					if (!ingSpecWidget.isPresenterSetted()){
+						ingSpecWidget.setPresenter(presenter, selected, recipe.getVerifiedLocation());
+					}
+					else{
+						ingSpecWidget.setIngredient(selected, recipe.getVerifiedLocation());
+					}
+					ingSpecWidget.setVisible(true);
+	    		}
+	    	}
+	    });
+	    
+	    ingredientCellTable.setSelectionModel(selectionModel);
+	    
+
+		/*
+		ingredientCellTable.setColumnWidth(weightInputColumn, 50.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(nameColumn, 100.0, Unit.PCT);
+		ingredientCellTable.setColumnWidth(co2Column, 40.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(removeColumn, 40.0, Unit.PX);
+*/
+		ingredientCellTable.addColumn(weightInputColumn, "Menge");
+		ingredientCellTable.addColumn(nameColumn, "Zutat");
+		ingredientCellTable.addColumn(bioColumn);
+		ingredientCellTable.addColumn(seasonColumn);
+		ingredientCellTable.addColumn(regionalColumn);
+		ingredientCellTable.addColumn(ratingColumn);
+		ingredientCellTable.addColumn(co2Column, "CO2-Äq.");
+		ingredientCellTable.addColumn(removeColumn);
+
+		ingredientDataProvider.addDataDisplay(ingredientCellTable);
+
+		
+	}
+
+
+	private void initializeCommentingField() {
+		if (recipe.getSavingPotentials() != null) {
+			numberofComments = recipe.getSavingPotentials().size();
+					
+			final Anchor addCommentButton = new Anchor("Einen Kommentar hinzufügen.");
+			addCommentButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+					commentTable.remove(addCommentButton);
+					fillCommentBoxes(null,numberofComments);
+					numberofComments = numberofComments +1;
+					commentTable.setWidget(numberofComments ,1,addCommentButton);
+
+				}
+
+			});
+			
+			for (int i = 0; i < numberofComments; i++) {
+				fillCommentBoxes(recipe.getSavingPotentials().get(i),i);
+			}
+			
+			commentTable.setWidget(numberofComments ,1,addCommentButton);
+		}
+	}
+	
+	private void fillCommentBoxes(SavingPotential recipeComment, int thisRow) {
+		final Anchor removeRowButton = new Anchor("x");
+		removeRowButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int thisRow = getWidgetRow(removeRowButton,commentTable);
+				commentTable.removeRow(thisRow);
+			}
+		});
+		
+		TextBox commentBox = new TextBox();
+		if(recipeComment != null){
+			commentBox.setText(recipeComment.symbol);
 		}
 		
-		private void fillCommentBoxes(SavingPotential recipeComment, int thisRow) {
-			final Anchor removeRowButton = new Anchor("x");
-			removeRowButton.addClickHandler(new ClickHandler() {
+		commentBox.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event)  {
+				updateComments();
+			}
+		});
+		
+	
+		commentBox.setWidth("273px");
+		
+		if(recipeComment != null && recipeComment.amount != 0){
+				setAmountBox(thisRow, recipeComment.amount);
+		} else {
+			final Anchor addCommentAmountButton = new Anchor("+");
+			
+			addCommentAmountButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					int thisRow = getWidgetRow(removeRowButton,commentTable);
-					commentTable.removeRow(thisRow);
+					int thisRow = getWidgetRow(addCommentAmountButton,commentTable);
+					commentTable.remove(addCommentAmountButton);
+					setAmountBox(thisRow, 0);
 				}
 			});
 			
-			TextBox commentBox = new TextBox();
-			if(recipeComment != null){
-				commentBox.setText(recipeComment.symbol);
-			}
-			
-			commentBox.addKeyUpHandler(new KeyUpHandler() {
-				public void onKeyUp(KeyUpEvent event)  {
+			commentTable.setWidget(thisRow ,2,addCommentAmountButton);
+		}
+
+		commentTable.setWidget(thisRow,0,removeRowButton);
+		commentTable.setWidget(thisRow,1,commentBox);
+	}
+
+	
+	private void updateComments() {
+		recipe.getSavingPotentials().clear();
+		for (int i = 0; i < commentTable.getRowCount()-1; i++) {
+			TextBox readBox = (TextBox) commentTable.getWidget(i, 1);
+			if(readBox.getText() != ""){
+				SavingPotential recipeComment = new SavingPotential(readBox.getText());
+				try{
+					TextBox readAmountBox = (TextBox) commentTable.getWidget(i, 2);
+					recipeComment.amount = Integer.parseInt(readAmountBox.getText());
+				} catch (ClassCastException error) {
+					recipeComment.amount = 0;
+				} catch (NumberFormatException error2) {}
+				
+				recipe.getSavingPotentials().add(recipeComment);
+			}	
+		}
+		changeSaveStatus(false);
+	}
+	
+	public void setAmountBox(int thisRow, int amount) {
+		TextBox commentAmountBox = new TextBox();
+		commentAmountBox.setText(Integer.toString(amount));
+		commentAmountBox.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event)  {
+				int keyCode = event.getNativeKeyCode();
+				if ((Character.isDigit((char) keyCode)) 
+						|| (keyCode == KeyCodes.KEY_BACKSPACE)
+						|| (keyCode == KeyCodes.KEY_DELETE) ) {
 					updateComments();
 				}
-			});
-			
-		
-			commentBox.setWidth("273px");
-			
-			if(recipeComment != null && recipeComment.amount != 0){
-					setAmountBox(thisRow, recipeComment.amount);
-			} else {
-				final Anchor addCommentAmountButton = new Anchor("+");
-				
-				addCommentAmountButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						int thisRow = getWidgetRow(addCommentAmountButton,commentTable);
-						commentTable.remove(addCommentAmountButton);
-						setAmountBox(thisRow, 0);
-					}
-				});
-				
-				commentTable.setWidget(thisRow ,2,addCommentAmountButton);
 			}
-
-			commentTable.setWidget(thisRow,0,removeRowButton);
-			commentTable.setWidget(thisRow,1,commentBox);
-		}
-
-		
-		private void updateComments() {
-			recipe.getSavingPotentials().clear();
-			for (int i = 0; i < commentTable.getRowCount()-1; i++) {
-				TextBox readBox = (TextBox) commentTable.getWidget(i, 1);
-				if(readBox.getText() != ""){
-					SavingPotential recipeComment = new SavingPotential(readBox.getText());
-					try{
-						TextBox readAmountBox = (TextBox) commentTable.getWidget(i, 2);
-						recipeComment.amount = Integer.parseInt(readAmountBox.getText());
-					} catch (ClassCastException error) {
-						recipeComment.amount = 0;
-					} catch (NumberFormatException error2) {}
-					
-					recipe.getSavingPotentials().add(recipeComment);
-				}	
-			}
-			changeSaveStatus(false);
-		}
-		
-		public void setAmountBox(int thisRow, int amount) {
-			TextBox commentAmountBox = new TextBox();
-			commentAmountBox.setText(Integer.toString(amount));
-			commentAmountBox.addKeyUpHandler(new KeyUpHandler() {
-				public void onKeyUp(KeyUpEvent event)  {
-					int keyCode = event.getNativeKeyCode();
-					if ((Character.isDigit((char) keyCode)) 
-							|| (keyCode == KeyCodes.KEY_BACKSPACE)
-							|| (keyCode == KeyCodes.KEY_DELETE) ) {
-						updateComments();
-					}
-				}
-			});
-			commentAmountBox.setWidth("20px");
-			commentTable.setWidget(thisRow ,2,commentAmountBox);
-		}
-
-		
-
-	void styleRow(int row, boolean selected) {
-		if (row != -1) {
-			String style = selectionStyleRow.selectedRow();
-
-			if (selected) {
-				ingredientList.getRowFormatter().addStyleName(row, style);
-			} else {
-				ingredientList.getRowFormatter().removeStyleName(row, style);
-			}
-		}
+		});
+		commentAmountBox.setWidth("20px");
+		commentTable.setWidget(thisRow ,2,commentAmountBox);
 	}
-
+	
 	private static int getWidgetRow(Widget widget, FlexTable table) {
 		for (int row = 0; row < table.getRowCount(); row++) {
 			for (int col = 0; col < table.getCellCount(row); col++) {
@@ -664,40 +796,6 @@ public class RecipeEdit extends Composite {
 		}
 		throw new RuntimeException("Unable to determine widget row");
 	}
-/*
-	// REFACTOR: listen to EventBus
-	public void updateIngSpecWidgetSaison() {
-		if (addInfoPanel.getWidgetCount() == 2) {
-			InfoZutatDialog infoZutat = (InfoZutatDialog) addInfoPanel.getWidget(1);
-			infoZutat.updateSaison();
-		}
-	}
-	*/
-	
-	public void setImageUrl(String url, boolean imageWidgetVisible) {
-		//recipeImage.setUrl(url);
-		uploadWidget.setVisible(imageWidgetVisible);
-		recipeImage.setUrlAndVisibleRect(url,0,0,670,230);
-	}
-
-	public Recipe getRecipe() {
-		return this.recipe;
-	}
-
-
-	public void closeRecipeEdit() {
-		
-		if (!saved && dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn() && recipe != null) {
-			dco.saveRecipe(recipe);
-			saved = true;
-		}
-		
-		dco.clearEditRecipe();
-		
-	}
-
-
-
 
 	
 

@@ -2,6 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 	<ui:style>
@@ -115,6 +116,8 @@
 		.gwt-TextBox {
 		  border: none !important;
 		}
+		
+		.cellTable { }
 
 		
 	</ui:style>
@@ -189,10 +192,10 @@
 				</g:HorizontalPanel>
 
 				<!-- Ingredients List, Specification WIdget-->
-				<g:HorizontalPanel styleName='{style.ingredientPanel}'>
-					<g:FlexTable ui:field='ingredientList' styleName='{style.ingredientList}' cellSpacing='0' cellPadding='0' />
+				<!-- <g:HorizontalPanel styleName='{style.ingredientPanel}'>-->
+					<c:CellTable width='300' ui:field='ingredientCellTable' addStyleNames='{style.cellTable}' pageSize='15' />
 					<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
-				</g:HorizontalPanel>
+				<!-- </g:HorizontalPanel>-->
 				<g:HorizontalPanel>
 					<g:Label ui:field='sumNameLabel' styleName='{style.sumNameLabel}' >Summe</g:Label>
 					<g:Label ui:field='sumCO2Label'>0g</g:Label>
