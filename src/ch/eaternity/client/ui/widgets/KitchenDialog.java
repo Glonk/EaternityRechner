@@ -325,7 +325,7 @@ public class KitchenDialog extends DialogBox{
 	public void initPersonCellTable() {
 		
 		usersCellTable.setWidth("70%", true);
-		usersCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		usersCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
 		Column<KitchenUser, String> nameColumn = new Column<KitchenUser, String>(new TextInputCell()) {
 			@Override
@@ -349,9 +349,7 @@ public class KitchenDialog extends DialogBox{
 					if (iterateUser == kitchenUser)
 						currentKitchen.getKitchenUsers().remove(i);
 				}
-				// currentKitchen.getKitchenUsers().remove(kitchenUser);
-				//usersDataProvider.setList(currentKitchen.getKitchenUsers());
-				usersDataProvider.refresh();
+				usersDataProvider.setList(currentKitchen.getKitchenUsers());
 				usersCellTable.redraw();
 			}
 		};

@@ -38,6 +38,7 @@ import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -69,6 +70,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
@@ -444,7 +446,8 @@ public class RecipeEdit extends Composite {
 	public void onBlur(BlurEvent event)  {
 		Date date = getDate();
 		if (date != null) {
-			dco.getEditRecipe().setCookingDate(date);
+			recipe.setCookingDate(date);
+			ingredientCellTable.redraw();
 			changeSaveStatus(false);
 		}
 	}
@@ -503,8 +506,7 @@ public class RecipeEdit extends Composite {
 				ingredients.remove(i);
 		}
 
-		ingredientDataProvider.refresh();
-		ingredientCellTable.redraw();
+		ingredientDataProvider.setList(ingredients);
 		
 		ingSpecWidget.setVisible(false);
 		
@@ -517,8 +519,28 @@ public class RecipeEdit extends Composite {
 	
 	private void initIngredientTable() {
 		ingredientCellTable.setWidth("600px", true);
-		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
+		// Add a selection model to handle user selection.
+	    final SingleSelectionModel<Ingredient> selectionModel = new SingleSelectionModel<Ingredient>(KEY_PROVIDER);
+	    ingredientCellTable.setSelectionModel(selectionModel);
+	    
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		Ingredient selected = selectionModel.getSelectedObject();
+	    		if (selected != null) {
+					if (!ingSpecWidget.isPresenterSetted()){
+						ingSpecWidget.setPresenter(presenter, selected, recipe.getVerifiedLocation());
+					}
+					else{
+						ingSpecWidget.setIngredient(selected, recipe.getVerifiedLocation());
+					}
+					ingSpecWidget.setVisible(true);
+	    		}
+	    	}
+	    });
+	    
+	    // ----------- Weight -----------
 		Column<Ingredient, String> weightInputColumn = new Column<Ingredient, String>(new TextInputCell()) {
 			@Override
 			public String getValue(Ingredient ingredient) {
@@ -526,6 +548,7 @@ public class RecipeEdit extends Composite {
 			}
 		};
 
+		// ----------- Name -----------
 		Column<Ingredient, String> nameColumn = new Column<Ingredient, String>(new TextCell()) {
 			@Override
 			public String getValue(Ingredient ingredient) {
@@ -533,6 +556,7 @@ public class RecipeEdit extends Composite {
 			}
 		};
 		
+		// ----------- Organic? -----------
 		Column<Ingredient, ImageResource> bioColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Ingredient ingredient) {
@@ -543,6 +567,7 @@ public class RecipeEdit extends Composite {
 			}
 		};
 		
+		// ----------- Seasonal? -----------
 		Column<Ingredient, ImageResource> seasonColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Ingredient ingredient) {
@@ -550,7 +575,7 @@ public class RecipeEdit extends Composite {
 				Season season = ingredient.getFoodProduct().getSeason();
 				if(season != null){
 
-					SeasonDate date = new SeasonDate(dco.getCurrentMonth(),1);
+					SeasonDate date = new SeasonDate(recipe.getCookingDate());
 					
 					if( !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH") && 
 						ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch") && 
@@ -562,6 +587,7 @@ public class RecipeEdit extends Composite {
 			}
 		};
 		
+		// ----------- Regional? -----------
 		Column<Ingredient, ImageResource> regionalColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Ingredient ingredient) {
@@ -572,6 +598,7 @@ public class RecipeEdit extends Composite {
 			}
 		};
 		
+		// ----------- Rating -----------
 		Column<Ingredient, ImageResource> ratingColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Ingredient ingredient) {
@@ -584,6 +611,7 @@ public class RecipeEdit extends Composite {
 			}
 		};
 		
+		// ----------- CO2 Value -----------
 		Column<Ingredient, String> co2Column = new Column<Ingredient, String>(new TextCell()) {
 			@Override
 			public String getValue(Ingredient ingredient) {
@@ -592,6 +620,7 @@ public class RecipeEdit extends Composite {
 		};
 		
 		
+		// ----------- Delete Ingredient -----------
 		ImageActionCell.Delegate<Ingredient> actionDelegate = new ImageActionCell.Delegate<Ingredient>() {
 			@Override
 			public void execute(Ingredient ingredient) {
@@ -605,6 +634,25 @@ public class RecipeEdit extends Composite {
 				return ingredient;
 			}
 		};
+	    
+	   
+	    ingredientCellTable.setColumnWidth(nameColumn, 250.0, Unit.PX);
+		/*
+		ingredientCellTable.setColumnWidth(weightInputColumn, 50.0, Unit.PX);
+		
+		ingredientCellTable.setColumnWidth(co2Column, 40.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(removeColumn, 40.0, Unit.PX);
+*/
+		ingredientCellTable.addColumn(weightInputColumn, "Menge");
+		ingredientCellTable.addColumn(nameColumn, "Zutat");
+		ingredientCellTable.addColumn(bioColumn);
+		ingredientCellTable.addColumn(seasonColumn);
+		ingredientCellTable.addColumn(regionalColumn);
+		ingredientCellTable.addColumn(ratingColumn);
+		ingredientCellTable.addColumn(co2Column, "CO2-Äq.");
+		ingredientCellTable.addColumn(removeColumn);
+
+		ingredientDataProvider.addDataDisplay(ingredientCellTable);
 
 		// Add a field updater to be notified when the user enters a new name.
 		weightInputColumn.setFieldUpdater(new FieldUpdater<Ingredient, String>() {
@@ -638,46 +686,6 @@ public class RecipeEdit extends Composite {
 				}
 			}
 		});
-		
-		// Add a selection model to handle user selection.
-	    final SingleSelectionModel<Ingredient> selectionModel = new SingleSelectionModel<Ingredient>(KEY_PROVIDER);
-	    
-	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		Ingredient selected = selectionModel.getSelectedObject();
-	    		if (selected != null) {
-					if (!ingSpecWidget.isPresenterSetted()){
-						ingSpecWidget.setPresenter(presenter, selected, recipe.getVerifiedLocation());
-					}
-					else{
-						ingSpecWidget.setIngredient(selected, recipe.getVerifiedLocation());
-					}
-					ingSpecWidget.setVisible(true);
-	    		}
-	    	}
-	    });
-	    
-	    ingredientCellTable.setSelectionModel(selectionModel);
-	    
-
-		/*
-		ingredientCellTable.setColumnWidth(weightInputColumn, 50.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(nameColumn, 100.0, Unit.PCT);
-		ingredientCellTable.setColumnWidth(co2Column, 40.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(removeColumn, 40.0, Unit.PX);
-*/
-		ingredientCellTable.addColumn(weightInputColumn, "Menge");
-		ingredientCellTable.addColumn(nameColumn, "Zutat");
-		ingredientCellTable.addColumn(bioColumn);
-		ingredientCellTable.addColumn(seasonColumn);
-		ingredientCellTable.addColumn(regionalColumn);
-		ingredientCellTable.addColumn(ratingColumn);
-		ingredientCellTable.addColumn(co2Column, "CO2-Äq.");
-		ingredientCellTable.addColumn(removeColumn);
-
-		ingredientDataProvider.addDataDisplay(ingredientCellTable);
-
-		
 	}
 
 
