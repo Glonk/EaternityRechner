@@ -67,6 +67,8 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -116,7 +118,7 @@ public class RecipeEdit extends Composite {
 	//@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
 	
-	@UiField CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(KEY_PROVIDER);
+	@UiField CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>();
 	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;
@@ -141,10 +143,10 @@ public class RecipeEdit extends Composite {
 	
 	private UploadPhotoWidget uploadWidget;
 	private ListDataProvider<Ingredient> ingredientDataProvider = new ListDataProvider<Ingredient>();
+	private final SingleSelectionModel<Ingredient> selectionModel = new SingleSelectionModel<Ingredient>();
 	
 	private boolean saved = false;
 	private int numberofComments = 0;
-	private int selectedRow = 0;
 	private Recipe recipe;
 	private List<Ingredient> ingredients;
 	
@@ -187,7 +189,7 @@ public class RecipeEdit extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.setHeight("1000px");
+		this.setHeight("1500px");
 		
 		// Image
 		uploadWidget = new UploadPhotoWidget(this, presenter);
@@ -287,7 +289,6 @@ public class RecipeEdit extends Composite {
 		updateLoginSpecificParameters();
 		updateCo2Value();
 		updateIngredients();
-		
 	}
 	
 	public void updateLoginSpecificParameters() {
@@ -519,11 +520,10 @@ public class RecipeEdit extends Composite {
 	
 	private void initIngredientTable() {
 		ingredientCellTable.setWidth("600px", true);
-		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		// Add a selection model to handle user selection.
-	    final SingleSelectionModel<Ingredient> selectionModel = new SingleSelectionModel<Ingredient>(KEY_PROVIDER);
-	    ingredientCellTable.setSelectionModel(selectionModel);
+		ingredientCellTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	public void onSelectionChange(SelectionChangeEvent event) {
@@ -535,10 +535,10 @@ public class RecipeEdit extends Composite {
 					else{
 						ingSpecWidget.setIngredient(selected, recipe.getVerifiedLocation());
 					}
-					ingSpecWidget.setVisible(true);
 	    		}
 	    	}
 	    });
+	    
 	    
 	    // ----------- Weight -----------
 		Column<Ingredient, String> weightInputColumn = new Column<Ingredient, String>(new TextInputCell()) {
@@ -634,9 +634,9 @@ public class RecipeEdit extends Composite {
 				return ingredient;
 			}
 		};
-	    
-	   
-	    ingredientCellTable.setColumnWidth(nameColumn, 250.0, Unit.PX);
+
+
+		ingredientCellTable.setColumnWidth(nameColumn, 250.0, Unit.PX);
 		/*
 		ingredientCellTable.setColumnWidth(weightInputColumn, 50.0, Unit.PX);
 		

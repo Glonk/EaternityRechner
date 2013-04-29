@@ -193,7 +193,7 @@
 
 				<!-- Ingredients List, Specification WIdget-->
 				<!-- <g:HorizontalPanel styleName='{style.ingredientPanel}'>-->
-					<c:CellTable width='300' ui:field='ingredientCellTable' addStyleNames='{style.cellTable}' pageSize='15' />
+					<c:CellTable ui:field='ingredientCellTable' addStyleNames='{style.cellTable}'/>
 					<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
 				<!-- </g:HorizontalPanel>-->
 				<g:HorizontalPanel>
