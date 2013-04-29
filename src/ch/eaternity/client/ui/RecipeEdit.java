@@ -33,6 +33,7 @@ import ch.eaternity.shared.Util;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.cell.client.TextCell;
@@ -128,8 +129,9 @@ public class RecipeEdit extends Composite {
 	//@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
 	
-
-	@UiField CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(100,cellTableResource);
+	
+	@UiField(provided = true)
+	CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(100, cellTableResource);
 	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;
@@ -557,6 +559,11 @@ public class RecipeEdit extends Composite {
 			public String getValue(Ingredient ingredient) {
 				return Integer.toString(ingredient.getWeight().getAmount().intValue());
 			}
+			@Override 
+	        public String getCellStyleNames(Context context, Ingredient ingredient)
+	        {
+	            return "weightTextInputCell";
+	        }
 		};
 
 		// ----------- Name -----------
@@ -628,6 +635,11 @@ public class RecipeEdit extends Composite {
 			public String getValue(Ingredient ingredient) {
 				return ((int)ingredient.getCalculatedCO2Value()) +"g";
 			}
+			@Override 
+	        public String getCellStyleNames(Context context, Ingredient ingredient)
+	        {
+	            return "co2TextCell";
+	        }
 		};
 		
 		
@@ -647,13 +659,16 @@ public class RecipeEdit extends Composite {
 		};
 
 
-		ingredientCellTable.setColumnWidth(nameColumn, 250.0, Unit.PX);
-		/*
-		ingredientCellTable.setColumnWidth(weightInputColumn, 50.0, Unit.PX);
 		
-		ingredientCellTable.setColumnWidth(co2Column, 40.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(removeColumn, 40.0, Unit.PX);
-*/
+		ingredientCellTable.setColumnWidth(weightInputColumn, 55.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(nameColumn, 100.0, Unit.PCT);
+		ingredientCellTable.setColumnWidth(bioColumn, 25.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(seasonColumn, 25.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(regionalColumn, 25.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(ratingColumn, 25.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(co2Column, 50.0, Unit.PX);
+		ingredientCellTable.setColumnWidth(removeColumn, 25.0, Unit.PX);
+
 		ingredientCellTable.addColumn(weightInputColumn, "Menge");
 		ingredientCellTable.addColumn(nameColumn, "Zutat");
 		ingredientCellTable.addColumn(bioColumn);

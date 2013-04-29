@@ -2,6 +2,17 @@ body, table {
   font-size: small;
 }
 
+.weightTextInputCell input, td.weightTextInputCell input {
+    width:32px;
+}
+
+.co2TextCell, td.co2TextCell {
+    margin-left:10px;
+    text-align:right;
+}
+
+
+
 
 hr {
 	border:solid #F48F28 1px;

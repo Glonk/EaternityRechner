@@ -59,7 +59,7 @@
 		padding:10px;
 	}
 	.CoherenceHTML {
-		margin-left:15px;
+		margin-left:35px;
 	}
 	
   </ui:style>
