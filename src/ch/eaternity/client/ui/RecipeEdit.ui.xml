@@ -142,88 +142,91 @@
 				color: red !important;
 			}
 	</ui:style>
+	
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 		
-		<g:AbsolutePanel ui:field="dragArea" styleName='{style.wholePanel}'>
-			<g:VerticalPanel>
-				<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
-				
-				<!-- Close Recipe Button -->
-				<g:HTMLPanel styleName='{style.floatRight}'>
-					<b:Close ui:field="closeRecipe" />
+	<g:AbsolutePanel ui:field="dragArea" styleName='{style.wholePanel}'>
+		<g:VerticalPanel>
+			<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
+			
+			<!-- Close Recipe Button -->
+			<g:HTMLPanel styleName='{style.floatRight}'>
+				<b:Close ui:field="closeRecipe" />
+			</g:HTMLPanel>
+
+			<g:HorizontalPanel>
+				<g:VerticalPanel>
+					<!-- title of the recipe -->
+					<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
+
+					<!-- sub-title of the recipe -->
+					<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
+				</g:VerticalPanel>
+
+				<!-- CO2 Value -->
+				<g:HorizontalPanel styleName='{style.co2value}'>
+					<g:Image ui:field="co2Image"></g:Image>
+					<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
+					<g:Label>&nbsp;&nbsp;&nbsp;g/p.P.</g:Label>
+				</g:HorizontalPanel>
+			</g:HorizontalPanel>
+
+			<!-- image and description here? any particular design choices -->
+			<g:HorizontalPanel>
+				<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
+				<g:Image ui:field='deleteImage' resource='{res.deleteLarge}'></g:Image>
+			</g:HorizontalPanel>
+			
+			<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
+
+			<g:HorizontalPanel>
+				<g:HTMLPanel styleName='{style.personsHTML}'>
+					für
+					<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
+					Personen
 				</g:HTMLPanel>
-
+				<!-- Cooking Date -->
 				<g:HorizontalPanel>
-					<g:VerticalPanel>
-						<!-- title of the recipe -->
-						<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
-
-						<!-- sub-title of the recipe -->
-						<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
-					</g:VerticalPanel>
-
-					<!-- CO2 Value -->
-					<g:HorizontalPanel styleName='{style.co2value}'>
-						<g:Image ui:field="co2Image"></g:Image>
-						<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
-						<g:Label>&nbsp;&nbsp;&nbsp;g/p.P.</g:Label>
-					</g:HorizontalPanel>
+					<g:HTML>Datum: </g:HTML>
+					<g:TextBox ui:field="recipeDate" styleName='{style.rezeptDateField}'>TT/MM/JJ</g:TextBox>
+					<g:HTML ui:field="recipeDateError" styleName='{style.recipeDateError}'></g:HTML>
 				</g:HorizontalPanel>
+			</g:HorizontalPanel>
 
-				<!-- image and description here? any particular design choices -->
-				<g:HorizontalPanel>
-					<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
-					<g:Image ui:field='deleteImage'></g:Image>
-				</g:HorizontalPanel>
+			<!-- Ingredients List, Specification WIdget-->
+			<g:HorizontalPanel styleName='{style.ingredientPanel}'>
+				<c:CellTable ui:field='ingredientCellTable' addStyleNames='{style.cellTable}'/>
+				<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
+			</g:HorizontalPanel>
+			
+			<g:HorizontalPanel>
+				<g:Label ui:field='sumNameLabel' styleName='{style.sumNameLabel}' >Summe</g:Label>
+				<g:Label ui:field='sumCO2Label'>0g</g:Label>
+			</g:HorizontalPanel>
+			
+			<g:Label>Zubereitung:</g:Label>
+			<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea>
+
+			<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
+				cellSpacing='2' cellPadding='2' />
 				
-				<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
-
-				<g:HorizontalPanel>
-					<g:HTMLPanel styleName='{style.personsHTML}'>
-						für
-						<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
-						Personen
-					</g:HTMLPanel>
-					<!-- Cooking Date -->
-					<g:HorizontalPanel>
-						<g:HTML>Datum: </g:HTML>
-						<g:TextBox ui:field="recipeDate" styleName='{style.rezeptDateField}'>TT/MM/JJ</g:TextBox>
-						<g:HTML ui:field="recipeDateError" styleName='{style.recipeDateError}'></g:HTML>
-					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-
-				<!-- Ingredients List, Specification WIdget-->
-				<!-- <g:HorizontalPanel styleName='{style.ingredientPanel}'>-->
-					<c:CellTable ui:field='ingredientCellTable' addStyleNames='{style.cellTable}'/>
-					<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
-				<!-- </g:HorizontalPanel>-->
-				<g:HorizontalPanel>
-					<g:Label ui:field='sumNameLabel' styleName='{style.sumNameLabel}' >Summe</g:Label>
-					<g:Label ui:field='sumCO2Label'>0g</g:Label>
-				</g:HorizontalPanel>
-				
-				<g:Label>Zubereitung:</g:Label>
-				<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea>
-
-				<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
-					cellSpacing='2' cellPadding='2' />
-					
-				<!--  
-				<g:CheckBox ui:field="preparationFactor">Zubereitungsfaktor hinzufuegen</g:CheckBox>
-				
-				<g:HorizontalPanel>
-					<g:Label>In Sammlungen:</g:Label>
-					<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
-				</g:HorizontalPanel>
-				-->
-				
-				<g:FlowPanel>
-					<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>
-					<b:Button ui:field="generatePDFButton">PDF generieren</b:Button>
-					<b:Button ui:field="publishButton">veröffentlichen</b:Button>
-					<b:Button ui:field="deleteButton">löschen</b:Button>
-					<b:Button ui:field="duplicateButton">duplizieren</b:Button>
-					<b:Button ui:field="saveButton">speichern</b:Button>
-				</g:FlowPanel>
-			</g:VerticalPanel>
+			<!--  
+			<g:CheckBox ui:field="preparationFactor">Zubereitungsfaktor hinzufuegen</g:CheckBox>
+			
+			<g:HorizontalPanel>
+				<g:Label>In Sammlungen:</g:Label>
+				<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
+			</g:HorizontalPanel>
+			-->
+			
+			<g:FlowPanel>
+				<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>
+				<b:Button ui:field="generatePDFButton">PDF generieren</b:Button>
+				<b:Button ui:field="publishButton">veröffentlichen</b:Button>
+				<b:Button ui:field="deleteButton">löschen</b:Button>
+				<b:Button ui:field="duplicateButton">duplizieren</b:Button>
+				<b:Button ui:field="saveButton">speichern</b:Button>
+			</g:FlowPanel>
+		</g:VerticalPanel>
 	</g:AbsolutePanel>
 </ui:UiBinder>

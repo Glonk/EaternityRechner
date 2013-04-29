@@ -3,6 +3,7 @@ package ch.eaternity.client.ui.cells;
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
+import ch.eaternity.client.resources.Resources;
 import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.Util;
 
@@ -109,7 +110,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.appendHtmlConstant("</span>&nbsp;&nbsp;&nbsp;g/p.P.</td>");
 	  
 	  sb.appendHtmlConstant("<td width='20'>");
-	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='/images/delete.png' /></a>");
+	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='" + Resources.INSTANCE.deleteLarge().getURL() + "' /></a>");
 	  sb.appendHtmlConstant("</td>");
 	  
 	  sb.appendHtmlConstant("</tr></table></div>");

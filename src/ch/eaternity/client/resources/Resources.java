@@ -48,10 +48,10 @@ public interface Resources extends ClientBundle {
 	@Source("question_mark.png")
 	public ImageResource questionMark();
 
-	@Source("delete-large.png")
+	@Source("trash22px.png")
 	public ImageResource deleteLarge();
 	
-	@Source("delete-small.png")
+	@Source("trash11px.png")
 	public ImageResource deleteSmall();
 	
 	@Source("bio.png")

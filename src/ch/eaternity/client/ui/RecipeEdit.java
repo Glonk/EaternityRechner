@@ -95,6 +95,16 @@ public class RecipeEdit extends Composite {
 		}
 	};
 	
+	public interface CellTableResource extends CellTable.Resources
+	{
+	   public interface CellTableStyle extends CellTable.Style {};
+
+	   @Source({"ingredientCellTable.css"})
+	   CellTableStyle cellTableStyle();
+	};
+	
+	CellTableResource cellTableResource = GWT.create(CellTableResource.class);
+	
 	// ---------------------- User Interface Elements --------------
 	@UiField AbsolutePanel dragArea;
 	
@@ -118,7 +128,8 @@ public class RecipeEdit extends Composite {
 	//@UiField CheckBox preparationFactor;
 	@UiField TextArea cookingInstr;
 	
-	@UiField CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>();
+
+	@UiField CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(100,cellTableResource);
 	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;
@@ -519,7 +530,7 @@ public class RecipeEdit extends Composite {
 	
 	
 	private void initIngredientTable() {
-		ingredientCellTable.setWidth("600px", true);
+		ingredientCellTable.setWidth("400px", true);
 		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		// Add a selection model to handle user selection.
