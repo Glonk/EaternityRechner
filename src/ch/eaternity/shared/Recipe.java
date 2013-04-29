@@ -70,9 +70,9 @@ public class Recipe implements Serializable {
 	private Boolean selected;
 
 	public Recipe() {
-		title = "Ihr Menu";
-		subTitle = "Menu Beschreibung";
-		cookInstruction = "Zubereitung";
+		title = "Rezept Titel";
+		subTitle = "Rezept Beschreibung";
+		cookInstruction = "Zubereitug bearbeiten ...";
 		cachedCO2Value = 0.0D;
 		deleted = false;
 		published = false;

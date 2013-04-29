@@ -577,7 +577,7 @@ body {
 background: #eee url(images/bg-float.png) 0 0 repeat;
 font-family: "Open Sans", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
 /*color: #333;*/
-color: #4D2E00;
+color: black;
 padding-top:0px;
 }
 
@@ -593,7 +593,7 @@ hr {
 }
 
 h1, h2, h3, h4, h5, h6 { 
-	color: #4D2E00;
+	color: black;
 	}
 
 h5 {
@@ -605,7 +605,7 @@ h5 {
 
 h6 {
 	font-size: 1em;
-	color: #4D2E00;
+	color: black;
 	text-transform: none;
 	padding-bottom:none;
 	padding-top:1em;
@@ -613,7 +613,7 @@ h6 {
 }
 
 small {
-	color: #4D2E00;
+	color: black;
 }
 
 .navbar {

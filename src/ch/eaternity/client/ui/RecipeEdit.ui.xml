@@ -8,8 +8,7 @@
 	<ui:style>
 	
 		.wholePanel {
-			width: 750px;
-			padding: 15px;
+
 		}
 		
 		.floatRight{
@@ -18,30 +17,32 @@
 		}	
 		
 		.recipeTitle {
-			width: 300px;
+			width: 400px;
 			font-size: 24px;
 			font-weight: bold;
 			text-align: left;
 		}
 		
 		.recipeSubTitle {
-			width: 300px;
-			font-size: 14px;
+			width: 400px;
+			font-size: 12px;
 			text-align: left;
 		}
 		
 		.recipeImage {
+			margin-bottom:15px;
+
 		}
 		
 		.imageUploadWidgetPanel {
-			margin-left:100px;
+			
 		}
 		
 		.personsHTML { /* margin-right:10px; */
-			width: 120px;
+			width: 250px;
 			text-align: right;
 			display: inline;
-			margin-right:150px;
+			margin-right:250px;
 		}
 		
 		.recipePersonsBox {
@@ -55,13 +56,18 @@
 		
 		.co2value {
 			text-align:right;
+			margin-left:100px;
 		}
 		
 		.co2valueLabel {
 			font-size:40px;
 			font-weight:bold;
-			margin:0px 20px 0px 20px;
-			
+			margin: 30px 20px 0px 15px;
+			vertical-align:bottom;
+		}
+		
+		.co2valueLabelPerson {
+			margin-top:35px;
 		}
 		
 		.ingredientPanel {
@@ -97,18 +103,20 @@
 			margin-left: 10px;
 		}
 		
+		.cookingInstrLabel {
+			font-weight:bold;
+			margin-top:30px;
+			margin-bottom:10px;
+		}
+		
 		.cookingInstr {
 			background-color: #F0F4C2;
 			height: 114px;
 			width:100%;
-			margin-top: 0px;
-			margin-bottom: 0px;
-			resize: none;
+			margin-bottom: 20px;
 		}
 		
 		.CommentTable {
-			float: left;
-			clear: both;
 			text-align: left;
 			border: 1px;
 		}
@@ -146,7 +154,7 @@
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 		
 	<g:AbsolutePanel ui:field="dragArea" styleName='{style.wholePanel}'>
-		<g:VerticalPanel>
+		<g:HTMLPanel>
 			<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
 			
 			<!-- Close Recipe Button -->
@@ -167,17 +175,16 @@
 				<g:HorizontalPanel styleName='{style.co2value}'>
 					<g:Image ui:field="co2Image"></g:Image>
 					<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
-					<g:Label>&nbsp;&nbsp;&nbsp;g/p.P.</g:Label>
+					<g:Label styleName='{style.co2valueLabelPerson}'>&nbsp;&nbsp;&nbsp;g/p.P.</g:Label>
 				</g:HorizontalPanel>
 			</g:HorizontalPanel>
 
 			<!-- image and description here? any particular design choices -->
+			<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
 			<g:HorizontalPanel>
-				<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
-				<g:Image ui:field='deleteImage' resource='{res.deleteLarge}'></g:Image>
+				<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
+				<b:Tooltip text='Bild löschen'><g:Image ui:field='deleteImage' resource='{res.deleteLarge}'></g:Image></b:Tooltip>
 			</g:HorizontalPanel>
-			
-			<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
 
 			<g:HorizontalPanel>
 				<g:HTMLPanel styleName='{style.personsHTML}'>
@@ -185,6 +192,7 @@
 					<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
 					Personen
 				</g:HTMLPanel>
+				
 				<!-- Cooking Date -->
 				<g:HorizontalPanel>
 					<g:HTML>Datum: </g:HTML>
@@ -199,13 +207,9 @@
 				<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" ></widgets:IngredientSpecificationWidget>
 			</g:HorizontalPanel>
 			
-			<g:HorizontalPanel>
-				<g:Label ui:field='sumNameLabel' styleName='{style.sumNameLabel}' >Summe</g:Label>
-				<g:Label ui:field='sumCO2Label'>0g</g:Label>
-			</g:HorizontalPanel>
 			
-			<g:Label>Zubereitung:</g:Label>
-			<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr">Kochanleitung</g:TextArea>
+			<g:Label styleName='{style.cookingInstrLabel}'>Zubereitung:</g:Label>
+			<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr"></g:TextArea>
 
 			<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
 				cellSpacing='2' cellPadding='2' />
@@ -227,6 +231,6 @@
 				<b:Button ui:field="duplicateButton">duplizieren</b:Button>
 				<b:Button ui:field="saveButton">speichern</b:Button>
 			</g:FlowPanel>
-		</g:VerticalPanel>
+		</g:HTMLPanel>
 	</g:AbsolutePanel>
 </ui:UiBinder>

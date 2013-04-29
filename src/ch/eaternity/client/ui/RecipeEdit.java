@@ -55,6 +55,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
@@ -135,7 +136,6 @@ public class RecipeEdit extends Composite {
 	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;
-	@UiField Label sumCO2Label;
 	
 	@UiField Button newRecipeButton;
 	@UiField Button generatePDFButton;
@@ -202,7 +202,6 @@ public class RecipeEdit extends Composite {
 	public void setPresenter(RechnerActivity presenter) {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
-		this.setHeight("1500px");
 		
 		// Image
 		uploadWidget = new UploadPhotoWidget(this, presenter);
@@ -272,7 +271,7 @@ public class RecipeEdit extends Composite {
 		amountPersons.setText(recipe.getPersons().toString());
 		
 		// Image
-		if(recipe.getImage() !=null){
+		if(recipe.getImage() != null){
 			setImageUrl(recipe.getImage().getUrl(), false);
 		}
 		
@@ -306,7 +305,7 @@ public class RecipeEdit extends Composite {
 	
 	public void updateLoginSpecificParameters() {
 		if (dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn()) {
-			setImageUrl("http://placehold.it/120x120", true);
+			setImageUrl(Resources.INSTANCE.recipeImageDefault().getURL(), true);
 			initializeCommentingField();
 			
 			imageUploadWidgetPanel.setVisible(true);
@@ -321,7 +320,6 @@ public class RecipeEdit extends Composite {
 	public void updateCo2Value() {
 		co2valueLabel.setText("" + (recipe.getCO2ValuePerServing().intValue()));
 		co2Image.setUrl(Util.getRecipeRatingBarUrl(recipe.getCO2ValuePerServing()));
-		sumCO2Label.setText("" + (recipe.getCO2Value().intValue()) + "g");
 	}
 	
 	/**
@@ -397,7 +395,7 @@ public class RecipeEdit extends Composite {
 	@UiHandler("deleteImage")
 	public void onDeleteClick(ClickEvent event) {
 		recipe.setImage(null);
-		setImageUrl("http://placehold.it/120x120", true);
+		setImageUrl(Resources.INSTANCE.recipeImageDefault().getURL(), true);
 		imageUploadWidgetPanel.setVisible(true);
 	}
 
@@ -462,6 +460,7 @@ public class RecipeEdit extends Composite {
 		if (date != null) {
 			recipe.setCookingDate(date);
 			ingredientCellTable.redraw();
+			ingSpecWidget.updateSeasonCoherency();
 			changeSaveStatus(false);
 		}
 	}
@@ -609,7 +608,7 @@ public class RecipeEdit extends Composite {
 		Column<Ingredient, ImageResource> regionalColumn = new Column<Ingredient, ImageResource>(new ImageResourceCell()) {
 			@Override
 			public ImageResource getValue(Ingredient ingredient) {
-				if ( ingredient.getRoute().getDistanceKM().getAmount() < 100)
+				if ( ingredient.getRoute().getDistanceKM().getAmount() < 200)
 					return Resources.INSTANCE.region();
 				else
 					return null;
@@ -630,6 +629,22 @@ public class RecipeEdit extends Composite {
 		};
 		
 		// ----------- CO2 Value -----------
+		Header<String> co2Header = new Header<String>(new TextCell()) {
+		      @Override
+		      public String getValue() {
+		    	  return "CO2-Äq.";
+		      }
+		};
+		Header<String> co2Footer = new Header<String>(new TextCell()) {
+		      @Override
+		      public String getValue() {
+		    	  if (recipe != null)
+		    		  return recipe.getCO2Value().intValue() + "g";
+		    	  else
+		    		  return "0g";
+		      }
+		};
+		
 		Column<Ingredient, String> co2Column = new Column<Ingredient, String>(new TextCell()) {
 			@Override
 			public String getValue(Ingredient ingredient) {
@@ -669,13 +684,13 @@ public class RecipeEdit extends Composite {
 		ingredientCellTable.setColumnWidth(co2Column, 50.0, Unit.PX);
 		ingredientCellTable.setColumnWidth(removeColumn, 25.0, Unit.PX);
 
-		ingredientCellTable.addColumn(weightInputColumn, "Menge");
+		ingredientCellTable.addColumn(weightInputColumn, "Menge", "SUMME");
 		ingredientCellTable.addColumn(nameColumn, "Zutat");
 		ingredientCellTable.addColumn(bioColumn);
 		ingredientCellTable.addColumn(seasonColumn);
 		ingredientCellTable.addColumn(regionalColumn);
 		ingredientCellTable.addColumn(ratingColumn);
-		ingredientCellTable.addColumn(co2Column, "CO2-Äq.");
+		ingredientCellTable.addColumn(co2Column, co2Header, co2Footer);
 		ingredientCellTable.addColumn(removeColumn);
 
 		ingredientDataProvider.addDataDisplay(ingredientCellTable);

@@ -20,7 +20,7 @@
 	.NameLabel {
 		font-size:16px;
 		font-weight:bold;
-	
+		margin-bottom:10px;
 	}
 	
 	.closeButton {
@@ -77,11 +77,9 @@
 	
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
   
-<g:HTMLPanel styleName='{style.box}'>
-	<g:VerticalPanel >
-		
+	<g:HTMLPanel styleName='{style.box}'>	
 		<g:HTMLPanel styleName='{style.floatRight}'>
-					<b:Close ui:field="closeButton" />
+			<b:Close ui:field="closeButton" />
 		</g:HTMLPanel>
 		
 		<g:Label ui:field="NameLabel" styleName='{style.NameLabel}'></g:Label>
@@ -126,7 +124,6 @@
 			<g:Image ui:field='questionImage' resource='{res.questionMark}' styleName='{style.questionImage}'></g:Image>
 			<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
 		</g:HorizontalPanel>
-		
-	</g:VerticalPanel>
+
 	</g:HTMLPanel>
 </ui:UiBinder>
