@@ -54,6 +54,10 @@
 	
 	.CostErrorLabel {}
 	
+	.questionImage {
+		width:40px;
+	}
+	
 	.CoherencePanel{
 		border-top:1px solid gray;
 		padding:10px;
@@ -119,7 +123,7 @@
 		</g:HorizontalPanel>
 		
 		<g:HorizontalPanel ui:field='coherencePanel' styleName='{style.CoherencePanel}'>
-			<g:Image ui:field='questionImage' resource='{res.questionMark}'></g:Image>
+			<g:Image ui:field='questionImage' resource='{res.questionMark}' styleName='{style.questionImage}'></g:Image>
 			<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
 		</g:HorizontalPanel>
 		

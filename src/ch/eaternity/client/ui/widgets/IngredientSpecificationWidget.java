@@ -219,6 +219,7 @@ public class IngredientSpecificationWidget extends Composite {
 		    	updateExtractionList(extraction);					    
 		    	ingredient.setExtraction(extraction);
 		    	
+		    	updateSeasonCoherency();
 				switchToKnownExtractions();
 			}
 		});
@@ -235,28 +236,30 @@ public class IngredientSpecificationWidget extends Composite {
 	}
 	
 	
-	private void updateSeasonCoherency() {
+	public void updateSeasonCoherency() {
 		if (product.isSeasonDependant()) {
-			String seasonText = "von <strong>" + product.getSeason().getBeginning().toMonthString() + "</strong> bis <strong>" + product.getSeason().getEnd().toMonthString() + "</strong>";
-			
 			SeasonDate begin = product.getSeason().getBeginning();
 			SeasonDate end = product.getSeason().getEnd();
 			SeasonDate date = new SeasonDate(recipeEdit.getRecipe().getCookingDate());
 			
-			if( date.after(begin) && date.before(end)) {
+			String seasonText = "von <strong>" + begin.toMonthString() + "</strong> bis <strong>" + end.toMonthString() + "</strong>";
+			
+			if( date.after(begin) && date.before(end)) 
 				seasonText.concat("<br />Diese Zutat ist saisonal");
-				CoherenceHTML.setHTML("Angaben sind kohärent. <br /> Es ist möglich die Zutat frisch und lokal zu beziehen.");
-				questionImage.setVisible(false);
+			else 
+				seasonText.concat("<br />Diese Zutat ist nicht saisonal");
+			
+			if (ingredient.getRoute().getDistanceKM().getAmount() < 200 
+					&& ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch")
+					&& !(date.after(begin) && date.before(end))
+					&& !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH")) {
+				CoherenceHTML.setHTML("Angaben sind unvollständig. <br >" +
+					"Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
+				questionImage.setVisible(true);
 			}
 			else {
-				seasonText.concat("<br />Diese Zutat ist nicht saisonal");
-				if (ingredient.getRoute().getDistanceKM().getAmount() < 100 
-						&& !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH")
-						&& ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch")) {
-					CoherenceHTML.setHTML("Angaben sind unvollständig. <br >" +
-							"Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
-					questionImage.setVisible(true);
-				}
+				CoherenceHTML.setHTML("Angaben sind kohärent. <br /> Es ist möglich die Zutat frisch und lokal zu beziehen.");
+				questionImage.setVisible(false);
 			}
 			
 			SeasonHTML.setHTML(seasonText);
