@@ -59,8 +59,9 @@ public class SeasonDate implements Serializable {
 
 	public boolean setDate(Date date) {
 		if (date != null) {
-			String strDate = date.getDay() + "." + date.getMonth();
-			return setDate(strDate);
+			day = date.getDay();
+			month = date.getMonth() + 1;
+			return true;
 		}
 		else return false;
 	}

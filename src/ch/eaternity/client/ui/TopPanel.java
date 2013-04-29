@@ -323,6 +323,6 @@ public class TopPanel extends Composite {
 	@UiHandler("monthListBox")
 	void onChange(ChangeEvent event) {
 		monthListBox.setVisible(false);
-		dco.changeMonth(monthListBox.getSelectedIndex());
+		dco.changeMonth(monthListBox.getSelectedIndex()+1);
 	}
 }
