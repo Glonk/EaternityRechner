@@ -46,4 +46,18 @@ public class Condition implements Serializable {
 	public void setFactor(Double factor) {
 		this.factor = factor;
 	}
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Condition other = (Condition) obj;
+        if ((this.symbol == null) ? (other.symbol != null) : !this.symbol.equals(other.symbol)) {
+            return false;
+        }
+        return true;
+    }
 }

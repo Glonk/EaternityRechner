@@ -1,49 +1,37 @@
 package ch.eaternity.client.ui.widgets;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eaticious.common.Quantity;
-import org.eaticious.common.QuantityImpl;
-import org.eaticious.common.Unit;
-
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.client.events.MonthChangedEvent;
-import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.ui.RecipeEdit;
 import ch.eaternity.shared.Condition;
 import ch.eaternity.shared.Extraction;
 import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.HomeDistances;
+import ch.eaternity.shared.HomeDistances.RequestCallback;
 import ch.eaternity.shared.Ingredient;
-import ch.eaternity.shared.NotLoggedInException;
 import ch.eaternity.shared.Production;
 import ch.eaternity.shared.Route;
 import ch.eaternity.shared.SeasonDate;
 import ch.eaternity.shared.Transportation;
-import ch.eaternity.shared.HomeDistances.RequestCallback;
-
 
 import com.github.gwtbootstrap.client.ui.Close;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.maps.client.geocode.Geocoder;
-import com.google.gwt.maps.client.geocode.LocationCallback;
-import com.google.gwt.maps.client.geocode.Placemark;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -75,9 +63,11 @@ public class IngredientSpecificationWidget extends Composite {
 	@UiField Label CurrencyLabel;
 	@UiField Label CostErrorLabel;
 	
+	@UiField HorizontalPanel coherencePanel;
+	@UiField Image questionImage;
 	@UiField HTML CoherenceHTML;
-	@UiField static IngSpecWidgetStyles ingSpecWidgetStyles;
 	
+	@UiField static IngSpecWidgetStyles ingSpecWidgetStyles;
 	
 	private Ingredient ingredient;
 	private FoodProduct product;
@@ -137,25 +127,41 @@ public class IngredientSpecificationWidget extends Composite {
 	// ---------------------- private Methods -----------------------
 
 	private void setFields() {
+		this.setVisible(true);
 		UnknownExtractionTextBox.setVisible(false);
+		coherencePanel.setVisible(false);
 		
 		NameLabel.setText(product.getName());
 		
-		if (product.getExtractions().size() > 0)
-			processExtraction(product.getExtractions().get(0).symbol);
+		if (ingredient.getExtraction() != null)
+			processExtraction(ingredient.getExtraction().symbol);
 		
 		TransportationList.clear();
 		for (Transportation transport : product.getTransportations()) {
 			TransportationList.addItem(transport.getSymbol());
 		}
+		TransportationList.setSelectedIndex(product.getTransportations().indexOf(ingredient.getTransportation()));
+		
 		ProductionList.clear();
 		for (Production production : product.getProductions()) {
 			ProductionList.addItem(production.getSymbol());
 		}
+		ProductionList.setSelectedIndex(product.getProductions().indexOf(ingredient.getProduction()));
+		
 		ConditionList.clear();
 		for (Condition condition : product.getConditions()) {
 			ConditionList.addItem(condition.getSymbol());
 		}
+		ConditionList.setSelectedIndex(product.getConditions().indexOf(ingredient.getCondition()));
+		
+		NumberFormat df = NumberFormat.getFormat("00.##");
+		double cost = ingredient.getCost();
+
+		if(cost != 0.0d)
+			CostTextBox.setText(df.format(cost));
+		else
+			CostTextBox.setText("");
+		CostTextBox.removeStyleName(ingSpecWidgetStyles.redTextError());
 	}
 
 	private void switchToUnknownExtraction(){
@@ -240,6 +246,7 @@ public class IngredientSpecificationWidget extends Composite {
 			if( date.after(begin) && date.before(end)) {
 				seasonText.concat("<br />Diese Zutat ist saisonal");
 				CoherenceHTML.setHTML("Angaben sind kohärent. <br /> Es ist möglich die Zutat frisch und lokal zu beziehen.");
+				questionImage.setVisible(false);
 			}
 			else {
 				seasonText.concat("<br />Diese Zutat ist nicht saisonal");
@@ -248,6 +255,7 @@ public class IngredientSpecificationWidget extends Composite {
 						&& ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch")) {
 					CoherenceHTML.setHTML("Angaben sind unvollständig. <br >" +
 							"Bitte geben Sie an ob die Zutat importiert, konserviert oder im Gewächaus produziert wurde.");
+					questionImage.setVisible(true);
 				}
 			}
 			
@@ -255,12 +263,12 @@ public class IngredientSpecificationWidget extends Composite {
 			
 			SeasonLabel.setVisible(true);
 			SeasonHTML.setVisible(true);
-			CoherenceHTML.setVisible(true);
+			coherencePanel.setVisible(true);
 		}
 		else {
 			SeasonLabel.setVisible(false);
 			SeasonHTML.setVisible(false);
-			CoherenceHTML.setVisible(false);
+			coherencePanel.setVisible(false);
 		}		
 	}
 	
@@ -307,7 +315,7 @@ public class IngredientSpecificationWidget extends Composite {
 
 	
 	@UiHandler("CostTextBox")
-	public void onKeyUp(BlurEvent event) {
+	public void onKeyUp(KeyUpEvent event) {
 		String errorStyle = ingSpecWidgetStyles.redTextError();
 		String text = CostTextBox.getText();
 		Double cost = 0.0;
@@ -318,7 +326,7 @@ public class IngredientSpecificationWidget extends Composite {
 				CostTextBox.removeStyleName(errorStyle);
 			else {
 				cost = Double.parseDouble(text.trim());
-				if (cost > 0.0) {
+				if (cost >= 0.0) {
 					success = true;
 					CostTextBox.removeStyleName(errorStyle);
 				}

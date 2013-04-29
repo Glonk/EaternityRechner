@@ -12,10 +12,19 @@
 		background-color: #F0F4C2;
 	}	
 	
+	.floatRight{
+		float:right;
+		display:inline;
+	}	
+	
 	.NameLabel {
 		font-size:16px;
 		font-weight:bold;
 	
+	}
+	
+	.closeButton {
+		margin-left:220px;
 	}
 	
 	.SpecificationLabel {
@@ -45,9 +54,14 @@
 	
 	.CostErrorLabel {}
 	
-	.CoherenceHTML{
+	.CoherencePanel{
 		border-top:1px solid gray;
+		padding:10px;
 	}
+	.CoherenceHTML {
+		margin-left:15px;
+	}
+	
   </ui:style>
   
   <ui:style field='ingSpecWidgetStyles'
@@ -62,11 +76,11 @@
 <g:HTMLPanel styleName='{style.box}'>
 	<g:VerticalPanel >
 		
-	
-		<g:HorizontalPanel>
-			<g:Label ui:field="NameLabel" styleName='{style.NameLabel}'></g:Label>
-			<b:Close ui:field="closeButton"></b:Close>
-		</g:HorizontalPanel>
+		<g:HTMLPanel styleName='{style.floatRight}'>
+					<b:Close ui:field="closeButton" />
+		</g:HTMLPanel>
+		
+		<g:Label ui:field="NameLabel" styleName='{style.NameLabel}'></g:Label>
 		
 		<g:HorizontalPanel>
 			<g:Label ui:field="SeasonLabel" styleName='{style.SpecificationLabel}'>Saison</g:Label>
@@ -104,8 +118,10 @@
 			<g:Label ui:field="CostErrorLabel" styleName='{style.CostErrorLabel}'></g:Label>
 		</g:HorizontalPanel>
 		
-		<g:Image ui:field='questionImage' resource='{res.questionMark}'></g:Image>
-		<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
+		<g:HorizontalPanel ui:field='coherencePanel' styleName='{style.CoherencePanel}'>
+			<g:Image ui:field='questionImage' resource='{res.questionMark}'></g:Image>
+			<g:HTML ui:field="CoherenceHTML" styleName='{style.CoherenceHTML}'></g:HTML>
+		</g:HorizontalPanel>
 		
 	</g:VerticalPanel>
 	</g:HTMLPanel>
