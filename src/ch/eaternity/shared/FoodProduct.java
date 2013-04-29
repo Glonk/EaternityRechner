@@ -61,13 +61,13 @@ public class FoodProduct implements Serializable {
 	// Copy Constructor
 	public FoodProduct(FoodProduct toClone) {
 		this();
-		name = new String(toClone.name);
-		name_en = new String(toClone.name_en);
-		co2eValue = new Double(toClone.co2eValue);
-		stdWeight = new QuantityImpl(toClone.stdWeight);
+		if (toClone.name != null) name = new String(toClone.name);
+		if (toClone.name_en != null) name_en = new String(toClone.name_en);
+		if (toClone.co2eValue != null) co2eValue = new Double(toClone.co2eValue);
+		if (toClone.stdWeight != null) stdWeight = new QuantityImpl(toClone.stdWeight);
 		for (Long id : toClone.substituteIds)
 			substituteIds.add(id);
-		season = new Season(toClone.season);
+		if (toClone.season != null) season = new Season(toClone.season);
 		for (String tag : toClone.getTags()) 
 			tags.add(new String(tag));
 		for (Extraction extr : toClone.extractions)

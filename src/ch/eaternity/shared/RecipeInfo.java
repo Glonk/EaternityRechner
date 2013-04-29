@@ -21,6 +21,8 @@ public class RecipeInfo implements Serializable {
 	private Double co2eValue;
 	
 	private UploadedImage image;
+	
+	private Boolean published;
 
 	private RecipeInfo() {}
 	
@@ -34,6 +36,7 @@ public class RecipeInfo implements Serializable {
 		this.subTitle = recipe.getSubTitle();
 		this.co2eValue = recipe.getCachedCO2Value();
 		this.image = recipe.getImage();
+		this.published = recipe.isPublished();
 	}
 	
 	public Long getId() {
@@ -74,6 +77,14 @@ public class RecipeInfo implements Serializable {
 
 	public void setImage(UploadedImage image) {
 		this.image = image;
+	}
+	
+	public Boolean isPublished() {
+		return published;
+	}
+
+	public void setPublished(Boolean published) {
+		this.published = published;
 	}
 	
 }

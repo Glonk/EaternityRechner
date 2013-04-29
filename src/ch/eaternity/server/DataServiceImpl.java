@@ -110,11 +110,9 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		Recipe recipe = dao.getRecipe(id);
 		if (recipe != null) {
-			if (!recipe.getUserId().equals(getUserId()))
+			if (!recipe.getUserId().equals(getUserId()) && !recipe.isPublished())
 				throw new UnsupportedOperationException("User with Id " + getUserId() + " doesn't own this recipe.");
 		}
-		//TODO add loading recipe possible if published
-		
 		return recipe;
 	}
 	

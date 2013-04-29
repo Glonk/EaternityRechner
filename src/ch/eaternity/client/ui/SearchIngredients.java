@@ -210,7 +210,7 @@ public class SearchIngredients extends Composite {
 		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE, new LoadedDataEventHandler() {
 			@Override
 			public void onEvent(LoadedDataEvent event) {
-				sortResults(SortMethod.ALPHABETIC, false);
+				sortResults(SortMethod.CO2VALUE, false);
 				updateResults("");
 			}
 		});

@@ -142,6 +142,18 @@ public class DataController {
 		setRecipeParameters(recipe);
 	}
 	
+	public void cloneRecipe(final RecipeInfo recipeInfo) {
+		dataRpcService.getRecipe(recipeInfo.getId(), new AsyncCallback<Recipe>() {
+			public void onFailure(Throwable error) {
+				eventBus.fireEvent(new AlertEvent("Rezept <" + recipeInfo.getTitle() + "> konnte nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.VIEW)); 
+			}
+			public void onSuccess(Recipe recipe) {
+				Recipe clonedRecipe = new Recipe(recipe);
+				setRecipeParameters(clonedRecipe);
+			}
+		});
+	}
+	
 	private void setRecipeParameters(Recipe recipe) {
 		recipe.setCreateDate(new Date());
 		recipe.setCookingDate(new Date());
@@ -163,6 +175,8 @@ public class DataController {
 		
 		cdata.editRecipe = recipe;
 		eventBus.fireEvent(new RecipeLoadedEvent(recipe)); 
+		eventBus.fireEvent(new AlertEvent("Rezept dupliziert.", AlertType.INFO, AlertEvent.Destination.EDIT, 3000));
+		
 	}
 	
 	
@@ -255,6 +269,10 @@ public class DataController {
 		
 		if (idStr == null || (idStr != null && (idStr.equals("") || idStr.equals("new")))) {
 			createRecipe();
+		}
+		// a little bit unstable. this is for the case if a public recipe gets duplicated
+		else if (idStr.equals("clone")) {
+			eventBus.fireEvent(new RecipeLoadedEvent(cdata.editRecipe)); 
 		}
 		else {
 			try {
@@ -701,6 +719,8 @@ public class DataController {
 			
 		});
 	}
+
+
 
 
 

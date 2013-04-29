@@ -13,6 +13,7 @@ import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
 import ch.eaternity.client.events.SpinnerEvent;
 import ch.eaternity.client.events.SpinnerEventHandler;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.resources.Resources;
 import ch.eaternity.client.ui.RecipeEdit.TextErrorStyle;

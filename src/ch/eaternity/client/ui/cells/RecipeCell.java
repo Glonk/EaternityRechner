@@ -6,6 +6,7 @@ import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.resources.Resources;
 import ch.eaternity.shared.RecipeInfo;
 import ch.eaternity.shared.Util;
+import ch.eaternity.shared.Util.RecipeScope; 
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -121,24 +122,29 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	 * handle the delete click
 	 * @param context
 	 * @param parent
-	 * @param value
+	 * @param recipeInfo
 	 * @param event
 	 * @param valueUpdater
 	 */
 	@Override
-	public void onBrowserEvent(Context context, Element parent, RecipeInfo value, NativeEvent event,
+	public void onBrowserEvent(Context context, Element parent, RecipeInfo recipeInfo, NativeEvent event,
 	        ValueUpdater<RecipeInfo> valueUpdater) {
-	    super.onBrowserEvent(context, parent, value, event, valueUpdater);
+	    super.onBrowserEvent(context, parent, recipeInfo, event, valueUpdater);
 	    if ("click".equals(event.getType())) {
 	        EventTarget eventTarget = event.getEventTarget();
 	        if (!Element.is(eventTarget)) {
 	            return;
 	        }
 	        if (parent.getElementsByTagName("a").getItem(0).isOrHasChild(Element.as(eventTarget))) {
-	            dco.deleteRecipe(value.getId());
+	            dco.deleteRecipe(recipeInfo.getId());
 	        }
 	        else {
-	        	presenter.goTo(new RechnerRecipeEditPlace(value.getId().toString()));
+	        	if (recipeInfo.isPublished() && dco.getRecipeScope() == RecipeScope.PUBLIC) {
+	        		dco.cloneRecipe(recipeInfo);
+	        		presenter.goTo(new RechnerRecipeEditPlace("clone"));
+	        	}
+	        	else
+	        		presenter.goTo(new RechnerRecipeEditPlace(recipeInfo.getId().toString()));
 	        }
 	    }
 	}

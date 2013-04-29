@@ -41,7 +41,6 @@ public class Recipe implements Serializable {
 	private Long kitchenId; // empty is no kitchen...
 	
 	private String verifiedLocation;
-	private String shortUrl;
 	
 	private Long servings;
 	
@@ -72,7 +71,7 @@ public class Recipe implements Serializable {
 	public Recipe() {
 		title = "Rezept Titel";
 		subTitle = "Rezept Beschreibung";
-		cookInstruction = "Zubereitug bearbeiten ...";
+		cookInstruction = "Zubereitung bearbeiten ...";
 		cachedCO2Value = 0.0D;
 		deleted = false;
 		published = false;
@@ -87,23 +86,21 @@ public class Recipe implements Serializable {
 		// call standard constructor
 		this();
 		this.ancestorId = toClone.id;
-		this.title = new String(toClone.title);
-		this.subTitle = new String(toClone.subTitle);
-		this.cookInstruction = new String(toClone.cookInstruction);
+		if (toClone.title != null) this.title = new String(toClone.title + " Kopie");
+		if (toClone.subTitle != null) this.subTitle = new String(toClone.subTitle);
+		if (toClone.cookInstruction != null) this.cookInstruction = new String(toClone.cookInstruction);
 		//not propper yet:
 		this.image = toClone.image;
 		
-		this.subTitle = new String(toClone.subTitle);
-		this.shortUrl = new String(toClone.shortUrl);
 		this.kitchenId = toClone.kitchenId;
 			
-		this.servings = new Long(toClone.servings);
+		if (toClone.servings != null) this.servings = new Long(toClone.servings);
 		this.createDate = (Date) toClone.createDate.clone();
 		this.cookingDate = (Date) toClone.cookingDate.clone();
-		this.hits = new Long(toClone.hits);
-		this.popularity = new Long(toClone.popularity);
+		if (toClone.hits != null) this.hits = new Long(toClone.hits);
+		if (toClone.popularity != null) this.popularity = new Long(toClone.popularity);
 		
-		this.selected = new Boolean(toClone.selected);
+		if (toClone.selected != null) this.selected = new Boolean(toClone.selected);
 		
 		for (SavingPotential com : toClone.savingPotentials) {
 			savingPotentials.add(new SavingPotential(com));
@@ -114,11 +111,11 @@ public class Recipe implements Serializable {
 		}
 		
 		
-		this.publicationRequested = new Boolean(toClone.publicationRequested);
-		this.published = new Boolean(toClone.published);
-		this.eaternitySelected = new Boolean(toClone.eaternitySelected);
-		this.bio = new Boolean(toClone.bio);
-		this.regsas = new Boolean(toClone.regsas);
+		if (toClone.publicationRequested != null) this.publicationRequested = new Boolean(toClone.publicationRequested);
+		this.published = false;
+		if (toClone.eaternitySelected != null) this.eaternitySelected = new Boolean(toClone.eaternitySelected);
+		if (toClone.bio != null) this.bio = new Boolean(toClone.bio);
+		if (toClone.regsas != null) this.regsas = new Boolean(toClone.regsas);
 	}
 
 	public void addIngredient(Ingredient ingSpec) {
@@ -231,15 +228,6 @@ public class Recipe implements Serializable {
 
 	public void setUserId(String userID) {
 		this.userId = userID;
-	}
-
-
-	public String getShortUrl() {
-		return shortUrl;
-	}
-
-	public void setShortUrl(String shortUrl) {
-		this.shortUrl = shortUrl;
 	}
 
 	public Long getKitchenId() {

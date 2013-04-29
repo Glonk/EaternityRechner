@@ -190,7 +190,9 @@ public class RecipeEdit extends Composite {
 		generatePDFButton.setEnabled(false);
 		publishButton.setEnabled(false);
 		duplicateButton.setEnabled(false);
+		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
+		commentTable.setVisible(false);
 		
 		imageUploadWidgetPanel.setVisible(false);
 		
@@ -313,6 +315,7 @@ public class RecipeEdit extends Composite {
 			generatePDFButton.setEnabled(true);
 			publishButton.setEnabled(true);
 			duplicateButton.setEnabled(true);
+			deleteButton.setEnabled(true);
 			saveButton.setEnabled(true);
 		}
 	}
@@ -479,8 +482,12 @@ public class RecipeEdit extends Composite {
 	
 	@UiHandler("generatePDFButton")
 	public void onGeneratePDFButtonClicked(ClickEvent event) {
-		presenter.getEventBus().fireEvent(new AlertEvent("This is a veeeery Long message which should be displayd in RecipeEdit and not in RecipeView", AlertType.ERROR, AlertEvent.Destination.EDIT));
 		
+	}
+	
+	@UiHandler("duplicateButton")
+	public void onDuplicateButtonClicked(ClickEvent event) {
+		dco.cloneRecipe(recipe);
 	}
 	
 	@UiHandler("deleteButton") 

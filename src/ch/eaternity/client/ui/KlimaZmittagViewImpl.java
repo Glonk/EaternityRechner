@@ -142,7 +142,7 @@ public class KlimaZmittagViewImpl<T> extends SimpleLayoutPanel implements KlimaZ
 		if(recipe.getImage() != null) {
 			image=  "<img src='" + recipe.getImage().getUrl() + "=s80-c' />";
 		}
-		HTML newMenu = new HTML(" <a href='"+recipe.getShortUrl()+"'>"+recipe.getTitle()+"</a>" + image);
+		HTML newMenu = new HTML();//" <a href='"+recipe.getShortUrl()+"'>"+recipe.getTitle()+"</a>" + image);
 		newMenu.setStyleName("colored-white");
 		Anchor addToMenu = new Anchor("Zum Tag hinzufügen.");
 		

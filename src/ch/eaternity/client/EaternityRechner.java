@@ -3,6 +3,7 @@ package ch.eaternity.client;
 
 import ch.eaternity.client.mvp.AppActivityMapper;
 import ch.eaternity.client.mvp.AppPlaceHistoryMapper;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.place.RechnerRecipeViewPlace;
 import ch.eaternity.client.resources.Resources;
 import ch.eaternity.client.ui.widgets.SimpleWidgetPanel;
@@ -31,7 +32,7 @@ import com.google.web.bindery.event.shared.EventBus;
 public class EaternityRechner implements EntryPoint {
 
 
-	private Place defaultEntryPlace = new RechnerRecipeViewPlace("PUBLIC");
+	private Place defaultEntryPlace = new RechnerRecipeEditPlace("new");
 	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
 	interface GlobalResources extends ClientBundle {
 			@NotStrict

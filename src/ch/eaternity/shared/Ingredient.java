@@ -58,15 +58,15 @@ public class Ingredient  implements Serializable {
 	// Copy Constructor
 	public Ingredient(Ingredient toClone) {
 		this();
-		productId = new Long(toClone.id);
+		if(toClone.productId != null) productId = new Long(toClone.productId);
 		foodproduct = new FoodProduct(toClone.foodproduct);
-		weight = toClone.weight;
+		if (toClone.weight != null)weight = toClone.weight;
 		// inlcude Extraction, now just a shallow copy...
-		extraction = toClone.extraction;
-		cookingDate = (Date) toClone.cookingDate.clone();
-		condition = new Condition(toClone.condition);
-		production = new Production(toClone.production);
-		transportation = new Transportation(toClone.transportation);
+		if (toClone.extraction != null)extraction = toClone.extraction;
+		if (toClone.cookingDate != null) cookingDate = (Date) toClone.cookingDate.clone();
+		if (toClone.condition != null)condition = new Condition(toClone.condition);
+		if (toClone.production != null)production = new Production(toClone.production);
+		if (toClone.transportation != null)transportation = new Transportation(toClone.transportation);
 		route = toClone.route;
 		cost = toClone.cost;
 	}
