@@ -37,7 +37,6 @@
   <inherits name='com.github.gwtbootstrap.Bootstrap' />
   
   <!-- Drag and Drop behaviours -->
-  <inherits name='gwtquery.plugins.droppable.Droppable'/>
   
   <!-- HERE we plan ahead of including the GWTP code -->
   <!-- <inherits name='com.gwtplatform.dispatch.Dispatch' />

@@ -206,10 +206,11 @@ public class RecipeEdit extends Composite {
 		this.dco = presenter.getDCO();
 		
 		// Image
+		/*
 		uploadWidget = new UploadPhotoWidget(this, presenter);
 		uploadWidget.setStyleName("notInline");	
 		imageUploadWidgetPanel.setWidget(uploadWidget);
-		
+		*/
 		bind();
 	}
 
