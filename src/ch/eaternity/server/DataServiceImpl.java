@@ -169,8 +169,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			for(int i = 0; i < searchStrings.length; i++) {
 				String partSearchString = searchStrings[i].toLowerCase();
 				
-				if (!recipe.getTitle().toLowerCase().contains(partSearchString) && !recipe.getSubTitle().toLowerCase().contains(partSearchString))
+				if (!recipe.getTitle().toLowerCase().contains(partSearchString) && !recipe.getSubTitle().toLowerCase().contains(partSearchString)) {
 					iterator.remove();
+					break;
+				}
 			}
 		}
 		
