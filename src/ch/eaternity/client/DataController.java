@@ -382,11 +382,14 @@ public class DataController {
 	}
 	
 	public void saveKitchen(final Kitchen kitchen) {
+		eventBus.fireEvent(new SpinnerEvent(true, "Küchen speichern"));
 		dataRpcService.saveKitchen(kitchen, new AsyncCallback<Long>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
+				eventBus.fireEvent(new SpinnerEvent(false));
 			}
 			public void onSuccess(Long kitchenId) {
+				eventBus.fireEvent(new SpinnerEvent(false, "Küchen gespeichert"));
 				kitchen.setId(kitchenId);
 				eventBus.fireEvent(new KitchenChangedEvent(cdata.currentKitchen.getId()));
 			}

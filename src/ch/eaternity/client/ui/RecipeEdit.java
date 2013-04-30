@@ -220,7 +220,8 @@ public class RecipeEdit extends Composite {
 					@Override
 					public void onEvent(IngredientAddedEvent event) {
 						if (recipe != null) {
-							ingredientDataProvider.refresh();
+							//ingredientDataProvider.refresh();
+							selectionModel.setSelected(event.ing, true);
 							updateCo2Value();
 							changeSaveStatus(false);
 						}
@@ -534,7 +535,14 @@ public class RecipeEdit extends Composite {
 		changeSaveStatus(false);
 	}
 
-	
+	private void openIngredientSpecificationWidget(Ingredient ingredient) {
+		if (!ingSpecWidget.isPresenterSetted()){
+			ingSpecWidget.setPresenter(presenter, ingredient, recipe.getVerifiedLocation());
+		}
+		else{
+			ingSpecWidget.setIngredient(ingredient, recipe.getVerifiedLocation());
+		}
+	}
 	
 	
 	private void initIngredientTable() {
@@ -548,12 +556,7 @@ public class RecipeEdit extends Composite {
 	    	public void onSelectionChange(SelectionChangeEvent event) {
 	    		Ingredient selected = selectionModel.getSelectedObject();
 	    		if (selected != null) {
-					if (!ingSpecWidget.isPresenterSetted()){
-						ingSpecWidget.setPresenter(presenter, selected, recipe.getVerifiedLocation());
-					}
-					else{
-						ingSpecWidget.setIngredient(selected, recipe.getVerifiedLocation());
-					}
+	    			openIngredientSpecificationWidget(selected);
 	    		}
 	    	}
 	    });
