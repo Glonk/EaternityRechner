@@ -2,6 +2,7 @@ package ch.eaternity.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ch.eaternity.shared.ClientData;
@@ -27,7 +28,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
 	
-	public ArrayList<FoodProductInfo> getFoodProductInfos(Integer month);
+	public ArrayList<FoodProductInfo> getFoodProductInfos(Date date);
 	public FoodProduct getFoodProduct(Long productId);
 	public Boolean persistIngredients(ArrayList<FoodProduct> ingredients) throws NotLoggedInException;
 	

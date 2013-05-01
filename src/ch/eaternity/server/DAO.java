@@ -4,6 +4,7 @@ package ch.eaternity.server;
 import static ch.eaternity.server.OfyService.ofy;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
@@ -61,6 +62,7 @@ public class DAO
 			userInfo.setAdmin(userService.isUserAdmin());
 			userInfo.setEnabled(isUserEnabled(user.getEmail()));
 			userInfo.setVerifiedLocation("Zürich, Schweiz");
+			userInfo.setCurrentDate(new Date());
 			if (userService.isUserAdmin())
 				userInfo.setEnabled(true);
 			ofy().save().entity(userInfo);
@@ -73,7 +75,7 @@ public class DAO
 	}
 	
 	/**
-	 * 
+	 * TAKE CARE. this doesnt load getUserInfo properly with all parameters set
 	 * @return null if not found
 	 */
 	public UserInfo getUserInfo() {
@@ -131,7 +133,7 @@ public class DAO
 	 * @param userMail
 	 * @return true if user is contained in any kitchen
 	 */
-	private Boolean isUserEnabled(String userMail) {
+	public Boolean isUserEnabled(String userMail) {
 		List<String> kitchenUserMails = getAllKitchenUserMails();
 		for (String kitchenUserMail : kitchenUserMails) {
 			if (kitchenUserMail.equalsIgnoreCase(userMail))
@@ -485,11 +487,13 @@ public class DAO
 			Iterable<Key<Recipe>> recipekeys = ofy().load().type(Recipe.class).keys();
 			Iterable<Key<Kitchen>> kitchenkeys = ofy().load().type(Kitchen.class).keys();
 			Iterable<Key<UserInfo>> userkeys = ofy().load().type(UserInfo.class).keys();
+			Iterable<Key<ImageBlob>> imagekeys = ofy().load().type(ImageBlob.class).keys();
 			
 			ofy().delete().keys(productkeys);
 			ofy().delete().keys(recipekeys);
 			ofy().delete().keys(kitchenkeys);
 			ofy().delete().keys(userkeys);
+			ofy().delete().keys(imagekeys);
 		
 		}
 		catch (Throwable e) {

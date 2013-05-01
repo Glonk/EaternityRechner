@@ -26,9 +26,11 @@ import ch.eaternity.shared.Util.RecipeScope;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.datepicker.client.ui.DateBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -60,7 +62,7 @@ public class TopPanel extends Composite {
 	@UiField MenuBar recipesMenuBar;
 	
 	@UiField Image calendarImage;
-	@UiField ListBox monthListBox;
+	@UiField DateBox dateBox;
 	@UiField Image contactImage;
 	@UiField Image signOutImage;
 	  
@@ -93,6 +95,8 @@ public class TopPanel extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		
 		adminMenuBar.setVisible(false);
+		dateBox.setVisible(false);
+		dateBox.setStartView("MONTH");
 		
 		spinnerColumn.setVisible(false);
 		spinnerHTML.setHTML("<img src='images/spinner_small.gif' />");
@@ -100,23 +104,6 @@ public class TopPanel extends Composite {
 		
 		kitchenMenu.setVisible(false);
 		kitchenMenu.setAutoOpen(true);
-
-		monthListBox.setVisible(false);
-		monthListBox.addItem("Januar");
-		monthListBox.addItem("Februar");
-		monthListBox.addItem("März");
-		monthListBox.addItem("April");
-		monthListBox.addItem("Mai");
-		monthListBox.addItem("Juni");
-		monthListBox.addItem("Juli");
-		monthListBox.addItem("August");
-		monthListBox.addItem("September");
-		monthListBox.addItem("Oktober");
-		monthListBox.addItem("November");
-		monthListBox.addItem("Dezember");
-
-		Date date = new Date();
-		monthListBox.setSelectedIndex(date.getMonth());
 		
 
 	}
@@ -306,7 +293,7 @@ public class TopPanel extends Composite {
 	}
 	@UiHandler("calendarImage")
 	public void onCalendarClick(ClickEvent event) {
-		monthListBox.setVisible(!monthListBox.isVisible());
+		dateBox.setVisible(!dateBox.isVisible());
 	}
 	
 	@UiHandler("contactImage")
@@ -321,9 +308,9 @@ public class TopPanel extends Composite {
 	}
 	
 
-	@UiHandler("monthListBox")
-	void onChange(ChangeEvent event) {
-		monthListBox.setVisible(false);
-		dco.changeMonth(monthListBox.getSelectedIndex()+1);
+	@UiHandler("dateBox")
+	void onValueChange(ValueChangeEvent<Date> event) {
+		dateBox.setVisible(false);
+		dco.changeDate(dateBox.getValue());
 	}
 }

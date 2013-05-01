@@ -57,7 +57,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	
 	 // ------------------------ Ingredients -----------------------------------
 	
-	public ArrayList<FoodProductInfo> getFoodProductInfos(Integer month) {
+	public ArrayList<FoodProductInfo> getFoodProductInfos(Date currentDate) {
 		DAO dao = new DAO();
 		List<FoodProduct> foodProducts = dao.getAllFoodProducts();
 		ArrayList<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
@@ -68,7 +68,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 			info.setInSeason(false);
 			Season season = product.getSeason();
 			if(product.isSeasonDependant() && season != null){
-				SeasonDate date = new SeasonDate(month,1);
+				SeasonDate date = new SeasonDate(currentDate);
 				if( date.after(season.getBeginning()) && date.before(season.getEnd()) )
 					info.setInSeason(true);
 			}
@@ -221,11 +221,10 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		// ------ RecipePlace EDIT -------
 		if (recipePlace == RecipePlace.EDIT) {
-			if (data.userInfo.getCurrentMonth() != null)
-				data.productInfos = getFoodProductInfos(data.userInfo.getCurrentMonth());
+			if (data.userInfo.getCurrentDate() != null)
+				data.productInfos = getFoodProductInfos(data.userInfo.getCurrentDate());
 			else {
-				Date date = new Date();
-				data.productInfos = getFoodProductInfos(date.getMonth()+1);
+				data.productInfos = getFoodProductInfos(new Date());
 			}
 			
 		}
@@ -322,14 +321,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		return dao.saveUserInfo(userInfo);
 	}
 	
-	public Boolean isUserEnabled() {
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean isUserEnabled() throws NotLoggedInException{
 		DAO dao = new DAO();
-		UserInfo userInfo = dao.getUserInfo();
 		
-		List<String> kitchenUserIds = dao.getAllKitchenUserMails();
-		
-		//return kitchenUserIds.contains(userInfo.getId());
-		return true;
+		return dao.isUserEnabled(getUserEmail());
 	}
 	
 	// ----------------------- Images ---------------------------------

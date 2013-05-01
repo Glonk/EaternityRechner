@@ -35,6 +35,7 @@
   
   <!-- HERE we plan of including the Twitter Bootstrap code -->
   <inherits name='com.github.gwtbootstrap.Bootstrap' />
+  <inherits name='com.github.gwtbootstrap.datepicker.Datepicker' />
   
   <!-- Drag and Drop behaviours -->
   

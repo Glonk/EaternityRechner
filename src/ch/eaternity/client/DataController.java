@@ -114,11 +114,8 @@ public class DataController {
 					}
 				
 							
-					// Load current Month or Kitchen Month
-					Date date = new Date();
-					//TODO change with correct loaded month
-					cdata.userInfo.setCurrentMonth(date.getMonth() + 1);
-					eventBus.fireEvent(new MonthChangedEvent(cdata.userInfo.getCurrentMonth()));			
+					cdata.userInfo.setCurrentDate(new Date());
+					eventBus.fireEvent(new MonthChangedEvent(cdata.userInfo.getCurrentDate()));			
 					
 					eventBus.fireEvent(new SpinnerEvent(false));
 					//TODO probably not necessary, remove
@@ -159,7 +156,6 @@ public class DataController {
 	
 	private void setRecipeParameters(Recipe recipe) {
 		recipe.setCreateDate(new Date());
-		recipe.setCookingDate(new Date());
 		
 		if (cdata.currentKitchen != null) {
 			recipe.setKitchenId(cdata.currentKitchen.getId());
@@ -169,9 +165,12 @@ public class DataController {
 		if (cdata.userInfo != null) {
 			recipe.setUserId(cdata.userInfo.getId());
 			recipe.setVerifiedLocation(cdata.userInfo.getVerifiedLocation());
+			recipe.setCookingDate(cdata.userInfo.getCurrentDate());
 		}
-		else
+		else {
 			Log.info("EditRecipe created with userInfo == null, thus no id added");
+			recipe.setCookingDate(new Date());
+		}
 		
 		recipe.setPopularity(0L);
 		recipe.setHits(0L);
@@ -344,11 +343,11 @@ public class DataController {
 	}
 	
 	// probably other place?
-	public void changeMonth(final int month) {
-		cdata.userInfo.setCurrentMonth(month);
+	public void changeDate(final Date date) {
+		cdata.userInfo.setCurrentDate(date);
 		
 		// Extra call for every month change - could be more efficient
-		dataRpcService.getFoodProductInfos(month, new AsyncCallback<ArrayList<FoodProductInfo>>() {
+		dataRpcService.getFoodProductInfos(date, new AsyncCallback<ArrayList<FoodProductInfo>>() {
 				public void onFailure(Throwable error) {
 					eventBus.fireEvent(new AlertEvent("Zutaten konnten nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.BOTH)); 
 				}
@@ -356,7 +355,7 @@ public class DataController {
 					cdata.productInfos = productInfos;
 				}
 			});
-		eventBus.fireEvent(new MonthChangedEvent(month));
+		eventBus.fireEvent(new MonthChangedEvent(date));
 	}
 	
 	public void changeCurrentKitchen(Kitchen kitchen) {
@@ -684,11 +683,11 @@ public class DataController {
 		return cdata.currentKitchen;
 	}
 
-	public int getCurrentMonth() {
+	public Date getCurrentDate() {
 		if (cdata.userInfo != null)
-			return cdata.userInfo.getCurrentMonth();
+			return cdata.userInfo.getCurrentDate();
 		else
-			return 1;
+			return new Date();
 	}
 
 	public String getVerifiedUserLocation() {

@@ -2,6 +2,7 @@ package ch.eaternity.client;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ch.eaternity.shared.ClientData;
@@ -24,7 +25,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DataServiceAsync {
 	
-	public void getFoodProductInfos(Integer month, AsyncCallback<ArrayList<FoodProductInfo>> asyncCallback);
+	public void getFoodProductInfos(Date date, AsyncCallback<ArrayList<FoodProductInfo>> asyncCallback);
 	public void getFoodProduct(Long productId, AsyncCallback<FoodProduct> asyncCallback);
 	
 	public void getRecipe(Long id, AsyncCallback<Recipe> async);

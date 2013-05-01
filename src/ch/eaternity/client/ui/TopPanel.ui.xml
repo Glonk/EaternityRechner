@@ -5,7 +5,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:mail='urn:import:ch.eaternity.client'
-	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
+	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:b2="urn:import:com.github.gwtbootstrap.datepicker.client.ui">
 
 
 	<ui:style>
@@ -90,7 +91,7 @@
 						</b:Column>
 						<b:Column size="4" offset="1" styleName="{style.iconsPanel}">
 							<b:Tooltip text='Der Monat in dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}'></g:Image></b:Tooltip>
-							<g:ListBox width='100' ui:field="monthListBox" />
+							<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
 			
 							<b:Tooltip text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}'></g:Image></b:Tooltip>
 							<b:Tooltip text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}'></g:Image></b:Tooltip>
