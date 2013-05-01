@@ -96,7 +96,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.append(image);
 	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<td width='450'><span style='font-size:20px; font-weight:bold;'>");
+	  sb.appendHtmlConstant("<td width='450'><span style='font-size:20px; font-weight:600;'>");
 	  sb.append(title);
 	  sb.appendHtmlConstant("</span><br /><span style='font-size:14px;'>");
 	  sb.append(subtitle);

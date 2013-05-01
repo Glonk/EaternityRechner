@@ -129,7 +129,7 @@ public class SearchIngredients extends Composite {
 	
 	private String searchString = "";
 		
-	private SortMethod lastSortMethod = SortMethod.NONE;
+	private SortMethod lastSortMethod = SortMethod.CO2VALUE;
 	
 	private boolean[] reversSortArray = {false,false,false};
 	
@@ -156,10 +156,12 @@ public class SearchIngredients extends Composite {
 		this.dco = presenter.getDCO();
 		
 		// this makes switching views (places) very slow... if it get's build each time again
-		if(dco.editDataLoaded())
+		if(dco.editDataLoaded()) {
 			updateResults("");
+			sortResults(SortMethod.CO2VALUE, false);
+		}
 		
-		this.setHeight("520px");
+		this.setHeight("620px");
 		panelSouth.setVisible(false);
 		
 		// initialize a key provider to refer to the same selection states
@@ -210,8 +212,8 @@ public class SearchIngredients extends Composite {
 		presenter.getEventBus().addHandler(LoadedDataEvent.TYPE, new LoadedDataEventHandler() {
 			@Override
 			public void onEvent(LoadedDataEvent event) {
-				sortResults(SortMethod.CO2VALUE, false);
 				updateResults("");
+				sortResults(SortMethod.CO2VALUE, false);
 			}
 		});
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {

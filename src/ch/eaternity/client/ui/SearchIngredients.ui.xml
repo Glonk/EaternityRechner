@@ -4,14 +4,12 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
-	
 		.hundredpercent {
-	width:100%;
+			width: 100%;
 		}
 		
 		.searchLabel {
-
-			font-size:14px;
+			font-size: 14px;
 		}
 		
 		.scrollLittle {
@@ -41,40 +39,6 @@
 			margin-left: -100px;
 		}
 		
-		.gwt-Button {
-			margin: 5px 10px 5px 0px;
-			padding: 2px 5px 3px 5px;
-			text-decoration: none;
-			/* cursor: pointer;
-				  cursor: hand;*/
-			cursor: default;
-			font-size: 11px;
-			color: #000;
-			background: url("hborder.png") repeat-x 0px -27px;
-			border: 1px solid #787878;
-			/* border-bottom: 1px solid #a0a0a0;*/
-			border-radius: 4px;
-			-moz-border-radius: 4px;
-		}
-		
-		.gwt-Button:active { /* border: 1px inset #fff; */
-			border: 1px solid #787878;
-			background: url("hborder.png") repeat-x 0px -1455px;
-		}
-		
-		.gwt-Button:hover {
-			border-color: #787878;
-		}
-		
-		.gwt-Button[disabled] {
-			cursor: default;
-			color: #888;
-		}
-		
-		.gwt-Button[disabled]:hover {
-			border: 1px outset #ccc;
-		}
-		
 		.outer {
 			border-right: 1.5px solid #bbb;
 			border-bottom: 1.5px solid #bbb;
@@ -83,81 +47,35 @@
 			background: #fff;
 		}
 		
-		.searchBox { 
+		.searchBox {
 			background: #a7b424;
 			color: white;
-			padding:15px;
-			width:100%;
+			padding: 15px;
+			width: 100%;
 		}
 		
 		.searchTextBox {
 			margin-left: 10px;
-			width:100%;
+			width: 100%;
+		}
+		
+		div.header {
+			white-space: nowrap;
+			overflow: hidden;
+			margin-top: 15px;
+			font-size: 13px;
+			color:#999;
+			padding:5px;
 		}
 		
 		.sortThing {
 			border-top: 1.5px solid #bbb;
 		}
 		
-		.table {
-			table-layout: fixed;
-			width: 100%;
-			background: #fff;
-			cursor: pointer;
-			cursor: hand;
-				
-		}
-
-		.table td { /*
-				    border-top: 1px solid #fff;
-				    border-bottom: 1px solid #ddd;
-				    */
-			padding: 2px 2px 2px 8px;
-			margin: 0px;
-			overflow: hidden;
-		}
-		
-		.table tr:hover {
-			background: #f3d3a3;
-			background-image: url('add.png');
-			background-repeat: no-repeat;
-			background-position: right center;
-		}
-		
-		.table2 {
-			table-layout: fixed;
-			width: 100%;
-			background: #fff;
-			cursor: pointer;
-			cursor: hand;
-		}
-		
-		.table2 td { /*
-				    border-top: 1px solid #fff;
-				    border-bottom: 1px solid #ddd;
-				    */
-			padding: 2px 2px 2px 8px;
-			margin: 0px;
-			overflow: hidden;
-		}
-		
-		.table2 tr:hover {
-			background: #f3d3a3;
-			background-repeat: no-repeat;
-			background-position: right center;
-		}
-		
 		.scroll {
 			background: #fff;
-			margin-top: 1px;
-			border-top: solid #bbb 1px;
-			
 			/* this is a HACK: without this the scrolling does not work */
-			height:402px;
-		}
-		
-		.htmlbox {
-			background: #fafafa;
+			height: 480px;
 		}
 	</ui:style>
 
@@ -214,15 +132,20 @@
 			
 				<g:center>
 					<g:HTMLPanel>
-							<p style='white-space: nowrap; overflow:hidden;'>
-								<g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor>
-								<g:Anchor href='javascript:;' ui:field='alphOrder'>Zutat</g:Anchor>
+							<p style='white-space: nowrap;
+										overflow: hidden;
+										margin-top: 15px;
+										font-size: 13px;
+										color:#999;
+										padding:5px;'>
+								<g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor>
 								&nbsp;
 								<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor>
+								&nbsp;&nbsp;
+								<g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor>
+							
 							</p>
-					
-						<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'>
-	      				</g:ScrollPanel>
+						<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'></g:ScrollPanel>
 				
 				  </g:HTMLPanel>
 				</g:center>
