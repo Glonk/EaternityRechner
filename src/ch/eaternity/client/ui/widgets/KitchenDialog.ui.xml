@@ -26,11 +26,6 @@
 		text-align: right;
 		}
 		
-		.buttonPerson {
-		float: right;
-		margin-right:15px;
-		text-align: left;
-		}
 		
 		.buttonDevice {
 		float: right;
@@ -69,7 +64,7 @@
 			<g:HTMLPanel>
 		
 			<g:InlineLabel ui:field='kitchenLabel' >Name der Küche: </g:InlineLabel>
-			<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
+			<g:TextBox ui:field="kitchenNameTextBox"></g:TextBox>
 			<br />
 			<g:InlineLabel ui:field='locationLabel' >Ort der Küche: </g:InlineLabel>
 			<b:Button ui:field="locationButton" text="Adresse ändern" />
@@ -88,8 +83,7 @@
 			<c:CellTable addStyleNames='{style.cellTable}' pageSize='100' ui:field='usersCellTable' />
 
 		
-			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person
-				hinzufügen</g:Button>
+			<b:Button text='Person hinzufügen' ui:field="addPerson" />
 			
 			</g:HTMLPanel>
 		</g:ScrollPanel>
@@ -97,7 +91,7 @@
 		<hr />
 		<b:Button text='Küche löschen' ui:field='deleteKitchenButton' />
 		<b:Button text='Neue Küche erstellen' ui:field='newKitchenButton' />
-		<b:Button text='Küchen speichern, betreten und verlassen' ui:field='exitButton' />
+		<b:Button text='Küchen speichern und betreten' ui:field='exitButton' />
 	</g:HTMLPanel>
 	
 

@@ -32,7 +32,7 @@ import com.google.web.bindery.event.shared.EventBus;
 public class EaternityRechner implements EntryPoint {
 
 
-	private Place defaultEntryPlace = new RechnerRecipeViewPlace("PUBLIC");
+	private Place defaultEntryPlace = new RechnerRecipeEditPlace("new");
 	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
 	interface GlobalResources extends ClientBundle {
 			@NotStrict

@@ -1,14 +1,18 @@
 package ch.eaternity.client.ui.cells;
 
 
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.client.resources.Resources;
+import ch.eaternity.client.ui.SearchIngredients;
 import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Util;
+import ch.eaternity.shared.Util.RecipeScope;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -21,6 +25,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class ProductCell extends AbstractCell<FoodProductInfo> {
 
+	
+	private SearchIngredients searchIngredients;
+	
 	
     /**
      * The HTML templates used to render the cell.
@@ -45,6 +52,11 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
           SafeHtml cell(SafeHtml name, SafeHtml value);
       }
 
+    
+    public ProductCell(SearchIngredients searchIngredients) {
+    	super("click");
+    	this.searchIngredients = searchIngredients;
+    }
     /**
      * Create a singleton instance of the templates used to render the cell.
      */
@@ -95,8 +107,14 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
     // future: override for mouseOver effect, keyboardselection effect...
     @Override
     public void onBrowserEvent(Cell.Context context, Element parent, FoodProductInfo value, NativeEvent event, ValueUpdater<FoodProductInfo> valueUpdater) {
-    	 super.onBrowserEvent(context, parent, value, event, valueUpdater);
-    	 
+    	super.onBrowserEvent(context, parent, value, event, valueUpdater);
+ 	    if ("click".equals(event.getType())) {
+ 	        EventTarget eventTarget = event.getEventTarget();
+ 	        if (!Element.is(eventTarget)) {
+ 	            return;
+ 	        }
+ 	        searchIngredients.addFoodProduct(value);
+ 	    }
     	 // Handle the click event.
          if ("onmoseover".equals(event.getType())) {
            // Ignore clicks that occur outside of the outermost element.

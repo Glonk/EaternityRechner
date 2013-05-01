@@ -4,7 +4,9 @@ package ch.eaternity.client.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Timer;
 
 import org.eaticious.common.QuantityImpl;
@@ -16,6 +18,8 @@ import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
+import ch.eaternity.client.ui.RecipeEdit.CellTableResource;
+import ch.eaternity.client.ui.RecipeEdit.CellTableResource.CellTableStyle;
 import ch.eaternity.client.ui.cells.ProductCell;
 import ch.eaternity.client.ui.widgets.TooltipListener;
 import ch.eaternity.shared.FoodProduct;
@@ -30,11 +34,13 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -62,6 +68,10 @@ import com.google.gwt.view.client.SingleSelectionModel;
 public class SearchIngredients extends Composite {
 	interface Binder extends UiBinder<Widget, SearchIngredients> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
+	
+	private enum MarkingType {
+		BEFORE, AFTER, FIRST, LAST
+	}
 	
 	// ---------------------- User Interface Elements --------------
 	
@@ -117,12 +127,32 @@ public class SearchIngredients extends Composite {
 			
 	// ---------------------- Class Variables ----------------------
 	
+	// initialize a key provider to refer to the same selection states
+	private final ProvidesKey<FoodProductInfo> keyProvider = new ProvidesKey<FoodProductInfo>() {
+	      public Object getKey(FoodProductInfo item) {
+	        // Always do a null check.
+	        return (item == null) ? null : item.getId();
+	      }
+	};
+	
+	public interface CellListResource extends CellList.Resources
+	{
+	   public interface CellListStyle extends CellList.Style {};
+
+	   @Source({"productCellList.css"})
+	   CellListStyle cellListStyle();
+	};
+	
+	CellListResource cellListResource = GWT.create(CellListResource.class);
+	
 	private RechnerActivity presenter;
 	private DataController dco;
 	
 	// Create a data provider.
 	private ListDataProvider<FoodProductInfo> productDataProvider = new ListDataProvider<FoodProductInfo>();
     private CellList<FoodProductInfo> cellList;
+    // Add a selection model to handle user selection.
+    private final SingleSelectionModel<FoodProductInfo> selectionModel = new SingleSelectionModel<FoodProductInfo>(keyProvider);
 	
     private List<FoodProductInfo> foundProducts  = new ArrayList<FoodProductInfo>();
 	private List<FoodProductInfo> foundAlternativeProducts  = new ArrayList<FoodProductInfo>();
@@ -134,8 +164,7 @@ public class SearchIngredients extends Composite {
 	private boolean[] reversSortArray = {false,false,false};
 	
 	// CSS of rows
-	static int markedRow = 0;
-	static int selectedRow = 0;
+	private int selectedRow = 0;
 	
 	// ---------------------- public Methods -----------------------
 	
@@ -146,8 +175,6 @@ public class SearchIngredients extends Composite {
 		// we have to wait till the database is loaded:
 		SearchInput.setText("wird geladen...");
 		SearchInput.setFocus(true);
-
-		initToolTips();
 	}
 	
 	
@@ -159,34 +186,27 @@ public class SearchIngredients extends Composite {
 		if(dco.editDataLoaded()) {
 			updateResults("");
 			sortResults(SortMethod.CO2VALUE, false);
+			markRow(0);
+			
 		}
 		
 		this.setHeight("620px");
 		panelSouth.setVisible(false);
 		
-		// initialize a key provider to refer to the same selection states
-		ProvidesKey<FoodProductInfo> keyProvider = new ProvidesKey<FoodProductInfo>() {
-		      public Object getKey(FoodProductInfo item) {
-		        // Always do a null check.
-		        return (item == null) ? null : item.getId();
-		      }
-		};
+
 		    
 		// Create a cell to render each value in the list.
-	    ProductCell productCell = new ProductCell();
+	    ProductCell productCell = new ProductCell(this);
 	    
 	    // Create a CellList that uses the cell.
-	    cellList = new CellList<FoodProductInfo>(productCell, keyProvider);
+	    cellList = new CellList<FoodProductInfo>(productCell, cellListResource, keyProvider);
 	    
 	    setupOnePageList(cellList);
 	    
 	    cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-
-		
-	    // Add a selection model to handle user selection.
-	    final SingleSelectionModel<FoodProductInfo> selectionModel = new SingleSelectionModel<FoodProductInfo>(keyProvider);
 	    
 	    cellList.setSelectionModel(selectionModel);
+	    /*
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	public void onSelectionChange(SelectionChangeEvent event) {
 	    		FoodProductInfo selected = selectionModel.getSelectedObject();
@@ -196,6 +216,7 @@ public class SearchIngredients extends Composite {
 		        }
 	    	}
 	    });
+	    */
 	    
 	    // Connect the list to the data provider.
 	    productDataProvider.addDataDisplay(cellList);
@@ -266,52 +287,47 @@ public class SearchIngredients extends Composite {
 	
 	
 	// Handle search input
-	private int numKeyPressed;
 	@UiHandler("SearchInput")
 	public void onKeyUp(KeyUpEvent event) {
-		// this matches up to 2 words!
-		numKeyPressed++;
-		// only update on text change
-		//if (numKeyPressed % 2 == 0)
-		//{
-			if( !SearchInput.getText().trim().equals(searchString)){
-				searchString = SearchInput.getText().trim();
-				updateResults(searchString);
-			}
-		//}
+		if( !SearchInput.getText().trim().equals(searchString)){
+			updateResults(SearchInput.getText().trim());
+		}
 	}
 	
-	// Handle Enter Key to add new ingredient
-	//ugly workaround for catching double firing of events from suggestbox (http://code.google.com/p/google-web-toolkit/issues/detail?id=3533)
-	private int numEnterKeyPressed;
-	private int numDownKeyPressed;
-	private int numUpKeyPressed;
 	
 	@UiHandler("SearchInput")
 	public void onKeyDown(KeyDownEvent event) {
 		if(KeyCodes.KEY_ENTER == event.getNativeKeyCode())
 		{
-			numEnterKeyPressed++;
-			//if (numEnterKeyPressed % 2 == 0)
-			//{
-				//selectRow(markedRow);
-				SearchInput.setText("");
-				updateResults("");
-				markedRow = 0;
-			//}
+			addFoodProduct(selectionModel.getSelectedObject());
+			SearchInput.setText("");
+			updateResults("");
+			markRow(0);
+			SearchInput.setFocus(true);
 		}
 		if(KeyCodes.KEY_DOWN == event.getNativeKeyCode())
 		{
-			numDownKeyPressed++;
-			if (numDownKeyPressed % 2 == 0);
-				//changeMarkedRow(markedRow + 1);
+			markRow(selectedRow + 1);
 		}
 		if(KeyCodes.KEY_UP == event.getNativeKeyCode())
 		{
-			numUpKeyPressed++;
-			if (numUpKeyPressed % 2 == 0);
-				//changeMarkedRow(markedRow - 1);
+			markRow(selectedRow - 1);
 		}
+	}
+	
+	public void markRow(int rowToMark) {
+		int listSize = productDataProvider.getList().size();
+		if (listSize > 0) {
+			if (rowToMark <= 0)
+				selectedRow = 0;
+			else if(rowToMark >= listSize)
+				selectedRow = listSize - 1;
+			else
+				selectedRow = rowToMark;
+			
+			selectionModel.setSelected(productDataProvider.getList().get(selectedRow), true);
+		}
+		
 	}
 
 	
@@ -344,33 +360,17 @@ public class SearchIngredients extends Composite {
 		foundProducts.clear();
 		foundAlternativeProducts.clear();
 		
-		// Add the data to the data provider, which automatically pushes it to the
-	    // widget.
+		// Add the data to the data provider, which automatically pushes it to the widget.
 	    List<FoodProductInfo> productList = productDataProvider.getList(); 
-	    
 	    
 		// Get data from Data Controller
 		dco.searchIngredients(searchString, productList, foundAlternativeProducts);
 	
-		// Display Results
 		//TODO: Special Display for alternatives, now still done in displayIngredient
 		///foundIngredients.addAll(foundAlternativeIngredients);
-	
-		//displayResults();
 		
-	    /*
-		// Correct mark adjustements
-		int numOfIngredientsFound = foundProducts.size();
-		if (markedRow <= 0)
-			changeMarkedRow(0);
-		else if(markedRow >= numOfIngredientsFound)
-			changeMarkedRow(numOfIngredientsFound-1);
-		else
-			changeMarkedRow(markedRow);
-		
-		if (searchString.equals(""))
-			changeMarkedRow(0);
-		*/
+		markRow(selectedRow);
+					
 	}
 	
 	/**
@@ -426,65 +426,14 @@ public class SearchIngredients extends Composite {
 				break;
 		}
 		
-	}
-	
-	@SuppressWarnings("deprecation")
-	private void initToolTips() {
+		markRow(selectedRow);
 		
-		// do the tooltips with gwt-bootstrap
-		
-		imageCarrot.setUrl("pixel.png");
-		imageSmiley1.setUrl("pixel.png");
-		imageSmiley2.setUrl("pixel.png");
-		imageSmiley3.setUrl("pixel.png");
-		imageRegloc.setUrl("pixel.png");
-		imageBio.setUrl("pixel.png");
-		imageCarrot.setPixelSize(20, 20);
-		imageSmiley1.setPixelSize(20, 20);
-		imageSmiley2.setPixelSize(20, 20);
-		imageSmiley3.setPixelSize(20, 20);
-		imageRegloc.setPixelSize(20, 20);
-		imageBio.setPixelSize(20, 20);
-	
-		imageCarrot.addMouseListener(
-				new TooltipListener(
-						"ausgezeichnet klimafreundlich", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
-		imageSmiley1.addMouseListener(
-				new TooltipListener(
-						"CO₂-Äq. Wert unter besten 20%", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
-		imageSmiley2.addMouseListener(
-				new TooltipListener(
-						"CO₂-Äq. Wert über Durchschnitt", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
-		imageSmiley3.addMouseListener(
-				new TooltipListener(
-						"Angaben unvollständig", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
-		imageRegloc.addMouseListener(
-				new TooltipListener(
-						"saisonale und regionale Ware", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
-		imageBio.addMouseListener(
-				new TooltipListener(
-						"biologische Zutat / Recipe", 5000 /* timeout in milliseconds*/,"yourcssclass",-6,-42));
-		
-		/**
-		*
-		* SearchLabel.addMouseListener(
-		*		new TooltipListener(
-		*				"Suche nach Zutaten und Rezepten hier.", 5000 ,"yourcssclass",5,-34));
-		*/
-		
-		co2Order.addMouseListener(
-				new TooltipListener(
-						"Sortiere Suchergebnisse nach CO₂-Äquivalent Wert.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
-		alphOrder.addMouseListener(
-				new TooltipListener(
-						"Sortiere Suchergebnisse alphabetisch.", 5000 /* timeout in milliseconds*/,"yourcssclass",0,-50));
-	
 	}
 	
 	
 	
 	
-	private void addFoodProduct(FoodProductInfo product) {
+	public void addFoodProduct(FoodProductInfo product) {
 		
 		if (product == null) return;
 		
