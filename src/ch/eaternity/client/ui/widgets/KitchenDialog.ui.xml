@@ -2,7 +2,8 @@
 	xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client' 
-	xmlns:mail='urn:import:ch.eaternity.client'>
+	xmlns:mail='urn:import:ch.eaternity.client'
+	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 
 
@@ -71,7 +72,7 @@
 			<g:TextBox ui:field="kitchenNameTextBox">neue Küche</g:TextBox>
 			<br />
 			<g:InlineLabel ui:field='locationLabel' >Ort der Küche: </g:InlineLabel>
-			<g:Button ui:field="locationButton" text="Adresse ändern" />
+			<b:Button ui:field="locationButton" text="Adresse ändern" />
 			<g:Label ui:field='kitchenId' ></g:Label>
 			<br /><br />
 			<g:InlineLabel ui:field='energyLabel' >Energiemix der Küche: </g:InlineLabel>
@@ -84,7 +85,7 @@
 			<g:Button styleName='{style.buttonDevice}' ui:field="addDevice">Gerät hinzufügen</g:Button> 
 			<br /> -->
 			Diese Personen können die Küche betreten:
-			<c:CellTable addStyleNames='{style.cellTable}' pageSize='15' ui:field='usersCellTable' />
+			<c:CellTable addStyleNames='{style.cellTable}' pageSize='100' ui:field='usersCellTable' />
 
 		
 			<g:Button styleName='{style.buttonPerson}' ui:field="addPerson">Person
@@ -94,9 +95,9 @@
 		</g:ScrollPanel>
 		
 		<hr />
-		<g:Button text='Küche löschen' ui:field='deleteKitchenButton' />
-		<g:Button text='Neue Küche erstellen' ui:field='newKitchenButton' />
-		<g:Button text='Küchen speichern verlassen' ui:field='exitButton' />
+		<b:Button text='Küche löschen' ui:field='deleteKitchenButton' />
+		<b:Button text='Neue Küche erstellen' ui:field='newKitchenButton' />
+		<b:Button text='Küchen speichern, betreten und verlassen' ui:field='exitButton' />
 	</g:HTMLPanel>
 	
 

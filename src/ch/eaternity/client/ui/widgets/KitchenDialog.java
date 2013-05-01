@@ -10,6 +10,7 @@ import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.KitchenUser;
 import ch.eaternity.shared.UserInfo;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextInputCell;
@@ -27,7 +28,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -324,7 +324,7 @@ public class KitchenDialog extends DialogBox{
 
 	public void initPersonCellTable() {
 		
-		usersCellTable.setWidth("70%", true);
+		usersCellTable.setWidth("100%", false);
 		usersCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
 		Column<KitchenUser, String> nameColumn = new Column<KitchenUser, String>(new TextInputCell()) {

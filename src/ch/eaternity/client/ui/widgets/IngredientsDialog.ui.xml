@@ -1,6 +1,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:mail='urn:import:ch.eaternity.client'>
+  xmlns:mail='urn:import:ch.eaternity.client'
+  xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 
 
@@ -22,8 +23,8 @@
     <g:Label ui:field='statusLabel' >add those ingredients</g:Label>
 	<g:TextArea ui:field='xmlText' ></g:TextArea>
     <div class='{style.buttons}'>
-      <g:Button text='Add' ui:field='executeButton' />
-      <g:Button text='Cancel' ui:field='closeButton' />
+      <b:Button text='Add' ui:field='executeButton' />
+      <b:Button text='Cancel' ui:field='closeButton' />
     </div>
   </g:HTMLPanel>
 </ui:UiBinder>
