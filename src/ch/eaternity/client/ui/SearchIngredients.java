@@ -7,13 +7,14 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Timer;
 
 import org.eaticious.common.QuantityImpl;
 import org.eaticious.common.Unit;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.IngredientAddedEvent;
+import ch.eaternity.client.events.IngredientAddedEventHandler;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
@@ -42,6 +43,7 @@ import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -68,10 +70,6 @@ import com.google.gwt.view.client.SingleSelectionModel;
 public class SearchIngredients extends Composite {
 	interface Binder extends UiBinder<Widget, SearchIngredients> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
-	
-	private enum MarkingType {
-		BEFORE, AFTER, FIRST, LAST
-	}
 	
 	// ---------------------- User Interface Elements --------------
 	
@@ -289,9 +287,9 @@ public class SearchIngredients extends Composite {
 	// Handle search input
 	@UiHandler("SearchInput")
 	public void onKeyUp(KeyUpEvent event) {
-		if( !SearchInput.getText().trim().equals(searchString)){
+		//if( !SearchInput.getText().trim().equals(searchString))
 			updateResults(SearchInput.getText().trim());
-		}
+		
 	}
 	
 	
@@ -356,9 +354,6 @@ public class SearchIngredients extends Composite {
 
 	public void updateResults(String searchString) {
 		SearchInput.setText(searchString);
-		
-		foundProducts.clear();
-		foundAlternativeProducts.clear();
 		
 		// Add the data to the data provider, which automatically pushes it to the widget.
 	    List<FoodProductInfo> productList = productDataProvider.getList(); 
@@ -425,7 +420,7 @@ public class SearchIngredients extends Composite {
 				});
 				break;
 		}
-		
+		// mark the previously selected row again
 		markRow(selectedRow);
 		
 	}

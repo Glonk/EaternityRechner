@@ -82,20 +82,22 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 	
 	  //SafeHtml rendered = productTemplate.cell(name, co2value);
 	  
-	  sb.appendHtmlConstant("<div class='productInfo'><table><tr><td width='150'>");
+	  sb.appendHtmlConstant("<div class='productInfo'><div class='inlineProductInfoItem'>");
 	  sb.append(name);
-	  sb.appendHtmlConstant("</td>");
-	  
-	  sb.appendHtmlConstant("<td width='80'>");
-	  sb.append(co2value);
-	  sb.appendHtmlConstant("g</td>");
-	  
-	  sb.appendHtmlConstant("<td width='40'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></td>");
-	  
+	  sb.appendHtmlConstant("</div>");
+	 
 	  if (productInfo.isInSeason()) 
-		  sb.appendHtmlConstant("<td><img src='" + Resources.INSTANCE.season().getURL() + "'  /></td>");
+		  sb.appendHtmlConstant("<div style='float:right;'><div class='inlineProductInfoItem'><img src='" + Resources.INSTANCE.season().getURL() + "'  /></div>");
 	  
-	  sb.appendHtmlConstant("</tr></table></div>");
+	  
+	  sb.appendHtmlConstant("<div class='inlineProductInfoItem'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></div>");
+	  
+	  
+	  sb.appendHtmlConstant("<div class='inlineProductInfoItem' style='text-align:right; width:50px;'>");
+	  sb.append(co2value);
+	  sb.appendHtmlConstant("g*</div>");
+	  
+	  sb.appendHtmlConstant("</div></div>");
 	
 	  
 	  //SafeStyles styles = SafeStylesUtils.forBorderStyle(BorderStyle.DOTTED);

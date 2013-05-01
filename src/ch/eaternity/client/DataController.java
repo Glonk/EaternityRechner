@@ -466,7 +466,7 @@ public class DataController {
 		products.clear();
 		alternatives.clear();
 		
-		if(searchString.trim().length() != 0){
+		if(searchString.trim().length() > 0){
 
  			String[] searches = searchString.split(" ");
 

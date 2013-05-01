@@ -184,7 +184,6 @@ public class IngredientSpecificationWidget extends Composite {
 		kmHTML.setHTML("ca. " + ingredient.getKmDistanceRounded() + "km");
 		UnknownExtractionTextBox.setVisible(false);
 		ExtractionList.setVisible(true);
-		ExtractionList.setFocus(true);
 	}
 	
 	private void updateExtractionList(Extraction selectedExtraction) {
