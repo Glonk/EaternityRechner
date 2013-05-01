@@ -270,13 +270,13 @@ public class SearchIngredients extends Composite {
 		// this matches up to 2 words!
 		numKeyPressed++;
 		// only update on text change
-		if (numKeyPressed % 2 == 0)
-		{
+		//if (numKeyPressed % 2 == 0)
+		//{
 			if( !SearchInput.getText().trim().equals(searchString)){
 				searchString = SearchInput.getText().trim();
 				updateResults(searchString);
 			}
-		}
+		//}
 	}
 	
 	// Handle Enter Key to add new ingredient
@@ -290,13 +290,13 @@ public class SearchIngredients extends Composite {
 		if(KeyCodes.KEY_ENTER == event.getNativeKeyCode())
 		{
 			numEnterKeyPressed++;
-			if (numEnterKeyPressed % 2 == 0)
-			{
+			//if (numEnterKeyPressed % 2 == 0)
+			//{
 				//selectRow(markedRow);
 				SearchInput.setText("");
 				updateResults("");
 				markedRow = 0;
-			}
+			//}
 		}
 		if(KeyCodes.KEY_DOWN == event.getNativeKeyCode())
 		{

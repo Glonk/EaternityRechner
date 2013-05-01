@@ -103,7 +103,7 @@ public class RechnerActivity extends AbstractActivity {
 			RecipeScope recipeScope = ((RechnerRecipeViewPlace) place).getRecipeScope();
 			
 			if (!dco.viewDataLoaded())
-				dco.loadData(RecipePlace.VIEW, new RecipeSearchRepresentation("",recipeScope));
+				dco.loadData(RecipePlace.VIEW, new RecipeSearchRepresentation("",recipeScope), null);
 			else	
 				dco.changeRecipeScope(recipeScope);
 			
@@ -113,11 +113,12 @@ public class RechnerActivity extends AbstractActivity {
 			recipePanel.setWidget(recipeEdit);
 			
 			if (!dco.editDataLoaded())
-				dco.loadData(RecipePlace.EDIT, new RecipeSearchRepresentation("",null));	
-			
-			//TODO this call could be integrated in loadData, but then create two loadData functions:
-			// loadViewData, loadEditData
-			dco.setEditRecipe(((RechnerRecipeEditPlace) place).getID());
+				dco.loadData(RecipePlace.EDIT, new RecipeSearchRepresentation("",null), ((RechnerRecipeEditPlace) place).getID());	
+			else {
+				//TODO this call could be integrated in loadData, but then create two loadData functions:
+				// loadViewData, loadEditData
+				dco.setEditRecipe(((RechnerRecipeEditPlace) place).getID());
+			}
 				
 			searchPanel.setWidget(searchIngredients);
 		}

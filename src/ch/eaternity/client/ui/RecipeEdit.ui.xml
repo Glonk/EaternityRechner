@@ -39,7 +39,7 @@
 		}
 		
 		.personsHTML { /* margin-right:10px; */
-			width: 250px;
+			width: 120px;
 			text-align: right;
 			display: inline;
 			margin-right:250px;
@@ -88,6 +88,10 @@
 			width:320px;
 		}
 		
+		.locationLabel {
+		width:120px;
+
+		}
 
 		
 		.rezeptDateField {
@@ -192,6 +196,8 @@
 					<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
 					Personen
 				</g:HTMLPanel>
+				
+				<g:Label ui:field='locationLabel' styleName='{style.locationLabel}'>Ort:</g:Label>
 				
 				<!-- Cooking Date -->
 				<g:HorizontalPanel>

@@ -122,6 +122,7 @@ public class RecipeEdit extends Composite {
 	@UiField SimplePanel imageUploadWidgetPanel;
 	
 	@UiField TextBox amountPersons;
+	@UiField Label locationLabel;
 	@UiField TextBox recipeDate;
 	@UiField HTML recipeDateError;
 	
@@ -279,6 +280,10 @@ public class RecipeEdit extends Composite {
 			setImageUrl(recipe.getImage().getUrl(), false);
 		}
 		
+		//Location
+		if (recipe.getVerifiedLocation() != null)
+			locationLabel.setText("Ort: " + recipe.getVerifiedLocation());
+		
 		//Date
 		DateTimeFormat dtf = DateTimeFormat.getFormat("dd.MM.yy");
 		Date date = recipe.getCookingDate();
@@ -350,7 +355,7 @@ public class RecipeEdit extends Composite {
 
 	public void setImageUrl(String url, boolean imageWidgetVisible) {
 		//recipeImage.setUrl(url);
-		uploadWidget.setVisible(imageWidgetVisible);
+		//uploadWidget.setVisible(imageWidgetVisible);
 		recipeImage.setUrlAndVisibleRect(url,0,0,670,230);
 	}
 

@@ -11,6 +11,7 @@ import org.eaticious.common.Unit;
 
 import ch.eaternity.client.events.*;
 import ch.eaternity.client.place.LoginPlace;
+import ch.eaternity.client.place.RechnerRecipeEditPlace;
 import ch.eaternity.shared.*;
 import ch.eaternity.shared.HomeDistances.RequestCallback;
 import ch.eaternity.shared.Util.RecipePlace;
@@ -69,7 +70,7 @@ public class DataController {
 	 * @param recipeSeachRepresentation
 	 */
 	
-	public void loadData(final RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation) {
+	public void loadData(final RecipePlace recipePlace, RecipeSearchRepresentation recipeSeachRepresentation, final String recipeEditId) {
 		eventBus.fireEvent(new SpinnerEvent(true, "Daten werden geladen"));
 		dataRpcService.getData(GWT.getHostPageBaseURL(),recipePlace, recipeSeachRepresentation, new AsyncCallback<ClientData>() {
 			public void onFailure(Throwable error) {
@@ -108,6 +109,7 @@ public class DataController {
 					if (recipePlace == RecipePlace.EDIT) {
 						cdata.productInfos = data.productInfos;
 						editDataLoaded = true;
+						setEditRecipe(recipeEditId);
 						//TODO add Distances to cdata here
 					}
 				
@@ -150,6 +152,7 @@ public class DataController {
 			public void onSuccess(Recipe recipe) {
 				Recipe clonedRecipe = new Recipe(recipe);
 				setRecipeParameters(clonedRecipe);
+				eventBus.fireEvent(new AlertEvent("Rezept dupliziert.", AlertType.INFO, AlertEvent.Destination.EDIT, 3000));
 			}
 		});
 	}
@@ -175,7 +178,6 @@ public class DataController {
 		
 		cdata.editRecipe = recipe;
 		eventBus.fireEvent(new RecipeLoadedEvent(recipe)); 
-		eventBus.fireEvent(new AlertEvent("Rezept dupliziert.", AlertType.INFO, AlertEvent.Destination.EDIT, 3000));
 		
 	}
 	

@@ -133,7 +133,11 @@ public class DAO
 	 */
 	private Boolean isUserEnabled(String userMail) {
 		List<String> kitchenUserMails = getAllKitchenUserMails();
-		return kitchenUserMails.contains(userMail);
+		for (String kitchenUserMail : kitchenUserMails) {
+			if (kitchenUserMail.equalsIgnoreCase(userMail))
+				return true;
+		}
+		return false;
 	}
 	
 	// ------------------------ Ingredients -----------------------------------
