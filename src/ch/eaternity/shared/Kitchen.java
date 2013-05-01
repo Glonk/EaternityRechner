@@ -13,15 +13,6 @@ public class Kitchen implements Serializable {
 
 	@Id private Long id;
 	
-//	// Load that on loading the whole kitchen - necessary?
-//	@Ignore
-//	private List<UserInfo> userInfos = new ArrayList<UserInfo>();
-//	
-//	/**
-//	 *  many to many relationship stored in both object -> update properly!
-//	 */
-//	private List<String> userIds = new ArrayList<String>();
-	
 	/**
 	 *  here the users with name and email, not having a UserInfo yet are stored, converted as soon as they login first time
 	 */
@@ -34,7 +25,7 @@ public class Kitchen implements Serializable {
 	 */
 	private String symbol;
 
-	@Embed
+	@Serialize
 	private UploadedImage image;
 	
 	// location is a valid Google Maps location (processLocation() returns true)

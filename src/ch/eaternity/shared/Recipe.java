@@ -29,7 +29,7 @@ public class Recipe implements Serializable {
 	private String subTitle;
 	private String cookInstruction;
 	
-	@Embed
+	@Serialize
 	private UploadedImage image;
 	
 	// needed for loading the RecipeInfo without having access to all the foodproducts
@@ -44,7 +44,7 @@ public class Recipe implements Serializable {
 	
 	private Long servings;
 	
-	@Embed
+	@Serialize
 	private List<SavingPotential> savingPotentials = new ArrayList<SavingPotential>();
 
 	@Embed

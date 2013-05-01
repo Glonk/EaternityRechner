@@ -26,6 +26,7 @@ public class Ingredient  implements Serializable {
 	@Ignore
     private FoodProduct foodproduct;
 
+	@Index
 	private Long productId;
 	
 	@Serialize

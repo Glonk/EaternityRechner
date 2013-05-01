@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.googlecode.objectify.Ref;
@@ -22,6 +23,7 @@ public class UserInfo implements Serializable {
 	
 	// many to many relationship stored in both object -> update properly!
 	// at the moment not used in fetching the kitchens...
+	@Index
 	private List<Long> kitchenIds = new ArrayList<Long>();
 	
 	@Ignore
@@ -29,11 +31,11 @@ public class UserInfo implements Serializable {
 	@Ignore
 	private String logoutUrl;
 	
+	@Index
 	private String emailAddress;
 	private String nickname;
-	
-	// probably date??
-	private Integer currentMonth;
+
+	private Date currentDate;
 	
 	/**
 	 * currentLocation is a valid Google Maps location (processed)
@@ -47,7 +49,7 @@ public class UserInfo implements Serializable {
 
 	public UserInfo() {
 		this.verifiedLocation = "Zürich, Schweiz";
-		this.currentMonth = 6;
+		this.currentDate = new Date();
 	}
 	
 	public boolean isLoggedIn() {
@@ -128,12 +130,12 @@ public class UserInfo implements Serializable {
 		this.kitchenIds = kitchenIDs;
 	}
 
-	public Integer getCurrentMonth() {
-		return currentMonth;
+	public Date getCurrentDate() {
+		return currentDate;
 	}
 
-	public void setCurrentMonth(Integer currentMonth) {
-		this.currentMonth = currentMonth;
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
 	}
 
 	public String getVerifiedLocation() {

@@ -19,13 +19,13 @@ public class UploadedImage implements Serializable {
 
 	@Id private Long id;
 	
-	String key;
-	String servingUrl;
-	Date createdAt;
-	String ownerId; // Refers to the User that uploaded this
+	private String key;
+	private String servingUrl;
+	private Date createdAt;
+	private String ownerId; // Refers to the User that uploaded this
 
-	@Embed
-	List<Tag> tags;
+	@Serialize 
+	private List<Tag> tags;
 	
 	public UploadedImage() {}
 
