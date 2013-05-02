@@ -9,8 +9,18 @@ import com.google.gwt.resources.client.TextResource;
 public interface Resources extends ClientBundle {
 	public static final Resources INSTANCE = GWT.create(Resources.class);
 
+	interface Style extends CssResource {
+		String productInfoItem();
+		String recipeInfo();
+		String container();
+		String co2TextCell();
+		String weightTextInputCell();
+		String row();
+		String intro();
+	}
+	
 	@Source("global.css")
-	public CssResource globalCss();
+	public Style style();
 
 	@Source("menu-label-1.png")
 	public ImageResource ratingBar1();

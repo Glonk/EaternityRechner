@@ -24,31 +24,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  * A custom {@link Cell} used to render a RecipeInfo
  */
 public class RecipeCell extends AbstractCell<RecipeInfo> {
-
-	/**
-	 * The HTML templates used to render the cell.
-	 */
-	interface ImgTemplate extends SafeHtmlTemplates {
-		/**
-		 * The template for this Cell, which includes styles and a value.
-		 * 
-		 * @param styles
-		 *            the styles to include in the style attribute of the div
-		 * @param value
-		 *            the safe value. Since the value type is {@link SafeHtml},
-		 *            it will not be escaped before including it in the
-		 *            template. Alternatively, you could make the value type
-		 *            String, in which case the value would be escaped.
-		 * @return a {@link SafeHtml} instance
-		 */
-		// @SafeHtmlTemplates.Template("<img class=\"{0}\" src=\"{1}\" />")
-		// SafeHtml cell(String classes, SafeHtml src);
-	}
-
-	interface ProductTemplate extends SafeHtmlTemplates {
-		@SafeHtmlTemplates.Template("<div class=\"productInfo\">{0}&nbsp;&nbsp;&nbsp;{1}</div>")
-		SafeHtml cell(SafeHtml name, SafeHtml value);
-	}
 	
 	private DataController dco;
 	private RechnerActivity presenter;
@@ -92,7 +67,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 			image = SafeHtmlUtils.fromTrustedString("<img src='http://placehold.it/80x80' />");
 	}
 	  
-	  sb.appendHtmlConstant("<div class='recipeInfo'><table><tr><td width='80'>");
+	  sb.appendHtmlConstant("<div class='" + Resources.INSTANCE.style().recipeInfo() + "'><table><tr><td width='80'>");
 	  sb.append(image);
 	  sb.appendHtmlConstant("</td>");
 	  

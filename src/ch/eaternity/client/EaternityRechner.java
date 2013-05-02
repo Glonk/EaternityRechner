@@ -96,8 +96,8 @@ public class EaternityRechner implements EntryPoint {
 		PlaceController placeController = clientFactory.getPlaceController();
 		
 		// Inject global styles.
-		Resources.INSTANCE.globalCss().ensureInjected();
-		GWT.<GlobalResources>create(GlobalResources.class).css().ensureInjected();
+		Resources.INSTANCE.style().ensureInjected();
+		//GWT.<GlobalResources>create(GlobalResources.class).css().ensureInjected();
 		
 		// Start ActivityManager for the main widget with our ActivityMapper
 		ActivityMapper activityMapper = new AppActivityMapper(clientFactory);

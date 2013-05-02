@@ -6,38 +6,65 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
-	    .sticky {
-				height: 1200px;
+		.sticky {
+			height: 1200px;
 		}
 		
 		.sidebar {
-	
 			position: -webkit-sticky;
-  			position: -moz-sticky;
-  			position: -ms-sticky;
-  			position: -o-sticky;
-  			top: 24px;
-	
-			
+			position: -moz-sticky;
+			position: -ms-sticky;
+			position: -o-sticky;
+			top: 24px;
 			margin: 0 auto;
-			
 			border-right: 1px dashed #efefef;
-			padding-right:30px;
+			padding-right: 30px;
 			/*
-			padding: 18px 18px;  
-			border: 1.5px solid #54AA54;
-				 
-			background: #ffffff;
-
-  -webkit-border-radius: 5px 5px 5px 5px;
-     -moz-border-radius: 5px 5px 5px 5px;
-          border-radius: 5px 5px 5px 5px;
-
-  -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.25);
-     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
-          box-shadow: 0 2px 5px rgba(0,0,0,.25);
-          */
+					padding: 18px 18px;  
+					border: 1.5px solid #54AA54;
+						 
+					background: #ffffff;
+				
+				  -webkit-border-radius: 5px 5px 5px 5px;
+				     -moz-border-radius: 5px 5px 5px 5px;
+				          border-radius: 5px 5px 5px 5px;
+				
+				  -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+				     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
+				          box-shadow: 0 2px 5px rgba(0,0,0,.25);
+				          */
 		}
+		
+		/* The white background content wrapper */
+		.contentStart {
+			/*	display: none;*/
+			padding: 18px 18px;
+			margin: 0 auto;
+			border: 1.5px solid #54AA54;
+			/*-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius:10px; border: 1.5px solid #FF8300;*/
+			background: #ffffff;
+			/*	background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F4F4F4',GradientType=0 );
+				*/
+			margin: 0 -20px;
+			/* negative indent the amount of the padding to maintain the grid system */
+			-webkit-border-radius: 5px 5px 5px 5px;
+			-moz-border-radius: 5px 5px 5px 5px;
+			border-radius: 5px 5px 5px 5px;
+			-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+			-moz-box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+		}
+		
+		/* -----------------------------------------
+		   Vcard
+		----------------------------------------- */
+		.vcard li {
+			list-style-type: none;
+			margin-left: -25px;
+		}
+		
 	</ui:style>
 
 	<ui:style field='stickyTop'
@@ -61,6 +88,7 @@
 
   </ui:style>
 
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 
 	<g:ScrollPanel ui:field='workspace'>
       <g:HTMLPanel>
@@ -73,7 +101,7 @@
 			    
 			
 			<g:HTMLPanel>
-				<div class="page content-start"><!-- website design code / bootstrap -->
+				<div class="{style.contentStart}"><!-- website design code / bootstrap -->
 				
 				<b:Row>
 					<b:Column size="4"  >
@@ -106,7 +134,6 @@
 						<g:HTML>
 						<h3>&copy; &nbsp;2013 Eaternity</h3>
 						<p></p>
-						<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.de">Creative Commons Namensnennung - Weitergabe unter gleichen Bedingungen 3.0 Unported Lizenz</a></p>
 						<p><a href="/legal">Haftbarkeit &amp; Rechtshinweise</a></p>
 						</g:HTML>
 					</b:Column>
@@ -117,13 +144,13 @@
 						<h3>Anschrift</h3>
 						
 						<a href="/infos/#kontakt">
-						<ul class="vcard" style="padding-left:26px">
+						<ul class="{style.vcard}" style="padding-left:26px">
 						    <li style="display:none" class="org">Eaternity</li>
-							<li class="street-address">Viaduktstrasse 93-95</li>
-							<li class="at">Im Hub Zürich</li>
-						    <li class="locality">CH-8005 Zürich</li>
-						    <li class="tel"><abbr title="Telefon">P:</abbr> +41 77-44-66-981</li>
-							<li style="display:none" class="email"><a href="mailto:info@eaternity.ch">info@eaternity.ch</a></li>
+							<li >Viaduktstrasse 93-95</li>
+							<li >Im Hub Zürich</li>
+						    <li >CH-8005 Zürich</li>
+						    <li ><abbr title="Telefon">P:</abbr> +41 77-44-66-981</li>
+							<li style="display:none"><a href="mailto:info@eaternity.ch">info@eaternity.ch</a></li>
 						</ul>
 						</a>
 						</g:HTML>

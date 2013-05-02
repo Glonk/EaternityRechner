@@ -89,14 +89,14 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 		sb.appendHtmlConstant("</div>");
 
 		sb.appendHtmlConstant("<div style='float:right; display:inline;'>");
-			sb.appendHtmlConstant("<div class='inlineProductInfoItem' style='text-align:right; width:40px;'>");
+			sb.appendHtmlConstant("<div class='" + Resources.INSTANCE.style().productInfoItem() + "' style='text-align:right; width:40px;'>");
 			sb.append(co2value);
 			sb.appendHtmlConstant("&nbsp;g*</div>");
 			
-			sb.appendHtmlConstant("<div class='inlineProductInfoItem'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></div>");
+			sb.appendHtmlConstant("<div class='" + Resources.INSTANCE.style().productInfoItem() + "'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></div>");
 		
 			if (productInfo.isInSeason())
-				sb.appendHtmlConstant("<div class='inlineProductInfoItem'><img src='"+ Resources.INSTANCE.season().getURL() + "'  /></div>");
+				sb.appendHtmlConstant("<div class='" + Resources.INSTANCE.style().productInfoItem() + "'><img src='"+ Resources.INSTANCE.season().getURL() + "'  /></div>");
 			
 		sb.appendHtmlConstant("</div>");
 

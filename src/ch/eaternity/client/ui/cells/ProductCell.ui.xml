@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE ui:UiBinder 
+  SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent"
+>
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:mail='urn:import:ch.eaternity.client'
+	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:b2="urn:import:com.github.gwtbootstrap.datepicker.client.ui">
+
+	<ui:style>
+		
+		.productInfoItem {
+			float: right;
+			margin: 0px 8px;
+		}
+	</ui:style>
+
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
+	<ui:with field='name' type='java.lang.String'/>
+	<ui:with field='co2' type='java.lang.String'/>
+
+<!--  
+	<div style='display:inline;'>
+		<ui:text from='{name}'/>
+	</div>
+
+	<div style='float:right; display:inline;'>
+	<div class='{style.productInfoItem}' style='text-align:right; width:40px;'>
+		<ui:text from='{co2}'/>&nbsp;g*</div>
+			
+		<div class='{style.productInfoItem}'>
+			<img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' />
+		</div>
+		
+		<div class='{style.productInfoItem}'>
+			<img src='"+ Resources.INSTANCE.season().getURL() + "'  />
+			</div>
+			
+	</div>
+	-->
+</ui:UiBinder>
