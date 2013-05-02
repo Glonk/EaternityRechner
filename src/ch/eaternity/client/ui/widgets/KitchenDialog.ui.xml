@@ -40,10 +40,6 @@
 			color:red;
 		}
 		
-		.TextBox {
-			width:150px;
-		}
-		
 		
   </ui:style>
   
@@ -84,6 +80,7 @@
 
 		
 			<b:Button text='Person hinzufügen' ui:field="addPerson" />
+			<b:CheckBox ui:field='betaCheckBox'>Beta Test Küche?</b:CheckBox>
 			
 			</g:HTMLPanel>
 		</g:ScrollPanel>

@@ -11,6 +11,7 @@ import ch.eaternity.shared.KitchenUser;
 import ch.eaternity.shared.UserInfo;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextInputCell;
@@ -69,6 +70,7 @@ public class KitchenDialog extends DialogBox{
 	
 	@UiField CellTable<KitchenUser> usersCellTable = new CellTable<KitchenUser>(KEY_PROVIDER);
 	@UiField Button addPerson;
+	@UiField CheckBox betaCheckBox;
 	
 	@UiField TextBox energyMixName;
 	@UiField TextBox energyMixCO2;
@@ -85,9 +87,6 @@ public class KitchenDialog extends DialogBox{
 	
 	private RechnerActivity presenter;
 	private DataController dco;
-	
-	//private static List<Device> devices = Arrays.asList(new Device());
-	private List<KitchenUser> kitchenStaff = new ArrayList<KitchenUser>();// = Arrays.asList(new KitchenUser("Name","email"));
 	
 	private ListDataProvider<KitchenUser> usersDataProvider = new ListDataProvider<KitchenUser>();
 	
@@ -113,10 +112,6 @@ public class KitchenDialog extends DialogBox{
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		this.userInfo = dco.getUserInfo();		
-		
-		kitchenStaff.add(new KitchenUser("Aurelian", "auja@gmx.ch"));
-		kitchenStaff.add(new KitchenUser("Jorim", "joirm@gmx.ch"));
-		kitchenStaff.add(new KitchenUser("Test", "test@gmx.ch"));
 		
 		if (userInfo.isAdmin()) 
 			newKitchenButton.setVisible(true);
@@ -166,6 +161,7 @@ public class KitchenDialog extends DialogBox{
 				energyMixName.setText(currentKitchen.getEnergyMix().Name);
 				energyMixCO2.setText(currentKitchen.getEnergyMix().Co2PerKWh.toString());
 			}
+			betaCheckBox.setValue(currentKitchen.isBeta());
 	}
 		
 	}
@@ -298,6 +294,11 @@ public class KitchenDialog extends DialogBox{
 		changeKitchenName(currentKitchen.getSymbol());
 	}
 
+	@UiHandler("betaCheckBox")
+	public void onBetaCheckClick(ClickEvent event) {
+		currentKitchen.setBeta(betaCheckBox.getValue());
+	}
+	
 	private void saveAndCloseDialog() {
 
 		for (Kitchen kitchen : userKitchens) {

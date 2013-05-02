@@ -40,11 +40,15 @@ public class Kitchen implements Serializable {
 	@Ignore
 	private Boolean changed;
 	
+	// used to mark one or more kitchens as beta tester kitchens (just for typing mails)
+	@Index
+	private Boolean beta;
 
 	public Kitchen() {
 		symbol = "Neue Küche";
 		energyMix = new EnergyMix("ewz.naturpower",0.01345);
 		changed = true;
+		beta = false;
 	}
 
 	public Long getId() {
@@ -131,6 +135,16 @@ public class Kitchen implements Serializable {
 	public void setKitchenUsers(List<KitchenUser> unmatchedUsers) {
 		this.kitchenUsers = unmatchedUsers;
 	}
+
+	public Boolean isBeta() {
+		return beta;
+	}
+
+	public void setBeta(Boolean beta) {
+		this.beta = beta;
+	}
+
+
 	
 
 
