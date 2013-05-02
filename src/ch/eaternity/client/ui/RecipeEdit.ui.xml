@@ -125,22 +125,12 @@
 		
 		.cellTable { }
 
+		.buttons {
+			margin-right:10px;
+		}
 		
 	</ui:style>
 
-	<ui:style field='selectionStyleRow'
-		type='ch.eaternity.client.ui.RecipeEdit.SelectionStyleRow'>
-			.selectedRow td {
-				background: #f0f4c2;
-			}
-		</ui:style>
-
-	<ui:style field='evenStyleRow'
-		type='ch.eaternity.client.ui.RecipeEdit.EvenStyleRow'>
-			.evenRow {
-				background: #efefef;
-			}
-	</ui:style>
 	
 	<ui:style field='textErrorStyle'
 		type='ch.eaternity.client.ui.RecipeEdit.TextErrorStyle'>
@@ -219,14 +209,14 @@
 			</g:HorizontalPanel>
 			-->
 			
-			<g:FlowPanel>
-				<b:Button ui:field="newRecipeButton">Neues Rezept</b:Button>
-				<b:Button ui:field="generatePDFButton">PDF generieren</b:Button>
-				<b:Button ui:field="publishButton">veröffentlichen</b:Button>
-				<b:Button ui:field="deleteButton">löschen</b:Button>
-				<b:Button ui:field="duplicateButton">duplizieren</b:Button>
-				<b:Button ui:field="saveButton">speichern</b:Button>
-			</g:FlowPanel>
+
+			<b:Button ui:field="newRecipeButton" addStyleNames='{style.buttons}'>Neues Rezept</b:Button>
+			<b:Button ui:field="generatePDFButton" addStyleNames='{style.buttons}'>PDF generieren</b:Button>
+			<b:Button ui:field="publishButton" addStyleNames='{style.buttons}'>veröffentlichen</b:Button>
+			<b:Button ui:field="deleteButton" addStyleNames='{style.buttons}'>löschen</b:Button>
+			<b:Button ui:field="duplicateButton" addStyleNames='{style.buttons}'>duplizieren</b:Button>
+			<b:Button ui:field="saveButton" addStyleNames='{style.buttons}'>speichern</b:Button>
+
 		</g:HTMLPanel>
 	</g:AbsolutePanel>
 </ui:UiBinder>

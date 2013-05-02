@@ -140,9 +140,7 @@ public class RecipeEdit extends Composite {
 	@UiField Button duplicateButton;
 	@UiField Button saveButton;
 	@UiField Button deleteButton;
-	
-	@UiField static SelectionStyleRow selectionStyleRow;
-	@UiField static EvenStyleRow evenStyleRow;
+
 	@UiField static TextErrorStyle textErrorStyle;
 	
 	
@@ -165,12 +163,6 @@ public class RecipeEdit extends Composite {
 		void onItemSelected(Ingredient item);
 	}
 	
-	interface SelectionStyleRow extends CssResource {
-		String selectedRow();
-	}
-	interface EvenStyleRow extends CssResource {
-		String evenRow();
-	}
 	interface TextErrorStyle extends CssResource {
 		String redTextError();
 	}

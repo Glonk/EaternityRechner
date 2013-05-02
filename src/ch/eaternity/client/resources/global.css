@@ -149,9 +149,4 @@ a:link, a:visited, a:hover, a:active {
 	display:none;
 }
 
-@external .gwt-Button;
-.gwt-Button {
-	margin: 0px 10px;
-}
-
 

@@ -69,7 +69,7 @@
 	
 	.recipesMenuBox {
 		position:relative;
-		bottom:-4px;
+		bottom:-7px;
 		right:-16px;
 		float:right;
 	}
@@ -102,11 +102,11 @@
 					<b:Row>
 						<b:Column size="5" offset="3" styleName='{style.iconsPanel}'>
 							<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
+							<b:Tooltip placement="BOTTOM" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
 							<b:Tooltip placement="BOTTOM" text='Das Datum an dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/></b:Tooltip>
 							<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
 			
 							<b:Tooltip placement="BOTTOM" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
-							<b:Tooltip placement="BOTTOM" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
 						</b:Column>
 					</b:Row>
 							
