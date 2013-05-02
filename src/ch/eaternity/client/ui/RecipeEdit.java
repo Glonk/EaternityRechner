@@ -31,6 +31,7 @@ import ch.eaternity.shared.Util;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
+import com.github.gwtbootstrap.datepicker.client.ui.DateBox;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ImageResourceCell;
@@ -44,6 +45,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -118,8 +120,7 @@ public class RecipeEdit extends Composite {
 	
 	@UiField TextBox amountPersons;
 	@UiField Label locationLabel;
-	@UiField TextBox recipeDate;
-	@UiField HTML recipeDateError;
+	@UiField DateBox recipeDateBox;
 	
 	@UiField FlexTable commentTable;
 	
@@ -192,8 +193,7 @@ public class RecipeEdit extends Composite {
 		deleteImage.setVisible(false);
 		
 		imageUploadWidgetPanel.setVisible(false);
-		
-		deleteImage.setUrl("/images/delete.png");
+	
 	
 		initIngredientTable();
 	}
@@ -285,7 +285,7 @@ public class RecipeEdit extends Composite {
 		Date date = recipe.getCookingDate();
 		if(date != null)
 		{
-			recipeDate.setText(dtf.format(date));
+			recipeDateBox.setValue(date);
 		}
 
 		
@@ -352,7 +352,7 @@ public class RecipeEdit extends Composite {
 	public void setImageUrl(String url, boolean imageWidgetVisible) {
 		//recipeImage.setUrl(url);
 		//uploadWidget.setVisible(imageWidgetVisible);
-		recipeImage.setUrlAndVisibleRect(url,0,0,670,230);
+		recipeImage.setUrlAndVisibleRect(url,0,0,770,103);
 	}
 
 	public Recipe getRecipe() {
@@ -437,38 +437,14 @@ public class RecipeEdit extends Composite {
 			amountPersons.addStyleName(errorStyle);
 		}
 	}
+
 	
-	private Date getDate() {
-		String text = recipeDate.getText();
-		Date date = null;
-		try { 
-			if ("".equals(text)) {}
-			else {
-				DateTimeFormat fmt = DateTimeFormat.getFormat("dd.MM.yy");
-				date = fmt.parseStrict(text);	
-				recipeDateError.setHTML("");
-			}
-		}
-		catch (IllegalArgumentException IAE) {
-			if(!"TT/MM/JJ".equals(text))
-				recipeDateError.setHTML("'" + text + "' is not a propper formated Date.");
-			else
-				recipeDateError.setHTML("");
-			//recipeDate.setText("");
-			//recipeDate.setCursorPos(0);
-		}
-		return date;
-	}
-	
-	@UiHandler("recipeDate")
-	public void onBlur(BlurEvent event)  {
-		Date date = getDate();
-		if (date != null) {
-			recipe.setCookingDate(date);
-			ingredientCellTable.redraw();
-			ingSpecWidget.updateSeasonCoherency();
-			changeSaveStatus(false);
-		}
+	@UiHandler("recipeDateBox")
+	void onValueChange(ValueChangeEvent<Date> event) {
+		recipe.setCookingDate(recipeDateBox.getValue());
+		ingredientCellTable.redraw();
+		ingSpecWidget.updateSeasonCoherency();
+		changeSaveStatus(false);
 	}
 
 	

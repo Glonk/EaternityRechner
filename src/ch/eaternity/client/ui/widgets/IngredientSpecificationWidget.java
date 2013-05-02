@@ -58,6 +58,7 @@ public class IngredientSpecificationWidget extends Composite {
 	@UiField Label ConditionLabel;
 	@UiField ListBox ConditionList;
 	
+	@UiField HorizontalPanel costPanel;
 	@UiField Label CostLabel;
 	@UiField TextBox CostTextBox;
 	@UiField Label CurrencyLabel;
@@ -108,6 +109,8 @@ public class IngredientSpecificationWidget extends Composite {
 		this.verifiedRecipeLocation = verifiedRecipeLocation;
 		setFields();
 		updateSeasonCoherency();
+		
+		costPanel.setVisible(dco.getUserInfo().isAdmin());
 		
 		presenterSetted = true;
 	}

@@ -3,7 +3,8 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:widgets='urn:import:ch.eaternity.client.ui.widgets'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
+	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
+	xmlns:b2='urn:import:com.github.gwtbootstrap.datepicker.client.ui'>
 
 	<ui:style>
 	
@@ -38,11 +39,8 @@
 			
 		}
 		
-		.personsHTML { /* margin-right:10px; */
-			width: 120px;
-			text-align: right;
-			display: inline;
-			margin-right:250px;
+		.personsHTML {
+			float:left;
 		}
 		
 		.recipePersonsBox {
@@ -88,28 +86,24 @@
 			width:320px;
 		}
 		
+		.recipeProperties {
+			margin-top:12px;
+		}
+		
 		.locationLabel {
-		width:120px;
-
+			width:250px;
+			margin:auto;
 		}
 
 		
-		.rezeptDateField {
-			padding-left: 4px;
-			background: #F9C88C;
-			text-align: left;
-			border: 0px;
-			width:70px;
-		}
-		
-		.recipeDateError {
-			color: red;
-			margin-left: 10px;
+		.recipeDateBox {
+			float:right;
+			width: 150px;
 		}
 		
 		.cookingInstrLabel {
-			font-weight:bold;
-			margin-top:30px;
+			font-weight:500;
+			margin-top:25px;
 			margin-bottom:10px;
 		}
 		
@@ -190,22 +184,18 @@
 				<b:Tooltip text='Bild löschen'><g:Image ui:field='deleteImage' resource='{res.deleteLarge}'></g:Image></b:Tooltip>
 			</g:HorizontalPanel>
 
-			<g:HorizontalPanel>
+			<g:HTMLPanel styleName='{style.recipeProperties}'>
+				<b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='recipeDateBox' styleName='{style.recipeDateBox}' />
+				
 				<g:HTMLPanel styleName='{style.personsHTML}'>
-					für
-					<g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}'></g:TextBox>
-					Personen
+					für <g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}' /> Personen
 				</g:HTMLPanel>
 				
 				<g:Label ui:field='locationLabel' styleName='{style.locationLabel}'>Ort:</g:Label>
 				
 				<!-- Cooking Date -->
-				<g:HorizontalPanel>
-					<g:HTML>Datum: </g:HTML>
-					<g:TextBox ui:field="recipeDate" styleName='{style.rezeptDateField}'>TT/MM/JJ</g:TextBox>
-					<g:HTML ui:field="recipeDateError" styleName='{style.recipeDateError}'></g:HTML>
-				</g:HorizontalPanel>
-			</g:HorizontalPanel>
+				
+			</g:HTMLPanel>
 
 			<!-- Ingredients List, Specification WIdget-->
 			<g:HorizontalPanel styleName='{style.ingredientPanel}'>

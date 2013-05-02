@@ -6,7 +6,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:mail='urn:import:ch.eaternity.client'
 	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'
-	xmlns:b2="urn:import:com.github.gwtbootstrap.datepicker.client.ui">
+	xmlns:b2='urn:import:com.github.gwtbootstrap.datepicker.client.ui'>
 
 
 	<ui:style>
