@@ -189,6 +189,7 @@ public class RecipeEdit extends Composite {
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		commentTable.setVisible(false);
+		deleteImage.setVisible(false);
 		
 		imageUploadWidgetPanel.setVisible(false);
 		

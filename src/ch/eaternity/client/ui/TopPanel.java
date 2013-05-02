@@ -76,7 +76,7 @@ public class TopPanel extends Composite {
 	@UiField Button publicRecipesButton;
 	 */
 
-	@UiField static SelectedRecipeScopeStyle selectedRecipeScopeStyle;
+	@UiField SelectedRecipeScopeStyle selectedRecipeScopeStyle;
 	
 	interface SelectedRecipeScopeStyle extends CssResource {
 		String selectedRecipeScopeMarking();

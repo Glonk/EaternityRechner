@@ -10,24 +10,32 @@
 
 
 	<ui:style>
+	/*
+	@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
+	@eval elightgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().elightgreen();
+	@eval etextblack ch.eaternity.client.resources.Resources.INSTANCE.constants().etextblack();
+	test
+	*/
 	.logo {
 		padding-left:20px;
-		margin-right:-20px
+		margin-right:-20px;
 	}
 	
 	.spinnerHeight {
 	  height:30px;
 	}
+
 	
-	.adminDiv {
-	float:right;
+	.adminMenuBar {
+		float:left;
 	}
 	
-	img .anchorImages { 
+	img.anchorImages { 
 		margin: 0px 6px;
+		float:right;
 	}
 	
-	img:hover .anchorImages { 
+	img:hover.anchorImages { 
 		cursor: pointer;
 	}
 	
@@ -36,10 +44,6 @@
 		margin-bottom:20px; 
 		text-align:rigth;
 		float:right;
-	}
-
-	.inline {
-	display: inline
 	}
 
 
@@ -57,31 +61,38 @@
 	
 	.spinnerLabel {
 		color:darkgray;
-		/* margin-left:10px; */
+		margin-left:10px;
 	}
 	.recipePlace {
-		/*margin-right:-20px;*/
-		position:relative;
-		bottom:-12px;
-		right:-20px;
-	}
 
-  </ui:style>
-  
-  <ui:style field='selectedRecipeScopeStyle'
-		type='ch.eaternity.client.ui.TopPanel.SelectedRecipeScopeStyle'>
-			.selectedRecipeScopeMarking{
-				background-color: #A7B424; !important;
+	}
+	
+	.recipesMenuBox {
+		position:relative;
+		bottom:-4px;
+		right:-16px;
+		float:right;
+	}
+	
+	
+</ui:style>
+
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources' />
+
+	<ui:style field='selectedRecipeScopeStyle' type='ch.eaternity.client.ui.TopPanel.SelectedRecipeScopeStyle'>
+			.selectedRecipeScopeMarking {
+				background: url(images/h_menu_active.png) repeat-x !important;
+				border-bottom-style: none !important;
 			}
 	</ui:style>
 
-	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
+	
 
 	<g:HTMLPanel>
 		<header>
 			<b:Row>
 				<b:Column size="2">
-					<g:HTMLPanel styleName="{style.logo}">
+					<g:HTMLPanel styleName='{style.logo}'>
 		
 						<img class="logo" src="images/logo-eaternity-small_04-11-2010.png" />
 		
@@ -89,26 +100,28 @@
 				</b:Column>
 				<b:Column size="8" offset="2">
 					<b:Row>
-						<b:Column size="5" offset="3" styleName="{style.iconsPanel}">
-							<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
-							<b:Tooltip placement="BOTTOM" text='Das Datum an dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName="{style.anchorImages}"></g:Image></b:Tooltip>
+						<b:Column size="5" offset="3" styleName='{style.iconsPanel}'>
+							<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
+							<b:Tooltip placement="BOTTOM" text='Das Datum an dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/></b:Tooltip>
 							<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
 			
-							<b:Tooltip placement="BOTTOM" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName="{style.anchorImages}"></g:Image></b:Tooltip>
-							<b:Tooltip placement="BOTTOM" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName="{style.anchorImages}"></g:Image></b:Tooltip>
+							<b:Tooltip placement="BOTTOM" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
+							<b:Tooltip placement="BOTTOM" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
 						</b:Column>
 					</b:Row>
 							
 
 					<b:Row>
 						<b:Column size="3">
-							<g:HorizontalPanel ui:field='spinnerColumn' styleName="{style.spinnerHeight}">
-								<g:HTML ui:field="spinnerHTML"></g:HTML>
-								<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
+							<g:HorizontalPanel ui:field='spinnerColumn' styleName='{style.spinnerHeight}'>
+								<g:HTML ui:field="spinnerHTML"/>
+								<g:Label ui:field="spinnerLabel" styleName='{style.spinnerLabel}' />
 							</g:HorizontalPanel>
 						</b:Column>
-						<b:Column size="5" offset="3" styleName="{style.recipePlace}">
-							<g:MenuBar ui:field='recipesMenuBar' ></g:MenuBar>
+						<b:Column size="5" offset="3" styleName='{style.recipePlace}'>
+							<g:HTMLPanel styleName='{style.recipesMenuBox}'>
+								<g:MenuBar ui:field='recipesMenuBar' />
+							</g:HTMLPanel>
 						</b:Column>
 					
 					</b:Row>

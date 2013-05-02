@@ -6,6 +6,7 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
+	@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
 		.sticky {
 			height: 1200px;
 		}
@@ -17,7 +18,7 @@
 			position: -o-sticky;
 			top: 24px;
 			margin: 0 auto;
-			border-right: 1px dashed #efefef;
+			border-right: 1px dashed #dfdfdf;
 			padding-right: 30px;
 			/*
 					padding: 18px 18px;  
@@ -40,7 +41,7 @@
 			/*	display: none;*/
 			padding: 18px 18px;
 			margin: 0 auto;
-			border: 1.5px solid #54AA54;
+			border: 1.8px solid edarkgreen;
 			/*-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius:10px; border: 1.5px solid #FF8300;*/
 			background: #ffffff;
 			/*	background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);

@@ -25,8 +25,8 @@ public interface Resources extends ClientBundle {
 		String edarkgreen();
 		String elightgreen();
 		String eoddrow();
-		String textgray();
-		String textblack();
+		String etextgray();
+		String etextblack();
 	}
 	
 	
@@ -86,4 +86,7 @@ public interface Resources extends ClientBundle {
 	
 	@Source("recipe_image_default_small.png")
 	public ImageResource recipeImageDefaultSmall();
+	
+	@Source("h_menu_active.png")
+	public ImageResource hMenuActive();
 }
