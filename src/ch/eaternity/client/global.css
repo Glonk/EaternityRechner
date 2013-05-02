@@ -103,8 +103,8 @@ width: 100%;
 }
 
 .inlineProductInfoItem {
-	display:inline;
-	margin:0px 5px;
+	float:right;
+	margin:0px 8px;
 }
 
 .recipeInfo {

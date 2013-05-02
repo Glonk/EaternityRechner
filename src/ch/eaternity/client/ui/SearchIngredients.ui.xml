@@ -4,48 +4,6 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
-		.hundredpercent {
-			width: 100%;
-		}
-		
-		.searchLabel {
-			font-size: 14px;
-		}
-		
-		.scrollLittle {
-			height: 100px;
-		}
-		
-		.someSpace {
-			padding-bottom: 7px;
-		}
-		
-		.inline {
-			display: inline;
-		}
-		
-		.legend {
-			display: none;
-			clear: both;
-			width: 100%;
-			text-wrap: none;
-			word-wrap: none;
-			white-space: nowrap;
-		}
-		
-		.legendClose {
-			float: right;
-			padding: 0px 10px 3px 3px;
-			margin-left: -100px;
-		}
-		
-		.outer {
-			border-right: 1.5px solid #bbb;
-			border-bottom: 1.5px solid #bbb;
-			cursor: pointer;
-			cursor: hand;
-			background: #fff;
-		}
 		
 		.searchBox {
 			background: #a7b424;
@@ -54,64 +12,34 @@
 			width: 100%;
 		}
 		
+		.searchLabel {
+			font-size: 14px;
+		}
+		
 		.searchTextBox {
 			margin-left: 10px;
 			width: 100%;
 		}
+
 		
-		div.header {
-			white-space: nowrap;
-			overflow: hidden;
-			margin-top: 15px;
-			font-size: 13px;
-			color:#999;
-			padding:5px;
-		}
-		
-		.sortThing {
-			border-top: 1.5px solid #bbb;
-		}
 		
 		.scroll {
 			background: #fff;
 			/* this is a HACK: without this the scrolling does not work */
 			height: 480px;
 		}
+		
+		.saisonOrder {
+			width: 86px;
+			text-align:left;
+		}
+		
+		.co2Order {
+			width:48;
+			text-align:left;
+		}
+		
 	</ui:style>
-
-	<!-- marking row for potential selection -->
-	<ui:style field='markingStyle'
-		type='ch.eaternity.client.ui.SearchIngredients.MarkingStyle'>
-			.markedRow {
-				
-			}
-			
-			.markedRow td {
-				background: #f3d3a3;
-				background-image: url('add.png');
-				background-repeat: no-repeat;
-				background-position: right center;
-			}
-		</ui:style>
-
-	<!-- select row, adding to menu -->
-	<ui:style field='selectionStyle'
-		type='ch.eaternity.client.ui.SearchIngredients.SelectionStyle'>
-			.selectedRow {
-			}
-			
-			.selectedRow td {
-				background: #adcce7;
-			}
-		</ui:style>
-
-
-	<ui:style field='evenStyleRow'
-		type='ch.eaternity.client.ui.SearchIngredients.EvenStyleRow'>
-			.evenRow {
-				background: #E8EAEA;
-			}
-		</ui:style>
 
 
 	
@@ -132,72 +60,25 @@
 			
 				<g:center>
 					<g:HTMLPanel>
-							<p style='white-space: nowrap;
+							<div style='white-space: nowrap;
 										overflow: hidden;
 										margin-top: 15px;
 										font-size: 13px;
 										color:#999;
 										padding:5px;'>
-								<g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor>
-								&nbsp;
-								<g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor>
-								&nbsp;&nbsp;
-								<g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor>
-							
-							</p>
+								
+								<div style='width:48px; float:right;'><g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor></div>
+								<div style='width:86px; float:right;'><g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor></div>
+								<div><g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor></div>
+							</div>
 						<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'></g:ScrollPanel>
 				
 				  </g:HTMLPanel>
 				</g:center>
 
 				<g:south size="20">
+					<g:HTMLPanel>Legende</g:HTMLPanel>
 				
-				
-					<g:HTMLPanel ui:field="panelSouth" styleName='{style.sortThing}'>
-						
-						<g:HTMLPanel ui:field="legendPanel" styleName='{style.legend}'>
-							<g:Anchor href='javascript:;' styleName='{style.legendClose}'
-								ui:field='legendAnchorClose'>x</g:Anchor>
-							<img style='float:left;margin-left:3px;' height='155' src='icons-3.png' />
-							<div
-								style='height: 180px;width:300px;line-height: 25px;padding: 9px 0px 5px 0px;'>
-								ausgezeichnet klimafreundlich
-								<br />
-								CO₂Äq-Wert unter den besten 20%
-								<br />
-								CO₂Äq-Wert überdurchschnittlich gut
-								<br />
-								Angaben unvollständig
-								<br />
-								saisonale und regionale Ware
-								<br />
-								biologische Zutat / Rezept
-								<br />
-							</div>
-						</g:HTMLPanel>
-						&nbsp;&nbsp;
-						<g:Anchor href='javascript:;' ui:field='legendAnchor'>Legende</g:Anchor>
-						<div
-							style='float:right;margin: -4px 4px 0px 0px;padding: 0px 0px 8px 0px;'
-							class='base-icons baseCarrot'>
-							<g:Image ui:field="imageCarrot" />
-							<div class='extra-icon smiley1'>
-								<g:Image ui:field="imageSmiley1" />
-							</div>
-							<div class='extra-icon smiley2'>
-								<g:Image ui:field="imageSmiley2" />
-							</div>
-							<div class='extra-icon smiley3'>
-								<g:Image ui:field="imageSmiley3" />
-							</div>
-							<div class='extra-icon regloc'>
-								<g:Image ui:field="imageRegloc" />
-							</div>
-							<div class='extra-icon bio'>
-								<g:Image ui:field="imageBio" />
-							</div>
-						</div>
-					</g:HTMLPanel>
 				</g:south>
 		
 				

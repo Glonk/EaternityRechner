@@ -1,11 +1,13 @@
 .cellListEvenItem {
 	cursor: pointer;
 	background: #efefef;
+	padding:7px;
 }
 
 .cellListOddItem {
 	cursor: pointer;
 	background: #ffffff;
+	padding:7px;
 }
 
 .cellListSelectedItem {

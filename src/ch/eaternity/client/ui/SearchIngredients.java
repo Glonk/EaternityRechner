@@ -4,62 +4,43 @@ package ch.eaternity.client.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eaticious.common.QuantityImpl;
 import org.eaticious.common.Unit;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
-import ch.eaternity.client.events.IngredientAddedEvent;
-import ch.eaternity.client.events.IngredientAddedEventHandler;
 import ch.eaternity.client.events.LoadedDataEvent;
 import ch.eaternity.client.events.LoadedDataEventHandler;
 import ch.eaternity.client.events.MonthChangedEvent;
 import ch.eaternity.client.events.MonthChangedEventHandler;
-import ch.eaternity.client.ui.RecipeEdit.CellTableResource;
-import ch.eaternity.client.ui.RecipeEdit.CellTableResource.CellTableStyle;
 import ch.eaternity.client.ui.cells.ProductCell;
-import ch.eaternity.client.ui.widgets.TooltipListener;
-import ch.eaternity.shared.FoodProduct;
 import ch.eaternity.shared.FoodProductInfo;
-import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.Util.SortMethod;
-
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RowCountChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
@@ -73,20 +54,6 @@ public class SearchIngredients extends Composite {
 	
 	// ---------------------- User Interface Elements --------------
 	
-	@UiField HTMLPanel panelSouth;
-	@UiField HTMLPanel legendPanel;
-	
-	
-	@UiField Anchor legendAnchor;
-	@UiField Anchor legendAnchorClose;
-	
-	@UiField Image imageCarrot;
-	@UiField Image imageSmiley1;
-	@UiField Image imageSmiley2;
-	@UiField Image imageSmiley3;
-	@UiField Image imageRegloc;
-	@UiField Image imageBio;
-	
 	// Search Panel (Box and Button)
 	@UiField Label SearchLabel;
 	@UiField TextBox SearchInput;
@@ -96,33 +63,12 @@ public class SearchIngredients extends Composite {
 	// Display Results in:
 	@UiField DockLayoutPanel displayResultsPanel;
 
-
-	// CSS reference for the alternating row coloring
-	@UiField static MarkingStyle markingStyle;
-	@UiField static SelectionStyle selectionStyle;
-	@UiField static EvenStyleRow evenStyleRow;
 	
 	// sorting of the tables:
 	@UiField Anchor saisonOrder;
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
 	
-	
-	// ---------------------- Class Interfaces ---------------------
-
-	interface MarkingStyle extends CssResource {
-		String markedRow();
-	}
-	
-	interface SelectionStyle extends CssResource {
-		String selectedRow();
-	}
-	
-	// Color the rows alternating
-	interface EvenStyleRow extends CssResource {
-		String evenRow();
-	}
-			
 	// ---------------------- Class Variables ----------------------
 	
 	// initialize a key provider to refer to the same selection states
@@ -189,7 +135,6 @@ public class SearchIngredients extends Composite {
 		}
 		
 		this.setHeight("620px");
-		panelSouth.setVisible(false);
 		
 
 		    
@@ -328,26 +273,6 @@ public class SearchIngredients extends Composite {
 		
 	}
 
-	
-
-	
-	@UiHandler("legendAnchor")
-	public void onLegendClick(ClickEvent event) {
-
-		legendPanel.setStyleName("legend1");
-		displayResultsPanel.setWidgetSize(panelSouth, 220);
-		displayResultsPanel.forceLayout();
-
-	}
-
-	@UiHandler("legendAnchorClose")
-	public void onLegendCloseClick(ClickEvent event) {
-
-		legendPanel.setStyleName("legend2");
-		displayResultsPanel.setWidgetSize(panelSouth, 20);
-		displayResultsPanel.forceLayout();
-
-	}
 
 	// ---------------------------------------------------------------
 	

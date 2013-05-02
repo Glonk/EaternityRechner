@@ -64,47 +64,48 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
     
     //private static ProductTemplate productTemplate = GWT.create(ProductTemplate.class);
 
-    @Override
-    public void render(Cell.Context context, FoodProductInfo productInfo, SafeHtmlBuilder sb) {
-	  /*
-	   * Always do a null check on the value. Cell widgets can pass null to
-	   * cells if the underlying data contains a null, or if the data arrives
-	   * out of order.
-	   */
-	  if (productInfo == null) {
-	    return;
-	  }
-	  
-	  NumberFormat formatter = NumberFormat.getFormat("##");
-	
-	  SafeHtml name = SafeHtmlUtils.fromTrustedString(productInfo.getName());
-	  SafeHtml co2value = SafeHtmlUtils.fromTrustedString(formatter.format(productInfo.getCo2eValue()));
-	
-	  //SafeHtml rendered = productTemplate.cell(name, co2value);
-	  
-	  sb.appendHtmlConstant("<div class='productInfo'><div class='inlineProductInfoItem'>");
-	  sb.append(name);
-	  sb.appendHtmlConstant("</div>");
-	 
-	  if (productInfo.isInSeason()) 
-		  sb.appendHtmlConstant("<div style='float:right;'><div class='inlineProductInfoItem'><img src='" + Resources.INSTANCE.season().getURL() + "'  /></div>");
-	  
-	  
-	  sb.appendHtmlConstant("<div class='inlineProductInfoItem'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></div>");
-	  
-	  
-	  sb.appendHtmlConstant("<div class='inlineProductInfoItem' style='text-align:right; width:50px;'>");
-	  sb.append(co2value);
-	  sb.appendHtmlConstant("g*</div>");
-	  
-	  sb.appendHtmlConstant("</div></div>");
-	
-	  
-	  //SafeStyles styles = SafeStylesUtils.forBorderStyle(BorderStyle.DOTTED);
-	  //SafeHtml rendered = imgTemplate.cell(styles, safeValue);
-	  
-	  //sb.append(rendered);
-    }
+	@Override
+	public void render(Cell.Context context, FoodProductInfo productInfo,
+			SafeHtmlBuilder sb) {
+		/*
+		 * Always do a null check on the value. Cell widgets can pass null to
+		 * cells if the underlying data contains a null, or if the data arrives
+		 * out of order.
+		 */
+		if (productInfo == null) {
+			return;
+		}
+
+		NumberFormat formatter = NumberFormat.getFormat("##");
+
+		SafeHtml name = SafeHtmlUtils.fromTrustedString(productInfo.getName());
+		SafeHtml co2value = SafeHtmlUtils.fromTrustedString(formatter
+				.format(productInfo.getCo2eValue()));
+
+		// SafeHtml rendered = productTemplate.cell(name, co2value);
+
+		sb.appendHtmlConstant("<div style='display:inline;'>");
+			sb.append(name);
+		sb.appendHtmlConstant("</div>");
+
+		sb.appendHtmlConstant("<div style='float:right; display:inline;'>");
+			sb.appendHtmlConstant("<div class='inlineProductInfoItem' style='text-align:right; width:40px;'>");
+			sb.append(co2value);
+			sb.appendHtmlConstant("&nbsp;g*</div>");
+			
+			sb.appendHtmlConstant("<div class='inlineProductInfoItem'><img src='" + Util.getIngredientRatingBarUrl(productInfo.getCo2eValue()) + "' /></div>");
+		
+			if (productInfo.isInSeason())
+				sb.appendHtmlConstant("<div class='inlineProductInfoItem'><img src='"+ Resources.INSTANCE.season().getURL() + "'  /></div>");
+			
+		sb.appendHtmlConstant("</div>");
+
+		// SafeStyles styles =
+		// SafeStylesUtils.forBorderStyle(BorderStyle.DOTTED);
+		// SafeHtml rendered = imgTemplate.cell(styles, safeValue);
+
+		// sb.append(rendered);
+	}
     
     // future: override for mouseOver effect, keyboardselection effect...
     @Override
