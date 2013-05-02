@@ -62,16 +62,16 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  SafeHtml image;
 	
 	  if(recipeInfo.getImage() !=null){
-		  	image = SafeHtmlUtils.fromTrustedString("<img style='max-width:80px; max-height:80px;' src='" + recipeInfo.getImage().getUrl() + "' />");
+		  	image = SafeHtmlUtils.fromTrustedString("<img style='max-width:70px; max-height:70px;' src='" + recipeInfo.getImage().getUrl() + "' />");
 		} else {
-			image = SafeHtmlUtils.fromTrustedString("<img src='http://placehold.it/80x80' />");
+			image = SafeHtmlUtils.fromTrustedString("<img src='" + Resources.INSTANCE.recipeImageDefaultSmall().getURL() + "' />");
 	}
 	  
 	  sb.appendHtmlConstant("<div class='" + Resources.INSTANCE.style().recipeInfo() + "'><table><tr><td width='80'>");
 	  sb.append(image);
 	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<td width='450'><span style='font-size:20px; font-weight:600;'>");
+	  sb.appendHtmlConstant("<td width='450' style='padding-left:10px;'><span style='font-size:20px; font-weight:600;'>");
 	  sb.append(title);
 	  sb.appendHtmlConstant("</span><br /><span style='font-size:14px;'>");
 	  sb.append(subtitle);

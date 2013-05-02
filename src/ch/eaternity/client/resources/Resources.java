@@ -83,4 +83,7 @@ public interface Resources extends ClientBundle {
 	
 	@Source("recipe_image_default.png")
 	public ImageResource recipeImageDefault();
+	
+	@Source("recipe_image_default_small.png")
+	public ImageResource recipeImageDefaultSmall();
 }

@@ -22,7 +22,6 @@ import ch.eaternity.client.resources.Resources;
 import ch.eaternity.client.ui.cells.ImageActionCell;
 import ch.eaternity.client.ui.widgets.IngredientSpecificationWidget;
 import ch.eaternity.client.ui.widgets.UploadPhotoWidget;
-import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Ingredient;
 import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SavingPotential;
@@ -32,7 +31,6 @@ import ch.eaternity.shared.Util;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ImageResourceCell;
@@ -69,12 +67,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
@@ -133,7 +128,7 @@ public class RecipeEdit extends Composite {
 	
 	
 	@UiField(provided = true)
-	CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(100, cellTableResource);
+	CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(200, cellTableResource);
 	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;

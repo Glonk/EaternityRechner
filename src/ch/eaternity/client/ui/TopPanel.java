@@ -122,6 +122,8 @@ public class TopPanel extends Composite {
 		List<Kitchen> kitchens = dco.getKitchens();
 		Kitchen currentKitchen = dco.getCurrentKitchen();
 		
+		int listedKitchens = 0;
+		
 		if (kitchens != null && kitchens.size() > 0) {
 			
 			// put current Kitchen on beginning of list
@@ -131,15 +133,20 @@ public class TopPanel extends Composite {
 				kitchens.add(0,currentKitchen);
 			} */
 			
+			
 			for (final Kitchen kitchen : kitchens) {
-				kitchenMenu.addItem(new MenuItem(kitchen.getSymbol(), new Command() {
-					public void execute() {
-						dco.changeCurrentKitchen(kitchen);
-						presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
-					}
-				}));
+				if (!kitchen.isBeta()) {
+					kitchenMenu.addItem(new MenuItem(kitchen.getSymbol(), new Command() {
+						public void execute() {
+							dco.changeCurrentKitchen(kitchen);
+							presenter.goTo(new RechnerRecipeViewPlace(RecipeScope.KITCHEN.toString()));
+						}
+					}));
+					listedKitchens++;
+				}
 			}
-			kitchenMenu.setVisible(true);
+			if (listedKitchens > 0)
+				kitchenMenu.setVisible(true);
 		}
 		
 		if (dco.getUserInfo() != null && dco.getUserInfo().isAdmin()) {
@@ -154,10 +161,12 @@ public class TopPanel extends Composite {
 		
 		recipesMenuBar.clearItems();
 		recipesMenuBar.addItem(userMenu);
-		if (currentKitchen != null)
-			recipesMenuBar.addItem(currentKitchen.getSymbol(), kitchenMenu);
-		else
-			recipesMenuBar.addItem("Küchen", kitchenMenu);
+		if (listedKitchens > 0) {
+			if (currentKitchen != null)
+				recipesMenuBar.addItem(currentKitchen.getSymbol(), kitchenMenu);
+			else
+				recipesMenuBar.addItem("Küchen", kitchenMenu);
+		}
 		recipesMenuBar.addItem(publicMenu);
 		
 	}

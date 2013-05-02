@@ -11,23 +11,23 @@
 
 	<ui:style>
 	.logo {
-	padding-left:20px;margin-right:-20px
-
+		padding-left:20px;
+		margin-right:-20px
 	}
+	
 	.spinnerHeight {
 	  height:30px;
-
 	}
+	
 	.adminDiv {
 	float:right;
-
 	}
 	
-	.gwt-Image { 
-		margin-left:20px;
+	img .anchorImages { 
+		margin: 0px 6px;
 	}
 	
-	.gwt-Image img:hover { 
+	img:hover .anchorImages { 
 		cursor: pointer;
 	}
 	
@@ -35,6 +35,7 @@
 	.iconsPanel {
 		margin-bottom:20px; 
 		text-align:rigth;
+		float:right;
 	}
 
 	.inline {
@@ -59,8 +60,10 @@
 		/* margin-left:10px; */
 	}
 	.recipePlace {
-		margin-right:-20px;
-
+		/*margin-right:-20px;*/
+		position:relative;
+		bottom:-12px;
+		right:-20px;
 	}
 
   </ui:style>
@@ -84,29 +87,27 @@
 		
 					</g:HTMLPanel>
 				</b:Column>
-				<b:Column size="7" offset="3">
+				<b:Column size="8" offset="2">
 					<b:Row>
-						<b:Column size="2" offset="4">
+						<b:Column size="5" offset="3" styleName="{style.iconsPanel}">
 							<g:MenuBar ui:field='adminMenuBar'></g:MenuBar>
-						</b:Column>
-						<b:Column size="4" offset="1" styleName="{style.iconsPanel}">
-							<b:Tooltip text='Der Monat in dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}'></g:Image></b:Tooltip>
+							<b:Tooltip placement="BOTTOM" text='Das Datum an dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName="{style.anchorImages}"></g:Image></b:Tooltip>
 							<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
 			
-							<b:Tooltip text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}'></g:Image></b:Tooltip>
-							<b:Tooltip text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}'></g:Image></b:Tooltip>
+							<b:Tooltip placement="BOTTOM" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName="{style.anchorImages}"></g:Image></b:Tooltip>
+							<b:Tooltip placement="BOTTOM" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName="{style.anchorImages}"></g:Image></b:Tooltip>
 						</b:Column>
 					</b:Row>
-					<b:Row>	
-						<b:Column size="3"  offset="4" styleName="{style.spinnerHeight}">
-							<g:HorizontalPanel ui:field='spinnerColumn'>
+							
+
+					<b:Row>
+						<b:Column size="3">
+							<g:HorizontalPanel ui:field='spinnerColumn' styleName="{style.spinnerHeight}">
 								<g:HTML ui:field="spinnerHTML"></g:HTML>
 								<g:Label ui:field="spinnerLabel" styleName="{style.spinnerLabel}"></g:Label>
 							</g:HorizontalPanel>
 						</b:Column>
-					</b:Row>
-					<b:Row>
-						<b:Column size="5" offset="2" styleName="{style.recipePlace}">
+						<b:Column size="5" offset="3" styleName="{style.recipePlace}">
 							<g:MenuBar ui:field='recipesMenuBar' ></g:MenuBar>
 						</b:Column>
 					
