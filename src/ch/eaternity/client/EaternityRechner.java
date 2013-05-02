@@ -34,11 +34,6 @@ public class EaternityRechner implements EntryPoint {
 
 	private Place defaultEntryPlace = new RechnerRecipeEditPlace("new");
 	private SimpleWidgetPanel appWidget = new SimpleWidgetPanel();
-	interface GlobalResources extends ClientBundle {
-			@NotStrict
-			@Source("global.css")
-			CssResource css();
-		}
 	
 	   /**
 	   * This field gets compiled out when <code>log_level=OFF</code>, or any <code>log_level</code>

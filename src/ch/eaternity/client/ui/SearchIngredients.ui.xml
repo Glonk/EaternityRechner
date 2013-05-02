@@ -4,9 +4,10 @@
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
 	<ui:style>
+		@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
 		
 		.searchBox {
-			background: #a7b424;
+			background: edarkgreen;
 			color: white;
 			padding: 15px;
 			width: 100%;

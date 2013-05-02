@@ -6,10 +6,12 @@
 
 
 	<ui:style>
+	@eval elightgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().elightgreen();
+	
   	.box {
 		margin:0px 0px 20px 20px;
 		padding: 15px;
-		background-color: #F0F4C2;
+		background-color: elightgreen;
 	}	
 	
 	.floatRight{

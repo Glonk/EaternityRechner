@@ -5,6 +5,8 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.TextResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
+import com.google.gwt.user.cellview.client.CellTable;
 
 public interface Resources extends ClientBundle {
 	public static final Resources INSTANCE = GWT.create(Resources.class);
@@ -19,8 +21,20 @@ public interface Resources extends ClientBundle {
 		String intro();
 	}
 	
+	interface Constants extends CssResource {
+		String edarkgreen();
+		String elightgreen();
+		String eoddrow();
+		String textgray();
+		String textblack();
+	}
+	
+	
 	@Source("global.css")
 	public Style style();
+	
+	@Source("constants.css")
+	public Constants constants();
 
 	@Source("menu-label-1.png")
 	public ImageResource ratingBar1();
