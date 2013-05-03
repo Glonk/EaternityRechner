@@ -163,7 +163,7 @@
 				<g:HorizontalPanel styleName='{style.co2value}'>
 					<g:Image ui:field="co2Image"></g:Image>
 					<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
-					<g:Label styleName='{style.co2valueLabelPerson}'>&nbsp;&nbsp;&nbsp;g/p.P.</g:Label>
+					<g:Label styleName='{style.co2valueLabelPerson}'>&nbsp;&nbsp;&nbsp;g CO2*/p.P.</g:Label>
 				</g:HorizontalPanel>
 			</g:HorizontalPanel>
 

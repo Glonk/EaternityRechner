@@ -61,10 +61,6 @@ public class SearchIngredients extends Composite {
 	
 	@UiField ScrollPanel ingredientDisplayWidget;
 	
-	// Display Results in:
-	@UiField DockLayoutPanel displayResultsPanel;
-
-	
 	// sorting of the tables:
 	@UiField Anchor saisonOrder;
 	@UiField Anchor co2Order;
@@ -135,7 +131,8 @@ public class SearchIngredients extends Composite {
 			
 		}
 		
-		this.setHeight("620px");
+		//if changing this, .scroll class must also be changed!
+		this.setHeight("690px");
 		
 
 		    
@@ -233,8 +230,8 @@ public class SearchIngredients extends Composite {
 	// Handle search input
 	@UiHandler("SearchInput")
 	public void onKeyUp(KeyUpEvent event) {
-		//if( !SearchInput.getText().trim().equals(searchString))
-			updateResults(SearchInput.getText().trim());
+		if( !SearchInput.getText().trim().equals(searchString))
+			updateResults(SearchInput.getText());
 		
 	}
 	

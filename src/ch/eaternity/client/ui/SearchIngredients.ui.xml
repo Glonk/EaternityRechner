@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	xmlns:b='urn:import:com.github.gwtbootstrap.client.ui'>
 
 	<ui:style>
 		@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
@@ -27,7 +27,7 @@
 		.scroll {
 			background: #fff;
 			/* this is a HACK: without this the scrolling does not work */
-			height: 480px;
+			height: 407px;
 		}
 		
 		.saisonOrder {
@@ -40,9 +40,27 @@
 			text-align:left;
 		}
 		
+		.legendPanel {
+			border-top:1px solid lightgray;
+			padding-top:14px;
+			margin-top:30px;
+			line-height:32px;
+		}
+		
+		.legendImages {
+			margin-right:5px;
+			margin-left:5px;
+		}
+		.legendImages2 {
+			margin-right:15px;
+			margin-left:5px;
+		}
+		.legendLines {
+		}
+		
 	</ui:style>
 
-
+	<ui:with field='res' type='ch.eaternity.client.resources.Resources' />
 	
 	<g:DockLayoutPanel unit='EM'>
 
@@ -56,34 +74,41 @@
 		</g:north>
 
 		<g:center>
-
-			<g:DockLayoutPanel ui:field="displayResultsPanel">
-			
-				<g:center>
-					<g:HTMLPanel>
-							<div style='white-space: nowrap;
-										overflow: hidden;
-										margin-top: 15px;
-										font-size: 13px;
-										color:#999;
-										padding:5px;'>
-								
-								<div style='width:48px; float:right;'><g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor></div>
-								<div style='width:86px; float:right;'><g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor></div>
-								<div><g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor></div>
-							</div>
-						<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'></g:ScrollPanel>
-				
-				  </g:HTMLPanel>
-				</g:center>
-
-				<g:south size="20">
-					<g:HTMLPanel>Legende</g:HTMLPanel>
-				
-				</g:south>
+			<g:HTMLPanel>
+					<div style='white-space: nowrap;
+								overflow: hidden;
+								margin-top: 15px;
+								font-size: 13px;
+								color:#999;
+								padding:5px;'>
+						
+						<div style='width:48px; float:right;'><b:Tooltip text="nach CO2 Wert sortieren"><g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor></b:Tooltip></div>
+						<div style='width:86px; float:right;'><b:Tooltip text="nach Saisonalität sortieren"><g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor></b:Tooltip></div>
+						<div><b:Tooltip text="alphabetisch sortieren"><g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor></b:Tooltip></div>
+					</div>
+				<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'></g:ScrollPanel>
 		
-				
-			</g:DockLayoutPanel>
+		  </g:HTMLPanel>
 		</g:center>
+
+		<g:south size="12">
+			<g:HTMLPanel styleName='{style.legendPanel}'><div class='{style.legendLines}'>Legende</div>
+			<div class='{style.legendLines}'>
+				<b:Tooltip text="unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Tooltip>gute
+				<b:Tooltip text="unter 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar2}' styleName='{style.legendImages}'/></b:Tooltip>mittel
+				<b:Tooltip text="über 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar3}' styleName='{style.legendImages}'/></b:Tooltip>schlechte&nbsp;&nbsp;CO2-Äquivalenz
+			</div>
+			<div class='{style.legendLines}'>
+				<b:Tooltip text="unter 200km Transportdistanz"><g:Image resource='{res.region}' styleName='{style.legendImages2}'/></b:Tooltip>regional
+				<g:Image resource='{res.season}' styleName='{style.legendImages2}'/>saisonal
+				<g:Image resource='{res.bio}' styleName='{style.legendImages2}'/>biologisch
+			</div>
+			<div class='{style.legendLines}'>
+				[ g* ]  : g CO2-Äquivalent
+			</div>
+			</g:HTMLPanel>
+		
+		</g:south>
+		
 	</g:DockLayoutPanel>
 </ui:UiBinder>

@@ -83,7 +83,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  
 	  sb.appendHtmlConstant("<td width='140'><span style='font-size:30px; font-weight:bold;'>");
 	  sb.append(co2value);
-	  sb.appendHtmlConstant("</span>&nbsp;&nbsp;&nbsp;g/p.P.</td>");
+	  sb.appendHtmlConstant("</span>&nbsp;&nbsp;&nbsp;g CO2*/p.P.</td>");
 	  
 	  sb.appendHtmlConstant("<td width='20'>");
 	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='" + Resources.INSTANCE.deleteLarge().getURL() + "' /></a>");

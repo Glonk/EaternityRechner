@@ -168,13 +168,14 @@
 			cursor: hand;
 			font-size:20px; 
 			font-weight:600;
+			color:#222;
 			background-color: #ebebeb;
 			margin-bottom: 5px;
 			border: none;
 		}
 		
 		.addButton:hover {
-			background-color: #999;
+			background-color: lightgray;
 		}
 		
 	</ui:style>
