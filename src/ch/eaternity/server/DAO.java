@@ -40,11 +40,9 @@ public class DAO
 		UserService userService = UserServiceFactory.getUserService();
 		UserInfo userInfo = new UserInfo();
 		User user = userService.getCurrentUser();
-		//TODO remove User Id Hack before deployement
-		//String userId = user.getUserId();
-		String userId = "1";
 		
 		if (user != null) {
+			String userId = user.getUserId();
 			userInfo = ofy().load().type(UserInfo.class).id(userId).get();
 
 			
@@ -82,11 +80,9 @@ public class DAO
 		UserService userService = UserServiceFactory.getUserService();
 		UserInfo userInfo = null;
 		User user = userService.getCurrentUser();
-		//TODO remove Hack before deployement
-		//String userId = user.getUserId();
-		String userId = "1";
 
 		if (user != null) {
+			String userId = user.getUserId();
 			userInfo = ofy().load().type(UserInfo.class).id(userId).get();
 			userInfo.setEnabled(isUserEnabled(user.getEmail()));
 			if (userService.isUserAdmin())
