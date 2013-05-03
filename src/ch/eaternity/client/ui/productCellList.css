@@ -10,6 +10,14 @@
 	padding:7px;
 }
 
+.cellListOddItem:hover {
+	background: #f0f4c2;
+}
+
+.cellListEvenItem:hover {
+	background: #f0f4c2;
+}
+	
 .cellListSelectedItem {
 	background: #f0f4c2;
 }

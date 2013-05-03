@@ -171,7 +171,7 @@ public class IngredientSpecificationWidget extends Composite {
 		int width = ExtractionList.getOffsetWidth();
 		ExtractionList.setVisible(false);
 		
-		UnknownExtractionTextBox.setWidth("200px");//Integer.toString(width)+"px");
+		UnknownExtractionTextBox.setWidth("150px");//Integer.toString(width)+"px");
 		UnknownExtractionTextBox.setVisible(true);
 		UnknownExtractionTextBox.setText("");
 		

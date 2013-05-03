@@ -58,7 +58,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	
 	  SafeHtml title = SafeHtmlUtils.fromString(recipeInfo.getTitle());
 	  SafeHtml subtitle = SafeHtmlUtils.fromString(recipeInfo.getSubTitle());
-	  SafeHtml co2value = SafeHtmlUtils.fromTrustedString(formatter.format(recipeInfo.getCo2eValue()));
+	  SafeHtml co2value = SafeHtmlUtils.fromTrustedString(formatter.format(recipeInfo.getCo2eValue()) + " g*");
 	  SafeHtml image;
 	
 	  if(recipeInfo.getImage() !=null){
@@ -71,7 +71,7 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.append(image);
 	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<td width='450' style='padding-left:10px;'><span style='font-size:20px; font-weight:600;'>");
+	  sb.appendHtmlConstant("<td width='370' style='padding-left:10px;'><span style='font-size:20px; font-weight:600;'>");
 	  sb.append(title);
 	  sb.appendHtmlConstant("</span><br /><span style='font-size:14px;'>");
 	  sb.append(subtitle);
@@ -81,11 +81,12 @@ public class RecipeCell extends AbstractCell<RecipeInfo> {
 	  sb.appendHtmlConstant("<img src='" + Util.getRecipeRatingBarUrl(recipeInfo.getCo2eValue()) + "' />");
 	  sb.appendHtmlConstant("</td>");
 	  
-	  sb.appendHtmlConstant("<td width='140'><span style='font-size:30px; font-weight:bold;'>");
+	  sb.appendHtmlConstant("<td width='150' align='right'><span style='font-size:30px; font-weight:bold;'>");
 	  sb.append(co2value);
-	  sb.appendHtmlConstant("</span>&nbsp;&nbsp;&nbsp;g CO2*/p.P.</td>");
+	  sb.appendHtmlConstant("</span></td>");
+	  sb.appendHtmlConstant("<td width='90'><div style='margin-left:7px; text-align:left;'>CO2<br />pro Person</div></td>");
 	  
-	  sb.appendHtmlConstant("<td width='20'>");
+	  sb.appendHtmlConstant("<td width='40'>");
 	  sb.appendHtmlConstant("<a style='cursor:pointer;'><img src='" + Resources.INSTANCE.deleteLarge().getURL() + "' /></a>");
 	  sb.appendHtmlConstant("</td>");
 	  

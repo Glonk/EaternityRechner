@@ -105,7 +105,6 @@ public class RecipeEdit extends Composite {
 	CellTableResource cellTableResource = GWT.create(CellTableResource.class);
 	
 	// ---------------------- User Interface Elements --------------
-	@UiField AbsolutePanel dragArea;
 	
 	@UiField Close closeRecipe;
 	@UiField VerticalPanel alertPanel;
@@ -316,7 +315,7 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void updateCo2Value() {
-		co2valueLabel.setText("" + (recipe.getCO2ValuePerServing().intValue()));
+		co2valueLabel.setText("" + (recipe.getCO2ValuePerServing().intValue()) + " g*");
 		co2Image.setUrl(Util.getRecipeRatingBarUrl(recipe.getCO2ValuePerServing()));
 	}
 	
@@ -516,7 +515,7 @@ public class RecipeEdit extends Composite {
 	
 	
 	private void initIngredientTable() {
-		ingredientCellTable.setWidth("400px", true);
+		ingredientCellTable.setWidth("370px", true);
 		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		// Add a selection model to handle user selection.
@@ -612,28 +611,28 @@ public class RecipeEdit extends Composite {
 		Header<String> co2Header = new Header<String>(new TextCell()) {
 		      @Override
 		      public String getValue() {
-		    	  return "CO2-Äq.";
+		    	  return "CO2";
 		      }
 		};
 		Header<String> co2Footer = new Header<String>(new TextCell()) {
 		      @Override
 		      public String getValue() {
 		    	  if (recipe != null)
-		    		  return recipe.getCO2Value().intValue() + "g";
+		    		  return recipe.getCO2Value().intValue() + "g*";
 		    	  else
-		    		  return "0g";
+		    		  return "0g*";
 		      }
 		};
 		
 		Column<Ingredient, String> co2Column = new Column<Ingredient, String>(new TextCell()) {
 			@Override
 			public String getValue(Ingredient ingredient) {
-				return ((int)ingredient.getCalculatedCO2Value()) +"g";
+				return ((int)ingredient.getCalculatedCO2Value()) +"g*";
 			}
 			@Override 
 	        public String getCellStyleNames(Context context, Ingredient ingredient)
 	        {
-	            return "co2TextCell";
+	            return Resources.INSTANCE.style().co2TextCell();//"co2TextCell";
 	        }
 		};
 		

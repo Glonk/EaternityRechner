@@ -18,8 +18,7 @@
 			position: -o-sticky;
 			top: 24px;
 			margin: 0 auto;
-			border-right: 1px dashed #dfdfdf;
-			padding-right: 30px;
+			
 			/*
 					padding: 18px 18px;  
 					border: 1.5px solid #54AA54;
@@ -34,6 +33,11 @@
 				     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
 				          box-shadow: 0 2px 5px rgba(0,0,0,.25);
 				          */
+		}
+		
+		.recipePanel {
+			/*border-left: 1px dashed #dfdfdf;*/
+			/*padding-left: 15px;*/
 		}
 		
 		/* The white background content wrapper */
@@ -116,7 +120,7 @@
 					<!-- </b:Affix>  -->
 					</b:Column>
 					<b:Column size="8">
-						<g:SimplePanel ui:field='recipePanel' />
+						<g:SimplePanel ui:field='recipePanel' styleName='{style.recipePanel}'/>
 					</b:Column>
 				</b:Row>
 				

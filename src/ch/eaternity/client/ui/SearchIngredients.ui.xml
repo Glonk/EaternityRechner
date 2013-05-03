@@ -82,7 +82,7 @@
 								color:#999;
 								padding:5px;'>
 						
-						<div style='width:48px; float:right;'><b:Tooltip text="nach CO2 Wert sortieren"><g:Anchor href='javascript:;' ui:field='co2Order'>CO₂</g:Anchor></b:Tooltip></div>
+						<div style='width:48px; float:right;'><b:Tooltip text="nach CO2 Wert sortieren"><g:Anchor href='javascript:;' ui:field='co2Order'>CO2</g:Anchor></b:Tooltip></div>
 						<div style='width:86px; float:right;'><b:Tooltip text="nach Saisonalität sortieren"><g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor></b:Tooltip></div>
 						<div><b:Tooltip text="alphabetisch sortieren"><g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor></b:Tooltip></div>
 					</div>
@@ -96,7 +96,7 @@
 			<div class='{style.legendLines}'>
 				<b:Tooltip text="unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Tooltip>gute
 				<b:Tooltip text="unter 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar2}' styleName='{style.legendImages}'/></b:Tooltip>mittel
-				<b:Tooltip text="über 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar3}' styleName='{style.legendImages}'/></b:Tooltip>schlechte&nbsp;&nbsp;CO2-Äquivalenz
+				<b:Tooltip text="über 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar3}' styleName='{style.legendImages}'/></b:Tooltip>schlechte&nbsp;&nbsp;CO2-Bilanz
 			</div>
 			<div class='{style.legendLines}'>
 				<b:Tooltip text="unter 200km Transportdistanz"><g:Image resource='{res.region}' styleName='{style.legendImages2}'/></b:Tooltip>regional
@@ -104,7 +104,7 @@
 				<g:Image resource='{res.bio}' styleName='{style.legendImages2}'/>biologisch
 			</div>
 			<div class='{style.legendLines}'>
-				[ g* ]  : g CO2-Äquivalent
+				<strong>[ g* ]</strong> : g CO2-Äquivalent
 			</div>
 			</g:HTMLPanel>
 		

@@ -56,7 +56,6 @@ public class SearchIngredients extends Composite {
 	// ---------------------- User Interface Elements --------------
 	
 	// Search Panel (Box and Button)
-	@UiField Label SearchLabel;
 	@UiField TextBox SearchInput;
 	
 	@UiField ScrollPanel ingredientDisplayWidget;
