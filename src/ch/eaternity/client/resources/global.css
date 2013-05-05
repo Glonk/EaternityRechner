@@ -39,30 +39,39 @@ header {
   background-position:80% 0%;
   
 
-  min-height:80px;
+  min-height:4em;
 }
+
+
 
 footer { 
 
-	padding-bottom: 60px;  background: url(images/background_footer-icons.png) 52% 90% repeat-x ; }
+	padding-bottom: 0px;  
+	/* background: url(images/background_footer-icons.png) 52% -195% repeat-x ; */
+	 }
 footer .row { 
 /*		display:none;*/
-	margin-top: 20px; padding-top: 20px; padding-bottom: 20px;  margin-bottom: 50px; border-bottom: 0px solid #ddd; }
+	margin-top: 0px; padding-top: 20px; padding-bottom: 0px;  margin-bottom: 0px; border-bottom: 0px solid #ddd; }
 
-footer h3 {
-	color:#EE7D31;
+footer h4 {
+	/* color:#EE7D31; */
+	color: #DE8D5B;
 
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 600;
 /*	font-weight: bold */
 	text-transform: uppercase;
+	padding:0px;
+	margin-top:0px;
+	margin-bottom:6px;
+	
 }
 
 footer a { color: #F18224; text-decoration: none; line-height: inherit; }
 footer a:hover { color: #F18224; text-decoration: underline; }
 
 .container > footer {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .container > footer p {
   text-align: center; /* center align it with the container */

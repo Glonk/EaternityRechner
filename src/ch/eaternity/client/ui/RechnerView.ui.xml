@@ -8,7 +8,7 @@
 	<ui:style>
 	@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
 		.sticky {
-			height: 1200px;
+			/* height: 1200px; */
 		}
 		
 		.sidebar {
@@ -52,7 +52,7 @@
 				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
 				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F4F4F4',GradientType=0 );
 				*/
-			margin: 0 -20px;
+			margin: 0 -20px 6px -20px;
 			/* negative indent the amount of the padding to maintain the grid system */
 			-webkit-border-radius: 5px 5px 5px 5px;
 			-moz-border-radius: 5px 5px 5px 5px;
@@ -95,20 +95,27 @@
 
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 
-	<g:ScrollPanel ui:field='workspace'>
-      <g:HTMLPanel>
-      	
+
+<g:DockLayoutPanel unit='EM' ui:field='workspace'>
+	<g:north size='4.4'>
+
 		<b:Container>
-			
 				<!-- Top Content -->
 				
 			<rechner:TopPanel ui:field='topPanel' />
 			    
-			
+		</b:Container>
+		
+	</g:north>
+	<g:center>
+
+	<g:HTMLPanel >
+		<b:Container>
 			<g:HTMLPanel>
 				<div class="{style.contentStart}"><!-- website design code / bootstrap -->
 				
 				<b:Row>
+				
 					<b:Column size="4"  >
 					<!-- Use Affix to make stuff sticky via gwtbootstrap javascript -->
 					<!--  <b:Affix>  -->
@@ -120,14 +127,21 @@
 					<!-- </b:Affix>  -->
 					</b:Column>
 					<b:Column size="8">
-						<g:SimplePanel ui:field='recipePanel' styleName='{style.recipePanel}'/>
+						
+							<g:SimplePanel ui:field='recipePanel' styleName='{style.recipePanel}'/>
+					
 					</b:Column>
+					
 				</b:Row>
 				
 				</div>
 			</g:HTMLPanel>
 		</b:Container>
-		
+	</g:HTMLPanel>
+
+	</g:center>
+	<g:south size='2'>
+		<g:HTMLPanel>
 		<footer>
 		<b:Container>
 				
@@ -135,29 +149,20 @@
 				
 				<!-- Footer Content -->
 					
-					<b:Column size="4"  >
+					<b:Column size="2"  >
 						<g:HTML>
-						<h3>&copy; &nbsp;2013 Eaternity</h3>
-						<p></p>
-						<p><a href="/legal">Haftbarkeit &amp; Rechtshinweise</a></p>
+						<h4>&copy; &nbsp;2013 Eaternity</h4>
+						</g:HTML>
+					</b:Column>
+					<b:Column size="3"  >
+						<g:HTML>
+						<a href="http://eaternity.ch/legal"><h4>Haftbarkeit &amp; Rechtshinweise</h4></a>
 						</g:HTML>
 					</b:Column>
 					
 					<b:Column size="3" >
 						<g:HTML>
-	
-						<h3>Anschrift</h3>
-						
-						<a href="/infos/#kontakt">
-						<ul class="{style.vcard}" style="padding-left:26px">
-						    <li style="display:none" class="org">Eaternity</li>
-							<li >Viaduktstrasse 93-95</li>
-							<li >Im Hub Zürich</li>
-						    <li >CH-8005 Zürich</li>
-						    <li ><abbr title="Telefon">P:</abbr> +41 77-44-66-981</li>
-							<li style="display:none"><a href="mailto:info@eaternity.ch">info@eaternity.ch</a></li>
-						</ul>
-						</a>
+						<a href="/infos/#kontakt"><h4>Kontakt</h4></a>
 						</g:HTML>
 					</b:Column>
 				
@@ -167,11 +172,14 @@
 
 			</b:Container>
 		</footer>
+		</g:HTMLPanel>
+	</g:south>
 
 			
+</g:DockLayoutPanel>
 			
-		</g:HTMLPanel>
-	</g:ScrollPanel>
+
+	
 
 
 

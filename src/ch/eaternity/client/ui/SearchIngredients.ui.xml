@@ -9,7 +9,7 @@
 		.searchBox {
 			background: edarkgreen;
 			color: white;
-			padding: 15px;
+			padding: 7px;
 			width: 100%;
 		}
 		
@@ -18,8 +18,7 @@
 		}
 		
 		.searchTextBox {
-			margin-left: 10px;
-			width: 100%;
+			width: 90%;
 		}
 
 		
@@ -27,15 +26,20 @@
 		.scroll {
 			background: #fff;
 			/* this is a HACK: without this the scrolling does not work */
-			height: 407px;
+			/* height: 407px; */
+			/* there was a trick to have this thing scroll, and adjust size to the browser window -> check the old calculator!! 
+			ideas: ask manuel
+			*/
 		}
 		
 		.saisonOrder {
+	/* there should be no fixed sizes */
 			width: 86px;
 			text-align:left;
 		}
 		
 		.co2Order {
+	/* there should be no fixed sizes */
 			width:48;
 			text-align:left;
 		}
@@ -66,10 +70,8 @@
 
 		<g:north size='5'>
 			<g:HTMLPanel styleName='{style.searchBox}'>
-				<g:HorizontalPanel >
 					<g:Label ui:field="SearchLabel" styleName='{style.searchLabel}'>SUCHE ZUTAT:</g:Label>
-					<g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" />
-				</g:HorizontalPanel>
+					<g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" >Im Marktplatz</g:TextBox>
 			</g:HTMLPanel>
 		</g:north>
 

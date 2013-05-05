@@ -17,12 +17,30 @@
 	test
 	*/
 	.logo {
+		padding-left:10px;
+		margin-right:-10px;
+	}
+	
+	.recipesMenuBox {
+		/* position:relative;
+		bottom:-7px;
+		right:-16px;
+		float:right; */
+		margin-top:30px;
+		margin-bottom:0px;
+	}
+	
+	
+	.manageBox {
 		padding-left:20px;
 		margin-right:-20px;
+		margin-top:30px;
+		margin-bottom:0px;
+
 	}
 	
 	.spinnerHeight {
-	  height:30px;
+	  /* height:30px; */
 	}
 
 	
@@ -39,41 +57,34 @@
 		cursor: pointer;
 	}
 	
-
+/*
 	.iconsPanel {
 		margin-bottom:20px; 
-		text-align:rigth;
-		float:right;
+		text-align:right;
+		float:right; 
+		
 	}
-
+*/
 
 
 	.statusInfo {
 	padding:0em 0em 0em 1em;
-	float: right;
-	text-align: right;
+	/* float: right;
+	text-align: right; */
 	}
 	
 	.spinnerPanel {
-		margin-left:20px;
-		margin-right:20px;
+	/*	margin-left:20px;
+		margin-right:20px; */
 	}
 	
 	.spinnerLabel {
 		color:darkgray;
-		margin-left:10px;
+		/* margin-left:10px; */
 	}
-	.recipePlace {
 
-	}
 	
-	.recipesMenuBox {
-		position:relative;
-		bottom:-7px;
-		right:-16px;
-		float:right;
-	}
-	
+
 	
 </ui:style>
 
@@ -94,38 +105,35 @@
 				<b:Column size="2">
 					<g:HTMLPanel styleName='{style.logo}'>
 		
-						<img class="logo" src="images/logo-eaternity-small_04-11-2010.png" />
+						<img class="logo" style="max-height:3.8em;" src="images/logo-eaternity-small_04-11-2010.png" />
 		
 					</g:HTMLPanel>
 				</b:Column>
-				<b:Column size="8" offset="2">
-					<b:Row>
-						<b:Column size="5" offset="3" styleName='{style.iconsPanel}'>
-							<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
-							<b:Tooltip placement="BOTTOM" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
-							<b:Tooltip placement="BOTTOM" text='Das Datum an dem Sie kochen'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/></b:Tooltip>
-							<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
-			
-							<b:Tooltip placement="BOTTOM" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
-						</b:Column>
-					</b:Row>
-							
-
-					<b:Row>
-						<b:Column size="3">
-							<g:HorizontalPanel ui:field='spinnerColumn' styleName='{style.spinnerHeight}'>
-								<g:HTML ui:field="spinnerHTML"/>
-								<g:Label ui:field="spinnerLabel" styleName='{style.spinnerLabel}' />
-							</g:HorizontalPanel>
-						</b:Column>
-						<b:Column size="5" offset="3" styleName='{style.recipePlace}'>
-							<g:HTMLPanel styleName='{style.recipesMenuBox}'>
-								<g:MenuBar ui:field='recipesMenuBar' />
-							</g:HTMLPanel>
-						</b:Column>
-					
-					</b:Row>
+		
+				<b:Column size="2">
+					<g:HorizontalPanel ui:field='spinnerColumn' styleName='{style.spinnerHeight}'>
+						<g:HTML ui:field="spinnerHTML"/>
+						<g:Label ui:field="spinnerLabel" styleName='{style.spinnerLabel}' />
+					</g:HorizontalPanel>
 				</b:Column>
+				
+				<b:Column size="5" >
+					<g:HTMLPanel styleName='{style.recipesMenuBox}'>
+						<g:MenuBar ui:field='recipesMenuBar' />
+					</g:HTMLPanel>
+				</b:Column>
+			
+				<b:Column size="3"  >
+					<g:HTMLPanel styleName='{style.manageBox}'>
+						<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
+						<b:Tooltip placement="TOP" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
+						<b:Tooltip placement="TOP" text='Saison-Datum'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/></b:Tooltip>
+						<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
+		
+						<b:Tooltip placement="TOP" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
+					</g:HTMLPanel>
+				</b:Column>
+			
 			</b:Row>
 		</header>
 	</g:HTMLPanel>

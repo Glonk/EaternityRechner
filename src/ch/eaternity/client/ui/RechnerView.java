@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class RechnerView extends SimpleLayoutPanel {
 	@UiTemplate("RechnerView.ui.xml")
-	interface Binder extends UiBinder<ScrollPanel, RechnerView> {
+	interface Binder extends UiBinder<DockLayoutPanel, RechnerView> {
 	}
 
 	private static Binder uiBinder = GWT.create(Binder.class);
@@ -30,7 +31,7 @@ public class RechnerView extends SimpleLayoutPanel {
 	}
 
 	// ----------------- Class Variables -------------------
-	@UiField ScrollPanel workspace;
+	@UiField DockLayoutPanel workspace;
 	@UiField TopPanel topPanel;
 	@UiField SimplePanel searchPanel;
 	@UiField SimplePanel recipePanel;

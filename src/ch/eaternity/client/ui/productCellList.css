@@ -2,12 +2,14 @@
 	cursor: pointer;
 	background: #efefef;
 	padding:7px;
+	overflow: hidden; /* this makes the box adjust size, if the icon wrap*/
 }
 
 .cellListOddItem {
 	cursor: pointer;
 	background: #ffffff;
 	padding:7px;
+	overflow: hidden; /* this makes the box adjust size, if the icon wrap*/
 }
 
 .cellListOddItem:hover {
