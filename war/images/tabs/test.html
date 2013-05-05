@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+
+	    <title>Bootstrap 101 Template</title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <!-- Bootstrap -->
+	    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" rel="stylesheet" media="screen">
+
+
+
+<style type="text/css" media="screen">
+	
+	.Tab, .Tab-selected { 
+	  position: relative; 
+	  height: 26px; 
+
+	  margin-left: -16px; 
+	} 
+
+	.Tab .TabInner, 
+	.Tab-selected .TabInner { 
+	  height: 26px; 
+	  padding-left: 15px; 
+	} 
+
+	.Tab { 
+	  background: url(tab-inactive-left.png) no-repeat bottom left; 
+	  cursor: default; 
+	position: relative;
+	display: inline-block;
+	
+
+	} 
+
+	.Tab .TabInner { 
+	  background: url(tab-inactive-right.png) no-repeat bottom right; 
+
+	} 
+
+	.Tab-selected { 
+	  background: url(tab-active-left.png) no-repeat bottom left; 
+	  z-index: 1; 
+	} 
+
+	.Tab-selected .TabInner { 
+	  background: url(tab-active-right.png) no-repeat bottom right; 
+	} 
+
+	.Tabs { 
+	  background: url(tabs-bg.png) repeat-x bottom; 
+	  padding-left: 2em; 
+	  margin-left: 0px; 
+	  margin-right: 4px; 
+	} 
+
+	.TabInner .Label { 
+	 
+	  padding-top: 6px; 
+	  font-weight: bold; 
+	  height: 26px; 
+	  text-align: center; 
+	  margin-right: 15px; 
+		padding-left:3px;
+		padding-right:3px;
+	
+	color: #222;
+	font-weight: 400;
+	font-family: "Open Sans", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-size:12px;
+		
+	} 
+	.TabInner .Label img{ 
+		height: 12px; 
+		padding-left:5px;
+		padding-bottom:5px;
+
+		}
+
+	.Tab .TabInner .Label { 
+	  background: url(tab-inactive-center.png) repeat-x top; 
+	} 
+
+	.Tab-selected .TabInner .Label { 
+	  background: url(tab-active-center.png) repeat-x top; 
+	}
+
+	
+</style>
+</head>
+<body>
+
+
+
+
+
+<div class="Tabs">
+	<div class="Tab">
+		<div class="TabInner">
+			<div class="Label">
+				Meine Hobby Küche
+			</div>
+		</div>
+	</div>
+	<div class="Tab Tab-selected">
+		<div class="TabInner">
+			<div class="Label">
+				<a href="#" id="open-tooltip-selected" class="popover-link" data-html="true"  data-trigger="manual" data-toggle="popover" data-placement="bottom" rel="popover" data-content="<ul class='nav nav-pills nav-stacked' style='width:14em;margin-bottom:0px'><li><a href='#'>Vivamus really long kitchn name</a></li><li><a href='#'>sagittis</a></li></ul>" title="" data-original-title="Auswahl Betriebsküchen">SwissRe<img src="regional.png" /></a>
+			</div>
+		</div>
+	</div>
+	<div class="Tab">
+		<div class="TabInner">
+			<div class="Label">
+				Gemeinschafts Küche
+			</div>
+		</div>
+	</div>
+	<div class="Tab">
+		<div class="TabInner">
+			<div class="Label">
+				Populäre Rezepte 
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="http://twitter.github.io/bootstrap/assets/js/bootstrap.min.js"></script>
+
+<script src="http://twitter.github.io/bootstrap/assets/js/bootstrap-tooltip.js"></script>
+<script src="http://twitter.github.io/bootstrap/assets/js/bootstrap-popover.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+
+	
+$(document).ready(function () {
+	// $('#open-tooltip').popover("toggle");
+	// $poped.popover("toggle")
+	
+
+	$('.popover-link').each(function () {
+	    $(this).click(function () {
+	        $(this).popover('show');
+	    });
+	});
+
+	$('html').on('click', function (e) {
+	    $('.popover-link').each(function () {
+	        //the 'is' for buttons that triggers popups
+	        //the 'has' for icons within a button that triggers a popup
+	        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+	            $(this).popover('hide');
+	        }
+	    });
+	});
+
+ });
+
+</script>
+
+</body>
