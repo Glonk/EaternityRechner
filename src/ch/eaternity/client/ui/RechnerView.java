@@ -35,8 +35,6 @@ public class RechnerView extends SimpleLayoutPanel {
 	@UiField TopPanel topPanel;
 	@UiField SimplePanel searchPanel;
 	@UiField SimplePanel recipePanel;
-	@UiField StickyTop stickyTop;
-	@UiField HTMLPanel sidebar;
 
 	private RechnerActivity presenter;
 	private DataController dco;
@@ -73,22 +71,7 @@ public class RechnerView extends SimpleLayoutPanel {
 	// ---------------- Sidebar stick to top ----------------
 	
 	
-	/*
-	 * this does not render properly
-	 * this is the same as illustraded here with the fixed-top navbar setting: http://gwtbootstrap.github.io/gwt-bootstrap/apidocs/com/github/gwtbootstrap/client/ui/Navbar.html
-		 
-	@UiHandler("workspace")
-    public void onScroll(ScrollEvent event) { 
-	
-		if(workspace.getVerticalScrollPosition() > 160) {
-			
-			sidebar.addStyleName(stickyTop.stickToTop());
-		} else {
-			sidebar.removeStyleName(stickyTop.stickToTop());
-		}
-		
-    }
-	*/
+
 	
 
 	public SimplePanel getSearchPanel() {

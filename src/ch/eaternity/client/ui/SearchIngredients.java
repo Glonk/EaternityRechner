@@ -34,8 +34,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -45,11 +48,11 @@ import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
- * 
+ * this class extends resize composite to propperly propagate down the onResize events to child widgets
  * @author aurelianjaggi
  *
  */
-public class SearchIngredients extends Composite {
+public class SearchIngredients extends ResizeComposite {
 	interface Binder extends UiBinder<Widget, SearchIngredients> { }
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
@@ -58,7 +61,7 @@ public class SearchIngredients extends Composite {
 	// Search Panel (Box and Button)
 	@UiField TextBox SearchInput;
 	
-	@UiField ScrollPanel ingredientDisplayWidget;
+	@UiField SimplePanel ingredientDisplayWidget;
 	
 	// sorting of the tables:
 	@UiField Anchor saisonOrder;
@@ -131,7 +134,7 @@ public class SearchIngredients extends Composite {
 		}
 		
 		//if changing this, .scroll class must also be changed!
-		this.setHeight("690px");
+		//this.setHeight("690px");
 		
 
 		    

@@ -7,37 +7,24 @@
 
 	<ui:style>
 	@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
-		.sticky {
-			/* height: 1200px; */
-		}
-		
-		.sidebar {
-			position: -webkit-sticky;
-			position: -moz-sticky;
-			position: -ms-sticky;
-			position: -o-sticky;
-			top: 24px;
-			margin: 0 auto;
-			
-			/*
-					padding: 18px 18px;  
-					border: 1.5px solid #54AA54;
-						 
-					background: #ffffff;
-				
-				  -webkit-border-radius: 5px 5px 5px 5px;
-				     -moz-border-radius: 5px 5px 5px 5px;
-				          border-radius: 5px 5px 5px 5px;
-				
-				  -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.25);
-				     -moz-box-shadow: 0 2px 5px rgba(0,0,0,.25);
-				          box-shadow: 0 2px 5px rgba(0,0,0,.25);
-				          */
-		}
 		
 		.recipePanel {
 			/*border-left: 1px dashed #dfdfdf;*/
 			/*padding-left: 15px;*/
+			margin:0px;
+			/*this is for passing full available space to docklayoutpanels */ 
+			height:100%;
+		}
+		
+		
+		.fullHeight {
+			/*this is for passing full available space to docklayoutpanels */ 
+			height:100%;
+		}
+		
+		.container {
+			margin-top: 0px;
+			margin-bottom: 6px;
 		}
 		
 		/* The white background content wrapper */
@@ -52,7 +39,6 @@
 				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
 				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F4F4F4',GradientType=0 );
 				*/
-			margin: 0 -20px 6px -20px;
 			/* negative indent the amount of the padding to maintain the grid system */
 			-webkit-border-radius: 5px 5px 5px 5px;
 			-moz-border-radius: 5px 5px 5px 5px;
@@ -98,47 +84,34 @@
 
 <g:DockLayoutPanel unit='EM' ui:field='workspace'>
 	<g:north size='4.4'>
-
 		<b:Container>
 				<!-- Top Content -->
 				
 			<rechner:TopPanel ui:field='topPanel' />
 			    
 		</b:Container>
-		
 	</g:north>
+	
 	<g:center>
+		<b:Container addStyleNames='{style.contentStart}'>  <!-- website design code / bootstrap -->
+				
+				<b:Row addStyleNames='{style.fullHeight}'>
+					<b:Column size="4" addStyleNames='{style.fullHeight}' >
 
-	<g:HTMLPanel >
-		<b:Container>
-			<g:HTMLPanel styleName='{style.contentStart}'> <!-- website design code / bootstrap -->
-				
-				<b:Row>
-				
-					<b:Column size="4"  >
-					<!-- Use Affix to make stuff sticky via gwtbootstrap javascript -->
-					<!--  <b:Affix>  -->
-						<g:HTMLPanel styleName='{style.sticky}'>
-							<g:HTMLPanel ui:field='sidebar' styleName='{style.sidebar}'>
-								<g:SimplePanel ui:field='searchPanel' />
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-					<!-- </b:Affix>  -->
+							<g:SimplePanel ui:field='searchPanel' styleName='{style.fullHeight}'/>
+
 					</b:Column>
-					<b:Column size="8">
-						
+					<b:Column size="8" addStyleNames='{style.fullHeight}'>
+					
 							<g:SimplePanel ui:field='recipePanel' styleName='{style.recipePanel}'/>
-					
+							
 					</b:Column>
-					
 				</b:Row>
 				
 
-			</g:HTMLPanel>
 		</b:Container>
-	</g:HTMLPanel>
-
 	</g:center>
+	
 	<g:south size='2'>
 		<g:HTMLPanel>
 		<footer>

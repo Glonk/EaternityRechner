@@ -8,6 +8,9 @@
 
 	<ui:style>
 		
+		.fullHeight {
+			height:100%;
+		}
 		
 		.wholePanel {
 
@@ -34,7 +37,7 @@
 			font-size:1.1em;
 			color:darkgray;
 			float:left;
-			text-align:left;
+			text-align:left;	
 		}
 		
 		.recipeTitle {
@@ -153,71 +156,85 @@
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 		
 	
-	<g:HTMLPanel>
-		<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
-	
-		<!-- Close Recipe Button -->
-		<g:HTMLPanel styleName='{style.floatRight}'>
-			<b:Close ui:field="closeRecipe" addStyleNames='{style.floatRight}' />
-			<g:Image ui:field="co2Image" styleName='{style.co2Image}'></g:Image>
-			<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
-			<div class='{style.co2valueLabelPerson}'>CO2<br /> pro Person</div>
-			
-		</g:HTMLPanel>
-	
-		<!-- title of the recipe -->
-		<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
-
-		<!-- sub-title of the recipe -->
-		<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
-	
-		<!-- image  -->
-		<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
-		<g:HorizontalPanel>
-			<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
-			<b:Tooltip text='Bild löschen'><g:Image ui:field='deleteImage' resource='{res.deleteLarge}'></g:Image></b:Tooltip>
-		</g:HorizontalPanel>
-	
-		<g:HTMLPanel styleName='{style.recipeProperties}'>
-			<b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='recipeDateBox' styleName='{style.recipeDateBox}' />
-			
-			<g:HTMLPanel styleName='{style.personsHTML}'>
-				für <g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}' /> Personen
-			</g:HTMLPanel>
-			
-			<g:Label ui:field='locationLabel' styleName='{style.locationLabel}'>Ort:</g:Label>
-		</g:HTMLPanel>
-		
-		<g:HorizontalPanel>
-			
-			<c:CellTable ui:field='ingredientCellTable' addStyleNames='{style.cellTable}'/>
-			<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" addStyleNames='{style.ingSpecWidget}'/>	
-		</g:HorizontalPanel>
-			
-			
-		<g:Label styleName='{style.cookingInstrLabel}'>Zubereitung:</g:Label>
-		<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr"></g:TextArea>
-
-		<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
-			cellSpacing='2' cellPadding='2' />
-			
-		<!--  
-		<g:CheckBox ui:field="preparationFactor">Zubereitungsfaktor hinzufuegen</g:CheckBox>
-		
-		<g:HorizontalPanel>
-			<g:Label>In Sammlungen:</g:Label>
-			<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
-		</g:HorizontalPanel>
-		-->
-		
+<g:DockLayoutPanel unit='EM' addStyleNames='{style.fullHeight}'>
+	<g:north size='17'>
 		<g:HTMLPanel>
-			<b:Button ui:field="newRecipeButton" addStyleNames='{style.buttons}'>Neues Rezept</b:Button>
-			<b:Button ui:field="generatePDFButton" addStyleNames='{style.buttons}'>PDF generieren</b:Button>
-			<b:Button ui:field="publishButton" addStyleNames='{style.buttons}'>veröffentlichen</b:Button>
-			<b:Button ui:field="deleteButton" addStyleNames='{style.buttons}'>löschen</b:Button>
-			<b:Button ui:field="duplicateButton" addStyleNames='{style.buttons}'>duplizieren</b:Button>
-			<b:Button ui:field="saveButton" addStyleNames='{style.buttons}'>speichern</b:Button>
+			<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
+		
+			<!-- Close Recipe Button -->
+			<g:HTMLPanel styleName='{style.floatRight}'>
+				<b:Close ui:field="closeRecipe" addStyleNames='{style.floatRight}' />
+				<g:Image ui:field="co2Image" styleName='{style.co2Image}'></g:Image>
+				<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
+				<div class='{style.co2valueLabelPerson}'>CO2<br /> pro Person</div>
+				
+			</g:HTMLPanel>
+		
+			<!-- title of the recipe -->
+			<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
+	
+			<!-- sub-title of the recipe -->
+			<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
+		
+			<!-- image  -->
+			<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
+			<g:HorizontalPanel>
+				<g:SimplePanel ui:field='imageUploadWidgetPanel' styleName='{style.imageUploadWidgetPanel}'></g:SimplePanel>
+				<b:Tooltip text='Bild löschen'><g:Image ui:field='deleteImage' resource='{res.deleteLarge}'></g:Image></b:Tooltip>
+			</g:HorizontalPanel>
+		
+			<g:HTMLPanel styleName='{style.recipeProperties}'>
+				<b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='recipeDateBox' styleName='{style.recipeDateBox}' />
+				
+				<g:HTMLPanel styleName='{style.personsHTML}'>
+					für <g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}' /> Personen
+				</g:HTMLPanel>
+				
+				<g:Label ui:field='locationLabel' styleName='{style.locationLabel}'>Ort:</g:Label>
+			</g:HTMLPanel>
 		</g:HTMLPanel>
+	</g:north>
+	
+	<g:center>
+		<g:ScrollPanel>
+			<c:CellTable ui:field='ingredientCellTable' addStyleNames='{style.cellTable}'/>
+		</g:ScrollPanel>
+	</g:center>
+	
 
-	</g:HTMLPanel>
+
+	
+	<g:south size='14'>
+	<g:HTMLPanel>
+			<g:Label styleName='{style.cookingInstrLabel}'>Zubereitung:</g:Label>
+			<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr"></g:TextArea>
+	
+			<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
+				cellSpacing='2' cellPadding='2' />
+				
+			<!--  
+			<g:CheckBox ui:field="preparationFactor">Zubereitungsfaktor hinzufuegen</g:CheckBox>
+			
+			<g:HorizontalPanel>
+				<g:Label>In Sammlungen:</g:Label>
+				<g:FlowPanel ui:field ="collectionPanel"></g:FlowPanel>
+			</g:HorizontalPanel>
+			-->
+			
+			<g:HTMLPanel>
+				<b:Button ui:field="newRecipeButton" addStyleNames='{style.buttons}'>Neues Rezept</b:Button>
+				<b:Button ui:field="generatePDFButton" addStyleNames='{style.buttons}'>PDF generieren</b:Button>
+				<b:Button ui:field="publishButton" addStyleNames='{style.buttons}'>veröffentlichen</b:Button>
+				<b:Button ui:field="deleteButton" addStyleNames='{style.buttons}'>löschen</b:Button>
+				<b:Button ui:field="duplicateButton" addStyleNames='{style.buttons}'>duplizieren</b:Button>
+				<b:Button ui:field="saveButton" addStyleNames='{style.buttons}'>speichern</b:Button>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:south>
+	
+		<g:east size='19'>
+		<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" addStyleNames='{style.ingSpecWidget}'/>
+	</g:east>
+
+</g:DockLayoutPanel>
 </ui:UiBinder>

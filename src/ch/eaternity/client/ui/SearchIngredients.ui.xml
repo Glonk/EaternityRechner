@@ -6,6 +6,12 @@
 	<ui:style>
 		@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
 		
+		.fullHeight {
+			/*this is for passing full available space to children (scroll!) */ 
+			height:100%;
+		
+		}
+		
 		.searchBox {
 			background: edarkgreen;
 			color: white;
@@ -21,76 +27,76 @@
 			width: 90%;
 		}
 
-		
-		
-		.scroll {
-			background: #fff;
-			/* this is a HACK: without this the scrolling does not work */
-			/* height: 407px; */
-			/* there was a trick to have this thing scroll, and adjust size to the browser window -> check the old calculator!! 
-			ideas: ask manuel
-			*/
+
+		.sortBox { 
+			white-space: nowrap;
+			overflow: hidden;
+			margin-top: 12px;
+			font-size: 13px;
+			color: #999;
+			padding: 5px;
 		}
 		
 		.saisonOrder {
-	/* there should be no fixed sizes */
+			/* there should be no fixed sizes */
 			width: 86px;
-			text-align:left;
+			text-align: left;
 		}
 		
 		.co2Order {
-	/* there should be no fixed sizes */
-			width:48;
-			text-align:left;
+			/* there should be no fixed sizes */
+			width: 48;
+			text-align: left;
+		}
+		
+		.ingredientDisplayWidget {
+			border-top: 1px solid lightgray;
+			border-bottom: 1px solid lightgray;
 		}
 		
 		.legendPanel {
-			border-top:1px solid lightgray;
-			padding-top:14px;
-			margin-top:30px;
-			line-height:32px;
+			margin-top: 25px;
+			line-height: 32px;
 		}
 		
 		.legendImages {
-			margin-right:5px;
-			margin-left:5px;
-		}
-		.legendImages2 {
-			margin-right:15px;
-			margin-left:5px;
-		}
-		.legendLines {
+			margin-right: 5px;
+			margin-left: 5px;
 		}
 		
+		.legendImages2 {
+			margin-right: 15px;
+			margin-left: 5px;
+		}
+		
+		.legendLines {
+			
+		}
 	</ui:style>
 
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources' />
 	
-	<g:DockLayoutPanel unit='EM'>
+	<g:DockLayoutPanel unit='EM' addStyleNames='{style.fullHeight}'>
 
-		<g:north size='5'>
-			<g:HTMLPanel styleName='{style.searchBox}'>
-					<g:Label ui:field="SearchLabel" styleName='{style.searchLabel}'>SUCHE ZUTAT:</g:Label>
-					<g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" >Im Marktplatz</g:TextBox>
-			</g:HTMLPanel>
-		</g:north>
-
-		<g:center>
+		<g:north size='9'>
 			<g:HTMLPanel>
-					<div style='white-space: nowrap;
-								overflow: hidden;
-								margin-top: 15px;
-								font-size: 13px;
-								color:#999;
-								padding:5px;'>
+					<g:HTMLPanel styleName='{style.searchBox}'>
+						<g:Label ui:field="SearchLabel" styleName='{style.searchLabel}'>SUCHE ZUTAT:</g:Label>
+						<g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" >Im Marktplatz</g:TextBox>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName='{style.sortBox}'>
 						
 						<div style='width:48px; float:right;'><b:Tooltip text="nach CO2 Wert sortieren"><g:Anchor href='javascript:;' ui:field='co2Order'>CO2</g:Anchor></b:Tooltip></div>
 						<div style='width:86px; float:right;'><b:Tooltip text="nach Saisonalität sortieren"><g:Anchor href='javascript:;' ui:field='saisonOrder'>sais.</g:Anchor></b:Tooltip></div>
 						<div><b:Tooltip text="alphabetisch sortieren"><g:Anchor href='javascript:;' ui:field='alphOrder'>Name</g:Anchor></b:Tooltip></div>
-					</div>
-				<g:ScrollPanel ui:field="ingredientDisplayWidget" styleName='{style.scroll}'></g:ScrollPanel>
-		
-		  </g:HTMLPanel>
+					</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:north>
+
+		<g:center>
+			<g:ScrollPanel>	
+				<g:SimplePanel ui:field="ingredientDisplayWidget" styleName='{style.ingredientDisplayWidget}'/>
+		  </g:ScrollPanel>
 		</g:center>
 
 		<g:south size="12">
