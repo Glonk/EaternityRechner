@@ -94,8 +94,8 @@
 		</g:north>
 
 		<g:center>
-			<g:ScrollPanel>	
-				<g:SimplePanel ui:field="ingredientDisplayWidget" styleName='{style.ingredientDisplayWidget}'/>
+			<g:ScrollPanel styleName='{style.ingredientDisplayWidget}'>	
+				<g:SimplePanel ui:field="ingredientDisplayWidget" />
 		  </g:ScrollPanel>
 		</g:center>
 
