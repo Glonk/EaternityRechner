@@ -15,9 +15,15 @@
 		.wholePanel {
 
 		}
+		.LabelBox {
+			height:5.5em;
+
+		}
+	
 		
 		.floatRight{
 			float:right;
+	
 		}	
 		
 		.co2Image {
@@ -41,14 +47,16 @@
 		}
 		
 		.recipeTitle {
-			width: 400px;
+			
+			width: 100%;
 			font-size: 24px;
 			font-weight: bold;
 			text-align: left;
 		}
 		
 		.recipeSubTitle {
-			width: 400px;
+			
+			width: 100%;
 			font-size: 12px;
 			text-align: left;
 		}
@@ -162,20 +170,30 @@
 			<g:VerticalPanel ui:field='alertPanel'></g:VerticalPanel>
 		
 			<!-- Close Recipe Button -->
-			<g:HTMLPanel styleName='{style.floatRight}'>
-				<b:Close ui:field="closeRecipe" addStyleNames='{style.floatRight}' />
-				<g:Image ui:field="co2Image" styleName='{style.co2Image}'></g:Image>
-				<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
-				<div class='{style.co2valueLabelPerson}'>CO2<br /> pro Person</div>
-				
-			</g:HTMLPanel>
-		
-			<!-- title of the recipe -->
-			<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
-	
-			<!-- sub-title of the recipe -->
-			<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
-		
+			<g:DockLayoutPanel unit='EM' styleName='{style.LabelBox}'>
+				<g:east size="18">
+					<g:HTMLPanel styleName='{style.floatRight}'>
+						<b:Close ui:field="closeRecipe" addStyleNames='{style.floatRight}' />
+						<g:Image ui:field="co2Image" styleName='{style.co2Image}'></g:Image>
+						<g:Label ui:field="co2valueLabel" styleName='{style.co2valueLabel}'>0</g:Label>
+						<div class='{style.co2valueLabelPerson}'>CO2<br /> pro Person</div>
+						
+					</g:HTMLPanel>
+				</g:east>
+				<g:center>
+					<b:Row>
+						<b:Column size="4">
+						<g:HTMLPanel >
+							<!-- title of the recipe -->
+							<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
+					
+							<!-- sub-title of the recipe -->
+							<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
+						</g:HTMLPanel>
+						</b:Column>
+					</b:Row>
+				</g:center>
+			</g:DockLayoutPanel>
 			<!-- image  -->
 			<g:Image ui:field='recipeImage' styleName='{style.recipeImage}'></g:Image>
 			<g:HorizontalPanel>
