@@ -111,8 +111,7 @@
 
 	<g:HTMLPanel >
 		<b:Container>
-			<g:HTMLPanel>
-				<div class="{style.contentStart}"><!-- website design code / bootstrap -->
+			<g:HTMLPanel styleName='{style.contentStart}'> <!-- website design code / bootstrap -->
 				
 				<b:Row>
 				
@@ -134,7 +133,7 @@
 					
 				</b:Row>
 				
-				</div>
+
 			</g:HTMLPanel>
 		</b:Container>
 	</g:HTMLPanel>

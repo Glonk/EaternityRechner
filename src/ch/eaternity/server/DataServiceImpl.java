@@ -293,10 +293,7 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 	}
 	
 	private String getUserId() throws NotLoggedInException {
-		//TODO remove User Id Hack before deployement
-		// checkLoggedIn()
-		//return getUser().getUserId();
-		return new String("1");
+		return getUser().getUserId();
 	}
 	
 	private String getUserEmail() throws NotLoggedInException {

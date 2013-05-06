@@ -126,7 +126,7 @@ a:link, a:visited, a:hover, a:active {
 
 @external .gwt-MenuBar-horizontal;
 .gwt-MenuBar-horizontal {
-	background:white;
+	background:transparent;
 	border-style:none;
 }
 
