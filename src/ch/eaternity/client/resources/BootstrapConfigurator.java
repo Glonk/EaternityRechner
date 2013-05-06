@@ -10,6 +10,6 @@ public class BootstrapConfigurator implements Configurator {
 	}
 	
 	public boolean hasResponsiveDesign() {
-		return true;
+		return false;
 	}
 }

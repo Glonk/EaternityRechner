@@ -7,6 +7,7 @@
  *
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
  */
+ /*
 .clearfix { *
 	zoom: 1
 }
@@ -59,7 +60,8 @@
 	display: inherit !important
 }
 
-@media ( min-width :768px) and (max-width:769px) {
+
+@media ( min-width :768px) and (max-width:979px) {
 	.hidden-desktop {
 		display: inherit !important
 	}
@@ -406,7 +408,7 @@
 	}
 }
 
-@media ( min-width :768px) and (max-width:769px) {
+@media ( min-width :768px) and (max-width:979px) {
 	.row {
 		margin-left: -20px; *
 		zoom: 1
@@ -834,7 +836,7 @@
 	}
 }
 
-@media ( max-width :769px) {
+@media ( max-width :979px) {
 	body {
 		padding-top: 0
 	}
@@ -971,9 +973,11 @@
 	}
 }
 
+
 @media ( min-width :980px) {
 	.nav-collapse.collapse {
 		height: auto !important;
 		overflow: visible !important
 	}
 }
+*/
