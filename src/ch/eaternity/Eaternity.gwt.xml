@@ -37,14 +37,7 @@
   <inherits name='com.github.gwtbootstrap.Bootstrap' />
   <inherits name='com.github.gwtbootstrap.datepicker.Datepicker' />
 
-	<source path='resources'/>
-    <replace-with class="ch.eaternity.client.resources.BootstrapConfigurator">
-      <when-type-is class="com.github.gwtbootstrap.client.ui.config.Configurator"/>
-    </replace-with>
-    <public path="resources">
-      <exclude name="** /*.java"/>
-      <exclude name="** /*.class"/>
-    </public>
+
   
   <!-- Drag and Drop behaviours -->
   
@@ -79,7 +72,7 @@
 -->
 
 <!-- enable responsive Design automatic adjustments -->
-<set-property name="bootstrap.responsiveDesign" value="true"/>
+<set-property name="bootstrap.responsiveDesign" value="false"/>
 
 
 
@@ -102,6 +95,16 @@
   
   <source path='client'/>
   <source path='shared'/>
+  
+  
+  	<source path='resources'/>
+    <replace-with class="ch.eaternity.resources.BootstrapConfigurator">
+      <when-type-is class="com.github.gwtbootstrap.client.ui.config.Configurator"/>
+    </replace-with>
+    <public path="resources">
+      <exclude name="** /*.java"/>
+      <exclude name="** /*.class"/>
+    </public>
   
   <!-- Okay, let's try this one -->
 

@@ -1,4 +1,5 @@
-package ch.eaternity.client.resources;
+package ch.eaternity.resources;
+
 
 import com.github.gwtbootstrap.client.ui.config.Configurator;
 import com.github.gwtbootstrap.client.ui.resources.Resources;
