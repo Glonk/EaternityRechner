@@ -19,6 +19,9 @@ public interface Resources extends ClientBundle {
 		String weightTextInputCell();
 		String row();
 		String intro();
+		String rotate90();
+		String rotate180();
+		String rotate270();
 	}
 	
 	interface Constants extends CssResource {
@@ -89,4 +92,7 @@ public interface Resources extends ClientBundle {
 	
 	@Source("h_menu_active.png")
 	public ImageResource hMenuActive();
+	
+	@Source("arrow-sort.png")
+	public ImageResource arrowSort();
 }

@@ -99,12 +99,15 @@
 			margin-right:200px;
 		}
 		
+		.eastPanel {
+			margin-left:10px;
+		}
+		
 		.ingSpecWidget {
 			/*float:right; uncomment that for div layouting... */
 			z-index:100;
 			/* for the overflow 
 			margin-left:-200px; */
-			margin-left:10px;
 		}
 		
 		.recipeProperties {
@@ -123,17 +126,36 @@
 			width: 150px;
 		}
 		
-		.cookingInstrLabel {
-			font-weight:500;
-			margin-top:25px;
+		.preparationDisclosurePanel {
+			width:100%;
+		}
+		
+		.preparationDisclosurePanel .content  {
+			height:100%;
+		}
+		
+		.arrowImage {}
+		
+		@external .header;
+		.header:hover {
+			background-color: #F0F4C2;
+		}
+		
+		.header {
+			padding:8px;
 			margin-bottom:10px;
+		}
+		
+
+		.cookingInstrLabel {
+			font-weight:600;
+			display:inline;
 		}
 		
 		.cookingInstr {
 			background-color: #F0F4C2;
-			height: 80px;
-			width:100%;
-			margin-bottom: 20px;
+			width:240px;
+			height:250px;
 		}
 		
 		.CommentTable {
@@ -141,21 +163,18 @@
 			border: 1px;
 		}
 		
-		.gwt-TextBox {
-		  border: none !important;
-		}
-		
 		.cellTable { }
 	
 
 		.buttons {
 			margin-right:10px;
+			margin-top:18px;
 		}
 		
 	</ui:style>
 
 	
-	<ui:style field='textErrorStyle' type='ch.eaternity.client.ui.RecipeEdit.TextErrorStyle'>
+	<ui:style field='styles' type='ch.eaternity.client.ui.RecipeEdit.Styles'>
 			.redTextError {
 				color: red !important;
 			}
@@ -222,11 +241,8 @@
 
 
 	
-	<g:south size='14'>
-	<g:HTMLPanel>
-			<g:Label styleName='{style.cookingInstrLabel}'>Zubereitung:</g:Label>
-			<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr"></g:TextArea>
-	
+	<g:south size='3.5'>
+		<g:HTMLPanel>
 			<g:FlexTable ui:field='commentTable' styleName='{style.CommentTable}'
 				cellSpacing='2' cellPadding='2' />
 				
@@ -250,8 +266,20 @@
 		</g:HTMLPanel>
 	</g:south>
 	
-		<g:east size='19'>
-		<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" addStyleNames='{style.ingSpecWidget}'/>
+	<g:east size='19'>
+		<g:HTMLPanel styleName='{style.eastPanel}'>
+			<g:DisclosurePanel ui:field='preparationDisclosurePanel' styleName='{style.preparationDisclosurePanel}' >
+				<g:customHeader>
+					<g:HTMLPanel>
+						<g:Image ui:field='arrowImage' resource='{res.arrowSort}' addStyleNames='{style.arrowImage} {res.style.rotate90}'></g:Image>
+						<g:Label styleName='{style.cookingInstrLabel}'>Zubereitung</g:Label>
+					</g:HTMLPanel>
+				</g:customHeader>
+				<g:TextArea styleName='{style.cookingInstr}' ui:field="cookingInstr"></g:TextArea>
+			</g:DisclosurePanel>
+			
+			<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" addStyleNames='{style.ingSpecWidget}'/>
+		</g:HTMLPanel>
 	</g:east>
 
 </g:DockLayoutPanel>

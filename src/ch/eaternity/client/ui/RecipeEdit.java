@@ -45,6 +45,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -56,10 +60,12 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -124,6 +130,8 @@ public class RecipeEdit extends Composite {
 	@UiField FlexTable commentTable;
 	
 	//@UiField CheckBox preparationFactor;
+	@UiField DisclosurePanel preparationDisclosurePanel;
+	@UiField Image arrowImage;
 	@UiField TextArea cookingInstr;
 	
 	
@@ -140,7 +148,7 @@ public class RecipeEdit extends Composite {
 	@UiField Button saveButton;
 	@UiField Button deleteButton;
 
-	@UiField static TextErrorStyle textErrorStyle;
+	@UiField static Styles styles;
 	
 	
 	// ---------------------- Class Variables ----------------------
@@ -162,7 +170,7 @@ public class RecipeEdit extends Composite {
 		void onItemSelected(Ingredient item);
 	}
 	
-	interface TextErrorStyle extends CssResource {
+	interface Styles extends CssResource {
 		String redTextError();
 	}
 	
@@ -185,6 +193,19 @@ public class RecipeEdit extends Composite {
 		
 		imageUploadWidgetPanel.setVisible(false);
 	
+		preparationDisclosurePanel.setAnimationEnabled(true);
+		preparationDisclosurePanel.setOpen(true);
+		preparationDisclosurePanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				ingSpecWidget.setVisible(false);
+				arrowImage.addStyleName(Resources.INSTANCE.style().rotate180());
+			}
+		});
+		preparationDisclosurePanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				arrowImage.removeStyleName(Resources.INSTANCE.style().rotate180());
+			}
+		});
 	
 		initIngredientTable();
 	}
@@ -400,7 +421,7 @@ public class RecipeEdit extends Composite {
 	
 	@UiHandler("amountPersons")
 	public void onKeyUp(KeyUpEvent event) {
-		String errorStyle = textErrorStyle.redTextError();
+		String errorStyle = styles.redTextError();
 		String text = amountPersons.getText();
 		Long persons = 4L;
 		boolean success = false;
@@ -479,6 +500,13 @@ public class RecipeEdit extends Composite {
 	public void onAddRecipeButtonPress(ClickEvent event) {
 		presenter.goTo(new RechnerRecipeEditPlace("new"));
 	}
+	
+	/*
+	@UiHandler("preparationDisclosurePanel")
+	public void onPreparationOpen(Event event) {
+		ingSpecWidget.setVisible(false);
+	}*/
+	
 
 	
 	// ---------------------- private Methods ---------------------
@@ -511,6 +539,7 @@ public class RecipeEdit extends Composite {
 		else{
 			ingSpecWidget.setIngredient(ingredient, recipe.getVerifiedLocation());
 		}
+		preparationDisclosurePanel.setOpen(false);
 	}
 	
 	
@@ -678,7 +707,7 @@ public class RecipeEdit extends Composite {
 		weightInputColumn.setFieldUpdater(new FieldUpdater<Ingredient, String>() {
 			@Override
 			public void update(int index, Ingredient ingredient, String value) {
-				String errorStyle = textErrorStyle.redTextError();
+				String errorStyle = styles.redTextError();
 				Double grams = 0.0;
 				boolean success = false;
 				

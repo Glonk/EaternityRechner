@@ -108,6 +108,35 @@ a:link, a:visited, a:hover, a:active {
 }
 
 /* -----------------------------------------
+   Rotation of Images
+----------------------------------------- */
+
+.rotate90 {
+	-webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.rotate180 {
+	-webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.rotate270 {
+	-webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+
+
+/* -----------------------------------------
    Styling of RecipeScope Menu
 ----------------------------------------- */
 
@@ -158,5 +187,30 @@ a:link, a:visited, a:hover, a:active {
 	background: white;
 	display:none;
 }
+
+/* -----------------------------------------
+   Styling general DisclosurePanel
+----------------------------------------- */
+
+@external .gwt-DisclosurePanel;
+@external .header;
+@external .content;
+@external .gwt-DisclosurePanel-open;
+@external .gwt-DisclosurePanel-closed;
+
+.gwt-DisclosurePanel {}
+.gwt-DisclosurePanel-open {}
+.gwt-DisclosurePanel-closed {}
+.gwt-DisclosurePanel .content {}
+.gwt-DisclosurePanel .header,
+.gwt-DisclosurePanel .header a,
+.gwt-DisclosurePanel .header td {
+  text-decoration: none;  /* Remove underline from header */
+  cursor: pointer;
+  cursor: hand;
+}
+
+
+
 
 
