@@ -2,8 +2,10 @@ package ch.eaternity.client.ui.widgets;
 
 import com.google.gwt.dom.client.Style.Unit; 
 
-/*
+
+/**
  * Used for ingredient legend (seasonalities u.s.w.)
+ * dynamic resizing of Layout panel (onclick)
  */
 import com.google.gwt.user.client.ui.DockLayoutPanel; 
 import com.google.gwt.user.client.ui.Widget; 

@@ -1,6 +1,6 @@
 .cellListEvenItem {
 	cursor: pointer;
-	background: #efefef;
+	background: #f8f8f8;
 	padding:7px;
 	overflow: hidden; /* this makes the box adjust size, if the icon wrap*/
 }
