@@ -82,7 +82,7 @@ public class SearchIngredients extends ResizeComposite {
 	{
 	   public interface CellListStyle extends CellList.Style {};
 
-	   @Source({"productCellList.css"})
+	   @Source({"../resources/productCellList.css"})
 	   CellListStyle cellListStyle();
 	};
 	

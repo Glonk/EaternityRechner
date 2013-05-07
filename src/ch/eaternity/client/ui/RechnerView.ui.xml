@@ -10,10 +10,15 @@
 		
 		.recipePanel {
 			/*border-left: 1px dashed #dfdfdf;*/
-			/*padding-left: 15px;*/
+			padding-right: 10px;
 			margin:0px;
 			/*this is for passing full available space to docklayoutpanels */ 
 			height:100%;
+		}
+		
+		.searchPanel {
+			border-right: 2px solid #DFDFDF;
+			padding-right: 20px;
 		}
 		
 		
@@ -30,7 +35,7 @@
 		/* The white background content wrapper */
 		.contentStart {
 			/*	display: none;*/
-			padding: 18px 18px;
+			padding: 20px;
 			margin: 0 auto;
 			border: 1.8px solid edarkgreen;
 			/*-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius:10px; border: 1.5px solid #FF8300;*/
@@ -58,26 +63,7 @@
 		
 	</ui:style>
 
-	<ui:style field='stickyTop'
-		type='ch.eaternity.client.ui.RechnerView.StickyTop'>
 
-		.stickToTop {
-
-     position:fixed;
-     top:24px;
-     /* 
-     needs another method
-     
-     
-     http://stackoverflow.com/questions/9350818/fixed-sidebar-navigation-in-fluid-twitter-bootstrap-2-0 
-     k-ohashi -> http://gwtbootstrap.github.io/gwt-bootstrap/apidocs/ AFFIX
-     http://html5-demos.appspot.com/static/css/sticky.html
-     */
- }
-
-
-
-  </ui:style>
 
 	<ui:with field='res' type='ch.eaternity.client.resources.Resources'/>
 
@@ -98,7 +84,7 @@
 				<b:Row addStyleNames='{style.fullHeight}'>
 					<b:Column size="4" addStyleNames='{style.fullHeight}' >
 
-							<g:SimplePanel ui:field='searchPanel' styleName='{style.fullHeight}'/>
+							<g:SimplePanel ui:field='searchPanel' addStyleNames='{style.fullHeight} {style.searchPanel}'/>
 
 					</b:Column>
 					<b:Column size="8" addStyleNames='{style.fullHeight}'>

@@ -1,8 +1,5 @@
 package ch.eaternity.client.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
 import ch.eaternity.client.events.AlertEvent;
@@ -10,17 +7,9 @@ import ch.eaternity.client.events.AlertEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
-import ch.eaternity.client.ui.cells.ProductCell;
 import ch.eaternity.client.ui.cells.RecipeCell;
-import ch.eaternity.client.ui.widgets.RecipeWidget;
-import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.RecipeInfo;
-import ch.eaternity.shared.Recipe;
-import ch.eaternity.shared.RecipeInfo;
-import ch.eaternity.shared.Util.RecipeScope;
 
-import com.github.gwtbootstrap.client.ui.Alert;
-import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,11 +21,9 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;

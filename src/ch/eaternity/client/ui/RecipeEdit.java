@@ -58,6 +58,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Event;
@@ -100,15 +101,15 @@ public class RecipeEdit extends Composite {
 		}
 	};
 	
-	public interface CellTableResource extends CellTable.Resources
+	public interface DataGridResource extends DataGrid.Resources
 	{
-	   public interface CellTableStyle extends CellTable.Style {};
+	   public interface DataGridStyle extends DataGrid.Style {};
 
-	   @Source({"ingredientCellTable.css"})
-	   CellTableStyle cellTableStyle();
+	   @Source({"../resources/ingredientDataGrid.css"})
+	   DataGridStyle dataGridStyle();
 	};
 	
-	CellTableResource cellTableResource = GWT.create(CellTableResource.class);
+	DataGridResource dataGridResource = GWT.create(DataGridResource.class);
 	
 	// ---------------------- User Interface Elements --------------
 	
@@ -136,7 +137,7 @@ public class RecipeEdit extends Composite {
 	
 	
 	@UiField(provided = true)
-	CellTable<Ingredient> ingredientCellTable = new CellTable<Ingredient>(200, cellTableResource);
+	DataGrid<Ingredient> ingredientDataGrid = new DataGrid<Ingredient>(200, dataGridResource);
 	
 	@UiField IngredientSpecificationWidget ingSpecWidget;
 	//@UiField FlowPanel collectionPanel;
@@ -454,7 +455,7 @@ public class RecipeEdit extends Composite {
 	@UiHandler("recipeDateBox")
 	void onValueChange(ValueChangeEvent<Date> event) {
 		recipe.setCookingDate(recipeDateBox.getValue());
-		ingredientCellTable.redraw();
+		ingredientDataGrid.redraw();
 		ingSpecWidget.updateSeasonCoherency();
 		changeSaveStatus(false);
 	}
@@ -544,11 +545,11 @@ public class RecipeEdit extends Composite {
 	
 	
 	private void initIngredientTable() {
-		ingredientCellTable.setWidth("370px", true);
-		ingredientCellTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		//ingredientDataGrid.setWidth("370px", true);
+		ingredientDataGrid.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		// Add a selection model to handle user selection.
-		ingredientCellTable.setSelectionModel(selectionModel);
+		ingredientDataGrid.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	public void onSelectionChange(SelectionChangeEvent event) {
@@ -683,25 +684,25 @@ public class RecipeEdit extends Composite {
 
 
 		
-		ingredientCellTable.setColumnWidth(weightInputColumn, 55.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(nameColumn, 100.0, Unit.PCT);
-		ingredientCellTable.setColumnWidth(bioColumn, 25.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(seasonColumn, 25.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(regionalColumn, 25.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(ratingColumn, 25.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(co2Column, 50.0, Unit.PX);
-		ingredientCellTable.setColumnWidth(removeColumn, 25.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(weightInputColumn, 55.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(nameColumn, 100.0, Unit.PCT);
+		ingredientDataGrid.setColumnWidth(bioColumn, 25.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(seasonColumn, 25.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(regionalColumn, 25.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(ratingColumn, 25.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(co2Column, 50.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(removeColumn, 25.0, Unit.PX);
 
-		ingredientCellTable.addColumn(weightInputColumn, "Menge", "SUMME");
-		ingredientCellTable.addColumn(nameColumn, "Zutat");
-		ingredientCellTable.addColumn(bioColumn);
-		ingredientCellTable.addColumn(seasonColumn);
-		ingredientCellTable.addColumn(regionalColumn);
-		ingredientCellTable.addColumn(ratingColumn);
-		ingredientCellTable.addColumn(co2Column, co2Header, co2Footer);
-		ingredientCellTable.addColumn(removeColumn);
+		ingredientDataGrid.addColumn(weightInputColumn, "Menge", "SUMME");
+		ingredientDataGrid.addColumn(nameColumn, "Zutat");
+		ingredientDataGrid.addColumn(bioColumn);
+		ingredientDataGrid.addColumn(seasonColumn);
+		ingredientDataGrid.addColumn(regionalColumn);
+		ingredientDataGrid.addColumn(ratingColumn);
+		ingredientDataGrid.addColumn(co2Column, co2Header, co2Footer);
+		ingredientDataGrid.addColumn(removeColumn);
 
-		ingredientDataProvider.addDataDisplay(ingredientCellTable);
+		ingredientDataProvider.addDataDisplay(ingredientDataGrid);
 
 		// Add a field updater to be notified when the user enters a new name.
 		weightInputColumn.setFieldUpdater(new FieldUpdater<Ingredient, String>() {

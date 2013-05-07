@@ -233,9 +233,7 @@
 	</g:north>
 	
 	<g:center>
-		<g:ScrollPanel>
-			<c:CellTable ui:field='ingredientCellTable' addStyleNames='{style.cellTable}'/>
-		</g:ScrollPanel>
+		<c:DataGrid ui:field='ingredientDataGrid' addStyleNames='{style.cellTable}'/>
 	</g:center>
 	
 
