@@ -15,13 +15,11 @@ public interface Resources extends ClientBundle {
 		String productInfoItem();
 		String recipeInfo();
 		String container();
-		String co2TextCell();
-		String weightTextInputCell();
-		String row();
 		String intro();
 		String rotate90();
 		String rotate180();
 		String rotate270();
+		String editableTextBox();
 	}
 	
 	interface Constants extends CssResource {

@@ -100,7 +100,7 @@
 		}
 		
 		.eastPanel {
-			margin-left:10px;
+			margin-left:20px;
 		}
 		
 		.ingSpecWidget {
@@ -154,7 +154,8 @@
 		
 		.cookingInstr {
 			background-color: #F0F4C2;
-			width:240px;
+			/* don't know why is like that otherwise its too big*/
+			width:94%;
 			height:250px;
 		}
 		
@@ -204,10 +205,10 @@
 						<b:Column size="4">
 						<g:HTMLPanel >
 							<!-- title of the recipe -->
-							<g:TextBox ui:field="RezeptName" addStyleNames='{style.recipeTitle}'>Ihr Menu</g:TextBox>
+							<b:TextBox ui:field="RezeptName"  addStyleNames='{style.recipeTitle}'></b:TextBox>
 					
 							<!-- sub-title of the recipe -->
-							<g:TextBox ui:field="rezeptDetails" styleName='{style.recipeSubTitle}'>Menu Beschreibung</g:TextBox>
+							<b:TextBox ui:field="rezeptDetails"  addStyleNames='{style.recipeSubTitle}'></b:TextBox>
 						</g:HTMLPanel>
 						</b:Column>
 					</b:Row>
@@ -224,7 +225,7 @@
 				<b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='recipeDateBox' styleName='{style.recipeDateBox}' />
 				
 				<g:HTMLPanel styleName='{style.personsHTML}'>
-					für <g:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}' /> Personen
+					für <b:TextBox ui:field="amountPersons" styleName='{style.recipePersonsBox}' /> Personen
 				</g:HTMLPanel>
 				
 				<g:Label ui:field='locationLabel' styleName='{style.locationLabel}'>Ort:</g:Label>
@@ -264,7 +265,7 @@
 		</g:HTMLPanel>
 	</g:south>
 	
-	<g:east size='19'>
+	<g:east size='20'>
 		<g:HTMLPanel styleName='{style.eastPanel}'>
 			<g:DisclosurePanel ui:field='preparationDisclosurePanel' styleName='{style.preparationDisclosurePanel}' >
 				<g:customHeader>

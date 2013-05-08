@@ -1,3 +1,27 @@
+/* -----------------------------------------
+   Custom Column styles
+----------------------------------------- */
+
+.co2Header {
+	text-align:right;
+	
+}
+
+.removeCell {
+	padding-left:8px;
+	padding-right:18px;
+}
+
+.weightTextInputCell input, td.weightTextInputCell input {
+    width:32px;
+}
+
+.co2TextCell, td.co2TextCell {
+    margin-left:10px;
+    text-align:right;
+}
+
+
 .dataGridWidget {}
 .dataGridFirstColumn {}
 .dataGridLastColumn {}
@@ -10,7 +34,7 @@
 	margin-top: 10px;
 	vertical-align:center;
 	height:35px;
-	border-top:1px solid lightgray;
+	border-top:2px solid lightgray;
 }
 .dataGridFirstColumnFooter {}
 .dataGridLastColumnFooter {}
@@ -30,7 +54,7 @@
 	background-color: #ffffff;
 	height: 25px;
 	vertical-align: top;
-	border-bottom:1px solid lightgray;
+	border-bottom:2px solid lightgray;
 }
 
 .dataGridFirstColumnHeader {
@@ -87,5 +111,7 @@
 .dataGridKeyboardSelectedCell {
 	border: none;
 }
+
+
 
 

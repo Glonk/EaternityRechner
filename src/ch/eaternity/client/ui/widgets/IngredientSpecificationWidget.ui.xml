@@ -10,9 +10,6 @@
   	.box {
 		padding: 15px;
 		background-color: elightgreen;
-		width:230px;
-
-		
 	}	
 	
 	.floatRight{
@@ -59,7 +56,6 @@
 	.CostErrorLabel {}
 	
 	.questionImage {
-		width:40px;
 	}
 	
 	.CoherencePanel{
@@ -67,8 +63,6 @@
 		padding:10px;
 	}
 	.CoherenceHTML {
-		position:relative;
-		left:20px;
 	}
 	
   </ui:style>

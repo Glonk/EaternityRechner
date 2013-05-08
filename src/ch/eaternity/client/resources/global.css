@@ -1,4 +1,8 @@
-
+@def edarkgreen #a7b424;
+@def elightgreen #f0f4c2;
+@def eoddrow #f1f1f1;
+@def etextgray #666666;
+@def etextblack #222222;
 
 /* -----------------------------------------
    Text
@@ -44,33 +48,6 @@ header {
 }
 
 
-
-footer { 
-
-	padding-bottom: 0px;  
-	/* background: url(images/background_footer-icons.png) 52% -195% repeat-x ; */
-	 }
-footer .row { 
-/*		display:none;*/
-	margin-top: 0px; padding-top: 20px; padding-bottom: 0px;  margin-bottom: 0px; border-bottom: 0px solid #ddd; }
-
-footer h4 {
-	/* color:#EE7D31; */
-	color: #DE8D5B;
-
-	font-size: 12px;
-	font-weight: 600;
-/*	font-weight: bold */
-	text-transform: uppercase;
-	padding:0px;
-	margin-top:0px;
-	margin-bottom:6px;
-	
-}
-
-footer a { color: #F18224; text-decoration: none; line-height: inherit; }
-footer a:hover { color: #F18224; text-decoration: underline; }
-
 .container > footer {
   margin-top: 10px;
 }
@@ -79,15 +56,6 @@ footer a:hover { color: #F18224; text-decoration: underline; }
 }
 
 
-
-.weightTextInputCell input, td.weightTextInputCell input {
-    width:32px;
-}
-
-.co2TextCell, td.co2TextCell {
-    margin-left:10px;
-    text-align:right;
-}
 
 .productInfoItem {
 			float: right;
@@ -101,11 +69,6 @@ footer a:hover { color: #F18224; text-decoration: underline; }
 
 }
 
-
-
-a:link, a:visited, a:hover, a:active {
-  color: #000;
-}
 
 /* -----------------------------------------
    Rotation of Images
@@ -210,7 +173,35 @@ a:link, a:visited, a:hover, a:active {
   cursor: hand;
 }
 
+/* -----------------------------------------
+   Styling general TextBox
+----------------------------------------- */
+/*
+@external .gwt-TextBox;
+.gwt-TextBox {
+	border: none;
+	cursor: pointer;
+	cursor: hand;
+}
 
+.gwt-TextBox:hover {
+	border: none;
+}
+*/
 
+input:hover {
+	border: 1px solid #cccccc;
+	-webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.editableTextBox {
+	border:none;
+}
+
+.editableTextBox:hover {
+	border: 1px solid #cccccc;
+} 
 
 
