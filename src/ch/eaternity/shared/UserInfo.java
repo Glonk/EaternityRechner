@@ -31,6 +31,9 @@ public class UserInfo implements Serializable {
 	@Ignore
 	private String logoutUrl;
 	
+	/* not really representative, (double counting, every refresh counting but for comparing ok */
+	private Long loginCount = 0L;
+	
 	@Index
 	private String emailAddress;
 	private String nickname;
@@ -74,6 +77,14 @@ public class UserInfo implements Serializable {
 
 	public void setLogoutUrl(String logoutUrl) {
 		this.logoutUrl = logoutUrl;
+	}
+
+	public Long getLoginCount() {
+		return loginCount;
+	}
+
+	public void setLoginCount(Long loginCount) {
+		this.loginCount = loginCount;
 	}
 
 	public String getEmailAddress() {

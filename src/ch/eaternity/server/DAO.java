@@ -52,6 +52,8 @@ public class DAO
 				userInfo.setId(userId);
 				userInfo.setLoggedIn(true);
 			}
+			else
+				userInfo.setLoginCount(userInfo.getLoginCount() + 1);
 			
 			// reset everything in case it got changed or if a new user is created
 			userInfo.setEmailAddress(user.getEmail());
