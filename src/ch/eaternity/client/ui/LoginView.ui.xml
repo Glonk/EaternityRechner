@@ -87,10 +87,8 @@
 							<g:HTML ui:field='statusInfo' styleName='{style.statusInfo}'></g:HTML>
 							<g:HTML>
 								<div style='margin-top:30px; font-style:italic;'>
-								<b>Disclaimer</b><br />
-								<p>Diese Web-Applikation und ihre Inhalte sind Eigentum von Eaternity. Die Inhalte der Web-Applikation sind dem gemäss urheberrechtlich geschützt. Es ist verboten die
-					CO2-Datenbank oder Teile von ihr zu veröffentlichen, zu kopieren, zu speichern oder für gewerbliche Zwecke zu nutzen ohne vorherige schriftliche Zustimmung von Eaternity. Die CO2-Datenbank 
-					wird mit größter Sorgfalt erstellt. Eaternity übernimmt jedoch keine Gewähr für die Vollständigkeit und/oder Richtigkeit der veröffentlichten Daten.</p>
+								<b>Rechtshinweis</b><br />
+								<p>Es ist verboten, die CO2-Datenbank oder Teile von ihr zu veröffentlichen, zu kopieren, zu speichern oder für gewerbliche Zwecke zu nutzen.</p>
 								</div>
 							</g:HTML>
 
