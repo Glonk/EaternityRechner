@@ -9,10 +9,7 @@
 	@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
 		
 		.recipePanel {
-			/*border-left: 1px dashed #dfdfdf;*/
-			padding-right: 10px;
 			margin:0px;
-			/*this is for passing full available space to docklayoutpanels */ 
 			height:100%;
 		}
 		
@@ -35,8 +32,8 @@
 		/* The white background content wrapper */
 		.contentStart {
 			/*	display: none;*/
-			padding: 20px;
-			margin: 0 auto;
+			padding: 20px 20px 23px;
+			margin: 0px auto -3px;
 			border: 1.8px solid edarkgreen;
 			/*-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius:10px; border: 1.5px solid #FF8300;*/
 			background: #ffffff;
@@ -89,7 +86,7 @@
 					</b:Column>
 					<b:Column size="8" addStyleNames='{style.fullHeight}'>
 					
-							<g:SimplePanel ui:field='recipePanel' styleName='{style.recipePanel}'/>
+							<g:SimplePanel ui:field='recipePanel' addStyleNames='{style.fullHeight} {style.recipePanel}'/>
 							
 					</b:Column>
 				</b:Row>
@@ -97,41 +94,6 @@
 
 		</b:Container>
 	</g:center>
-	
-	<g:south size='2'>
-		<g:HTMLPanel>
-		<footer>
-		<b:Container>
-				
-				<b:Row>
-				
-				<!-- Footer Content -->
-					
-					<b:Column size="2"  >
-						<g:HTML>
-						<h4>&copy; &nbsp;2013 Eaternity</h4>
-						</g:HTML>
-					</b:Column>
-					<b:Column size="3"  >
-						<g:HTML>
-						<a href="http://eaternity.ch/legal"><h4>Haftbarkeit &amp; Rechtshinweise</h4></a>
-						</g:HTML>
-					</b:Column>
-					
-					<b:Column size="3" >
-						<g:HTML>
-						<a href="/infos/#kontakt"><h4>Kontakt</h4></a>
-						</g:HTML>
-					</b:Column>
-				
-				</b:Row>
-				
-				
-
-			</b:Container>
-		</footer>
-		</g:HTMLPanel>
-	</g:south>
 
 			
 </g:DockLayoutPanel>

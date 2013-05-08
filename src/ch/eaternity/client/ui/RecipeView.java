@@ -21,6 +21,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,12 +42,11 @@ public class RecipeView extends Composite {
 	private static Binder uiBinder = GWT.create(Binder.class);
 	
 	// ---------------------- User Interface Elements --------------
-	@UiField VerticalPanel alertPanel;
 	@UiField Button addRecipeButton;
 	@UiField Button addToCollectionButton;
 	@UiField Button generateReportButton;
 	
-	@UiField SimplePanel recipeDisplayWidget;
+	@UiField ScrollPanel recipeScrollPanel;
 	
 	// ---------------------- Class Variables ----------------------
 	
@@ -69,7 +69,6 @@ public class RecipeView extends Composite {
 		this.recipeDataProvider = dco.getRecipeDataProvider();
 		
 		// this shoud be in css
-		this.setHeight("600px");
 		addToCollectionButton.setVisible(false);
 		generateReportButton.setVisible(false);
 		
@@ -111,7 +110,7 @@ public class RecipeView extends Composite {
 	    recipeDataProvider.setList(dco.getRecipeInfos());
 	    
 	    // Add it to the display panel.
-	    recipeDisplayWidget.setWidget(cellList);
+	    recipeScrollPanel.setWidget(cellList);
 		
 		bind();
 	}
@@ -147,7 +146,7 @@ public class RecipeView extends Composite {
 					@Override
 					public void onEvent(final AlertEvent event) {
 						if (event.destination == AlertEvent.Destination.VIEW || event.destination == AlertEvent.Destination.BOTH) {
-							alertPanel.insert(event.alert, 0);
+							//alertPanel.insert(event.alert, 0);
 							
 							Timer t = new Timer() {
 								public void run() {
