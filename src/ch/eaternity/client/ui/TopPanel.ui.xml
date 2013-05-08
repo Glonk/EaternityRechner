@@ -22,25 +22,22 @@
 	}
 	
 	.recipesMenuBox {
-		/* position:relative;
-		bottom:-7px;
-		right:-16px;
-		float:right; */
-		margin-top:30px;
-		margin-bottom:0px;
+		position:absolute;
+		bottom:-1px;
+		max-width:350px;
 	}
 	
 	
 	.manageBox {
 		padding-left:20px;
 		margin-right:-20px;
-		margin-top:30px;
+		margin-top:27px;
 		margin-bottom:0px;
-
+		float:right;
 	}
 	
 	.spinnerHeight {
-	  /* height:30px; */
+		height:30px;
 	}
 
 	
@@ -78,9 +75,13 @@
 		margin-right:20px; */
 	}
 	
+	.spinnerHTML {
+		float:left;
+	}
+	
 	.spinnerLabel {
 		color:darkgray;
-		/* margin-left:10px; */
+		margin-left:10px;
 	}
 
 	
@@ -111,27 +112,29 @@
 				</b:Column>
 		
 				<b:Column size="2">
-					<g:HorizontalPanel ui:field='spinnerColumn' styleName='{style.spinnerHeight}'>
-						<g:HTML ui:field="spinnerHTML"/>
-						<g:Label ui:field="spinnerLabel" styleName='{style.spinnerLabel}' />
-					</g:HorizontalPanel>
+					<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
 				</b:Column>
 				
-				<b:Column size="5" >
+				<b:Column size="8" >
+					<g:HTMLPanel styleName='{style.manageBox}'>
+						<b:Tooltip placement="TOP" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
+						<g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/>
+						<b:Tooltip placement="TOP" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
+						<!--  <b:Tooltip placement="TOP" text='Saison-Datum'>--><b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='dateBox' styleName='{style.anchorImages}'/><!-- </b:Tooltip>-->		
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel ui:field='spinnerColumn' styleName='{style.spinnerHeight}'>
+							<g:HTML ui:field="spinnerHTML" styleName='{style.spinnerHTML}'/>
+							<g:Label ui:field="spinnerLabel" styleName='{style.spinnerLabel}' />
+					</g:HTMLPanel>
+					
 					<g:HTMLPanel styleName='{style.recipesMenuBox}'>
 						<g:MenuBar ui:field='recipesMenuBar' />
 					</g:HTMLPanel>
-				</b:Column>
-			
-				<b:Column size="3"  >
-					<g:HTMLPanel styleName='{style.manageBox}'>
-						<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
-						<b:Tooltip placement="TOP" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
-						<b:Tooltip placement="TOP" text='Saison-Datum'><g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/></b:Tooltip>
-						<b2:DateBox format="dd/mm/yyyy" autoClose="true" ui:field='dateBox'/>
-		
-						<b:Tooltip placement="TOP" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
-					</g:HTMLPanel>
+					
+					
+
+					
 				</b:Column>
 			
 			</b:Row>

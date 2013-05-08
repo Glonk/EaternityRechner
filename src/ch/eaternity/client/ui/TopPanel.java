@@ -32,6 +32,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -55,7 +56,7 @@ public class TopPanel extends Composite {
 	@UiField Image contactImage;
 	@UiField Image signOutImage;
 	  
-	@UiField HorizontalPanel spinnerColumn;
+	@UiField HTMLPanel spinnerColumn;
 	@UiField HTML spinnerHTML;
 	@UiField Label spinnerLabel;
 	  
@@ -84,8 +85,10 @@ public class TopPanel extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		
 		adminMenuBar.setVisible(false);
-		dateBox.setVisible(false);
+		dateBox.setVisible(true);
 		dateBox.setStartView("MONTH");
+		//dateBox.setFormat("dd. MM yyyy");
+		calendarImage.setVisible(false);
 		
 		spinnerColumn.setVisible(false);
 		spinnerHTML.setHTML("<img src='images/spinner_small.gif' />");
@@ -289,11 +292,12 @@ public class TopPanel extends Composite {
 			case PUBLIC: publicMenu.addStyleName(selectedRecipeScopeMarking);break;
 		}	
 	}
+	/*
 	@UiHandler("calendarImage")
 	public void onCalendarClick(ClickEvent event) {
 		dateBox.setVisible(!dateBox.isVisible());
 	}
-	
+	*/
 	@UiHandler("contactImage")
 	public void onContactClick(ClickEvent event) {
 		Window.open("mailto:info@eaternity.ch", "_blank", "");
@@ -308,7 +312,7 @@ public class TopPanel extends Composite {
 
 	@UiHandler("dateBox")
 	void onValueChange(ValueChangeEvent<Date> event) {
-		dateBox.setVisible(false);
+		//dateBox.setVisible(false);
 		dco.changeDate(dateBox.getValue());
 	}
 }
