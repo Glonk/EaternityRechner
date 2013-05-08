@@ -239,10 +239,10 @@ public class IngredientSpecificationWidget extends Composite {
 	
 	
 	public void updateSeasonCoherency() {
-		if (product.isSeasonDependant()) {
+		if (product != null && product.isSeasonDependant()) {
 			SeasonDate begin = product.getSeason().getBeginning();
 			SeasonDate end = product.getSeason().getEnd();
-			SeasonDate date = new SeasonDate(recipeEdit.getRecipe().getCookingDate());
+			SeasonDate date = new SeasonDate(dco.getCurrentDate());
 			
 			String seasonText = "von <strong>" + begin.toMonthString() + "</strong> bis <strong>" + end.toMonthString() + "</strong>";
 			

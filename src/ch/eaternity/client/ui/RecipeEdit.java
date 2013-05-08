@@ -14,6 +14,8 @@ import ch.eaternity.client.events.IngredientAddedEvent;
 import ch.eaternity.client.events.IngredientAddedEventHandler;
 import ch.eaternity.client.events.LoginChangedEvent;
 import ch.eaternity.client.events.LoginChangedEventHandler;
+import ch.eaternity.client.events.MonthChangedEvent;
+import ch.eaternity.client.events.MonthChangedEventHandler;
 import ch.eaternity.client.events.RecipeLoadedEvent;
 import ch.eaternity.client.events.RecipeLoadedEventHandler;
 import ch.eaternity.client.place.RechnerRecipeEditPlace;
@@ -27,10 +29,12 @@ import ch.eaternity.shared.Recipe;
 import ch.eaternity.shared.SavingPotential;
 import ch.eaternity.shared.Season;
 import ch.eaternity.shared.SeasonDate;
+import ch.eaternity.shared.UserInfo;
 import ch.eaternity.shared.Util;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Close;
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.datepicker.client.ui.DateBox;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -73,7 +77,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -103,10 +106,17 @@ public class RecipeEdit extends Composite {
 	
 	public interface DataGridResource extends DataGrid.Resources
 	{
-	   public interface DataGridStyle extends DataGrid.Style {};
-
+	   public interface DataGridStyle extends DataGrid.Style {
+		   String co2Header();
+		   String removeCell();
+		   String weightTextInputCell();
+		   String co2TextCell();
+	   };
+	   
 	   @Source({"../resources/ingredientDataGrid.css"})
 	   DataGridStyle dataGridStyle();
+	   
+	   
 	};
 	
 	DataGridResource dataGridResource = GWT.create(DataGridResource.class);
@@ -189,6 +199,8 @@ public class RecipeEdit extends Composite {
 		duplicateButton.setEnabled(false);
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
+		
+		recipeDateBox.setVisible(false);
 		commentTable.setVisible(false);
 		deleteImage.setVisible(false);
 		
@@ -244,6 +256,14 @@ public class RecipeEdit extends Composite {
 					public void onEvent(LoginChangedEvent event) {
 						if (recipe != null)
 							updateLoginSpecificParameters();
+					}
+				});
+		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE,
+				new MonthChangedEventHandler() {
+					@Override
+					public void onEvent(MonthChangedEvent event) {
+						ingSpecWidget.updateSeasonCoherency();
+						ingredientDataGrid.redraw();
 					}
 				});
 		presenter.getEventBus().addHandler(RecipeLoadedEvent.TYPE,
@@ -322,7 +342,9 @@ public class RecipeEdit extends Composite {
 	}
 	
 	public void updateLoginSpecificParameters() {
-		if (dco.getUserInfo() != null && dco.getUserInfo().isLoggedIn()) {
+		UserInfo userInfo = dco.getUserInfo();
+
+		if (userInfo != null && userInfo.isLoggedIn()) {
 			setImageUrl(Resources.INSTANCE.recipeImageDefault().getURL(), true);
 			initializeCommentingField();
 			
@@ -333,6 +355,9 @@ public class RecipeEdit extends Composite {
 			duplicateButton.setEnabled(true);
 			deleteButton.setEnabled(true);
 			saveButton.setEnabled(true);
+		}
+		if (userInfo != null && userInfo.isLoggedIn() && userInfo.isAdmin()) {
+			recipeDateBox.setVisible(true);
 		}
 	}
 	
@@ -455,8 +480,6 @@ public class RecipeEdit extends Composite {
 	@UiHandler("recipeDateBox")
 	void onValueChange(ValueChangeEvent<Date> event) {
 		recipe.setCookingDate(recipeDateBox.getValue());
-		ingredientDataGrid.redraw();
-		ingSpecWidget.updateSeasonCoherency();
 		changeSaveStatus(false);
 	}
 
@@ -570,7 +593,7 @@ public class RecipeEdit extends Composite {
 			@Override 
 	        public String getCellStyleNames(Context context, Ingredient ingredient)
 	        {
-	            return "weightTextInputCell";
+	            return dataGridResource.dataGridStyle().weightTextInputCell();
 	        }
 		};
 
@@ -601,7 +624,7 @@ public class RecipeEdit extends Composite {
 				Season season = ingredient.getFoodProduct().getSeason();
 				if(season != null){
 
-					SeasonDate date = new SeasonDate(recipe.getCookingDate());
+					SeasonDate date = new SeasonDate(dco.getCurrentDate());
 					
 					if( !ingredient.getProduction().getSymbol().equalsIgnoreCase("GH") && 
 						ingredient.getCondition().getSymbol().equalsIgnoreCase("frisch") && 
@@ -662,7 +685,7 @@ public class RecipeEdit extends Composite {
 			@Override 
 	        public String getCellStyleNames(Context context, Ingredient ingredient)
 	        {
-	            return Resources.INSTANCE.style().co2TextCell();//"co2TextCell";
+	            return dataGridResource.dataGridStyle().co2TextCell();//"co2TextCell";
 	        }
 		};
 		
@@ -674,11 +697,16 @@ public class RecipeEdit extends Composite {
 				removeIngredient(ingredient);
 			}
 		};
-		
-		Column<Ingredient, Ingredient> removeColumn = new Column<Ingredient, Ingredient>(new ImageActionCell<Ingredient>(Resources.INSTANCE.deleteSmall(), actionDelegate)) {
+
+		Column<Ingredient, Ingredient> removeColumn = new Column<Ingredient, Ingredient>(new ImageActionCell<Ingredient>(
+						Resources.INSTANCE.deleteSmall(), actionDelegate)) {
 			@Override
 			public Ingredient getValue(Ingredient ingredient) {
 				return ingredient;
+			}
+
+			public String getCellStyleNames(Context context, Ingredient ingredient) {
+				return dataGridResource.dataGridStyle().removeCell();
 			}
 		};
 
@@ -691,7 +719,7 @@ public class RecipeEdit extends Composite {
 		ingredientDataGrid.setColumnWidth(regionalColumn, 25.0, Unit.PX);
 		ingredientDataGrid.setColumnWidth(ratingColumn, 25.0, Unit.PX);
 		ingredientDataGrid.setColumnWidth(co2Column, 50.0, Unit.PX);
-		ingredientDataGrid.setColumnWidth(removeColumn, 25.0, Unit.PX);
+		ingredientDataGrid.setColumnWidth(removeColumn, 40.0, Unit.PX);
 
 		ingredientDataGrid.addColumn(weightInputColumn, "Menge", "SUMME");
 		ingredientDataGrid.addColumn(nameColumn, "Zutat");
