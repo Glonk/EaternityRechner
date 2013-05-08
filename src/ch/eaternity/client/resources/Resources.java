@@ -93,4 +93,7 @@ public interface Resources extends ClientBundle {
 	
 	@Source("arrow-sort.png")
 	public ImageResource arrowSort();
+	
+	@Source("rechner.png")
+	public ImageResource rechner();
 }

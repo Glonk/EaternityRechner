@@ -32,7 +32,7 @@
 		/* The white background content wrapper */
 		.contentStart {
 			/*	display: none;*/
-			padding: 20px 20px 23px;
+			padding: 20px 20px 17px;
 			margin: 0px auto -3px;
 			border: 1.8px solid edarkgreen;
 			/*-webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius:10px; border: 1.5px solid #FF8300;*/

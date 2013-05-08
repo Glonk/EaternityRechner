@@ -21,6 +21,11 @@
 		margin-right:-10px;
 	}
 	
+	.rechnerImage {
+		margin-top:11px;
+		margin-left:-57px;
+	}
+	
 	.recipesMenuBox {
 		position:absolute;
 		bottom:-1px;
@@ -113,6 +118,7 @@
 		
 				<b:Column size="2">
 					<g:MenuBar ui:field='adminMenuBar' addStyleNames='{style.adminMenuBar}'/>
+					<g:Image resource='{res.rechner}' styleName='{style.rechnerImage}'></g:Image>
 				</b:Column>
 				
 				<b:Column size="8" >
