@@ -2,6 +2,8 @@ package ch.eaternity.client.ui;
 
 import ch.eaternity.client.DataController;
 import ch.eaternity.client.activity.RechnerActivity;
+import ch.eaternity.client.events.AlertEvent;
+import ch.eaternity.client.events.AlertEventHandler;
 import ch.eaternity.client.events.UpdateRecipeViewEvent;
 import ch.eaternity.client.events.UpdateRecipeViewEventHandler;
 
@@ -13,6 +15,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -31,6 +34,7 @@ public class RechnerView extends SimpleLayoutPanel {
 	}
 
 	// ----------------- Class Variables -------------------
+//	@UiField SimplePanel alertPanel;
 	@UiField DockLayoutPanel workspace;
 	@UiField TopPanel topPanel;
 	@UiField SimplePanel searchPanel;
@@ -59,10 +63,21 @@ public class RechnerView extends SimpleLayoutPanel {
 		setWidget(uiBinder.createAndBindUi(this));
 		
 		// ---------------- Listen to the EventBus ----------------
-		presenter.getEventBus().addHandler(UpdateRecipeViewEvent.TYPE,
-				new UpdateRecipeViewEventHandler() {
+		presenter.getEventBus().addHandler(AlertEvent.TYPE,
+				new AlertEventHandler() {
 					@Override
-					public void onEvent(UpdateRecipeViewEvent event) {
+					public void onEvent(final AlertEvent event) {
+						if (event.destination == AlertEvent.Destination.VIEW || event.destination == AlertEvent.Destination.EDIT || event.destination == AlertEvent.Destination.BOTH) {
+							//alertPanel.setWidget(event.alert);
+							
+							Timer t = new Timer() {
+								public void run() {
+									//event.alert.close();
+								}
+							};
+							if (event.timeDisplayed != null)
+								t.schedule(event.timeDisplayed);
+						}
 					}
 				});
 	}

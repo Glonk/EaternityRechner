@@ -8,6 +8,16 @@
 	<ui:style>
 	@eval edarkgreen ch.eaternity.client.resources.Resources.INSTANCE.constants().edarkgreen();
 		
+		.alertPanel {
+			positon:absolute;
+			width:400px;
+			top:20px;
+			height:100px;
+			left:50%;
+			background:transparent;
+			z-index:200000;
+		}
+		
 		.recipePanel {
 			margin:0px;
 			height:100%;
@@ -70,6 +80,8 @@
 		<b:Container>
 				<!-- Top Content -->
 				
+			
+				
 			<rechner:TopPanel ui:field='topPanel' />
 			    
 		</b:Container>
@@ -90,6 +102,8 @@
 							
 					</b:Column>
 				</b:Row>
+				
+				<!--  does not work yet ... <g:SimplePanel ui:field='alertPanel' styleName='{style.alertPanel}'></g:SimplePanel>-->
 				
 
 		</b:Container>
