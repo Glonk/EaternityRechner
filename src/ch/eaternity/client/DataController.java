@@ -484,20 +484,16 @@ public class DataController {
 				}
 				// only look for alternatives, if there is only 1 result
 				if(products.size() == 1){
-					FoodProductInfo product = products.get(0);
-					if(product.getSubstituteIds() != null){
-						for(Long alternativen_id : product.getSubstituteIds()){
-							for(FoodProductInfo zutat2 : cdata.productInfos){
-								if(zutat2.getId().equals(alternativen_id)){
-									if(!alternatives.contains(zutat2)){
-										zutat2.setNotASubstitute(false);
-										alternatives.add(zutat2);
-									}
+					for(Long alternativen_id : products.get(0).getSubstituteIds()){
+						for(FoodProductInfo zutat2 : cdata.productInfos){
+							if(zutat2.getId().equals(alternativen_id)){
+								if(!alternatives.contains(zutat2)){
+									zutat2.setNotASubstitute(false);
+									alternatives.add(zutat2);
 								}
 							}
 						}
 					}
-
 				}
 			}
 		}

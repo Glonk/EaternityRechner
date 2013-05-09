@@ -79,7 +79,7 @@
 			float:right;
 		}
 		
-		.legal {
+		.legal, .legal:visited {
 			color: #DE8D5B;
 			font-weight:600;
 		}

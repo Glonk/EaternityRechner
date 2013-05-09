@@ -191,7 +191,7 @@
 		
 			<!-- Close Recipe Button -->
 			<g:DockLayoutPanel unit='EM' styleName='{style.LabelBox}'>
-				<g:east size="18">
+				<g:east size='20'>
 					<g:HTMLPanel styleName='{style.floatRight}'>
 						<b:Close ui:field="closeRecipe" addStyleNames='{style.floatRight}' />
 						<g:Image ui:field="co2Image" styleName='{style.co2Image}'></g:Image>

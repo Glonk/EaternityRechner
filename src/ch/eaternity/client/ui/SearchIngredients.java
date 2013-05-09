@@ -125,41 +125,21 @@ public class SearchIngredients extends ResizeComposite {
 		this.presenter = presenter;
 		this.dco = presenter.getDCO();
 		
-		// this makes switching views (places) very slow... if it get's build each time again
 		if(dco.editDataLoaded()) {
 			updateResults("");
 			sortResults(SortMethod.CO2VALUE, false);
 			markRow(0);
 			
 		}
-		
-		//if changing this, .scroll class must also be changed!
-		//this.setHeight("690px");
-		
-
 		    
 		// Create a cell to render each value in the list.
 	    ProductCell productCell = new ProductCell(this);
 	    
 	    // Create a CellList that uses the cell.
 	    cellList = new CellList<FoodProductInfo>(productCell, cellListResource, keyProvider);
-	    
-	    setupOnePageList(cellList);
-	    
+	    setupOnePageList(cellList); 
 	    cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-	    
 	    cellList.setSelectionModel(selectionModel);
-	    /*
-	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		FoodProductInfo selected = selectionModel.getSelectedObject();
-		        if (selected != null) {
-		        	addFoodProduct(selected);
-		        	selectionModel.setSelected(selected, false);
-		        }
-	    	}
-	    });
-	    */
 	    
 	    // Connect the list to the data provider.
 	    productDataProvider.addDataDisplay(cellList);
@@ -234,7 +214,6 @@ public class SearchIngredients extends ResizeComposite {
 	public void onKeyUp(KeyUpEvent event) {
 		if( !SearchInput.getText().trim().equals(searchString))
 			updateResults(SearchInput.getText());
-		
 	}
 	
 	
@@ -279,6 +258,7 @@ public class SearchIngredients extends ResizeComposite {
 
 	public void updateResults(String searchString) {
 		SearchInput.setText(searchString);
+		this.searchString = searchString.trim();
 		
 		// Add the data to the data provider, which automatically pushes it to the widget.
 	    List<FoodProductInfo> productList = productDataProvider.getList(); 

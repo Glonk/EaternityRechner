@@ -14,6 +14,7 @@
 
 .weightTextInputCell input, td.weightTextInputCell input {
     width:32px;
+    text-align:right;
 }
 
 .co2TextCell, td.co2TextCell {
