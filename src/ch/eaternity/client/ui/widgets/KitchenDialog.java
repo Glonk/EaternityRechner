@@ -68,7 +68,7 @@ public class KitchenDialog extends DialogBox{
 	@UiField Button addDevice;
 	*/
 	
-	@UiField CellTable<KitchenUser> usersCellTable = new CellTable<KitchenUser>(KEY_PROVIDER);
+	@UiField CellTable<KitchenUser> usersCellTable = new CellTable<KitchenUser>(200, KEY_PROVIDER);
 	@UiField Button addPerson;
 	@UiField CheckBox betaCheckBox;
 	
