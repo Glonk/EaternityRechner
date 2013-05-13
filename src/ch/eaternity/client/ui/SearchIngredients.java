@@ -19,6 +19,8 @@ import ch.eaternity.client.ui.cells.ProductCell;
 import ch.eaternity.shared.FoodProductInfo;
 import ch.eaternity.shared.Util.SortMethod;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -49,7 +51,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * this class extends resize composite to propperly propagate down the onResize events to child widgets
- * @author aurelianjaggi
+ * @author aurelianjaggi and mklarmann
  *
  */
 public class SearchIngredients extends ResizeComposite {
@@ -67,6 +69,11 @@ public class SearchIngredients extends ResizeComposite {
 	@UiField Anchor saisonOrder;
 	@UiField Anchor co2Order;
 	@UiField Anchor alphOrder;
+	
+	// The Legend
+	@UiField Anchor showDisclaimer;
+	@UiField Modal disclaimerModal;
+	@UiField Button closeDisclaimer;
 	
 	// ---------------------- Class Variables ----------------------
 	
@@ -207,6 +214,16 @@ public class SearchIngredients extends ResizeComposite {
 		sortResults(SortMethod.SEASON, reversSortArray[0]);
 	}
 	
+	// Legend
+	@UiHandler("showDisclaimer")
+	void onshowDisclaimer(ClickEvent event) {
+		disclaimerModal.show();
+	}
+	
+	@UiHandler("closeDisclaimer")
+	void onCloseDisclaimer(ClickEvent event) {
+		disclaimerModal.hide();
+	}
 	
 	
 	// Handle search input

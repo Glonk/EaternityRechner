@@ -86,7 +86,12 @@
 		.legal:hover {
 			color: #F18224;
 		}
+	
+		.disclaimer {
+	width:100%;
+	height:100%;
 
+		}
 
 	</ui:style>
 
@@ -131,8 +136,18 @@
 				<strong>[ g* ]</strong> : g CO2-Äquivalent
 			</div>
 
-				<div class='{style.legalBox}' ><a class='{style.legal}' href="http://eaternity.ch/legal">Haftbarkeit &amp; Rechtshinweise</a></div>
+				<div class='{style.legalBox}' ><g:Anchor styleName='{style.legal}' ui:field="showDisclaimer">Haftbarkeit &amp; Rechtshinweise</g:Anchor></div>
 				<span class='{style.copyright}'>&copy; &nbsp;2013 Eaternity</span>
+				
+				<b:Modal ui:field="disclaimerModal" title="My Modal" backdrop="STATIC" keyboard="true" animation="true">
+				    <g:Label>Bitte beachten Sie die Rechtshinweise.</g:Label>
+				    <g:ScrollPanel>
+				    	<g:Frame styleName='{style.disclaimer}' url="http://eaternity.ch/legal"></g:Frame>
+					</g:ScrollPanel>
+				    <b:ModalFooter>
+				        <b:Button icon="LEGAL"  ui:field="closeDisclaimer" type="SUCCESS">Akzeptieren</b:Button>
+				    </b:ModalFooter>
+				</b:Modal>
 						
 			</g:HTMLPanel>
 		
