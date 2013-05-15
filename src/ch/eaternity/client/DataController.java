@@ -2,6 +2,7 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -466,10 +467,38 @@ public class DataController {
 		products.clear();
 		alternatives.clear();
 		
-		if(searchString.trim().length() > 0){
-
- 			String[] searches = searchString.split(" ");
-
+		products.addAll(cdata.productInfos);
+		
+		searchString = searchString.trim();
+		
+		if(searchString.length() > 0 && searchString.length() <= 2){
+			Iterator<FoodProductInfo> iterator = products.iterator();
+ 			while(iterator.hasNext()) {
+ 				FoodProductInfo foodProduct = iterator.next();
+ 				if (searchString.trim().length() <= foodProduct.getName().length() && !foodProduct.getName().substring(0,searchString.length()).equalsIgnoreCase(searchString.substring(0,searchString.length()))) {
+ 					iterator.remove();
+ 				}
+ 			}
+		}
+ 		else if(searchString.trim().length() > 1) {
+ 			String[] searchStrings = searchString.split(" ");
+ 			
+ 			Iterator<FoodProductInfo> iterator = products.iterator();
+ 			while(iterator.hasNext()) {
+ 			
+ 				FoodProductInfo foodProduct = iterator.next();
+ 				
+ 				// the whitespace is an AND operator
+ 				for(int i = 0; i < searchStrings.length; i++) {
+ 					String partSearchString = searchStrings[i].toLowerCase();
+ 					
+ 					if (!foodProduct.getName().toLowerCase().contains(partSearchString) ) {
+ 						iterator.remove();
+ 						break;
+ 					}
+ 				}
+ 			}
+ 			/*
 			// consider strings with whitespaces, seek for each string individually
 			for(String search : searches)
 			{
@@ -496,13 +525,7 @@ public class DataController {
 					}
 				}
 			}
-		}
-		else {
-			// the search routine is also fast enough, the lag comes later
-			for(FoodProductInfo product : cdata.productInfos){
-				products.add(product);
-				product.setNotASubstitute(true);
-			}
+			*/
 		}
 	}
 	
