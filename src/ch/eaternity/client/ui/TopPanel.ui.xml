@@ -59,6 +59,10 @@
 		cursor: pointer;
 	}
 	
+	.dateBox {
+		width:150px;
+	}
+	
 /*
 	.iconsPanel {
 		margin-bottom:20px; 
@@ -88,7 +92,6 @@
 		color:darkgray;
 		margin-left:10px;
 	}
-
 	
 
 	
@@ -122,11 +125,13 @@
 				</b:Column>
 				
 				<b:Column size="8" >
+					
 					<g:HTMLPanel styleName='{style.manageBox}'>
+						
 						<b:Tooltip placement="TOP" text='Abmelden'><g:Image ui:field='signOutImage' resource='{res.logout}' styleName='{style.anchorImages}'/></b:Tooltip>
 						<g:Image ui:field='calendarImage' resource='{res.calendar}' styleName='{style.anchorImages}'/>
-						<b:Tooltip placement="TOP" text='Feedback an Eaternity senden'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
-						<!--  <b:Tooltip placement="TOP" text='Saison-Datum'>--><b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='dateBox' styleName='{style.anchorImages}'/><!-- </b:Tooltip>-->		
+						<b:Tooltip placement="TOP" text='Eaternity kontaktieren'><g:Image ui:field='contactImage' resource='{res.contact}' styleName='{style.anchorImages}'/></b:Tooltip>
+						<!--  <b:Tooltip placement="TOP" text='Saison-Datum'>--><b2:DateBox format="dd. MM yyyy" autoClose="true" ui:field='dateBox' styleName='{style.dateBox}'/><!-- </b:Tooltip>-->		
 					</g:HTMLPanel>
 					
 					<g:HTMLPanel ui:field='spinnerColumn' styleName='{style.spinnerHeight}'>

@@ -55,42 +55,47 @@
 		}
 		
 		.legendPanel {
-			margin-top: 10px;
-			line-height: 26px;
+			margin-top: 12px;
+			line-height: 23px;
 		}
 		
 		.legendImages {
-			margin-right: 5px;
-			margin-left: 5px;
+			margin-right: 4px;
 		}
 		
-		.legendImages2 {
-			margin-right: 15px;
-			margin-left: 5px;
-		}
 		
 		.legendLines {
+		}
+		
+		.legendLabel {
+			display:inline-block;
+			margin-right:34px;
 		}
 		
 		.copyright {
 		}
 		
-		.legalBox {
-			float:right;
+		.tooltip {
+			z-index:2000;
 		}
 		
-		.legal, .legal:visited {
-			color: #DE8D5B;
+		.legalBox {
+			overflow:hidden;
+			white-space: nowrap;	
+		}
+		
+		.co2Legend {
 			font-weight:600;
 		}
-		.legal:hover {
-			color: #F18224;
-		}
+
 	
 		.disclaimer {
-	width:100%;
-	height:100%;
-
+			width:100%;
+			height:100%;
+		}
+		.feedbackAnchor {
+			float:right;
+			margin-left:4px;
 		}
 
 	</ui:style>
@@ -120,23 +125,20 @@
 		  </g:ScrollPanel>
 		</g:center>
 
-		<g:south size="9.5">
-			<g:HTMLPanel styleName='{style.legendPanel}'><div class='{style.legendLines}'>Legende</div>
+		<g:south size="5.5">
+			<g:HTMLPanel styleName='{style.legendPanel}'>
 			<div class='{style.legendLines}'>
-				<b:Tooltip text="unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Tooltip>gute
-				<b:Tooltip text="unter 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar2}' styleName='{style.legendImages}'/></b:Tooltip>mittel
-				<b:Tooltip text="über 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar3}' styleName='{style.legendImages}'/></b:Tooltip>schlechte&nbsp;&nbsp;CO2-Bilanz
+				<div class='{style.legendLabel}'>Legende: </div>
+				<b:Popover text="gute CO2-Bilanz: unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Popover>
+				<b:Tooltip text="mitelmässige CO2-Bilanz: unter 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar2}' styleName='{style.legendImages}'/></b:Tooltip>
+				<b:Tooltip text="schlechte CO2-Bilanz: über 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar3}' styleName='{style.legendImages}'/></b:Tooltip>
+				<b:Tooltip text="Regional: unter 200km Transportdistanz"><g:Image resource='{res.region}' styleName='{style.legendImages}'/></b:Tooltip>
+				<b:Tooltip text="Saisonal in der Schweiz"><g:Image resource='{res.season}' styleName='{style.legendImages}'/></b:Tooltip>
+				<b:Tooltip text="Biologisch"><g:Image resource='{res.bio}' styleName='{style.legendImages}'/></b:Tooltip>
+				<b:Tooltip text="[ g* ] : g CO2-Äquivalent"><b:Label styleName='{style.co2Legend}'>[ g* ]</b:Label></b:Tooltip>
 			</div>
-			<div class='{style.legendLines}'>
-				<b:Tooltip text="unter 200km Transportdistanz"><g:Image resource='{res.region}' styleName='{style.legendImages2}'/></b:Tooltip>regional
-				<g:Image resource='{res.season}' styleName='{style.legendImages2}'/>saisonal
-				<g:Image resource='{res.bio}' styleName='{style.legendImages2}'/>biologisch
-			</div>
-			<div class='{style.legendLines}'>
-				<strong>[ g* ]</strong> : g CO2-Äquivalent
-			</div>
-
-				<div class='{style.legalBox}' ><g:Anchor styleName='{style.legal}' ui:field="showDisclaimer">Haftbarkeit &amp; Rechtshinweise</g:Anchor></div>
+				<g:Anchor ui:field='feedbackAnchor' addStyleNames='{style.feedbackAnchor}' styleName='{res.style.generalAnchor}' href='https://docs.google.com/a/eaternity.ch/forms/d/12KbLmDePOc-twZZKBD-4v8AS4IIDzkwAmYe9aWDZjbE/viewform'>Feedback senden</g:Anchor>
+				<div class='{style.legalBox}' ><g:Anchor styleName='{res.style.generalAnchor}' ui:field="showDisclaimer" href='javascript:;'>Haftbarkeit &amp; Rechtshinweise</g:Anchor></div>
 				<span class='{style.copyright}'>&copy; &nbsp;2013 Eaternity</span>
 				
 				<b:Modal ui:field="disclaimerModal" title="My Modal" backdrop="STATIC" keyboard="true" animation="true">
@@ -146,6 +148,13 @@
 					</g:ScrollPanel>
 				    <b:ModalFooter>
 				        <b:Button icon="LEGAL"  ui:field="closeDisclaimer" type="SUCCESS">Akzeptieren</b:Button>
+				    </b:ModalFooter>
+				</b:Modal>
+				
+				<b:Modal ui:field="feedbackModal" title="My Modal" backdrop="STATIC" keyboard="true" animation="true">
+				    <g:Frame styleName='{style.disclaimer}' url="https://docs.google.com/a/eaternity.ch/forms/d/12KbLmDePOc-twZZKBD-4v8AS4IIDzkwAmYe9aWDZjbE/viewform" />
+				    <b:ModalFooter>
+				        <b:Button ui:field="closeButton" type="SUCCESS">Fenster schliessen</b:Button>
 				    </b:ModalFooter>
 				</b:Modal>
 						

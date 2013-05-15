@@ -20,6 +20,7 @@ public interface Resources extends ClientBundle {
 		String rotate180();
 		String rotate270();
 		String editableTextBox();
+		String generalAnchor();
 	}
 	
 	interface Constants extends CssResource {

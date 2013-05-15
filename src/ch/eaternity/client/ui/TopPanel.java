@@ -19,6 +19,8 @@ import ch.eaternity.client.ui.widgets.KitchenDialog;
 import ch.eaternity.shared.Kitchen;
 import ch.eaternity.shared.Util.RecipeScope;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.datepicker.client.ui.DateBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,6 +32,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -87,7 +90,7 @@ public class TopPanel extends Composite {
 		adminMenuBar.setVisible(false);
 		dateBox.setVisible(true);
 		dateBox.setStartView("MONTH");
-		//dateBox.setFormat("dd. MM yyyy");
+		dateBox.setFormat("dd. MM yyyy");
 		calendarImage.setVisible(false);
 		
 		spinnerColumn.setVisible(false);
@@ -96,8 +99,7 @@ public class TopPanel extends Composite {
 		
 		kitchenMenu.setVisible(false);
 		kitchenMenu.setAutoOpen(true);
-		
-
+	
 	}
 	
 	public void setPresenter(RechnerActivity presenter) {
@@ -298,6 +300,8 @@ public class TopPanel extends Composite {
 		dateBox.setVisible(!dateBox.isVisible());
 	}
 	*/
+
+	
 	@UiHandler("contactImage")
 	public void onContactClick(ClickEvent event) {
 		Window.open("mailto:info@eaternity.ch", "_blank", "");

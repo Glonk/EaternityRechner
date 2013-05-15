@@ -66,9 +66,17 @@ header {
 	padding:5px;
 	background-color:#ebebeb;
 	margin-bottom:5px;
-
 }
 
+.generalAnchor, generalAnchor:visited {
+	color:#EE7D31;
+	text-decoration: none;
+}
+
+.generalAnchor:hover {
+	color:#EE7D31;
+	text-decoration: undeline;
+}
 
 /* -----------------------------------------
    Rotation of Images

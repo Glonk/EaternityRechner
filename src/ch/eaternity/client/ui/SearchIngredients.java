@@ -75,6 +75,10 @@ public class SearchIngredients extends ResizeComposite {
 	@UiField Modal disclaimerModal;
 	@UiField Button closeDisclaimer;
 	
+	@UiField Anchor feedbackAnchor;
+	@UiField Modal feedbackModal;
+	@UiField Button closeButton;
+	
 	// ---------------------- Class Variables ----------------------
 	
 	// initialize a key provider to refer to the same selection states
@@ -121,7 +125,7 @@ public class SearchIngredients extends ResizeComposite {
 	public SearchIngredients() {
 		
 		initWidget(uiBinder.createAndBindUi(this));
-		
+		feedbackAnchor.setTarget("_blank");
 		// we have to wait till the database is loaded:
 		SearchInput.setText("wird geladen...");
 		SearchInput.setFocus(true);
@@ -223,6 +227,16 @@ public class SearchIngredients extends ResizeComposite {
 	@UiHandler("closeDisclaimer")
 	void onCloseDisclaimer(ClickEvent event) {
 		disclaimerModal.hide();
+	}
+	
+	// Feedback
+	@UiHandler("feedbackAnchor")
+	public void onFeedbackClick(ClickEvent event) {
+		feedbackModal.show();
+	}
+	@UiHandler("closeButton")
+	public void onCloseClick(ClickEvent event) {
+		feedbackModal.hide();
 	}
 	
 	
