@@ -32,14 +32,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -111,11 +105,9 @@ public class SearchIngredients extends ResizeComposite {
     private List<FoodProductInfo> foundProducts  = new ArrayList<FoodProductInfo>();
 	private List<FoodProductInfo> foundAlternativeProducts  = new ArrayList<FoodProductInfo>();
 	
-	private String searchString = "";
-		
+	private String searchString = "";	
 	private SortMethod lastSortMethod = SortMethod.CO2VALUE;
-	
-	private boolean[] reversSortArray = {false,false,false};
+	private boolean lastReverseSort= false;
 	
 	// CSS of rows
 	private int selectedRow = 0;
@@ -138,7 +130,6 @@ public class SearchIngredients extends ResizeComposite {
 		
 		if(dco.editDataLoaded()) {
 			updateResults("");
-			sortResults(SortMethod.CO2VALUE, false);
 			markRow(0);
 			
 		}
@@ -168,14 +159,12 @@ public class SearchIngredients extends ResizeComposite {
 			@Override
 			public void onEvent(LoadedDataEvent event) {
 				updateResults("");
-				sortResults(SortMethod.CO2VALUE, false);
 			}
 		});
 		presenter.getEventBus().addHandler(MonthChangedEvent.TYPE, new MonthChangedEventHandler() {
 			@Override
 			public void onEvent(MonthChangedEvent event) {
 				updateResults(SearchInput.getText().trim());
-				sortResults(lastSortMethod, false);
 			}
 		});
 	}
@@ -194,28 +183,28 @@ public class SearchIngredients extends ResizeComposite {
 	@UiHandler("co2Order")
 	void onCo2Clicked(ClickEvent event) {
 		if (lastSortMethod == SortMethod.CO2VALUE)
-			reversSortArray[1] = !reversSortArray[1];
+			lastReverseSort = !lastReverseSort;
 		else
-			reversSortArray[1] = false;
-		sortResults(SortMethod.CO2VALUE, reversSortArray[1]);
+			lastReverseSort = false;
+		sortResults(SortMethod.CO2VALUE, lastReverseSort);
 	}
 
 	@UiHandler("alphOrder")
 	void onAlphClicked(ClickEvent event) {
 		if (lastSortMethod == SortMethod.ALPHABETIC)
-			reversSortArray[2] = !reversSortArray[2];
+			lastReverseSort = !lastReverseSort;
 		else
-			reversSortArray[2] = false;
-		sortResults(SortMethod.ALPHABETIC, reversSortArray[2]);
+			lastReverseSort = false;
+		sortResults(SortMethod.ALPHABETIC, lastReverseSort);
 	}
 	
 	@UiHandler("saisonOrder")
 	void onSaisonClicked(ClickEvent event) {
 		if (lastSortMethod == SortMethod.SEASON)
-			reversSortArray[0] = !reversSortArray[0];
+			lastReverseSort = !lastReverseSort;
 		else
-			reversSortArray[0] = false;
-		sortResults(SortMethod.SEASON, reversSortArray[0]);
+			lastReverseSort= false;
+		sortResults(SortMethod.SEASON, lastReverseSort);
 	}
 	
 	// Legend
@@ -300,6 +289,8 @@ public class SearchIngredients extends ResizeComposite {
 		//TODO: Special Display for alternatives, now still done in displayIngredient
 		///foundIngredients.addAll(foundAlternativeIngredients);
 		
+		sortResults(lastSortMethod, lastReverseSort);
+		
 		markRow(selectedRow);
 					
 	}
@@ -312,6 +303,7 @@ public class SearchIngredients extends ResizeComposite {
 		List<FoodProductInfo> productList = productDataProvider.getList();
 		
 		this.lastSortMethod = sortMethod;
+		this.lastReverseSort = reverse;
 		
 		switch(sortMethod){
 			case CO2VALUE:
