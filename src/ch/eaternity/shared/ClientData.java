@@ -22,7 +22,7 @@ public class ClientData implements Serializable {
 
 	private static final long serialVersionUID = -8325524250818194857L;
 	
-	public List<FoodProductInfo> productInfos = new ArrayList<FoodProductInfo>();
+	public Map<Long, FoodProductInfo> productInfos = new HashMap<Long, FoodProductInfo>();
 	
 	public List<RecipeInfo> recipeInfos = new ArrayList<RecipeInfo>();
 	

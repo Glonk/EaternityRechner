@@ -113,6 +113,19 @@ public class IngredientsDialog extends DialogBox{
 					if (tmpNodeVal1 != null) newIngredient.setName( tmpNodeVal1 );
 					else isValidIng = false;
 					
+					// Synonyms
+					tmpNodeVal1 = getTagContent(zutatElmnt, "Synonyme");
+					if (tmpNodeVal1 != null){
+						String synonyms_ar[] = tmpNodeVal1.split(",");
+						List<String> synonyms = new ArrayList<String>();
+						
+						for(int i=0; i < synonyms_ar.length;i++)
+						{
+							synonyms.add(synonyms_ar[i].trim());
+						}
+						newIngredient.setSynonyms(synonyms);
+					}
+					
 					// CO2eWert		
 					tmpNodeVal1 = getTagContent(zutatElmnt, "CO2eq_Wert");
 					//Window.alert("CO2eWert : "  + Math.round(Float.parseFloat( nodeValue )*1000));

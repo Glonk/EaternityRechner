@@ -85,7 +85,15 @@ public class ProductCell extends AbstractCell<FoodProductInfo> {
 		// SafeHtml rendered = productTemplate.cell(name, co2value);
 
 		sb.appendHtmlConstant("<div style='display:inline;'>");
-			sb.append(name);
+		
+		if (productInfo.isSubstitute())
+			sb.append(SafeHtmlUtils.fromTrustedString("<span style='color:gray;'>(alt) </span>"));
+		
+		sb.append(name);
+			
+		if (productInfo.getCurrentSynonym() != null) {
+			sb.append(SafeHtmlUtils.fromTrustedString("<span style='color:gray;'> (" + productInfo.getCurrentSynonym() + ")</span>"));
+		}
 		sb.appendHtmlConstant("</div>");
 
 		sb.appendHtmlConstant("<div style='float:right; display:inline;'>");

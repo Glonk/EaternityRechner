@@ -102,9 +102,6 @@ public class SearchIngredients extends ResizeComposite {
     // Add a selection model to handle user selection.
     private final SingleSelectionModel<FoodProductInfo> selectionModel = new SingleSelectionModel<FoodProductInfo>(keyProvider);
 	
-    private List<FoodProductInfo> foundProducts  = new ArrayList<FoodProductInfo>();
-	private List<FoodProductInfo> foundAlternativeProducts  = new ArrayList<FoodProductInfo>();
-	
 	private String searchString = "";	
 	private SortMethod lastSortMethod = SortMethod.CO2VALUE;
 	private boolean lastReverseSort= false;
@@ -282,17 +279,17 @@ public class SearchIngredients extends ResizeComposite {
 		
 		// Add the data to the data provider, which automatically pushes it to the widget.
 	    List<FoodProductInfo> productList = productDataProvider.getList(); 
+	    List<FoodProductInfo> alternativesProductList = new ArrayList<FoodProductInfo>();
+	    
 	    
 		// Get data from Data Controller
-		dco.searchIngredients(searchString, productList, foundAlternativeProducts);
-	
-		//TODO: Special Display for alternatives, now still done in displayIngredient
-		///foundIngredients.addAll(foundAlternativeIngredients);
+		dco.searchIngredients(searchString, productList, alternativesProductList);
 		
 		sortResults(lastSortMethod, lastReverseSort);
 		
-		markRow(selectedRow);
-					
+		productList.addAll(alternativesProductList);
+		
+		markRow(selectedRow);			
 	}
 	
 	/**

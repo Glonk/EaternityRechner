@@ -221,12 +221,14 @@ public class DataServiceImpl extends RemoteServiceServlet implements DataService
 		
 		// ------ RecipePlace EDIT -------
 		if (recipePlace == RecipePlace.EDIT) {
+			List<FoodProductInfo> productInfos;
 			if (data.userInfo.getCurrentDate() != null)
-				data.productInfos = getFoodProductInfos(data.userInfo.getCurrentDate());
+				productInfos = getFoodProductInfos(data.userInfo.getCurrentDate());
 			else {
-				data.productInfos = getFoodProductInfos(new Date());
+				productInfos = getFoodProductInfos(new Date());
 			}
-			
+			for (FoodProductInfo productInfo : productInfos) 
+				data.productInfos.put(productInfo.getId(), productInfo);
 		}
 		return data;
 	}

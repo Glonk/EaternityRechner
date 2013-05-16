@@ -2,9 +2,12 @@ package ch.eaternity.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.eaticious.common.Quantity;
 import org.eaticious.common.QuantityImpl;
@@ -43,6 +46,9 @@ public class DataController {
 	private boolean editDataLoaded = false;
 	
 	private ListDataProvider<RecipeInfo> recipeDataProvider = new ListDataProvider<RecipeInfo>();
+	
+	private Set<Long> hasSynonymsSet = new HashSet<Long>();
+	private Set<Long> isAlternativeSet = new HashSet<Long>();
 
 	// ---------------------- public Methods ----------------------
 	
@@ -353,7 +359,8 @@ public class DataController {
 					eventBus.fireEvent(new AlertEvent("Zutaten konnten nicht geladen werden.", AlertType.ERROR, AlertEvent.Destination.BOTH)); 
 				}
 				public void onSuccess(ArrayList<FoodProductInfo> productInfos) {
-					cdata.productInfos = productInfos;
+					for (FoodProductInfo productInfo : productInfos) 
+						cdata.productInfos.put(productInfo.getId(), productInfo);
 				}
 			});
 		eventBus.fireEvent(new MonthChangedEvent(date));
@@ -466,67 +473,64 @@ public class DataController {
 	public void searchIngredients(String searchString, List<FoodProductInfo> products, List<FoodProductInfo> alternatives) {
 		products.clear();
 		alternatives.clear();
+		for (Long id : hasSynonymsSet) cdata.productInfos.get(id).setCurrentSynonym(null);
+		for (Long id : isAlternativeSet) cdata.productInfos.get(id).setSubstitute(false);
 		
-		products.addAll(cdata.productInfos);
+		searchString = searchString.trim().toLowerCase();
 		
-		searchString = searchString.trim();
-		
+		/*
 		if(searchString.length() > 0 && searchString.length() <= 2){
-			Iterator<FoodProductInfo> iterator = products.iterator();
- 			while(iterator.hasNext()) {
- 				FoodProductInfo foodProduct = iterator.next();
- 				if (searchString.trim().length() <= foodProduct.getName().length() && !foodProduct.getName().substring(0,searchString.length()).equalsIgnoreCase(searchString.substring(0,searchString.length()))) {
- 					iterator.remove();
+ 			for (FoodProductInfo foodProduct : cdata.productInfos.values()) {
+ 				if (searchString.trim().length() <= foodProduct.getName().length() && foodProduct.getName().substring(0,searchString.length()).equalsIgnoreCase(searchString.substring(0,searchString.length()))) {
+ 					products.add(foodProduct);
  				}
  			}
 		}
- 		else if(searchString.trim().length() > 1) {
+		*/
+ 		if(searchString.trim().length() > 0) {
  			String[] searchStrings = searchString.split(" ");
  			
- 			Iterator<FoodProductInfo> iterator = products.iterator();
- 			while(iterator.hasNext()) {
- 			
- 				FoodProductInfo foodProduct = iterator.next();
+ 			for (FoodProductInfo foodProduct : cdata.productInfos.values()) {
  				
  				// the whitespace is an AND operator
+ 				boolean containsWord = true;
  				for(int i = 0; i < searchStrings.length; i++) {
  					String partSearchString = searchStrings[i].toLowerCase();
  					
- 					if (!foodProduct.getName().toLowerCase().contains(partSearchString) ) {
- 						iterator.remove();
+ 					//avoid searching for grams
+ 					if (partSearchString.matches("[0-9]+"))
  						break;
+ 					
+ 					if (!foodProduct.getName().toLowerCase().contains(partSearchString) ) {
+ 						containsWord = false;
  					}
+ 					for (String synonym : foodProduct.getSynonyms()) {
+ 						if (synonym.toLowerCase().contains(partSearchString) ) {
+ 	 						containsWord = true;
+ 	 						// probably dangerous, because its referenced directly
+ 	 						foodProduct.setCurrentSynonym(synonym);
+ 	 						hasSynonymsSet.add(foodProduct.getId());
+ 	 					}
+ 					}
+ 					
  				}
+ 				if (containsWord)
+ 					products.add(foodProduct);
  			}
- 			/*
-			// consider strings with whitespaces, seek for each string individually
-			for(String search : searches)
-			{
-				// TODO this search algorithm is extremely slow, make faster
-				for(FoodProductInfo product : cdata.productInfos){
-					if( search.trim().length() <= product.getName().length() &&  product.getName().substring(0, search.trim().length()).compareToIgnoreCase(search) == 0){
-						if(!products.contains(product)){
-							product.setNotASubstitute(true);
-							products.add(product);
-						}
-					}
+ 			
+			// look for alternatives, if there is only 1 result
+			if(products.size() == 1){
+				for(Long id : products.get(0).getSubstituteIds()){
+					FoodProductInfo alternative = cdata.productInfos.get(id);
+					alternative.setSubstitute(true);
+					alternatives.add(alternative);
+					isAlternativeSet.add(alternative.getId());
 				}
-				// only look for alternatives, if there is only 1 result
-				if(products.size() == 1){
-					for(Long alternativen_id : products.get(0).getSubstituteIds()){
-						for(FoodProductInfo zutat2 : cdata.productInfos){
-							if(zutat2.getId().equals(alternativen_id)){
-								if(!alternatives.contains(zutat2)){
-									zutat2.setNotASubstitute(false);
-									alternatives.add(zutat2);
-								}
-							}
-						}
-					}
-				}
-			}
-			*/
+ 			}
 		}
+ 		else {
+ 			products.addAll(cdata.productInfos.values());
+ 		}
 	}
 	
 	
@@ -717,7 +721,7 @@ public class DataController {
 		cdata.editRecipe = null;
 	}
 
-	public List<FoodProductInfo> getProductInfos() {
+	public Map<Long, FoodProductInfo> getProductInfos() {
 		return cdata.productInfos;
 	}
 

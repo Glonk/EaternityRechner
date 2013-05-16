@@ -268,8 +268,15 @@ public class FoodProduct implements Serializable {
 		this.seasonDependant = seasonDependant;
 	}
 
-
-
+	//not tested yet
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) return false;
+	    if (other == this) return true;
+	    if (!(other instanceof FoodProduct))return false;
+	    if (((FoodProduct)other).getId().equals(this.getId())) return true;
+	    else return false;
+	}
 
 
     

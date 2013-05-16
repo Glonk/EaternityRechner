@@ -55,7 +55,7 @@
 		}
 		
 		.legendPanel {
-			margin-top: 12px;
+			margin-top: 42px;
 			line-height: 23px;
 		}
 		
@@ -108,7 +108,7 @@
 			<g:HTMLPanel>
 					<g:HTMLPanel styleName='{style.searchBox}'>
 						<g:Label ui:field="SearchLabel" styleName='{style.searchLabel}'>SUCHE ZUTAT:</g:Label>
-						<g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" >Im Marktplatz</g:TextBox>
+						<!--  <b:Tooltip text="Zutaten suchen und sie per Klick dem Rezept hinzufügen">--><g:TextBox styleName='{style.searchTextBox}' ui:field="SearchInput" >Im Marktplatz</g:TextBox><!--  </b:Tooltip>-->
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName='{style.sortBox}'>
 						
@@ -125,11 +125,11 @@
 		  </g:ScrollPanel>
 		</g:center>
 
-		<g:south size="5.5">
+		<g:south size="8">
 			<g:HTMLPanel styleName='{style.legendPanel}'>
 			<div class='{style.legendLines}'>
 				<div class='{style.legendLabel}'>Legende: </div>
-				<b:Popover text="gute CO2-Bilanz: unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Popover>
+				<b:Tooltip text="gute CO2-Bilanz: unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Tooltip>
 				<b:Tooltip text="mitelmässige CO2-Bilanz: unter 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar2}' styleName='{style.legendImages}'/></b:Tooltip>
 				<b:Tooltip text="schlechte CO2-Bilanz: über 120g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar3}' styleName='{style.legendImages}'/></b:Tooltip>
 				<b:Tooltip text="Regional: unter 200km Transportdistanz"><g:Image resource='{res.region}' styleName='{style.legendImages}'/></b:Tooltip>

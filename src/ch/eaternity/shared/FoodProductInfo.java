@@ -17,7 +17,7 @@ public class FoodProductInfo implements Serializable {
 	
 	private List<Long> substituteIds = new ArrayList<Long>();
 	
-	private Boolean notASubstitute;
+	private Boolean substitute = false;
 	
 	private String name;
 	
@@ -25,6 +25,10 @@ public class FoodProductInfo implements Serializable {
 	 * The equivalent co2 value in [gram co2e / 100 g amount]
 	 */
 	private Double co2eValue;
+	
+	private List<String> synonyms = new ArrayList<String>();
+	
+	private String currentSynonym;
 	
 	private boolean inSeason;
 
@@ -41,6 +45,7 @@ public class FoodProductInfo implements Serializable {
 		// kg / kg -> g / g same, multiplicate by 100 for getting [gram co2e / 100 g amount]
 		this.co2eValue = product.getCo2eValue()*100;
 		this.substituteIds = product.getSubstitues();
+		this.synonyms = product.getSynonyms();
 	}
 	
 	public Long getId() {
@@ -61,12 +66,12 @@ public class FoodProductInfo implements Serializable {
 	}
 	
 	
-	public Boolean isNotASubstitute() {
-		return notASubstitute;
+	public Boolean isSubstitute() {
+		return substitute;
 	}
 	
-	public void setNotASubstitute(Boolean notASubstitute) {
-		this.notASubstitute = notASubstitute;
+	public void setSubstitute(Boolean substitute) {
+		this.substitute = substitute;
 	}
 
 	public String getName() {
@@ -88,12 +93,38 @@ public class FoodProductInfo implements Serializable {
 		this.co2eValue = co2eValue;
 	}
 
+	public List<String> getSynonyms() {
+		return synonyms;
+	}
+
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
+	}
+
+	public String getCurrentSynonym() {
+		return currentSynonym;
+	}
+
+	public void setCurrentSynonym(String currentSynonym) {
+		this.currentSynonym = currentSynonym;
+	}
+
 	public boolean isInSeason() {
 		return inSeason;
 	}
 
 	public void setInSeason(boolean inSeason) {
 		this.inSeason = inSeason;
+	}
+	
+	//not tested yet
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) return false;
+	    if (other == this) return true;
+	    if (!(other instanceof FoodProductInfo))return false;
+	    if (((FoodProductInfo)other).getId().equals(this.getId())) return true;
+	    else return false;
 	}
 	
 }
