@@ -137,7 +137,7 @@
 				<b:Tooltip text="Biologisch"><g:Image resource='{res.bio}' styleName='{style.legendImages}'/></b:Tooltip>
 				<b:Tooltip text="[ g* ] : g CO2-Äquivalent"><b:Label styleName='{style.co2Legend}'>[ g* ]</b:Label></b:Tooltip>
 			</div>
-				<g:Anchor ui:field='feedbackAnchor' addStyleNames='{style.feedbackAnchor}' styleName='{res.style.generalAnchor}' href='https://docs.google.com/a/eaternity.ch/forms/d/12KbLmDePOc-twZZKBD-4v8AS4IIDzkwAmYe9aWDZjbE/viewform'>Feedback senden</g:Anchor>
+				<g:Anchor ui:field='feedbackAnchor' addStyleNames='{style.feedbackAnchor}' styleName='{res.style.generalAnchor}' href='https://docs.google.com/forms/d/12KbLmDePOc-twZZKBD-4v8AS4IIDzkwAmYe9aWDZjbE/viewform'>Feedback senden</g:Anchor>
 				<div class='{style.legalBox}' ><g:Anchor styleName='{res.style.generalAnchor}' ui:field="showDisclaimer" href='javascript:;'>Haftbarkeit &amp; Rechtshinweise</g:Anchor></div>
 				<span class='{style.copyright}'>&copy; &nbsp;2013 Eaternity</span>
 				
@@ -152,7 +152,7 @@
 				</b:Modal>
 				
 				<b:Modal ui:field="feedbackModal" title="My Modal" backdrop="STATIC" keyboard="true" animation="true">
-				    <g:Frame styleName='{style.disclaimer}' url="https://docs.google.com/a/eaternity.ch/forms/d/12KbLmDePOc-twZZKBD-4v8AS4IIDzkwAmYe9aWDZjbE/viewform" />
+				    <g:Frame styleName='{style.disclaimer}' url="https://docs.google.com/forms/d/12KbLmDePOc-twZZKBD-4v8AS4IIDzkwAmYe9aWDZjbE/viewform" />
 				    <b:ModalFooter>
 				        <b:Button ui:field="closeButton" type="SUCCESS">Fenster schliessen</b:Button>
 				    </b:ModalFooter>

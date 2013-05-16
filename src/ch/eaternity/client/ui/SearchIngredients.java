@@ -218,7 +218,7 @@ public class SearchIngredients extends ResizeComposite {
 	// Feedback
 	@UiHandler("feedbackAnchor")
 	public void onFeedbackClick(ClickEvent event) {
-		feedbackModal.show();
+		//feedbackModal.show();
 	}
 	@UiHandler("closeButton")
 	public void onCloseClick(ClickEvent event) {
