@@ -266,6 +266,7 @@
 	</g:south>
 	
 	<g:east size='20'>
+	<g:ScrollPanel>
 		<g:HTMLPanel styleName='{style.eastPanel}'>
 			<g:DisclosurePanel ui:field='preparationDisclosurePanel' styleName='{style.preparationDisclosurePanel}' >
 				<g:customHeader>
@@ -279,6 +280,7 @@
 			
 			<widgets:IngredientSpecificationWidget ui:field="ingSpecWidget" addStyleNames='{style.ingSpecWidget}'/>
 		</g:HTMLPanel>
+	</g:ScrollPanel>
 	</g:east>
 
 </g:DockLayoutPanel>
