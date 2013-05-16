@@ -144,7 +144,7 @@
 				<b:Modal ui:field="disclaimerModal" title="My Modal" backdrop="STATIC" keyboard="true" animation="true">
 				    <g:Label>Bitte beachten Sie die Rechtshinweise.</g:Label>
 				    <g:ScrollPanel>
-				    	<g:Frame styleName='{style.disclaimer}' url="http://eaternity.ch/legal"></g:Frame>
+				    	<g:Frame styleName='{style.disclaimer}' url="http://eaternity.ch/legal-calc"></g:Frame>
 					</g:ScrollPanel>
 				    <b:ModalFooter>
 				        <b:Button icon="LEGAL"  ui:field="closeDisclaimer" type="SUCCESS">Akzeptieren</b:Button>
