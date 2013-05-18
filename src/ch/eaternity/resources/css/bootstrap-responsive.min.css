@@ -1,1 +1,6 @@
-/* customized by manuel klarmann */
+/* customizations file
+*
+* edited by mklarmann */
+.tooltip {
+    z-index: 2060;
+}

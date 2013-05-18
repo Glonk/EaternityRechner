@@ -125,8 +125,8 @@
 		  </g:ScrollPanel>
 		</g:center>
 
-		<g:south size="8">
-			<g:HTMLPanel styleName='{style.legendPanel}'>
+		<g:south size="8" >
+			<g:HTMLPanel ui:field="southPanel" styleName='{style.legendPanel}'>
 			<div class='{style.legendLines}'>
 				<div class='{style.legendLabel}'>Legende: </div>
 				<b:Tooltip text="gute CO2-Bilanz: unter 40g CO2-Äquivalent pro 100g Nahrungsmittel"><g:Image resource='{res.ingredientRatingBar1}' styleName='{style.legendImages}'/></b:Tooltip>

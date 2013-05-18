@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.*;
 import org.eaticious.common.QuantityImpl;
 import org.eaticious.common.Unit;
 
@@ -32,11 +34,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -65,6 +62,7 @@ public class SearchIngredients extends ResizeComposite {
 	@UiField Anchor alphOrder;
 	
 	// The Legend
+    @UiField HTMLPanel southPanel;
 	@UiField Anchor showDisclaimer;
 	@UiField Modal disclaimerModal;
 	@UiField Button closeDisclaimer;
@@ -148,6 +146,8 @@ public class SearchIngredients extends ResizeComposite {
 	    ingredientDisplayWidget.setWidget(cellList);
 	    
 		bind();
+        southPanel.getElement().getParentElement().getStyle().setOverflow(Style.Overflow.VISIBLE);
+
 	}
 	
 	private void bind() {
